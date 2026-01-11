@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Quick fix commands and one-liners for common security vulnerabilities">
+    <title>Quick Fix Commands - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="content-header">
+        <div class="container">
+            <h1>Quick Fix Commands</h1>
+            <p>One-liners and fast patches for common vulnerabilities</p>
+        </div>
+    </header>
+    
+    <main class="container">
+        <div class="content-wrapper">
+            <div class="warning-box">
+                <strong>⚠️ Warning:</strong> Always test commands in a staging environment first. Back up your data before applying fixes to production systems.
+            </div>
+
+            <h2>System Updates & Patching</h2>
+
+            <div class="vuln-item">
+                <h3>Update All Packages (Linux)</h3>
+                <div class="code-block">
+                    <code># Ubuntu/Debian
+sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
+
+# CentOS/RHEL/Fedora
+sudo yum update -y && sudo yum autoremove -y
+
+# Arch Linux
+sudo pacman -Syu
+
+# Alpine Linux
+sudo apk update && sudo apk upgrade</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Update Specific Vulnerable Package</h3>
+                <div class="code-block">
+                    <code># Ubuntu/Debian
+sudo apt install --only-upgrade package_name
+
+# CentOS/RHEL
+sudo yum update package_name
+
+# Check version after update
+package_name --version</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Windows Updates (PowerShell)</h3>
+                <div class="code-block">
+                    <code># Install Windows Update module
+Install-Module PSWindowsUpdate -Force
+
+# Check for updates
+Get-WindowsUpdate
+
+# Install all updates
+Install-WindowsUpdate -AcceptAll -AutoReboot</code>
+                </div>
+            </div>
+
+            <h2>Web Application Security</h2>
+
+            <div class="vuln-item">
+                <h3>Fix File Permissions (Linux)</h3>
+                <div class="code-block">
+                    <code># Secure web directory permissions
+sudo find /var/www/html -type d -exec chmod 755 {} \;
+sudo find /var/www/html -type f -exec chmod 644 {} \;
+
+# Secure WordPress
+sudo chown -R www-data:www-data /var/www/html/wordpress
+sudo find /var/www/html/wordpress -type d -exec chmod 755 {} \;
+sudo find /var/www/html/wordpress -type f -exec chmod 644 {} \;
+
+# Make wp-config.php read-only
+sudo chmod 400 /var/www/html/wordpress/wp-config.php</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Remove Default/Test Files</h3>
+                <div class="code-block">
+                    <code># Remove common default files
+sudo rm -f /var/www/html/index.html
+sudo rm -f /var/www/html/phpinfo.php
+sudo rm -rf /var/www/html/test
+sudo rm -rf /var/www/html/backup
+
+# Remove Apache default pages
+sudo rm -f /etc/apache2/sites-enabled/000-default.conf
+
+# Remove Nginx default config
+sudo rm -f /etc/nginx/sites-enabled/default</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Disable Directory Listing</h3>
+                <div class="code-block">
+                    <code># Apache (.htaccess)
+Options -Indexes
+
+# Nginx (in server block)
+autoindex off;</code>
+                </div>
+            </div>
+
+            <h2>Database Security</h2>
+
+            <div class="vuln-item">
+                <h3>MySQL Secure Installation</h3>
+                <div class="code-block">
+                    <code># Run MySQL secure installation script
+sudo mysql_secure_installation
+
+# Or manually:
+mysql -u root -p << EOF
+DELETE FROM mysql.user WHERE User='';
+DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+DROP DATABASE IF EXISTS test;
+DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
+FLUSH PRIVILEGES;
+EOF</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Change Database Root Password</h3>
+                <div class="code-block">
+                    <code># MySQL
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'NewStrongP@ssw0rd!';
+FLUSH PRIVILEGES;
+
+# PostgreSQL
+ALTER USER postgres WITH PASSWORD 'NewStrongP@ssw0rd!';
+
+# MongoDB
+use admin
+db.changeUserPassword("admin", "NewStrongP@ssw0rd!")</code>
+                </div>
+            </div>
+
+            <h2>SSH Hardening</h2>
+
+            <div class="vuln-item">
+                <h3>Quick SSH Security Fixes</h3>
+                <div class="code-block">
+                    <code># Backup original config
+sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup
+
+# Apply secure settings (one-liner)
+sudo sed -i 's/#PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config && \
+sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config && \
+sudo sed -i 's/#PermitEmptyPasswords no/PermitEmptyPasswords no/' /etc/ssh/sshd_config && \
+sudo systemctl restart sshd
+
+# Or using echo to append
+echo "PermitRootLogin no" | sudo tee -a /etc/ssh/sshd_config
+echo "PasswordAuthentication no" | sudo tee -a /etc/ssh/sshd_config
+sudo systemctl restart sshd</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Generate Strong SSH Key</h3>
+                <div class="code-block">
+                    <code># Generate ED25519 key (recommended)
+ssh-keygen -t ed25519 -C "your_email@example.com"
+
+# Or RSA 4096-bit
+ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+
+# Copy to server
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server</code>
+                </div>
+            </div>
+
+            <h2>Firewall Quick Fixes</h2>
+
+            <div class="vuln-item">
+                <h3>Enable and Configure UFW</h3>
+                <div class="code-block">
+                    <code># Quick secure firewall setup
+sudo ufw default deny incoming && \
+sudo ufw default allow outgoing && \
+sudo ufw allow 22/tcp && \
+sudo ufw allow 80/tcp && \
+sudo ufw allow 443/tcp && \
+sudo ufw --force enable
+
+# Check status
+sudo ufw status verbose</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Block Specific IP</h3>
+                <div class="code-block">
+                    <code># UFW
+sudo ufw deny from 192.168.1.100
+
+# iptables
+sudo iptables -A INPUT -s 192.168.1.100 -j DROP
+
+# Block IP range
+sudo ufw deny from 192.168.1.0/24</code>
+                </div>
+            </div>
+
+            <h2>SSL/TLS Fixes</h2>
+
+            <div class="vuln-item">
+                <h3>Install Let's Encrypt Certificate</h3>
+                <div class="code-block">
+                    <code># Install Certbot
+sudo apt install certbot python3-certbot-apache -y
+
+# Get certificate (Apache)
+sudo certbot --apache -d example.com -d www.example.com
+
+# Get certificate (Nginx)
+sudo apt install certbot python3-certbot-nginx -y
+sudo certbot --nginx -d example.com -d www.example.com
+
+# Auto-renewal (add to crontab)
+0 0 * * * certbot renew --quiet</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Disable Weak SSL/TLS Protocols</h3>
+                <div class="code-block">
+                    <code># Apache (in ssl.conf or virtualhost)
+SSLProtocol all -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
+SSLCipherSuite HIGH:!aNULL:!MD5:!3DES
+
+# Nginx (in server block)
+ssl_protocols TLSv1.2 TLSv1.3;
+ssl_ciphers 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384';
+ssl_prefer_server_ciphers on;</code>
+                </div>
+            </div>
+
+            <h2>Malware & Backdoor Detection</h2>
+
+            <div class="vuln-item">
+                <h3>Find Recently Modified Files</h3>
+                <div class="code-block">
+                    <code># Files modified in last 7 days
+find /var/www/html -type f -mtime -7 -ls
+
+# Files modified today
+find /var/www/html -type f -mtime 0
+
+# Find suspicious PHP files
+find /var/www/html -name "*.php" -type f -exec grep -l "eval(" {} \;
+find /var/www/html -name "*.php" -type f -exec grep -l "base64_decode" {} \;</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Scan for Malware</h3>
+                <div class="code-block">
+                    <code># Install ClamAV
+sudo apt install clamav clamav-daemon -y
+
+# Update virus definitions
+sudo freshclam
+
+# Scan directory
+sudo clamscan -r /var/www/html
+
+# Scan and remove infected files
+sudo clamscan -r --remove /var/www/html</code>
+                </div>
+            </div>
+
+            <h2>WordPress Specific Fixes</h2>
+
+            <div class="vuln-item">
+                <h3>Update WordPress Core & Plugins</h3>
+                <div class="code-block">
+                    <code># Using WP-CLI
+wp core update
+wp plugin update --all
+wp theme update --all
+
+# Check for vulnerabilities
+wp plugin list --status=active
+wp theme list --status=active</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Disable XML-RPC</h3>
+                <div class="code-block">
+                    <code># Add to .htaccess
+&lt;Files xmlrpc.php&gt;
+    Order Deny,Allow
+    Deny from all
+&lt;/Files&gt;
+
+# Or in Nginx
+location = /xmlrpc.php {
+    deny all;
+}</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Protect wp-config.php</h3>
+                <div class="code-block">
+                    <code># Add to .htaccess
+&lt;files wp-config.php&gt;
+    Order deny,allow
+    Deny from all
+&lt;/files&gt;
+
+# Or move outside web root
+mv wp-config.php ../
+# WordPress will automatically find it one directory up</code>
+                </div>
+            </div>
+
+            <h2>Log Analysis & Monitoring</h2>
+
+            <div class="vuln-item">
+                <h3>Check for Failed Login Attempts</h3>
+                <div class="code-block">
+                    <code># SSH failed logins
+sudo grep "Failed password" /var/log/auth.log | tail -20
+
+# Count failed attempts by IP
+sudo grep "Failed password" /var/log/auth.log | awk '{print $(NF-3)}' | sort | uniq -c | sort -nr
+
+# Apache access log - 401/403 errors
+sudo grep " 40[13] " /var/log/apache2/access.log | tail -20
+
+# Nginx access log
+sudo grep " 40[13] " /var/log/nginx/access.log | tail -20</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Install Fail2Ban (Brute Force Protection)</h3>
+                <div class="code-block">
+                    <code># Install
+sudo apt install fail2ban -y
+
+# Copy default config
+sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+
+# Enable SSH protection
+sudo systemctl enable fail2ban
+sudo systemctl start fail2ban
+
+# Check status
+sudo fail2ban-client status
+sudo fail2ban-client status sshd</code>
+                </div>
+            </div>
+
+            <h2>Docker Security</h2>
+
+            <div class="vuln-item">
+                <h3>Update Docker Images</h3>
+                <div class="code-block">
+                    <code># Pull latest versions of all images
+docker images --format "{{.Repository}}:{{.Tag}}" | grep -v "<none>" | xargs -L1 docker pull
+
+# Remove old/dangling images
+docker image prune -a
+
+# Update running containers
+docker-compose pull && docker-compose up -d</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Scan Docker Images for Vulnerabilities</h3>
+                <div class="code-block">
+                    <code># Using Trivy
+docker run aquasec/trivy image your-image:tag
+
+# Using Snyk
+snyk container test your-image:tag</code>
+                </div>
+            </div>
+
+            <h2>Node.js / npm Security</h2>
+
+            <div class="vuln-item">
+                <h3>Fix npm Vulnerabilities</h3>
+                <div class="code-block">
+                    <code># Audit packages
+npm audit
+
+# Fix automatically
+npm audit fix
+
+# Force fix (may break things)
+npm audit fix --force
+
+# Update all packages
+npm update
+
+# Check for outdated packages
+npm outdated</code>
+                </div>
+            </div>
+
+            <h2>Emergency Response</h2>
+
+            <div class="vuln-item">
+                <h3>Quick Site Takedown (If Compromised)</h3>
+                <div class="code-block">
+                    <code># Apache - Stop service immediately
+sudo systemctl stop apache2
+
+# Nginx - Stop service
+sudo systemctl stop nginx
+
+# Put up maintenance page
+echo "Site under maintenance" | sudo tee /var/www/html/index.html
+
+# Block all incoming traffic (emergency)
+sudo iptables -P INPUT DROP
+sudo iptables -A INPUT -i lo -j ACCEPT
+sudo iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT</code>
+                </div>
+            </div>
+
+            <div class="success-box">
+                <strong>Pro Tip:</strong> Create a security checklist script with these commands for regular security maintenance. Run it weekly or monthly depending on your risk profile.
+            </div>
+
+            <a href="index.html" class="back-link">← Back to Tools</a>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 RmVuln. Quick reference for security professionals.</p>
+            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
+</body>
+</html>

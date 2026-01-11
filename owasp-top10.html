@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="OWASP Top 10 2021 quick reference guide with fast remediation steps">
+    <title>OWASP Top 10 Quick Reference - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="content-header">
+        <div class="container">
+            <h1>OWASP Top 10 - 2021</h1>
+            <p>The most critical web application security risks</p>
+        </div>
+    </header>
+    
+    <main class="container">
+        <div class="content-wrapper">
+            <div class="info-box">
+                <strong>What is OWASP Top 10?</strong> A standard awareness document representing a broad consensus about the most critical security risks to web applications. Updated every few years by the Open Web Application Security Project (OWASP).
+            </div>
+
+            <div class="vuln-item">
+                <h2>A01:2021 – Broken Access Control</h2>
+                <p><strong>Risk Level:</strong> Critical</p>
+                <p><strong>Description:</strong> Users can act outside their intended permissions, accessing unauthorized functionality or data.</p>
+                
+                <h3>Common Vulnerabilities:</h3>
+                <p>• Bypassing access control checks by modifying URLs, internal application state, or HTML<br>
+                • Viewing or editing someone else's account by providing its unique identifier<br>
+                • Accessing API with missing access controls for POST, PUT and DELETE<br>
+                • Elevation of privilege (acting as a user without being logged in, or as an admin when logged in as a user)</p>
+                
+                <h3>Quick Fixes:</h3>
+                <p>• Deny by default – except for public resources<br>
+                • Implement access control mechanisms once and re-use throughout application<br>
+                • Enforce record ownership rather than accepting user can create, read, update or delete any record<br>
+                • Log access control failures, alert admins when appropriate<br>
+                • Rate limit API calls to minimize automated attack harm</p>
+                
+                <div class="code-block">
+                    <code>// Example: Check user authorization before accessing resource
+if (!currentUser.hasPermission('edit_post', postId)) {
+    return res.status(403).json({ error: 'Forbidden' });
+}</code>
+                </div>
+                
+                <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed fix guide →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h2>A02:2021 – Cryptographic Failures</h2>
+                <p><strong>Risk Level:</strong> High</p>
+                <p><strong>Description:</strong> Sensitive data exposed due to lack of encryption or weak cryptographic implementation.</p>
+                
+                <h3>Common Vulnerabilities:</h3>
+                <p>• Transmitting data in clear text (HTTP, FTP, SMTP)<br>
+                • Using old or weak cryptographic algorithms<br>
+                • Default or weak crypto keys in use<br>
+                • Improper certificate validation<br>
+                • Passwords stored without proper hashing</p>
+                
+                <h3>Quick Fixes:</h3>
+                <p>• Always use TLS/HTTPS for transmitting sensitive data<br>
+                • Encrypt all data at rest containing sensitive information<br>
+                • Use strong, up-to-date algorithms (AES-256, RSA-2048+)<br>
+                • Hash passwords with bcrypt, scrypt, or Argon2<br>
+                • Disable caching for responses containing sensitive data</p>
+                
+                <div class="code-block">
+                    <code>// Example: Proper password hashing with bcrypt
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+const hashedPassword = await bcrypt.hash(password, saltRounds);</code>
+                </div>
+                
+                <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed fix guide →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h2>A03:2021 – Injection</h2>
+                <p><strong>Risk Level:</strong> Critical</p>
+                <p><strong>Description:</strong> Untrusted data sent to an interpreter as part of a command or query (SQL, NoSQL, OS commands, LDAP).</p>
+                
+                <h3>Common Vulnerabilities:</h3>
+                <p>• SQL Injection (SQLi)<br>
+                • NoSQL Injection<br>
+                • OS Command Injection<br>
+                • LDAP Injection<br>
+                • Expression Language (EL) or OGNL Injection</p>
+                
+                <h3>Quick Fixes:</h3>
+                <p>• Use parameterized queries (prepared statements)<br>
+                • Use ORM frameworks that automatically escape inputs<br>
+                • Validate and sanitize all user inputs<br>
+                • Use whitelist input validation<br>
+                • Escape special characters for specific interpreters</p>
+                
+                <div class="code-block">
+                    <code>// BAD: Vulnerable to SQL injection
+query = "SELECT * FROM users WHERE username = '" + username + "'";
+
+// GOOD: Using parameterized query
+query = "SELECT * FROM users WHERE username = ?";
+stmt = connection.prepareStatement(query);
+stmt.setString(1, username);</code>
+                </div>
+                
+                <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed fix guide →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h2>A04:2021 – Insecure Design</h2>
+                <p><strong>Risk Level:</strong> High</p>
+                <p><strong>Description:</strong> Missing or ineffective control design, different from insecure implementation.</p>
+                
+                <h3>Quick Fixes:</h3>
+                <p>• Establish secure development lifecycle with security professionals<br>
+                • Use threat modeling for critical authentication, access control, business logic<br>
+                • Integrate security language and controls into user stories<br>
+                • Write unit and integration tests to validate all critical flows are resistant to threat model<br>
+                • Segregate tier layers on system and network layers</p>
+                
+                <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed fix guide →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h2>A05:2021 – Security Misconfiguration</h2>
+                <p><strong>Risk Level:</strong> High</p>
+                <p><strong>Description:</strong> Insecure default configurations, incomplete configurations, open cloud storage, misconfigured HTTP headers.</p>
+                
+                <h3>Common Vulnerabilities:</h3>
+                <p>• Missing security hardening across application stack<br>
+                • Unnecessary features enabled (ports, services, pages, accounts, privileges)<br>
+                • Default accounts and passwords still enabled<br>
+                • Error handling reveals stack traces or overly informative error messages<br>
+                • Latest security features disabled or not configured securely</p>
+                
+                <h3>Quick Fixes:</h3>
+                <p>• Remove or disable unused features, frameworks, documentation, samples<br>
+                • Implement segmented application architecture<br>
+                • Send security directives to clients (security headers)<br>
+                • Automate verification of configurations in all environments<br>
+                • Keep all frameworks, libraries, and dependencies updated</p>
+                
+                <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed fix guide →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h2>A06:2021 – Vulnerable and Outdated Components</h2>
+                <p><strong>Risk Level:</strong> High</p>
+                <p><strong>Description:</strong> Using components with known vulnerabilities.</p>
+                
+                <h3>Quick Fixes:</h3>
+                <p>• Remove unused dependencies, features, files, and documentation<br>
+                • Continuously inventory versions of components (client and server-side)<br>
+                • Monitor sources like CVE and NVD for vulnerabilities<br>
+                • Only obtain components from official sources over secure links<br>
+                • Monitor for unmaintained libraries and components</p>
+                
+                <div class="code-block">
+                    <code># Check for vulnerable npm packages
+npm audit
+
+# Update vulnerable packages
+npm audit fix
+
+# For severe vulnerabilities
+npm audit fix --force</code>
+                </div>
+                
+                <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed fix guide →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h2>A07:2021 – Identification and Authentication Failures</h2>
+                <p><strong>Risk Level:</strong> Critical</p>
+                <p><strong>Description:</strong> Weaknesses in authentication and session management.</p>
+                
+                <h3>Common Vulnerabilities:</h3>
+                <p>• Permits automated attacks such as credential stuffing<br>
+                • Permits brute force or other automated attacks<br>
+                • Permits default, weak, or well-known passwords<br>
+                • Uses weak credential recovery processes<br>
+                • Exposes session identifiers in the URL<br>
+                • Session IDs not properly invalidated</p>
+                
+                <h3>Quick Fixes:</h3>
+                <p>• Implement multi-factor authentication<br>
+                • Do not ship or deploy with default credentials<br>
+                • Implement weak password checks<br>
+                • Limit or delay failed login attempts (rate limiting)<br>
+                • Use server-side, secure, built-in session managers<br>
+                • Regenerate session IDs after login</p>
+                
+                <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed fix guide →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h2>A08:2021 – Software and Data Integrity Failures</h2>
+                <p><strong>Risk Level:</strong> High</p>
+                <p><strong>Description:</strong> Code and infrastructure that does not protect against integrity violations.</p>
+                
+                <h3>Quick Fixes:</h3>
+                <p>• Use digital signatures to verify software or data from expected source<br>
+                • Ensure libraries and dependencies are from trusted repositories<br>
+                • Use software supply chain security tools (OWASP Dependency Check, Snyk)<br>
+                • Ensure proper segregation and configuration of CI/CD pipeline<br>
+                • Ensure unsigned or unencrypted serialized data not sent to untrusted clients</p>
+                
+                <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed fix guide →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h2>A09:2021 – Security Logging and Monitoring Failures</h2>
+                <p><strong>Risk Level:</strong> Medium</p>
+                <p><strong>Description:</strong> Insufficient logging, detection, monitoring, and response capabilities.</p>
+                
+                <h3>Quick Fixes:</h3>
+                <p>• Log all login, access control, and server-side input validation failures<br>
+                • Ensure logs are in format easily consumed by log management solutions<br>
+                • Ensure high-value transactions have audit trail with integrity controls<br>
+                • Establish effective monitoring and alerting<br>
+                • Establish incident response and recovery plan</p>
+                
+                <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed fix guide →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h2>A10:2021 – Server-Side Request Forgery (SSRF)</h2>
+                <p><strong>Risk Level:</strong> High</p>
+                <p><strong>Description:</strong> Web application fetches remote resource without validating user-supplied URL.</p>
+                
+                <h3>Quick Fixes:</h3>
+                <p>• Sanitize and validate all client-supplied input data<br>
+                • Enforce URL schema, port, and destination with positive allow list<br>
+                • Do not send raw responses to clients<br>
+                • Disable HTTP redirections<br>
+                • Segment remote resource access functionality in separate networks</p>
+                
+                <div class="code-block">
+                    <code>// Example: Validate URL before fetching
+const allowedDomains = ['api.example.com', 'trusted.com'];
+const url = new URL(userInput);
+
+if (!allowedDomains.includes(url.hostname)) {
+    throw new Error('Domain not allowed');
+}</code>
+                </div>
+                
+                <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed fix guide →</a>
+            </div>
+
+            <div class="success-box">
+                <strong>Next Steps:</strong> Review each vulnerability against your application. Prioritize fixes based on your specific risk profile. For detailed implementation guides, visit <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a>
+            </div>
+
+            <a href="index.html" class="back-link">← Back to Tools</a>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 RmVuln. Quick reference for security professionals.</p>
+            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
+</body>
+</html>

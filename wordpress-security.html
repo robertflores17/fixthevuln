@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Essential WordPress security hardening steps and best practices">
+    <title>WordPress Security Hardening - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="content-header">
+        <div class="container">
+            <h1>WordPress Security Hardening</h1>
+            <p>Essential security steps for WordPress sites</p>
+        </div>
+    </header>
+    
+    <main class="container">
+        <div class="content-wrapper">
+            <div class="warning-box">
+                <strong>Why WordPress Security Matters:</strong> WordPress powers 43% of all websites, making it a prime target for attackers. Default installations have known vulnerabilities that must be addressed.
+            </div>
+
+            <h2>Immediate Security Actions</h2>
+
+            <div class="vuln-item">
+                <h2>1. Keep Everything Updated</h2>
+                <div class="code-block">
+                    <code># Using WP-CLI (recommended)
+wp core update
+wp plugin update --all
+wp theme update --all
+
+# Check for vulnerabilities
+wp plugin list --status=active
+wp theme list --status=active
+
+# Or via admin dashboard: Dashboard → Updates</code>
+                </div>
+                
+                <div class="info-box">
+                    <strong>Enable Auto-Updates:</strong> Dashboard → Updates → Enable automatic updates for plugins and themes (WP 5.5+)
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>2. Secure wp-config.php</h2>
+                
+                <h3>Move wp-config.php Outside Web Root</h3>
+                <div class="code-block">
+                    <code># Move one directory up (WordPress will find it automatically)
+mv /var/www/html/wp-config.php /var/www/wp-config.php
+
+# Set restrictive permissions
+chmod 600 /var/www/wp-config.php</code>
+                </div>
+                
+                <h3>Or Protect with .htaccess</h3>
+                <div class="code-block">
+                    <code># Add to /var/www/html/.htaccess
+&lt;files wp-config.php&gt;
+    order allow,deny
+    deny from all
+&lt;/files&gt;</code>
+                </div>
+                
+                <h3>Generate Strong Security Keys</h3>
+                <p>Visit: <a href="https://api.wordpress.org/secret-key/1.1/salt/" target="_blank">https://api.wordpress.org/secret-key/1.1/salt/</a></p>
+                <p>Replace these in wp-config.php:</p>
+                <div class="code-block">
+                    <code>define('AUTH_KEY',         'put your unique phrase here');
+define('SECURE_AUTH_KEY',  'put your unique phrase here');
+define('LOGGED_IN_KEY',    'put your unique phrase here');
+define('NONCE_KEY',        'put your unique phrase here');
+define('AUTH_SALT',        'put your unique phrase here');
+define('SECURE_AUTH_SALT', 'put your unique phrase here');
+define('LOGGED_IN_SALT',   'put your unique phrase here');
+define('NONCE_SALT',       'put your unique phrase here');</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>3. Change Default Database Prefix</h2>
+                <p><strong>Default prefix:</strong> <code>wp_</code> (makes SQL injection easier)</p>
+                
+                <div class="code-block">
+                    <code># In wp-config.php, change:
+$table_prefix = 'wp_';
+
+# To something random:
+$table_prefix = 'wp_7x2j_';
+
+# Then rename all tables in database
+# WARNING: Backup first!
+# Use plugin like "Brozzme DB Prefix" or manual SQL</code>
+                </div>
+                
+                <div class="warning-box">
+                    <strong>Important:</strong> Only change prefix on NEW installations. For existing sites, use a plugin or backup thoroughly first.
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>4. Disable File Editing</h2>
+                <p>Prevents attackers from editing theme/plugin files via admin dashboard.</p>
+                
+                <div class="code-block">
+                    <code># Add to wp-config.php
+define('DISALLOW_FILE_EDIT', true);</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>5. Limit Login Attempts</h2>
+                <p>Prevent brute force attacks on wp-login.php</p>
+                
+                <h3>Using Plugin (Recommended)</h3>
+                <p>Install: <strong>Limit Login Attempts Reloaded</strong> or <strong>WP Limit Login Attempts</strong></p>
+                
+                <h3>Or Use .htaccess Password Protection</h3>
+                <div class="code-block">
+                    <code># Create password file
+htpasswd -c /etc/apache2/.htpasswd adminuser
+
+# Add to wp-admin/.htaccess
+AuthType Basic
+AuthName "Restricted Area"
+AuthUserFile /etc/apache2/.htpasswd
+Require valid-user</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>6. Change wp-login.php URL</h2>
+                <p>Hide login page from automated bots</p>
+                
+                <p><strong>Plugin:</strong> WPS Hide Login</p>
+                <p>Changes /wp-login.php to custom URL like /my-secret-login</p>
+            </div>
+
+            <div class="vuln-item">
+                <h2>7. Disable XML-RPC</h2>
+                <p>XML-RPC is exploited for DDoS and brute force attacks</p>
+                
+                <h3>Method 1: .htaccess</h3>
+                <div class="code-block">
+                    <code>&lt;Files xmlrpc.php&gt;
+    order deny,allow
+    deny from all
+&lt;/Files&gt;</code>
+                </div>
+                
+                <h3>Method 2: Nginx</h3>
+                <div class="code-block">
+                    <code>location = /xmlrpc.php {
+    deny all;
+    access_log off;
+    log_not_found off;
+}</code>
+                </div>
+                
+                <h3>Method 3: functions.php</h3>
+                <div class="code-block">
+                    <code>// Add to theme's functions.php
+add_filter('xmlrpc_enabled', '__return_false');</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>8. Secure File Permissions</h2>
+                
+                <div class="code-block">
+                    <code># Set ownership
+sudo chown -R www-data:www-data /var/www/html/
+
+# Secure directory permissions
+sudo find /var/www/html/ -type d -exec chmod 755 {} \;
+
+# Secure file permissions
+sudo find /var/www/html/ -type f -exec chmod 644 {} \;
+
+# Extra secure wp-config.php
+sudo chmod 600 /var/www/html/wp-config.php
+
+# Make .htaccess readable
+sudo chmod 644 /var/www/html/.htaccess</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>9. Disable Directory Browsing</h2>
+                
+                <div class="code-block">
+                    <code># Add to .htaccess
+Options -Indexes</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>10. Remove WordPress Version Info</h2>
+                
+                <div class="code-block">
+                    <code>// Add to functions.php
+remove_action('wp_head', 'wp_generator');
+
+// Remove from RSS feeds
+add_filter('the_generator', '__return_empty_string');</code>
+                </div>
+            </div>
+
+            <h2>Advanced Security Measures</h2>
+
+            <div class="vuln-item">
+                <h2>Enable Two-Factor Authentication (2FA)</h2>
+                <p><strong>Plugins:</strong></p>
+                <p>• Two Factor Authentication (by WP White Security)<br>
+                • Google Authenticator<br>
+                • Wordfence Login Security</p>
+            </div>
+
+            <div class="vuln-item">
+                <h2>Install Security Plugin</h2>
+                <p><strong>Recommended Security Plugins:</strong></p>
+                
+                <h3>Wordfence Security (Most Popular)</h3>
+                <p>• Firewall<br>
+                • Malware scanner<br>
+                • Login security<br>
+                • Real-time threat defense</p>
+                
+                <h3>Sucuri Security</h3>
+                <p>• Security activity auditing<br>
+                • File integrity monitoring<br>
+                • Malware scanning<br>
+                • Blacklist monitoring</p>
+                
+                <h3>iThemes Security</h3>
+                <p>• 30+ security measures<br>
+                • Two-factor authentication<br>
+                • Password security<br>
+                • Database backups</p>
+            </div>
+
+            <div class="vuln-item">
+                <h2>Harden .htaccess</h2>
+                
+                <div class="code-block">
+                    <code># Comprehensive .htaccess security
+
+# Protect wp-config.php
+&lt;files wp-config.php&gt;
+    order allow,deny
+    deny from all
+&lt;/files&gt;
+
+# Disable directory browsing
+Options -Indexes
+
+# Protect .htaccess
+&lt;files .htaccess&gt;
+    order allow,deny
+    deny from all
+&lt;/files&gt;
+
+# Disable XML-RPC
+&lt;Files xmlrpc.php&gt;
+    order deny,allow
+    deny from all
+&lt;/Files&gt;
+
+# Block access to readme.html
+&lt;files readme.html&gt;
+    order allow,deny
+    deny from all
+&lt;/files&gt;
+
+# Block access to license.txt
+&lt;files license.txt&gt;
+    order allow,deny
+    deny from all
+&lt;/files&gt;
+
+# Protect wp-includes
+&lt;IfModule mod_rewrite.c&gt;
+    RewriteEngine On
+    RewriteBase /
+    RewriteRule ^wp-admin/includes/ - [F,L]
+    RewriteRule !^wp-includes/ - [S=3]
+    RewriteRule ^wp-includes/[^/]+\.php$ - [F,L]
+    RewriteRule ^wp-includes/js/tinymce/langs/.+\.php - [F,L]
+    RewriteRule ^wp-includes/theme-compat/ - [F,L]
+&lt;/IfModule&gt;
+
+# Block author scans
+RewriteCond %{QUERY_STRING} (author=\d+) [NC]
+RewriteRule .* - [F]
+
+# Disable server signature
+ServerSignature Off
+
+# Block PHP execution in uploads
+&lt;Directory "/var/www/html/wp-content/uploads/"&gt;
+    &lt;Files "*.php"&gt;
+        Order Deny,Allow
+        Deny from All
+    &lt;/Files&gt;
+&lt;/Directory&gt;</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>Database Security</h2>
+                
+                <div class="code-block">
+                    <code># Regular backups (using WP-CLI)
+wp db export backup-$(date +%Y%m%d).sql
+
+# Or use backup plugins:
+# - UpdraftPlus
+# - BackWPup
+# - Duplicator
+
+# Change database user password
+ALTER USER 'wp_user'@'localhost' IDENTIFIED BY 'NewStrongP@ssw0rd!';</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>Add Security Headers</h2>
+                
+                <div class="code-block">
+                    <code># Add to .htaccess
+&lt;IfModule mod_headers.c&gt;
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "0"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+&lt;/IfModule&gt;</code>
+                </div>
+            </div>
+
+            <h2>Plugin & Theme Security</h2>
+
+            <div class="vuln-item">
+                <h2>Remove Unused Plugins & Themes</h2>
+                
+                <div class="code-block">
+                    <code># List installed plugins
+wp plugin list
+
+# Delete inactive plugins
+wp plugin delete plugin-name
+
+# List themes
+wp theme list
+
+# Delete unused themes (keep one default as fallback)
+wp theme delete theme-name</code>
+                </div>
+                
+                <div class="info-box">
+                    <strong>Best Practice:</strong> Only keep active plugins and one default theme. Inactive code can still be exploited.
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>Check Plugin/Theme Vulnerabilities</h2>
+                <p><strong>Resources:</strong></p>
+                <p>• <a href="https://wpscan.com/wordpress-security-scanner" target="_blank">WPScan</a><br>
+                • <a href="https://patchstack.com/" target="_blank">Patchstack</a><br>
+                • <a href="https://www.wordfence.com/threat-intel/" target="_blank">Wordfence Intelligence</a></p>
+                
+                <div class="code-block">
+                    <code># Scan with WPScan (requires API token)
+gem install wpscan
+wpscan --url https://example.com --api-token YOUR_TOKEN</code>
+                </div>
+            </div>
+
+            <h2>User Account Security</h2>
+
+            <div class="vuln-item">
+                <h2>Strengthen User Security</h2>
+                
+                <h3>1. Change Default "admin" Username</h3>
+                <p>Create new admin user, delete old "admin" account</p>
+                
+                <h3>2. Enforce Strong Passwords</h3>
+                <p><strong>Plugin:</strong> Force Strong Passwords</p>
+                
+                <h3>3. Limit User Roles</h3>
+                <p>Only give users minimum necessary permissions:<br>
+                • Administrator (full control)<br>
+                • Editor (publish/manage posts)<br>
+                • Author (publish own posts)<br>
+                • Contributor (write posts, can't publish)<br>
+                • Subscriber (read only)</p>
+                
+                <h3>4. Audit User Accounts</h3>
+                <div class="code-block">
+                    <code># List all users
+wp user list
+
+# Delete suspicious users
+wp user delete user_id --reassign=1</code>
+                </div>
+            </div>
+
+            <h2>Monitoring & Maintenance</h2>
+
+            <div class="vuln-item">
+                <h2>Enable Activity Logging</h2>
+                <p><strong>Plugins:</strong></p>
+                <p>• WP Security Audit Log<br>
+                • Simple History<br>
+                • Activity Log</p>
+                
+                <p>Track: Login attempts, file changes, plugin installs, user changes</p>
+            </div>
+
+            <div class="vuln-item">
+                <h2>Regular Malware Scans</h2>
+                
+                <div class="code-block">
+                    <code># Using Wordfence (via WP-CLI)
+wp wordfence scan
+
+# Or manual file integrity check
+wp core verify-checksums
+wp plugin verify-checksums --all</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>Set Up Automated Backups</h2>
+                <p><strong>Backup Solutions:</strong></p>
+                <p>• UpdraftPlus (free, reliable)<br>
+                • BackWPup<br>
+                • VaultPress (Jetpack)<br>
+                • BlogVault</p>
+                
+                <p><strong>Backup:</strong> Database + Files, at least weekly, store offsite</p>
+            </div>
+
+            <h2>Emergency Response</h2>
+
+            <div class="vuln-item">
+                <h2>If Site is Compromised</h2>
+                
+                <h3>Immediate Actions:</h3>
+                <p>1. Take site offline (maintenance mode)<br>
+                2. Change ALL passwords (database, hosting, FTP, admin)<br>
+                3. Scan for malware<br>
+                4. Restore from clean backup<br>
+                5. Update everything<br>
+                6. Review user accounts<br>
+                7. Check file permissions<br>
+                8. Enable security plugin<br>
+                9. Monitor logs closely</p>
+                
+                <div class="code-block">
+                    <code># Emergency maintenance mode
+# Create .maintenance file in WordPress root
+&lt;?php
+$upgrading = time();
+?&gt;</code>
+                </div>
+            </div>
+
+            <h2>Security Checklist</h2>
+            <div class="success-box">
+                <p>☐ WordPress core, plugins, themes updated<br>
+                ☐ wp-config.php secured and moved<br>
+                ☐ Strong security keys generated<br>
+                ☐ Database prefix changed (new sites)<br>
+                ☐ File editing disabled<br>
+                ☐ Login attempts limited<br>
+                ☐ XML-RPC disabled<br>
+                ☐ File permissions set correctly (755/644)<br>
+                ☐ Directory browsing disabled<br>
+                ☐ Security plugin installed (Wordfence/Sucuri)<br>
+                ☐ 2FA enabled for admin accounts<br>
+                ☐ Unused plugins/themes removed<br>
+                ☐ Regular automated backups configured<br>
+                ☐ SSL/HTTPS enabled<br>
+                ☐ Activity logging enabled</p>
+            </div>
+
+            <a href="index.html" class="back-link">← Back to Tools</a>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 RmVuln. Quick reference for security professionals.</p>
+            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
+</body>
+</html>

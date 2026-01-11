@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Common network ports, security risks, and hardening guide">
+    <title>Port Security Guide - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="content-header">
+        <div class="container">
+            <h1>Port Security Reference</h1>
+            <p>Common ports, risks, and how to secure them</p>
+        </div>
+    </header>
+    
+    <main class="container">
+        <div class="content-wrapper">
+            <div class="info-box">
+                <strong>Why Port Security Matters:</strong> Open ports are entry points into your systems. Each unnecessary open port is a potential attack vector. Proper port management is fundamental to network security.
+            </div>
+
+            <h2>Critical Ports to Secure</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Port</th>
+                        <th>Service</th>
+                        <th>Risk Level</th>
+                        <th>Common Attacks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>21</td>
+                        <td>FTP</td>
+                        <td>High</td>
+                        <td>Unencrypted transmission, brute force, bounce attacks</td>
+                    </tr>
+                    <tr>
+                        <td>22</td>
+                        <td>SSH</td>
+                        <td>Medium</td>
+                        <td>Brute force, weak credentials, exploits</td>
+                    </tr>
+                    <tr>
+                        <td>23</td>
+                        <td>Telnet</td>
+                        <td>Critical</td>
+                        <td>Unencrypted, credential sniffing, MitM</td>
+                    </tr>
+                    <tr>
+                        <td>25</td>
+                        <td>SMTP</td>
+                        <td>Medium</td>
+                        <td>Spam relay, email spoofing</td>
+                    </tr>
+                    <tr>
+                        <td>53</td>
+                        <td>DNS</td>
+                        <td>Medium</td>
+                        <td>DNS amplification, cache poisoning, zone transfer</td>
+                    </tr>
+                    <tr>
+                        <td>80</td>
+                        <td>HTTP</td>
+                        <td>Medium</td>
+                        <td>MitM, session hijacking, XSS, injection</td>
+                    </tr>
+                    <tr>
+                        <td>443</td>
+                        <td>HTTPS</td>
+                        <td>Low</td>
+                        <td>SSL/TLS vulnerabilities, weak ciphers</td>
+                    </tr>
+                    <tr>
+                        <td>445</td>
+                        <td>SMB</td>
+                        <td>High</td>
+                        <td>EternalBlue, ransomware, lateral movement</td>
+                    </tr>
+                    <tr>
+                        <td>3306</td>
+                        <td>MySQL</td>
+                        <td>High</td>
+                        <td>Unauthorized access, SQL injection, data theft</td>
+                    </tr>
+                    <tr>
+                        <td>3389</td>
+                        <td>RDP</td>
+                        <td>High</td>
+                        <td>Brute force, BlueKeep, credential theft</td>
+                    </tr>
+                    <tr>
+                        <td>5432</td>
+                        <td>PostgreSQL</td>
+                        <td>High</td>
+                        <td>Unauthorized access, SQL injection</td>
+                    </tr>
+                    <tr>
+                        <td>6379</td>
+                        <td>Redis</td>
+                        <td>High</td>
+                        <td>Unauthorized access, data exfiltration</td>
+                    </tr>
+                    <tr>
+                        <td>27017</td>
+                        <td>MongoDB</td>
+                        <td>High</td>
+                        <td>Unauthorized access, ransomware</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Port-Specific Security Hardening</h2>
+
+            <div class="vuln-item">
+                <h2>Port 22 - SSH</h2>
+                <p><strong>Service:</strong> Secure Shell</p>
+                <p><strong>Risk:</strong> Brute force attacks, weak credentials</p>
+                
+                <h3>Hardening Steps:</h3>
+                <div class="code-block">
+                    <code># Edit /etc/ssh/sshd_config
+
+# 1. Change default port
+Port 2222
+
+# 2. Disable root login
+PermitRootLogin no
+
+# 3. Use key-based authentication only
+PasswordAuthentication no
+PubkeyAuthentication yes
+
+# 4. Limit user access
+AllowUsers username1 username2
+
+# 5. Disable empty passwords
+PermitEmptyPasswords no
+
+# 6. Set login grace time
+LoginGraceTime 30
+
+# 7. Max authentication attempts
+MaxAuthTries 3
+
+# 8. Use Protocol 2 only
+Protocol 2
+
+# Restart SSH service
+sudo systemctl restart sshd</code>
+                </div>
+                
+                <h3>Additional Security:</h3>
+                <p>• Install fail2ban to block repeated failed attempts<br>
+                • Use key-based authentication with strong passphrases<br>
+                • Implement IP whitelisting if possible<br>
+                • Enable two-factor authentication (2FA)</p>
+                
+                <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed SSH hardening guide →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h2>Port 3389 - RDP (Remote Desktop Protocol)</h2>
+                <p><strong>Service:</strong> Windows Remote Desktop</p>
+                <p><strong>Risk:</strong> Brute force, BlueKeep vulnerability, credential theft</p>
+                
+                <h3>Hardening Steps:</h3>
+                <div class="code-block">
+                    <code># PowerShell commands
+
+# 1. Enable Network Level Authentication (NLA)
+Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 1
+
+# 2. Change default port (optional, not security through obscurity alone)
+Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "PortNumber" -Value 3390
+
+# 3. Enable firewall rules for specific IPs only
+New-NetFirewallRule -DisplayName "RDP-Restricted" -Direction Inbound -LocalPort 3389 -Protocol TCP -RemoteAddress 192.168.1.100 -Action Allow
+
+# 4. Disable RDP if not needed
+Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 1</code>
+                </div>
+                
+                <h3>Additional Security:</h3>
+                <p>• Use VPN instead of exposing RDP to internet<br>
+                • Implement account lockout policies<br>
+                • Use strong, unique passwords<br>
+                • Enable Windows Defender Credential Guard<br>
+                • Keep Windows patched (especially for BlueKeep)</p>
+                
+                <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed RDP hardening guide →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h2>Port 445 - SMB (Server Message Block)</h2>
+                <p><strong>Service:</strong> File sharing (Windows)</p>
+                <p><strong>Risk:</strong> EternalBlue, ransomware, WannaCry, lateral movement</p>
+                
+                <h3>Hardening Steps:</h3>
+                <div class="code-block">
+                    <code># PowerShell commands
+
+# 1. Disable SMBv1 (vulnerable to EternalBlue)
+Disable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol
+
+# 2. Verify SMBv1 is disabled
+Get-SmbServerConfiguration | Select EnableSMB1Protocol
+
+# 3. Enable SMB signing
+Set-SmbServerConfiguration -RequireSecuritySignature $true -EnableSecuritySignature $true
+
+# 4. Enable SMB encryption
+Set-SmbServerConfiguration -EncryptData $true
+
+# 5. Block port 445 at firewall for external traffic
+New-NetFirewallRule -DisplayName "Block SMB" -Direction Inbound -LocalPort 445 -Protocol TCP -Action Block</code>
+                </div>
+                
+                <h3>Additional Security:</h3>
+                <p>• Never expose SMB to the internet<br>
+                • Use VPN for remote file access<br>
+                • Implement strong authentication<br>
+                • Regular Windows updates<br>
+                • Monitor for unusual SMB traffic</p>
+                
+                <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed SMB hardening guide →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h2>Port 3306 - MySQL</h2>
+                <p><strong>Service:</strong> MySQL Database</p>
+                <p><strong>Risk:</strong> Unauthorized access, SQL injection, data theft</p>
+                
+                <h3>Hardening Steps:</h3>
+                <div class="code-block">
+                    <code># MySQL configuration (/etc/mysql/my.cnf)
+
+# 1. Bind to localhost only (if remote access not needed)
+bind-address = 127.0.0.1
+
+# 2. Disable remote root login
+# In MySQL console:
+DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+FLUSH PRIVILEGES;
+
+# 3. Remove anonymous users
+DELETE FROM mysql.user WHERE User='';
+FLUSH PRIVILEGES;
+
+# 4. Remove test database
+DROP DATABASE IF EXISTS test;
+DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
+FLUSH PRIVILEGES;
+
+# 5. Use strong passwords
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'StrongP@ssw0rd!';
+
+# 6. Create specific user accounts
+CREATE USER 'appuser'@'localhost' IDENTIFIED BY 'StrongP@ss';
+GRANT SELECT, INSERT, UPDATE, DELETE ON mydb.* TO 'appuser'@'localhost';
+FLUSH PRIVILEGES;</code>
+                </div>
+                
+                <h3>Firewall Rules:</h3>
+                <div class="code-block">
+                    <code># Only allow specific IPs if remote access needed
+sudo ufw allow from 192.168.1.100 to any port 3306
+
+# Or block external access entirely
+sudo ufw deny 3306</code>
+                </div>
+                
+                <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed MySQL hardening guide →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h2>Port 27017 - MongoDB</h2>
+                <p><strong>Service:</strong> MongoDB Database</p>
+                <p><strong>Risk:</strong> Unauthorized access, ransomware attacks, data exposure</p>
+                
+                <h3>Hardening Steps:</h3>
+                <div class="code-block">
+                    <code># MongoDB configuration (/etc/mongod.conf)
+
+# 1. Bind to localhost
+net:
+  bindIp: 127.0.0.1
+  port: 27017
+
+# 2. Enable authentication
+security:
+  authorization: enabled
+
+# 3. Create admin user (in mongo shell)
+use admin
+db.createUser({
+  user: "admin",
+  pwd: "StrongP@ssw0rd!",
+  roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]
+})
+
+# 4. Create application user
+use mydb
+db.createUser({
+  user: "appuser",
+  pwd: "AppP@ssw0rd!",
+  roles: [ { role: "readWrite", db: "mydb" } ]
+})
+
+# 5. Enable TLS/SSL
+net:
+  ssl:
+    mode: requireSSL
+    PEMKeyFile: /path/to/mongodb.pem</code>
+                </div>
+                
+                <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed MongoDB hardening guide →</a>
+            </div>
+
+            <h2>General Port Security Best Practices</h2>
+
+            <div class="vuln-item">
+                <h3>1. Port Scanning & Discovery</h3>
+                <div class="code-block">
+                    <code># Scan your own system for open ports
+sudo nmap -sS -sV localhost
+
+# Check listening ports
+sudo netstat -tulpn
+
+# Or using ss (modern alternative)
+sudo ss -tulpn
+
+# Check open ports (Linux)
+sudo lsof -i -P -n | grep LISTEN</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>2. Firewall Configuration</h3>
+                <div class="code-block">
+                    <code># UFW (Ubuntu/Debian)
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow 22/tcp
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw enable
+
+# iptables (Advanced)
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -P OUTPUT ACCEPT
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+
+# Windows Firewall
+New-NetFirewallRule -DisplayName "Allow HTTP" -Direction Inbound -LocalPort 80 -Protocol TCP -Action Allow
+New-NetFirewallRule -DisplayName "Allow HTTPS" -Direction Inbound -LocalPort 443 -Protocol TCP -Action Allow</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>3. Close Unnecessary Ports</h3>
+                <div class="code-block">
+                    <code># Stop and disable unused services (Linux)
+sudo systemctl stop service_name
+sudo systemctl disable service_name
+
+# Windows
+Stop-Service -Name "ServiceName"
+Set-Service -Name "ServiceName" -StartupType Disabled</code>
+                </div>
+            </div>
+
+            <h2>Security Checklist</h2>
+            <div class="success-box">
+                <p>☐ Scan for open ports regularly<br>
+                ☐ Close all unnecessary ports<br>
+                ☐ Use firewall to restrict access<br>
+                ☐ Change default ports where appropriate<br>
+                ☐ Implement strong authentication<br>
+                ☐ Enable encryption (TLS/SSL)<br>
+                ☐ Use VPN for remote access to sensitive services<br>
+                ☐ Monitor logs for unauthorized access attempts<br>
+                ☐ Keep all services updated<br>
+                ☐ Implement intrusion detection (fail2ban, etc.)</p>
+            </div>
+
+            <div class="warning-box">
+                <strong>Important:</strong> Security through obscurity (changing default ports) is NOT sufficient alone. Always combine with strong authentication, encryption, and firewall rules.
+            </div>
+
+            <a href="index.html" class="back-link">← Back to Tools</a>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 RmVuln. Quick reference for security professionals.</p>
+            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
+</body>
+</html>
