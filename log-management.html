@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Log management guide - what to log, log retention policies, SIEM basics, and security logging best practices.">
+    <meta name="keywords" content="log management, SIEM, security logging, log retention, audit logging, centralized logging, log analysis">
+    <title>Log Management Guide - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>RmVuln</h1></a>
+            <p class="tagline">Log Management Guide</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="index.html" class="back-link">&larr; Back to Home</a>
+
+        <section class="intro">
+            <h2>Security Logging Essentials</h2>
+            <p>Quick reference for security logging - what events to capture, how to structure logs, retention requirements, and SIEM integration basics.</p>
+        </section>
+
+        <!-- What to Log -->
+        <section class="vulnerability-card">
+            <h2>What to Log</h2>
+
+            <h3>Authentication Events (Critical)</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Fields to Capture</th>
+                        <th>Priority</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Successful login</td>
+                        <td>username, IP, timestamp, user-agent, MFA method</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td>Failed login</td>
+                        <td>username, IP, timestamp, failure reason</td>
+                        <td>Critical</td>
+                    </tr>
+                    <tr>
+                        <td>Logout</td>
+                        <td>username, session duration, IP</td>
+                        <td>Medium</td>
+                    </tr>
+                    <tr>
+                        <td>Password change</td>
+                        <td>username, IP, timestamp, changed_by</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td>Password reset request</td>
+                        <td>username, IP, email sent to</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td>MFA enabled/disabled</td>
+                        <td>username, IP, MFA type, admin_override</td>
+                        <td>Critical</td>
+                    </tr>
+                    <tr>
+                        <td>Account lockout</td>
+                        <td>username, IP, failed_attempts, duration</td>
+                        <td>Critical</td>
+                    </tr>
+                    <tr>
+                        <td>Session invalidation</td>
+                        <td>username, reason, admin_action</td>
+                        <td>High</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Authorization Events (Critical)</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Fields to Capture</th>
+                        <th>Priority</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Access denied</td>
+                        <td>username, resource, action, reason</td>
+                        <td>Critical</td>
+                    </tr>
+                    <tr>
+                        <td>Privilege escalation</td>
+                        <td>username, from_role, to_role, approved_by</td>
+                        <td>Critical</td>
+                    </tr>
+                    <tr>
+                        <td>Role change</td>
+                        <td>username, old_role, new_role, changed_by</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td>Permission grant/revoke</td>
+                        <td>username, permission, resource, admin</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td>Admin action</td>
+                        <td>admin_user, action, target, details</td>
+                        <td>Critical</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Data Access Events</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Fields to Capture</th>
+                        <th>Priority</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Sensitive data access</td>
+                        <td>username, data_type, record_count, purpose</td>
+                        <td>Critical</td>
+                    </tr>
+                    <tr>
+                        <td>Data export/download</td>
+                        <td>username, data_type, format, record_count</td>
+                        <td>Critical</td>
+                    </tr>
+                    <tr>
+                        <td>Bulk data operations</td>
+                        <td>username, operation, record_count, filters</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td>Data modification</td>
+                        <td>username, table, record_id, before/after</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td>Data deletion</td>
+                        <td>username, table, record_id, soft/hard</td>
+                        <td>Critical</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>System Events</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Fields to Capture</th>
+                        <th>Priority</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Application start/stop</td>
+                        <td>app_name, version, timestamp, triggered_by</td>
+                        <td>Medium</td>
+                    </tr>
+                    <tr>
+                        <td>Configuration change</td>
+                        <td>setting, old_value, new_value, changed_by</td>
+                        <td>Critical</td>
+                    </tr>
+                    <tr>
+                        <td>Scheduled job execution</td>
+                        <td>job_name, status, duration, records_processed</td>
+                        <td>Medium</td>
+                    </tr>
+                    <tr>
+                        <td>API rate limit hit</td>
+                        <td>client_id, endpoint, limit, current_count</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td>Error/Exception</td>
+                        <td>error_type, message, stack_trace, user_context</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td>Security scan results</td>
+                        <td>scan_type, findings_count, severity_breakdown</td>
+                        <td>High</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Log Structure -->
+        <section class="vulnerability-card">
+            <h2>Log Structure & Format</h2>
+
+            <h3>Structured Log Format (JSON)</h3>
+            <div class="code-block">
+<pre><code>{
+  "timestamp": "2026-01-15T10:30:45.123Z",
+  "level": "INFO",
+  "service": "auth-service",
+  "environment": "production",
+  "trace_id": "abc123def456",
+  "span_id": "789xyz",
+  "event": {
+    "type": "authentication",
+    "action": "login_success",
+    "outcome": "success"
+  },
+  "actor": {
+    "user_id": "user_12345",
+    "username": "john.doe@example.com",
+    "ip_address": "192.168.1.100",
+    "user_agent": "Mozilla/5.0...",
+    "session_id": "sess_abc123"
+  },
+  "resource": {
+    "type": "user_account",
+    "id": "user_12345"
+  },
+  "metadata": {
+    "mfa_method": "totp",
+    "login_method": "password",
+    "geo_location": "US-CA"
+  }
+}</code></pre>
+            </div>
+
+            <h3>Common Log Fields</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Description</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>timestamp</td>
+                        <td>ISO 8601 format, UTC timezone</td>
+                        <td>2026-01-15T10:30:45.123Z</td>
+                    </tr>
+                    <tr>
+                        <td>level</td>
+                        <td>Log severity level</td>
+                        <td>DEBUG, INFO, WARN, ERROR, CRITICAL</td>
+                    </tr>
+                    <tr>
+                        <td>service</td>
+                        <td>Source application/service name</td>
+                        <td>auth-service, api-gateway</td>
+                    </tr>
+                    <tr>
+                        <td>trace_id</td>
+                        <td>Distributed tracing correlation ID</td>
+                        <td>abc123def456</td>
+                    </tr>
+                    <tr>
+                        <td>event.type</td>
+                        <td>Category of event</td>
+                        <td>authentication, authorization, data_access</td>
+                    </tr>
+                    <tr>
+                        <td>event.action</td>
+                        <td>Specific action taken</td>
+                        <td>login_success, access_denied</td>
+                    </tr>
+                    <tr>
+                        <td>actor.user_id</td>
+                        <td>User who performed action</td>
+                        <td>user_12345</td>
+                    </tr>
+                    <tr>
+                        <td>actor.ip_address</td>
+                        <td>Client IP address</td>
+                        <td>192.168.1.100</td>
+                    </tr>
+                    <tr>
+                        <td>resource.type</td>
+                        <td>Type of resource accessed</td>
+                        <td>user_account, document, api_endpoint</td>
+                    </tr>
+                    <tr>
+                        <td>resource.id</td>
+                        <td>Identifier of resource</td>
+                        <td>doc_789, user_12345</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Python Logging Example</h3>
+            <div class="code-block">
+<pre><code>import logging
+import json
+from datetime import datetime
+
+class SecurityLogger:
+    def __init__(self, service_name):
+        self.service = service_name
+        self.logger = logging.getLogger(service_name)
+
+    def log_auth_event(self, action, outcome, user_id, ip_address, **kwargs):
+        log_entry = {
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "level": "INFO" if outcome == "success" else "WARN",
+            "service": self.service,
+            "event": {
+                "type": "authentication",
+                "action": action,
+                "outcome": outcome
+            },
+            "actor": {
+                "user_id": user_id,
+                "ip_address": ip_address
+            },
+            "metadata": kwargs
+        }
+        self.logger.info(json.dumps(log_entry))
+
+# Usage
+security_log = SecurityLogger("auth-service")
+security_log.log_auth_event(
+    action="login_attempt",
+    outcome="success",
+    user_id="user_123",
+    ip_address="192.168.1.100",
+    mfa_method="totp"
+)</code></pre>
+            </div>
+        </section>
+
+        <!-- Log Retention -->
+        <section class="vulnerability-card">
+            <h2>Log Retention Requirements</h2>
+
+            <h3>Retention by Compliance Framework</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Framework</th>
+                        <th>Minimum Retention</th>
+                        <th>Log Types</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>PCI DSS</td>
+                        <td>1 year (3 months immediately accessible)</td>
+                        <td>All security-relevant logs</td>
+                    </tr>
+                    <tr>
+                        <td>HIPAA</td>
+                        <td>6 years</td>
+                        <td>PHI access logs, security logs</td>
+                    </tr>
+                    <tr>
+                        <td>SOX</td>
+                        <td>7 years</td>
+                        <td>Financial system audit logs</td>
+                    </tr>
+                    <tr>
+                        <td>GDPR</td>
+                        <td>As long as necessary (minimize)</td>
+                        <td>Personal data processing logs</td>
+                    </tr>
+                    <tr>
+                        <td>SOC 2</td>
+                        <td>1 year minimum</td>
+                        <td>Security event logs</td>
+                    </tr>
+                    <tr>
+                        <td>NIST 800-53</td>
+                        <td>Organization-defined</td>
+                        <td>AU-11 specifies requirements</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Recommended Retention by Log Type</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Log Type</th>
+                        <th>Hot Storage</th>
+                        <th>Cold Storage</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Security/Audit logs</td>
+                        <td>90 days</td>
+                        <td>2+ years</td>
+                        <td>3-7 years</td>
+                    </tr>
+                    <tr>
+                        <td>Authentication logs</td>
+                        <td>90 days</td>
+                        <td>1+ years</td>
+                        <td>2-3 years</td>
+                    </tr>
+                    <tr>
+                        <td>Application logs</td>
+                        <td>30 days</td>
+                        <td>90 days</td>
+                        <td>6-12 months</td>
+                    </tr>
+                    <tr>
+                        <td>Debug logs</td>
+                        <td>7 days</td>
+                        <td>N/A</td>
+                        <td>7-30 days</td>
+                    </tr>
+                    <tr>
+                        <td>Access logs (web)</td>
+                        <td>30 days</td>
+                        <td>90 days</td>
+                        <td>6-12 months</td>
+                    </tr>
+                    <tr>
+                        <td>Firewall/Network logs</td>
+                        <td>30 days</td>
+                        <td>1 year</td>
+                        <td>1-2 years</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- SIEM Basics -->
+        <section class="vulnerability-card">
+            <h2>SIEM Integration</h2>
+
+            <h3>Popular SIEM Solutions</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Solution</th>
+                        <th>Type</th>
+                        <th>Best For</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Splunk</td>
+                        <td>Commercial</td>
+                        <td>Enterprise, large scale</td>
+                    </tr>
+                    <tr>
+                        <td>Microsoft Sentinel</td>
+                        <td>Cloud (Azure)</td>
+                        <td>Microsoft ecosystem</td>
+                    </tr>
+                    <tr>
+                        <td>Elastic Security</td>
+                        <td>Open Source/Commercial</td>
+                        <td>Flexible, scalable</td>
+                    </tr>
+                    <tr>
+                        <td>Sumo Logic</td>
+                        <td>Cloud</td>
+                        <td>Cloud-native apps</td>
+                    </tr>
+                    <tr>
+                        <td>Wazuh</td>
+                        <td>Open Source</td>
+                        <td>Budget-conscious, compliance</td>
+                    </tr>
+                    <tr>
+                        <td>Graylog</td>
+                        <td>Open Source/Commercial</td>
+                        <td>Log management focus</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Key SIEM Detection Rules</h3>
+            <div class="code-block">
+<pre><code># Example: Brute Force Detection (Splunk SPL)
+index=auth sourcetype=auth_logs action=login_failure
+| stats count by src_ip, user
+| where count > 5
+| table src_ip, user, count
+
+# Example: Impossible Travel (pseudo-code)
+SELECT user_id,
+       prev_location, current_location,
+       time_diff_minutes,
+       distance_km
+FROM login_events
+WHERE time_diff_minutes < (distance_km / 900) * 60
+  AND distance_km > 500
+
+# Example: Data Exfiltration (high volume download)
+index=app_logs event_type=data_export
+| stats sum(record_count) as total_records by user, _time span=1h
+| where total_records > 10000
+
+# Example: Privilege Escalation
+index=auth_logs event_type=role_change
+| where new_role IN ("admin", "superuser", "root")
+| table _time, user, old_role, new_role, changed_by</code></pre>
+            </div>
+
+            <h3>Alert Priority Matrix</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Alert</th>
+                        <th>Priority</th>
+                        <th>Response Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Multiple failed logins (brute force)</td>
+                        <td>High</td>
+                        <td>&lt; 15 minutes</td>
+                    </tr>
+                    <tr>
+                        <td>Admin account login from new IP</td>
+                        <td>Critical</td>
+                        <td>&lt; 5 minutes</td>
+                    </tr>
+                    <tr>
+                        <td>Bulk data export</td>
+                        <td>High</td>
+                        <td>&lt; 15 minutes</td>
+                    </tr>
+                    <tr>
+                        <td>Configuration change</td>
+                        <td>Medium</td>
+                        <td>&lt; 1 hour</td>
+                    </tr>
+                    <tr>
+                        <td>MFA disabled</td>
+                        <td>Critical</td>
+                        <td>&lt; 5 minutes</td>
+                    </tr>
+                    <tr>
+                        <td>Impossible travel</td>
+                        <td>High</td>
+                        <td>&lt; 15 minutes</td>
+                    </tr>
+                    <tr>
+                        <td>After-hours access</td>
+                        <td>Medium</td>
+                        <td>&lt; 1 hour</td>
+                    </tr>
+                    <tr>
+                        <td>New admin account created</td>
+                        <td>Critical</td>
+                        <td>&lt; 5 minutes</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Centralized Logging -->
+        <section class="vulnerability-card">
+            <h2>Centralized Logging Architecture</h2>
+
+            <h3>Log Shipping Methods</h3>
+            <div class="code-block">
+<pre><code># Filebeat configuration (ship to Elasticsearch)
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /var/log/app/*.log
+  json.keys_under_root: true
+  json.add_error_key: true
+
+output.elasticsearch:
+  hosts: ["https://elasticsearch:9200"]
+  username: "filebeat_internal"
+  password: "${ES_PASSWORD}"
+  ssl.certificate_authorities: ["/etc/pki/ca.crt"]
+
+# Fluentd configuration
+<source>
+  @type tail
+  path /var/log/app/*.log
+  pos_file /var/log/fluentd/app.log.pos
+  tag app.logs
+  <parse>
+    @type json
+  </parse>
+</source>
+
+<match app.**>
+  @type elasticsearch
+  host elasticsearch
+  port 9200
+  logstash_format true
+  logstash_prefix app-logs
+</match></code></pre>
+            </div>
+
+            <h3>Log Integrity Protection</h3>
+            <div class="remediation">
+                <ul>
+                    <li><strong>Immutable storage</strong> - Use WORM (Write Once Read Many) storage</li>
+                    <li><strong>Log signing</strong> - Sign log entries with HMAC or digital signatures</li>
+                    <li><strong>Separate log servers</strong> - Logs should be sent to dedicated infrastructure</li>
+                    <li><strong>Access control</strong> - Restrict who can delete/modify logs</li>
+                    <li><strong>Hash chains</strong> - Link log entries cryptographically</li>
+                    <li><strong>Timestamps</strong> - Use trusted time sources (NTP)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Don't Log -->
+        <section class="vulnerability-card">
+            <h2>What NOT to Log</h2>
+            <div class="remediation" style="background: #fff3cd; border-color: #ffc107;">
+                <h3 style="color: #856404;">Sensitive Data to Exclude</h3>
+                <ul style="color: #856404;">
+                    <li><strong>Passwords</strong> - Never log passwords, even hashed</li>
+                    <li><strong>API keys/Secrets</strong> - Mask or exclude entirely</li>
+                    <li><strong>Credit card numbers</strong> - PCI DSS violation</li>
+                    <li><strong>SSN/Government IDs</strong> - Personally identifiable information</li>
+                    <li><strong>Full session tokens</strong> - Log only last 4 characters</li>
+                    <li><strong>Health information</strong> - HIPAA protected</li>
+                    <li><strong>Biometric data</strong> - Cannot be changed if leaked</li>
+                    <li><strong>Encryption keys</strong> - Defeats purpose of encryption</li>
+                </ul>
+            </div>
+
+            <h3>Data Masking Example</h3>
+            <div class="code-block">
+<pre><code>import re
+
+def mask_sensitive_data(log_entry):
+    # Mask credit card numbers
+    log_entry = re.sub(
+        r'\b\d{4}[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}\b',
+        '****-****-****-XXXX',
+        log_entry
+    )
+
+    # Mask email addresses (partial)
+    log_entry = re.sub(
+        r'(\w{2})\w*@(\w{2})\w*\.(\w+)',
+        r'\1***@\2***.\3',
+        log_entry
+    )
+
+    # Mask API keys
+    log_entry = re.sub(
+        r'(api[_-]?key["\s:=]+)["\']?[\w-]{20,}["\']?',
+        r'\1[REDACTED]',
+        log_entry,
+        flags=re.IGNORECASE
+    )
+
+    return log_entry</code></pre>
+            </div>
+        </section>
+
+        <section class="cta">
+            <h2>Need Detailed Logging Implementation Guides?</h2>
+            <p>For comprehensive tutorials and SIEM setup guides:</p>
+            <a href="https://fixthevuln.com" class="cta-button" target="_blank">Visit FixTheVuln.com &rarr;</a>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
+</body>
+</html>

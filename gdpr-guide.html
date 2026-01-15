@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="GDPR for developers quick guide - data protection principles, user rights, and practical implementation guidance for software developers.">
+    <meta name="keywords" content="GDPR, GDPR for developers, data protection, privacy by design, GDPR compliance, personal data protection">
+    <title>GDPR for Developers - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .principle-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #667eea;
+        }
+        .principle-card h4 {
+            margin: 0 0 0.5rem 0;
+            color: #333;
+        }
+        .principle-card p {
+            margin: 0;
+            color: #666;
+        }
+        .right-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        .right-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        .right-content h4 {
+            margin: 0 0 0.25rem 0;
+            color: #333;
+        }
+        .right-content p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .basis-table td:first-child {
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .dev-checklist {
+            background: #e7f3ff;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .dev-checklist h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .timeline-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>RmVuln</h1></a>
+            <p class="tagline">GDPR for Developers</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="index.html" class="back-link">&larr; Back to Home</a>
+
+        <section class="intro">
+            <h2>GDPR Quick Reference for Developers</h2>
+            <p>The General Data Protection Regulation (GDPR) applies to any organization processing personal data of EU residents. This guide covers the key principles and practical implementation guidance for developers.</p>
+        </section>
+
+        <!-- Key Definitions -->
+        <section class="vulnerability-card">
+            <h2>Key Definitions</h2>
+            <table class="styled-table">
+                <tbody>
+                    <tr>
+                        <td><strong>Personal Data</strong></td>
+                        <td>Any information relating to an identified or identifiable person (name, email, IP address, location, cookies, device IDs)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Data Subject</strong></td>
+                        <td>The individual whose personal data is being processed</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Data Controller</strong></td>
+                        <td>Entity that determines purposes and means of processing (your company)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Data Processor</strong></td>
+                        <td>Entity that processes data on behalf of controller (cloud providers, analytics services)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Processing</strong></td>
+                        <td>Any operation on personal data (collecting, storing, using, sharing, deleting)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Special Category Data</strong></td>
+                        <td>Sensitive data requiring extra protection (health, race, religion, biometrics, sexual orientation)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 7 Principles -->
+        <section class="vulnerability-card">
+            <h2>The 7 GDPR Principles</h2>
+
+            <div class="principle-card">
+                <h4>1. Lawfulness, Fairness, and Transparency</h4>
+                <p>Process data lawfully, fairly, and be transparent about how you use it. Users must know what data you collect and why.</p>
+            </div>
+
+            <div class="principle-card">
+                <h4>2. Purpose Limitation</h4>
+                <p>Collect data only for specified, explicit, and legitimate purposes. Don't use it for incompatible purposes later.</p>
+            </div>
+
+            <div class="principle-card">
+                <h4>3. Data Minimization</h4>
+                <p>Collect only the data that is necessary for your stated purposes. Don't collect "just in case."</p>
+            </div>
+
+            <div class="principle-card">
+                <h4>4. Accuracy</h4>
+                <p>Keep personal data accurate and up to date. Allow users to correct inaccurate data.</p>
+            </div>
+
+            <div class="principle-card">
+                <h4>5. Storage Limitation</h4>
+                <p>Keep data only as long as necessary. Define and implement retention periods.</p>
+            </div>
+
+            <div class="principle-card">
+                <h4>6. Integrity and Confidentiality</h4>
+                <p>Ensure appropriate security of personal data, including protection against unauthorized processing and accidental loss.</p>
+            </div>
+
+            <div class="principle-card">
+                <h4>7. Accountability</h4>
+                <p>Be responsible for and be able to demonstrate compliance with these principles.</p>
+            </div>
+        </section>
+
+        <!-- User Rights -->
+        <section class="vulnerability-card">
+            <h2>User Rights (Data Subject Rights)</h2>
+
+            <div class="right-card">
+                <span class="right-icon">📋</span>
+                <div class="right-content">
+                    <h4>Right to be Informed</h4>
+                    <p>Users must be told what data you collect, why, how long you keep it, and who you share it with.</p>
+                </div>
+            </div>
+
+            <div class="right-card">
+                <span class="right-icon">👁️</span>
+                <div class="right-content">
+                    <h4>Right of Access <span class="timeline-badge">30 days</span></h4>
+                    <p>Users can request a copy of all personal data you hold about them.</p>
+                </div>
+            </div>
+
+            <div class="right-card">
+                <span class="right-icon">✏️</span>
+                <div class="right-content">
+                    <h4>Right to Rectification <span class="timeline-badge">30 days</span></h4>
+                    <p>Users can request correction of inaccurate or incomplete data.</p>
+                </div>
+            </div>
+
+            <div class="right-card">
+                <span class="right-icon">🗑️</span>
+                <div class="right-content">
+                    <h4>Right to Erasure (Right to be Forgotten) <span class="timeline-badge">30 days</span></h4>
+                    <p>Users can request deletion of their data under certain circumstances.</p>
+                </div>
+            </div>
+
+            <div class="right-card">
+                <span class="right-icon">⏸️</span>
+                <div class="right-content">
+                    <h4>Right to Restrict Processing</h4>
+                    <p>Users can request that you stop processing their data while disputes are resolved.</p>
+                </div>
+            </div>
+
+            <div class="right-card">
+                <span class="right-icon">📦</span>
+                <div class="right-content">
+                    <h4>Right to Data Portability</h4>
+                    <p>Users can request their data in a machine-readable format to transfer elsewhere.</p>
+                </div>
+            </div>
+
+            <div class="right-card">
+                <span class="right-icon">🚫</span>
+                <div class="right-content">
+                    <h4>Right to Object</h4>
+                    <p>Users can object to processing for direct marketing or based on legitimate interests.</p>
+                </div>
+            </div>
+
+            <div class="right-card">
+                <span class="right-icon">🤖</span>
+                <div class="right-content">
+                    <h4>Rights Related to Automated Decision Making</h4>
+                    <p>Users can request human review of automated decisions that significantly affect them.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lawful Basis -->
+        <section class="vulnerability-card">
+            <h2>Lawful Basis for Processing</h2>
+            <p>You must have at least one lawful basis to process personal data:</p>
+            <table class="styled-table basis-table">
+                <thead>
+                    <tr>
+                        <th>Basis</th>
+                        <th>When to Use</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Consent</td>
+                        <td>User freely gives specific, informed consent</td>
+                        <td>Marketing emails, analytics cookies</td>
+                    </tr>
+                    <tr>
+                        <td>Contract</td>
+                        <td>Processing necessary to fulfill a contract</td>
+                        <td>Shipping address for order delivery</td>
+                    </tr>
+                    <tr>
+                        <td>Legal Obligation</td>
+                        <td>Processing required by law</td>
+                        <td>Tax records, employee data for payroll</td>
+                    </tr>
+                    <tr>
+                        <td>Vital Interests</td>
+                        <td>Necessary to protect someone's life</td>
+                        <td>Medical emergency, disaster response</td>
+                    </tr>
+                    <tr>
+                        <td>Public Task</td>
+                        <td>Necessary for official functions</td>
+                        <td>Government services</td>
+                    </tr>
+                    <tr>
+                        <td>Legitimate Interests</td>
+                        <td>Necessary for your legitimate interests (balanced against user rights)</td>
+                        <td>Fraud prevention, network security</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Developer Checklist -->
+        <section class="vulnerability-card">
+            <h2>Developer Implementation Checklist</h2>
+
+            <div class="dev-checklist">
+                <h3>Privacy by Design</h3>
+                <ul>
+                    <li>Minimize data collection - only collect what you need</li>
+                    <li>Implement data retention policies with automatic deletion</li>
+                    <li>Pseudonymize or anonymize data where possible</li>
+                    <li>Encrypt personal data at rest and in transit</li>
+                    <li>Implement access controls - least privilege principle</li>
+                    <li>Log access to personal data for audit purposes</li>
+                </ul>
+            </div>
+
+            <div class="dev-checklist">
+                <h3>User Rights Implementation</h3>
+                <ul>
+                    <li>Build data export functionality (JSON/CSV format)</li>
+                    <li>Implement account deletion that removes all personal data</li>
+                    <li>Create admin tools to handle data subject requests</li>
+                    <li>Allow users to update their information</li>
+                    <li>Implement consent management for optional processing</li>
+                    <li>Track and document consent (who, when, what)</li>
+                </ul>
+            </div>
+
+            <div class="dev-checklist">
+                <h3>Security Measures</h3>
+                <ul>
+                    <li>Use HTTPS everywhere</li>
+                    <li>Encrypt databases containing personal data</li>
+                    <li>Implement proper authentication and authorization</li>
+                    <li>Conduct security testing and vulnerability assessments</li>
+                    <li>Have an incident response plan for data breaches</li>
+                    <li>Report breaches to authorities within 72 hours</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Code Examples -->
+        <section class="vulnerability-card">
+            <h2>Code Examples</h2>
+
+            <h3>Data Export Endpoint</h3>
+            <div class="code-block">
+<pre><code># Python/Flask - Data export for GDPR access request
+@app.route('/api/user/export', methods=['GET'])
+@login_required
+def export_user_data():
+    user_id = current_user.id
+
+    data = {
+        'profile': get_user_profile(user_id),
+        'orders': get_user_orders(user_id),
+        'preferences': get_user_preferences(user_id),
+        'activity_log': get_user_activity(user_id),
+        'exported_at': datetime.utcnow().isoformat()
+    }
+
+    return jsonify(data), 200, {
+        'Content-Disposition': f'attachment; filename=user_data_{user_id}.json'
+    }</code></pre>
+            </div>
+
+            <h3>Account Deletion</h3>
+            <div class="code-block">
+<pre><code># Proper account deletion - remove all personal data
+def delete_user_account(user_id):
+    # Delete from all related tables
+    delete_user_orders(user_id)
+    delete_user_preferences(user_id)
+    delete_user_activity_logs(user_id)
+    delete_user_sessions(user_id)
+
+    # Anonymize data that must be retained (e.g., for legal reasons)
+    anonymize_financial_records(user_id)
+
+    # Finally delete the user record
+    delete_user(user_id)
+
+    # Log the deletion for compliance
+    log_gdpr_action('account_deletion', user_id)</code></pre>
+            </div>
+
+            <h3>Consent Tracking</h3>
+            <div class="code-block">
+<pre><code>// Consent tracking schema
+CREATE TABLE user_consents (
+    id UUID PRIMARY KEY,
+    user_id UUID REFERENCES users(id),
+    consent_type VARCHAR(50),  -- 'marketing', 'analytics', etc.
+    granted BOOLEAN,
+    granted_at TIMESTAMP,
+    withdrawn_at TIMESTAMP,
+    ip_address INET,
+    user_agent TEXT,
+    consent_text TEXT  -- Store the exact text user agreed to
+);</code></pre>
+            </div>
+        </section>
+
+        <!-- Penalties -->
+        <section class="vulnerability-card">
+            <h2>Penalties for Non-Compliance</h2>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Tier</th>
+                        <th>Maximum Fine</th>
+                        <th>Violations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Lower</td>
+                        <td>€10 million or 2% of global turnover</td>
+                        <td>Technical/organizational failures, records, security</td>
+                    </tr>
+                    <tr>
+                        <td>Upper</td>
+                        <td>€20 million or 4% of global turnover</td>
+                        <td>Principles violations, user rights, international transfers</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="cta">
+            <h2>Need Detailed GDPR Implementation Guides?</h2>
+            <p>For comprehensive tutorials and compliance guides:</p>
+            <a href="https://fixthevuln.com" class="cta-button" target="_blank">Visit FixTheVuln.com &rarr;</a>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
+</body>
+</html>

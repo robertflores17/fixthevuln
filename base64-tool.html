@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Free online Base64 encoder and decoder tool. Convert text to Base64 and decode Base64 strings instantly in your browser.">
+    <meta name="keywords" content="base64 encoder, base64 decoder, base64 converter, online base64 tool, encode base64, decode base64">
+    <title>Base64 Encoder/Decoder - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tool-container {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        .input-group textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #218838;
+        }
+        .options-group {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+        }
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .option-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+        .result-info {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        .result-info span {
+            color: #666;
+        }
+        .result-info strong {
+            color: #333;
+        }
+        .copy-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+        }
+        .tab-container {
+            display: flex;
+            gap: 0;
+            margin-bottom: 0;
+        }
+        .tab {
+            padding: 1rem 2rem;
+            background: #e9ecef;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .tab:first-child {
+            border-radius: 8px 0 0 0;
+        }
+        .tab:last-child {
+            border-radius: 0 8px 0 0;
+        }
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>RmVuln</h1></a>
+            <p class="tagline">Base64 Encoder/Decoder</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="index.html" class="back-link">&larr; Back to Home</a>
+
+        <section class="intro">
+            <h2>Base64 Encoder & Decoder</h2>
+            <p>Encode text to Base64 or decode Base64 strings instantly. All processing happens in your browser - no data is sent to any server.</p>
+        </section>
+
+        <div class="tool-container">
+            <div class="tab-container">
+                <button class="tab active" onclick="switchTab('encode')">Encode</button>
+                <button class="tab" onclick="switchTab('decode')">Decode</button>
+            </div>
+
+            <!-- Encode Tab -->
+            <div id="encode-tab" class="tab-content active" style="background: white; padding: 1.5rem; border-radius: 0 8px 8px 8px;">
+                <div class="input-group">
+                    <label for="encode-input">Text to Encode</label>
+                    <textarea id="encode-input" placeholder="Enter text to encode to Base64..."></textarea>
+                </div>
+
+                <div class="options-group">
+                    <div class="option-item">
+                        <input type="checkbox" id="url-safe-encode">
+                        <label for="url-safe-encode">URL-safe encoding (replace +/ with -_)</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="checkbox" id="no-padding-encode">
+                        <label for="no-padding-encode">Remove padding (=)</label>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="encodeBase64()">Encode to Base64</button>
+                    <button class="btn btn-secondary" onclick="clearEncode()">Clear</button>
+                    <button class="btn btn-success" onclick="copyResult('encode-output')">Copy Result</button>
+                </div>
+
+                <div class="input-group">
+                    <label for="encode-output">Base64 Output</label>
+                    <textarea id="encode-output" readonly placeholder="Encoded result will appear here..."></textarea>
+                </div>
+
+                <div class="result-info" id="encode-info" style="display: none;">
+                    <span>Input Length: <strong id="encode-input-length">0</strong> characters</span>
+                    <span>Output Length: <strong id="encode-output-length">0</strong> characters</span>
+                    <span>Size Increase: <strong id="encode-size-increase">0</strong>%</span>
+                </div>
+            </div>
+
+            <!-- Decode Tab -->
+            <div id="decode-tab" class="tab-content" style="background: white; padding: 1.5rem; border-radius: 0 8px 8px 8px;">
+                <div class="input-group">
+                    <label for="decode-input">Base64 to Decode</label>
+                    <textarea id="decode-input" placeholder="Enter Base64 string to decode..."></textarea>
+                </div>
+
+                <div class="options-group">
+                    <div class="option-item">
+                        <input type="checkbox" id="url-safe-decode">
+                        <label for="url-safe-decode">URL-safe input (convert -_ to +/)</label>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="decodeBase64()">Decode from Base64</button>
+                    <button class="btn btn-secondary" onclick="clearDecode()">Clear</button>
+                    <button class="btn btn-success" onclick="copyResult('decode-output')">Copy Result</button>
+                </div>
+
+                <div class="input-group">
+                    <label for="decode-output">Decoded Output</label>
+                    <textarea id="decode-output" readonly placeholder="Decoded result will appear here..."></textarea>
+                </div>
+
+                <div class="result-info" id="decode-info" style="display: none;">
+                    <span>Input Length: <strong id="decode-input-length">0</strong> characters</span>
+                    <span>Output Length: <strong id="decode-output-length">0</strong> characters</span>
+                </div>
+
+                <div class="error-message" id="decode-error"></div>
+            </div>
+        </div>
+
+        <!-- Reference Section -->
+        <section class="vulnerability-card">
+            <h2>Base64 Reference</h2>
+
+            <h3>What is Base64?</h3>
+            <p>Base64 is a binary-to-text encoding scheme that represents binary data using 64 printable ASCII characters. It's commonly used for:</p>
+            <ul>
+                <li>Encoding binary data in emails (MIME)</li>
+                <li>Embedding images in HTML/CSS (data URIs)</li>
+                <li>Encoding credentials in HTTP Basic Authentication</li>
+                <li>Storing binary data in JSON/XML</li>
+                <li>JWT (JSON Web Tokens) encoding</li>
+            </ul>
+
+            <h3>Base64 Alphabet</h3>
+            <div class="code-block">
+<pre><code>Standard Base64:
+A-Z (0-25), a-z (26-51), 0-9 (52-61), + (62), / (63)
+Padding character: =
+
+URL-Safe Base64:
+A-Z (0-25), a-z (26-51), 0-9 (52-61), - (62), _ (63)
+(Replaces + with - and / with _)</code></pre>
+            </div>
+
+            <h3>Size Overhead</h3>
+            <p>Base64 encoding increases data size by approximately 33% (4 output characters for every 3 input bytes).</p>
+            <div class="code-block">
+<pre><code>Original:  3 bytes  = 24 bits
+Encoded:   4 chars  = 24 bits (6 bits per character)
+
+Formula: encoded_size = ceil(original_size / 3) * 4</code></pre>
+            </div>
+        </section>
+
+        <section class="vulnerability-card">
+            <h2>Common Base64 Examples</h2>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Original</th>
+                        <th>Base64 Encoded</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Hello</td>
+                        <td>SGVsbG8=</td>
+                    </tr>
+                    <tr>
+                        <td>Hello World</td>
+                        <td>SGVsbG8gV29ybGQ=</td>
+                    </tr>
+                    <tr>
+                        <td>admin:password</td>
+                        <td>YWRtaW46cGFzc3dvcmQ=</td>
+                    </tr>
+                    <tr>
+                        <td>{"user":"test"}</td>
+                        <td>eyJ1c2VyIjoidGVzdCJ9</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <div class="copy-notification" id="copy-notification">
+            Copied to clipboard!
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
+
+    <script>
+        function switchTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(tab + '-tab').classList.add('active');
+        }
+
+        function encodeBase64() {
+            const input = document.getElementById('encode-input').value;
+            const urlSafe = document.getElementById('url-safe-encode').checked;
+            const noPadding = document.getElementById('no-padding-encode').checked;
+
+            try {
+                // Encode to UTF-8 bytes, then to Base64
+                let encoded = btoa(unescape(encodeURIComponent(input)));
+
+                if (urlSafe) {
+                    encoded = encoded.replace(/\+/g, '-').replace(/\//g, '_');
+                }
+
+                if (noPadding) {
+                    encoded = encoded.replace(/=+$/, '');
+                }
+
+                document.getElementById('encode-output').value = encoded;
+
+                // Show stats
+                document.getElementById('encode-info').style.display = 'flex';
+                document.getElementById('encode-input-length').textContent = input.length;
+                document.getElementById('encode-output-length').textContent = encoded.length;
+                const increase = input.length > 0 ? Math.round((encoded.length - input.length) / input.length * 100) : 0;
+                document.getElementById('encode-size-increase').textContent = increase;
+            } catch (e) {
+                alert('Error encoding: ' + e.message);
+            }
+        }
+
+        function decodeBase64() {
+            let input = document.getElementById('decode-input').value.trim();
+            const urlSafe = document.getElementById('url-safe-decode').checked;
+            const errorDiv = document.getElementById('decode-error');
+
+            errorDiv.style.display = 'none';
+
+            try {
+                if (urlSafe) {
+                    input = input.replace(/-/g, '+').replace(/_/g, '/');
+                }
+
+                // Add padding if needed
+                while (input.length % 4) {
+                    input += '=';
+                }
+
+                // Decode Base64 to UTF-8
+                const decoded = decodeURIComponent(escape(atob(input)));
+
+                document.getElementById('decode-output').value = decoded;
+
+                // Show stats
+                document.getElementById('decode-info').style.display = 'flex';
+                document.getElementById('decode-input-length').textContent = document.getElementById('decode-input').value.length;
+                document.getElementById('decode-output-length').textContent = decoded.length;
+            } catch (e) {
+                errorDiv.textContent = 'Invalid Base64 string: ' + e.message;
+                errorDiv.style.display = 'block';
+                document.getElementById('decode-output').value = '';
+                document.getElementById('decode-info').style.display = 'none';
+            }
+        }
+
+        function clearEncode() {
+            document.getElementById('encode-input').value = '';
+            document.getElementById('encode-output').value = '';
+            document.getElementById('encode-info').style.display = 'none';
+        }
+
+        function clearDecode() {
+            document.getElementById('decode-input').value = '';
+            document.getElementById('decode-output').value = '';
+            document.getElementById('decode-info').style.display = 'none';
+            document.getElementById('decode-error').style.display = 'none';
+        }
+
+        function copyResult(elementId) {
+            const textarea = document.getElementById(elementId);
+            if (textarea.value) {
+                navigator.clipboard.writeText(textarea.value).then(() => {
+                    const notification = document.getElementById('copy-notification');
+                    notification.style.display = 'block';
+                    setTimeout(() => {
+                        notification.style.display = 'none';
+                    }, 2000);
+                });
+            }
+        }
+
+        // Auto-encode/decode on input (optional - can be enabled)
+        // document.getElementById('encode-input').addEventListener('input', encodeBase64);
+        // document.getElementById('decode-input').addEventListener('input', decodeBase64);
+    </script>
+</body>
+</html>

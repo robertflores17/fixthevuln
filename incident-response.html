@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Incident response guide - IR steps checklist, containment procedures, NIST framework, and security incident handling best practices.">
+    <meta name="keywords" content="incident response, IR checklist, security incident, containment procedures, NIST incident response, breach response">
+    <title>Incident Response Guide - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>RmVuln</h1></a>
+            <p class="tagline">Incident Response Guide</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="index.html" class="back-link">&larr; Back to Home</a>
+
+        <section class="intro">
+            <h2>Security Incident Response</h2>
+            <p>Quick reference for handling security incidents - from detection through recovery. Based on NIST SP 800-61 framework with practical checklists and procedures.</p>
+        </section>
+
+        <!-- IR Phases -->
+        <section class="vulnerability-card">
+            <h2>Incident Response Phases (NIST)</h2>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Phase</th>
+                        <th>Key Activities</th>
+                        <th>Goal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1. Preparation</td>
+                        <td>Build IR team, tools, playbooks, training</td>
+                        <td>Be ready before incidents occur</td>
+                    </tr>
+                    <tr>
+                        <td>2. Detection & Analysis</td>
+                        <td>Monitor, detect, validate, assess severity</td>
+                        <td>Identify and understand the incident</td>
+                    </tr>
+                    <tr>
+                        <td>3. Containment</td>
+                        <td>Stop spread, preserve evidence, short/long-term</td>
+                        <td>Limit damage and scope</td>
+                    </tr>
+                    <tr>
+                        <td>4. Eradication</td>
+                        <td>Remove threat, patch vulnerabilities, clean systems</td>
+                        <td>Eliminate the root cause</td>
+                    </tr>
+                    <tr>
+                        <td>5. Recovery</td>
+                        <td>Restore systems, verify functionality, monitor</td>
+                        <td>Return to normal operations</td>
+                    </tr>
+                    <tr>
+                        <td>6. Lessons Learned</td>
+                        <td>Post-incident review, update procedures, report</td>
+                        <td>Improve future response</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Severity Classification -->
+        <section class="vulnerability-card">
+            <h2>Incident Severity Classification</h2>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Severity</th>
+                        <th>Description</th>
+                        <th>Response Time</th>
+                        <th>Examples</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="background: #dc3545; color: white;">Critical (P1)</td>
+                        <td>Business-critical systems down, active breach, data exfiltration</td>
+                        <td>Immediate (15 min)</td>
+                        <td>Ransomware, active attacker, data breach</td>
+                    </tr>
+                    <tr>
+                        <td style="background: #fd7e14; color: white;">High (P2)</td>
+                        <td>Significant impact, potential for escalation</td>
+                        <td>&lt; 1 hour</td>
+                        <td>Compromised admin account, malware spread</td>
+                    </tr>
+                    <tr>
+                        <td style="background: #ffc107;">Medium (P3)</td>
+                        <td>Limited impact, contained threat</td>
+                        <td>&lt; 4 hours</td>
+                        <td>Phishing success, single compromised host</td>
+                    </tr>
+                    <tr>
+                        <td style="background: #28a745; color: white;">Low (P4)</td>
+                        <td>Minimal impact, policy violation</td>
+                        <td>&lt; 24 hours</td>
+                        <td>Failed attack, suspicious activity</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Initial Response -->
+        <section class="vulnerability-card">
+            <h2>Initial Response Checklist</h2>
+
+            <h3>First 15 Minutes</h3>
+            <div class="remediation">
+                <ul>
+                    <li><input type="checkbox"> <strong>Validate the alert</strong> - Confirm it's a real incident, not false positive</li>
+                    <li><input type="checkbox"> <strong>Assess severity</strong> - Use classification matrix above</li>
+                    <li><input type="checkbox"> <strong>Notify IR lead</strong> - Escalate based on severity</li>
+                    <li><input type="checkbox"> <strong>Start incident log</strong> - Document everything with timestamps</li>
+                    <li><input type="checkbox"> <strong>Preserve evidence</strong> - Don't restart systems yet</li>
+                    <li><input type="checkbox"> <strong>Initial containment</strong> - Isolate if critical</li>
+                </ul>
+            </div>
+
+            <h3>Critical Information to Gather</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Information Needed</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>What</td>
+                        <td>Type of incident, systems affected, data at risk</td>
+                    </tr>
+                    <tr>
+                        <td>When</td>
+                        <td>Detection time, estimated start time, timeline</td>
+                    </tr>
+                    <tr>
+                        <td>Where</td>
+                        <td>Affected hosts, networks, geographic locations</td>
+                    </tr>
+                    <tr>
+                        <td>Who</td>
+                        <td>Affected users, reporter, potential threat actor</td>
+                    </tr>
+                    <tr>
+                        <td>How</td>
+                        <td>Attack vector, indicators of compromise (IOCs)</td>
+                    </tr>
+                    <tr>
+                        <td>Impact</td>
+                        <td>Business impact, data sensitivity, regulatory</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Containment Procedures -->
+        <section class="vulnerability-card">
+            <h2>Containment Procedures</h2>
+
+            <h3>Short-Term Containment</h3>
+            <div class="code-block">
+<pre><code># Network Isolation
+# Isolate compromised host from network
+sudo iptables -A INPUT -s [COMPROMISED_IP] -j DROP
+sudo iptables -A OUTPUT -d [COMPROMISED_IP] -j DROP
+
+# Or disconnect from VLAN/switch port
+# Using network management tools
+
+# Disable compromised user account
+# Active Directory
+Disable-ADAccount -Identity [USERNAME]
+
+# Linux
+sudo usermod -L [USERNAME]
+sudo pkill -u [USERNAME]
+
+# Cloud (AWS)
+aws iam update-login-profile --user-name [USERNAME] --no-password-reset-required
+aws iam delete-login-profile --user-name [USERNAME]
+
+# Revoke active sessions
+# Invalidate all tokens/sessions for compromised account</code></pre>
+            </div>
+
+            <h3>Long-Term Containment</h3>
+            <div class="remediation">
+                <ul>
+                    <li><strong>Rebuild compromised systems</strong> from known-good images</li>
+                    <li><strong>Apply emergency patches</strong> for exploited vulnerabilities</li>
+                    <li><strong>Reset credentials</strong> for affected accounts and services</li>
+                    <li><strong>Block IOCs</strong> at firewall, proxy, and endpoint</li>
+                    <li><strong>Increase monitoring</strong> on similar systems</li>
+                    <li><strong>Segment network</strong> to prevent lateral movement</li>
+                </ul>
+            </div>
+
+            <h3>Containment by Incident Type</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Incident Type</th>
+                        <th>Containment Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Ransomware</td>
+                        <td>Isolate infected hosts, disable network shares, preserve encrypted files, check backups</td>
+                    </tr>
+                    <tr>
+                        <td>Compromised Account</td>
+                        <td>Disable account, revoke sessions, reset password, review access logs</td>
+                    </tr>
+                    <tr>
+                        <td>Malware Infection</td>
+                        <td>Isolate host, block C2 domains/IPs, scan similar systems</td>
+                    </tr>
+                    <tr>
+                        <td>Data Breach</td>
+                        <td>Identify data accessed, revoke access, preserve logs, legal notification</td>
+                    </tr>
+                    <tr>
+                        <td>DDoS Attack</td>
+                        <td>Enable DDoS protection, block source IPs, scale infrastructure</td>
+                    </tr>
+                    <tr>
+                        <td>Insider Threat</td>
+                        <td>Disable access quietly, preserve evidence, involve HR/Legal</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Evidence Collection -->
+        <section class="vulnerability-card">
+            <h2>Evidence Collection</h2>
+
+            <h3>Order of Volatility (Collect First to Last)</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Priority</th>
+                        <th>Evidence Type</th>
+                        <th>Collection Method</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Memory (RAM)</td>
+                        <td>Memory dump before shutdown</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Network connections</td>
+                        <td>netstat, ss, network captures</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Running processes</td>
+                        <td>ps, tasklist, process memory</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Open files</td>
+                        <td>lsof, handle</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>System logs</td>
+                        <td>Event logs, syslog, auth logs</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Disk image</td>
+                        <td>Full forensic image</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Backup media</td>
+                        <td>Compare with compromised state</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Evidence Collection Commands</h3>
+            <div class="code-block">
+<pre><code># Linux Evidence Collection
+
+# Memory dump (requires root)
+sudo dd if=/dev/mem of=/evidence/memory.dump bs=1M
+
+# Or using LiME
+sudo insmod lime.ko "path=/evidence/memory.lime format=lime"
+
+# Running processes with full details
+ps auxwww > /evidence/processes.txt
+ls -la /proc/*/exe 2>/dev/null > /evidence/proc_exe.txt
+
+# Network connections
+ss -tulpn > /evidence/network_connections.txt
+netstat -anp > /evidence/netstat.txt
+
+# Open files
+lsof > /evidence/open_files.txt
+
+# System logs
+cp -r /var/log /evidence/logs/
+
+# User activity
+last > /evidence/last_logins.txt
+lastlog > /evidence/lastlog.txt
+cat /home/*/.bash_history > /evidence/bash_histories.txt
+
+# Scheduled tasks
+crontab -l > /evidence/crontab.txt
+ls -la /etc/cron* > /evidence/cron_files.txt
+
+# Disk image (forensic copy)
+sudo dd if=/dev/sda of=/evidence/disk.img bs=4M status=progress
+# Calculate hash
+sha256sum /evidence/disk.img > /evidence/disk.img.sha256</code></pre>
+            </div>
+
+            <div class="code-block">
+<pre><code># Windows Evidence Collection (PowerShell as Admin)
+
+# Running processes
+Get-Process | Export-Csv C:\Evidence\processes.csv
+
+# Network connections
+Get-NetTCPConnection | Export-Csv C:\Evidence\network.csv
+
+# Services
+Get-Service | Export-Csv C:\Evidence\services.csv
+
+# Scheduled tasks
+Get-ScheduledTask | Export-Csv C:\Evidence\tasks.csv
+
+# Event logs
+wevtutil epl Security C:\Evidence\Security.evtx
+wevtutil epl System C:\Evidence\System.evtx
+wevtutil epl Application C:\Evidence\Application.evtx
+
+# Registry (common persistence locations)
+reg export HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run C:\Evidence\run.reg
+reg export HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run C:\Evidence\run_user.reg
+
+# Memory dump (requires Sysinternals or WinPMEM)
+winpmem.exe C:\Evidence\memory.raw</code></pre>
+            </div>
+        </section>
+
+        <!-- Communication -->
+        <section class="vulnerability-card">
+            <h2>Communication Templates</h2>
+
+            <h3>Internal Notification (Leadership)</h3>
+            <div class="code-block" style="background: #f8f9fa;">
+<pre style="white-space: pre-wrap;"><code>SECURITY INCIDENT NOTIFICATION
+
+Severity: [CRITICAL/HIGH/MEDIUM/LOW]
+Incident ID: INC-2026-001
+Date/Time Detected: [TIMESTAMP]
+
+SUMMARY
+[Brief description of incident - 2-3 sentences]
+
+CURRENT STATUS
+- Impact: [Systems/data affected]
+- Containment: [Actions taken]
+- Investigation: [Current phase]
+
+BUSINESS IMPACT
+- [List affected services/operations]
+- [Customer/data impact if known]
+
+NEXT STEPS
+1. [Immediate action]
+2. [Short-term action]
+3. [Communication plan]
+
+NEXT UPDATE: [Time]
+IR Lead: [Name] | Contact: [Phone/Email]</code></pre>
+            </div>
+
+            <h3>Customer Notification (Data Breach)</h3>
+            <div class="code-block" style="background: #f8f9fa;">
+<pre style="white-space: pre-wrap;"><code>Subject: Important Security Notice from [Company]
+
+Dear [Customer Name],
+
+We are writing to inform you of a security incident that may have affected your personal information.
+
+WHAT HAPPENED
+On [DATE], we discovered unauthorized access to [SYSTEM]. Our investigation determined that [DESCRIPTION].
+
+WHAT INFORMATION WAS INVOLVED
+The following types of information may have been accessed:
+- [List data types]
+
+WHAT WE ARE DOING
+- [Remediation actions taken]
+- [Security improvements implemented]
+- [Third-party investigation if applicable]
+
+WHAT YOU CAN DO
+- [Specific recommendations]
+- [Password reset if needed]
+- [Credit monitoring offer if applicable]
+
+FOR MORE INFORMATION
+Contact our dedicated response team at [EMAIL/PHONE]
+Visit [URL] for updates
+
+We sincerely apologize for any concern this may cause.
+
+[Signature]</code></pre>
+            </div>
+        </section>
+
+        <!-- Post-Incident -->
+        <section class="vulnerability-card">
+            <h2>Post-Incident Review</h2>
+
+            <h3>Lessons Learned Meeting Agenda</h3>
+            <div class="remediation">
+                <ul>
+                    <li><strong>Timeline review</strong> - What happened and when</li>
+                    <li><strong>What worked well</strong> - Effective detection/response</li>
+                    <li><strong>What could improve</strong> - Gaps and delays</li>
+                    <li><strong>Root cause analysis</strong> - Why did this happen</li>
+                    <li><strong>Action items</strong> - Specific improvements with owners</li>
+                    <li><strong>Metrics review</strong> - Time to detect, contain, resolve</li>
+                </ul>
+            </div>
+
+            <h3>Key Metrics to Track</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Description</th>
+                        <th>Target</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>MTTD</td>
+                        <td>Mean Time to Detect</td>
+                        <td>&lt; 24 hours</td>
+                    </tr>
+                    <tr>
+                        <td>MTTA</td>
+                        <td>Mean Time to Acknowledge</td>
+                        <td>&lt; 15 minutes</td>
+                    </tr>
+                    <tr>
+                        <td>MTTC</td>
+                        <td>Mean Time to Contain</td>
+                        <td>&lt; 4 hours</td>
+                    </tr>
+                    <tr>
+                        <td>MTTR</td>
+                        <td>Mean Time to Resolve</td>
+                        <td>&lt; 72 hours</td>
+                    </tr>
+                    <tr>
+                        <td>Dwell Time</td>
+                        <td>Time attacker was present undetected</td>
+                        <td>&lt; 7 days</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Quick Reference Card -->
+        <section class="vulnerability-card">
+            <h2>IR Quick Reference Card</h2>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Phase</th>
+                        <th>Key Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Detect</td>
+                        <td>Validate alert, assess severity, start documentation</td>
+                    </tr>
+                    <tr>
+                        <td>Contain</td>
+                        <td>Isolate systems, disable accounts, preserve evidence</td>
+                    </tr>
+                    <tr>
+                        <td>Investigate</td>
+                        <td>Collect evidence, identify IOCs, determine scope</td>
+                    </tr>
+                    <tr>
+                        <td>Eradicate</td>
+                        <td>Remove malware, patch vulnerabilities, reset credentials</td>
+                    </tr>
+                    <tr>
+                        <td>Recover</td>
+                        <td>Restore from backup, verify clean, increase monitoring</td>
+                    </tr>
+                    <tr>
+                        <td>Learn</td>
+                        <td>Document findings, update procedures, implement improvements</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="cta">
+            <h2>Need Detailed IR Playbooks?</h2>
+            <p>For comprehensive incident response procedures and templates:</p>
+            <a href="https://fixthevuln.com" class="cta-button" target="_blank">Visit FixTheVuln.com &rarr;</a>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
+</body>
+</html>

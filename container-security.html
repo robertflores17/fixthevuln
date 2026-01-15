@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Container security cheat sheet - Docker hardening, Kubernetes security, image scanning, and container best practices for DevSecOps.">
+    <meta name="keywords" content="container security, Docker hardening, Kubernetes security, image scanning, DevSecOps, container best practices, pod security">
+    <title>Container Security Cheat Sheet - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>RmVuln</h1></a>
+            <p class="tagline">Container Security Cheat Sheet</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="index.html" class="back-link">&larr; Back to Home</a>
+
+        <section class="intro">
+            <h2>Container Security Essentials</h2>
+            <p>Quick reference for securing Docker containers, Kubernetes clusters, and container registries. Covers image hardening, runtime security, and orchestration best practices.</p>
+        </section>
+
+        <!-- Docker Security -->
+        <section class="vulnerability-card">
+            <h2>Docker Security Hardening</h2>
+
+            <h3>1. Image Security</h3>
+            <div class="code-block">
+<pre><code># Use minimal base images
+FROM alpine:3.18
+# or
+FROM gcr.io/distroless/static-debian11
+
+# Don't run as root
+RUN addgroup -g 1000 appgroup && \
+    adduser -u 1000 -G appgroup -D appuser
+USER appuser
+
+# Use specific versions, not 'latest'
+FROM node:20.10.0-alpine3.18
+
+# Multi-stage builds to reduce attack surface
+FROM golang:1.21 AS builder
+WORKDIR /app
+COPY . .
+RUN CGO_ENABLED=0 go build -o myapp
+
+FROM scratch
+COPY --from=builder /app/myapp /myapp
+ENTRYPOINT ["/myapp"]</code></pre>
+            </div>
+
+            <h3>2. Dockerfile Best Practices</h3>
+            <div class="code-block">
+<pre><code># Bad - running as root
+FROM ubuntu:22.04
+RUN apt-get update && apt-get install -y nginx
+CMD ["nginx", "-g", "daemon off;"]
+
+# Good - non-root user, minimal image
+FROM nginx:1.25-alpine
+RUN addgroup -g 101 -S nginx && \
+    adduser -S -D -H -u 101 -h /var/cache/nginx -s /sbin/nologin -G nginx nginx
+USER nginx
+COPY --chown=nginx:nginx nginx.conf /etc/nginx/nginx.conf
+EXPOSE 8080
+CMD ["nginx", "-g", "daemon off;"]</code></pre>
+            </div>
+
+            <h3>3. Docker Daemon Security</h3>
+            <div class="code-block">
+<pre><code># /etc/docker/daemon.json
+{
+  "icc": false,
+  "userns-remap": "default",
+  "no-new-privileges": true,
+  "live-restore": true,
+  "userland-proxy": false,
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "3"
+  },
+  "storage-driver": "overlay2"
+}</code></pre>
+            </div>
+
+            <h3>4. Runtime Security Flags</h3>
+            <div class="code-block">
+<pre><code># Run container with security options
+docker run -d \
+  --name secure-app \
+  --read-only \
+  --tmpfs /tmp:rw,noexec,nosuid,size=100m \
+  --cap-drop ALL \
+  --cap-add NET_BIND_SERVICE \
+  --security-opt no-new-privileges:true \
+  --security-opt seccomp=/path/to/seccomp-profile.json \
+  --pids-limit 100 \
+  --memory 512m \
+  --cpus 0.5 \
+  --user 1000:1000 \
+  --network custom-network \
+  myapp:latest</code></pre>
+            </div>
+        </section>
+
+        <!-- Kubernetes Security -->
+        <section class="vulnerability-card">
+            <h2>Kubernetes Security</h2>
+
+            <h3>1. Pod Security Standards</h3>
+            <div class="code-block">
+<pre><code># Restricted Pod Security Standard
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secure-pod
+spec:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+  - name: app
+    image: myapp:v1.0.0
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+      requests:
+        memory: "64Mi"
+        cpu: "250m"
+    volumeMounts:
+    - name: tmp
+      mountPath: /tmp
+  volumes:
+  - name: tmp
+    emptyDir: {}</code></pre>
+            </div>
+
+            <h3>2. Network Policies</h3>
+            <div class="code-block">
+<pre><code># Default deny all ingress traffic
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: production
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+
+---
+# Allow specific ingress
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-to-backend
+  namespace: production
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: frontend
+    ports:
+    - protocol: TCP
+      port: 8080</code></pre>
+            </div>
+
+            <h3>3. RBAC Configuration</h3>
+            <div class="code-block">
+<pre><code># Least privilege Role
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: production
+  name: pod-reader
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["pods/log"]
+  verbs: ["get"]
+
+---
+# RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-pods
+  namespace: production
+subjects:
+- kind: ServiceAccount
+  name: monitoring-sa
+  namespace: production
+roleRef:
+  kind: Role
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io</code></pre>
+            </div>
+
+            <h3>4. Secrets Management</h3>
+            <div class="code-block">
+<pre><code># Use external secrets operator (not plain K8s secrets)
+# Example with External Secrets Operator
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: db-credentials
+  namespace: production
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: db-credentials
+    creationPolicy: Owner
+  data:
+  - secretKey: username
+    remoteRef:
+      key: secret/data/production/db
+      property: username
+  - secretKey: password
+    remoteRef:
+      key: secret/data/production/db
+      property: password</code></pre>
+            </div>
+        </section>
+
+        <!-- Image Scanning -->
+        <section class="vulnerability-card">
+            <h2>Image Scanning & Registry Security</h2>
+
+            <h3>1. Trivy Scanner</h3>
+            <div class="code-block">
+<pre><code># Scan image for vulnerabilities
+trivy image myapp:latest
+
+# Scan with severity filter
+trivy image --severity HIGH,CRITICAL myapp:latest
+
+# Scan and fail on vulnerabilities (for CI/CD)
+trivy image --exit-code 1 --severity CRITICAL myapp:latest
+
+# Scan Dockerfile
+trivy config Dockerfile
+
+# Scan Kubernetes manifests
+trivy config --severity HIGH,CRITICAL ./k8s/
+
+# Generate SBOM
+trivy image --format spdx-json -o sbom.json myapp:latest</code></pre>
+            </div>
+
+            <h3>2. Grype Scanner</h3>
+            <div class="code-block">
+<pre><code># Scan image
+grype myapp:latest
+
+# Scan with output format
+grype myapp:latest -o json > vulnerabilities.json
+
+# Fail on severity
+grype myapp:latest --fail-on critical
+
+# Scan SBOM
+grype sbom:./sbom.json</code></pre>
+            </div>
+
+            <h3>3. CI/CD Integration (GitHub Actions)</h3>
+            <div class="code-block">
+<pre><code>name: Container Security Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Build image
+      run: docker build -t myapp:${{ github.sha }} .
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'myapp:${{ github.sha }}'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        severity: 'CRITICAL,HIGH'
+        exit-code: '1'
+
+    - name: Upload Trivy scan results
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: 'trivy-results.sarif'</code></pre>
+            </div>
+
+            <h3>4. Registry Security</h3>
+            <div class="code-block">
+<pre><code># Sign images with cosign
+cosign generate-key-pair
+cosign sign --key cosign.key myregistry.com/myapp:v1.0.0
+
+# Verify signed image
+cosign verify --key cosign.pub myregistry.com/myapp:v1.0.0
+
+# Use admission controller to enforce signed images
+# Kyverno policy example
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: verify-image-signature
+spec:
+  validationFailureAction: Enforce
+  background: false
+  rules:
+  - name: verify-signature
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+    verifyImages:
+    - imageReferences:
+      - "myregistry.com/*"
+      attestors:
+      - entries:
+        - keys:
+            publicKeys: |-
+              -----BEGIN PUBLIC KEY-----
+              ...
+              -----END PUBLIC KEY-----</code></pre>
+            </div>
+        </section>
+
+        <!-- Container Runtime Security -->
+        <section class="vulnerability-card">
+            <h2>Runtime Security</h2>
+
+            <h3>1. Falco Rules</h3>
+            <div class="code-block">
+<pre><code># /etc/falco/falco_rules.local.yaml
+- rule: Detect Shell in Container
+  desc: Detect shell spawned in container
+  condition: >
+    spawned_process and
+    container and
+    shell_procs
+  output: >
+    Shell spawned in container
+    (user=%user.name container=%container.name
+    shell=%proc.name parent=%proc.pname)
+  priority: WARNING
+  tags: [container, shell]
+
+- rule: Detect Crypto Mining
+  desc: Detect crypto mining processes
+  condition: >
+    spawned_process and
+    container and
+    (proc.name in (cryptominer_binaries) or
+     proc.cmdline contains "stratum+tcp")
+  output: >
+    Crypto mining detected
+    (container=%container.name command=%proc.cmdline)
+  priority: CRITICAL
+  tags: [container, cryptomining]</code></pre>
+            </div>
+
+            <h3>2. AppArmor Profile</h3>
+            <div class="code-block">
+<pre><code># /etc/apparmor.d/docker-custom
+#include <tunables/global>
+
+profile docker-custom flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+
+  network,
+  capability,
+
+  deny @{PROC}/* w,
+  deny @{PROC}/sys/kernel/** w,
+  deny /sys/** w,
+
+  deny /bin/su x,
+  deny /usr/bin/sudo x,
+  deny /bin/bash x,
+  deny /bin/sh x,
+
+  /app/** r,
+  /app/bin/* ix,
+  /tmp/** rw,
+}
+
+# Load profile
+sudo apparmor_parser -r /etc/apparmor.d/docker-custom
+
+# Use in Docker
+docker run --security-opt apparmor=docker-custom myapp:latest</code></pre>
+            </div>
+
+            <h3>3. Seccomp Profile</h3>
+            <div class="code-block">
+<pre><code>{
+  "defaultAction": "SCMP_ACT_ERRNO",
+  "architectures": ["SCMP_ARCH_X86_64"],
+  "syscalls": [
+    {
+      "names": [
+        "accept", "access", "arch_prctl", "bind", "brk",
+        "clone", "close", "connect", "dup", "dup2",
+        "execve", "exit", "exit_group", "fcntl", "fstat",
+        "futex", "getdents64", "getpid", "getsockname",
+        "getsockopt", "listen", "lseek", "mmap", "mprotect",
+        "munmap", "nanosleep", "open", "openat", "pipe",
+        "poll", "read", "recvfrom", "rt_sigaction",
+        "rt_sigprocmask", "sendto", "set_tid_address",
+        "setsockopt", "socket", "stat", "write"
+      ],
+      "action": "SCMP_ACT_ALLOW"
+    }
+  ]
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- Quick Reference Table -->
+        <section class="vulnerability-card">
+            <h2>Container Security Checklist</h2>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Check</th>
+                        <th>Priority</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Images</td>
+                        <td>Use minimal base images (Alpine, Distroless)</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td>Images</td>
+                        <td>Pin image versions, avoid 'latest' tag</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td>Images</td>
+                        <td>Scan images for vulnerabilities in CI/CD</td>
+                        <td>Critical</td>
+                    </tr>
+                    <tr>
+                        <td>Images</td>
+                        <td>Sign and verify images</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td>Runtime</td>
+                        <td>Run containers as non-root user</td>
+                        <td>Critical</td>
+                    </tr>
+                    <tr>
+                        <td>Runtime</td>
+                        <td>Use read-only root filesystem</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td>Runtime</td>
+                        <td>Drop all capabilities, add only needed</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td>Runtime</td>
+                        <td>Set resource limits (CPU, memory, PIDs)</td>
+                        <td>Medium</td>
+                    </tr>
+                    <tr>
+                        <td>Kubernetes</td>
+                        <td>Implement Pod Security Standards</td>
+                        <td>Critical</td>
+                    </tr>
+                    <tr>
+                        <td>Kubernetes</td>
+                        <td>Use Network Policies (default deny)</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td>Kubernetes</td>
+                        <td>Configure RBAC with least privilege</td>
+                        <td>Critical</td>
+                    </tr>
+                    <tr>
+                        <td>Kubernetes</td>
+                        <td>Use external secrets management</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td>Registry</td>
+                        <td>Use private registry with authentication</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td>Registry</td>
+                        <td>Enable vulnerability scanning on push</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td>Monitoring</td>
+                        <td>Deploy runtime security (Falco, Sysdig)</td>
+                        <td>Medium</td>
+                    </tr>
+                    <tr>
+                        <td>Monitoring</td>
+                        <td>Enable audit logging</td>
+                        <td>High</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="cta">
+            <h2>Need Detailed Container Security Guides?</h2>
+            <p>For comprehensive tutorials and step-by-step implementation guides:</p>
+            <a href="https://fixthevuln.com" class="cta-button" target="_blank">Visit FixTheVuln.com &rarr;</a>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
+</body>
+</html>
