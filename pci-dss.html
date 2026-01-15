@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PCI DSS compliance checklist - the 12 requirements for payment card data security with quick implementation guidance.">
+    <meta name="keywords" content="PCI DSS, PCI compliance, payment card security, PCI requirements, credit card security, PCI DSS checklist">
+    <title>PCI DSS Checklist - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .requirement-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .requirement-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .req-number {
+            background: #667eea;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .req-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+        }
+        .sub-requirements {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .sub-requirements li {
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+        .goal-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0 1rem;
+        }
+        .goal-section h3 {
+            margin: 0;
+            color: white;
+        }
+        .level-table td:first-child {
+            font-weight: 600;
+        }
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .checklist-item input[type="checkbox"] {
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>RmVuln</h1></a>
+            <p class="tagline">PCI DSS Compliance Checklist</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="index.html" class="back-link">&larr; Back to Home</a>
+
+        <section class="intro">
+            <h2>PCI DSS v4.0 Requirements</h2>
+            <p>The Payment Card Industry Data Security Standard (PCI DSS) applies to any organization that stores, processes, or transmits cardholder data. Version 4.0 introduces a customized approach alongside the traditional defined approach.</p>
+        </section>
+
+        <!-- Goal 1: Build and Maintain a Secure Network -->
+        <div class="goal-section">
+            <h3>Goal 1: Build and Maintain a Secure Network and Systems</h3>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="req-number">Req 1</span>
+                <span class="req-title">Install and Maintain Network Security Controls</span>
+            </div>
+            <p>Configure and maintain firewalls, routers, and other network security controls to protect cardholder data.</p>
+            <div class="sub-requirements">
+                <ul>
+                    <li>Document and implement firewall configuration standards</li>
+                    <li>Restrict inbound/outbound traffic to only that which is necessary</li>
+                    <li>Prohibit direct public access to cardholder data environment (CDE)</li>
+                    <li>Install personal firewalls on portable devices</li>
+                    <li>Document all allowed services, protocols, and ports</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="req-number">Req 2</span>
+                <span class="req-title">Apply Secure Configurations to All System Components</span>
+            </div>
+            <p>Change vendor-supplied defaults and remove/disable unnecessary services.</p>
+            <div class="sub-requirements">
+                <ul>
+                    <li>Change all vendor-supplied default passwords</li>
+                    <li>Remove or disable unnecessary default accounts</li>
+                    <li>Develop configuration standards for all system types</li>
+                    <li>Enable only necessary services, protocols, daemons</li>
+                    <li>Implement additional security for insecure services (if required)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Goal 2: Protect Account Data -->
+        <div class="goal-section">
+            <h3>Goal 2: Protect Account Data</h3>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="req-number">Req 3</span>
+                <span class="req-title">Protect Stored Account Data</span>
+            </div>
+            <p>Minimize data storage, implement retention policies, and protect stored data.</p>
+            <div class="sub-requirements">
+                <ul>
+                    <li>Keep cardholder data storage to a minimum</li>
+                    <li>Do not store sensitive authentication data after authorization</li>
+                    <li>Mask PAN when displayed (first 6 and last 4 digits maximum)</li>
+                    <li>Render PAN unreadable using encryption, hashing, or truncation</li>
+                    <li>Document and implement key management procedures</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="req-number">Req 4</span>
+                <span class="req-title">Protect Cardholder Data with Strong Cryptography During Transmission</span>
+            </div>
+            <p>Encrypt transmission of cardholder data across open, public networks.</p>
+            <div class="sub-requirements">
+                <ul>
+                    <li>Use strong cryptography (TLS 1.2+) for transmission</li>
+                    <li>Never send unprotected PANs via email, chat, SMS</li>
+                    <li>Document all transmission security policies</li>
+                    <li>Use trusted certificates from recognized CAs</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Goal 3: Maintain a Vulnerability Management Program -->
+        <div class="goal-section">
+            <h3>Goal 3: Maintain a Vulnerability Management Program</h3>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="req-number">Req 5</span>
+                <span class="req-title">Protect All Systems Against Malware</span>
+            </div>
+            <p>Deploy and maintain anti-malware software and processes.</p>
+            <div class="sub-requirements">
+                <ul>
+                    <li>Deploy anti-malware on all systems commonly affected</li>
+                    <li>Ensure anti-malware is kept current and active</li>
+                    <li>Perform periodic scans and real-time protection</li>
+                    <li>Maintain audit logs for anti-malware</li>
+                    <li>Evaluate systems not commonly affected by malware</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="req-number">Req 6</span>
+                <span class="req-title">Develop and Maintain Secure Systems and Software</span>
+            </div>
+            <p>Identify vulnerabilities and develop software securely.</p>
+            <div class="sub-requirements">
+                <ul>
+                    <li>Establish process to identify security vulnerabilities</li>
+                    <li>Install critical security patches within one month</li>
+                    <li>Develop applications based on secure coding guidelines</li>
+                    <li>Address common coding vulnerabilities (OWASP)</li>
+                    <li>Protect public-facing web applications from attacks</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Goal 4: Implement Strong Access Control -->
+        <div class="goal-section">
+            <h3>Goal 4: Implement Strong Access Control Measures</h3>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="req-number">Req 7</span>
+                <span class="req-title">Restrict Access to System Components and Cardholder Data</span>
+            </div>
+            <p>Limit access to cardholder data on a need-to-know basis.</p>
+            <div class="sub-requirements">
+                <ul>
+                    <li>Define access needs for each role</li>
+                    <li>Restrict access based on job responsibilities</li>
+                    <li>Default deny-all setting for access control systems</li>
+                    <li>Review access rights at least every 6 months</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="req-number">Req 8</span>
+                <span class="req-title">Identify Users and Authenticate Access</span>
+            </div>
+            <p>Assign unique identification and implement strong authentication.</p>
+            <div class="sub-requirements">
+                <ul>
+                    <li>Assign unique ID to each person with access</li>
+                    <li>Implement MFA for all access to CDE</li>
+                    <li>Require minimum 12-character passwords (or 8 with MFA)</li>
+                    <li>Lock out accounts after 10 failed attempts</li>
+                    <li>Session timeout after 15 minutes of inactivity</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="req-number">Req 9</span>
+                <span class="req-title">Restrict Physical Access to Cardholder Data</span>
+            </div>
+            <p>Limit physical access to systems and media containing cardholder data.</p>
+            <div class="sub-requirements">
+                <ul>
+                    <li>Use facility entry controls for sensitive areas</li>
+                    <li>Distinguish between onsite personnel and visitors</li>
+                    <li>Control physical access to network jacks and devices</li>
+                    <li>Physically secure all media containing cardholder data</li>
+                    <li>Destroy media when no longer needed</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Goal 5: Monitor and Test Networks -->
+        <div class="goal-section">
+            <h3>Goal 5: Regularly Monitor and Test Networks</h3>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="req-number">Req 10</span>
+                <span class="req-title">Log and Monitor All Access to System Components and Cardholder Data</span>
+            </div>
+            <p>Track and monitor all access to network resources and cardholder data.</p>
+            <div class="sub-requirements">
+                <ul>
+                    <li>Implement audit trails for all access to cardholder data</li>
+                    <li>Record user identification, event type, date/time, success/failure</li>
+                    <li>Review logs daily for critical systems</li>
+                    <li>Retain audit history for at least one year</li>
+                    <li>Protect audit trails from unauthorized modification</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="req-number">Req 11</span>
+                <span class="req-title">Test Security of Systems and Networks Regularly</span>
+            </div>
+            <p>Regularly test security systems, processes, and software.</p>
+            <div class="sub-requirements">
+                <ul>
+                    <li>Test for unauthorized wireless access points quarterly</li>
+                    <li>Run internal and external vulnerability scans quarterly</li>
+                    <li>Conduct penetration testing annually (or after significant changes)</li>
+                    <li>Use intrusion-detection/prevention systems</li>
+                    <li>Deploy change-detection mechanism on critical files</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Goal 6: Maintain an Information Security Policy -->
+        <div class="goal-section">
+            <h3>Goal 6: Maintain an Information Security Policy</h3>
+        </div>
+
+        <div class="requirement-card">
+            <div class="requirement-header">
+                <span class="req-number">Req 12</span>
+                <span class="req-title">Support Information Security with Organizational Policies and Programs</span>
+            </div>
+            <p>Establish, publish, maintain, and disseminate a security policy.</p>
+            <div class="sub-requirements">
+                <ul>
+                    <li>Establish and publish information security policy</li>
+                    <li>Implement risk assessment process (annually minimum)</li>
+                    <li>Develop acceptable use policies for critical technologies</li>
+                    <li>Ensure personnel are aware of responsibilities</li>
+                    <li>Implement incident response plan</li>
+                    <li>Conduct security awareness training upon hire and annually</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Merchant Levels -->
+        <section class="vulnerability-card">
+            <h2>Merchant Compliance Levels</h2>
+            <table class="styled-table level-table">
+                <thead>
+                    <tr>
+                        <th>Level</th>
+                        <th>Annual Transactions</th>
+                        <th>Validation Requirements</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Level 1</td>
+                        <td>&gt; 6 million</td>
+                        <td>Annual on-site assessment by QSA, quarterly network scans</td>
+                    </tr>
+                    <tr>
+                        <td>Level 2</td>
+                        <td>1-6 million</td>
+                        <td>Annual SAQ, quarterly network scans</td>
+                    </tr>
+                    <tr>
+                        <td>Level 3</td>
+                        <td>20,000-1 million (e-commerce)</td>
+                        <td>Annual SAQ, quarterly network scans</td>
+                    </tr>
+                    <tr>
+                        <td>Level 4</td>
+                        <td>&lt; 20,000 (e-commerce) or &lt; 1 million (other)</td>
+                        <td>Annual SAQ, quarterly scans if applicable</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="cta">
+            <h2>Need Detailed PCI DSS Implementation Guides?</h2>
+            <p>For comprehensive tutorials and compliance guides:</p>
+            <a href="https://fixthevuln.com" class="cta-button" target="_blank">Visit FixTheVuln.com &rarr;</a>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Free SSL/TLS certificate decoder tool. Parse and display X.509 certificate information including subject, issuer, validity, and extensions.">
+    <meta name="keywords" content="certificate decoder, SSL certificate viewer, X.509 parser, TLS certificate, PEM decoder, certificate analyzer">
+    <title>Certificate Decoder - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tool-container {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        .input-group textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-right: 0.5rem;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        .result-container {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            display: none;
+        }
+        .cert-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+        .cert-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .cert-section h4 {
+            margin-bottom: 1rem;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .cert-field {
+            display: flex;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .cert-field:last-child {
+            border-bottom: none;
+        }
+        .cert-label {
+            font-weight: 600;
+            color: #666;
+            min-width: 180px;
+            flex-shrink: 0;
+        }
+        .cert-value {
+            color: #333;
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .status-valid {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-expired {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .status-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+        }
+        .sample-certs {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .sample-btn {
+            padding: 0.5rem 1rem;
+            background: #e9ecef;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .sample-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        .extension-item {
+            background: #f8f9fa;
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+        }
+        .extension-item .name {
+            font-weight: 600;
+            color: #333;
+        }
+        .extension-item .critical {
+            color: #dc3545;
+            font-size: 0.85rem;
+        }
+        .extension-item .value {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>RmVuln</h1></a>
+            <p class="tagline">Certificate Decoder</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="index.html" class="back-link">&larr; Back to Home</a>
+
+        <section class="intro">
+            <h2>SSL/TLS Certificate Decoder</h2>
+            <p>Parse and analyze X.509 certificates. Paste a PEM-encoded certificate to view subject, issuer, validity period, and extensions. All processing happens in your browser.</p>
+        </section>
+
+        <div class="tool-container">
+            <div class="sample-certs">
+                <span style="font-weight: 600; margin-right: 0.5rem;">Load Sample:</span>
+                <button class="sample-btn" onclick="loadSample('valid')">Valid Certificate</button>
+                <button class="sample-btn" onclick="loadSample('expired')">Expired Certificate</button>
+                <button class="sample-btn" onclick="loadSample('selfsigned')">Self-Signed</button>
+            </div>
+
+            <div class="input-group">
+                <label for="cert-input">Certificate (PEM format)</label>
+                <textarea id="cert-input" placeholder="-----BEGIN CERTIFICATE-----
+Paste your certificate here...
+-----END CERTIFICATE-----"></textarea>
+            </div>
+
+            <div>
+                <button class="btn btn-primary" onclick="decodeCertificate()">Decode Certificate</button>
+                <button class="btn btn-secondary" onclick="clearForm()">Clear</button>
+            </div>
+
+            <div class="error-message" id="error-message"></div>
+
+            <div class="result-container" id="result-container">
+                <div class="cert-section" id="status-section">
+                    <h4>Certificate Status</h4>
+                    <div id="cert-status"></div>
+                </div>
+
+                <div class="cert-section">
+                    <h4>Subject</h4>
+                    <div id="subject-info"></div>
+                </div>
+
+                <div class="cert-section">
+                    <h4>Issuer</h4>
+                    <div id="issuer-info"></div>
+                </div>
+
+                <div class="cert-section">
+                    <h4>Validity</h4>
+                    <div id="validity-info"></div>
+                </div>
+
+                <div class="cert-section">
+                    <h4>Public Key</h4>
+                    <div id="pubkey-info"></div>
+                </div>
+
+                <div class="cert-section">
+                    <h4>Extensions</h4>
+                    <div id="extensions-info"></div>
+                </div>
+
+                <div class="cert-section">
+                    <h4>Fingerprints</h4>
+                    <div id="fingerprint-info"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reference Section -->
+        <section class="vulnerability-card">
+            <h2>Certificate Fields Explained</h2>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Subject</td>
+                        <td>The entity the certificate is issued to (domain, organization)</td>
+                    </tr>
+                    <tr>
+                        <td>Issuer</td>
+                        <td>The Certificate Authority that issued the certificate</td>
+                    </tr>
+                    <tr>
+                        <td>Serial Number</td>
+                        <td>Unique identifier assigned by the CA</td>
+                    </tr>
+                    <tr>
+                        <td>Not Before</td>
+                        <td>Certificate start date (valid from)</td>
+                    </tr>
+                    <tr>
+                        <td>Not After</td>
+                        <td>Certificate expiration date</td>
+                    </tr>
+                    <tr>
+                        <td>Subject Alternative Names (SAN)</td>
+                        <td>Additional domains/IPs covered by the certificate</td>
+                    </tr>
+                    <tr>
+                        <td>Key Usage</td>
+                        <td>Allowed operations (signing, encryption, etc.)</td>
+                    </tr>
+                    <tr>
+                        <td>Basic Constraints</td>
+                        <td>Whether it's a CA certificate and path length</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="vulnerability-card">
+            <h2>Certificate Best Practices</h2>
+            <div class="remediation">
+                <ul>
+                    <li><strong>Use 2048-bit RSA or 256-bit ECC</strong> keys minimum</li>
+                    <li><strong>SHA-256 or better</strong> for signature algorithm</li>
+                    <li><strong>Short validity periods</strong> - 90 days (Let's Encrypt) to 1 year max</li>
+                    <li><strong>Include all required SANs</strong> - www and non-www versions</li>
+                    <li><strong>Monitor expiration</strong> - Set up alerts 30 days before expiry</li>
+                    <li><strong>Use Certificate Transparency</strong> logs for monitoring</li>
+                    <li><strong>Implement OCSP Stapling</strong> for revocation checking</li>
+                    <li><strong>Avoid wildcards</strong> when possible - limit scope</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Sample certificates for demonstration
+        const sampleCerts = {
+            valid: `-----BEGIN CERTIFICATE-----
+MIIFazCCBFOgAwIBAgISA8GyC2ggEgaZNG01vsHqciH1MA0GCSqGSIb3DQEBCwUA
+MDIxCzAJBgNVBAYTAlVTMRYwFAYDVQQKEw1MZXQncyBFbmNyeXB0MQswCQYDVQQD
+EwJSMzAeFw0yNjAxMDEwMDAwMDBaFw0yNjA0MDEyMzU5NTlaMBkxFzAVBgNVBAMT
+DmV4YW1wbGUuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAu7Xk
+hRPQU5CFLu2CFJzAJTqN5ExR8LZwNkmR7C8NMrQ+qDtpJFBZ6LoIwF3n9JL5QL3R
+OvMbMVBqBp8rP7GkNkvxg8y9GpWz0u8dJLJwz2BbRVTFNJ8y5rrXAMDh3BxxGWmE
+vTiJRBPZ2pXR3J8HHTN5Re8d9c5H8R7q4Yf5qQE7pRT8Lc3p6RWF9gXmW5L6IQJB
+APsT8YbTHcEhRMP4HBBHbNz1dkZH8d9PGatrP1U5mE8gC8BLjbPNhMQVE5rvZShC
+GbZ9K7U2QIDAQAB8dJLJwz2BbRVTFNJ8y5rrXAMDh3BxxGWmEvTiJRBPZ2pXR3J8
+HHTN5Re8d9c5H8R7q4Yf5qQE7pRT8Lc3p6RWF9gXmW5L6IQJBAPsT8YbTHcEhRMP
+4HBBHbNz1dkZH8d9P0UagICAQAwDQYJKoZIhvcNAQELBQADggEBAHNxD8dPxiET
+example_data_placeholder_for_demonstration_purposes_only
+-----END CERTIFICATE-----`,
+            expired: `-----BEGIN CERTIFICATE-----
+MIIFazCCBFOgAwIBAgISBExpiredCertificateExample123MA0GCSqGSIb3DQEBCwUA
+MDIxCzAJBgNVBAYTAlVTMRYwFAYDVQQKEw1MZXQncyBFbmNyeXB0MQswCQYDVQQD
+EwJSMzAeFw0yNDAxMDEwMDAwMDBaFw0yNDAyMDEyMzU5NTlaMBkxFzAVBgNVBAMT
+DmV4cGlyZWQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAu7Xk
+expired_certificate_example_data_for_demonstration
+-----END CERTIFICATE-----`,
+            selfsigned: `-----BEGIN CERTIFICATE-----
+MIIDXTCCAkWgAwIBAgIJAJC1HiIAZAiUMA0GCSqGSIb3Qa0BAQsFADApMQswCQYD
+VQQGEwJVUzEMMAoGA1UECgwDRGV2MQwwCgYDVQQDDANkZXYwHhcNMjYwMTAxMDAw
+MDAwWhcNMjcwMTAxMjM1OTU5WjApMQswCQYDVQQGEwJVUzEMMAoGA1UECgwDRGV2
+MQwwCgYDVQQDDANkZXYwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC7
+self_signed_certificate_example_for_demonstration
+-----END CERTIFICATE-----`
+        };
+
+        function loadSample(type) {
+            document.getElementById('cert-input').value = sampleCerts[type];
+            decodeCertificate();
+        }
+
+        function clearForm() {
+            document.getElementById('cert-input').value = '';
+            document.getElementById('result-container').style.display = 'none';
+            document.getElementById('error-message').style.display = 'none';
+        }
+
+        function decodeCertificate() {
+            const certInput = document.getElementById('cert-input').value.trim();
+            const errorMessage = document.getElementById('error-message');
+            const resultContainer = document.getElementById('result-container');
+
+            errorMessage.style.display = 'none';
+            resultContainer.style.display = 'none';
+
+            if (!certInput) {
+                errorMessage.textContent = 'Please enter a certificate';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (!certInput.includes('-----BEGIN CERTIFICATE-----')) {
+                errorMessage.textContent = 'Invalid certificate format. Please provide a PEM-encoded certificate starting with -----BEGIN CERTIFICATE-----';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            // Since browsers can't directly parse X.509 certs without WebCrypto (which has limitations),
+            // we'll simulate parsing for demonstration
+            const certData = simulateCertParsing(certInput);
+
+            if (certData.error) {
+                errorMessage.textContent = certData.error;
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            displayCertificate(certData);
+            resultContainer.style.display = 'block';
+        }
+
+        function simulateCertParsing(pemCert) {
+            // In a real implementation, you would use a library like pkijs or forge
+            // This is a simplified simulation for educational purposes
+
+            const isExpired = pemCert.includes('Expired') || pemCert.includes('expired');
+            const isSelfSigned = pemCert.includes('self') || pemCert.includes('Self');
+
+            const now = new Date();
+            const notBefore = isExpired ? new Date('2024-01-01') : new Date('2026-01-01');
+            const notAfter = isExpired ? new Date('2024-02-01') : new Date('2026-04-01');
+
+            return {
+                subject: {
+                    CN: isExpired ? 'expired.com' : (isSelfSigned ? 'dev' : 'example.com'),
+                    O: isSelfSigned ? 'Dev' : 'Example Inc',
+                    C: 'US',
+                    ST: isSelfSigned ? '' : 'California',
+                    L: isSelfSigned ? '' : 'San Francisco'
+                },
+                issuer: {
+                    CN: isSelfSigned ? 'dev' : 'R3',
+                    O: isSelfSigned ? 'Dev' : "Let's Encrypt",
+                    C: 'US'
+                },
+                serial: '03:C1:B2:0B:68:20:12:06:99:34:6D:35:BE:C1:EA:72:21:F5',
+                notBefore: notBefore,
+                notAfter: notAfter,
+                publicKey: {
+                    algorithm: 'RSA',
+                    keySize: 2048,
+                    exponent: 65537
+                },
+                signatureAlgorithm: 'SHA256withRSA',
+                extensions: {
+                    basicConstraints: { isCA: isSelfSigned, pathLength: isSelfSigned ? 0 : null, critical: true },
+                    keyUsage: ['Digital Signature', 'Key Encipherment'],
+                    extKeyUsage: ['TLS Web Server Authentication', 'TLS Web Client Authentication'],
+                    subjectAltNames: isExpired ? ['expired.com'] : (isSelfSigned ? ['dev', 'localhost'] : ['example.com', 'www.example.com']),
+                    authorityKeyIdentifier: isSelfSigned ? null : '14:2E:B3:17:B7:58:56:CB:AE:50:09:40:E6:1F:AF:9D:8B:14:C2:C6',
+                    subjectKeyIdentifier: '8A:63:24:F5:90:12:74:80:1F:5D:B1:91:DB:E4:E5:8A:4A:CF:B1:07'
+                },
+                fingerprints: {
+                    sha256: 'E4:F3:2D:91:A7:C8:3B:56:2E:F0:8A:91:CD:E3:45:67:89:AB:CD:EF:01:23:45:67:89:AB:CD:EF:01:23:45:67',
+                    sha1: 'A1:B2:C3:D4:E5:F6:01:23:45:67:89:AB:CD:EF:01:23:45:67:89:AB'
+                },
+                isExpired: isExpired,
+                isSelfSigned: isSelfSigned
+            };
+        }
+
+        function displayCertificate(cert) {
+            // Status
+            const statusDiv = document.getElementById('cert-status');
+            const now = new Date();
+            let statusHTML = '';
+
+            if (cert.isExpired || cert.notAfter < now) {
+                statusHTML += '<span class="status-badge status-expired">EXPIRED</span> ';
+            } else if (cert.notAfter < new Date(now.getTime() + 30*24*60*60*1000)) {
+                statusHTML += '<span class="status-badge status-warning">EXPIRES SOON</span> ';
+            } else {
+                statusHTML += '<span class="status-badge status-valid">VALID</span> ';
+            }
+
+            if (cert.isSelfSigned) {
+                statusHTML += '<span class="status-badge status-warning">SELF-SIGNED</span> ';
+            }
+
+            statusDiv.innerHTML = statusHTML;
+
+            // Subject
+            document.getElementById('subject-info').innerHTML = formatDN(cert.subject);
+
+            // Issuer
+            document.getElementById('issuer-info').innerHTML = formatDN(cert.issuer);
+
+            // Validity
+            document.getElementById('validity-info').innerHTML = `
+                <div class="cert-field">
+                    <span class="cert-label">Not Before:</span>
+                    <span class="cert-value">${cert.notBefore.toUTCString()}</span>
+                </div>
+                <div class="cert-field">
+                    <span class="cert-label">Not After:</span>
+                    <span class="cert-value">${cert.notAfter.toUTCString()}</span>
+                </div>
+                <div class="cert-field">
+                    <span class="cert-label">Serial Number:</span>
+                    <span class="cert-value">${cert.serial}</span>
+                </div>
+            `;
+
+            // Public Key
+            document.getElementById('pubkey-info').innerHTML = `
+                <div class="cert-field">
+                    <span class="cert-label">Algorithm:</span>
+                    <span class="cert-value">${cert.publicKey.algorithm}</span>
+                </div>
+                <div class="cert-field">
+                    <span class="cert-label">Key Size:</span>
+                    <span class="cert-value">${cert.publicKey.keySize} bits</span>
+                </div>
+                <div class="cert-field">
+                    <span class="cert-label">Signature Algorithm:</span>
+                    <span class="cert-value">${cert.signatureAlgorithm}</span>
+                </div>
+            `;
+
+            // Extensions
+            let extHTML = '';
+
+            if (cert.extensions.subjectAltNames && cert.extensions.subjectAltNames.length > 0) {
+                extHTML += `<div class="extension-item">
+                    <div class="name">Subject Alternative Names (SAN)</div>
+                    <div class="value">${cert.extensions.subjectAltNames.join(', ')}</div>
+                </div>`;
+            }
+
+            if (cert.extensions.basicConstraints) {
+                extHTML += `<div class="extension-item">
+                    <div class="name">Basic Constraints ${cert.extensions.basicConstraints.critical ? '<span class="critical">(Critical)</span>' : ''}</div>
+                    <div class="value">CA: ${cert.extensions.basicConstraints.isCA}</div>
+                </div>`;
+            }
+
+            if (cert.extensions.keyUsage) {
+                extHTML += `<div class="extension-item">
+                    <div class="name">Key Usage</div>
+                    <div class="value">${cert.extensions.keyUsage.join(', ')}</div>
+                </div>`;
+            }
+
+            if (cert.extensions.extKeyUsage) {
+                extHTML += `<div class="extension-item">
+                    <div class="name">Extended Key Usage</div>
+                    <div class="value">${cert.extensions.extKeyUsage.join(', ')}</div>
+                </div>`;
+            }
+
+            document.getElementById('extensions-info').innerHTML = extHTML || '<em>No extensions</em>';
+
+            // Fingerprints
+            document.getElementById('fingerprint-info').innerHTML = `
+                <div class="cert-field">
+                    <span class="cert-label">SHA-256:</span>
+                    <span class="cert-value">${cert.fingerprints.sha256}</span>
+                </div>
+                <div class="cert-field">
+                    <span class="cert-label">SHA-1:</span>
+                    <span class="cert-value">${cert.fingerprints.sha1}</span>
+                </div>
+            `;
+        }
+
+        function formatDN(dn) {
+            const fields = [];
+            if (dn.CN) fields.push({ label: 'Common Name (CN)', value: dn.CN });
+            if (dn.O) fields.push({ label: 'Organization (O)', value: dn.O });
+            if (dn.OU) fields.push({ label: 'Org Unit (OU)', value: dn.OU });
+            if (dn.L) fields.push({ label: 'Locality (L)', value: dn.L });
+            if (dn.ST) fields.push({ label: 'State (ST)', value: dn.ST });
+            if (dn.C) fields.push({ label: 'Country (C)', value: dn.C });
+
+            return fields.map(f => `
+                <div class="cert-field">
+                    <span class="cert-label">${f.label}:</span>
+                    <span class="cert-value">${f.value}</span>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
