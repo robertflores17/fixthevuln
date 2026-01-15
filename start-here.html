@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="New to cybersecurity? Start here with our guided learning path. From basics to advanced - learn security concepts step by step.">
+    <meta name="keywords" content="cybersecurity learning path, security basics, learn cybersecurity, security training, beginner security guide">
+    <title>Start Here - Your Security Learning Path - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .path-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .path-hero h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+        .path-hero p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .level-selector {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+        .level-btn {
+            padding: 1rem 2rem;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .level-btn:hover, .level-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        .track {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .track-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .track-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+        .track-title h3 {
+            margin: 0;
+            color: #333;
+            font-size: 1.4rem;
+        }
+        .track-title p {
+            margin: 0.25rem 0 0 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .track-time {
+            margin-left: auto;
+            background: #e7f3ff;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #667eea;
+            font-weight: 600;
+        }
+        .step-list {
+            display: grid;
+            gap: 1rem;
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+        .step:hover {
+            background: #e7f3ff;
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+        .step-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            text-align: center;
+        }
+        .step-content h4 {
+            margin: 0;
+            color: #333;
+            font-size: 1rem;
+        }
+        .step-content p {
+            margin: 0.25rem 0 0 0;
+            color: #666;
+            font-size: 0.85rem;
+        }
+        .step-badge {
+            margin-left: auto;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-guide { background: #d4edda; color: #155724; }
+        .badge-tool { background: #fff3cd; color: #856404; }
+        .badge-quiz { background: #d1ecf1; color: #0c5460; }
+        .badge-external { background: #e2e3e5; color: #383d41; }
+        .progress-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .progress-bar {
+            background: #e0e0e0;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        .progress-fill {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        .progress-text {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .cert-badges {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        .cert-badge {
+            background: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        .newsletter-box {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        .newsletter-box h3 {
+            margin: 0 0 0.5rem 0;
+            color: white;
+        }
+        .newsletter-box p {
+            margin: 0 0 1.5rem 0;
+            opacity: 0.95;
+        }
+        .newsletter-form {
+            display: flex;
+            gap: 0.5rem;
+            max-width: 500px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .newsletter-form input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        .newsletter-form button {
+            padding: 0.75rem 1.5rem;
+            background: white;
+            color: #28a745;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .newsletter-form button:hover {
+            transform: scale(1.05);
+        }
+        @media (max-width: 768px) {
+            .track-header {
+                flex-wrap: wrap;
+            }
+            .track-time {
+                margin-left: 0;
+                margin-top: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>RmVuln</h1></a>
+            <p class="tagline">Start Your Security Journey</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="index.html" class="back-link">&larr; Back to Home</a>
+
+        <div class="path-hero">
+            <h2>Your Guided Learning Path</h2>
+            <p>Whether you're preparing for certifications or building real-world skills, follow these tracks to master cybersecurity fundamentals.</p>
+        </div>
+
+        <div class="progress-section">
+            <h3>Your Progress</h3>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <p class="progress-text"><span id="completed-count">0</span> of <span id="total-count">0</span> steps completed</p>
+            <div class="cert-badges">
+                <span class="cert-badge">Security+</span>
+                <span class="cert-badge">CEH</span>
+                <span class="cert-badge">CISSP</span>
+                <span class="cert-badge">GIAC</span>
+            </div>
+        </div>
+
+        <div class="level-selector">
+            <button class="level-btn active" onclick="showLevel('all')">All Levels</button>
+            <button class="level-btn" onclick="showLevel('beginner')">Beginner</button>
+            <button class="level-btn" onclick="showLevel('intermediate')">Intermediate</button>
+            <button class="level-btn" onclick="showLevel('advanced')">Advanced</button>
+        </div>
+
+        <!-- Track 1: Foundations -->
+        <div class="track" data-level="beginner">
+            <div class="track-header">
+                <div class="track-number">1</div>
+                <div class="track-title">
+                    <h3>Security Foundations</h3>
+                    <p>Core concepts every security professional must know</p>
+                </div>
+                <span class="track-time">~2 hours</span>
+            </div>
+            <div class="step-list">
+                <a href="osi-layer-attacks.html" class="step" data-step="1">
+                    <span class="step-icon">🔗</span>
+                    <div class="step-content">
+                        <h4>OSI Model & Layer Attacks</h4>
+                        <p>Understand network layers and how attacks target each one</p>
+                    </div>
+                    <span class="step-badge badge-guide">Guide</span>
+                </a>
+                <a href="port-security.html" class="step" data-step="2">
+                    <span class="step-icon">🔌</span>
+                    <div class="step-content">
+                        <h4>Port Security Fundamentals</h4>
+                        <p>Common ports, services, and security implications</p>
+                    </div>
+                    <span class="step-badge badge-guide">Guide</span>
+                </a>
+                <a href="encryption-cheatsheet.html" class="step" data-step="3">
+                    <span class="step-icon">🔐</span>
+                    <div class="step-content">
+                        <h4>Encryption Basics</h4>
+                        <p>Symmetric, asymmetric, hashing - when to use what</p>
+                    </div>
+                    <span class="step-badge badge-guide">Guide</span>
+                </a>
+                <a href="hash-generator.html" class="step" data-step="4">
+                    <span class="step-icon">#️⃣</span>
+                    <div class="step-content">
+                        <h4>Practice: Hash Generator</h4>
+                        <p>Generate hashes and understand their properties</p>
+                    </div>
+                    <span class="step-badge badge-tool">Tool</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Track 2: Web Security -->
+        <div class="track" data-level="beginner">
+            <div class="track-header">
+                <div class="track-number">2</div>
+                <div class="track-title">
+                    <h3>Web Application Security</h3>
+                    <p>The OWASP Top 10 and how to defend against them</p>
+                </div>
+                <span class="track-time">~3 hours</span>
+            </div>
+            <div class="step-list">
+                <a href="owasp-top10.html" class="step" data-step="5">
+                    <span class="step-icon">🔒</span>
+                    <div class="step-content">
+                        <h4>OWASP Top 10 Overview</h4>
+                        <p>The most critical web application security risks</p>
+                    </div>
+                    <span class="step-badge badge-guide">Guide</span>
+                </a>
+                <a href="sql-injection-simulator.html" class="step" data-step="6">
+                    <span class="step-icon">💉</span>
+                    <div class="step-content">
+                        <h4>SQL Injection Lab</h4>
+                        <p>Hands-on: See how SQLi works and how to prevent it</p>
+                    </div>
+                    <span class="step-badge badge-tool">Interactive</span>
+                </a>
+                <a href="xss-playground.html" class="step" data-step="7">
+                    <span class="step-icon">⚠️</span>
+                    <div class="step-content">
+                        <h4>XSS Playground</h4>
+                        <p>Hands-on: Understand cross-site scripting attacks</p>
+                    </div>
+                    <span class="step-badge badge-tool">Interactive</span>
+                </a>
+                <a href="security-headers.html" class="step" data-step="8">
+                    <span class="step-icon">📋</span>
+                    <div class="step-content">
+                        <h4>Security Headers</h4>
+                        <p>HTTP headers that protect your web applications</p>
+                    </div>
+                    <span class="step-badge badge-guide">Guide</span>
+                </a>
+                <a href="api-security.html" class="step" data-step="9">
+                    <span class="step-icon">🔌</span>
+                    <div class="step-content">
+                        <h4>API Security</h4>
+                        <p>OWASP API Top 10 and REST security best practices</p>
+                    </div>
+                    <span class="step-badge badge-guide">Guide</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Track 3: Infrastructure Security -->
+        <div class="track" data-level="intermediate">
+            <div class="track-header">
+                <div class="track-number">3</div>
+                <div class="track-title">
+                    <h3>Infrastructure Hardening</h3>
+                    <p>Secure your servers, networks, and cloud environments</p>
+                </div>
+                <span class="track-time">~4 hours</span>
+            </div>
+            <div class="step-list">
+                <a href="linux-hardening.html" class="step" data-step="10">
+                    <span class="step-icon">🐧</span>
+                    <div class="step-content">
+                        <h4>Linux Hardening</h4>
+                        <p>SSH, firewalls, user management, and auditing</p>
+                    </div>
+                    <span class="step-badge badge-guide">Guide</span>
+                </a>
+                <a href="windows-hardening.html" class="step" data-step="11">
+                    <span class="step-icon">🪟</span>
+                    <div class="step-content">
+                        <h4>Windows Hardening</h4>
+                        <p>Group Policy, Defender, BitLocker, and PowerShell security</p>
+                    </div>
+                    <span class="step-badge badge-guide">Guide</span>
+                </a>
+                <a href="cloud-security.html" class="step" data-step="12">
+                    <span class="step-icon">☁️</span>
+                    <div class="step-content">
+                        <h4>Cloud Security Checklist</h4>
+                        <p>AWS, Azure, GCP security essentials</p>
+                    </div>
+                    <span class="step-badge badge-guide">Guide</span>
+                </a>
+                <a href="container-security.html" class="step" data-step="13">
+                    <span class="step-icon">🐳</span>
+                    <div class="step-content">
+                        <h4>Container Security</h4>
+                        <p>Docker and Kubernetes hardening best practices</p>
+                    </div>
+                    <span class="step-badge badge-guide">Guide</span>
+                </a>
+                <a href="ssl-tls.html" class="step" data-step="14">
+                    <span class="step-icon">🔐</span>
+                    <div class="step-content">
+                        <h4>SSL/TLS Configuration</h4>
+                        <p>Secure HTTPS implementation and certificate management</p>
+                    </div>
+                    <span class="step-badge badge-guide">Guide</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Track 4: Security Operations -->
+        <div class="track" data-level="intermediate">
+            <div class="track-header">
+                <div class="track-number">4</div>
+                <div class="track-title">
+                    <h3>Security Operations</h3>
+                    <p>Detection, response, and ongoing security management</p>
+                </div>
+                <span class="track-time">~3 hours</span>
+            </div>
+            <div class="step-list">
+                <a href="log-management.html" class="step" data-step="15">
+                    <span class="step-icon">📊</span>
+                    <div class="step-content">
+                        <h4>Log Management</h4>
+                        <p>What to log, retention policies, and SIEM basics</p>
+                    </div>
+                    <span class="step-badge badge-guide">Guide</span>
+                </a>
+                <a href="incident-response.html" class="step" data-step="16">
+                    <span class="step-icon">🚨</span>
+                    <div class="step-content">
+                        <h4>Incident Response</h4>
+                        <p>NIST framework, containment, and evidence handling</p>
+                    </div>
+                    <span class="step-badge badge-guide">Guide</span>
+                </a>
+                <a href="cve-lookup.html" class="step" data-step="17">
+                    <span class="step-icon">🔍</span>
+                    <div class="step-content">
+                        <h4>CVE Reference</h4>
+                        <p>Understanding and tracking vulnerabilities</p>
+                    </div>
+                    <span class="step-badge badge-guide">Guide</span>
+                </a>
+                <a href="cvss-calculator.html" class="step" data-step="18">
+                    <span class="step-icon">🧮</span>
+                    <div class="step-content">
+                        <h4>CVSS Calculator</h4>
+                        <p>Practice scoring vulnerability severity</p>
+                    </div>
+                    <span class="step-badge badge-tool">Tool</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Track 5: Compliance -->
+        <div class="track" data-level="advanced">
+            <div class="track-header">
+                <div class="track-number">5</div>
+                <div class="track-title">
+                    <h3>Compliance & Frameworks</h3>
+                    <p>Standards and regulations for enterprise security</p>
+                </div>
+                <span class="track-time">~3 hours</span>
+            </div>
+            <div class="step-list">
+                <a href="nist-framework.html" class="step" data-step="19">
+                    <span class="step-icon">🏛️</span>
+                    <div class="step-content">
+                        <h4>NIST Cybersecurity Framework</h4>
+                        <p>Identify, Protect, Detect, Respond, Recover</p>
+                    </div>
+                    <span class="step-badge badge-guide">Guide</span>
+                </a>
+                <a href="cis-controls.html" class="step" data-step="20">
+                    <span class="step-icon">📋</span>
+                    <div class="step-content">
+                        <h4>CIS Controls</h4>
+                        <p>18 Critical Security Controls with implementation guidance</p>
+                    </div>
+                    <span class="step-badge badge-guide">Guide</span>
+                </a>
+                <a href="soc2-basics.html" class="step" data-step="21">
+                    <span class="step-icon">✅</span>
+                    <div class="step-content">
+                        <h4>SOC 2 Compliance</h4>
+                        <p>Trust Service Criteria for service organizations</p>
+                    </div>
+                    <span class="step-badge badge-guide">Guide</span>
+                </a>
+                <a href="pci-dss.html" class="step" data-step="22">
+                    <span class="step-icon">💳</span>
+                    <div class="step-content">
+                        <h4>PCI DSS</h4>
+                        <p>Payment card security requirements</p>
+                    </div>
+                    <span class="step-badge badge-guide">Guide</span>
+                </a>
+                <a href="gdpr-guide.html" class="step" data-step="23">
+                    <span class="step-icon">🇪🇺</span>
+                    <div class="step-content">
+                        <h4>GDPR for Developers</h4>
+                        <p>Data protection and privacy requirements</p>
+                    </div>
+                    <span class="step-badge badge-guide">Guide</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Track 6: Practical Skills -->
+        <div class="track" data-level="intermediate">
+            <div class="track-header">
+                <div class="track-number">6</div>
+                <div class="track-title">
+                    <h3>Essential Tools & Skills</h3>
+                    <p>Hands-on practice with security tools</p>
+                </div>
+                <span class="track-time">~2 hours</span>
+            </div>
+            <div class="step-list">
+                <a href="password-generator.html" class="step" data-step="24">
+                    <span class="step-icon">🎲</span>
+                    <div class="step-content">
+                        <h4>Password Generator</h4>
+                        <p>Generate cryptographically secure passwords</p>
+                    </div>
+                    <span class="step-badge badge-tool">Tool</span>
+                </a>
+                <a href="jwt-decoder.html" class="step" data-step="25">
+                    <span class="step-icon">🎟️</span>
+                    <div class="step-content">
+                        <h4>JWT Decoder</h4>
+                        <p>Decode and analyze JSON Web Tokens</p>
+                    </div>
+                    <span class="step-badge badge-tool">Tool</span>
+                </a>
+                <a href="base64-tool.html" class="step" data-step="26">
+                    <span class="step-icon">🔄</span>
+                    <div class="step-content">
+                        <h4>Base64 Encoder/Decoder</h4>
+                        <p>Essential encoding for security work</p>
+                    </div>
+                    <span class="step-badge badge-tool">Tool</span>
+                </a>
+                <a href="regex-tester.html" class="step" data-step="27">
+                    <span class="step-icon">🔍</span>
+                    <div class="step-content">
+                        <h4>Regex Tester</h4>
+                        <p>Build and test input validation patterns</p>
+                    </div>
+                    <span class="step-badge badge-tool">Tool</span>
+                </a>
+                <a href="quick-fixes.html" class="step" data-step="28">
+                    <span class="step-icon">⚡</span>
+                    <div class="step-content">
+                        <h4>Quick Fix Commands</h4>
+                        <p>One-liners for common security tasks</p>
+                    </div>
+                    <span class="step-badge badge-guide">Guide</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Newsletter Signup -->
+        <div class="newsletter-box">
+            <h3>Stay Updated</h3>
+            <p>Get weekly security tips, new guides, and vulnerability alerts.</p>
+            <form class="newsletter-form" onsubmit="handleNewsletterSubmit(event)">
+                <input type="email" placeholder="Enter your email" required id="newsletter-email">
+                <button type="submit">Subscribe</button>
+            </form>
+            <p style="font-size: 0.8rem; margin-top: 1rem; opacity: 0.8;">No spam. Unsubscribe anytime.</p>
+        </div>
+
+        <!-- What's Next -->
+        <section class="vulnerability-card">
+            <h2>Ready for More?</h2>
+            <p>After completing the learning path, test your knowledge:</p>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem;">
+                <a href="security-quiz.html" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 600;">Take the Security Quiz</a>
+                <a href="resources.html" style="background: #f8f9fa; color: #667eea; padding: 1rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #667eea;">Recommended Tools</a>
+            </div>
+        </section>
+
+        <section class="cta">
+            <h2>Want In-Depth Training?</h2>
+            <p>For comprehensive courses, hands-on labs, and certification prep:</p>
+            <a href="https://fixthevuln.com" class="cta-button" target="_blank">Visit FixTheVuln.com →</a>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Progress tracking using localStorage
+        const STORAGE_KEY = 'rmvuln_progress';
+        let completedSteps = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+        function initProgress() {
+            const steps = document.querySelectorAll('.step');
+            const totalCount = steps.length;
+            document.getElementById('total-count').textContent = totalCount;
+
+            steps.forEach(step => {
+                const stepNum = step.dataset.step;
+                if (completedSteps.includes(stepNum)) {
+                    step.style.background = '#d4edda';
+                    step.style.borderColor = '#28a745';
+                }
+
+                // Mark as completed when clicked
+                step.addEventListener('click', () => {
+                    if (!completedSteps.includes(stepNum)) {
+                        completedSteps.push(stepNum);
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(completedSteps));
+                    }
+                });
+            });
+
+            updateProgressBar();
+        }
+
+        function updateProgressBar() {
+            const steps = document.querySelectorAll('.step');
+            const totalCount = steps.length;
+            const completedCount = completedSteps.length;
+            const percentage = (completedCount / totalCount) * 100;
+
+            document.getElementById('completed-count').textContent = completedCount;
+            document.getElementById('progress-fill').style.width = percentage + '%';
+        }
+
+        function showLevel(level) {
+            document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.querySelectorAll('.track').forEach(track => {
+                if (level === 'all' || track.dataset.level === level) {
+                    track.style.display = 'block';
+                } else {
+                    track.style.display = 'none';
+                }
+            });
+        }
+
+        function handleNewsletterSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('newsletter-email').value;
+            // In production, this would send to your email service
+            alert('Thanks for subscribing! (Demo: ' + email + ')');
+            document.getElementById('newsletter-email').value = '';
+        }
+
+        // Initialize on page load
+        initProgress();
+    </script>
+</body>
+</html>

@@ -262,10 +262,59 @@ if (!allowedDomains.includes(url.hostname)) {
                 <strong>Next Steps:</strong> Review each vulnerability against your application. Prioritize fixes based on your specific risk profile. For detailed implementation guides, visit <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a>
             </div>
 
+            <!-- Related Content -->
+            <section style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid #e0e0e0;">
+                <h2 style="margin-bottom: 1.5rem;">Related Resources</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                    <a href="sql-injection-simulator.html" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 1.25rem; border-radius: 8px; text-decoration: none;">
+                        <strong style="display: block; margin-bottom: 0.5rem;">💉 SQL Injection Simulator</strong>
+                        <span style="font-size: 0.9rem; opacity: 0.9;">Practice SQLi attacks safely</span>
+                    </a>
+                    <a href="xss-playground.html" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 1.25rem; border-radius: 8px; text-decoration: none;">
+                        <strong style="display: block; margin-bottom: 0.5rem;">⚠️ XSS Playground</strong>
+                        <span style="font-size: 0.9rem; opacity: 0.9;">Learn cross-site scripting</span>
+                    </a>
+                    <a href="security-headers.html" style="background: #f8f9fa; color: #333; padding: 1.25rem; border-radius: 8px; text-decoration: none; border: 2px solid #e0e0e0;">
+                        <strong style="display: block; margin-bottom: 0.5rem; color: #667eea;">📋 Security Headers</strong>
+                        <span style="font-size: 0.9rem; color: #666;">Protect against common attacks</span>
+                    </a>
+                    <a href="api-security.html" style="background: #f8f9fa; color: #333; padding: 1.25rem; border-radius: 8px; text-decoration: none; border: 2px solid #e0e0e0;">
+                        <strong style="display: block; margin-bottom: 0.5rem; color: #667eea;">🔌 API Security</strong>
+                        <span style="font-size: 0.9rem; color: #666;">OWASP API Top 10</span>
+                    </a>
+                </div>
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <a href="security-quiz.html" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.75rem 2rem; border-radius: 25px; text-decoration: none; font-weight: 600; display: inline-block;">🎯 Test Your Knowledge - Take the Quiz</a>
+                </div>
+            </section>
+
             <a href="index.html" class="back-link">← Back to Tools</a>
         </div>
     </main>
-    
+
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode">
+        <span id="theme-icon">🌙</span>
+    </button>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('rmvuln-theme', newTheme);
+            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+        (function() {
+            const savedTheme = localStorage.getItem('rmvuln-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('theme-icon').textContent = '☀️';
+            }
+        })();
+    </script>
+
     <footer>
         <div class="container">
             <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
