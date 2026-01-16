@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Database security hardening guide for MySQL, PostgreSQL, MongoDB, and MSSQL. SQL injection prevention and secure configuration.">
+    <meta name="keywords" content="database security, SQL injection prevention, MySQL hardening, PostgreSQL security, MongoDB security, MSSQL hardening, database encryption">
+    <title>Database Security Hardening - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="content-header">
+        <div class="container">
+            <h1>Database Security Hardening</h1>
+            <p>Secure your databases against attacks and data breaches</p>
+        </div>
+    </header>
+
+    <div style="width: 100%; height: 250px; overflow: hidden;">
+        <img src="https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=1600&h=250&fit=crop"
+             alt="Database security and protection"
+             style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+
+    <main class="container">
+        <div class="content-wrapper">
+            <div class="info-box">
+                <strong>Why Database Security Matters:</strong> Databases store your most valuable asset - data. A compromised database can lead to data breaches, regulatory fines, and loss of customer trust. Most breaches involve SQL injection or misconfigured databases.
+            </div>
+
+            <h2>SQL Injection Prevention</h2>
+
+            <div class="vuln-item">
+                <h2>1. Use Parameterized Queries (Prepared Statements)</h2>
+                <p>NEVER concatenate user input directly into SQL queries.</p>
+
+                <h3>PHP (PDO)</h3>
+                <div class="code-block">
+                    <code># BAD - Vulnerable to SQL Injection
+$sql = "SELECT * FROM users WHERE id = " . $_GET['id'];
+
+# GOOD - Parameterized Query
+$stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+$stmt->execute([$_GET['id']]);
+$user = $stmt->fetch();</code>
+                </div>
+
+                <h3>Python (psycopg2 / mysql-connector)</h3>
+                <div class="code-block">
+                    <code># BAD - Vulnerable
+cursor.execute(f"SELECT * FROM users WHERE id = {user_id}")
+
+# GOOD - Parameterized
+cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))</code>
+                </div>
+
+                <h3>Node.js (mysql2)</h3>
+                <div class="code-block">
+                    <code>// BAD - Vulnerable
+connection.query(`SELECT * FROM users WHERE id = ${userId}`);
+
+// GOOD - Parameterized
+connection.query('SELECT * FROM users WHERE id = ?', [userId]);</code>
+                </div>
+
+                <h3>Java (JDBC)</h3>
+                <div class="code-block">
+                    <code>// BAD - Vulnerable
+Statement stmt = conn.createStatement();
+ResultSet rs = stmt.executeQuery("SELECT * FROM users WHERE id = " + userId);
+
+// GOOD - PreparedStatement
+PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM users WHERE id = ?");
+pstmt.setInt(1, userId);
+ResultSet rs = pstmt.executeQuery();</code>
+                </div>
+
+                <h3>C# (.NET)</h3>
+                <div class="code-block">
+                    <code>// BAD - Vulnerable
+string sql = "SELECT * FROM users WHERE id = " + userId;
+
+// GOOD - Parameterized
+using (SqlCommand cmd = new SqlCommand("SELECT * FROM users WHERE id = @id", conn))
+{
+    cmd.Parameters.AddWithValue("@id", userId);
+    SqlDataReader reader = cmd.ExecuteReader();
+}</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>2. Input Validation & Sanitization</h2>
+                <div class="code-block">
+                    <code># Whitelist validation - only allow expected characters
+import re
+
+def validate_username(username):
+    # Only alphanumeric and underscore, 3-20 chars
+    if re.match(r'^[a-zA-Z0-9_]{3,20}$', username):
+        return True
+    return False
+
+def validate_id(id):
+    # Only integers
+    return str(id).isdigit()</code>
+                </div>
+            </div>
+
+            <h2>MySQL Hardening</h2>
+
+            <div class="vuln-item">
+                <h2>3. Secure MySQL Installation</h2>
+                <div class="code-block">
+                    <code># Run the security script
+sudo mysql_secure_installation
+
+# This will:
+# - Set root password
+# - Remove anonymous users
+# - Disallow remote root login
+# - Remove test database
+# - Reload privilege tables</code>
+                </div>
+
+                <h3>MySQL Configuration (/etc/mysql/mysql.conf.d/mysqld.cnf)</h3>
+                <div class="code-block">
+                    <code>[mysqld]
+# Bind to localhost only (no remote connections)
+bind-address = 127.0.0.1
+
+# Disable local file loading (prevents file read attacks)
+local-infile = 0
+
+# Disable symbolic links
+symbolic-links = 0
+
+# Enable logging
+general_log = 1
+general_log_file = /var/log/mysql/mysql.log
+log_error = /var/log/mysql/error.log
+
+# Enable slow query logging
+slow_query_log = 1
+slow_query_log_file = /var/log/mysql/slow.log
+long_query_time = 2
+
+# Require secure transport for remote connections
+require_secure_transport = ON</code>
+                </div>
+
+                <h3>Create Least-Privilege User</h3>
+                <div class="code-block">
+                    <code># Never use root for application connections
+CREATE USER 'app_user'@'localhost' IDENTIFIED BY 'StrongPassword123!';
+
+# Grant only necessary permissions
+GRANT SELECT, INSERT, UPDATE ON myapp.* TO 'app_user'@'localhost';
+
+# For read-only reporting user
+CREATE USER 'report_user'@'localhost' IDENTIFIED BY 'AnotherPassword!';
+GRANT SELECT ON myapp.* TO 'report_user'@'localhost';
+
+# Apply changes
+FLUSH PRIVILEGES;</code>
+                </div>
+            </div>
+
+            <h2>PostgreSQL Hardening</h2>
+
+            <div class="vuln-item">
+                <h2>4. Secure PostgreSQL Configuration</h2>
+
+                <h3>pg_hba.conf (Authentication)</h3>
+                <div class="code-block">
+                    <code># /etc/postgresql/[version]/main/pg_hba.conf
+
+# Reject all by default, then whitelist
+# TYPE  DATABASE  USER      ADDRESS        METHOD
+
+# Local connections
+local   all       postgres                 peer
+local   all       all                      md5
+
+# IPv4 - only from specific IPs
+host    myapp     app_user  127.0.0.1/32   scram-sha-256
+host    all       all       0.0.0.0/0      reject
+
+# IPv6
+host    all       all       ::1/128        scram-sha-256</code>
+                </div>
+
+                <h3>postgresql.conf (Security Settings)</h3>
+                <div class="code-block">
+                    <code># /etc/postgresql/[version]/main/postgresql.conf
+
+# Listen only on localhost
+listen_addresses = 'localhost'
+
+# Require password encryption
+password_encryption = scram-sha-256
+
+# Enable SSL
+ssl = on
+ssl_cert_file = '/etc/ssl/certs/server.crt'
+ssl_key_file = '/etc/ssl/private/server.key'
+
+# Logging
+logging_collector = on
+log_directory = 'pg_log'
+log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'
+log_statement = 'all'
+log_connections = on
+log_disconnections = on</code>
+                </div>
+
+                <h3>Create Secure User</h3>
+                <div class="code-block">
+                    <code>-- Create role with limited permissions
+CREATE ROLE app_user WITH LOGIN PASSWORD 'StrongPassword123!';
+
+-- Grant connect to specific database
+GRANT CONNECT ON DATABASE myapp TO app_user;
+
+-- Grant schema usage
+GRANT USAGE ON SCHEMA public TO app_user;
+
+-- Grant specific table permissions
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA public TO app_user;
+
+-- Revoke dangerous permissions
+REVOKE CREATE ON SCHEMA public FROM PUBLIC;</code>
+                </div>
+            </div>
+
+            <h2>MongoDB Hardening</h2>
+
+            <div class="vuln-item">
+                <h2>5. Secure MongoDB Configuration</h2>
+
+                <div class="warning-box">
+                    <strong>Warning:</strong> MongoDB has NO authentication by default! Always enable authentication before exposing to any network.
+                </div>
+
+                <h3>Enable Authentication (/etc/mongod.conf)</h3>
+                <div class="code-block">
+                    <code># /etc/mongod.conf
+
+# Network settings
+net:
+  port: 27017
+  bindIp: 127.0.0.1  # Only localhost
+
+# Security
+security:
+  authorization: enabled
+
+# Enable TLS/SSL
+net:
+  tls:
+    mode: requireTLS
+    certificateKeyFile: /etc/ssl/mongodb.pem
+    CAFile: /etc/ssl/ca.pem</code>
+                </div>
+
+                <h3>Create Admin and Application Users</h3>
+                <div class="code-block">
+                    <code>// Connect to MongoDB
+mongosh
+
+// Switch to admin database
+use admin
+
+// Create admin user
+db.createUser({
+  user: "admin",
+  pwd: "StrongAdminPassword123!",
+  roles: ["userAdminAnyDatabase", "dbAdminAnyDatabase", "readWriteAnyDatabase"]
+})
+
+// Switch to application database
+use myapp
+
+// Create application user with limited permissions
+db.createUser({
+  user: "app_user",
+  pwd: "StrongAppPassword123!",
+  roles: [
+    { role: "readWrite", db: "myapp" }
+  ]
+})
+
+// Create read-only user
+db.createUser({
+  user: "report_user",
+  pwd: "StrongReportPassword123!",
+  roles: [
+    { role: "read", db: "myapp" }
+  ]
+})</code>
+                </div>
+            </div>
+
+            <h2>Microsoft SQL Server Hardening</h2>
+
+            <div class="vuln-item">
+                <h2>6. Secure MSSQL Configuration</h2>
+
+                <h3>Disable SA Account</h3>
+                <div class="code-block">
+                    <code>-- Rename SA account
+ALTER LOGIN sa WITH NAME = [disabled_sa];
+
+-- Disable SA account
+ALTER LOGIN sa DISABLE;
+
+-- Create new admin account
+CREATE LOGIN [db_admin] WITH PASSWORD = 'StrongPassword123!';
+ALTER SERVER ROLE sysadmin ADD MEMBER [db_admin];</code>
+                </div>
+
+                <h3>Enable Encryption</h3>
+                <div class="code-block">
+                    <code>-- Enable TDE (Transparent Data Encryption)
+USE master;
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'MasterKeyPassword123!';
+
+CREATE CERTIFICATE TDECert WITH SUBJECT = 'TDE Certificate';
+
+USE myapp;
+CREATE DATABASE ENCRYPTION KEY
+WITH ALGORITHM = AES_256
+ENCRYPTION BY SERVER CERTIFICATE TDECert;
+
+ALTER DATABASE myapp SET ENCRYPTION ON;</code>
+                </div>
+
+                <h3>Create Least-Privilege User</h3>
+                <div class="code-block">
+                    <code>-- Create login
+CREATE LOGIN app_user WITH PASSWORD = 'StrongPassword123!';
+
+-- Create database user
+USE myapp;
+CREATE USER app_user FOR LOGIN app_user;
+
+-- Grant specific permissions only
+GRANT SELECT, INSERT, UPDATE ON SCHEMA::dbo TO app_user;
+DENY DELETE ON SCHEMA::dbo TO app_user;
+
+-- Deny dangerous permissions
+DENY EXECUTE ON xp_cmdshell TO app_user;
+DENY EXECUTE ON sp_OACreate TO app_user;</code>
+                </div>
+            </div>
+
+            <h2>Database Encryption</h2>
+
+            <div class="vuln-item">
+                <h2>7. Encryption at Rest and in Transit</h2>
+
+                <h3>Encryption at Rest</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Database</th>
+                            <th>Feature</th>
+                            <th>How to Enable</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>MySQL</td>
+                            <td>InnoDB Tablespace Encryption</td>
+                            <td>innodb_encrypt_tables=ON</td>
+                        </tr>
+                        <tr>
+                            <td>PostgreSQL</td>
+                            <td>pgcrypto extension</td>
+                            <td>CREATE EXTENSION pgcrypto;</td>
+                        </tr>
+                        <tr>
+                            <td>MongoDB</td>
+                            <td>Encrypted Storage Engine</td>
+                            <td>security.enableEncryption: true</td>
+                        </tr>
+                        <tr>
+                            <td>MSSQL</td>
+                            <td>TDE</td>
+                            <td>ALTER DATABASE SET ENCRYPTION ON</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Encryption in Transit (SSL/TLS)</h3>
+                <div class="code-block">
+                    <code># MySQL - Force SSL connections
+ALTER USER 'app_user'@'%' REQUIRE SSL;
+
+# PostgreSQL - Require SSL in pg_hba.conf
+hostssl  myapp  app_user  0.0.0.0/0  scram-sha-256
+
+# MongoDB - Connect with TLS
+mongosh --tls --tlsCertificateKeyFile /path/to/client.pem
+
+# Connection strings with SSL
+# MySQL
+mysql://user:pass@host/db?ssl-mode=REQUIRED
+
+# PostgreSQL
+postgresql://user:pass@host/db?sslmode=require
+
+# MongoDB
+mongodb://user:pass@host/db?tls=true</code>
+                </div>
+            </div>
+
+            <h2>Backup Security</h2>
+
+            <div class="vuln-item">
+                <h2>8. Secure Database Backups</h2>
+                <div class="code-block">
+                    <code># Encrypted MySQL backup
+mysqldump -u root -p myapp | openssl enc -aes-256-cbc -salt -out backup.sql.enc
+
+# Decrypt backup
+openssl enc -aes-256-cbc -d -in backup.sql.enc -out backup.sql
+
+# PostgreSQL encrypted backup
+pg_dump myapp | gpg --symmetric --cipher-algo AES256 -o backup.sql.gpg
+
+# Secure backup permissions
+chmod 600 backup.sql.enc
+chown root:root backup.sql.enc
+
+# Store backups off-site
+# - AWS S3 with server-side encryption
+# - Azure Blob with encryption
+# - Encrypted external drive</code>
+                </div>
+            </div>
+
+            <h2>Security Checklist</h2>
+            <div class="success-box">
+                <p>☐ Using parameterized queries (no SQL concatenation)<br>
+                ☐ Input validation on all user inputs<br>
+                ☐ Database runs as non-root user<br>
+                ☐ Application uses least-privilege database account<br>
+                ☐ Remote root/admin login disabled<br>
+                ☐ Database bound to localhost or internal IP only<br>
+                ☐ SSL/TLS enabled for connections<br>
+                ☐ Encryption at rest enabled<br>
+                ☐ Audit logging enabled<br>
+                ☐ Backups encrypted and stored securely<br>
+                ☐ Default/test databases removed<br>
+                ☐ Strong passwords enforced<br>
+                ☐ Regular security updates applied</p>
+            </div>
+
+            <div class="warning-box">
+                <strong>Important:</strong> Test all configuration changes in a staging environment first. Incorrect database security settings can lock you out or break your application.
+            </div>
+
+            <a href="index.html" class="back-link">← Back to Tools</a>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a> | Support us: <a href="https://www.etsy.com/shop/BlizfulStore?ref=seller-platform-mcnav" target="_blank">Blizful Store</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

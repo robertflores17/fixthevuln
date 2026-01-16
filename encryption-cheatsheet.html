@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Encryption cheat sheet - AES, RSA, hashing algorithms explained. When to use symmetric vs asymmetric encryption, key sizes, and best practices.">
+    <meta name="keywords" content="encryption cheat sheet, AES, RSA, hashing algorithms, symmetric encryption, asymmetric encryption, cryptography guide">
+    <title>Encryption Cheat Sheet - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>RmVuln</h1></a>
+            <p class="tagline">Encryption Cheat Sheet</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="index.html" class="back-link">&larr; Back to Home</a>
+
+        <section class="intro">
+            <h2>Cryptography Quick Reference</h2>
+            <p>Essential guide to encryption algorithms, hashing functions, and when to use each. Covers symmetric encryption (AES), asymmetric encryption (RSA, ECC), and secure hashing.</p>
+        </section>
+
+        <!-- When to Use What -->
+        <section class="vulnerability-card">
+            <h2>When to Use What</h2>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Use Case</th>
+                        <th>Algorithm</th>
+                        <th>Why</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Encrypting data at rest</td>
+                        <td>AES-256-GCM</td>
+                        <td>Fast, authenticated encryption</td>
+                    </tr>
+                    <tr>
+                        <td>Encrypting files</td>
+                        <td>AES-256-GCM or ChaCha20-Poly1305</td>
+                        <td>Symmetric, efficient for large data</td>
+                    </tr>
+                    <tr>
+                        <td>Password storage</td>
+                        <td>Argon2id, bcrypt, scrypt</td>
+                        <td>Slow hash, memory-hard</td>
+                    </tr>
+                    <tr>
+                        <td>Data integrity/checksums</td>
+                        <td>SHA-256, SHA-3</td>
+                        <td>Fast, collision-resistant</td>
+                    </tr>
+                    <tr>
+                        <td>Digital signatures</td>
+                        <td>Ed25519, ECDSA, RSA-PSS</td>
+                        <td>Non-repudiation, authenticity</td>
+                    </tr>
+                    <tr>
+                        <td>Key exchange</td>
+                        <td>X25519, ECDH, DH</td>
+                        <td>Establish shared secret</td>
+                    </tr>
+                    <tr>
+                        <td>TLS/HTTPS</td>
+                        <td>TLS 1.3 (auto-negotiates)</td>
+                        <td>Uses all of the above</td>
+                    </tr>
+                    <tr>
+                        <td>Message authentication</td>
+                        <td>HMAC-SHA256</td>
+                        <td>Verify integrity + authenticity</td>
+                    </tr>
+                    <tr>
+                        <td>Random token generation</td>
+                        <td>CSPRNG (secrets module)</td>
+                        <td>Cryptographically secure random</td>
+                    </tr>
+                    <tr>
+                        <td>JWT signing</td>
+                        <td>RS256, ES256, EdDSA</td>
+                        <td>Asymmetric for verification</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Symmetric Encryption -->
+        <section class="vulnerability-card">
+            <h2>Symmetric Encryption</h2>
+            <p>Same key for encryption and decryption. Fast, used for bulk data.</p>
+
+            <h3>Algorithm Comparison</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Algorithm</th>
+                        <th>Key Size</th>
+                        <th>Status</th>
+                        <th>Use Case</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>AES-256-GCM</td>
+                        <td>256 bits</td>
+                        <td>Recommended</td>
+                        <td>General purpose, authenticated</td>
+                    </tr>
+                    <tr>
+                        <td>AES-128-GCM</td>
+                        <td>128 bits</td>
+                        <td>Acceptable</td>
+                        <td>Still secure, faster</td>
+                    </tr>
+                    <tr>
+                        <td>ChaCha20-Poly1305</td>
+                        <td>256 bits</td>
+                        <td>Recommended</td>
+                        <td>Mobile, no AES hardware</td>
+                    </tr>
+                    <tr>
+                        <td>AES-CBC + HMAC</td>
+                        <td>256 bits</td>
+                        <td>Acceptable</td>
+                        <td>Legacy systems (use GCM if possible)</td>
+                    </tr>
+                    <tr>
+                        <td>AES-ECB</td>
+                        <td>Any</td>
+                        <td>NEVER USE</td>
+                        <td>Reveals patterns in data</td>
+                    </tr>
+                    <tr>
+                        <td>3DES</td>
+                        <td>168 bits</td>
+                        <td>Deprecated</td>
+                        <td>Legacy only, migrate away</td>
+                    </tr>
+                    <tr>
+                        <td>DES, RC4, Blowfish</td>
+                        <td>Various</td>
+                        <td>Broken</td>
+                        <td>Never use</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>AES-256-GCM Example (Python)</h3>
+            <div class="code-block">
+<pre><code>from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+import os
+
+def encrypt_aes_gcm(plaintext: bytes, key: bytes) -> tuple[bytes, bytes]:
+    """Encrypt with AES-256-GCM. Returns (nonce, ciphertext)."""
+    nonce = os.urandom(12)  # 96-bit nonce for GCM
+    aesgcm = AESGCM(key)
+    ciphertext = aesgcm.encrypt(nonce, plaintext, associated_data=None)
+    return nonce, ciphertext
+
+def decrypt_aes_gcm(nonce: bytes, ciphertext: bytes, key: bytes) -> bytes:
+    """Decrypt AES-256-GCM ciphertext."""
+    aesgcm = AESGCM(key)
+    return aesgcm.decrypt(nonce, ciphertext, associated_data=None)
+
+# Usage
+key = os.urandom(32)  # 256-bit key
+message = b"Secret message"
+
+nonce, encrypted = encrypt_aes_gcm(message, key)
+decrypted = decrypt_aes_gcm(nonce, encrypted, key)</code></pre>
+            </div>
+
+            <h3>AES-256-GCM Example (Node.js)</h3>
+            <div class="code-block">
+<pre><code>const crypto = require('crypto');
+
+function encryptAesGcm(plaintext, key) {
+  const iv = crypto.randomBytes(12); // 96-bit IV for GCM
+  const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
+
+  let encrypted = cipher.update(plaintext, 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+  const authTag = cipher.getAuthTag();
+
+  return { iv: iv.toString('hex'), encrypted, authTag: authTag.toString('hex') };
+}
+
+function decryptAesGcm(encrypted, key, iv, authTag) {
+  const decipher = crypto.createDecipheriv('aes-256-gcm', key, Buffer.from(iv, 'hex'));
+  decipher.setAuthTag(Buffer.from(authTag, 'hex'));
+
+  let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+  decrypted += decipher.final('utf8');
+  return decrypted;
+}
+
+// Usage
+const key = crypto.randomBytes(32); // 256-bit key</code></pre>
+            </div>
+        </section>
+
+        <!-- Asymmetric Encryption -->
+        <section class="vulnerability-card">
+            <h2>Asymmetric Encryption</h2>
+            <p>Public key encrypts, private key decrypts. Used for key exchange and signatures.</p>
+
+            <h3>Algorithm Comparison</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Algorithm</th>
+                        <th>Key Size</th>
+                        <th>Status</th>
+                        <th>Use Case</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>RSA-OAEP</td>
+                        <td>2048+ bits</td>
+                        <td>Acceptable</td>
+                        <td>Encryption, legacy compatibility</td>
+                    </tr>
+                    <tr>
+                        <td>RSA-PSS</td>
+                        <td>2048+ bits</td>
+                        <td>Recommended</td>
+                        <td>Digital signatures</td>
+                    </tr>
+                    <tr>
+                        <td>ECDSA (P-256)</td>
+                        <td>256 bits</td>
+                        <td>Recommended</td>
+                        <td>Signatures, TLS</td>
+                    </tr>
+                    <tr>
+                        <td>Ed25519</td>
+                        <td>256 bits</td>
+                        <td>Preferred</td>
+                        <td>Signatures, SSH keys</td>
+                    </tr>
+                    <tr>
+                        <td>X25519</td>
+                        <td>256 bits</td>
+                        <td>Preferred</td>
+                        <td>Key exchange</td>
+                    </tr>
+                    <tr>
+                        <td>ECDH (P-256)</td>
+                        <td>256 bits</td>
+                        <td>Recommended</td>
+                        <td>Key exchange</td>
+                    </tr>
+                    <tr>
+                        <td>RSA PKCS#1 v1.5</td>
+                        <td>Any</td>
+                        <td>Deprecated</td>
+                        <td>Padding oracle vulnerable</td>
+                    </tr>
+                    <tr>
+                        <td>DSA</td>
+                        <td>Any</td>
+                        <td>Deprecated</td>
+                        <td>Use ECDSA or Ed25519</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Equivalent Security Levels</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Security (bits)</th>
+                        <th>Symmetric</th>
+                        <th>RSA/DH</th>
+                        <th>ECC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>80 (weak)</td>
+                        <td>80-bit</td>
+                        <td>1024-bit</td>
+                        <td>160-bit</td>
+                    </tr>
+                    <tr>
+                        <td>112 (legacy)</td>
+                        <td>112-bit</td>
+                        <td>2048-bit</td>
+                        <td>224-bit</td>
+                    </tr>
+                    <tr>
+                        <td>128 (standard)</td>
+                        <td>128-bit (AES-128)</td>
+                        <td>3072-bit</td>
+                        <td>256-bit (P-256)</td>
+                    </tr>
+                    <tr>
+                        <td>192 (high)</td>
+                        <td>192-bit</td>
+                        <td>7680-bit</td>
+                        <td>384-bit (P-384)</td>
+                    </tr>
+                    <tr>
+                        <td>256 (ultra)</td>
+                        <td>256-bit (AES-256)</td>
+                        <td>15360-bit</td>
+                        <td>512-bit (P-521)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Ed25519 Signing Example (Python)</h3>
+            <div class="code-block">
+<pre><code>from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+from cryptography.hazmat.primitives import serialization
+
+# Generate key pair
+private_key = Ed25519PrivateKey.generate()
+public_key = private_key.public_key()
+
+# Sign message
+message = b"Important document"
+signature = private_key.sign(message)
+
+# Verify signature
+try:
+    public_key.verify(signature, message)
+    print("Signature valid")
+except InvalidSignature:
+    print("Signature invalid")
+
+# Export keys
+private_pem = private_key.private_bytes(
+    encoding=serialization.Encoding.PEM,
+    format=serialization.PrivateFormat.PKCS8,
+    encryption_algorithm=serialization.NoEncryption()
+)</code></pre>
+            </div>
+        </section>
+
+        <!-- Hashing -->
+        <section class="vulnerability-card">
+            <h2>Hashing Algorithms</h2>
+            <p>One-way functions. Used for integrity, checksums, and password storage.</p>
+
+            <h3>Hash Algorithm Comparison</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Algorithm</th>
+                        <th>Output Size</th>
+                        <th>Status</th>
+                        <th>Use Case</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>SHA-256</td>
+                        <td>256 bits</td>
+                        <td>Recommended</td>
+                        <td>General purpose, checksums</td>
+                    </tr>
+                    <tr>
+                        <td>SHA-384</td>
+                        <td>384 bits</td>
+                        <td>Recommended</td>
+                        <td>Higher security requirement</td>
+                    </tr>
+                    <tr>
+                        <td>SHA-512</td>
+                        <td>512 bits</td>
+                        <td>Recommended</td>
+                        <td>Faster on 64-bit systems</td>
+                    </tr>
+                    <tr>
+                        <td>SHA-3 (256/512)</td>
+                        <td>256/512 bits</td>
+                        <td>Recommended</td>
+                        <td>Alternative to SHA-2</td>
+                    </tr>
+                    <tr>
+                        <td>BLAKE2b</td>
+                        <td>Up to 512 bits</td>
+                        <td>Recommended</td>
+                        <td>Fast, secure alternative</td>
+                    </tr>
+                    <tr>
+                        <td>BLAKE3</td>
+                        <td>256 bits</td>
+                        <td>Recommended</td>
+                        <td>Very fast, parallelizable</td>
+                    </tr>
+                    <tr>
+                        <td>SHA-1</td>
+                        <td>160 bits</td>
+                        <td>Deprecated</td>
+                        <td>Collision attacks exist</td>
+                    </tr>
+                    <tr>
+                        <td>MD5</td>
+                        <td>128 bits</td>
+                        <td>Broken</td>
+                        <td>Non-security only (checksums)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Password Hashing (Different!)</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Algorithm</th>
+                        <th>Status</th>
+                        <th>Parameters</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Argon2id</td>
+                        <td>Preferred</td>
+                        <td>m=65536, t=3, p=4</td>
+                    </tr>
+                    <tr>
+                        <td>bcrypt</td>
+                        <td>Excellent</td>
+                        <td>cost=12+</td>
+                    </tr>
+                    <tr>
+                        <td>scrypt</td>
+                        <td>Good</td>
+                        <td>N=2^17, r=8, p=1</td>
+                    </tr>
+                    <tr>
+                        <td>PBKDF2-SHA256</td>
+                        <td>Acceptable</td>
+                        <td>600,000+ iterations</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Key Management -->
+        <section class="vulnerability-card">
+            <h2>Key Management Best Practices</h2>
+
+            <h3>Key Generation</h3>
+            <div class="code-block">
+<pre><code># Python - Secure random key generation
+import secrets
+import os
+
+# Generate random bytes (use for symmetric keys)
+key_256 = secrets.token_bytes(32)  # 256-bit key
+key_128 = os.urandom(16)           # 128-bit key
+
+# Generate random tokens (for API keys, session tokens)
+api_key = secrets.token_urlsafe(32)  # URL-safe base64
+hex_token = secrets.token_hex(32)    # Hex string
+
+# NEVER use random module for cryptography
+import random  # NOT cryptographically secure!</code></pre>
+            </div>
+
+            <h3>Key Storage Guidelines</h3>
+            <div class="remediation">
+                <ul>
+                    <li><strong>Never hardcode keys</strong> in source code</li>
+                    <li><strong>Use HSM/KMS</strong> - AWS KMS, Azure Key Vault, HashiCorp Vault</li>
+                    <li><strong>Encrypt keys at rest</strong> with master key</li>
+                    <li><strong>Rotate keys regularly</strong> - annually minimum, immediately on compromise</li>
+                    <li><strong>Use envelope encryption</strong> - encrypt data key with master key</li>
+                    <li><strong>Separate environments</strong> - different keys for dev/staging/prod</li>
+                    <li><strong>Audit key access</strong> - log all key operations</li>
+                </ul>
+            </div>
+
+            <h3>Envelope Encryption Pattern</h3>
+            <div class="code-block">
+<pre><code># Envelope encryption with AWS KMS
+import boto3
+
+kms = boto3.client('kms')
+
+# Generate data key (DEK)
+response = kms.generate_data_key(
+    KeyId='alias/my-master-key',
+    KeySpec='AES_256'
+)
+
+plaintext_key = response['Plaintext']      # Use to encrypt data
+encrypted_key = response['CiphertextBlob'] # Store with encrypted data
+
+# To decrypt: first decrypt the DEK with KMS, then decrypt data
+decrypted_key = kms.decrypt(
+    CiphertextBlob=encrypted_key
+)['Plaintext']</code></pre>
+            </div>
+        </section>
+
+        <!-- TLS Configuration -->
+        <section class="vulnerability-card">
+            <h2>TLS 1.3 Cipher Suites</h2>
+
+            <h3>Recommended Cipher Suites</h3>
+            <div class="code-block">
+<pre><code># TLS 1.3 (automatic - these are the only options)
+TLS_AES_256_GCM_SHA384
+TLS_CHACHA20_POLY1305_SHA256
+TLS_AES_128_GCM_SHA256
+
+# TLS 1.2 (if 1.3 not available)
+ECDHE-ECDSA-AES256-GCM-SHA384
+ECDHE-RSA-AES256-GCM-SHA384
+ECDHE-ECDSA-CHACHA20-POLY1305
+ECDHE-RSA-CHACHA20-POLY1305
+ECDHE-ECDSA-AES128-GCM-SHA256
+ECDHE-RSA-AES128-GCM-SHA256
+
+# Nginx configuration
+ssl_protocols TLSv1.2 TLSv1.3;
+ssl_prefer_server_ciphers off;
+ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384;</code></pre>
+            </div>
+
+            <h3>Cipher Suites to Avoid</h3>
+            <div class="remediation">
+                <ul>
+                    <li>Anything with <code>NULL</code> - No encryption</li>
+                    <li>Anything with <code>EXPORT</code> - Weak 40-bit keys</li>
+                    <li>Anything with <code>DES</code> or <code>3DES</code> - Broken/deprecated</li>
+                    <li>Anything with <code>RC4</code> - Broken</li>
+                    <li>Anything with <code>MD5</code> - Broken</li>
+                    <li>Anything without <code>ECDHE</code> or <code>DHE</code> - No forward secrecy</li>
+                    <li>Anything with <code>CBC</code> mode - Padding oracle vulnerabilities</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Quick Reference -->
+        <section class="vulnerability-card">
+            <h2>Quick Decision Guide</h2>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Question</th>
+                        <th>Answer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>What symmetric cipher?</td>
+                        <td>AES-256-GCM</td>
+                    </tr>
+                    <tr>
+                        <td>What asymmetric algorithm?</td>
+                        <td>Ed25519 (signatures), X25519 (key exchange)</td>
+                    </tr>
+                    <tr>
+                        <td>What hash function?</td>
+                        <td>SHA-256 (general), Argon2id (passwords)</td>
+                    </tr>
+                    <tr>
+                        <td>What RSA key size?</td>
+                        <td>3072+ bits (2048 minimum)</td>
+                    </tr>
+                    <tr>
+                        <td>What ECC curve?</td>
+                        <td>P-256 (NIST) or Curve25519</td>
+                    </tr>
+                    <tr>
+                        <td>What TLS version?</td>
+                        <td>TLS 1.3 (1.2 minimum)</td>
+                    </tr>
+                    <tr>
+                        <td>Random numbers?</td>
+                        <td>secrets module (Python), crypto.randomBytes (Node)</td>
+                    </tr>
+                    <tr>
+                        <td>Key rotation frequency?</td>
+                        <td>Annually, or on compromise</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="cta">
+            <h2>Need Detailed Cryptography Guides?</h2>
+            <p>For comprehensive tutorials and implementation guides:</p>
+            <a href="https://fixthevuln.com" class="cta-button" target="_blank">Visit FixTheVuln.com &rarr;</a>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
+</body>
+</html>

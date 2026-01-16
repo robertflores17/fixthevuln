@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Test your cybersecurity knowledge with our free interactive quiz. Questions covering Security+, CEH, CISSP, and real-world security scenarios.">
+    <meta name="keywords" content="security quiz, cybersecurity test, Security+ practice, CEH questions, CISSP prep, security assessment">
+    <title>Security Knowledge Quiz - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .quiz-container {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .quiz-header h2 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        .quiz-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .stat-box {
+            background: #f8f9fa;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        .progress-section {
+            margin-bottom: 2rem;
+        }
+        .progress-bar {
+            background: #e0e0e0;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        .progress-text {
+            text-align: center;
+            margin-top: 0.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .category-select {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .category-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .category-btn:hover, .category-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        .question-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .question-category {
+            display: inline-block;
+            background: #e7f3ff;
+            color: #667eea;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+        .question-text {
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .option {
+            padding: 1rem 1.25rem;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .option:hover:not(.disabled) {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        .option.selected {
+            border-color: #667eea;
+            background: #e7f3ff;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        .option.incorrect {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+        .option.disabled {
+            cursor: default;
+        }
+        .option-letter {
+            background: #e0e0e0;
+            color: #666;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        .option.selected .option-letter {
+            background: #667eea;
+            color: white;
+        }
+        .option.correct .option-letter {
+            background: #28a745;
+            color: white;
+        }
+        .option.incorrect .option-letter {
+            background: #dc3545;
+            color: white;
+        }
+        .explanation {
+            background: #e7f3ff;
+            border-left: 4px solid #667eea;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0 8px 8px 0;
+            display: none;
+        }
+        .explanation.show {
+            display: block;
+        }
+        .explanation h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+        .explanation p {
+            color: #555;
+            line-height: 1.6;
+        }
+        .explanation a {
+            color: #667eea;
+            font-weight: 600;
+        }
+        .quiz-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+        .results-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            text-align: center;
+            display: none;
+        }
+        .results-card.show {
+            display: block;
+        }
+        .results-score {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .results-grade {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.95;
+        }
+        .results-breakdown {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        .breakdown-item {
+            background: rgba(255,255,255,0.2);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+        }
+        .breakdown-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .breakdown-label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+        .share-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.3);
+        }
+        .share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        .share-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .share-twitter { background: #1DA1F2; color: white; }
+        .share-linkedin { background: #0077B5; color: white; }
+        .start-screen {
+            text-align: center;
+            padding: 3rem;
+        }
+        .start-screen h2 {
+            margin-bottom: 1rem;
+        }
+        .start-screen p {
+            color: #666;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .difficulty-select {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        .difficulty-btn {
+            padding: 1rem 2rem;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .difficulty-btn:hover, .difficulty-btn.active {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        .difficulty-btn h4 {
+            margin: 0 0 0.25rem 0;
+            color: #333;
+        }
+        .difficulty-btn p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #666;
+        }
+        .timer {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #667eea;
+        }
+        .timer.warning {
+            color: #dc3545;
+        }
+        @media (max-width: 768px) {
+            .quiz-stats {
+                gap: 1rem;
+            }
+            .results-breakdown {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>RmVuln</h1></a>
+            <p class="tagline">Security Knowledge Quiz</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="index.html" class="back-link">&larr; Back to Home</a>
+
+        <section class="intro">
+            <h2>Test Your Security Knowledge</h2>
+            <p>Challenge yourself with questions covering web security, network defense, compliance frameworks, and more. Perfect for certification prep or skill assessment.</p>
+        </section>
+
+        <div class="quiz-container" id="quiz-container">
+            <!-- Start Screen -->
+            <div id="start-screen" class="start-screen">
+                <h2>Choose Your Quiz</h2>
+                <p>Select a difficulty level and category to begin. Each quiz has 10 questions with explanations to help you learn.</p>
+
+                <div class="category-select">
+                    <button class="category-btn active" data-category="all">All Topics</button>
+                    <button class="category-btn" data-category="web">Web Security</button>
+                    <button class="category-btn" data-category="network">Network</button>
+                    <button class="category-btn" data-category="compliance">Compliance</button>
+                    <button class="category-btn" data-category="crypto">Cryptography</button>
+                    <button class="category-btn" data-category="ops">SecOps</button>
+                </div>
+
+                <div class="difficulty-select">
+                    <div class="difficulty-btn active" data-difficulty="mixed">
+                        <h4>Mixed</h4>
+                        <p>All difficulty levels</p>
+                    </div>
+                    <div class="difficulty-btn" data-difficulty="easy">
+                        <h4>Beginner</h4>
+                        <p>Security+ level</p>
+                    </div>
+                    <div class="difficulty-btn" data-difficulty="medium">
+                        <h4>Intermediate</h4>
+                        <p>CEH level</p>
+                    </div>
+                    <div class="difficulty-btn" data-difficulty="hard">
+                        <h4>Advanced</h4>
+                        <p>CISSP level</p>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="startQuiz()">Start Quiz (10 Questions)</button>
+            </div>
+
+            <!-- Quiz Screen -->
+            <div id="quiz-screen" style="display: none;">
+                <div class="quiz-header">
+                    <div class="quiz-stats">
+                        <div class="stat-box">
+                            <div class="stat-value" id="current-question">1</div>
+                            <div class="stat-label">Question</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="score">0</div>
+                            <div class="stat-label">Score</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value timer" id="timer">--</div>
+                            <div class="stat-label">Time</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-section">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill" style="width: 10%;"></div>
+                    </div>
+                    <p class="progress-text"><span id="answered">0</span> of 10 answered</p>
+                </div>
+
+                <div id="question-container">
+                    <!-- Question will be inserted here -->
+                </div>
+
+                <div class="quiz-actions">
+                    <button class="btn btn-secondary" onclick="skipQuestion()" id="skip-btn">Skip</button>
+                    <button class="btn btn-primary" onclick="nextQuestion()" id="next-btn" style="display: none;">Next Question</button>
+                    <button class="btn btn-primary" onclick="showResults()" id="finish-btn" style="display: none;">See Results</button>
+                </div>
+            </div>
+
+            <!-- Results Screen -->
+            <div id="results-screen" class="results-card">
+                <div class="results-score" id="final-score">0%</div>
+                <div class="results-grade" id="grade">Keep Learning!</div>
+                <p id="grade-message">Review the explanations to strengthen your knowledge.</p>
+
+                <div class="results-breakdown">
+                    <div class="breakdown-item">
+                        <div class="breakdown-value" id="correct-count">0</div>
+                        <div class="breakdown-label">Correct</div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-value" id="incorrect-count">0</div>
+                        <div class="breakdown-label">Incorrect</div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-value" id="time-taken">0:00</div>
+                        <div class="breakdown-label">Time</div>
+                    </div>
+                </div>
+
+                <div class="share-section">
+                    <p>Share your score:</p>
+                    <div class="share-buttons">
+                        <a href="#" class="share-btn share-twitter" id="share-twitter" target="_blank">Twitter</a>
+                        <a href="#" class="share-btn share-linkedin" id="share-linkedin" target="_blank">LinkedIn</a>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <button class="btn btn-secondary" style="background: white; color: #667eea;" onclick="restartQuiz()">Try Again</button>
+                    <a href="start-here.html" class="btn btn-secondary" style="background: rgba(255,255,255,0.2); color: white; text-decoration: none; display: inline-block; margin-left: 1rem;">Study More</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboard teaser -->
+        <section class="vulnerability-card">
+            <h2>Track Your Progress</h2>
+            <p>Your quiz history is saved locally. Keep practicing to improve your scores!</p>
+            <div id="quiz-history" style="margin-top: 1rem;">
+                <!-- History will be populated by JS -->
+            </div>
+        </section>
+
+        <section class="cta">
+            <h2>Ready to Go Deeper?</h2>
+            <p>For comprehensive training, hands-on labs, and certification prep:</p>
+            <a href="https://fixthevuln.com" class="cta-button" target="_blank">Visit FixTheVuln.com →</a>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Question Bank
+        const questions = [
+            // Web Security - Easy
+            {
+                category: 'web',
+                difficulty: 'easy',
+                question: 'Which OWASP Top 10 vulnerability involves inserting malicious SQL code through user input?',
+                options: ['Cross-Site Scripting (XSS)', 'SQL Injection', 'Broken Authentication', 'Security Misconfiguration'],
+                correct: 1,
+                explanation: 'SQL Injection (A03:2021) occurs when untrusted data is sent to an interpreter as part of a command or query. Always use parameterized queries to prevent it.',
+                link: 'sql-injection-simulator.html'
+            },
+            {
+                category: 'web',
+                difficulty: 'easy',
+                question: 'What HTTP header prevents a page from being embedded in an iframe (clickjacking protection)?',
+                options: ['Content-Security-Policy', 'X-Frame-Options', 'X-XSS-Protection', 'Strict-Transport-Security'],
+                correct: 1,
+                explanation: 'X-Frame-Options with value DENY or SAMEORIGIN prevents clickjacking by controlling whether the page can be embedded in frames.',
+                link: 'security-headers.html'
+            },
+            {
+                category: 'web',
+                difficulty: 'medium',
+                question: 'In a JWT (JSON Web Token), which part contains the payload/claims?',
+                options: ['First part (before first dot)', 'Second part (between dots)', 'Third part (after second dot)', 'The entire token'],
+                correct: 1,
+                explanation: 'JWTs have three parts: Header.Payload.Signature. The middle part (payload) contains the claims like user ID, expiration, etc.',
+                link: 'jwt-decoder.html'
+            },
+            {
+                category: 'web',
+                difficulty: 'hard',
+                question: 'Which Content-Security-Policy directive would prevent inline JavaScript execution?',
+                options: ["script-src 'self'", "script-src 'unsafe-inline'", "default-src 'none'", "script-src 'strict-dynamic'"],
+                correct: 0,
+                explanation: "script-src 'self' only allows scripts from the same origin and blocks inline scripts. 'unsafe-inline' would ALLOW inline scripts (dangerous).",
+                link: 'security-headers.html'
+            },
+            // Network - Easy
+            {
+                category: 'network',
+                difficulty: 'easy',
+                question: 'Which port is commonly used for HTTPS traffic?',
+                options: ['80', '443', '22', '3389'],
+                correct: 1,
+                explanation: 'Port 443 is the default port for HTTPS (HTTP over TLS). Port 80 is HTTP, 22 is SSH, and 3389 is RDP.',
+                link: 'port-security.html'
+            },
+            {
+                category: 'network',
+                difficulty: 'easy',
+                question: 'At which OSI layer does a firewall typically operate?',
+                options: ['Layer 1 (Physical)', 'Layer 2 (Data Link)', 'Layer 3/4 (Network/Transport)', 'Layer 7 (Application)'],
+                correct: 2,
+                explanation: 'Traditional firewalls operate at Layer 3 (IP addresses) and Layer 4 (ports). Next-generation firewalls also inspect Layer 7.',
+                link: 'osi-layer-attacks.html'
+            },
+            {
+                category: 'network',
+                difficulty: 'medium',
+                question: 'What type of attack involves flooding a target with SYN packets without completing the TCP handshake?',
+                options: ['DDoS Amplification', 'SYN Flood', 'ARP Spoofing', 'DNS Poisoning'],
+                correct: 1,
+                explanation: 'SYN Flood exploits the TCP three-way handshake by sending many SYN requests but never responding to SYN-ACK, exhausting server resources.',
+                link: 'osi-layer-attacks.html'
+            },
+            {
+                category: 'network',
+                difficulty: 'hard',
+                question: 'Which protocol is vulnerable to on-path (man-in-the-middle) attacks because it lacks authentication?',
+                options: ['HTTPS', 'SSH', 'ARP', 'SFTP'],
+                correct: 2,
+                explanation: 'ARP has no authentication mechanism, making it vulnerable to ARP spoofing where attackers redirect traffic through their machine.',
+                link: 'osi-layer-attacks.html'
+            },
+            // Cryptography - Easy
+            {
+                category: 'crypto',
+                difficulty: 'easy',
+                question: 'Which hashing algorithm is considered cryptographically broken and should not be used for security?',
+                options: ['SHA-256', 'SHA-3', 'MD5', 'bcrypt'],
+                correct: 2,
+                explanation: 'MD5 has known collision vulnerabilities and is considered broken. Use SHA-256 or SHA-3 for integrity, bcrypt/Argon2 for passwords.',
+                link: 'encryption-cheatsheet.html'
+            },
+            {
+                category: 'crypto',
+                difficulty: 'medium',
+                question: 'What is the recommended minimum key size for RSA encryption in 2024?',
+                options: ['1024 bits', '2048 bits', '4096 bits', '512 bits'],
+                correct: 1,
+                explanation: '2048 bits is the current minimum recommended RSA key size. 4096 bits provides additional security margin for long-term use.',
+                link: 'encryption-cheatsheet.html'
+            },
+            {
+                category: 'crypto',
+                difficulty: 'medium',
+                question: 'Which encryption mode should be used with AES for authenticated encryption?',
+                options: ['ECB (Electronic Codebook)', 'CBC (Cipher Block Chaining)', 'GCM (Galois/Counter Mode)', 'CTR (Counter Mode)'],
+                correct: 2,
+                explanation: 'AES-GCM provides both encryption and authentication (AEAD). ECB is insecure, CBC needs separate MAC, CTR lacks authentication.',
+                link: 'encryption-cheatsheet.html'
+            },
+            {
+                category: 'crypto',
+                difficulty: 'hard',
+                question: 'What is the purpose of a "salt" in password hashing?',
+                options: ['To speed up the hashing process', 'To prevent rainbow table attacks', 'To encrypt the password', 'To compress the password'],
+                correct: 1,
+                explanation: 'A salt is random data added to each password before hashing. This ensures identical passwords produce different hashes, defeating precomputed rainbow tables.',
+                link: 'password-policy.html'
+            },
+            // Compliance - Easy
+            {
+                category: 'compliance',
+                difficulty: 'easy',
+                question: 'Which GDPR right allows users to request deletion of their personal data?',
+                options: ['Right to Access', 'Right to Portability', 'Right to Erasure', 'Right to Rectification'],
+                correct: 2,
+                explanation: 'The Right to Erasure (Right to be Forgotten) allows individuals to request deletion of their personal data under certain circumstances.',
+                link: 'gdpr-guide.html'
+            },
+            {
+                category: 'compliance',
+                difficulty: 'easy',
+                question: 'Which SOC 2 Trust Service Criterion is REQUIRED for all SOC 2 audits?',
+                options: ['Availability', 'Confidentiality', 'Security', 'Privacy'],
+                correct: 2,
+                explanation: 'Security is the only required criterion for SOC 2. The others (Availability, Confidentiality, Processing Integrity, Privacy) are optional.',
+                link: 'soc2-basics.html'
+            },
+            {
+                category: 'compliance',
+                difficulty: 'medium',
+                question: 'How long do you have to report a data breach to authorities under GDPR?',
+                options: ['24 hours', '72 hours', '7 days', '30 days'],
+                correct: 1,
+                explanation: 'GDPR requires notification to supervisory authorities within 72 hours of becoming aware of a personal data breach.',
+                link: 'gdpr-guide.html'
+            },
+            {
+                category: 'compliance',
+                difficulty: 'medium',
+                question: 'What PCI DSS requirement mandates changing default vendor passwords?',
+                options: ['Requirement 1', 'Requirement 2', 'Requirement 8', 'Requirement 12'],
+                correct: 1,
+                explanation: 'PCI DSS Requirement 2 states "Apply Secure Configurations to All System Components" including changing vendor-supplied defaults.',
+                link: 'pci-dss.html'
+            },
+            {
+                category: 'compliance',
+                difficulty: 'hard',
+                question: 'In the NIST Cybersecurity Framework, which function includes incident response?',
+                options: ['Identify', 'Protect', 'Detect', 'Respond'],
+                correct: 3,
+                explanation: 'The Respond function includes response planning, communications, analysis, mitigation, and improvements after a security event.',
+                link: 'nist-framework.html'
+            },
+            // SecOps - Easy
+            {
+                category: 'ops',
+                difficulty: 'easy',
+                question: 'What does SIEM stand for?',
+                options: ['Security Information and Event Management', 'System Integration and Error Monitoring', 'Secure Internet and Email Management', 'Security Incident and Emergency Management'],
+                correct: 0,
+                explanation: 'SIEM (Security Information and Event Management) systems collect and analyze log data to detect security threats and incidents.',
+                link: 'log-management.html'
+            },
+            {
+                category: 'ops',
+                difficulty: 'medium',
+                question: 'What is the first phase of the NIST Incident Response lifecycle?',
+                options: ['Detection', 'Containment', 'Preparation', 'Recovery'],
+                correct: 2,
+                explanation: 'The NIST IR lifecycle is: 1) Preparation, 2) Detection & Analysis, 3) Containment/Eradication/Recovery, 4) Post-Incident Activity.',
+                link: 'incident-response.html'
+            },
+            {
+                category: 'ops',
+                difficulty: 'medium',
+                question: 'What CVSS score range is considered "Critical" severity?',
+                options: ['7.0-8.9', '8.0-9.9', '9.0-10.0', '10.0 only'],
+                correct: 2,
+                explanation: 'CVSS v3.1 severity ratings: Low (0.1-3.9), Medium (4.0-6.9), High (7.0-8.9), Critical (9.0-10.0).',
+                link: 'cvss-calculator.html'
+            },
+            {
+                category: 'ops',
+                difficulty: 'hard',
+                question: 'Which CIS Control focuses on email and web browser protections?',
+                options: ['Control 7', 'Control 9', 'Control 10', 'Control 13'],
+                correct: 1,
+                explanation: 'CIS Control 9 covers "Email and Web Browser Protections" to improve defenses against threats from these common attack vectors.',
+                link: 'cis-controls.html'
+            },
+            // Additional questions for variety
+            {
+                category: 'web',
+                difficulty: 'medium',
+                question: 'What is the primary defense against Cross-Site Request Forgery (CSRF)?',
+                options: ['Input validation', 'CSRF tokens', 'Content-Security-Policy', 'Rate limiting'],
+                correct: 1,
+                explanation: 'CSRF tokens are unique, unpredictable values that the server validates on state-changing requests to ensure the request originated from the legitimate site.',
+                link: 'owasp-top10.html'
+            },
+            {
+                category: 'network',
+                difficulty: 'medium',
+                question: 'What is the purpose of network segmentation?',
+                options: ['Increase network speed', 'Limit blast radius of breaches', 'Reduce hardware costs', 'Simplify network management'],
+                correct: 1,
+                explanation: 'Network segmentation divides a network into smaller parts, limiting lateral movement if one segment is compromised and protecting sensitive assets.',
+                link: 'cloud-security.html'
+            },
+            {
+                category: 'crypto',
+                difficulty: 'hard',
+                question: 'Which key exchange algorithm is vulnerable to quantum computing attacks?',
+                options: ['RSA', 'AES-256', 'SHA-256', 'Argon2'],
+                correct: 0,
+                explanation: "RSA and other asymmetric algorithms (ECDH, DSA) are vulnerable to Shor's algorithm on quantum computers. AES and SHA are symmetric/hashing and less affected.",
+                link: 'encryption-cheatsheet.html'
+            }
+        ];
+
+        let currentQuiz = [];
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = 0;
+        let selectedCategory = 'all';
+        let selectedDifficulty = 'mixed';
+        let startTime = null;
+        let timerInterval = null;
+
+        // Initialize category and difficulty buttons
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedCategory = btn.dataset.category;
+            });
+        });
+
+        document.querySelectorAll('.difficulty-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedDifficulty = btn.dataset.difficulty;
+            });
+        });
+
+        function startQuiz() {
+            // Filter questions by category and difficulty
+            let filtered = questions.filter(q => {
+                const categoryMatch = selectedCategory === 'all' || q.category === selectedCategory;
+                const difficultyMatch = selectedDifficulty === 'mixed' || q.difficulty === selectedDifficulty;
+                return categoryMatch && difficultyMatch;
+            });
+
+            // Shuffle and pick 10 questions
+            filtered = shuffleArray(filtered);
+            currentQuiz = filtered.slice(0, 10);
+
+            // If not enough questions, add more from any category
+            if (currentQuiz.length < 10) {
+                const remaining = shuffleArray(questions.filter(q => !currentQuiz.includes(q)));
+                currentQuiz = currentQuiz.concat(remaining.slice(0, 10 - currentQuiz.length));
+            }
+
+            currentQuestion = 0;
+            score = 0;
+            answered = 0;
+            startTime = Date.now();
+
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('quiz-screen').style.display = 'block';
+            document.getElementById('results-screen').classList.remove('show');
+
+            // Start timer
+            timerInterval = setInterval(updateTimer, 1000);
+
+            displayQuestion();
+        }
+
+        function updateTimer() {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            const timerEl = document.getElementById('timer');
+            timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            if (elapsed > 300) { // 5 minute warning
+                timerEl.classList.add('warning');
+            }
+        }
+
+        function displayQuestion() {
+            const q = currentQuiz[currentQuestion];
+            const container = document.getElementById('question-container');
+
+            const letters = ['A', 'B', 'C', 'D'];
+            const optionsHTML = q.options.map((opt, i) => `
+                <div class="option" data-index="${i}" onclick="selectOption(${i})">
+                    <span class="option-letter">${letters[i]}</span>
+                    <span>${opt}</span>
+                </div>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="question-card">
+                    <span class="question-number">Question ${currentQuestion + 1}/10</span>
+                    <span class="question-category">${getCategoryLabel(q.category)}</span>
+                    <p class="question-text">${q.question}</p>
+                    <div class="options-list">
+                        ${optionsHTML}
+                    </div>
+                    <div class="explanation" id="explanation">
+                        <h4>Explanation</h4>
+                        <p>${q.explanation}</p>
+                        ${q.link ? `<p><a href="${q.link}">Learn more →</a></p>` : ''}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('current-question').textContent = currentQuestion + 1;
+            document.getElementById('progress-fill').style.width = ((currentQuestion + 1) / 10 * 100) + '%';
+            document.getElementById('skip-btn').style.display = 'inline-block';
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('finish-btn').style.display = 'none';
+        }
+
+        function selectOption(index) {
+            const options = document.querySelectorAll('.option');
+            if (options[0].classList.contains('disabled')) return;
+
+            const q = currentQuiz[currentQuestion];
+            const correct = q.correct;
+
+            options.forEach((opt, i) => {
+                opt.classList.add('disabled');
+                if (i === index) {
+                    opt.classList.add('selected');
+                }
+                if (i === correct) {
+                    opt.classList.add('correct');
+                } else if (i === index && index !== correct) {
+                    opt.classList.add('incorrect');
+                }
+            });
+
+            if (index === correct) {
+                score++;
+            }
+            answered++;
+
+            document.getElementById('score').textContent = score;
+            document.getElementById('answered').textContent = answered;
+            document.getElementById('explanation').classList.add('show');
+            document.getElementById('skip-btn').style.display = 'none';
+
+            if (currentQuestion < 9) {
+                document.getElementById('next-btn').style.display = 'inline-block';
+            } else {
+                document.getElementById('finish-btn').style.display = 'inline-block';
+            }
+        }
+
+        function skipQuestion() {
+            answered++;
+            document.getElementById('answered').textContent = answered;
+            nextQuestion();
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < 10) {
+                displayQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            clearInterval(timerInterval);
+
+            const percentage = Math.round((score / 10) * 100);
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+
+            let grade, message;
+            if (percentage >= 90) {
+                grade = 'Expert!';
+                message = 'Outstanding! You have excellent security knowledge.';
+            } else if (percentage >= 70) {
+                grade = 'Proficient';
+                message = 'Great job! You have solid security fundamentals.';
+            } else if (percentage >= 50) {
+                grade = 'Learning';
+                message = 'Good effort! Review the topics you missed.';
+            } else {
+                grade = 'Keep Studying';
+                message = 'Check out our learning path to build your knowledge.';
+            }
+
+            document.getElementById('final-score').textContent = percentage + '%';
+            document.getElementById('grade').textContent = grade;
+            document.getElementById('grade-message').textContent = message;
+            document.getElementById('correct-count').textContent = score;
+            document.getElementById('incorrect-count').textContent = 10 - score;
+            document.getElementById('time-taken').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            // Share links
+            const shareText = `I scored ${percentage}% on the RmVuln Security Quiz! Test your cybersecurity knowledge:`;
+            document.getElementById('share-twitter').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent('https://rmvuln.com/security-quiz.html')}`;
+            document.getElementById('share-linkedin').href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://rmvuln.com/security-quiz.html')}`;
+
+            document.getElementById('quiz-screen').style.display = 'none';
+            document.getElementById('results-screen').classList.add('show');
+
+            // Save to history
+            saveQuizResult(percentage, elapsed);
+            displayHistory();
+        }
+
+        function restartQuiz() {
+            document.getElementById('results-screen').classList.remove('show');
+            document.getElementById('start-screen').style.display = 'block';
+        }
+
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function getCategoryLabel(cat) {
+            const labels = {
+                web: 'Web Security',
+                network: 'Network',
+                crypto: 'Cryptography',
+                compliance: 'Compliance',
+                ops: 'SecOps'
+            };
+            return labels[cat] || cat;
+        }
+
+        function saveQuizResult(score, time) {
+            const history = JSON.parse(localStorage.getItem('rmvuln_quiz_history') || '[]');
+            history.unshift({
+                score,
+                time,
+                category: selectedCategory,
+                difficulty: selectedDifficulty,
+                date: new Date().toISOString()
+            });
+            // Keep only last 10 results
+            localStorage.setItem('rmvuln_quiz_history', JSON.stringify(history.slice(0, 10)));
+        }
+
+        function displayHistory() {
+            const history = JSON.parse(localStorage.getItem('rmvuln_quiz_history') || '[]');
+            const container = document.getElementById('quiz-history');
+
+            if (history.length === 0) {
+                container.innerHTML = '<p style="color: #666;">No quiz history yet. Take a quiz to track your progress!</p>';
+                return;
+            }
+
+            const rows = history.slice(0, 5).map((h, i) => {
+                const date = new Date(h.date).toLocaleDateString();
+                const minutes = Math.floor(h.time / 60);
+                const seconds = h.time % 60;
+                return `
+                    <tr>
+                        <td>${date}</td>
+                        <td><strong>${h.score}%</strong></td>
+                        <td>${minutes}:${seconds.toString().padStart(2, '0')}</td>
+                        <td>${getCategoryLabel(h.category)}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <table class="styled-table" style="margin: 0;">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Score</th>
+                            <th>Time</th>
+                            <th>Category</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            `;
+        }
+
+        // Initialize history display
+        displayHistory();
+    </script>
+</body>
+</html>

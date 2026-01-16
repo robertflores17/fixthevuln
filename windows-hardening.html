@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Windows Server and desktop hardening guide - Group Policy, firewall, user accounts, PowerShell security, and Windows Defender configuration.">
+    <meta name="keywords" content="Windows hardening, Windows Server security, Group Policy security, Windows firewall, PowerShell security, Windows Defender, Active Directory security">
+    <title>Windows Hardening Guide - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="content-header">
+        <div class="container">
+            <h1>Windows Hardening Guide</h1>
+            <p>Secure Windows servers and workstations against attacks</p>
+        </div>
+    </header>
+
+    <div style="width: 100%; height: 250px; overflow: hidden;">
+        <img src="https://images.unsplash.com/photo-1624996379697-f01d168b1a52?w=1600&h=250&fit=crop"
+             alt="Windows security"
+             style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+
+    <main class="container">
+        <div class="content-wrapper">
+            <div class="info-box">
+                <strong>Why Windows Hardening Matters:</strong> Windows is the most targeted operating system. Default configurations leave systems vulnerable to malware, ransomware, and credential theft. Hardening reduces attack surface and improves detection capabilities.
+            </div>
+
+            <h2>Windows Updates</h2>
+
+            <div class="vuln-item">
+                <h2>1. Keep Windows Updated</h2>
+
+                <h3>PowerShell Commands</h3>
+                <div class="code-block">
+                    <code># Check for updates (PowerShell as Admin)
+Install-Module PSWindowsUpdate -Force
+Import-Module PSWindowsUpdate
+
+# List available updates
+Get-WindowsUpdate
+
+# Install all updates
+Install-WindowsUpdate -AcceptAll -AutoReboot
+
+# Check update history
+Get-WUHistory | Select-Object -First 20
+
+# Configure Windows Update via Registry
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Value 4
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "ScheduledInstallDay" -Value 0
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "ScheduledInstallTime" -Value 3</code>
+                </div>
+
+                <h3>Group Policy (gpedit.msc)</h3>
+                <p>Computer Configuration → Administrative Templates → Windows Components → Windows Update</p>
+                <ul>
+                    <li>Configure Automatic Updates: Enabled (Auto download and schedule install)</li>
+                    <li>Specify intranet Microsoft update service location (for WSUS)</li>
+                </ul>
+            </div>
+
+            <h2>User Account Security</h2>
+
+            <div class="vuln-item">
+                <h2>2. Secure User Accounts</h2>
+
+                <h3>Rename/Disable Default Accounts</h3>
+                <div class="code-block">
+                    <code># PowerShell - Rename Administrator account
+Rename-LocalUser -Name "Administrator" -NewName "LocalAdmin"
+
+# Disable Guest account
+Disable-LocalUser -Name "Guest"
+
+# Check for accounts with no password
+Get-LocalUser | Where-Object { $_.PasswordRequired -eq $false }
+
+# Force password change on next login
+Set-LocalUser -Name "username" -PasswordNeverExpires $false
+net user username /logonpasswordchg:yes
+
+# List all local users
+Get-LocalUser | Select-Object Name, Enabled, PasswordRequired, LastLogon
+
+# List local admins
+Get-LocalGroupMember -Group "Administrators"</code>
+                </div>
+
+                <h3>Password Policy (secpol.msc or Group Policy)</h3>
+                <div class="code-block">
+                    <code># View current password policy
+net accounts
+
+# Set password policy via command line
+net accounts /minpwlen:12
+net accounts /maxpwage:90
+net accounts /minpwage:1
+net accounts /uniquepw:5
+
+# Or via PowerShell/Group Policy
+# Computer Configuration → Windows Settings → Security Settings → Account Policies → Password Policy
+
+# Recommended settings:
+# - Minimum password length: 12 characters
+# - Password must meet complexity requirements: Enabled
+# - Maximum password age: 90 days
+# - Minimum password age: 1 day
+# - Enforce password history: 5 passwords</code>
+                </div>
+
+                <h3>Account Lockout Policy</h3>
+                <div class="code-block">
+                    <code># Computer Configuration → Windows Settings → Security Settings → Account Policies → Account Lockout Policy
+
+# Account lockout threshold: 5 invalid attempts
+# Account lockout duration: 30 minutes
+# Reset account lockout counter after: 30 minutes
+
+# PowerShell
+net accounts /lockoutthreshold:5
+net accounts /lockoutduration:30
+net accounts /lockoutwindow:30</code>
+                </div>
+            </div>
+
+            <h2>Windows Firewall</h2>
+
+            <div class="vuln-item">
+                <h2>3. Configure Windows Firewall</h2>
+
+                <h3>Enable and Configure Firewall</h3>
+                <div class="code-block">
+                    <code># PowerShell - Check firewall status
+Get-NetFirewallProfile | Select-Object Name, Enabled
+
+# Enable all profiles
+Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True
+
+# Set default to block inbound
+Set-NetFirewallProfile -Profile Domain,Public,Private -DefaultInboundAction Block -DefaultOutboundAction Allow
+
+# Allow specific port
+New-NetFirewallRule -DisplayName "Allow RDP" -Direction Inbound -Protocol TCP -LocalPort 3389 -Action Allow
+
+# Allow application
+New-NetFirewallRule -DisplayName "Allow MyApp" -Direction Inbound -Program "C:\Apps\myapp.exe" -Action Allow
+
+# Allow from specific IP only
+New-NetFirewallRule -DisplayName "Allow SSH from Admin" -Direction Inbound -Protocol TCP -LocalPort 22 -RemoteAddress 192.168.1.100 -Action Allow
+
+# Block outbound to specific IP
+New-NetFirewallRule -DisplayName "Block Malicious IP" -Direction Outbound -RemoteAddress 203.0.113.50 -Action Block
+
+# List all rules
+Get-NetFirewallRule | Where-Object { $_.Enabled -eq 'True' } | Select-Object DisplayName, Direction, Action
+
+# Remove a rule
+Remove-NetFirewallRule -DisplayName "Allow RDP"
+
+# Export firewall rules
+netsh advfirewall export "C:\firewall-backup.wfw"
+
+# Import firewall rules
+netsh advfirewall import "C:\firewall-backup.wfw"</code>
+                </div>
+
+                <h3>Firewall Logging</h3>
+                <div class="code-block">
+                    <code># Enable firewall logging
+Set-NetFirewallProfile -Profile Domain,Public,Private -LogAllowed True -LogBlocked True -LogFileName "%systemroot%\system32\LogFiles\Firewall\pfirewall.log" -LogMaxSizeKilobytes 32767
+
+# View firewall logs
+Get-Content "$env:systemroot\system32\LogFiles\Firewall\pfirewall.log" -Tail 50</code>
+                </div>
+            </div>
+
+            <h2>Remote Desktop Security</h2>
+
+            <div class="vuln-item">
+                <h2>4. Secure Remote Desktop (RDP)</h2>
+
+                <h3>RDP Best Practices</h3>
+                <div class="code-block">
+                    <code># Disable RDP if not needed
+Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Value 1
+
+# Enable RDP (if needed)
+Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Value 0
+
+# Enable Network Level Authentication (NLA) - CRITICAL
+Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" -Name "UserAuthentication" -Value 1
+
+# Change RDP port (security through obscurity)
+Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" -Name "PortNumber" -Value 3390
+
+# Limit RDP access to specific users
+# Computer Management → Local Users and Groups → Groups → Remote Desktop Users
+Add-LocalGroupMember -Group "Remote Desktop Users" -Member "rdp_admin"
+Remove-LocalGroupMember -Group "Remote Desktop Users" -Member "Everyone"
+
+# Set idle timeout (Group Policy)
+# Computer Configuration → Administrative Templates → Windows Components → Remote Desktop Services → Remote Desktop Session Host → Session Time Limits
+# Set idle session limit: 15 minutes</code>
+                </div>
+
+                <h3>RDP Gateway (for Internet-facing RDP)</h3>
+                <p>Instead of exposing RDP directly to the internet:</p>
+                <ul>
+                    <li>Use RDP Gateway with SSL/TLS</li>
+                    <li>Use VPN to access internal RDP</li>
+                    <li>Use Azure Bastion for Azure VMs</li>
+                    <li>Implement MFA for RDP access</li>
+                </ul>
+            </div>
+
+            <h2>Windows Defender</h2>
+
+            <div class="vuln-item">
+                <h2>5. Configure Windows Defender</h2>
+
+                <h3>Enable All Protections</h3>
+                <div class="code-block">
+                    <code># Check Defender status
+Get-MpComputerStatus | Select-Object AntivirusEnabled, RealTimeProtectionEnabled, IoavProtectionEnabled, AntispywareEnabled, BehaviorMonitorEnabled
+
+# Enable Real-time protection
+Set-MpPreference -DisableRealtimeMonitoring $false
+
+# Enable cloud-delivered protection
+Set-MpPreference -MAPSReporting Advanced
+Set-MpPreference -SubmitSamplesConsent SendAllSamples
+
+# Enable Potentially Unwanted Application (PUA) protection
+Set-MpPreference -PUAProtection Enabled
+
+# Enable Network Protection
+Set-MpPreference -EnableNetworkProtection Enabled
+
+# Update definitions
+Update-MpSignature
+
+# Run full scan
+Start-MpScan -ScanType FullScan
+
+# Schedule daily quick scan
+Set-MpPreference -ScanScheduleQuickScanTime 12:00:00
+
+# View threat history
+Get-MpThreatDetection | Select-Object -First 10</code>
+                </div>
+
+                <h3>Attack Surface Reduction (ASR) Rules</h3>
+                <div class="code-block">
+                    <code># Enable ASR rules (Windows 10/11 Enterprise, Windows Server 2019+)
+
+# Block executable content from email and webmail
+Add-MpPreference -AttackSurfaceReductionRules_Ids BE9BA2D9-53EA-4CDC-84E5-9B1EEEE46550 -AttackSurfaceReductionRules_Actions Enabled
+
+# Block Office apps from creating executable content
+Add-MpPreference -AttackSurfaceReductionRules_Ids 3B576869-A4EC-4529-8536-B80A7769E899 -AttackSurfaceReductionRules_Actions Enabled
+
+# Block Office apps from creating child processes
+Add-MpPreference -AttackSurfaceReductionRules_Ids D4F940AB-401B-4EFC-AADC-AD5F3C50688A -AttackSurfaceReductionRules_Actions Enabled
+
+# Block JavaScript/VBScript from launching downloaded content
+Add-MpPreference -AttackSurfaceReductionRules_Ids D3E037E1-3EB8-44C8-A917-57927947596D -AttackSurfaceReductionRules_Actions Enabled
+
+# Block credential stealing from LSASS
+Add-MpPreference -AttackSurfaceReductionRules_Ids 9E6C4E1F-7D60-472F-BA1A-A39EF669E4B2 -AttackSurfaceReductionRules_Actions Enabled
+
+# View ASR rules status
+Get-MpPreference | Select-Object -ExpandProperty AttackSurfaceReductionRules_Ids</code>
+                </div>
+            </div>
+
+            <h2>PowerShell Security</h2>
+
+            <div class="vuln-item">
+                <h2>6. Secure PowerShell</h2>
+
+                <h3>Enable Script Logging</h3>
+                <div class="code-block">
+                    <code># Enable PowerShell Script Block Logging (Group Policy)
+# Computer Configuration → Administrative Templates → Windows Components → Windows PowerShell
+# Turn on PowerShell Script Block Logging: Enabled
+
+# Or via Registry
+New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Force
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Name "EnableScriptBlockLogging" -Value 1
+
+# Enable Module Logging
+New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ModuleLogging" -Force
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ModuleLogging" -Name "EnableModuleLogging" -Value 1
+
+# Enable Transcription (logs all PowerShell activity to files)
+New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\Transcription" -Force
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\Transcription" -Name "EnableTranscripting" -Value 1
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\Transcription" -Name "OutputDirectory" -Value "C:\PSTranscripts"</code>
+                </div>
+
+                <h3>Constrained Language Mode</h3>
+                <div class="code-block">
+                    <code># Check current language mode
+$ExecutionContext.SessionState.LanguageMode
+
+# Enable Constrained Language Mode (limits dangerous PowerShell features)
+# Via AppLocker or Windows Defender Application Control (WDAC)
+
+# Set execution policy
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine
+
+# Block PowerShell 2.0 (lacks security features)
+Disable-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2
+Disable-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2Root</code>
+                </div>
+            </div>
+
+            <h2>Audit and Logging</h2>
+
+            <div class="vuln-item">
+                <h2>7. Enable Security Auditing</h2>
+
+                <h3>Configure Audit Policies</h3>
+                <div class="code-block">
+                    <code># View current audit policy
+auditpol /get /category:*
+
+# Enable critical audit categories
+auditpol /set /category:"Account Logon" /success:enable /failure:enable
+auditpol /set /category:"Account Management" /success:enable /failure:enable
+auditpol /set /category:"Logon/Logoff" /success:enable /failure:enable
+auditpol /set /category:"Object Access" /success:enable /failure:enable
+auditpol /set /category:"Policy Change" /success:enable /failure:enable
+auditpol /set /category:"Privilege Use" /success:enable /failure:enable
+auditpol /set /category:"System" /success:enable /failure:enable
+
+# Enable command line auditing (see what commands are run)
+# Computer Configuration → Administrative Templates → System → Audit Process Creation
+# Include command line in process creation events: Enabled
+
+# Or via Registry
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit" -Name "ProcessCreationIncludeCmdLine_Enabled" -Value 1</code>
+                </div>
+
+                <h3>Important Event IDs to Monitor</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Event ID</th>
+                            <th>Description</th>
+                            <th>Importance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>4624</td>
+                            <td>Successful logon</td>
+                            <td>Monitor for unusual logons</td>
+                        </tr>
+                        <tr>
+                            <td>4625</td>
+                            <td>Failed logon</td>
+                            <td>Brute force detection</td>
+                        </tr>
+                        <tr>
+                            <td>4648</td>
+                            <td>Explicit credential logon</td>
+                            <td>Pass-the-hash detection</td>
+                        </tr>
+                        <tr>
+                            <td>4672</td>
+                            <td>Admin logon</td>
+                            <td>Privileged access monitoring</td>
+                        </tr>
+                        <tr>
+                            <td>4688</td>
+                            <td>Process creation</td>
+                            <td>Malware execution</td>
+                        </tr>
+                        <tr>
+                            <td>4698</td>
+                            <td>Scheduled task created</td>
+                            <td>Persistence mechanism</td>
+                        </tr>
+                        <tr>
+                            <td>4720</td>
+                            <td>User account created</td>
+                            <td>Unauthorized access</td>
+                        </tr>
+                        <tr>
+                            <td>4732</td>
+                            <td>Member added to local group</td>
+                            <td>Privilege escalation</td>
+                        </tr>
+                        <tr>
+                            <td>7045</td>
+                            <td>Service installed</td>
+                            <td>Persistence/malware</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>View Security Logs</h3>
+                <div class="code-block">
+                    <code># PowerShell - View recent security events
+Get-WinEvent -LogName Security -MaxEvents 100 | Select-Object TimeCreated, Id, Message
+
+# Search for failed logons
+Get-WinEvent -FilterHashtable @{LogName='Security';Id=4625} -MaxEvents 50
+
+# Search for admin logons
+Get-WinEvent -FilterHashtable @{LogName='Security';Id=4672} -MaxEvents 50
+
+# Export events
+Get-WinEvent -LogName Security -MaxEvents 1000 | Export-Csv "C:\security-events.csv"</code>
+                </div>
+            </div>
+
+            <h2>Additional Hardening</h2>
+
+            <div class="vuln-item">
+                <h2>8. Additional Security Settings</h2>
+
+                <h3>Disable SMBv1</h3>
+                <div class="code-block">
+                    <code># Check SMB versions
+Get-SmbServerConfiguration | Select-Object EnableSMB1Protocol, EnableSMB2Protocol
+
+# Disable SMBv1 (vulnerable to WannaCry, EternalBlue)
+Set-SmbServerConfiguration -EnableSMB1Protocol $false -Force
+
+# Or via DISM
+Disable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol
+
+# Disable SMBv1 client
+Set-SmbClientConfiguration -EnableSMB1Protocol $false</code>
+                </div>
+
+                <h3>Enable Credential Guard (Enterprise)</h3>
+                <div class="code-block">
+                    <code># Check if Credential Guard is running
+Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard
+
+# Enable via Group Policy
+# Computer Configuration → Administrative Templates → System → Device Guard
+# Turn On Virtualization Based Security: Enabled
+# Credential Guard Configuration: Enabled with UEFI lock</code>
+                </div>
+
+                <h3>BitLocker Encryption</h3>
+                <div class="code-block">
+                    <code># Check BitLocker status
+Get-BitLockerVolume
+
+# Enable BitLocker on C: drive
+Enable-BitLocker -MountPoint "C:" -EncryptionMethod XtsAes256 -UsedSpaceOnly -RecoveryPasswordProtector
+
+# Add TPM protector
+Add-BitLockerKeyProtector -MountPoint "C:" -TpmProtector
+
+# Backup recovery key to AD (domain-joined)
+Backup-BitLockerKeyProtector -MountPoint "C:" -KeyProtectorId (Get-BitLockerVolume -MountPoint "C:").KeyProtector[0].KeyProtectorId</code>
+                </div>
+
+                <h3>Disable LLMNR and NBT-NS (Prevent Responder attacks)</h3>
+                <div class="code-block">
+                    <code># Disable LLMNR via Registry
+New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient" -Force
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient" -Name "EnableMulticast" -Value 0
+
+# Disable NBT-NS (per adapter)
+$adapters = Get-WmiObject Win32_NetworkAdapterConfiguration | Where-Object { $_.IPEnabled -eq $true }
+foreach ($adapter in $adapters) {
+    $adapter.SetTcpipNetbios(2)  # 2 = Disable NetBIOS over TCP/IP
+}</code>
+                </div>
+            </div>
+
+            <h2>Security Checklist</h2>
+            <div class="success-box">
+                <p>☐ Windows fully updated with automatic updates<br>
+                ☐ Administrator account renamed and strong password set<br>
+                ☐ Guest account disabled<br>
+                ☐ Strong password policy enforced<br>
+                ☐ Account lockout policy configured<br>
+                ☐ Windows Firewall enabled on all profiles<br>
+                ☐ RDP secured with NLA or disabled if not needed<br>
+                ☐ Windows Defender enabled with all protections<br>
+                ☐ Attack Surface Reduction rules enabled<br>
+                ☐ PowerShell logging enabled<br>
+                ☐ Security auditing configured<br>
+                ☐ SMBv1 disabled<br>
+                ☐ BitLocker encryption enabled<br>
+                ☐ LLMNR and NBT-NS disabled</p>
+            </div>
+
+            <div class="warning-box">
+                <strong>Important:</strong> Test all changes in a non-production environment first. Some security settings may impact application functionality. Always have a recovery plan before making Group Policy changes.
+            </div>
+
+            <a href="index.html" class="back-link">← Back to Tools</a>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a> | Support us: <a href="https://www.etsy.com/shop/BlizfulStore?ref=seller-platform-mcnav" target="_blank">Blizful Store</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

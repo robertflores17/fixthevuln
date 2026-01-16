@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Free online JWT decoder - Decode and inspect JSON Web Tokens. View header, payload, and signature. Security analysis for JWT tokens.">
+    <meta name="keywords" content="JWT decoder, JSON Web Token, JWT parser, JWT debugger, token decoder, JWT security, authentication token">
+    <title>JWT Decoder Tool - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .jwt-tool {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .input-area {
+            margin-bottom: 1.5rem;
+        }
+        .input-area label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        .input-area textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+            min-height: 100px;
+        }
+        .input-area textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .jwt-parts {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        @media (max-width: 768px) {
+            .jwt-parts {
+                grid-template-columns: 1fr;
+            }
+        }
+        .jwt-part {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        .jwt-part h4 {
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid;
+        }
+        .jwt-part.header h4 {
+            color: #dc3545;
+            border-color: #dc3545;
+        }
+        .jwt-part.payload h4 {
+            color: #764ba2;
+            border-color: #764ba2;
+        }
+        .jwt-part.signature h4 {
+            color: #28a745;
+            border-color: #28a745;
+        }
+        .jwt-part pre {
+            background: white;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .jwt-colored {
+            font-family: monospace;
+            word-break: break-all;
+            line-height: 1.6;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        .jwt-colored .header { color: #dc3545; }
+        .jwt-colored .payload { color: #764ba2; }
+        .jwt-colored .signature { color: #28a745; }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 1rem;
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-right: 1rem;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        .claims-table {
+            width: 100%;
+            margin-top: 1rem;
+        }
+        .claims-table th, .claims-table td {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .claims-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        .claim-value {
+            font-family: monospace;
+            word-break: break-all;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .status-valid { background: #d4edda; color: #155724; }
+        .status-expired { background: #f8d7da; color: #721c24; }
+        .status-warning { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <header class="content-header">
+        <div class="container">
+            <h1>JWT Decoder</h1>
+            <p>Decode and inspect JSON Web Tokens</p>
+        </div>
+    </header>
+
+    <div style="width: 100%; height: 250px; overflow: hidden;">
+        <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=1600&h=250&fit=crop"
+             alt="JSON Web Token security"
+             style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+
+    <main class="container">
+        <div class="content-wrapper">
+            <div class="info-box">
+                <strong>Real Tool:</strong> This JWT decoder performs <strong>actual Base64 decoding</strong> in your browser. No data is sent to any server. Note: This tool decodes tokens but cannot verify signatures without the secret key.
+            </div>
+
+            <div class="jwt-tool">
+                <div class="input-area">
+                    <label for="jwtInput">Paste your JWT token:</label>
+                    <textarea id="jwtInput" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"></textarea>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <button class="btn-primary" onclick="decodeJWT()">Decode JWT</button>
+                    <button class="btn-secondary" onclick="loadSample()">Load Sample</button>
+                    <button class="btn-secondary" onclick="clearAll()">Clear</button>
+                </div>
+
+                <div id="jwtResults" style="display: none;">
+                    <h3 style="margin-bottom: 1rem;">Token Structure:</h3>
+                    <div class="jwt-colored" id="coloredToken"></div>
+
+                    <div class="jwt-parts">
+                        <div class="jwt-part header">
+                            <h4>Header</h4>
+                            <pre id="headerJson"></pre>
+                        </div>
+                        <div class="jwt-part payload">
+                            <h4>Payload</h4>
+                            <pre id="payloadJson"></pre>
+                        </div>
+                        <div class="jwt-part signature">
+                            <h4>Signature</h4>
+                            <pre id="signatureInfo"></pre>
+                        </div>
+                    </div>
+
+                    <div id="claimsAnalysis">
+                        <h3 style="margin-bottom: 1rem;">Claims Analysis:</h3>
+                        <table class="claims-table" id="claimsTable">
+                            <thead>
+                                <tr>
+                                    <th>Claim</th>
+                                    <th>Value</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody id="claimsBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div id="securityWarnings" style="margin-top: 1.5rem;"></div>
+                </div>
+            </div>
+
+            <h2>JWT Structure Reference</h2>
+
+            <div class="vuln-item">
+                <h3>Standard Claims</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Claim</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>iss</td><td>Issuer</td><td>Who issued the token</td></tr>
+                        <tr><td>sub</td><td>Subject</td><td>Who the token is about (user ID)</td></tr>
+                        <tr><td>aud</td><td>Audience</td><td>Who the token is intended for</td></tr>
+                        <tr><td>exp</td><td>Expiration</td><td>When the token expires (Unix timestamp)</td></tr>
+                        <tr><td>nbf</td><td>Not Before</td><td>Token not valid before this time</td></tr>
+                        <tr><td>iat</td><td>Issued At</td><td>When the token was issued</td></tr>
+                        <tr><td>jti</td><td>JWT ID</td><td>Unique identifier for the token</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Common Algorithms</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Algorithm</th>
+                            <th>Type</th>
+                            <th>Security</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>none</td>
+                            <td>None</td>
+                            <td style="color: #dc3545;">DANGEROUS - Never use!</td>
+                        </tr>
+                        <tr>
+                            <td>HS256</td>
+                            <td>HMAC + SHA-256</td>
+                            <td style="color: #28a745;">Secure (symmetric)</td>
+                        </tr>
+                        <tr>
+                            <td>HS384</td>
+                            <td>HMAC + SHA-384</td>
+                            <td style="color: #28a745;">Secure (symmetric)</td>
+                        </tr>
+                        <tr>
+                            <td>HS512</td>
+                            <td>HMAC + SHA-512</td>
+                            <td style="color: #28a745;">Secure (symmetric)</td>
+                        </tr>
+                        <tr>
+                            <td>RS256</td>
+                            <td>RSA + SHA-256</td>
+                            <td style="color: #28a745;">Secure (asymmetric)</td>
+                        </tr>
+                        <tr>
+                            <td>RS384</td>
+                            <td>RSA + SHA-384</td>
+                            <td style="color: #28a745;">Secure (asymmetric)</td>
+                        </tr>
+                        <tr>
+                            <td>RS512</td>
+                            <td>RSA + SHA-512</td>
+                            <td style="color: #28a745;">Secure (asymmetric)</td>
+                        </tr>
+                        <tr>
+                            <td>ES256</td>
+                            <td>ECDSA + P-256</td>
+                            <td style="color: #28a745;">Secure (asymmetric)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="warning-box">
+                <strong>Security Warning:</strong>
+                <ul style="margin-top: 0.5rem;">
+                    <li>Never trust a JWT without verifying its signature</li>
+                    <li>Always validate the <code>alg</code> header - reject "none" algorithm</li>
+                    <li>Check <code>exp</code> claim to ensure token hasn't expired</li>
+                    <li>Validate <code>iss</code> and <code>aud</code> claims match expected values</li>
+                    <li>Never store sensitive data in JWT payload (it's only Base64 encoded, not encrypted)</li>
+                </ul>
+            </div>
+
+            <a href="index.html" class="back-link">← Back to Tools</a>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a> | Support us: <a href="https://www.etsy.com/shop/BlizfulStore?ref=seller-platform-mcnav" target="_blank">Blizful Store</a></p>
+        </div>
+    </footer>
+
+    <script>
+        function base64UrlDecode(str) {
+            // Add padding if needed
+            str = str.replace(/-/g, '+').replace(/_/g, '/');
+            switch (str.length % 4) {
+                case 2: str += '=='; break;
+                case 3: str += '='; break;
+            }
+            return decodeURIComponent(atob(str).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+        }
+
+        function formatJson(obj) {
+            return JSON.stringify(obj, null, 2);
+        }
+
+        function formatTimestamp(timestamp) {
+            if (!timestamp) return 'N/A';
+            const date = new Date(timestamp * 1000);
+            return date.toLocaleString() + ' (' + date.toISOString() + ')';
+        }
+
+        function decodeJWT() {
+            const jwt = document.getElementById('jwtInput').value.trim();
+
+            if (!jwt) {
+                alert('Please enter a JWT token');
+                return;
+            }
+
+            const parts = jwt.split('.');
+            if (parts.length !== 3) {
+                alert('Invalid JWT format. A JWT should have 3 parts separated by dots.');
+                return;
+            }
+
+            try {
+                const header = JSON.parse(base64UrlDecode(parts[0]));
+                const payload = JSON.parse(base64UrlDecode(parts[1]));
+                const signature = parts[2];
+
+                // Show results
+                document.getElementById('jwtResults').style.display = 'block';
+
+                // Colored token
+                document.getElementById('coloredToken').innerHTML =
+                    '<span class="header">' + parts[0] + '</span>.<span class="payload">' + parts[1] + '</span>.<span class="signature">' + parts[2] + '</span>';
+
+                // Header
+                document.getElementById('headerJson').textContent = formatJson(header);
+
+                // Payload
+                document.getElementById('payloadJson').textContent = formatJson(payload);
+
+                // Signature
+                document.getElementById('signatureInfo').textContent =
+                    'Algorithm: ' + (header.alg || 'Unknown') + '\n\n' +
+                    'Base64 Signature:\n' + signature.substring(0, 43) + '...';
+
+                // Claims analysis
+                const claimsBody = document.getElementById('claimsBody');
+                claimsBody.innerHTML = '';
+
+                const claimDescriptions = {
+                    'iss': 'Issuer',
+                    'sub': 'Subject (User ID)',
+                    'aud': 'Audience',
+                    'exp': 'Expiration Time',
+                    'nbf': 'Not Before',
+                    'iat': 'Issued At',
+                    'jti': 'JWT ID',
+                    'name': 'Full Name',
+                    'email': 'Email Address',
+                    'role': 'User Role',
+                    'roles': 'User Roles',
+                    'scope': 'Token Scope',
+                    'permissions': 'Permissions'
+                };
+
+                for (const [key, value] of Object.entries(payload)) {
+                    const row = document.createElement('tr');
+                    let displayValue = value;
+                    let description = claimDescriptions[key] || 'Custom Claim';
+
+                    // Format timestamps
+                    if (['exp', 'nbf', 'iat'].includes(key) && typeof value === 'number') {
+                        displayValue = formatTimestamp(value);
+                    } else if (typeof value === 'object') {
+                        displayValue = JSON.stringify(value);
+                    }
+
+                    row.innerHTML = '<td><strong>' + key + '</strong></td><td class="claim-value">' + displayValue + '</td><td>' + description + '</td>';
+                    claimsBody.appendChild(row);
+                }
+
+                // Security warnings
+                const warnings = [];
+
+                if (header.alg === 'none') {
+                    warnings.push('<div class="warning-box"><strong>CRITICAL:</strong> Algorithm is "none" - this token has no signature verification!</div>');
+                }
+
+                if (header.alg && header.alg.startsWith('HS') && header.alg !== 'HS256' && header.alg !== 'HS384' && header.alg !== 'HS512') {
+                    warnings.push('<div class="warning-box"><strong>Warning:</strong> Unusual HMAC algorithm detected.</div>');
+                }
+
+                if (payload.exp) {
+                    const now = Math.floor(Date.now() / 1000);
+                    if (payload.exp < now) {
+                        warnings.push('<div class="warning-box"><strong>EXPIRED:</strong> This token expired on ' + formatTimestamp(payload.exp) + '</div>');
+                    } else {
+                        const timeLeft = payload.exp - now;
+                        const hoursLeft = Math.floor(timeLeft / 3600);
+                        const minsLeft = Math.floor((timeLeft % 3600) / 60);
+                        warnings.push('<div class="success-box"><strong>Valid:</strong> Token expires in ' + hoursLeft + ' hours, ' + minsLeft + ' minutes</div>');
+                    }
+                } else {
+                    warnings.push('<div class="warning-box"><strong>Warning:</strong> No expiration (exp) claim - token never expires!</div>');
+                }
+
+                if (!payload.iss) {
+                    warnings.push('<div class="info-box"><strong>Note:</strong> No issuer (iss) claim present.</div>');
+                }
+
+                document.getElementById('securityWarnings').innerHTML = warnings.join('');
+
+            } catch (e) {
+                alert('Error decoding JWT: ' + e.message);
+                console.error(e);
+            }
+        }
+
+        function loadSample() {
+            // Sample JWT with typical claims
+            document.getElementById('jwtInput').value = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiZW1haWwiOiJqb2huQGV4YW1wbGUuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzA0MDY3MjAwLCJleHAiOjE3MzU2ODk2MDAsImlzcyI6Imh0dHBzOi8vYXV0aC5leGFtcGxlLmNvbSIsImF1ZCI6Imh0dHBzOi8vYXBpLmV4YW1wbGUuY29tIn0.demo_signature_not_valid';
+            decodeJWT();
+        }
+
+        function clearAll() {
+            document.getElementById('jwtInput').value = '';
+            document.getElementById('jwtResults').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SSL/TLS hardening and secure HTTPS configuration guide">
+    <title>SSL/TLS Hardening - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="content-header">
+        <div class="container">
+            <h1>SSL/TLS Security Hardening</h1>
+            <p>Configuration checklist for secure HTTPS</p>
+        </div>
+    </header>
+    
+    <div style="width: 100%; height: 250px; overflow: hidden;">
+        <img src="https://images.unsplash.com/photo-1614064641938-3bbee52942c7?w=1600&h=250&fit=crop" 
+             alt="SSL/TLS encryption and HTTPS security" 
+             style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+    
+    <main class="container">
+        <div class="content-wrapper">
+            <div class="info-box">
+                <strong>Why SSL/TLS Matters:</strong> Proper SSL/TLS configuration protects data in transit, prevents man-in-the-middle attacks, and builds user trust. Weak configurations can be exploited despite having a certificate.
+            </div>
+
+            <h2>Essential SSL/TLS Hardening Steps</h2>
+
+            <div class="vuln-item">
+                <h2>1. Get a Valid SSL Certificate</h2>
+                
+                <h3>Free Option: Let's Encrypt</h3>
+                <div class="code-block">
+                    <code># Install Certbot
+sudo apt install certbot python3-certbot-apache -y  # For Apache
+sudo apt install certbot python3-certbot-nginx -y   # For Nginx
+
+# Get certificate (Apache)
+sudo certbot --apache -d example.com -d www.example.com
+
+# Get certificate (Nginx)
+sudo certbot --nginx -d example.com -d www.example.com
+
+# Test auto-renewal
+sudo certbot renew --dry-run</code>
+                </div>
+                
+                <h3>Commercial Certificates</h3>
+                <p>• DigiCert, Sectigo, GlobalSign for OV/EV certificates<br>
+                • Install using CSR (Certificate Signing Request)</p>
+                
+                <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed certificate installation guide →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h2>2. Disable Weak SSL/TLS Protocols</h2>
+                
+                <h3>Apache Configuration</h3>
+                <div class="code-block">
+                    <code># Edit /etc/apache2/sites-available/your-site-ssl.conf or ssl.conf
+
+# Disable SSLv2, SSLv3, TLS 1.0, TLS 1.1
+SSLProtocol all -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
+
+# Or only enable TLS 1.2 and 1.3
+SSLProtocol TLSv1.2 TLSv1.3
+
+# Restart Apache
+sudo systemctl restart apache2</code>
+                </div>
+                
+                <h3>Nginx Configuration</h3>
+                <div class="code-block">
+                    <code># Edit /etc/nginx/sites-available/your-site or nginx.conf
+
+server {
+    listen 443 ssl http2;
+    
+    # Only allow TLS 1.2 and 1.3
+    ssl_protocols TLSv1.2 TLSv1.3;
+    
+    # Certificate paths
+    ssl_certificate /path/to/fullchain.pem;
+    ssl_certificate_key /path/to/privkey.pem;
+}
+
+# Restart Nginx
+sudo systemctl restart nginx</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>3. Use Strong Cipher Suites</h2>
+                
+                <h3>Apache</h3>
+                <div class="code-block">
+                    <code># Strong cipher configuration
+SSLCipherSuite ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
+
+# Prefer server cipher order
+SSLHonorCipherOrder on</code>
+                </div>
+                
+                <h3>Nginx</h3>
+                <div class="code-block">
+                    <code>ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384';
+ssl_prefer_server_ciphers on;</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>4. Enable HSTS (HTTP Strict Transport Security)</h2>
+                
+                <h3>Apache</h3>
+                <div class="code-block">
+                    <code># Enable headers module
+sudo a2enmod headers
+
+# Add to VirtualHost
+Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"</code>
+                </div>
+                
+                <h3>Nginx</h3>
+                <div class="code-block">
+                    <code>add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;</code>
+                </div>
+                
+                <div class="warning-box">
+                    <strong>Important:</strong> Start with shorter max-age (e.g., 300 seconds) for testing. Once confident, increase to 31536000 (1 year) and submit to <a href="https://hstspreload.org/" target="_blank">HSTS Preload List</a>.
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>5. Enable OCSP Stapling</h2>
+                <p><strong>Why:</strong> Improves performance and privacy by bundling certificate validity status with TLS handshake.</p>
+                
+                <h3>Apache</h3>
+                <div class="code-block">
+                    <code>SSLUseStapling on
+SSLStaplingCache "shmcb:logs/stapling-cache(150000)"</code>
+                </div>
+                
+                <h3>Nginx</h3>
+                <div class="code-block">
+                    <code>ssl_stapling on;
+ssl_stapling_verify on;
+ssl_trusted_certificate /path/to/chain.pem;
+resolver 8.8.8.8 8.8.4.4 valid=300s;
+resolver_timeout 5s;</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>6. Use Strong Diffie-Hellman Parameters</h2>
+                
+                <h3>Generate DH Parameters</h3>
+                <div class="code-block">
+                    <code># Generate 2048-bit (faster, still secure)
+sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+
+# Or 4096-bit (slower, more secure - takes ~10 minutes)
+sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 4096</code>
+                </div>
+                
+                <h3>Configure Apache</h3>
+                <div class="code-block">
+                    <code>SSLOpenSSLConfCmd DHParameters "/etc/ssl/certs/dhparam.pem"</code>
+                </div>
+                
+                <h3>Configure Nginx</h3>
+                <div class="code-block">
+                    <code>ssl_dhparam /etc/ssl/certs/dhparam.pem;</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>7. Enable Session Resumption</h2>
+                
+                <h3>Apache</h3>
+                <div class="code-block">
+                    <code>SSLSessionCache "shmcb:/var/cache/apache2/ssl_scache(512000)"
+SSLSessionCacheTimeout 300</code>
+                </div>
+                
+                <h3>Nginx</h3>
+                <div class="code-block">
+                    <code>ssl_session_cache shared:SSL:10m;
+ssl_session_timeout 10m;</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>8. Redirect HTTP to HTTPS</h2>
+                
+                <h3>Apache</h3>
+                <div class="code-block">
+                    <code>&lt;VirtualHost *:80&gt;
+    ServerName example.com
+    ServerAlias www.example.com
+    
+    Redirect permanent / https://example.com/
+&lt;/VirtualHost&gt;
+
+# Or using mod_rewrite
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]</code>
+                </div>
+                
+                <h3>Nginx</h3>
+                <div class="code-block">
+                    <code>server {
+    listen 80;
+    server_name example.com www.example.com;
+    return 301 https://$server_name$request_uri;
+}</code>
+                </div>
+            </div>
+
+            <h2>Complete Secure Configuration Examples</h2>
+
+            <div class="vuln-item">
+                <h3>Apache Complete SSL Configuration</h3>
+                <div class="code-block">
+                    <code>&lt;VirtualHost *:443&gt;
+    ServerName example.com
+    ServerAlias www.example.com
+    DocumentRoot /var/www/html
+
+    # SSL Certificate
+    SSLEngine on
+    SSLCertificateFile /etc/letsencrypt/live/example.com/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/example.com/privkey.pem
+
+    # Strong protocols only
+    SSLProtocol TLSv1.2 TLSv1.3
+
+    # Strong ciphers
+    SSLCipherSuite ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384
+    SSLHonorCipherOrder on
+
+    # DH parameters
+    SSLOpenSSLConfCmd DHParameters "/etc/ssl/certs/dhparam.pem"
+
+    # OCSP Stapling
+    SSLUseStapling on
+    SSLStaplingCache "shmcb:logs/stapling-cache(150000)"
+
+    # Session cache
+    SSLSessionCache "shmcb:/var/cache/apache2/ssl_scache(512000)"
+    SSLSessionCacheTimeout 300
+
+    # Security headers
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    Header always set X-Frame-Options "DENY"
+    Header always set X-Content-Type-Options "nosniff"
+
+    # HTTP/2
+    Protocols h2 http/1.1
+&lt;/VirtualHost&gt;</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Nginx Complete SSL Configuration</h3>
+                <div class="code-block">
+                    <code>server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name example.com www.example.com;
+    root /var/www/html;
+
+    # SSL Certificate
+    ssl_certificate /etc/letsencrypt/live/example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;
+
+    # Strong protocols only
+    ssl_protocols TLSv1.2 TLSv1.3;
+
+    # Strong ciphers
+    ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384';
+    ssl_prefer_server_ciphers on;
+
+    # DH parameters
+    ssl_dhparam /etc/ssl/certs/dhparam.pem;
+
+    # OCSP Stapling
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    ssl_trusted_certificate /etc/letsencrypt/live/example.com/chain.pem;
+    resolver 8.8.8.8 8.8.4.4 valid=300s;
+    resolver_timeout 5s;
+
+    # Session cache
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+    ssl_session_tickets off;
+
+    # Security headers
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "0" always;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}</code>
+                </div>
+            </div>
+
+            <h2>Testing Your SSL/TLS Configuration</h2>
+
+            <div class="info-box">
+                <p><strong>Online Testing Tools:</strong></p>
+                <p>• <a href="https://www.ssllabs.com/ssltest/" target="_blank">SSL Labs Server Test</a> - Comprehensive SSL analysis (aim for A+ rating)<br>
+                • <a href="https://securityheaders.com/" target="_blank">Security Headers</a> - Check HTTP security headers<br>
+                • <a href="https://testssl.sh/" target="_blank">testssl.sh</a> - Command-line SSL testing tool</p>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Command-Line Testing</h3>
+                <div class="code-block">
+                    <code># Test SSL connection
+openssl s_client -connect example.com:443
+
+# Check certificate expiration
+echo | openssl s_client -servername example.com -connect example.com:443 2>/dev/null | openssl x509 -noout -dates
+
+# Test specific TLS version
+openssl s_client -connect example.com:443 -tls1_2
+openssl s_client -connect example.com:443 -tls1_3
+
+# Using testssl.sh
+git clone https://github.com/drwetter/testssl.sh.git
+cd testssl.sh
+./testssl.sh example.com</code>
+                </div>
+            </div>
+
+            <h2>Common SSL/TLS Vulnerabilities to Fix</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Vulnerability</th>
+                        <th>Impact</th>
+                        <th>Fix</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>POODLE</td>
+                        <td>High</td>
+                        <td>Disable SSLv3</td>
+                    </tr>
+                    <tr>
+                        <td>BEAST</td>
+                        <td>Medium</td>
+                        <td>Disable TLS 1.0, prefer server ciphers</td>
+                    </tr>
+                    <tr>
+                        <td>CRIME</td>
+                        <td>Medium</td>
+                        <td>Disable SSL compression</td>
+                    </tr>
+                    <tr>
+                        <td>Heartbleed</td>
+                        <td>Critical</td>
+                        <td>Update OpenSSL to 1.0.1g+</td>
+                    </tr>
+                    <tr>
+                        <td>FREAK</td>
+                        <td>High</td>
+                        <td>Disable export ciphers</td>
+                    </tr>
+                    <tr>
+                        <td>Logjam</td>
+                        <td>High</td>
+                        <td>Use 2048-bit DH parameters</td>
+                    </tr>
+                    <tr>
+                        <td>DROWN</td>
+                        <td>High</td>
+                        <td>Disable SSLv2</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Security Checklist</h2>
+            <div class="success-box">
+                <p>☐ Valid SSL certificate installed<br>
+                ☐ SSLv2, SSLv3, TLS 1.0, TLS 1.1 disabled<br>
+                ☐ Strong cipher suites configured<br>
+                ☐ HSTS enabled with long max-age<br>
+                ☐ OCSP Stapling enabled<br>
+                ☐ Strong DH parameters (2048-bit minimum)<br>
+                ☐ HTTP redirects to HTTPS<br>
+                ☐ Certificate auto-renewal configured<br>
+                ☐ SSL Labs test shows A or A+ rating<br>
+                ☐ Regular security monitoring enabled</p>
+            </div>
+
+            <div class="warning-box">
+                <strong>Important:</strong> After making SSL configuration changes, always test in staging first and verify that your site remains accessible before applying to production.
+            </div>
+
+            <div class="info-box" style="margin-top: 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
+                <h3 style="color: white;">🔒 Protect Your Connection</h3>
+                <p>Even with perfect SSL/TLS configuration, your connection can be compromised on untrusted networks. Use a VPN for an additional layer of encryption:</p>
+                <p style="margin: 1rem 0;">
+                    <a href="https://www.jdoqocy.com/click-101630293-13999888?url=https%3A%2F%2Fnordcheckout.com%2F%3Fproduct_group%3Dnordvpn%26product%3D2-year&cjsku=nordvpn-2y" target="_blank" style="background: white; color: #667eea; padding: 0.8rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block;">Get NordVPN (2-Year Plan)</a>
+                    <img src="https://www.awltovhc.com/image-101630293-13999888" width="1" height="1" style="display:none;" />
+                </p>
+                <p style="font-size: 0.9rem; opacity: 0.9;">Military-grade encryption • No-logs policy • 30-day money-back guarantee</p>
+            </div>
+
+            <a href="index.html" class="back-link">← Back to Tools</a>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a> | Support us: <a href="https://www.etsy.com/shop/BlizfulStore?ref=seller-platform-mcnav" target="_blank">Blizful Store</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

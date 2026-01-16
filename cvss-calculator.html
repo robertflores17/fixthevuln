@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CVSS v3.1 vulnerability severity score calculator">
+    <title>CVSS Score Calculator - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="content-header">
+        <div class="container">
+            <h1>CVSS v3.1 Score Calculator</h1>
+            <p>Calculate Common Vulnerability Scoring System severity ratings</p>
+        </div>
+    </header>
+    
+    <div style="width: 100%; height: 250px; overflow: hidden;">
+        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&h=250&fit=crop" 
+             alt="Vulnerability scoring and risk assessment" 
+             style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+    
+    <main class="container">
+        <div class="content-wrapper">
+            <div class="info-box">
+                <strong>What is CVSS?</strong> The Common Vulnerability Scoring System (CVSS) provides a standardized way to rate IT vulnerability severity. Scores range from 0.0 (None) to 10.0 (Critical).
+            </div>
+
+            <div class="tool-form">
+                <form id="cvssForm">
+                    <h3>Base Score Metrics</h3>
+                    
+                    <div class="form-group">
+                        <label for="attackVector">Attack Vector (AV)</label>
+                        <select id="attackVector" required>
+                            <option value="">Select...</option>
+                            <option value="N">Network (N) - Remotely exploitable</option>
+                            <option value="A">Adjacent (A) - Same network segment</option>
+                            <option value="L">Local (L) - Local access required</option>
+                            <option value="P">Physical (P) - Physical access required</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="attackComplexity">Attack Complexity (AC)</label>
+                        <select id="attackComplexity" required>
+                            <option value="">Select...</option>
+                            <option value="L">Low (L) - No special conditions</option>
+                            <option value="H">High (H) - Special conditions required</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="privilegesRequired">Privileges Required (PR)</label>
+                        <select id="privilegesRequired" required>
+                            <option value="">Select...</option>
+                            <option value="N">None (N) - No privileges needed</option>
+                            <option value="L">Low (L) - Basic user privileges</option>
+                            <option value="H">High (H) - Admin/significant privileges</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userInteraction">User Interaction (UI)</label>
+                        <select id="userInteraction" required>
+                            <option value="">Select...</option>
+                            <option value="N">None (N) - No user interaction</option>
+                            <option value="R">Required (R) - User must take action</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="scope">Scope (S)</label>
+                        <select id="scope" required>
+                            <option value="">Select...</option>
+                            <option value="U">Unchanged (U) - Impacts only vulnerable component</option>
+                            <option value="C">Changed (C) - Impacts beyond vulnerable component</option>
+                        </select>
+                    </div>
+
+                    <h3>Impact Metrics</h3>
+
+                    <div class="form-group">
+                        <label for="confidentiality">Confidentiality Impact (C)</label>
+                        <select id="confidentiality" required>
+                            <option value="">Select...</option>
+                            <option value="N">None (N) - No confidentiality impact</option>
+                            <option value="L">Low (L) - Some information disclosed</option>
+                            <option value="H">High (H) - Total information disclosure</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="integrity">Integrity Impact (I)</label>
+                        <select id="integrity" required>
+                            <option value="">Select...</option>
+                            <option value="N">None (N) - No integrity impact</option>
+                            <option value="L">Low (L) - Some data modification possible</option>
+                            <option value="H">High (H) - Total compromise of integrity</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="availability">Availability Impact (A)</label>
+                        <select id="availability" required>
+                            <option value="">Select...</option>
+                            <option value="N">None (N) - No availability impact</option>
+                            <option value="L">Low (L) - Reduced performance</option>
+                            <option value="H">High (H) - Total loss of availability</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn">Calculate CVSS Score</button>
+                </form>
+            </div>
+
+            <div id="result" class="result-box" style="display:none;">
+                <h3>CVSS v3.1 Score</h3>
+                <div id="scoreDisplay" style="font-size: 3rem; font-weight: bold; margin: 1rem 0;"></div>
+                <div id="severityDisplay" style="font-size: 1.5rem; margin: 1rem 0;"></div>
+                <div id="vectorString" style="margin-top: 1rem; font-family: monospace; background: #f0f0f0; padding: 1rem; border-radius: 4px;"></div>
+                <div id="interpretation" style="margin-top: 1rem;"></div>
+            </div>
+
+            <div class="info-box" style="margin-top: 2rem;">
+                <h3>CVSS Severity Ratings</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rating</th>
+                            <th>Score Range</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>None</td>
+                            <td>0.0</td>
+                        </tr>
+                        <tr>
+                            <td>Low</td>
+                            <td>0.1 - 3.9</td>
+                        </tr>
+                        <tr>
+                            <td>Medium</td>
+                            <td>4.0 - 6.9</td>
+                        </tr>
+                        <tr>
+                            <td>High</td>
+                            <td>7.0 - 8.9</td>
+                        </tr>
+                        <tr>
+                            <td>Critical</td>
+                            <td>9.0 - 10.0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <a href="index.html" class="back-link">← Back to Tools</a>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a> | Support us: <a href="https://www.etsy.com/shop/BlizfulStore?ref=seller-platform-mcnav" target="_blank">Blizful Store</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('cvssForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            calculateCVSS();
+        });
+
+        function calculateCVSS() {
+            // Get values
+            const AV = document.getElementById('attackVector').value;
+            const AC = document.getElementById('attackComplexity').value;
+            const PR = document.getElementById('privilegesRequired').value;
+            const UI = document.getElementById('userInteraction').value;
+            const S = document.getElementById('scope').value;
+            const C = document.getElementById('confidentiality').value;
+            const I = document.getElementById('integrity').value;
+            const A = document.getElementById('availability').value;
+
+            // Validate all fields filled
+            if (!AV || !AC || !PR || !UI || !S || !C || !I || !A) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // CVSS v3.1 metric values
+            const metrics = {
+                AV: { N: 0.85, A: 0.62, L: 0.55, P: 0.2 },
+                AC: { L: 0.77, H: 0.44 },
+                PR: { 
+                    N: { U: 0.85, C: 0.85 },
+                    L: { U: 0.62, C: 0.68 },
+                    H: { U: 0.27, C: 0.50 }
+                },
+                UI: { N: 0.85, R: 0.62 },
+                C: { N: 0, L: 0.22, H: 0.56 },
+                I: { N: 0, L: 0.22, H: 0.56 },
+                A: { N: 0, L: 0.22, H: 0.56 }
+            };
+
+            // Get PR value based on scope
+            const PRValue = metrics.PR[PR][S];
+
+            // Calculate Impact Sub Score (ISS)
+            const ISS = 1 - ((1 - metrics.C[C]) * (1 - metrics.I[I]) * (1 - metrics.A[A]));
+
+            // Calculate Impact
+            let Impact;
+            if (S === 'U') {
+                Impact = 6.42 * ISS;
+            } else {
+                Impact = 7.52 * (ISS - 0.029) - 3.25 * Math.pow(ISS - 0.02, 15);
+            }
+
+            // Calculate Exploitability
+            const Exploitability = 8.22 * metrics.AV[AV] * metrics.AC[AC] * PRValue * metrics.UI[UI];
+
+            // Calculate Base Score
+            let baseScore;
+            if (Impact <= 0) {
+                baseScore = 0;
+            } else {
+                if (S === 'U') {
+                    baseScore = Math.min(Impact + Exploitability, 10);
+                } else {
+                    baseScore = Math.min(1.08 * (Impact + Exploitability), 10);
+                }
+            }
+
+            // Round up to 1 decimal
+            baseScore = Math.ceil(baseScore * 10) / 10;
+
+            // Determine severity
+            let severity, severityColor;
+            if (baseScore === 0) {
+                severity = 'None';
+                severityColor = '#6c757d';
+            } else if (baseScore < 4.0) {
+                severity = 'Low';
+                severityColor = '#28a745';
+            } else if (baseScore < 7.0) {
+                severity = 'Medium';
+                severityColor = '#ffc107';
+            } else if (baseScore < 9.0) {
+                severity = 'High';
+                severityColor = '#fd7e14';
+            } else {
+                severity = 'Critical';
+                severityColor = '#dc3545';
+            }
+
+            // Build vector string
+            const vectorString = `CVSS:3.1/AV:${AV}/AC:${AC}/PR:${PR}/UI:${UI}/S:${S}/C:${C}/I:${I}/A:${A}`;
+
+            // Get interpretation
+            const interpretation = getSeverityInterpretation(severity);
+
+            // Display results
+            document.getElementById('scoreDisplay').textContent = baseScore.toFixed(1);
+            document.getElementById('scoreDisplay').style.color = severityColor;
+            document.getElementById('severityDisplay').textContent = `Severity: ${severity}`;
+            document.getElementById('severityDisplay').style.color = severityColor;
+            document.getElementById('vectorString').textContent = vectorString;
+            document.getElementById('interpretation').innerHTML = interpretation;
+            document.getElementById('result').style.display = 'block';
+            
+            // Scroll to result
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function getSeverityInterpretation(severity) {
+            const interpretations = {
+                'None': '<strong>None:</strong> No vulnerability or negligible risk.',
+                'Low': '<strong>Low:</strong> The vulnerability is difficult to exploit or has minimal impact. May be addressed in routine updates.',
+                'Medium': '<strong>Medium:</strong> The vulnerability presents a moderate risk and should be remediated in a timely manner.',
+                'High': '<strong>High:</strong> The vulnerability is serious and should be addressed as a priority. Can result in significant compromise.',
+                'Critical': '<strong>Critical:</strong> The vulnerability is extremely serious and requires immediate attention. Can result in complete system compromise.'
+            };
+            return interpretations[severity];
+        }
+    </script>
+</body>
+</html>

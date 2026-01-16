@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NIST Cybersecurity Framework quick reference - the 5 functions (Identify, Protect, Detect, Respond, Recover) with implementation guidance.">
+    <meta name="keywords" content="NIST CSF, NIST cybersecurity framework, NIST 5 functions, cybersecurity framework, NIST compliance">
+    <title>NIST Cybersecurity Framework - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .function-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 5px solid;
+        }
+        .function-card.identify { border-color: #667eea; }
+        .function-card.protect { border-color: #28a745; }
+        .function-card.detect { border-color: #ffc107; }
+        .function-card.respond { border-color: #fd7e14; }
+        .function-card.recover { border-color: #dc3545; }
+        .function-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .function-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        .function-icon.identify { background: #667eea; }
+        .function-icon.protect { background: #28a745; }
+        .function-icon.detect { background: #ffc107; }
+        .function-icon.respond { background: #fd7e14; }
+        .function-icon.recover { background: #dc3545; }
+        .function-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #333;
+        }
+        .function-desc {
+            color: #666;
+            font-size: 0.95rem;
+        }
+        .category-list {
+            margin-top: 1rem;
+        }
+        .category-item {
+            background: #f8f9fa;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+        }
+        .category-item strong {
+            color: #333;
+        }
+        .category-item p {
+            margin: 0.25rem 0 0 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .tier-table td:first-child {
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .framework-overview {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        @media (max-width: 768px) {
+            .framework-overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        .overview-item {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            border-radius: 12px;
+            color: white;
+        }
+        .overview-item.identify { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .overview-item.protect { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); }
+        .overview-item.detect { background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); }
+        .overview-item.respond { background: linear-gradient(135deg, #fd7e14 0%, #dc3545 100%); }
+        .overview-item.recover { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); }
+        .overview-item .icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .overview-item .title { font-weight: 700; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>RmVuln</h1></a>
+            <p class="tagline">NIST Cybersecurity Framework</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="index.html" class="back-link">&larr; Back to Home</a>
+
+        <section class="intro">
+            <h2>NIST Cybersecurity Framework (CSF)</h2>
+            <p>Quick reference guide to the NIST Cybersecurity Framework - a voluntary framework for organizations to manage and reduce cybersecurity risk. The framework consists of 5 core functions.</p>
+        </section>
+
+        <div class="framework-overview">
+            <div class="overview-item identify">
+                <div class="icon">🔍</div>
+                <div class="title">IDENTIFY</div>
+            </div>
+            <div class="overview-item protect">
+                <div class="icon">🛡️</div>
+                <div class="title">PROTECT</div>
+            </div>
+            <div class="overview-item detect">
+                <div class="icon">👁️</div>
+                <div class="title">DETECT</div>
+            </div>
+            <div class="overview-item respond">
+                <div class="icon">⚡</div>
+                <div class="title">RESPOND</div>
+            </div>
+            <div class="overview-item recover">
+                <div class="icon">🔄</div>
+                <div class="title">RECOVER</div>
+            </div>
+        </div>
+
+        <!-- Identify -->
+        <div class="function-card identify">
+            <div class="function-header">
+                <div class="function-icon identify">🔍</div>
+                <div>
+                    <div class="function-title">IDENTIFY (ID)</div>
+                    <div class="function-desc">Develop organizational understanding to manage cybersecurity risk</div>
+                </div>
+            </div>
+            <div class="category-list">
+                <div class="category-item">
+                    <strong>ID.AM - Asset Management</strong>
+                    <p>Identify and manage data, personnel, devices, systems, and facilities</p>
+                </div>
+                <div class="category-item">
+                    <strong>ID.BE - Business Environment</strong>
+                    <p>Understand organization's mission, objectives, stakeholders, and activities</p>
+                </div>
+                <div class="category-item">
+                    <strong>ID.GV - Governance</strong>
+                    <p>Policies, procedures, and processes to manage and monitor requirements</p>
+                </div>
+                <div class="category-item">
+                    <strong>ID.RA - Risk Assessment</strong>
+                    <p>Understand cybersecurity risk to operations, assets, and individuals</p>
+                </div>
+                <div class="category-item">
+                    <strong>ID.RM - Risk Management Strategy</strong>
+                    <p>Establish priorities, constraints, risk tolerances, and assumptions</p>
+                </div>
+                <div class="category-item">
+                    <strong>ID.SC - Supply Chain Risk Management</strong>
+                    <p>Identify, assess, and manage supply chain risks</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Protect -->
+        <div class="function-card protect">
+            <div class="function-header">
+                <div class="function-icon protect">🛡️</div>
+                <div>
+                    <div class="function-title">PROTECT (PR)</div>
+                    <div class="function-desc">Develop and implement safeguards to ensure delivery of critical services</div>
+                </div>
+            </div>
+            <div class="category-list">
+                <div class="category-item">
+                    <strong>PR.AC - Identity Management & Access Control</strong>
+                    <p>Limit access to assets and facilities to authorized users and processes</p>
+                </div>
+                <div class="category-item">
+                    <strong>PR.AT - Awareness and Training</strong>
+                    <p>Educate personnel to perform security-related duties</p>
+                </div>
+                <div class="category-item">
+                    <strong>PR.DS - Data Security</strong>
+                    <p>Manage information and records consistent with risk strategy</p>
+                </div>
+                <div class="category-item">
+                    <strong>PR.IP - Information Protection Processes</strong>
+                    <p>Maintain security policies, processes, and procedures</p>
+                </div>
+                <div class="category-item">
+                    <strong>PR.MA - Maintenance</strong>
+                    <p>Perform maintenance and repairs of system components</p>
+                </div>
+                <div class="category-item">
+                    <strong>PR.PT - Protective Technology</strong>
+                    <p>Technical security solutions to ensure resilience</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detect -->
+        <div class="function-card detect">
+            <div class="function-header">
+                <div class="function-icon detect">👁️</div>
+                <div>
+                    <div class="function-title">DETECT (DE)</div>
+                    <div class="function-desc">Develop and implement activities to identify cybersecurity events</div>
+                </div>
+            </div>
+            <div class="category-list">
+                <div class="category-item">
+                    <strong>DE.AE - Anomalies and Events</strong>
+                    <p>Detect anomalous activity and understand potential impact</p>
+                </div>
+                <div class="category-item">
+                    <strong>DE.CM - Security Continuous Monitoring</strong>
+                    <p>Monitor systems and assets to identify cybersecurity events</p>
+                </div>
+                <div class="category-item">
+                    <strong>DE.DP - Detection Processes</strong>
+                    <p>Maintain and test detection processes and procedures</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Respond -->
+        <div class="function-card respond">
+            <div class="function-header">
+                <div class="function-icon respond">⚡</div>
+                <div>
+                    <div class="function-title">RESPOND (RS)</div>
+                    <div class="function-desc">Develop and implement activities to take action on detected events</div>
+                </div>
+            </div>
+            <div class="category-list">
+                <div class="category-item">
+                    <strong>RS.RP - Response Planning</strong>
+                    <p>Execute response processes and procedures during/after an incident</p>
+                </div>
+                <div class="category-item">
+                    <strong>RS.CO - Communications</strong>
+                    <p>Coordinate response activities with internal and external stakeholders</p>
+                </div>
+                <div class="category-item">
+                    <strong>RS.AN - Analysis</strong>
+                    <p>Conduct analysis to ensure effective response and support recovery</p>
+                </div>
+                <div class="category-item">
+                    <strong>RS.MI - Mitigation</strong>
+                    <p>Perform activities to prevent expansion and mitigate effects</p>
+                </div>
+                <div class="category-item">
+                    <strong>RS.IM - Improvements</strong>
+                    <p>Improve response activities by incorporating lessons learned</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recover -->
+        <div class="function-card recover">
+            <div class="function-header">
+                <div class="function-icon recover">🔄</div>
+                <div>
+                    <div class="function-title">RECOVER (RC)</div>
+                    <div class="function-desc">Develop and implement activities to restore capabilities impaired by events</div>
+                </div>
+            </div>
+            <div class="category-list">
+                <div class="category-item">
+                    <strong>RC.RP - Recovery Planning</strong>
+                    <p>Execute recovery processes and procedures to restore systems</p>
+                </div>
+                <div class="category-item">
+                    <strong>RC.IM - Improvements</strong>
+                    <p>Improve recovery planning by incorporating lessons learned</p>
+                </div>
+                <div class="category-item">
+                    <strong>RC.CO - Communications</strong>
+                    <p>Coordinate restoration activities with internal and external parties</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Implementation Tiers -->
+        <section class="vulnerability-card">
+            <h2>Implementation Tiers</h2>
+            <table class="styled-table tier-table">
+                <thead>
+                    <tr>
+                        <th>Tier</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Tier 1</td>
+                        <td>Partial</td>
+                        <td>Risk management is ad hoc, limited awareness, no external collaboration</td>
+                    </tr>
+                    <tr>
+                        <td>Tier 2</td>
+                        <td>Risk Informed</td>
+                        <td>Risk management approved but not organization-wide, informal external sharing</td>
+                    </tr>
+                    <tr>
+                        <td>Tier 3</td>
+                        <td>Repeatable</td>
+                        <td>Formal policies, regularly updated, collaborates with partners</td>
+                    </tr>
+                    <tr>
+                        <td>Tier 4</td>
+                        <td>Adaptive</td>
+                        <td>Adapts based on lessons learned, continuous improvement, active sharing</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Quick Implementation -->
+        <section class="vulnerability-card">
+            <h2>Quick Implementation Checklist</h2>
+            <div class="remediation">
+                <h3>Identify</h3>
+                <ul>
+                    <li>Maintain hardware and software inventory</li>
+                    <li>Document data flows and classifications</li>
+                    <li>Conduct regular risk assessments</li>
+                    <li>Define organizational risk tolerance</li>
+                </ul>
+
+                <h3>Protect</h3>
+                <ul>
+                    <li>Implement identity management and MFA</li>
+                    <li>Conduct security awareness training</li>
+                    <li>Encrypt data at rest and in transit</li>
+                    <li>Maintain baseline configurations</li>
+                </ul>
+
+                <h3>Detect</h3>
+                <ul>
+                    <li>Deploy SIEM and log aggregation</li>
+                    <li>Implement network monitoring</li>
+                    <li>Establish security baselines and alerts</li>
+                    <li>Conduct vulnerability scanning</li>
+                </ul>
+
+                <h3>Respond</h3>
+                <ul>
+                    <li>Develop incident response plan</li>
+                    <li>Define communication procedures</li>
+                    <li>Establish forensics capabilities</li>
+                    <li>Test response procedures regularly</li>
+                </ul>
+
+                <h3>Recover</h3>
+                <ul>
+                    <li>Maintain tested backup procedures</li>
+                    <li>Document recovery procedures</li>
+                    <li>Establish business continuity plans</li>
+                    <li>Conduct post-incident reviews</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="cta">
+            <h2>Need Detailed NIST Implementation Guides?</h2>
+            <p>For comprehensive tutorials and implementation guides:</p>
+            <a href="https://fixthevuln.com" class="cta-button" target="_blank">Visit FixTheVuln.com &rarr;</a>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
+</body>
+</html>
