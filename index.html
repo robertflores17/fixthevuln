@@ -5,381 +5,613 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Free vulnerability remediation cheat sheets, OSI security reference, and interactive network tools. The Security Professional's Quick Reference Toolkit for Security+, CEH, CISSP, and GIAC exam prep.">
     <meta name="keywords" content="vulnerability remediation cheat sheet, OSI security reference, free security tools online, OWASP top 10, CVE lookup, subnet calculator, port scanner, Security+ study guide, CEH exam prep, CISSP reference, GIAC certification, network security tools, cybersecurity cheat sheets">
-    <meta name="author" content="RmVuln">
+    <meta name="author" content="FixTheVuln">
     <meta name="robots" content="index, follow">
-    <meta property="og:title" content="RmVuln - The Security Professional's Quick Reference Toolkit">
+    <meta property="og:title" content="FixTheVuln - The Security Professional's Quick Reference Toolkit">
     <meta property="og:description" content="Free vulnerability remediation cheat sheets, interactive security tools, and OSI layer attack references. Perfect for Security+, CEH, CISSP, and GIAC exam prep.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://rmvuln.com">
-    <title>RmVuln - Free Security Cheat Sheets & Vulnerability Remediation Tools</title>
+    <meta property="og:url" content="https://FixTheVuln.com">
+    <title>FixTheVuln - Free Security Cheat Sheets & Vulnerability Remediation Tools</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .category-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .category-card:hover {
+            border-color: #667eea;
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.2);
+        }
+        .category-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .category-card h3 {
+            color: #333;
+            margin: 0 0 0.3rem 0;
+            font-size: 1.1rem;
+        }
+        .category-card p {
+            color: #666;
+            margin: 0 0 0.75rem 0;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+        .category-count {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.3rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: auto;
+        }
+        .external-tools-brief {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .external-tool-link {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            text-align: center;
+            transition: all 0.2s;
+            border: 1px solid #e0e0e0;
+        }
+        .external-tool-link:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+        .external-tool-link span {
+            display: block;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .vuln-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1.5rem;
+        }
+        .vuln-card {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 1.25rem;
+            border-left: 4px solid #e74c3c;
+            box-shadow: var(--card-shadow);
+            text-align: left;
+        }
+        .vuln-card.critical { border-left-color: #9b59b6; }
+        .vuln-card.high { border-left-color: #e74c3c; }
+        .vuln-card.medium { border-left-color: #f39c12; }
+        .vuln-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+            gap: 0.5rem;
+        }
+        .vuln-card h4 {
+            color: var(--text-primary);
+            font-size: 1rem;
+            margin: 0;
+            font-weight: 600;
+        }
+        .severity-badge {
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+        .severity-badge.critical { background: #9b59b6; color: white; }
+        .severity-badge.high { background: #e74c3c; color: white; }
+        .severity-badge.medium { background: #f39c12; color: white; }
+        .vuln-card p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin: 0 0 0.75rem 0;
+            line-height: 1.4;
+        }
+        .vuln-fix {
+            background: #d4edda;
+            border-radius: 6px;
+            padding: 0.6rem 0.75rem;
+            font-size: 0.8rem;
+            color: #155724;
+        }
+        .vuln-fix strong {
+            color: #155724;
+        }
+        .vuln-impact {
+            background: #fff3cd;
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8rem;
+            color: #856404;
+            margin-bottom: 0.75rem;
+        }
+        .vuln-impact strong { color: #856404; }
+        .code-tabs {
+            display: flex;
+            gap: 0.25rem;
+            margin-bottom: 0;
+        }
+        .code-tab {
+            padding: 0.3rem 0.6rem;
+            font-size: 0.7rem;
+            background: #e9ecef;
+            border: none;
+            border-radius: 4px 4px 0 0;
+            cursor: pointer;
+            font-weight: 600;
+            color: #495057;
+        }
+        .code-tab.active {
+            background: #2c3e50;
+            color: #fff;
+        }
+        .code-block {
+            background: #2c3e50;
+            border-radius: 0 6px 6px 6px;
+            padding: 0.75rem;
+            position: relative;
+            margin-bottom: 0.75rem;
+        }
+        .code-block code {
+            color: #a8e6cf;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.75rem;
+            display: block;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.65rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .copy-btn:hover { background: #764ba2; }
+        .copy-btn.copied { background: #28a745; }
+        .kev-section {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        .kev-section h2 {
+            color: #fff;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        .kev-section > p {
+            color: #b8b8b8;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .kev-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+        .kev-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            border-left: 3px solid #e74c3c;
+        }
+        .kev-card h4 {
+            color: #fff;
+            font-size: 0.9rem;
+            margin: 0 0 0.25rem 0;
+        }
+        .kev-card .cve-id {
+            color: #e74c3c;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .kev-card p {
+            color: #b8b8b8;
+            font-size: 0.8rem;
+            margin: 0 0 0.5rem 0;
+            line-height: 1.4;
+        }
+        .kev-card .kev-fix {
+            background: rgba(40, 167, 69, 0.2);
+            border-radius: 4px;
+            padding: 0.4rem 0.6rem;
+            font-size: 0.75rem;
+            color: #a8e6cf;
+        }
+    </style>
+
+    <!-- Schema.org HowTo Markup for SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "HowTo",
+        "name": "How to Fix Common Security Vulnerabilities",
+        "description": "Quick remediation guides for SQL Injection, XSS, Broken Authentication, and other OWASP Top 10 vulnerabilities.",
+        "step": [
+            {
+                "@type": "HowToStep",
+                "name": "Fix SQL Injection",
+                "text": "Use parameterized queries or prepared statements. Never concatenate user input directly into SQL queries.",
+                "url": "https://fixthevuln.com/#sql-injection"
+            },
+            {
+                "@type": "HowToStep",
+                "name": "Fix Cross-Site Scripting (XSS)",
+                "text": "Encode all output, implement Content-Security-Policy headers, and sanitize HTML input using libraries like DOMPurify.",
+                "url": "https://fixthevuln.com/#xss"
+            },
+            {
+                "@type": "HowToStep",
+                "name": "Fix Broken Authentication",
+                "text": "Implement multi-factor authentication, use secure session tokens with httpOnly and secure flags, enforce strong password policies.",
+                "url": "https://fixthevuln.com/#broken-auth"
+            },
+            {
+                "@type": "HowToStep",
+                "name": "Fix Security Misconfiguration",
+                "text": "Remove default credentials, disable unnecessary services, configure proper error handling to hide stack traces.",
+                "url": "https://fixthevuln.com/#misconfig"
+            }
+        ]
+    }
+    </script>
 </head>
 <body>
     <header>
         <div class="container">
-            <h1>🛡️ RmVuln</h1>
+            <h1>FixTheVuln</h1>
             <p class="tagline">The Security Professional's Quick Reference Toolkit</p>
             <p class="subtitle">Free cheat sheets, interactive tools & vulnerability remediation guides</p>
         </div>
     </header>
-    
+
     <div style="width: 100%; height: 300px; overflow: hidden; position: relative;">
-        <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1600&h=300&fit=crop&crop=center" 
-             alt="Cybersecurity technology" 
+        <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1600&h=300&fit=crop&crop=center"
+             alt="Cybersecurity technology"
              style="width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7);">
         <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; text-align: center; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
             <div style="font-size: 2rem; font-weight: bold;">Security Made Simple</div>
-            <div style="font-size: 1rem; margin-top: 10px; opacity: 0.9;">Perfect for Security+ | CEH | CISSP | GIAC Exam Prep</div>
+            <div style="font-size: 1rem; margin-top: 10px; opacity: 0.9;"><b>Perfect for Security+ | CEH | CISSP | GIAC Exam Prep</b></div>
         </div>
     </div>
-    
+
     <main class="container">
         <section class="intro">
-            <h2>What is RmVuln?</h2>
-            <p>RmVuln provides instant access to security cheat sheets, vulnerability references, and quick fix commands. No fluff, just the essential information you need to secure your systems fast.</p>
+            <h2>What is FixTheVuln?</h2>
+            <p>FixTheVuln provides instant access to security cheat sheets, vulnerability references, and quick fix commands. No fluff, just the essential information you need to secure your systems fast.</p>
             <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1.5rem; justify-content: center;">
-                <a href="start-here.html" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 0.75rem 1.5rem; border-radius: 25px; font-size: 1rem; font-weight: 600; text-decoration: none; box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);">🚀 Start Learning Path</a>
-                <a href="security-quiz.html" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 0.75rem 1.5rem; border-radius: 25px; font-size: 1rem; font-weight: 600; text-decoration: none; box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);">🎯 Take the Quiz</a>
+                <a href="start-here.html" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 0.75rem 1.5rem; border-radius: 25px; font-size: 1rem; font-weight: 600; text-decoration: none; box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);">Start Learning Path</a>
+                <a href="security-quiz.html" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 0.75rem 1.5rem; border-radius: 25px; font-size: 1rem; font-weight: 600; text-decoration: none; box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);">Take the Quiz</a>
             </div>
             <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem; justify-content: center;">
-                <span style="background: #f8f9fa; color: #667eea; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.85rem; font-weight: 500;">📚 Security+</span>
-                <span style="background: #f8f9fa; color: #667eea; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.85rem; font-weight: 500;">🎯 CEH</span>
-                <span style="background: #f8f9fa; color: #667eea; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.85rem; font-weight: 500;">🏆 CISSP</span>
-                <span style="background: #f8f9fa; color: #667eea; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.85rem; font-weight: 500;">🔐 GIAC</span>
-                <span style="background: #d4edda; color: #155724; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.85rem; font-weight: 500;">💻 100% Free</span>
+                <span style="background: #f8f9fa; color: #667eea; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.85rem; font-weight: 500;">Security+</span>
+                <span style="background: #f8f9fa; color: #667eea; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.85rem; font-weight: 500;">CEH</span>
+                <span style="background: #f8f9fa; color: #667eea; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.85rem; font-weight: 500;">CISSP</span>
+                <span style="background: #f8f9fa; color: #667eea; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.85rem; font-weight: 500;">GIAC</span>
+                <span style="background: #d4edda; color: #155724; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.85rem; font-weight: 500;">100% Free</span>
             </div>
         </section>
 
-        <section class="tools">
-            <h2>Quick Reference Guides</h2>
-            <div class="tool-grid">
-                <a href="owasp-top10.html" class="tool-card">
-                    <span class="icon">🔒</span>
-                    <h3>OWASP Top 10</h3>
-                    <p>The most critical web application security risks and quick fixes</p>
-                </a>
-                
-                <a href="cve-lookup.html" class="tool-card">
-                    <span class="icon">🔍</span>
-                    <h3>Common CVE Reference</h3>
-                    <p>Quick lookup for frequently exploited vulnerabilities and patches</p>
-                </a>
-                
-                <a href="security-headers.html" class="tool-card">
-                    <span class="icon">📋</span>
-                    <h3>Security Headers</h3>
-                    <p>Essential HTTP security headers checklist and implementation</p>
+        <!-- Vulnerability Findings Section -->
+        <section style="margin-top: 3rem;">
+            <h2 style="text-align: center; margin-bottom: 0.5rem; color: var(--text-primary);">Recent Vulnerability Fixes</h2>
+            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 1rem;">Quick remediation guides for common security issues</p>
+
+            <div style="background: linear-gradient(135deg, #e7f3ff 0%, #f0f7ff 100%); border: 1px solid #b8daff; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 0.75rem;">
+                <span style="font-size: 1.25rem;">🛡️</span>
+                <p style="margin: 0; color: #004085; font-size: 0.9rem; line-height: 1.5;"><strong>Pro Tip:</strong> Always apply security patches released by vendors (Microsoft, Red Hat, Ubuntu, Apache, etc.) as soon as possible. Enable automatic updates where feasible and subscribe to security advisories like <a href="https://nvd.nist.gov/" target="_blank" style="color: #004085; font-weight: 600;">NVD</a>, <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank" style="color: #004085; font-weight: 600;">CISA KEV</a>, and vendor mailing lists to stay ahead of threats.</p>
+            </div>
+
+            <div class="vuln-grid">
+                <div class="vuln-card critical" id="sql-injection">
+                    <div class="vuln-header">
+                        <h4>SQL Injection (SQLi)</h4>
+                        <span class="severity-badge critical">Critical</span>
+                    </div>
+                    <p>Unsanitized user input in database queries allows attackers to extract or modify data.</p>
+                    <div class="vuln-impact">
+                        <strong>Impact:</strong> Full database breach, data theft, ransomware, compliance violations (GDPR/PCI fines)
+                    </div>
+                    <div class="code-tabs">
+                        <button class="code-tab active" onclick="showTab(this, 'sqli-python')">Python</button>
+                        <button class="code-tab" onclick="showTab(this, 'sqli-node')">Node.js</button>
+                        <button class="code-tab" onclick="showTab(this, 'sqli-php')">PHP</button>
+                    </div>
+                    <div class="code-block" id="sqli-python">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <code># Use parameterized queries
+cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))</code>
+                    </div>
+                    <div class="code-block" id="sqli-node" style="display:none;">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <code>// Use prepared statements
+db.query('SELECT * FROM users WHERE id = ?', [userId])</code>
+                    </div>
+                    <div class="code-block" id="sqli-php" style="display:none;">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <code>// Use PDO prepared statements
+$stmt = $pdo->prepare('SELECT * FROM users WHERE id = ?');
+$stmt->execute([$userId]);</code>
+                    </div>
+                </div>
+
+                <div class="vuln-card critical" id="xss">
+                    <div class="vuln-header">
+                        <h4>Cross-Site Scripting (XSS)</h4>
+                        <span class="severity-badge critical">Critical</span>
+                    </div>
+                    <p>Malicious scripts injected into web pages execute in users' browsers, stealing sessions or data.</p>
+                    <div class="vuln-impact">
+                        <strong>Impact:</strong> Session hijacking, credential theft, malware distribution, defacement
+                    </div>
+                    <div class="code-tabs">
+                        <button class="code-tab active" onclick="showTab(this, 'xss-js')">JavaScript</button>
+                        <button class="code-tab" onclick="showTab(this, 'xss-react')">React</button>
+                        <button class="code-tab" onclick="showTab(this, 'xss-header')">Headers</button>
+                    </div>
+                    <div class="code-block" id="xss-js">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <code>// Encode output before rendering
+element.textContent = userInput; // Safe
+// NOT: element.innerHTML = userInput; // Unsafe</code>
+                    </div>
+                    <div class="code-block" id="xss-react" style="display:none;">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <code>// React auto-escapes by default
+&lt;div&gt;{userInput}&lt;/div&gt;  // Safe
+// Avoid: dangerouslySetInnerHTML</code>
+                    </div>
+                    <div class="code-block" id="xss-header" style="display:none;">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <code>Content-Security-Policy: default-src 'self';
+X-XSS-Protection: 1; mode=block</code>
+                    </div>
+                </div>
+
+                <div class="vuln-card high" id="broken-auth">
+                    <div class="vuln-header">
+                        <h4>Broken Authentication</h4>
+                        <span class="severity-badge high">High</span>
+                    </div>
+                    <p>Weak session management or credential handling allows account takeover.</p>
+                    <div class="vuln-impact">
+                        <strong>Impact:</strong> Account takeover, identity theft, unauthorized access to sensitive data
+                    </div>
+                    <div class="code-tabs">
+                        <button class="code-tab active" onclick="showTab(this, 'auth-session')">Session</button>
+                        <button class="code-tab" onclick="showTab(this, 'auth-cookie')">Cookies</button>
+                    </div>
+                    <div class="code-block" id="auth-session">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <code># Regenerate session after login
+session.regenerate()
+session['user_id'] = user.id</code>
+                    </div>
+                    <div class="code-block" id="auth-cookie" style="display:none;">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <code>Set-Cookie: session=abc123; HttpOnly; Secure; SameSite=Strict</code>
+                    </div>
+                </div>
+
+                <div class="vuln-card high" id="idor">
+                    <div class="vuln-header">
+                        <h4>Insecure Direct Object Reference</h4>
+                        <span class="severity-badge high">High</span>
+                    </div>
+                    <p>Users can access unauthorized resources by manipulating object references (IDs, filenames).</p>
+                    <div class="vuln-impact">
+                        <strong>Impact:</strong> Unauthorized data access, PII exposure, horizontal privilege escalation
+                    </div>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <code># Always verify ownership
+def get_document(doc_id, user):
+    doc = Document.query.get(doc_id)
+    if doc.owner_id != user.id:
+        abort(403)  # Access denied
+    return doc</code>
+                    </div>
+                </div>
+
+                <div class="vuln-card medium" id="misconfig">
+                    <div class="vuln-header">
+                        <h4>Security Misconfiguration</h4>
+                        <span class="severity-badge medium">Medium</span>
+                    </div>
+                    <p>Default credentials, unnecessary services, or verbose errors expose attack surface.</p>
+                    <div class="vuln-impact">
+                        <strong>Impact:</strong> System compromise, information disclosure, lateral movement
+                    </div>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <code># Disable debug mode in production
+DEBUG = False
+ALLOWED_HOSTS = ['yourdomain.com']
+
+# Hide server version
+server_tokens off;  # nginx</code>
+                    </div>
+                </div>
+
+                <div class="vuln-card medium" id="headers">
+                    <div class="vuln-header">
+                        <h4>Missing Security Headers</h4>
+                        <span class="severity-badge medium">Medium</span>
+                    </div>
+                    <p>Absent HTTP headers leave browsers vulnerable to clickjacking, XSS, and MIME attacks.</p>
+                    <div class="vuln-impact">
+                        <strong>Impact:</strong> Clickjacking attacks, content injection, data exfiltration
+                    </div>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <code># Add to nginx/Apache config
+X-Frame-Options: DENY
+X-Content-Type-Options: nosniff
+Strict-Transport-Security: max-age=31536000
+Content-Security-Policy: default-src 'self'</code>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 1.5rem;">
+                <a href="owasp-top10.html" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600;">View All OWASP Top 10 →</a>
+            </div>
+        </section>
+
+        <!-- KEV Section - Known Exploited Vulnerabilities -->
+        <section class="kev-section">
+            <h2>Actively Exploited Vulnerabilities</h2>
+            <p>High-priority CVEs from CISA's Known Exploited Vulnerabilities catalog. Patch these immediately.</p>
+
+            <div class="kev-grid">
+                <div class="kev-card">
+                    <h4>Apache Log4j RCE (Log4Shell)</h4>
+                    <div class="cve-id">CVE-2021-44228 | CVSS 10.0</div>
+                    <p>Remote code execution via JNDI injection in Log4j logging library. Actively exploited in ransomware attacks.</p>
+                    <div class="kev-fix"><strong>Fix:</strong> Upgrade to Log4j 2.17.1+ or remove JndiLookup class</div>
+                </div>
+
+                <div class="kev-card">
+                    <h4>MOVEit Transfer SQLi</h4>
+                    <div class="cve-id">CVE-2023-34362 | CVSS 9.8</div>
+                    <p>SQL injection allowing unauthenticated access. Used by Cl0p ransomware gang in mass exploitation.</p>
+                    <div class="kev-fix"><strong>Fix:</strong> Apply Progress MOVEit patches immediately</div>
+                </div>
+
+                <div class="kev-card">
+                    <h4>Citrix NetScaler RCE</h4>
+                    <div class="cve-id">CVE-2023-4966 | CVSS 9.4</div>
+                    <p>Buffer overflow enabling session hijacking. Dubbed "CitrixBleed" - actively exploited in the wild.</p>
+                    <div class="kev-fix"><strong>Fix:</strong> Update to latest NetScaler version, kill active sessions</div>
+                </div>
+
+                <div class="kev-card">
+                    <h4>Microsoft Exchange ProxyShell</h4>
+                    <div class="cve-id">CVE-2021-34473 | CVSS 9.8</div>
+                    <p>Pre-auth RCE chain targeting Exchange servers. Widely exploited for webshell deployment.</p>
+                    <div class="kev-fix"><strong>Fix:</strong> Apply KB5001779 cumulative update</div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 1.5rem;">
+                <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank" style="background: #e74c3c; color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">View Full CISA KEV Catalog →</a>
+            </div>
+        </section>
+
+        <section style="margin-top: 3rem;">
+            <h2 style="text-align: center; margin-bottom: 0.5rem; color: var(--text-primary);">Explore Our Resources</h2>
+            <p style="text-align: center; color: var(--text-primary); margin-bottom: 1rem; font-weight: 600; font-size: 1.1rem;">Choose a category to get started</p>
+
+            <div class="category-grid">
+                <a href="guides.html" class="category-card">
+                    <span class="category-icon">📚</span>
+                    <h3>Quick Reference Guides</h3>
+                    <p>Security cheat sheets covering OWASP, infrastructure hardening, encryption, and incident response</p>
+                    <span class="category-count">19 Guides</span>
                 </a>
 
-                <a href="port-security.html" class="tool-card">
-                    <span class="icon">🔌</span>
-                    <h3>Port Security Guide</h3>
-                    <p>Common ports, risks, and how to secure them</p>
+                <a href="tools.html" class="category-card">
+                    <span class="category-icon">🛠️</span>
+                    <h3>Interactive Tools</h3>
+                    <p>Hands-on calculators, generators, decoders, and educational simulators for practice</p>
+                    <span class="category-count">20 Tools</span>
                 </a>
 
-                <a href="quick-fixes.html" class="tool-card">
-                    <span class="icon">⚡</span>
-                    <h3>Quick Fix Commands</h3>
-                    <p>One-liner commands for common vulnerability patches</p>
+                <a href="compliance.html" class="category-card">
+                    <span class="category-icon">📋</span>
+                    <h3>Compliance & Frameworks</h3>
+                    <p>NIST, CIS Controls, PCI DSS, GDPR, and SOC 2 quick reference guides</p>
+                    <span class="category-count">5 Frameworks</span>
                 </a>
 
-                <a href="ssl-tls.html" class="tool-card">
-                    <span class="icon">🔐</span>
-                    <h3>SSL/TLS Hardening</h3>
-                    <p>Configuration checklist for secure HTTPS implementation</p>
+                <a href="start-here.html" class="category-card">
+                    <span class="category-icon">🎯</span>
+                    <h3>Learning Path</h3>
+                    <p>Structured journey from security foundations to advanced topics with progress tracking</p>
+                    <span class="category-count">6 Tracks</span>
                 </a>
 
-                <a href="wordpress-security.html" class="tool-card">
-                    <span class="icon">📝</span>
-                    <h3>WordPress Security</h3>
-                    <p>Essential security hardening steps for WordPress sites</p>
-                </a>
-
-                <a href="cloud-security.html" class="tool-card">
-                    <span class="icon">☁️</span>
-                    <h3>Cloud Security Checklist</h3>
-                    <p>AWS, Azure, GCP security configuration essentials</p>
-                </a>
-
-                <a href="osi-layer-attacks.html" class="tool-card">
-                    <span class="icon">🔗</span>
-                    <h3>OSI Layer Attacks</h3>
-                    <p>Complete reference for attacks at all 7 network layers</p>
-                </a>
-
-                <a href="database-security.html" class="tool-card">
-                    <span class="icon">🗄️</span>
-                    <h3>Database Security</h3>
-                    <p>SQL injection prevention and database hardening for MySQL, PostgreSQL, MongoDB</p>
-                </a>
-
-                <a href="secrets-management.html" class="tool-card">
-                    <span class="icon">🔐</span>
-                    <h3>Secrets Management</h3>
-                    <p>Secure credential storage, environment variables, and secrets managers</p>
-                </a>
-
-                <a href="api-security.html" class="tool-card">
-                    <span class="icon">🔌</span>
-                    <h3>API Security</h3>
-                    <p>OWASP API Top 10, authentication, rate limiting, and input validation</p>
-                </a>
-
-                <a href="linux-hardening.html" class="tool-card">
-                    <span class="icon">🐧</span>
-                    <h3>Linux Hardening</h3>
-                    <p>SSH security, firewall rules, user management, and auditd configuration</p>
-                </a>
-
-                <a href="windows-hardening.html" class="tool-card">
-                    <span class="icon">🪟</span>
-                    <h3>Windows Hardening</h3>
-                    <p>Group Policy, Windows Defender, BitLocker, and PowerShell security</p>
-                </a>
-
-                <a href="container-security.html" class="tool-card">
-                    <span class="icon">🐳</span>
-                    <h3>Container Security</h3>
-                    <p>Docker hardening, Kubernetes security, and image scanning best practices</p>
-                </a>
-
-                <a href="password-policy.html" class="tool-card">
-                    <span class="icon">🔑</span>
-                    <h3>Password Policy Guide</h3>
-                    <p>NIST guidelines, length vs complexity, and MFA best practices</p>
-                </a>
-
-                <a href="encryption-cheatsheet.html" class="tool-card">
-                    <span class="icon">🔐</span>
-                    <h3>Encryption Cheat Sheet</h3>
-                    <p>AES, RSA, hashing algorithms - when to use what</p>
-                </a>
-
-                <a href="log-management.html" class="tool-card">
-                    <span class="icon">📊</span>
-                    <h3>Log Management</h3>
-                    <p>What to log, retention policies, and SIEM basics</p>
-                </a>
-
-                <a href="incident-response.html" class="tool-card">
-                    <span class="icon">🚨</span>
-                    <h3>Incident Response</h3>
-                    <p>IR steps checklist, containment procedures, and NIST framework</p>
+                <a href="resources.html" class="category-card">
+                    <span class="category-icon">⭐</span>
+                    <h3>Recommended Resources</h3>
+                    <p>Curated VPNs, anti-malware, password managers, and learning platforms we trust</p>
+                    <span class="category-count">View All</span>
                 </a>
             </div>
         </section>
 
-        <section class="tools">
-            <h2>Interactive Tools</h2>
-            <div class="tool-grid">
-                <a href="cvss-calculator.html" class="tool-card interactive">
-                    <span class="icon">🧮</span>
-                    <h3>CVSS Score Calculator</h3>
-                    <p>Calculate vulnerability severity scores (CVSS v3.1)</p>
-                </a>
-
-                <a href="password-strength.html" class="tool-card interactive">
-                    <span class="icon">🔑</span>
-                    <h3>Password Strength Checker</h3>
-                    <p>Test password security and get improvement suggestions</p>
-                </a>
-
-                <a href="hash-generator.html" class="tool-card interactive">
-                    <span class="icon">#️⃣</span>
-                    <h3>Hash Generator</h3>
-                    <p>Generate MD5, SHA-1, SHA-256, SHA-384, SHA-512 hashes instantly</p>
-                </a>
-
-                <a href="jwt-decoder.html" class="tool-card interactive">
-                    <span class="icon">🎟️</span>
-                    <h3>JWT Decoder</h3>
-                    <p>Decode and analyze JSON Web Tokens, view claims and expiration</p>
-                </a>
-
-                <a href="base64-tool.html" class="tool-card interactive">
-                    <span class="icon">🔄</span>
-                    <h3>Base64 Encoder/Decoder</h3>
-                    <p>Encode and decode Base64 strings instantly</p>
-                </a>
-
-                <a href="password-generator.html" class="tool-card interactive">
-                    <span class="icon">🎲</span>
-                    <h3>Password Generator</h3>
-                    <p>Generate secure random passwords and passphrases</p>
-                </a>
-
-                <a href="regex-tester.html" class="tool-card interactive">
-                    <span class="icon">🔍</span>
-                    <h3>Regex Tester</h3>
-                    <p>Test regular expressions for input validation and pattern matching</p>
-                </a>
-
-                <a href="sql-injection-simulator.html" class="tool-card interactive">
-                    <span class="icon">💉</span>
-                    <h3>SQL Injection Simulator</h3>
-                    <p>Learn how SQLi works and how to prevent it (educational)</p>
-                </a>
-
-                <a href="xss-playground.html" class="tool-card interactive">
-                    <span class="icon">⚠️</span>
-                    <h3>XSS Playground</h3>
-                    <p>Understand cross-site scripting attacks safely (educational)</p>
-                </a>
-
-                <a href="certificate-decoder.html" class="tool-card interactive">
-                    <span class="icon">📜</span>
-                    <h3>Certificate Decoder</h3>
-                    <p>Parse and display SSL/TLS certificate information</p>
-                </a>
-
-                <a href="rmvuln-complete.html" class="tool-card interactive">
-                    <span class="icon">🌐</span>
-                    <h3>IP Tools</h3>
-                    <p>Analyze IP addresses, get IP class, and convert formats</p>
-                </a>
-
-                <a href="rmvuln-complete.html#subnet-calc" class="tool-card interactive">
-                    <span class="icon">🔢</span>
-                    <h3>Subnet Calculator</h3>
-                    <p>Calculate network addresses, hosts, and broadcast addresses</p>
-                </a>
-
-                <a href="rmvuln-complete.html#port-scanner" class="tool-card interactive">
-                    <span class="icon">🔍</span>
-                    <h3>Port Scanner Simulator</h3>
-                    <p>Simulate port scans and learn about common port services</p>
-                </a>
-
-                <a href="rmvuln-complete.html#packet-analyzer" class="tool-card interactive">
-                    <span class="icon">📦</span>
-                    <h3>Packet Analyzer</h3>
-                    <p>Visualize packet structure across OSI layers</p>
-                </a>
-
-                <a href="rmvuln-complete.html#protocol-decoder" class="tool-card interactive">
-                    <span class="icon">🔓</span>
-                    <h3>Protocol Decoder</h3>
-                    <p>Decode hex data into Ethernet, IP, TCP, and UDP formats</p>
-                </a>
-
-                <a href="rmvuln-complete.html#cidr-converter" class="tool-card interactive">
-                    <span class="icon">🔄</span>
-                    <h3>CIDR Converter</h3>
-                    <p>Convert CIDR notation to subnet masks and IP ranges</p>
-                </a>
-
-                <a href="rmvuln-complete.html#mac-lookup" class="tool-card interactive">
-                    <span class="icon">🔎</span>
-                    <h3>MAC Address Lookup</h3>
-                    <p>Lookup vendor information from MAC addresses</p>
-                </a>
-
-                <a href="rmvuln-complete.html#dns-tools" class="tool-card interactive">
-                    <span class="icon">🌍</span>
-                    <h3>DNS Tools</h3>
-                    <p>Query DNS records (A, AAAA, MX, NS, TXT, CNAME)</p>
-                </a>
-
-                <a href="rmvuln-complete.html#vuln-scanner" class="tool-card interactive">
-                    <span class="icon">🛡️</span>
-                    <h3>Vulnerability Scanner</h3>
-                    <p>Simulate vulnerability scans with sample findings</p>
-                </a>
-
-                <a href="rmvuln-complete.html#network-calc" class="tool-card interactive">
-                    <span class="icon">📐</span>
-                    <h3>Network Calculator</h3>
-                    <p>Calculate subnet requirements based on host needs</p>
-                </a>
-            </div>
-        </section>
-
-        <section class="tools">
+        <section class="tools" style="margin-top: 3rem;">
             <h2>Free External Security Tools</h2>
-            <p style="margin-bottom: 1.5rem; color: #666;">Links to trusted third-party security services for real-world scanning and analysis.</p>
-            <div class="tool-grid">
-                <a href="https://www.virustotal.com/" target="_blank" class="tool-card">
-                    <span class="icon">🦠</span>
-                    <h3>VirusTotal</h3>
-                    <p>Scan files and URLs for malware using 70+ antivirus engines</p>
+            <p style="margin-bottom: 1rem; text-align: center;">Quick links to trusted third-party security services.</p>
+            <div class="external-tools-brief">
+                <a href="https://www.virustotal.com/" target="_blank" class="external-tool-link">
+                    <span>🦠</span>
+                    VirusTotal
                 </a>
-
-                <a href="https://www.ssllabs.com/ssltest/" target="_blank" class="tool-card">
-                    <span class="icon">🔒</span>
-                    <h3>SSL Labs</h3>
-                    <p>Deep analysis of SSL/TLS configuration and certificate validity</p>
+                <a href="https://www.ssllabs.com/ssltest/" target="_blank" class="external-tool-link">
+                    <span>🔒</span>
+                    SSL Labs
                 </a>
-
-                <a href="https://securityheaders.com/" target="_blank" class="tool-card">
-                    <span class="icon">📋</span>
-                    <h3>Security Headers</h3>
-                    <p>Analyze HTTP security headers and get improvement recommendations</p>
+                <a href="https://securityheaders.com/" target="_blank" class="external-tool-link">
+                    <span>📋</span>
+                    Security Headers
                 </a>
-
-                <a href="https://haveibeenpwned.com/" target="_blank" class="tool-card">
-                    <span class="icon">🔓</span>
-                    <h3>Have I Been Pwned</h3>
-                    <p>Check if your email or password has been exposed in data breaches</p>
+                <a href="https://haveibeenpwned.com/" target="_blank" class="external-tool-link">
+                    <span>🔓</span>
+                    Have I Been Pwned
                 </a>
-
-                <a href="https://www.shodan.io/" target="_blank" class="tool-card">
-                    <span class="icon">🌐</span>
-                    <h3>Shodan</h3>
-                    <p>Search engine for internet-connected devices and exposed services</p>
+                <a href="https://www.shodan.io/" target="_blank" class="external-tool-link">
+                    <span>🌐</span>
+                    Shodan
                 </a>
-
-                <a href="https://www.abuseipdb.com/" target="_blank" class="tool-card">
-                    <span class="icon">🚫</span>
-                    <h3>AbuseIPDB</h3>
-                    <p>Check IP reputation and report malicious IP addresses</p>
+                <a href="https://www.abuseipdb.com/" target="_blank" class="external-tool-link">
+                    <span>🚫</span>
+                    AbuseIPDB
                 </a>
-
-                <a href="https://urlscan.io/" target="_blank" class="tool-card">
-                    <span class="icon">🔍</span>
-                    <h3>URLScan.io</h3>
-                    <p>Scan and analyze websites for malicious content and phishing</p>
+                <a href="https://urlscan.io/" target="_blank" class="external-tool-link">
+                    <span>🔍</span>
+                    URLScan.io
                 </a>
-
-                <a href="https://www.whois.com/whois/" target="_blank" class="tool-card">
-                    <span class="icon">📝</span>
-                    <h3>WHOIS Lookup</h3>
-                    <p>Look up domain registration information and ownership details</p>
-                </a>
-            </div>
-        </section>
-
-        <section class="tools">
-            <h2>Compliance & Frameworks</h2>
-            <p style="margin-bottom: 1.5rem; color: #666;">Quick reference guides for security compliance frameworks and standards.</p>
-            <div class="tool-grid">
-                <a href="nist-framework.html" class="tool-card">
-                    <span class="icon">🏛️</span>
-                    <h3>NIST Cybersecurity Framework</h3>
-                    <p>The 5 functions: Identify, Protect, Detect, Respond, Recover</p>
-                </a>
-
-                <a href="cis-controls.html" class="tool-card">
-                    <span class="icon">📋</span>
-                    <h3>CIS Controls</h3>
-                    <p>The 18 Critical Security Controls with implementation guidance</p>
-                </a>
-
-                <a href="pci-dss.html" class="tool-card">
-                    <span class="icon">💳</span>
-                    <h3>PCI DSS Checklist</h3>
-                    <p>Payment card security requirements and compliance checklist</p>
-                </a>
-
-                <a href="gdpr-guide.html" class="tool-card">
-                    <span class="icon">🇪🇺</span>
-                    <h3>GDPR for Developers</h3>
-                    <p>Data protection principles, user rights, and implementation guide</p>
-                </a>
-
-                <a href="soc2-basics.html" class="tool-card">
-                    <span class="icon">✅</span>
-                    <h3>SOC 2 Basics</h3>
-                    <p>Trust Service Criteria: Security, Availability, Confidentiality</p>
+                <a href="https://www.whois.com/whois/" target="_blank" class="external-tool-link">
+                    <span>📝</span>
+                    WHOIS Lookup
                 </a>
             </div>
         </section>
@@ -410,27 +642,22 @@
             </div>
         </section>
 
-        <section class="cta">
-            <h2>Need Detailed Guides?</h2>
-            <p>For in-depth tutorials, step-by-step remediation guides, and comprehensive security articles, visit:</p>
-            <a href="https://fixthevuln.com" class="cta-button" target="_blank">FixTheVuln.com →</a>
-        </section>
 
         <section style="background: #f8f9fa; padding: 2.5rem; border-radius: 12px; margin-top: 3rem; text-align: center;">
-            <h2 style="color: #333; margin-bottom: 1rem;">📜 Our Mission</h2>
+            <h2 style="color: #333; margin-bottom: 1rem;">Our Mission</h2>
             <p style="color: #555; max-width: 800px; margin: 0 auto 1.5rem; line-height: 1.8; font-size: 1.1rem;">
-                RmVuln is a <strong>free educational platform</strong> designed to help security professionals, students, and enthusiasts learn cybersecurity concepts through interactive tools and quick reference guides. All tools on this site are <strong>simulators for educational purposes only</strong> and do not perform actual network scanning or vulnerability assessments.
+                FixTheVuln is a <strong>free educational platform</strong> designed to help security professionals, students, and enthusiasts learn cybersecurity concepts through interactive tools and quick reference guides. All tools on this site are <strong>simulators for educational purposes only</strong> and do not perform actual network scanning or vulnerability assessments.
             </p>
             <div style="border-top: 1px solid #ddd; padding-top: 1.5rem; margin-top: 1.5rem;">
                 <p style="color: #666; margin-bottom: 0.5rem;">Have suggestions, feedback, or want to contribute?</p>
-                <a href="mailto:hello@rmvuln.com" style="color: #667eea; font-weight: 600; font-size: 1.1rem; text-decoration: none;">📧 hello@rmvuln.com</a>
+                <a href="mailto:hello@FixTheVuln.com" style="color: #667eea; font-weight: 600; font-size: 1.1rem; text-decoration: none;">hello@FixTheVuln.com</a>
             </div>
         </section>
     </main>
-    
+
     <footer>
         <div class="container">
-            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p>&copy; 2026 FixTheVuln. Quick reference for security professionals.</p>
             <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a> | Support us: <a href="https://www.etsy.com/shop/BlizfulStore?ref=seller-platform-mcnav" target="_blank">Blizful Store</a></p>
             <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
                 <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
@@ -450,14 +677,14 @@
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
             html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('rmvuln-theme', newTheme);
+            localStorage.setItem('FixTheVuln-theme', newTheme);
 
             document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
         }
 
         // Load saved theme
         (function() {
-            const savedTheme = localStorage.getItem('rmvuln-theme');
+            const savedTheme = localStorage.getItem('FixTheVuln-theme');
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             const theme = savedTheme || (prefersDark ? 'dark' : 'light');
 
@@ -466,6 +693,51 @@
                 document.getElementById('theme-icon').textContent = '☀️';
             }
         })();
+
+        // Code tab switching
+        function showTab(btn, tabId) {
+            // Find parent vuln-card
+            const card = btn.closest('.vuln-card');
+
+            // Remove active from all tabs in this card
+            card.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Hide all code blocks in this card, show selected
+            card.querySelectorAll('.code-block').forEach(block => {
+                block.style.display = 'none';
+            });
+            document.getElementById(tabId).style.display = 'block';
+        }
+
+        // Copy code to clipboard
+        function copyCode(btn) {
+            const codeBlock = btn.parentElement;
+            const code = codeBlock.querySelector('code').textContent;
+
+            navigator.clipboard.writeText(code).then(() => {
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'Copy';
+                    btn.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = code;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'Copy';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
     </script>
 </body>
 </html>
