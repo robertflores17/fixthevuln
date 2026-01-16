@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-FixTheVuln - Automated Security News Fetcher
+FixTheVuln - Automated Security News Fetcher with Unsplash Images
 Fetches latest security vulnerabilities and news from multiple sources
 """
 
@@ -10,6 +10,8 @@ import requests
 from datetime import datetime
 import feedparser
 from pathlib import Path
+import hashlib
+import time
 
 # Configuration
 NEWS_SOURCES = {
@@ -20,7 +22,102 @@ NEWS_SOURCES = {
 }
 
 OUTPUT_DIR = Path('posts')
+IMAGES_DIR = Path('images')
 TEMPLATE_FILE = Path('post-template.html')
+
+# Unsplash API
+UNSPLASH_ACCESS_KEY = os.environ.get('UNSPLASH_ACCESS_KEY', '')
+UNSPLASH_API_URL = 'https://api.unsplash.com/photos/random'
+
+# Security-related search terms for images
+IMAGE_KEYWORDS = [
+    'cybersecurity',
+    'hacking',
+    'computer security',
+    'network security',
+    'data security',
+    'code security',
+    'digital security',
+    'cyber attack',
+]
+
+def fetch_unsplash_image(query='cybersecurity', post_title=''):
+    """Fetch a random security-related image from Unsplash"""
+    if not UNSPLASH_ACCESS_KEY:
+        print("⚠️  No Unsplash API key found. Skipping image fetch.")
+        return None
+    
+    try:
+        # Try to match image to post topic
+        if 'docker' in post_title.lower() or 'container' in post_title.lower():
+            query = 'containers technology'
+        elif 'sql' in post_title.lower() or 'database' in post_title.lower():
+            query = 'database security'
+        elif 'jenkins' in post_title.lower() or 'ci/cd' in post_title.lower():
+            query = 'devops security'
+        elif 'cloud' in post_title.lower():
+            query = 'cloud computing'
+        else:
+            # Use random security keyword
+            import random
+            query = random.choice(IMAGE_KEYWORDS)
+        
+        params = {
+            'query': query,
+            'orientation': 'landscape',
+            'client_id': UNSPLASH_ACCESS_KEY,
+        }
+        
+        response = requests.get(UNSPLASH_API_URL, params=params, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            image_url = data['urls']['regular']  # High quality but not too large
+            image_id = data['id']
+            photographer = data['user']['name']
+            photographer_url = data['user']['links']['html']
+            
+            return {
+                'url': image_url,
+                'id': image_id,
+                'photographer': photographer,
+                'photographer_url': photographer_url,
+                'download_link': f"{photographer_url}?utm_source=fixthevuln&utm_medium=referral"
+            }
+        else:
+            print(f"⚠️  Unsplash API error: {response.status_code}")
+            return None
+            
+    except Exception as e:
+        print(f"⚠️  Error fetching Unsplash image: {e}")
+        return None
+
+def download_image(image_data, post_id):
+    """Download and save image locally"""
+    if not image_data:
+        return None
+    
+    try:
+        # Create images directory if it doesn't exist
+        IMAGES_DIR.mkdir(exist_ok=True)
+        
+        # Generate filename from post_id
+        filename = f"post-{post_id}.jpg"
+        filepath = IMAGES_DIR / filename
+        
+        # Download image
+        response = requests.get(image_data['url'], timeout=15)
+        if response.status_code == 200:
+            with open(filepath, 'wb') as f:
+                f.write(response.content)
+            print(f"📷 Downloaded image: {filename}")
+            return f"../images/{filename}"
+        else:
+            return None
+            
+    except Exception as e:
+        print(f"⚠️  Error downloading image: {e}")
+        return None
 
 def fetch_cisa_kev():
     """Fetch CISA Known Exploited Vulnerabilities"""
@@ -73,7 +170,7 @@ def fetch_rss_feed(feed_url, source_name, max_items=3):
         print(f"Error fetching {source_name}: {e}")
         return []
 
-def generate_blog_post(post_data):
+def generate_blog_post(post_data, image_path=None, image_credit=None):
     """Generate HTML blog post from template"""
     
     # Read template
@@ -81,7 +178,7 @@ def generate_blog_post(post_data):
         with open(TEMPLATE_FILE, 'r') as f:
             template = f.read()
     else:
-        # Fallback inline template
+        # Fallback inline template with image support
         template = """<!DOCTYPE HTML>
 <html>
 <head>
@@ -105,6 +202,7 @@ def generate_blog_post(post_data):
                         <li><a href="{{LINK}}" class="icon fa-external-link-alt">Source</a></li>
                     </ul>
                 </div>
+                {{IMAGE_SECTION}}
                 <div class="content">
                     <p><strong>Summary:</strong> {{DESCRIPTION}}</p>
                     {{CVE_SECTION}}
@@ -135,6 +233,13 @@ def generate_blog_post(post_data):
     # Parse date
     date_obj = datetime.strptime(post_data['date'], '%Y-%m-%d')
     
+    # Build image section
+    image_section = ""
+    if image_path:
+        image_section = f'<a href="#" class="image featured"><img src="{image_path}" alt="{post_data["title"]}" /></a>'
+        if image_credit:
+            image_section += f'\n<p style="font-size: 0.8em; color: #888;">Photo by <a href="{image_credit["photographer_url"]}" target="_blank">{image_credit["photographer"]}</a> on <a href="{image_credit["download_link"]}" target="_blank">Unsplash</a></p>'
+    
     # Build CVE section if available
     cve_section = ""
     if post_data.get('cve_id'):
@@ -162,6 +267,7 @@ def generate_blog_post(post_data):
     html = html.replace('{{LINK}}', post_data['link'])
     html = html.replace('{{CVE_SECTION}}', cve_section)
     html = html.replace('{{REMEDIATION_SECTION}}', remediation_section)
+    html = html.replace('{{IMAGE_SECTION}}', image_section)
     
     return html
 
@@ -197,13 +303,24 @@ def main():
     print(f"\n✍️  Generating {len(all_posts)} blog posts...")
     
     for i, post in enumerate(all_posts[:10]):  # Limit to 10 most recent
+        # Generate unique post ID
+        post_id = hashlib.md5(f"{post['title']}{post['date']}".encode()).hexdigest()[:8]
+        
+        # Fetch and download image from Unsplash
+        print(f"🖼️  Fetching image for: {post['title'][:50]}...")
+        image_data = fetch_unsplash_image(post_title=post['title'])
+        image_path = download_image(image_data, post_id) if image_data else None
+        
+        # Small delay to respect Unsplash API rate limits
+        time.sleep(0.5)
+        
         # Create filename from title and date
         safe_title = ''.join(c if c.isalnum() else '-' for c in post['title'][:50]).lower()
         filename = f"{post['date']}-{safe_title}.html"
         filepath = OUTPUT_DIR / filename
         
         # Generate and save post
-        html = generate_blog_post(post)
+        html = generate_blog_post(post, image_path, image_data)
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write(html)
         

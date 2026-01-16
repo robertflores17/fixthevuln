@@ -26,15 +26,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       
-      - name: Fetch security news
+      - name: Fetch security news with images
+        env:
+          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
         run: |
-          python fetch_news.py
+          python3 fetch_news.py
       
       - name: Commit and push if changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add posts/
+          git add posts/ images/
           git diff --quiet && git diff --staged --quiet || (git commit -m "🔒 Auto-update: Daily security news $(date +'%Y-%m-%d')" && git push)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
