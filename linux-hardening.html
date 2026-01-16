@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Linux server hardening guide - SSH security, firewall configuration, user permissions, and system hardening best practices.">
+    <meta name="keywords" content="Linux hardening, server security, SSH hardening, firewall configuration, iptables, ufw, Linux permissions, system security">
+    <title>Linux Server Hardening - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="content-header">
+        <div class="container">
+            <h1>Linux Server Hardening</h1>
+            <p>Secure your Linux servers against attacks</p>
+        </div>
+    </header>
+
+    <div style="width: 100%; height: 250px; overflow: hidden;">
+        <img src="https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=1600&h=250&fit=crop"
+             alt="Linux server security"
+             style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+
+    <main class="container">
+        <div class="content-wrapper">
+            <div class="info-box">
+                <strong>Why Linux Hardening Matters:</strong> Default Linux installations prioritize ease of use over security. Hardening reduces the attack surface by disabling unnecessary services, enforcing strong authentication, and implementing defense-in-depth.
+            </div>
+
+            <h2>System Updates</h2>
+
+            <div class="vuln-item">
+                <h2>1. Keep System Updated</h2>
+
+                <h3>Debian/Ubuntu</h3>
+                <div class="code-block">
+                    <code># Update package lists and upgrade
+sudo apt update && sudo apt upgrade -y
+
+# Enable automatic security updates
+sudo apt install unattended-upgrades
+sudo dpkg-reconfigure -plow unattended-upgrades
+
+# Configure automatic updates
+sudo nano /etc/apt/apt.conf.d/50unattended-upgrades
+# Uncomment: "${distro_id}:${distro_codename}-security";</code>
+                </div>
+
+                <h3>RHEL/CentOS/Rocky/Alma</h3>
+                <div class="code-block">
+                    <code># Update all packages
+sudo dnf update -y   # RHEL 8+/Rocky/Alma
+sudo yum update -y   # RHEL 7/CentOS 7
+
+# Enable automatic updates
+sudo dnf install dnf-automatic
+sudo systemctl enable --now dnf-automatic.timer
+
+# Configure automatic updates
+sudo nano /etc/dnf/automatic.conf
+# Set: apply_updates = yes</code>
+                </div>
+            </div>
+
+            <h2>SSH Hardening</h2>
+
+            <div class="vuln-item">
+                <h2>2. Secure SSH Configuration</h2>
+
+                <h3>Edit SSH Config (/etc/ssh/sshd_config)</h3>
+                <div class="code-block">
+                    <code># /etc/ssh/sshd_config - Security hardened configuration
+
+# Change default port (security through obscurity - optional)
+Port 2222
+
+# Disable root login
+PermitRootLogin no
+
+# Disable password authentication (use keys only)
+PasswordAuthentication no
+PubkeyAuthentication yes
+
+# Disable empty passwords
+PermitEmptyPasswords no
+
+# Limit login attempts
+MaxAuthTries 3
+
+# Set login grace time
+LoginGraceTime 60
+
+# Disable X11 forwarding
+X11Forwarding no
+
+# Disable TCP forwarding (unless needed)
+AllowTcpForwarding no
+
+# Use strong ciphers only
+Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com
+MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
+KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group16-sha512
+
+# Limit users who can SSH
+AllowUsers admin deploy
+# Or use groups
+AllowGroups sshusers
+
+# Set idle timeout (5 minutes)
+ClientAliveInterval 300
+ClientAliveCountMax 0
+
+# Disable unused authentication methods
+ChallengeResponseAuthentication no
+KerberosAuthentication no
+GSSAPIAuthentication no
+
+# Enable logging
+LogLevel VERBOSE</code>
+                </div>
+
+                <h3>Apply Changes</h3>
+                <div class="code-block">
+                    <code># Test configuration before restart
+sudo sshd -t
+
+# Restart SSH service
+sudo systemctl restart sshd
+
+# IMPORTANT: Keep current session open and test new connection first!</code>
+                </div>
+
+                <h3>SSH Key Setup</h3>
+                <div class="code-block">
+                    <code># Generate SSH key pair (on client machine)
+ssh-keygen -t ed25519 -C "your_email@example.com"
+# Or RSA 4096 if ed25519 not supported
+ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+
+# Copy public key to server
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server
+
+# Or manually add to server
+cat ~/.ssh/id_ed25519.pub >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+chmod 700 ~/.ssh</code>
+                </div>
+            </div>
+
+            <h2>Firewall Configuration</h2>
+
+            <div class="vuln-item">
+                <h2>3. Configure Firewall</h2>
+
+                <h3>UFW (Uncomplicated Firewall) - Ubuntu/Debian</h3>
+                <div class="code-block">
+                    <code># Install UFW
+sudo apt install ufw
+
+# Set default policies
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+
+# Allow SSH (BEFORE enabling!)
+sudo ufw allow 22/tcp
+# Or custom port
+sudo ufw allow 2222/tcp
+
+# Allow common services
+sudo ufw allow 80/tcp   # HTTP
+sudo ufw allow 443/tcp  # HTTPS
+
+# Allow from specific IP only
+sudo ufw allow from 192.168.1.100 to any port 22
+
+# Enable firewall
+sudo ufw enable
+
+# Check status
+sudo ufw status verbose
+
+# View rules numbered (for deletion)
+sudo ufw status numbered
+
+# Delete a rule
+sudo ufw delete 3</code>
+                </div>
+
+                <h3>firewalld - RHEL/CentOS/Rocky</h3>
+                <div class="code-block">
+                    <code># Start and enable firewalld
+sudo systemctl enable --now firewalld
+
+# Check status
+sudo firewall-cmd --state
+
+# List all rules
+sudo firewall-cmd --list-all
+
+# Add services
+sudo firewall-cmd --permanent --add-service=ssh
+sudo firewall-cmd --permanent --add-service=http
+sudo firewall-cmd --permanent --add-service=https
+
+# Add custom port
+sudo firewall-cmd --permanent --add-port=2222/tcp
+
+# Remove service
+sudo firewall-cmd --permanent --remove-service=ssh
+
+# Allow from specific IP
+sudo firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="192.168.1.100" service name="ssh" accept'
+
+# Reload to apply changes
+sudo firewall-cmd --reload</code>
+                </div>
+
+                <h3>iptables (Advanced)</h3>
+                <div class="code-block">
+                    <code># Flush existing rules
+sudo iptables -F
+
+# Set default policies
+sudo iptables -P INPUT DROP
+sudo iptables -P FORWARD DROP
+sudo iptables -P OUTPUT ACCEPT
+
+# Allow loopback
+sudo iptables -A INPUT -i lo -j ACCEPT
+
+# Allow established connections
+sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+# Allow SSH
+sudo iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+
+# Allow HTTP/HTTPS
+sudo iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+sudo iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+
+# Rate limit SSH connections (prevent brute force)
+sudo iptables -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW -m recent --set
+sudo iptables -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW -m recent --update --seconds 60 --hitcount 4 -j DROP
+
+# Save rules
+sudo iptables-save | sudo tee /etc/iptables/rules.v4
+
+# Install persistence
+sudo apt install iptables-persistent</code>
+                </div>
+            </div>
+
+            <h2>User Management</h2>
+
+            <div class="vuln-item">
+                <h2>4. Secure User Accounts</h2>
+
+                <h3>Create Non-Root Admin User</h3>
+                <div class="code-block">
+                    <code># Create user
+sudo useradd -m -s /bin/bash admin
+
+# Set strong password
+sudo passwd admin
+
+# Add to sudo group
+sudo usermod -aG sudo admin    # Debian/Ubuntu
+sudo usermod -aG wheel admin   # RHEL/CentOS
+
+# Lock root account (after confirming sudo works!)
+sudo passwd -l root</code>
+                </div>
+
+                <h3>Password Policy (/etc/login.defs)</h3>
+                <div class="code-block">
+                    <code># /etc/login.defs
+PASS_MAX_DAYS   90    # Maximum days password valid
+PASS_MIN_DAYS   7     # Minimum days between changes
+PASS_MIN_LEN    12    # Minimum password length
+PASS_WARN_AGE   14    # Warning days before expiry
+
+# Apply to existing user
+sudo chage -M 90 -m 7 -W 14 username</code>
+                </div>
+
+                <h3>PAM Password Requirements</h3>
+                <div class="code-block">
+                    <code># Install password quality checking
+sudo apt install libpam-pwquality
+
+# Configure /etc/security/pwquality.conf
+minlen = 12
+minclass = 3
+maxrepeat = 3
+maxclassrepeat = 4
+lcredit = -1
+ucredit = -1
+dcredit = -1
+ocredit = -1
+dictcheck = 1</code>
+                </div>
+
+                <h3>Audit User Accounts</h3>
+                <div class="code-block">
+                    <code># List all users with login shells
+cat /etc/passwd | grep -v nologin | grep -v false
+
+# List users with UID 0 (root privileges)
+awk -F: '($3 == "0") {print}' /etc/passwd
+
+# Find users with empty passwords
+sudo awk -F: '($2 == "") {print $1}' /etc/shadow
+
+# List users in sudo/wheel group
+getent group sudo
+getent group wheel
+
+# Check for unauthorized SSH keys
+find /home -name "authorized_keys" -exec ls -la {} \;</code>
+                </div>
+            </div>
+
+            <h2>File Permissions</h2>
+
+            <div class="vuln-item">
+                <h2>5. Secure File Permissions</h2>
+
+                <h3>Critical File Permissions</h3>
+                <div class="code-block">
+                    <code># Secure SSH files
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/id_*
+chmod 644 ~/.ssh/id_*.pub
+chmod 644 ~/.ssh/known_hosts
+
+# Secure system files
+sudo chmod 644 /etc/passwd
+sudo chmod 000 /etc/shadow
+sudo chmod 000 /etc/gshadow
+sudo chmod 644 /etc/group
+sudo chmod 600 /etc/ssh/sshd_config
+
+# Remove world-writable permissions
+find /home -type f -perm -002 -exec chmod o-w {} \;
+
+# Find SUID/SGID files (potential security risk)
+find / -perm /4000 -type f 2>/dev/null  # SUID
+find / -perm /2000 -type f 2>/dev/null  # SGID
+
+# Find world-writable files
+find / -type f -perm -002 2>/dev/null
+
+# Find files without owner
+find / -nouser -o -nogroup 2>/dev/null</code>
+                </div>
+
+                <h3>Secure /tmp</h3>
+                <div class="code-block">
+                    <code># Mount /tmp with noexec, nosuid (edit /etc/fstab)
+tmpfs /tmp tmpfs defaults,noexec,nosuid,nodev 0 0
+
+# Remount without reboot
+sudo mount -o remount /tmp</code>
+                </div>
+            </div>
+
+            <h2>Disable Unnecessary Services</h2>
+
+            <div class="vuln-item">
+                <h2>6. Minimize Attack Surface</h2>
+
+                <h3>List Running Services</h3>
+                <div class="code-block">
+                    <code># List all running services
+sudo systemctl list-units --type=service --state=running
+
+# List enabled services
+sudo systemctl list-unit-files --type=service --state=enabled
+
+# List listening ports
+sudo ss -tulpn
+sudo netstat -tulpn</code>
+                </div>
+
+                <h3>Disable Unnecessary Services</h3>
+                <div class="code-block">
+                    <code># Disable and stop service
+sudo systemctl disable --now cups       # Printing
+sudo systemctl disable --now avahi-daemon  # mDNS
+sudo systemctl disable --now bluetooth  # Bluetooth
+sudo systemctl disable --now ModemManager  # Modem
+sudo systemctl disable --now rpcbind    # NFS (if not used)
+
+# Mask service (prevent starting)
+sudo systemctl mask cups</code>
+                </div>
+
+                <h3>Remove Unnecessary Packages</h3>
+                <div class="code-block">
+                    <code># Debian/Ubuntu
+sudo apt remove --purge telnet rsh-client
+sudo apt autoremove
+
+# RHEL/CentOS
+sudo dnf remove telnet rsh</code>
+                </div>
+            </div>
+
+            <h2>Logging & Auditing</h2>
+
+            <div class="vuln-item">
+                <h2>7. Enable Comprehensive Logging</h2>
+
+                <h3>Configure auditd</h3>
+                <div class="code-block">
+                    <code># Install auditd
+sudo apt install auditd audispd-plugins
+
+# Enable and start
+sudo systemctl enable --now auditd
+
+# Add audit rules (/etc/audit/rules.d/audit.rules)
+
+# Monitor authentication
+-w /etc/passwd -p wa -k identity
+-w /etc/shadow -p wa -k identity
+-w /etc/group -p wa -k identity
+-w /etc/gshadow -p wa -k identity
+
+# Monitor sudo usage
+-w /etc/sudoers -p wa -k sudoers
+-w /etc/sudoers.d/ -p wa -k sudoers
+
+# Monitor SSH config
+-w /etc/ssh/sshd_config -p wa -k sshd
+
+# Monitor login/logout
+-w /var/log/faillog -p wa -k logins
+-w /var/log/lastlog -p wa -k logins
+
+# Reload rules
+sudo augenrules --load</code>
+                </div>
+
+                <h3>View Audit Logs</h3>
+                <div class="code-block">
+                    <code># Search audit logs
+sudo ausearch -k identity
+sudo ausearch -k sudoers
+
+# Generate report
+sudo aureport --summary
+sudo aureport --auth
+sudo aureport --login</code>
+                </div>
+
+                <h3>Centralize Logs (rsyslog)</h3>
+                <div class="code-block">
+                    <code># Send logs to remote server
+# Add to /etc/rsyslog.conf
+*.* @syslog-server.example.com:514   # UDP
+*.* @@syslog-server.example.com:514  # TCP
+
+# Restart rsyslog
+sudo systemctl restart rsyslog</code>
+                </div>
+            </div>
+
+            <h2>Intrusion Prevention</h2>
+
+            <div class="vuln-item">
+                <h2>8. Install Fail2Ban</h2>
+
+                <div class="code-block">
+                    <code># Install Fail2Ban
+sudo apt install fail2ban   # Debian/Ubuntu
+sudo dnf install fail2ban   # RHEL/Rocky
+
+# Create local config
+sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+
+# Edit /etc/fail2ban/jail.local
+[DEFAULT]
+bantime = 1h
+findtime = 10m
+maxretry = 5
+ignoreip = 127.0.0.1/8 ::1
+
+[sshd]
+enabled = true
+port = ssh
+filter = sshd
+logpath = /var/log/auth.log   # Debian
+# logpath = /var/log/secure   # RHEL
+maxretry = 3
+bantime = 24h
+
+# Enable and start
+sudo systemctl enable --now fail2ban
+
+# Check status
+sudo fail2ban-client status
+sudo fail2ban-client status sshd
+
+# Unban an IP
+sudo fail2ban-client set sshd unbanip 192.168.1.100</code>
+                </div>
+            </div>
+
+            <h2>Security Checklist</h2>
+            <div class="success-box">
+                <p>☐ System fully updated with auto-updates enabled<br>
+                ☐ SSH: Root login disabled, key-based auth only<br>
+                ☐ SSH: Running on non-standard port (optional)<br>
+                ☐ Firewall enabled with minimal open ports<br>
+                ☐ Non-root admin user created<br>
+                ☐ Strong password policy enforced<br>
+                ☐ Unnecessary services disabled<br>
+                ☐ File permissions secured<br>
+                ☐ Audit logging enabled (auditd)<br>
+                ☐ Fail2Ban or similar installed<br>
+                ☐ Logs centralized to remote server<br>
+                ☐ Regular security scans scheduled</p>
+            </div>
+
+            <div class="warning-box">
+                <strong>Important:</strong> Always test SSH configuration changes in a separate terminal before closing your current session. Incorrect SSH settings can lock you out permanently!
+            </div>
+
+            <a href="index.html" class="back-link">← Back to Tools</a>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a> | Support us: <a href="https://www.etsy.com/shop/BlizfulStore?ref=seller-platform-mcnav" target="_blank">Blizful Store</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

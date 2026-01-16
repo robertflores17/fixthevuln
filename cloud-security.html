@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Cloud security checklist and best practices for AWS, Azure, and GCP">
+    <title>Cloud Security Checklist - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="content-header">
+        <div class="container">
+            <h1>Cloud Security Checklist</h1>
+            <p>Essential security configurations for AWS, Azure, and GCP</p>
+        </div>
+    </header>
+    
+    <div style="width: 100%; height: 250px; overflow: hidden;">
+        <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1600&h=250&fit=crop" 
+             alt="Cloud computing security and infrastructure" 
+             style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+    
+    <main class="container">
+        <div class="content-wrapper">
+            <div class="warning-box">
+                <strong>Cloud Security Importance:</strong> Misconfigured cloud resources are a leading cause of data breaches. Default settings are rarely secure. Regular auditing is essential.
+            </div>
+
+            <h2>Universal Cloud Security Principles</h2>
+
+            <div class="vuln-item">
+                <h2>1. Identity and Access Management (IAM)</h2>
+                <h3>Principle of Least Privilege</h3>
+                <p>• Grant minimum permissions necessary<br>
+                • Use role-based access control (RBAC)<br>
+                • Regularly review and revoke unused permissions<br>
+                • Never use root/admin accounts for daily operations</p>
+                
+                <h3>Multi-Factor Authentication (MFA)</h3>
+                <p>• Enable MFA for ALL users<br>
+                • Especially critical for admin/root accounts<br>
+                • Use hardware tokens for high-privilege accounts</p>
+            </div>
+
+            <div class="vuln-item">
+                <h2>2. Encryption</h2>
+                <p>• Encrypt data at rest (storage, databases)<br>
+                • Encrypt data in transit (TLS/HTTPS)<br>
+                • Use cloud provider managed keys or bring your own (BYOK)<br>
+                • Enable automatic key rotation</p>
+            </div>
+
+            <div class="vuln-item">
+                <h2>3. Network Security</h2>
+                <p>• Use Virtual Private Cloud (VPC) / VNet<br>
+                • Implement network segmentation<br>
+                • Configure security groups/firewalls properly<br>
+                • Disable public access unless absolutely necessary<br>
+                • Use private endpoints for internal services</p>
+            </div>
+
+            <div class="vuln-item">
+                <h2>4. Logging and Monitoring</h2>
+                <p>• Enable cloud audit logs<br>
+                • Set up alerts for suspicious activity<br>
+                • Centralize logs in secure location<br>
+                • Retain logs for compliance requirements<br>
+                • Monitor for configuration changes</p>
+            </div>
+
+            <h2>AWS Security Best Practices</h2>
+
+            <div class="vuln-item">
+                <h2>AWS IAM Security</h2>
+                
+                <h3>Secure Root Account</h3>
+                <div class="code-block">
+                    <code># AWS CLI - Check root account usage
+aws iam get-account-summary
+
+# Enable MFA for root (via AWS Console)
+# IAM → Dashboard → Security Status → Activate MFA</code>
+                </div>
+                
+                <h3>IAM Best Practices</h3>
+                <div class="code-block">
+                    <code># Create IAM user instead of using root
+aws iam create-user --user-name admin-user
+
+# Attach administrator access policy
+aws iam attach-user-policy --user-name admin-user --policy-arn arn:aws:iam::aws:policy/AdministratorAccess
+
+# Enable MFA for IAM user
+aws iam enable-mfa-device --user-name admin-user --serial-number arn:aws:iam::ACCOUNT-ID:mfa/admin-user --authentication-code1 123456 --authentication-code2 654321
+
+# Rotate access keys regularly
+aws iam create-access-key --user-name admin-user
+aws iam delete-access-key --user-name admin-user --access-key-id OLD_KEY_ID</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>AWS S3 Bucket Security</h2>
+                
+                <h3>Block Public Access</h3>
+                <div class="code-block">
+                    <code># Block public access (recommended default)
+aws s3api put-public-access-block --bucket my-bucket --public-access-block-configuration \
+    "BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true"
+
+# Enable versioning for backup
+aws s3api put-bucket-versioning --bucket my-bucket --versioning-configuration Status=Enabled
+
+# Enable encryption at rest
+aws s3api put-bucket-encryption --bucket my-bucket --server-side-encryption-configuration \
+    '{"Rules":[{"ApplyServerSideEncryptionByDefault":{"SSEAlgorithm":"AES256"}}]}'
+
+# Enable access logging
+aws s3api put-bucket-logging --bucket my-bucket --bucket-logging-status \
+    '{"LoggingEnabled":{"TargetBucket":"my-log-bucket","TargetPrefix":"my-bucket-logs/"}}'</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>AWS EC2 Security</h2>
+                
+                <div class="code-block">
+                    <code># Secure security group (allow only necessary ports)
+aws ec2 authorize-security-group-ingress --group-id sg-xxxxx --protocol tcp --port 22 --cidr 203.0.113.0/24
+
+# Remove overly permissive rules
+aws ec2 revoke-security-group-ingress --group-id sg-xxxxx --protocol tcp --port 22 --cidr 0.0.0.0/0
+
+# Enable detailed monitoring
+aws ec2 monitor-instances --instance-ids i-xxxxx
+
+# Use Systems Manager Session Manager instead of SSH (more secure)
+aws ssm start-session --target i-xxxxx</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>AWS CloudTrail (Audit Logging)</h2>
+                
+                <div class="code-block">
+                    <code># Enable CloudTrail for all regions
+aws cloudtrail create-trail --name my-trail --s3-bucket-name my-cloudtrail-bucket --is-multi-region-trail
+
+# Start logging
+aws cloudtrail start-logging --name my-trail
+
+# Enable log file validation
+aws cloudtrail update-trail --name my-trail --enable-log-file-validation
+
+# Check trail status
+aws cloudtrail get-trail-status --name my-trail</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>AWS Security Tools</h2>
+                <p>• <strong>AWS GuardDuty:</strong> Threat detection<br>
+                • <strong>AWS Security Hub:</strong> Centralized security findings<br>
+                • <strong>AWS Config:</strong> Configuration compliance<br>
+                • <strong>AWS Inspector:</strong> Vulnerability assessments<br>
+                • <strong>AWS Macie:</strong> Data security and privacy</p>
+            </div>
+
+            <h2>Azure Security Best Practices</h2>
+
+            <div class="vuln-item">
+                <h2>Azure Active Directory (AAD)</h2>
+                
+                <div class="code-block">
+                    <code># Enable MFA for all users
+az ad user update --id <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="730600160133160b121e031f165d101c1e">[email&#160;protected]</a> --force-change-password-next-login true
+
+# Create conditional access policy requiring MFA
+# (Use Azure Portal: Azure AD → Security → Conditional Access)
+
+# List privileged role assignments
+az role assignment list --role "Owner" --output table
+
+# Review and remove unnecessary role assignments
+az role assignment delete --assignee <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8efbfdebfcceebf6efe3fee2eba0ede1e3">[email&#160;protected]</a> --role "Contributor"</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>Azure Storage Security</h2>
+                
+                <div class="code-block">
+                    <code># Disable public blob access
+az storage account update --name mystorageaccount --resource-group myResourceGroup --allow-blob-public-access false
+
+# Enable encryption at rest (enabled by default, but verify)
+az storage account update --name mystorageaccount --resource-group myResourceGroup --encryption-services blob
+
+# Enable soft delete for blobs
+az storage blob service-properties delete-policy update --account-name mystorageaccount --enable true --days-retained 30
+
+# Require secure transfer (HTTPS only)
+az storage account update --name mystorageaccount --resource-group myResourceGroup --https-only true
+
+# Enable storage analytics logging
+az storage logging update --account-name mystorageaccount --services b --log rwd --retention 90</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>Azure Network Security</h2>
+                
+                <div class="code-block">
+                    <code># Create Network Security Group with restricted rules
+az network nsg create --name myNSG --resource-group myResourceGroup
+
+# Allow HTTPS only
+az network nsg rule create --name AllowHTTPS --nsg-name myNSG --resource-group myResourceGroup \
+    --priority 100 --destination-port-ranges 443 --access Allow --protocol Tcp
+
+# Deny all other inbound traffic
+az network nsg rule create --name DenyAll --nsg-name myNSG --resource-group myResourceGroup \
+    --priority 4096 --access Deny --protocol '*' --direction Inbound
+
+# Enable DDoS Protection
+az network ddos-protection create --name myDDoSProtection --resource-group myResourceGroup</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>Azure Security Tools</h2>
+                <p>• <strong>Microsoft Defender for Cloud:</strong> Security posture management<br>
+                • <strong>Azure Sentinel:</strong> SIEM and SOAR<br>
+                • <strong>Azure Policy:</strong> Governance and compliance<br>
+                • <strong>Azure Key Vault:</strong> Secrets management</p>
+            </div>
+
+            <h2>Google Cloud (GCP) Security Best Practices</h2>
+
+            <div class="vuln-item">
+                <h2>GCP IAM Security</h2>
+                
+                <div class="code-block">
+                    <code># List all IAM bindings for a project
+gcloud projects get-iam-policy PROJECT_ID
+
+# Add user with specific role
+gcloud projects add-iam-policy-binding PROJECT_ID \
+    --member='user:<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0f6a626e66634f6a776e627f636a216c6062">[email&#160;protected]</a>' \
+    --role='roles/viewer'
+
+# Remove overly permissive binding
+gcloud projects remove-iam-policy-binding PROJECT_ID \
+    --member='user:<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="72171f131b1e32170a131f021e175c111d1f">[email&#160;protected]</a>' \
+    --role='roles/owner'
+
+# Enable organization policy for domain restriction
+gcloud resource-manager org-policies set-policy policy.yaml</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>GCP Cloud Storage Security</h2>
+                
+                <div class="code-block">
+                    <code># Remove public access
+gsutil iam ch -d allUsers:objectViewer gs://my-bucket
+
+# Enable uniform bucket-level access
+gsutil uniformbucketlevelaccess set on gs://my-bucket
+
+# Enable versioning
+gsutil versioning set on gs://my-bucket
+
+# Enable encryption at rest (default, but can specify keys)
+gsutil encryption set -k projects/PROJECT_ID/locations/LOCATION/keyRings/KEYRING/cryptoKeys/KEY gs://my-bucket
+
+# Set lifecycle rules to auto-delete old data
+gsutil lifecycle set lifecycle.json gs://my-bucket</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>GCP Compute Engine Security</h2>
+                
+                <div class="code-block">
+                    <code># Create firewall rule (deny by default, allow specific)
+gcloud compute firewall-rules create allow-https \
+    --allow tcp:443 \
+    --source-ranges 0.0.0.0/0 \
+    --target-tags https-server
+
+# Remove overly permissive rules
+gcloud compute firewall-rules delete allow-all
+
+# Enable OS patch management
+gcloud compute instances os-patch-update INSTANCE_NAME --zone=ZONE
+
+# Use shielded VMs for extra security
+gcloud compute instances create INSTANCE_NAME \
+    --shielded-secure-boot \
+    --shielded-vtpm \
+    --shielded-integrity-monitoring</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>GCP Security Tools</h2>
+                <p>• <strong>Security Command Center:</strong> Security and risk management<br>
+                • <strong>Cloud Armor:</strong> DDoS and application defense<br>
+                • <strong>VPC Service Controls:</strong> Data exfiltration protection<br>
+                • <strong>Binary Authorization:</strong> Container image security</p>
+            </div>
+
+            <h2>Common Cloud Misconfigurations</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Misconfiguration</th>
+                        <th>Risk</th>
+                        <th>Fix</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Public S3 buckets / Storage</td>
+                        <td>Critical</td>
+                        <td>Enable block public access, use private ACLs</td>
+                    </tr>
+                    <tr>
+                        <td>Unrestricted security groups</td>
+                        <td>High</td>
+                        <td>Limit to specific IPs/ranges, use principle of least privilege</td>
+                    </tr>
+                    <tr>
+                        <td>No MFA on accounts</td>
+                        <td>High</td>
+                        <td>Enforce MFA for all users, especially privileged accounts</td>
+                    </tr>
+                    <tr>
+                        <td>Disabled logging</td>
+                        <td>High</td>
+                        <td>Enable CloudTrail/Activity Logs, retain for compliance</td>
+                    </tr>
+                    <tr>
+                        <td>Unencrypted data at rest</td>
+                        <td>High</td>
+                        <td>Enable encryption for all storage services</td>
+                    </tr>
+                    <tr>
+                        <td>Overprivileged IAM roles</td>
+                        <td>Medium</td>
+                        <td>Regular access reviews, use least privilege principle</td>
+                    </tr>
+                    <tr>
+                        <td>Exposed credentials in code</td>
+                        <td>Critical</td>
+                        <td>Use secrets management (AWS Secrets Manager, Azure Key Vault, GCP Secret Manager)</td>
+                    </tr>
+                    <tr>
+                        <td>No network segmentation</td>
+                        <td>Medium</td>
+                        <td>Use VPCs/VNets, implement subnets, use private endpoints</td>
+                    </tr>
+                    <tr>
+                        <td>Unpatched instances</td>
+                        <td>High</td>
+                        <td>Enable automatic patching, use managed services when possible</td>
+                    </tr>
+                    <tr>
+                        <td>No backup/disaster recovery</td>
+                        <td>High</td>
+                        <td>Implement automated backups, test recovery procedures</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Cloud Security Checklist</h2>
+
+            <div class="success-box">
+                <h3>Identity & Access</h3>
+                <p>☐ MFA enabled for all users<br>
+                ☐ Root/admin accounts secured<br>
+                ☐ Least privilege access implemented<br>
+                ☐ Regular access reviews conducted<br>
+                ☐ Service accounts properly secured</p>
+
+                <h3>Data Protection</h3>
+                <p>☐ Encryption at rest enabled<br>
+                ☐ Encryption in transit enforced<br>
+                ☐ Automated backups configured<br>
+                ☐ Data classification implemented<br>
+                ☐ Key rotation enabled</p>
+
+                <h3>Network Security</h3>
+                <p>☐ VPC/VNet properly configured<br>
+                ☐ Security groups restrictive<br>
+                ☐ Public access disabled by default<br>
+                ☐ DDoS protection enabled<br>
+                ☐ Private endpoints used for internal services</p>
+
+                <h3>Monitoring & Logging</h3>
+                <p>☐ Audit logs enabled (CloudTrail/Activity Logs)<br>
+                ☐ Log retention meets compliance<br>
+                ☐ Security alerts configured<br>
+                ☐ Log analysis automated<br>
+                ☐ Centralized logging implemented</p>
+
+                <h3>Compliance & Governance</h3>
+                <p>☐ Security policies enforced<br>
+                ☐ Compliance monitoring enabled<br>
+                ☐ Regular security assessments<br>
+                ☐ Incident response plan documented<br>
+                ☐ Configuration management automated</p>
+            </div>
+
+            <h2>Cloud Security Scanning Tools</h2>
+
+            <div class="info-box">
+                <p><strong>Open Source Tools:</strong></p>
+                <p>• <strong>ScoutSuite:</strong> Multi-cloud security auditing<br>
+                • <strong>Prowler:</strong> AWS security assessment<br>
+                • <strong>CloudSploit:</strong> Cloud security scanning<br>
+                • <strong>Trivy:</strong> Container and infrastructure scanning<br>
+                • <strong>Checkov:</strong> Infrastructure as Code scanning</p>
+                
+                <p><strong>Commercial Tools:</strong></p>
+                <p>• Prisma Cloud (Palo Alto)<br>
+                • Wiz<br>
+                • Orca Security<br>
+                • Lacework</p>
+            </div>
+
+            <div class="warning-box">
+                <strong>Important:</strong> Cloud security is a shared responsibility. While cloud providers secure the infrastructure, you are responsible for securing your data, applications, and access controls.
+            </div>
+
+            <a href="index.html" class="back-link">← Back to Tools</a>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a> | Support us: <a href="htt

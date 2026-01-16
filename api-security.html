@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="API security best practices - Authentication, authorization, rate limiting, input validation, and OWASP API Security Top 10.">
+    <meta name="keywords" content="API security, REST API security, API authentication, OAuth2, JWT security, rate limiting, API best practices, OWASP API Top 10">
+    <title>API Security Best Practices - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="content-header">
+        <div class="container">
+            <h1>API Security Best Practices</h1>
+            <p>Secure your REST APIs against common attacks</p>
+        </div>
+    </header>
+
+    <div style="width: 100%; height: 250px; overflow: hidden;">
+        <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1600&h=250&fit=crop"
+             alt="API and network security"
+             style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+
+    <main class="container">
+        <div class="content-wrapper">
+            <div class="info-box">
+                <strong>Why API Security Matters:</strong> APIs are the backbone of modern applications. They're also prime targets for attackers - exposing sensitive data, business logic, and backend systems. A single vulnerable API endpoint can compromise your entire infrastructure.
+            </div>
+
+            <h2>OWASP API Security Top 10 (2023)</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Vulnerability</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>API1</td><td>Broken Object Level Authorization</td><td>APIs exposing endpoints that handle object IDs without proper authorization</td></tr>
+                    <tr><td>API2</td><td>Broken Authentication</td><td>Weak authentication mechanisms allowing attackers to compromise tokens</td></tr>
+                    <tr><td>API3</td><td>Broken Object Property Level Authorization</td><td>Exposing or allowing modification of sensitive object properties</td></tr>
+                    <tr><td>API4</td><td>Unrestricted Resource Consumption</td><td>No limits on API requests allowing DoS attacks</td></tr>
+                    <tr><td>API5</td><td>Broken Function Level Authorization</td><td>Complex access control policies leading to authorization flaws</td></tr>
+                    <tr><td>API6</td><td>Unrestricted Access to Sensitive Business Flows</td><td>Exposing business flows without considering abuse potential</td></tr>
+                    <tr><td>API7</td><td>Server Side Request Forgery (SSRF)</td><td>API fetches remote resources without validating user-supplied URLs</td></tr>
+                    <tr><td>API8</td><td>Security Misconfiguration</td><td>Insecure default configurations, verbose errors, unnecessary features</td></tr>
+                    <tr><td>API9</td><td>Improper Inventory Management</td><td>Exposed old API versions, undocumented endpoints</td></tr>
+                    <tr><td>API10</td><td>Unsafe Consumption of APIs</td><td>Trusting third-party APIs without proper validation</td></tr>
+                </tbody>
+            </table>
+
+            <h2>Authentication</h2>
+
+            <div class="vuln-item">
+                <h2>1. Use Strong Authentication</h2>
+
+                <h3>API Key Authentication (Simple)</h3>
+                <div class="code-block">
+                    <code># Pass API key in header (preferred)
+curl -H "X-API-Key: your-api-key-here" https://api.example.com/data
+
+# Never pass API keys in URL (logged in server logs!)
+# BAD: https://api.example.com/data?api_key=secret</code>
+                </div>
+
+                <h3>JWT (JSON Web Token) Authentication</h3>
+                <div class="code-block">
+                    <code># Request with JWT Bearer token
+curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIs..." https://api.example.com/data
+
+# Node.js - Verify JWT
+const jwt = require('jsonwebtoken');
+
+function verifyToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) return res.sendStatus(401);
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403);
+        req.user = user;
+        next();
+    });
+}
+
+# Python - Verify JWT
+import jwt
+from functools import wraps
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            return {'error': 'Token missing'}, 401
+        try:
+            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+            current_user = User.query.get(data['user_id'])
+        except jwt.ExpiredSignatureError:
+            return {'error': 'Token expired'}, 401
+        except jwt.InvalidTokenError:
+            return {'error': 'Invalid token'}, 401
+        return f(current_user, *args, **kwargs)
+    return decorated</code>
+                </div>
+
+                <h3>OAuth 2.0</h3>
+                <div class="code-block">
+                    <code># OAuth 2.0 Authorization Code Flow
+# 1. Redirect user to authorization server
+GET /authorize?
+    response_type=code&
+    client_id=YOUR_CLIENT_ID&
+    redirect_uri=https://yourapp.com/callback&
+    scope=read write&
+    state=random_csrf_token
+
+# 2. Exchange code for access token
+POST /token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code&
+code=AUTHORIZATION_CODE&
+redirect_uri=https://yourapp.com/callback&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET
+
+# 3. Use access token
+curl -H "Authorization: Bearer ACCESS_TOKEN" https://api.example.com/resource</code>
+                </div>
+            </div>
+
+            <h2>Authorization</h2>
+
+            <div class="vuln-item">
+                <h2>2. Implement Proper Authorization</h2>
+
+                <h3>Object-Level Authorization (BOLA Prevention)</h3>
+                <div class="code-block">
+                    <code># BAD - No authorization check
+@app.route('/api/users/<user_id>/orders')
+def get_orders(user_id):
+    return Order.query.filter_by(user_id=user_id).all()
+
+# GOOD - Verify user owns the resource
+@app.route('/api/users/<user_id>/orders')
+@token_required
+def get_orders(current_user, user_id):
+    # Check if requesting their own data
+    if str(current_user.id) != user_id:
+        return {'error': 'Forbidden'}, 403
+    return Order.query.filter_by(user_id=user_id).all()
+
+# Node.js example
+app.get('/api/orders/:orderId', authenticate, async (req, res) => {
+    const order = await Order.findById(req.params.orderId);
+
+    // Verify ownership
+    if (order.userId.toString() !== req.user.id) {
+        return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    res.json(order);
+});</code>
+                </div>
+
+                <h3>Role-Based Access Control (RBAC)</h3>
+                <div class="code-block">
+                    <code># Python decorator for role checking
+def require_role(*roles):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if current_user.role not in roles:
+                return {'error': 'Insufficient permissions'}, 403
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
+@app.route('/api/admin/users')
+@token_required
+@require_role('admin', 'superadmin')
+def list_all_users():
+    return User.query.all()
+
+# Node.js middleware
+const requireRole = (...roles) => {
+    return (req, res, next) => {
+        if (!roles.includes(req.user.role)) {
+            return res.status(403).json({ error: 'Insufficient permissions' });
+        }
+        next();
+    };
+};
+
+app.delete('/api/users/:id', authenticate, requireRole('admin'), deleteUser);</code>
+                </div>
+            </div>
+
+            <h2>Rate Limiting</h2>
+
+            <div class="vuln-item">
+                <h2>3. Implement Rate Limiting</h2>
+
+                <h3>Express.js Rate Limiting</h3>
+                <div class="code-block">
+                    <code>const rateLimit = require('express-rate-limit');
+
+// General rate limit
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // 100 requests per window
+    message: { error: 'Too many requests, please try again later' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+app.use('/api/', limiter);
+
+// Stricter limit for auth endpoints
+const authLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 5, // 5 login attempts per hour
+    message: { error: 'Too many login attempts' },
+});
+
+app.use('/api/auth/login', authLimiter);</code>
+                </div>
+
+                <h3>Python Flask Rate Limiting</h3>
+                <div class="code-block">
+                    <code>from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"]
+)
+
+@app.route("/api/resource")
+@limiter.limit("10 per minute")
+def get_resource():
+    return {"data": "resource"}
+
+@app.route("/api/auth/login", methods=["POST"])
+@limiter.limit("5 per hour")
+def login():
+    # Login logic
+    pass</code>
+                </div>
+
+                <h3>Nginx Rate Limiting</h3>
+                <div class="code-block">
+                    <code># nginx.conf
+http {
+    # Define rate limit zone
+    limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
+    limit_req_zone $binary_remote_addr zone=login:10m rate=1r/m;
+
+    server {
+        # Apply to API endpoints
+        location /api/ {
+            limit_req zone=api burst=20 nodelay;
+            proxy_pass http://backend;
+        }
+
+        # Stricter limit for login
+        location /api/auth/login {
+            limit_req zone=login burst=5;
+            proxy_pass http://backend;
+        }
+    }
+}</code>
+                </div>
+            </div>
+
+            <h2>Input Validation</h2>
+
+            <div class="vuln-item">
+                <h2>4. Validate All Input</h2>
+
+                <h3>Schema Validation (Node.js - Joi)</h3>
+                <div class="code-block">
+                    <code>const Joi = require('joi');
+
+const userSchema = Joi.object({
+    username: Joi.string().alphanum().min(3).max(30).required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(8).pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).required(),
+    age: Joi.number().integer().min(18).max(120),
+    role: Joi.string().valid('user', 'admin').default('user')
+});
+
+app.post('/api/users', async (req, res) => {
+    const { error, value } = userSchema.validate(req.body);
+    if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+    }
+    // Process validated data
+});</code>
+                </div>
+
+                <h3>Python (Pydantic / Marshmallow)</h3>
+                <div class="code-block">
+                    <code># Pydantic
+from pydantic import BaseModel, EmailStr, validator
+from typing import Optional
+
+class UserCreate(BaseModel):
+    username: str
+    email: EmailStr
+    password: str
+    age: Optional[int] = None
+
+    @validator('username')
+    def username_alphanumeric(cls, v):
+        if not v.isalnum():
+            raise ValueError('must be alphanumeric')
+        if len(v) < 3 or len(v) > 30:
+            raise ValueError('must be 3-30 characters')
+        return v
+
+    @validator('password')
+    def password_strength(cls, v):
+        if len(v) < 8:
+            raise ValueError('must be at least 8 characters')
+        return v
+
+@app.post("/api/users")
+def create_user(user: UserCreate):
+    # Pydantic automatically validates
+    return {"user": user.dict()}</code>
+                </div>
+
+                <h3>Prevent Injection Attacks</h3>
+                <div class="code-block">
+                    <code># SQL Injection - Use parameterized queries (see Database Security page)
+# NoSQL Injection - Sanitize MongoDB queries
+
+# BAD - Vulnerable to NoSQL injection
+db.users.find({ username: req.body.username })
+
+# Input: { "username": { "$gt": "" } }  // Returns all users!
+
+# GOOD - Type check and sanitize
+const username = String(req.body.username).trim();
+if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+    return res.status(400).json({ error: 'Invalid username' });
+}
+db.users.find({ username: username });</code>
+                </div>
+            </div>
+
+            <h2>Security Headers & HTTPS</h2>
+
+            <div class="vuln-item">
+                <h2>5. Use HTTPS and Security Headers</h2>
+
+                <h3>Express.js Security Headers (Helmet)</h3>
+                <div class="code-block">
+                    <code>const helmet = require('helmet');
+
+app.use(helmet());
+
+// Or configure individually
+app.use(helmet.contentSecurityPolicy());
+app.use(helmet.crossOriginEmbedderPolicy());
+app.use(helmet.crossOriginOpenerPolicy());
+app.use(helmet.crossOriginResourcePolicy());
+app.use(helmet.dnsPrefetchControl());
+app.use(helmet.frameguard());
+app.use(helmet.hsts());
+app.use(helmet.ieNoOpen());
+app.use(helmet.noSniff());
+app.use(helmet.originAgentCluster());
+app.use(helmet.permittedCrossDomainPolicies());
+app.use(helmet.referrerPolicy());
+app.use(helmet.xssFilter());</code>
+                </div>
+
+                <h3>CORS Configuration</h3>
+                <div class="code-block">
+                    <code>const cors = require('cors');
+
+// BAD - Allow all origins
+app.use(cors());
+
+// GOOD - Whitelist specific origins
+const corsOptions = {
+    origin: ['https://example.com', 'https://app.example.com'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+    maxAge: 86400 // 24 hours
+};
+
+app.use(cors(corsOptions));</code>
+                </div>
+            </div>
+
+            <h2>Error Handling</h2>
+
+            <div class="vuln-item">
+                <h2>6. Secure Error Handling</h2>
+
+                <div class="code-block">
+                    <code># BAD - Exposes internal details
+{
+    "error": "Error: ECONNREFUSED 127.0.0.1:5432",
+    "stack": "Error: connect ECONNREFUSED\n    at TCPConnectWrap..."
+}
+
+# GOOD - Generic error for clients
+{
+    "error": "Internal server error",
+    "code": "INTERNAL_ERROR",
+    "requestId": "abc123"  // For debugging via logs
+}
+
+// Node.js error handler
+app.use((err, req, res, next) => {
+    // Log full error internally
+    console.error('Error:', {
+        message: err.message,
+        stack: err.stack,
+        requestId: req.id,
+        userId: req.user?.id
+    });
+
+    // Send sanitized response
+    res.status(err.status || 500).json({
+        error: process.env.NODE_ENV === 'production'
+            ? 'Internal server error'
+            : err.message,
+        requestId: req.id
+    });
+});</code>
+                </div>
+            </div>
+
+            <h2>Logging & Monitoring</h2>
+
+            <div class="vuln-item">
+                <h2>7. Log Security Events</h2>
+
+                <div class="code-block">
+                    <code>// Log security-relevant events
+const securityLogger = {
+    authSuccess: (userId, ip) => {
+        logger.info('AUTH_SUCCESS', { userId, ip, timestamp: new Date() });
+    },
+    authFailure: (username, ip, reason) => {
+        logger.warn('AUTH_FAILURE', { username, ip, reason, timestamp: new Date() });
+    },
+    accessDenied: (userId, resource, ip) => {
+        logger.warn('ACCESS_DENIED', { userId, resource, ip, timestamp: new Date() });
+    },
+    suspiciousActivity: (userId, activity, ip) => {
+        logger.error('SUSPICIOUS_ACTIVITY', { userId, activity, ip, timestamp: new Date() });
+    }
+};
+
+// Usage
+app.post('/api/auth/login', async (req, res) => {
+    const { username, password } = req.body;
+    const user = await User.findByUsername(username);
+
+    if (!user || !await user.verifyPassword(password)) {
+        securityLogger.authFailure(username, req.ip, 'Invalid credentials');
+        return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    securityLogger.authSuccess(user.id, req.ip);
+    // Generate token...
+});</code>
+                </div>
+            </div>
+
+            <h2>Security Checklist</h2>
+            <div class="success-box">
+                <p>☐ HTTPS enforced for all endpoints<br>
+                ☐ Strong authentication implemented (OAuth2/JWT)<br>
+                ☐ Object-level authorization on all endpoints<br>
+                ☐ Role-based access control (RBAC)<br>
+                ☐ Rate limiting on all endpoints (stricter on auth)<br>
+                ☐ Input validation using schemas<br>
+                ☐ SQL/NoSQL injection prevention<br>
+                ☐ Security headers configured<br>
+                ☐ CORS properly restricted<br>
+                ☐ Error messages sanitized (no stack traces)<br>
+                ☐ Security events logged<br>
+                ☐ API versioning implemented<br>
+                ☐ Deprecated endpoints removed<br>
+                ☐ API documentation up to date</p>
+            </div>
+
+            <div class="warning-box">
+                <strong>Remember:</strong> Security is not a one-time task. Regularly audit your APIs, keep dependencies updated, and conduct penetration testing to identify vulnerabilities before attackers do.
+            </div>
+
+            <a href="index.html" class="back-link">← Back to Tools</a>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a> | Support us: <a href="https://www.etsy.com/shop/BlizfulStore?ref=seller-platform-mcnav" target="_blank">Blizful Store</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

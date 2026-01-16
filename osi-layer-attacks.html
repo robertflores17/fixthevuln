@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Complete reference guide for OSI layer attacks and defenses. Learn security vulnerabilities at each network layer and how to fix them.">
+    <title>OSI Layer Attacks & Defenses - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .layer-nav {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.5rem;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .layer-btn {
+            padding: 0.8rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s;
+            font-size: 0.9rem;
+        }
+        .layer-btn:hover {
+            transform: translateY(-3px);
+        }
+        .severity-critical { color: #dc3545; font-weight: bold; }
+        .severity-high { color: #fd7e14; font-weight: bold; }
+        .severity-medium { color: #ffc107; font-weight: bold; }
+        .severity-low { color: #28a745; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <header class="content-header">
+        <div class="container">
+            <h1>OSI Layer Attacks & Defenses</h1>
+            <p>Complete security reference for all 7 network layers</p>
+        </div>
+    </header>
+    
+    <div style="width: 100%; height: 250px; overflow: hidden;">
+        <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1600&h=250&fit=crop" 
+             alt="Network layers and cybersecurity" 
+             style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+    
+    <main class="container">
+        <div class="content-wrapper">
+            <div class="info-box">
+                <strong>Why OSI Layers Matter for Security:</strong> Understanding the OSI (Open Systems Interconnection) model helps you identify WHERE attacks occur in the network stack and apply the RIGHT defenses at each layer. Each layer has unique vulnerabilities and requires specific security controls.
+            </div>
+
+            <h2>OSI Model Overview</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Layer #</th>
+                        <th>Name</th>
+                        <th>Function</th>
+                        <th>Common Protocols</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>7</td>
+                        <td>Application</td>
+                        <td>User interfaces, apps</td>
+                        <td>HTTP, FTP, SMTP, DNS</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Presentation</td>
+                        <td>Data formatting, encryption</td>
+                        <td>SSL/TLS, JPEG, MPEG</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Session</td>
+                        <td>Connection management</td>
+                        <td>NetBIOS, PPTP, RPC</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Transport</td>
+                        <td>End-to-end communication</td>
+                        <td>TCP, UDP</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Network</td>
+                        <td>Routing, addressing</td>
+                        <td>IP, ICMP, IPsec</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Data Link</td>
+                        <td>Node-to-node transfer</td>
+                        <td>Ethernet, WiFi, ARP</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Physical</td>
+                        <td>Physical transmission</td>
+                        <td>Cables, signals, hardware</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="layer-nav">
+                <a href="#layer7" class="layer-btn">Layer 7<br>Application</a>
+                <a href="#layer6" class="layer-btn">Layer 6<br>Presentation</a>
+                <a href="#layer5" class="layer-btn">Layer 5<br>Session</a>
+                <a href="#layer4" class="layer-btn">Layer 4<br>Transport</a>
+                <a href="#layer3" class="layer-btn">Layer 3<br>Network</a>
+                <a href="#layer2" class="layer-btn">Layer 2<br>Data Link</a>
+                <a href="#layer1" class="layer-btn">Layer 1<br>Physical</a>
+            </div>
+
+            <h2 id="layer7">Layer 7 - Application Layer Attacks</h2>
+            
+            <div class="vuln-item">
+                <h3>SQL Injection (SQLi)</h3>
+                <p><strong>Severity:</strong> <span class="severity-critical">Critical</span></p>
+                <p><strong>Description:</strong> Attacker inserts malicious SQL queries through application inputs to manipulate database operations, potentially exposing, modifying, or deleting data.</p>
+                
+                <p><strong>Real-World Example:</strong> Attacker enters <code>' OR '1'='1</code> in login form, bypassing authentication.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <div class="code-block">
+                    <code><!-- Use parameterized queries (prepared statements) -->
+// BAD - Vulnerable
+$query = "SELECT * FROM users WHERE username = '" . $username . "'";
+
+// GOOD - Protected
+$stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
+$stmt->execute([$username]);
+
+# Input validation
+# Whitelist allowed characters
+# Use ORM frameworks (Sequelize, SQLAlchemy, Hibernate)
+# Least privilege database accounts</code>
+                </div>
+                
+                <p><strong>Prevention:</strong></p>
+                <p>• Always use parameterized queries or prepared statements<br>
+                • Input validation with whitelisting<br>
+                • Use stored procedures<br>
+                • Implement WAF (Web Application Firewall)<br>
+                • Regular security testing</p>
+                
+                <a href="owasp-top10.html" class="detailed-link">See OWASP Top 10 for more →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Cross-Site Scripting (XSS)</h3>
+                <p><strong>Severity:</strong> <span class="severity-high">High</span></p>
+                <p><strong>Description:</strong> Injection of malicious scripts into web pages viewed by other users, allowing attackers to steal session tokens, cookies, or sensitive information.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <div class="code-block">
+                    <code>// Input sanitization
+import DOMPurify from 'dompurify';
+const clean = DOMPurify.sanitize(userInput);
+
+// Output encoding
+const escaped = escapeHtml(userInput);
+
+// Content Security Policy (CSP)
+Content-Security-Policy: default-src 'self'; script-src 'self'
+
+// HTTPOnly cookies
+Set-Cookie: sessionid=abc123; HttpOnly; Secure</code>
+                </div>
+                
+                <a href="security-headers.html" class="detailed-link">See Security Headers guide →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Cross-Site Request Forgery (CSRF)</h3>
+                <p><strong>Severity:</strong> <span class="severity-high">High</span></p>
+                <p><strong>Description:</strong> Forces authenticated users to execute unwanted actions on a web application in which they're currently authenticated.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <div class="code-block">
+                    <code>// Anti-CSRF tokens
+<input type="hidden" name="csrf_token" value="random_token_here">
+
+// Verify token on server
+if ($_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+    die('CSRF token validation failed');
+}
+
+// SameSite cookies
+Set-Cookie: session=value; SameSite=Strict
+
+// Check Referer header
+// Require re-authentication for sensitive actions</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>DNS Attacks (Spoofing, Cache Poisoning, Tunneling)</h3>
+                <p><strong>Severity:</strong> <span class="severity-high">High</span></p>
+                <p><strong>Description:</strong> Manipulation of DNS queries/responses to redirect traffic to malicious servers or exfiltrate data.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <div class="code-block">
+                    <code># Enable DNSSEC
+dnssec-enable yes;
+dnssec-validation yes;
+
+# Use trusted DNS servers (Cloudflare, Google)
+# /etc/resolv.conf
+nameserver 1.1.1.1
+nameserver 8.8.8.8
+
+# Monitor DNS traffic for anomalies
+# Implement DNS filtering
+# Use encrypted DNS (DNS over HTTPS/TLS)</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>HTTP Response Splitting/Smuggling</h3>
+                <p><strong>Severity:</strong> <span class="severity-high">High</span></p>
+                <p><strong>Description:</strong> Exploiting discrepancies in how different systems parse HTTP requests/responses.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <div class="code-block">
+                    <code># Validate and sanitize HTTP headers
+# Remove CRLF (\r\n) from user input
+header = header.replace(/[\r\n]/g, '');
+
+# Use latest HTTP/2 or HTTP/3
+# Update web server software
+# Implement strict HTTP parsing</code>
+                </div>
+            </div>
+
+            <h2 id="layer6">Layer 6 - Presentation Layer Attacks</h2>
+
+            <div class="vuln-item">
+                <h3>SSL/TLS Vulnerabilities (Heartbleed, POODLE, BEAST)</h3>
+                <p><strong>Severity:</strong> <span class="severity-critical">Critical</span></p>
+                <p><strong>Description:</strong> Exploits in SSL/TLS implementations allowing attackers to decrypt encrypted traffic or steal sensitive data.</p>
+                
+                <p><strong>Real-World Example:</strong> Heartbleed (CVE-2014-0160) allowed reading server memory, exposing passwords and private keys.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <div class="code-block">
+                    <code># Update OpenSSL immediately
+sudo apt update && sudo apt upgrade openssl
+
+# Disable vulnerable protocols
+# Apache
+SSLProtocol TLSv1.2 TLSv1.3
+
+# Nginx
+ssl_protocols TLSv1.2 TLSv1.3;
+
+# Use strong ciphers
+ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256';
+
+# Test configuration
+openssl s_client -connect example.com:443 -tls1_2</code>
+                </div>
+                
+                <a href="ssl-tls.html" class="detailed-link">See complete SSL/TLS hardening guide →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Encryption Downgrade Attacks</h3>
+                <p><strong>Severity:</strong> <span class="severity-high">High</span></p>
+                <p><strong>Description:</strong> Force client-server communication to use weaker encryption that can be broken.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <div class="code-block">
+                    <code># Enforce strong encryption only
+# Disable SSLv2, SSLv3, TLS 1.0, TLS 1.1
+# Enable HSTS
+Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+# Prefer server cipher order
+SSLHonorCipherOrder on</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Certificate Attacks (Spoofing, MITM)</h3>
+                <p><strong>Severity:</strong> <span class="severity-high">High</span></p>
+                <p><strong>Description:</strong> Using fraudulent certificates to impersonate legitimate sites.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <div class="code-block">
+                    <code># Use Certificate Transparency
+# Enable OCSP stapling
+ssl_stapling on;
+ssl_stapling_verify on;
+
+# Certificate pinning (for mobile apps)
+# Use reputable Certificate Authorities
+# Monitor certificate logs
+# Implement CAA DNS records</code>
+                </div>
+            </div>
+
+            <h2 id="layer5">Layer 5 - Session Layer Attacks</h2>
+
+            <div class="vuln-item">
+                <h3>Session Hijacking</h3>
+                <p><strong>Severity:</strong> <span class="severity-critical">Critical</span></p>
+                <p><strong>Description:</strong> Stealing or predicting a valid session token to gain unauthorized access to a user's session.</p>
+                
+                <p><strong>Real-World Example:</strong> Attacker intercepts session cookie over unencrypted WiFi and uses it to access victim's account.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <div class="code-block">
+                    <code># Use HTTPS only
+# Set secure cookies
+Set-Cookie: sessionid=abc123; Secure; HttpOnly; SameSite=Strict
+
+# Regenerate session ID after login
+session_regenerate_id(true);
+
+# Session timeout
+session.gc_maxlifetime = 1800  # 30 minutes
+
+# Bind session to IP address (optional)
+if ($_SESSION['ip'] !== $_SERVER['REMOTE_ADDR']) {
+    session_destroy();
+}
+
+# Use strong session IDs (random, unpredictable)</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Session Fixation</h3>
+                <p><strong>Severity:</strong> <span class="severity-high">High</span></p>
+                <p><strong>Description:</strong> Forcing a user to use a known session ID, then hijacking that session after authentication.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <div class="code-block">
+                    <code># Regenerate session ID on login
+// Before authentication
+session_start();
+
+// After successful login
+session_regenerate_id(true);
+$_SESSION['authenticated'] = true;
+
+# Don't accept session IDs from GET/POST parameters
+# Use framework's built-in session management</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Man-in-the-Middle (MITM)</h3>
+                <p><strong>Severity:</strong> <span class="severity-critical">Critical</span></p>
+                <p><strong>Description:</strong> Intercepting communication between two parties to eavesdrop or manipulate data.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <div class="code-block">
+                    <code># Enforce HTTPS everywhere
+# Use HSTS
+# Implement certificate pinning
+# Use VPN for sensitive connections
+# Enable encrypted DNS (DoH/DoT)
+# Mutual TLS authentication for APIs</code>
+                </div>
+
+                <div class="info-box" style="margin-top: 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
+                    <h3 style="color: white;">🔒 Protect Against MITM Attacks</h3>
+                    <p>VPNs encrypt your entire connection, preventing man-in-the-middle attacks on public WiFi and untrusted networks:</p>
+                    <p style="margin: 1rem 0;">
+                        <a href="https://www.jdoqocy.com/click-101630293-13999888?url=https%3A%2F%2Fnordcheckout.com%2F%3Fproduct_group%3Dnordvpn%26product%3D2-year&cjsku=nordvpn-2y" target="_blank" style="background: white; color: #667eea; padding: 0.8rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block;">Get NordVPN (63% OFF)</a>
+                        <img src="https://www.awltovhc.com/image-101630293-13999888" width="1" height="1" style="display:none;" />
+                    </p>
+                    <p style="font-size: 0.9rem; opacity: 0.9;">Military-grade encryption • Secure public WiFi • 30-day guarantee</p>
+                </div>
+            </div>
+
+            <h2 id="layer4">Layer 4 - Transport Layer Attacks</h2>
+
+            <div class="vuln-item">
+                <h3>SYN Flood Attack</h3>
+                <p><strong>Severity:</strong> <span class="severity-high">High</span></p>
+                <p><strong>Description:</strong> Overwhelming a server by sending many SYN requests without completing the TCP handshake, exhausting server resources.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <div class="code-block">
+                    <code># Enable SYN cookies (Linux)
+sudo sysctl -w net.ipv4.tcp_syncookies=1
+echo "net.ipv4.tcp_syncookies=1" >> /etc/sysctl.conf
+
+# Reduce SYN backlog timeout
+sudo sysctl -w net.ipv4.tcp_synack_retries=2
+
+# Increase backlog queue
+sudo sysctl -w net.ipv4.tcp_max_syn_backlog=2048
+
+# Use firewall rate limiting
+iptables -A INPUT -p tcp --syn -m limit --limit 1/s --limit-burst 3 -j ACCEPT
+iptables -A INPUT -p tcp --syn -j DROP
+
+# Use DDoS protection service (Cloudflare, AWS Shield)</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>UDP Flood Attack</h3>
+                <p><strong>Severity:</strong> <span class="severity-high">High</span></p>
+                <p><strong>Description:</strong> Sending large volumes of UDP packets to random ports, consuming bandwidth and resources.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <div class="code-block">
+                    <code># Rate limit UDP traffic
+iptables -A INPUT -p udp -m limit --limit 10/s --limit-burst 20 -j ACCEPT
+iptables -A INPUT -p udp -j DROP
+
+# Filter unnecessary UDP ports
+iptables -A INPUT -p udp --dport 53 -j ACCEPT  # DNS
+iptables -A INPUT -p udp -j DROP
+
+# Use DDoS mitigation service
+# Monitor network traffic for anomalies</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Port Scanning</h3>
+                <p><strong>Severity:</strong> <span class="severity-medium">Medium</span></p>
+                <p><strong>Description:</strong> Reconnaissance technique to discover open ports and services on a target system.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <div class="code-block">
+                    <code># Close unnecessary ports
+# Use minimal services principle
+
+# Configure firewall to drop, not reject
+iptables -A INPUT -p tcp --dport 1:1024 -j DROP
+
+# Install port scan detection
+sudo apt install portsentry
+
+# Rate limit connection attempts
+# Use fail2ban for repeated scan attempts
+# Implement port knocking for sensitive services</code>
+                </div>
+                
+                <a href="port-security.html" class="detailed-link">See complete Port Security guide →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h3>TCP Reset Attack</h3>
+                <p><strong>Severity:</strong> <span class="severity-medium">Medium</span></p>
+                <p><strong>Description:</strong> Injecting forged TCP RST packets to terminate legitimate connections.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <div class="code-block">
+                    <code># Use IPsec or VPN for critical connections
+# Enable TCP MD5 signatures (for BGP)
+# Implement connection tracking
+# Monitor for abnormal RST packets</code>
+                </div>
+            </div>
+
+            <h2 id="layer3">Layer 3 - Network Layer Attacks</h2>
+
+            <div class="vuln-item">
+                <h3>IP Spoofing</h3>
+                <p><strong>Severity:</strong> <span class="severity-high">High</span></p>
+                <p><strong>Description:</strong> Creating IP packets with a forged source address to impersonate another system or hide the attacker's identity.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <div class="code-block">
+                    <code># Ingress filtering (Block spoofed IPs)
+# Cisco router
+access-list 100 deny ip 10.0.0.0 0.255.255.255 any
+access-list 100 deny ip 172.16.0.0 0.15.255.255 any
+access-list 100 deny ip 192.168.0.0 0.0.255.255 any
+
+# Linux iptables
+iptables -A INPUT -i eth0 -s 10.0.0.0/8 -j DROP
+iptables -A INPUT -i eth0 -s 172.16.0.0/12 -j DROP
+iptables -A INPUT -i eth0 -s 192.168.0.0/16 -j DROP
+
+# Enable reverse path filtering
+sysctl -w net.ipv4.conf.all.rp_filter=1
+
+# Use BCP 38 (Best Current Practice) filtering</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>ICMP Flood (Ping Flood)</h3>
+                <p><strong>Severity:</strong> <span class="severity-medium">Medium</span></p>
+                <p><strong>Description:</strong> Overwhelming target with ICMP echo requests, consuming bandwidth and resources.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <div class="code-block">
+                    <code># Disable ICMP echo replies (if not needed)
+sysctl -w net.ipv4.icmp_echo_ignore_all=1
+
+# Rate limit ICMP
+iptables -A INPUT -p icmp --icmp-type echo-request -m limit --limit 1/s -j ACCEPT
+iptables -A INPUT -p icmp --icmp-type echo-request -j DROP
+
+# Or completely block ICMP from external sources
+iptables -A INPUT -i eth0 -p icmp -j DROP
+
+# Allow ICMP only from trusted networks
+iptables -A INPUT -s 192.168.1.0/24 -p icmp -j ACCEPT</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Smurf Attack</h3>
+                <p><strong>Severity:</strong> <span class="severity-medium">Medium</span></p>
+                <p><strong>Description:</strong> Amplification attack using spoofed ICMP packets sent to broadcast addresses.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <div class="code-block">
+                    <code># Disable IP directed broadcasts
+# Cisco
+interface FastEthernet0/0
+ no ip directed-broadcast
+
+# Linux
+echo 0 > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
+
+# Block packets to broadcast addresses
+iptables -A INPUT -m pkttype --pkt-type broadcast -j DROP</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Routing Attacks (BGP Hijacking)</h3>
+                <p><strong>Severity:</strong> <span class="severity-high">High</span></p>
+                <p><strong>Description:</strong> Manipulating routing protocols to redirect network traffic through attacker-controlled systems.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <div class="code-block">
+                    <code># Implement BGP security
+# Use BGPsec or RPKI (Resource Public Key Infrastructure)
+
+# Filter BGP announcements
+# Accept only expected prefixes
+# Implement BGP MD5 authentication
+
+# Monitor for route changes
+# Use IRR (Internet Routing Registry) validation
+
+# For enterprises: Use static routes where possible</code>
+                </div>
+            </div>
+
+            <h2 id="layer2">Layer 2 - Data Link Layer Attacks</h2>
+
+            <div class="vuln-item">
+                <h3>ARP Spoofing (ARP Poisoning)</h3>
+                <p><strong>Severity:</strong> <span class="severity-high">High</span></p>
+                <p><strong>Description:</strong> Sending fake ARP messages to associate attacker's MAC address with legitimate IP addresses, enabling MITM attacks on local network.</p>
+                
+                <p><strong>Real-World Example:</strong> Attacker on same WiFi network intercepts traffic between victim and router by poisoning ARP cache.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <div class="code-block">
+                    <code># Static ARP entries for critical systems
+arp -s 192.168.1.1 00:11:22:33:44:55
+
+# Enable Dynamic ARP Inspection (DAI)
+# Cisco switch
+ip arp inspection vlan 1
+interface GigabitEthernet0/1
+ ip arp inspection trust
+
+# Use arpwatch to monitor ARP changes
+sudo apt install arpwatch
+sudo systemctl start arpwatch
+
+# Enable port security on switches
+# Use encrypted protocols (HTTPS, SSH, VPN)</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>MAC Flooding</h3>
+                <p><strong>Severity:</strong> <span class="severity-medium">Medium</span></p>
+                <p><strong>Description:</strong> Overwhelming switch's MAC address table with fake entries, causing it to operate as a hub and broadcast traffic.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <div class="code-block">
+                    <code># Enable port security on switches
+# Cisco
+interface GigabitEthernet0/1
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security violation shutdown
+ switchport port-security mac-address sticky
+
+# Set MAC address table size limits
+# Enable MAC address aging</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>VLAN Hopping</h3>
+                <p><strong>Severity:</strong> <span class="severity-high">High</span></p>
+                <p><strong>Description:</strong> Exploiting misconfigurations to gain access to traffic on other VLANs.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <div class="code-block">
+                    <code># Disable DTP (Dynamic Trunking Protocol)
+# Cisco
+interface GigabitEthernet0/1
+ switchport mode access
+ switchport nonegotiate
+
+# Don't use VLAN 1 for user traffic
+# Explicitly configure trunk ports
+interface GigabitEthernet0/24
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,30
+
+# Enable VLAN access control lists</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>CAM Table Overflow</h3>
+                <p><strong>Severity:</strong> <span class="severity-medium">Medium</span></p>
+                <p><strong>Description:</strong> Similar to MAC flooding, overflowing switch's Content Addressable Memory table.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <div class="code-block">
+                    <code># Implement port security (same as MAC flooding)
+# Monitor CAM table utilization
+# Set MAC address learning limits per port
+# Use private VLANs for isolation</code>
+                </div>
+            </div>
+
+            <h2 id="layer1">Layer 1 - Physical Layer Attacks</h2>
+
+            <div class="vuln-item">
+                <h3>Physical Access Attacks</h3>
+                <p><strong>Severity:</strong> <span class="severity-critical">Critical</span></p>
+                <p><strong>Description:</strong> Direct physical access to hardware allowing installation of keyloggers, tampering, theft, or destruction.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <p>• Lock server rooms and network closets<br>
+                • Use cable locks on laptops and equipment<br>
+                • Install security cameras<br>
+                • Badge/biometric access control<br>
+                • Visitor logs and escort policies<br>
+                • Encrypt hard drives (BitLocker, LUKS, FileVault)<br>
+                • BIOS/UEFI passwords<br>
+                • Disable unused USB ports physically or via policy<br>
+                • Tamper-evident seals on equipment<br>
+                • Regular physical security audits</p>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Cable Tapping/Wiretapping</h3>
+                <p><strong>Severity:</strong> <span class="severity-high">High</span></p>
+                <p><strong>Description:</strong> Physical interception of data transmission through cables.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <p>• Use fiber optic cables (harder to tap)<br>
+                • Run cables through secure conduits<br>
+                • Encrypt all data in transit (TLS, IPsec, VPN)<br>
+                • Physical inspection of cable routes<br>
+                • Use tamper-detection systems<br>
+                • Implement network segmentation<br>
+                • Monitor for unusual network activity</p>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Signal Jamming/Interference</h3>
+                <p><strong>Severity:</strong> <span class="severity-medium">Medium</span></p>
+                <p><strong>Description:</strong> Disrupting wireless communications through electromagnetic interference.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <p>• Use wired connections for critical systems<br>
+                • Implement redundant communication paths<br>
+                • Use frequency hopping (FHSS)<br>
+                • Monitor for unusual interference patterns<br>
+                • Physical security to prevent placement of jamming devices<br>
+                • Use directional antennas to reduce signal area<br>
+                • Implement WIDS (Wireless Intrusion Detection Systems)</p>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Hardware Tampering</h3>
+                <p><strong>Severity:</strong> <span class="severity-critical">Critical</span></p>
+                <p><strong>Description:</strong> Physical modification of hardware to install backdoors, keyloggers, or malicious firmware.</p>
+                
+                <h4>Quick Fixes:</h4>
+                <p>• Purchase equipment from trusted vendors only<br>
+                • Verify hardware integrity upon receipt<br>
+                • Use tamper-evident packaging/seals<br>
+                • Implement supply chain security<br>
+                • Regular hardware inspections<br>
+                • Firmware verification and signing<br>
+                • Use hardware security modules (HSMs) for sensitive operations<br>
+                • Implement Trusted Platform Module (TPM)</p>
+            </div>
+
+            <h2>Quick Reference Summary</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Layer</th>
+                        <th>Key Attacks</th>
+                        <th>Top Priority Fix</th>
+                        <th>Severity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>7 - Application</td>
+                        <td>SQLi, XSS, CSRF</td>
+                        <td>Input validation, parameterized queries</td>
+                        <td><span class="severity-critical">Critical</span></td>
+                    </tr>
+                    <tr>
+                        <td>6 - Presentation</td>
+                        <td>SSL/TLS exploits</td>
+                        <td>Update OpenSSL, disable old protocols</td>
+                        <td><span class="severity-critical">Critical</span></td>
+                    </tr>
+                    <tr>
+                        <td>5 - Session</td>
+                        <td>Session hijacking, MITM</td>
+                        <td>HTTPS only, secure cookies, VPN</td>
+                        <td><span class="severity-critical">Critical</span></td>
+                    </tr>
+                    <tr>
+                        <td>4 - Transport</td>
+                        <td>SYN flood, UDP flood</td>
+                        <td>Enable SYN cookies, rate limiting</td>
+                        <td><span class="severity-high">High</span></td>
+                    </tr>
+                    <tr>
+                        <td>3 - Network</td>
+                        <td>IP spoofing, ICMP flood</td>
+                        <td>Ingress filtering, disable ICMP</td>
+                        <td><span class="severity-high">High</span></td>
+                    </tr>
+                    <tr>
+                        <td>2 - Data Link</td>
+                        <td>ARP spoofing, VLAN hopping</td>
+                        <td>DAI, port security, disable DTP</td>
+                        <td><span class="severity-high">High</span></td>
+                    </tr>
+                    <tr>
+                        <td>1 - Physical</td>
+                        <td>Physical access, tampering</td>
+                        <td>Lock facilities, encrypt drives</td>
+                        <td><span class="severity-critical">Critical</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Defense in Depth Strategy</h2>
+
+            <div class="success-box">
+                <p><strong>Layer-by-Layer Security Approach:</strong></p>
+                <p>1. <strong>Physical:</strong> Lock server rooms, cable management, access control<br>
+                2. <strong>Data Link:</strong> Port security, VLAN segmentation, DAI<br>
+                3. <strong>Network:</strong> Firewalls, anti-spoofing, ICMP filtering<br>
+                4. <strong>Transport:</strong> SYN cookies, rate limiting, DDoS protection<br>
+                5. <strong>Session:</strong> Strong session management, HTTPS everywhere<br>
+                6. <strong>Presentation:</strong> Strong encryption, updated SSL/TLS<br>
+                7. <strong>Application:</strong> Input validation, WAF, security testing</p>
+                
+                <p style="margin-top: 1rem;"><strong>Key Principle:</strong> If one layer fails, other layers provide backup protection. Never rely on a single security control.</p>
+            </div>
+
+            <div class="info-box" style="margin-top: 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
+                <h3 style="color: white;">🛡️ Advanced Threat Protection</h3>
+                <p>Protect against sophisticated attacks across all OSI layers with professional-grade security tools:</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                    <div>
+                        <p style="margin: 0.5rem 0;">
+                            <a href="https://www.anrdoezrs.net/click-101630293-12580492" target="_blank" style="background: white; color: #667eea; padding: 0.7rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block; width: 100%; text-align: center;">Malwarebytes Premium</a>
+                            <img src="https://www.tqlkg.com/image-101630293-12580492" width="1" height="1" style="display:none;" />
+                        </p>
+                        <p style="font-size: 0.85rem; opacity: 0.9; margin-top: 0.5rem;">Application layer protection</p>
+                    </div>
+                    <div>
+                        <p style="margin: 0.5rem 0;">
+                            <a href="https://www.jdoqocy.com/click-101630293-13999888?url=https%3A%2F%2Fnordcheckout.com%2F%3Fproduct_group%3Dnordvpn%26product%3D2-year&cjsku=nordvpn-2y" target="_blank" style="background: white; color: #667eea; padding: 0.7rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block; width: 100%; text-align: center;">NordVPN (63% OFF)</a>
+                            <img src="https://www.awltovhc.com/image-101630293-13999888" width="1" height="1" style="display:none;" />
+                        </p>
+                        <p style="font-size: 0.85rem; opacity: 0.9; margin-top: 0.5rem;">Network/transport layer encryption</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="warning-box" style="margin-top: 2rem;">
+                <strong>Certification Study Guide:</strong> This page covers attack types commonly tested on Security+, CEH, CISSP, and other security certifications. Bookmark for exam prep!
+            </div>
+
+            <a href="index.html" class="back-link">← Back to Tools</a>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a> | Support us: <a href="https://www.etsy.com/shop/BlizfulStore?ref=seller-platform-mcnav" target="_blank">Blizful Store</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SOC 2 basics quick guide - the 5 Trust Service Criteria (security, availability, processing integrity, confidentiality, privacy) explained.">
+    <meta name="keywords" content="SOC 2, SOC 2 compliance, Trust Service Criteria, SOC 2 audit, security compliance, service organization controls">
+    <title>SOC 2 Basics - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tsc-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-top: 4px solid;
+        }
+        .tsc-card.security { border-color: #667eea; }
+        .tsc-card.availability { border-color: #28a745; }
+        .tsc-card.processing { border-color: #ffc107; }
+        .tsc-card.confidentiality { border-color: #17a2b8; }
+        .tsc-card.privacy { border-color: #dc3545; }
+        .tsc-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .tsc-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        .tsc-icon.security { background: #667eea; }
+        .tsc-icon.availability { background: #28a745; }
+        .tsc-icon.processing { background: #ffc107; }
+        .tsc-icon.confidentiality { background: #17a2b8; }
+        .tsc-icon.privacy { background: #dc3545; }
+        .tsc-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #333;
+        }
+        .tsc-subtitle {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .criteria-list {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin-top: 1rem;
+        }
+        .criteria-list li {
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+        .type-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        @media (max-width: 768px) {
+            .type-comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+        .type-box {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 2px solid #e9ecef;
+        }
+        .type-box h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .required-badge {
+            background: #dc3545;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        .optional-badge {
+            background: #6c757d;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        .timeline-section {
+            background: #e7f3ff;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .timeline-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #cce5ff;
+        }
+        .timeline-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        .timeline-phase {
+            background: #667eea;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-weight: 600;
+            white-space: nowrap;
+            height: fit-content;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>RmVuln</h1></a>
+            <p class="tagline">SOC 2 Basics</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="index.html" class="back-link">&larr; Back to Home</a>
+
+        <section class="intro">
+            <h2>SOC 2 Compliance Overview</h2>
+            <p>SOC 2 (Service Organization Control 2) is an auditing framework developed by AICPA for service providers storing customer data. It's based on five Trust Service Criteria and demonstrates that your organization has effective controls in place.</p>
+        </section>
+
+        <!-- Trust Service Criteria -->
+        <section>
+            <h2>The 5 Trust Service Criteria</h2>
+
+            <div class="tsc-card security">
+                <div class="tsc-header">
+                    <div class="tsc-icon security">🔒</div>
+                    <div>
+                        <div class="tsc-title">Security <span class="required-badge">Required</span></div>
+                        <div class="tsc-subtitle">Protection against unauthorized access</div>
+                    </div>
+                </div>
+                <p>The system is protected against unauthorized access, use, or modification. This is the only required criteria - all SOC 2 reports must include security.</p>
+                <div class="criteria-list">
+                    <strong>Common Controls:</strong>
+                    <ul>
+                        <li>Firewalls and network security</li>
+                        <li>Access controls and authentication (MFA)</li>
+                        <li>Encryption at rest and in transit</li>
+                        <li>Intrusion detection systems</li>
+                        <li>Security awareness training</li>
+                        <li>Vulnerability management</li>
+                        <li>Incident response procedures</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tsc-card availability">
+                <div class="tsc-header">
+                    <div class="tsc-icon availability">⚡</div>
+                    <div>
+                        <div class="tsc-title">Availability <span class="optional-badge">Optional</span></div>
+                        <div class="tsc-subtitle">System is available for operation and use</div>
+                    </div>
+                </div>
+                <p>The system is available for operation and use as committed or agreed. Important for SaaS providers with uptime SLAs.</p>
+                <div class="criteria-list">
+                    <strong>Common Controls:</strong>
+                    <ul>
+                        <li>Uptime monitoring and SLA tracking</li>
+                        <li>Disaster recovery and business continuity plans</li>
+                        <li>Backup and restore procedures</li>
+                        <li>Capacity planning</li>
+                        <li>Redundancy and failover systems</li>
+                        <li>Incident management for outages</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tsc-card processing">
+                <div class="tsc-header">
+                    <div class="tsc-icon processing">⚙️</div>
+                    <div>
+                        <div class="tsc-title">Processing Integrity <span class="optional-badge">Optional</span></div>
+                        <div class="tsc-subtitle">System processing is complete, accurate, timely, and authorized</div>
+                    </div>
+                </div>
+                <p>System processing is complete, valid, accurate, timely, and authorized. Important for financial services, payment processors.</p>
+                <div class="criteria-list">
+                    <strong>Common Controls:</strong>
+                    <ul>
+                        <li>Input validation and error handling</li>
+                        <li>Data quality checks</li>
+                        <li>Transaction logging and audit trails</li>
+                        <li>Processing monitoring and alerts</li>
+                        <li>Change management procedures</li>
+                        <li>Quality assurance testing</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tsc-card confidentiality">
+                <div class="tsc-header">
+                    <div class="tsc-icon confidentiality">🤐</div>
+                    <div>
+                        <div class="tsc-title">Confidentiality <span class="optional-badge">Optional</span></div>
+                        <div class="tsc-subtitle">Confidential information is protected</div>
+                    </div>
+                </div>
+                <p>Information designated as confidential is protected as committed or agreed. For organizations handling sensitive business data.</p>
+                <div class="criteria-list">
+                    <strong>Common Controls:</strong>
+                    <ul>
+                        <li>Data classification policies</li>
+                        <li>Encryption of confidential data</li>
+                        <li>Access restrictions based on classification</li>
+                        <li>Secure data disposal procedures</li>
+                        <li>NDA and confidentiality agreements</li>
+                        <li>Data loss prevention (DLP)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tsc-card privacy">
+                <div class="tsc-header">
+                    <div class="tsc-icon privacy">👤</div>
+                    <div>
+                        <div class="tsc-title">Privacy <span class="optional-badge">Optional</span></div>
+                        <div class="tsc-subtitle">Personal information is handled appropriately</div>
+                    </div>
+                </div>
+                <p>Personal information is collected, used, retained, disclosed, and disposed of properly. Aligns with GDPR and other privacy regulations.</p>
+                <div class="criteria-list">
+                    <strong>Common Controls:</strong>
+                    <ul>
+                        <li>Privacy policy and notice</li>
+                        <li>Consent management</li>
+                        <li>Data subject rights (access, deletion, portability)</li>
+                        <li>Data retention policies</li>
+                        <li>Third-party data sharing controls</li>
+                        <li>Privacy impact assessments</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Type I vs Type II -->
+        <section class="vulnerability-card">
+            <h2>SOC 2 Type I vs Type II</h2>
+            <div class="type-comparison">
+                <div class="type-box">
+                    <h3>Type I</h3>
+                    <p><strong>Point-in-time assessment</strong></p>
+                    <ul>
+                        <li>Evaluates control design at a specific date</li>
+                        <li>Answers: "Are controls suitably designed?"</li>
+                        <li>Faster to complete (2-3 months)</li>
+                        <li>Good starting point for first audit</li>
+                        <li>Less valuable to customers</li>
+                    </ul>
+                </div>
+                <div class="type-box">
+                    <h3>Type II</h3>
+                    <p><strong>Period-of-time assessment</strong></p>
+                    <ul>
+                        <li>Evaluates control effectiveness over 6-12 months</li>
+                        <li>Answers: "Do controls operate effectively?"</li>
+                        <li>More rigorous and time-consuming</li>
+                        <li>Required by most enterprise customers</li>
+                        <li>Industry standard expectation</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline -->
+        <section class="vulnerability-card">
+            <h2>SOC 2 Readiness Timeline</h2>
+            <div class="timeline-section">
+                <div class="timeline-item">
+                    <span class="timeline-phase">Phase 1</span>
+                    <div>
+                        <strong>Gap Assessment (1-2 months)</strong>
+                        <p>Identify current state, gaps, and required controls. Define scope and TSC selection.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-phase">Phase 2</span>
+                    <div>
+                        <strong>Remediation (2-4 months)</strong>
+                        <p>Implement missing controls, document policies, and train staff.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-phase">Phase 3</span>
+                    <div>
+                        <strong>Readiness Assessment (1 month)</strong>
+                        <p>Internal audit to verify controls are in place and operating.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-phase">Phase 4</span>
+                    <div>
+                        <strong>Type I Audit (1-2 months)</strong>
+                        <p>External auditor evaluates control design at a point in time.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-phase">Phase 5</span>
+                    <div>
+                        <strong>Type II Observation Period (6-12 months)</strong>
+                        <p>Controls must operate effectively during observation period.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-phase">Phase 6</span>
+                    <div>
+                        <strong>Type II Audit (1-2 months)</strong>
+                        <p>External auditor tests control effectiveness over the period.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Checklist -->
+        <section class="vulnerability-card">
+            <h2>SOC 2 Readiness Checklist</h2>
+            <div class="remediation">
+                <h3>Policies & Documentation</h3>
+                <ul>
+                    <li>Information Security Policy</li>
+                    <li>Access Control Policy</li>
+                    <li>Change Management Policy</li>
+                    <li>Incident Response Plan</li>
+                    <li>Business Continuity/Disaster Recovery Plan</li>
+                    <li>Vendor Management Policy</li>
+                    <li>Data Classification Policy</li>
+                    <li>Acceptable Use Policy</li>
+                </ul>
+
+                <h3>Technical Controls</h3>
+                <ul>
+                    <li>MFA for all users (especially admin accounts)</li>
+                    <li>Encryption at rest and in transit</li>
+                    <li>Centralized logging and monitoring</li>
+                    <li>Vulnerability scanning and patching</li>
+                    <li>Endpoint protection (antivirus/EDR)</li>
+                    <li>Network segmentation and firewalls</li>
+                    <li>Backup and recovery procedures (tested)</li>
+                </ul>
+
+                <h3>Operational Controls</h3>
+                <ul>
+                    <li>Security awareness training (annual)</li>
+                    <li>Background checks for employees</li>
+                    <li>Onboarding/offboarding procedures</li>
+                    <li>Regular access reviews</li>
+                    <li>Vendor security assessments</li>
+                    <li>Risk assessments (annual)</li>
+                    <li>Penetration testing (annual)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Common Tools -->
+        <section class="vulnerability-card">
+            <h2>SOC 2 Compliance Tools</h2>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Tool</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Vanta, Drata, Secureframe</td>
+                        <td>Automated compliance platforms - continuous monitoring</td>
+                    </tr>
+                    <tr>
+                        <td>Okta, Auth0</td>
+                        <td>Identity and access management, SSO, MFA</td>
+                    </tr>
+                    <tr>
+                        <td>AWS CloudTrail, GCP Audit Logs</td>
+                        <td>Cloud audit logging</td>
+                    </tr>
+                    <tr>
+                        <td>Datadog, Splunk</td>
+                        <td>Centralized logging and monitoring</td>
+                    </tr>
+                    <tr>
+                        <td>Snyk, Dependabot</td>
+                        <td>Vulnerability scanning</td>
+                    </tr>
+                    <tr>
+                        <td>1Password, HashiCorp Vault</td>
+                        <td>Secrets management</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="cta">
+            <h2>Need Detailed SOC 2 Implementation Guides?</h2>
+            <p>For comprehensive tutorials and compliance guides:</p>
+            <a href="https://fixthevuln.com" class="cta-button" target="_blank">Visit FixTheVuln.com &rarr;</a>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
+</body>
+</html>

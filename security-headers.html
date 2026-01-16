@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Essential HTTP security headers checklist and implementation guide">
+    <title>Security Headers Checklist - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="content-header">
+        <div class="container">
+            <h1>HTTP Security Headers</h1>
+            <p>Essential headers to protect your web application</p>
+        </div>
+    </header>
+    
+    <div style="width: 100%; height: 250px; overflow: hidden;">
+        <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1600&h=250&fit=crop" 
+             alt="Network security and encryption" 
+             style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+    
+    <main class="container">
+        <div class="content-wrapper">
+            <div class="info-box">
+                <strong>Why Security Headers Matter:</strong> HTTP security headers tell browsers how to behave when handling your site's content, providing crucial protection against common attacks like XSS, clickjacking, and data injection.
+            </div>
+
+            <h2>Essential Security Headers</h2>
+
+            <div class="vuln-item">
+                <h2>Content-Security-Policy (CSP)</h2>
+                <p><strong>Protection Against:</strong> XSS, data injection attacks, malicious script execution</p>
+                <p><strong>Priority:</strong> Critical</p>
+                
+                <h3>What It Does:</h3>
+                <p>Controls which resources the browser is allowed to load, preventing execution of malicious scripts.</p>
+                
+                <h3>Basic Implementation:</h3>
+                <div class="code-block">
+                    <code>Content-Security-Policy: default-src 'self'; script-src 'self' https://trusted-cdn.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;</code>
+                </div>
+                
+                <h3>Recommended Starter Policy:</h3>
+                <div class="code-block">
+                    <code>Content-Security-Policy: 
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' 'unsafe-eval';
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' data: https:;
+    font-src 'self' data:;
+    connect-src 'self';
+    frame-ancestors 'none';</code>
+                </div>
+                
+                <h3>Server Configuration:</h3>
+                <div class="code-block">
+                    <code># Apache (.htaccess or httpd.conf)
+Header set Content-Security-Policy "default-src 'self'"
+
+# Nginx
+add_header Content-Security-Policy "default-src 'self'";
+
+# Express.js
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "default-src 'self'");
+    next();
+});</code>
+                </div>
+                
+                <div class="warning-box">
+                    <strong>Note:</strong> Start with report-only mode to avoid breaking functionality:<br>
+                    <code>Content-Security-Policy-Report-Only</code>
+                </div>
+                
+                <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed CSP guide →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h2>Strict-Transport-Security (HSTS)</h2>
+                <p><strong>Protection Against:</strong> Man-in-the-middle attacks, SSL stripping, protocol downgrade attacks</p>
+                <p><strong>Priority:</strong> Critical</p>
+                
+                <h3>What It Does:</h3>
+                <p>Forces browsers to only connect via HTTPS, never HTTP.</p>
+                
+                <h3>Implementation:</h3>
+                <div class="code-block">
+                    <code>Strict-Transport-Security: max-age=31536000; includeSubDomains; preload</code>
+                </div>
+                
+                <h3>Parameters:</h3>
+                <p>• <code>max-age=31536000</code> - Cache for 1 year (in seconds)<br>
+                • <code>includeSubDomains</code> - Apply to all subdomains<br>
+                • <code>preload</code> - Submit to browser preload list</p>
+                
+                <h3>Server Configuration:</h3>
+                <div class="code-block">
+                    <code># Apache
+Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+# Nginx
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+
+# Express.js
+app.use((req, res, next) => {
+    res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+    next();
+});</code>
+                </div>
+                
+                <div class="warning-box">
+                    <strong>Important:</strong> Only enable after ensuring all content is served over HTTPS. Start with shorter max-age (e.g., 300) for testing.
+                </div>
+                
+                <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed HSTS guide →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h2>X-Frame-Options</h2>
+                <p><strong>Protection Against:</strong> Clickjacking attacks</p>
+                <p><strong>Priority:</strong> High</p>
+                
+                <h3>What It Does:</h3>
+                <p>Prevents your site from being embedded in frames/iframes on other sites.</p>
+                
+                <h3>Implementation:</h3>
+                <div class="code-block">
+                    <code>X-Frame-Options: DENY</code>
+                </div>
+                
+                <h3>Options:</h3>
+                <p>• <code>DENY</code> - No framing allowed (recommended)<br>
+                • <code>SAMEORIGIN</code> - Allow framing from same origin only<br>
+                • <code>ALLOW-FROM uri</code> - Allow from specific URI (deprecated)</p>
+                
+                <h3>Server Configuration:</h3>
+                <div class="code-block">
+                    <code># Apache
+Header always set X-Frame-Options "DENY"
+
+# Nginx
+add_header X-Frame-Options "DENY" always;
+
+# Express.js
+app.use((req, res, next) => {
+    res.setHeader("X-Frame-Options", "DENY");
+    next();
+});</code>
+                </div>
+                
+                <div class="info-box">
+                    <strong>Modern Alternative:</strong> Use CSP's <code>frame-ancestors 'none'</code> directive for better control.
+                </div>
+                
+                <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed clickjacking protection guide →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h2>X-Content-Type-Options</h2>
+                <p><strong>Protection Against:</strong> MIME type sniffing attacks</p>
+                <p><strong>Priority:</strong> High</p>
+                
+                <h3>What It Does:</h3>
+                <p>Prevents browsers from MIME-sniffing a response away from the declared content-type.</p>
+                
+                <h3>Implementation:</h3>
+                <div class="code-block">
+                    <code>X-Content-Type-Options: nosniff</code>
+                </div>
+                
+                <h3>Server Configuration:</h3>
+                <div class="code-block">
+                    <code># Apache
+Header always set X-Content-Type-Options "nosniff"
+
+# Nginx
+add_header X-Content-Type-Options "nosniff" always;
+
+# Express.js
+app.use((req, res, next) => {
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    next();
+});</code>
+                </div>
+                
+                <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed guide →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h2>Referrer-Policy</h2>
+                <p><strong>Protection Against:</strong> Information leakage via referrer header</p>
+                <p><strong>Priority:</strong> Medium</p>
+                
+                <h3>What It Does:</h3>
+                <p>Controls how much referrer information is sent with requests.</p>
+                
+                <h3>Recommended Implementation:</h3>
+                <div class="code-block">
+                    <code>Referrer-Policy: strict-origin-when-cross-origin</code>
+                </div>
+                
+                <h3>Options (from most to least restrictive):</h3>
+                <p>• <code>no-referrer</code> - Never send referrer<br>
+                • <code>same-origin</code> - Send only for same-origin requests<br>
+                • <code>strict-origin</code> - Send origin only, not on HTTPS→HTTP<br>
+                • <code>strict-origin-when-cross-origin</code> - Full URL for same-origin, origin only for cross-origin<br>
+                • <code>unsafe-url</code> - Always send full URL (not recommended)</p>
+                
+                <h3>Server Configuration:</h3>
+                <div class="code-block">
+                    <code># Apache
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+# Nginx
+add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+# Express.js
+app.use((req, res, next) => {
+    res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+    next();
+});</code>
+                </div>
+                
+                <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed guide →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h2>Permissions-Policy</h2>
+                <p><strong>Protection Against:</strong> Unauthorized access to browser features</p>
+                <p><strong>Priority:</strong> Medium</p>
+                
+                <h3>What It Does:</h3>
+                <p>Controls which browser features and APIs can be used (formerly Feature-Policy).</p>
+                
+                <h3>Implementation:</h3>
+                <div class="code-block">
+                    <code>Permissions-Policy: geolocation=(), microphone=(), camera=()</code>
+                </div>
+                
+                <h3>Common Restrictions:</h3>
+                <div class="code-block">
+                    <code>Permissions-Policy: 
+    geolocation=(), 
+    microphone=(), 
+    camera=(), 
+    payment=(), 
+    usb=(), 
+    magnetometer=(), 
+    gyroscope=(), 
+    accelerometer=()</code>
+                </div>
+                
+                <h3>Server Configuration:</h3>
+                <div class="code-block">
+                    <code># Apache
+Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+# Nginx
+add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;</code>
+                </div>
+                
+                <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed guide →</a>
+            </div>
+
+            <div class="vuln-item">
+                <h2>X-XSS-Protection</h2>
+                <p><strong>Protection Against:</strong> Reflected XSS attacks (legacy)</p>
+                <p><strong>Priority:</strong> Low (deprecated in favor of CSP)</p>
+                
+                <h3>Implementation:</h3>
+                <div class="code-block">
+                    <code>X-XSS-Protection: 0</code>
+                </div>
+                
+                <div class="warning-box">
+                    <strong>Note:</strong> Set to <code>0</code> to disable. This header is deprecated and can introduce vulnerabilities. Use Content-Security-Policy instead.
+                </div>
+                
+                <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed guide →</a>
+            </div>
+
+            <h2>Complete Configuration Examples</h2>
+
+            <div class="vuln-item">
+                <h3>Apache (.htaccess or httpd.conf)</h3>
+                <div class="code-block">
+                    <code>&lt;IfModule mod_headers.c&gt;
+    # Content Security Policy
+    Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';"
+    
+    # Strict Transport Security
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    
+    # Prevent clickjacking
+    Header always set X-Frame-Options "DENY"
+    
+    # Prevent MIME sniffing
+    Header always set X-Content-Type-Options "nosniff"
+    
+    # Referrer Policy
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Permissions Policy
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+    
+    # Disable XSS Protection (use CSP instead)
+    Header always set X-XSS-Protection "0"
+&lt;/IfModule&gt;</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Nginx</h3>
+                <div class="code-block">
+                    <code># Add to server or location block
+add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';" always;
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+add_header X-Frame-Options "DENY" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;
+add_header X-XSS-Protection "0" always;</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h3>Express.js (Node.js)</h3>
+                <div class="code-block">
+                    <code>const helmet = require('helmet');
+
+// Using Helmet middleware (recommended)
+app.use(helmet());
+
+// Or manually:
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "default-src 'self'");
+    res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+    res.setHeader("X-Frame-Options", "DENY");
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+    res.setHeader("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
+    next();
+});</code>
+                </div>
+            </div>
+
+            <h2>Testing Your Headers</h2>
+            <div class="info-box">
+                <p><strong>Online Tools:</strong></p>
+                <p>• <a href="https://securityheaders.com/" target="_blank">SecurityHeaders.com</a> - Comprehensive header scanner<br>
+                • <a href="https://observatory.mozilla.org/" target="_blank">Mozilla Observatory</a> - Security analysis<br>
+                • Browser DevTools - Network tab to inspect response headers</p>
+            </div>
+
+            <h2>Quick Checklist</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Header</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Content-Security-Policy</td>
+                        <td>Critical</td>
+                        <td>☐ Implemented</td>
+                    </tr>
+                    <tr>
+                        <td>Strict-Transport-Security</td>
+                        <td>Critical</td>
+                        <td>☐ Implemented</td>
+                    </tr>
+                    <tr>
+                        <td>X-Frame-Options</td>
+                        <td>High</td>
+                        <td>☐ Implemented</td>
+                    </tr>
+                    <tr>
+                        <td>X-Content-Type-Options</td>
+                        <td>High</td>
+                        <td>☐ Implemented</td>
+                    </tr>
+                    <tr>
+                        <td>Referrer-Policy</td>
+                        <td>Medium</td>
+                        <td>☐ Implemented</td>
+                    </tr>
+                    <tr>
+                        <td>Permissions-Policy</td>
+                        <td>Medium</td>
+                        <td>☐ Implemented</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="success-box">
+                <strong>Next Steps:</strong> Test your headers at <a href="https://securityheaders.com" target="_blank">SecurityHeaders.com</a> after implementation. Aim for an A+ rating!
+            </div>
+
+            <a href="index.html" class="back-link">← Back to Tools</a>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a> | Support us: <a href="https://www.etsy.com/shop/BlizfulStore?ref=seller-platform-mcnav" target="_blank">Blizful Store</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

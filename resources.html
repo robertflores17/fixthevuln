@@ -1,371 +1,560 @@
-<!DOCTYPE HTML>
-<html>
-	<head>
-		<title>Resources - FixTheVuln</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-	</head>
-	<body class="is-preload">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Curated security tools and resources recommended by RmVuln. VPNs, anti-malware, password managers, and learning platforms for security professionals.">
+    <meta name="keywords" content="security tools, VPN recommendations, anti-malware, password manager, cybersecurity resources, security software">
+    <title>Recommended Security Resources - RmVuln</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .resource-section {
+            margin-bottom: 3rem;
+        }
+        .resource-section h2 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        .resource-section > p {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .resource-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .resource-card:hover {
+            border-color: #667eea;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        .resource-card.featured {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+        }
+        .resource-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .resource-icon {
+            font-size: 2.5rem;
+        }
+        .resource-title h3 {
+            margin: 0;
+            color: #333;
+            font-size: 1.2rem;
+        }
+        .resource-title .badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        .badge-recommended { background: #667eea; color: white; }
+        .badge-free { background: #28a745; color: white; }
+        .badge-opensource { background: #6f42c1; color: white; }
+        .resource-description {
+            color: #555;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .resource-features {
+            margin-bottom: 1rem;
+        }
+        .resource-features li {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+            padding-left: 0.5rem;
+        }
+        .resource-features li::marker {
+            content: "✓ ";
+            color: #28a745;
+        }
+        .resource-cta {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .resource-btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .resource-btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .resource-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .resource-btn-secondary {
+            background: #f8f9fa;
+            color: #667eea;
+            border: 1px solid #667eea;
+        }
+        .resource-btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+        .category-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        .free-tools-section {
+            background: #e8f5e9;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .free-tools-section h2 {
+            color: #2e7d32;
+        }
+        .disclosure-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            color: #856404;
+        }
+        .newsletter-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 2.5rem;
+            text-align: center;
+            color: white;
+            margin: 2rem 0;
+        }
+        .newsletter-section h2 {
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+        .newsletter-section p {
+            opacity: 0.95;
+            margin-bottom: 1.5rem;
+        }
+        .newsletter-form {
+            display: flex;
+            gap: 0.5rem;
+            max-width: 500px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .newsletter-form input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        .newsletter-form button {
+            padding: 0.75rem 1.5rem;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .comparison-note {
+            background: #e7f3ff;
+            border-left: 4px solid #667eea;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>RmVuln</h1></a>
+            <p class="tagline">Recommended Security Resources</p>
+        </div>
+    </header>
 
-		<!-- Content -->
-			<div id="content">
-				<div class="inner">
+    <main class="container">
+        <a href="index.html" class="back-link">&larr; Back to Home</a>
 
-					<!-- Resources Overview -->
-						<article class="box post post-excerpt">
-							<header>
-								<h2>Free Security Resources</h2>
-								<p>Practical tools and guides for securing your systems</p>
-							</header>
-							<div class="info">
-								<ul class="stats">
-									<li><a href="#" class="icon fa-download">Free</a></li>
-									<li><a href="#" class="icon fa-book">Educational</a></li>
-									<li><a href="#" class="icon fa-hands-helping">Community</a></li>
-								</ul>
-							</div>
-							<a href="#" class="image featured"><img src="images/resources-hero.jpg" alt="Security Resources" /></a>
-							<p>
-								All resources on FixTheVuln are completely free. We believe security knowledge should be accessible to everyone, 
-								regardless of budget. Download what you need, use it to improve your security posture, and share it with others 
-								who might benefit.
-							</p>
-						</article>
+        <section class="intro">
+            <h2>Tools We Trust</h2>
+            <p>A curated collection of security tools, services, and learning resources. We only recommend products we've personally used or thoroughly researched.</p>
+        </section>
 
-					<!-- Security Checklists -->
-						<article class="box post post-excerpt">
-							<header>
-								<h2>Security Checklists</h2>
-								<p>Step-by-step guides for common security tasks</p>
-							</header>
-							<div class="info">
-								<ul class="stats">
-									<li><a href="#" class="icon fa-check-square">Actionable</a></li>
-									<li><a href="#" class="icon fa-list">Comprehensive</a></li>
-								</ul>
-							</div>
-							
-							<h3>Application Security Checklist</h3>
-							<p>
-								A comprehensive checklist for securing web applications before launch. Covers authentication, authorization, 
-								input validation, session management, API security, and common OWASP Top 10 vulnerabilities. Perfect for 
-								development teams doing security reviews.
-							</p>
-							<p><strong>Includes:</strong> 50+ security controls across authentication, data protection, API security, and deployment</p>
-							<p><a href="#" class="button">Download PDF</a></p>
+        <div class="disclosure-box">
+            <strong>Affiliate Disclosure:</strong> Some links on this page are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. This helps support RmVuln and allows us to keep all our educational content free. We only recommend tools and services we genuinely trust.
+        </div>
 
-							<h3>WordPress Hardening Checklist</h3>
-							<p>
-								Step-by-step guide to securing WordPress installations. From basic configuration to advanced security measures, 
-								this checklist helps you lock down your WordPress site against common attacks. Suitable for site owners and 
-								developers managing WordPress installations.
-							</p>
-							<p><strong>Includes:</strong> Installation security, plugin management, user permissions, database hardening, backup strategies</p>
-							<p><a href="#" class="button">Download PDF</a></p>
+        <div class="category-filter">
+            <button class="filter-btn active" onclick="filterResources('all')">All</button>
+            <button class="filter-btn" onclick="filterResources('privacy')">Privacy & VPN</button>
+            <button class="filter-btn" onclick="filterResources('security')">Security Software</button>
+            <button class="filter-btn" onclick="filterResources('learning')">Learning</button>
+            <button class="filter-btn" onclick="filterResources('free')">Free Tools</button>
+        </div>
 
-							<h3>Docker Security Checklist</h3>
-							<p>
-								Essential security controls for Docker containers and container orchestration. Covers image security, runtime 
-								configuration, network isolation, secrets management, and Kubernetes security basics. Designed for DevOps teams 
-								deploying containerized applications.
-							</p>
-							<p><strong>Includes:</strong> Image scanning, least privilege containers, network policies, secrets management, monitoring</p>
-							<p><a href="#" class="button">Download PDF</a></p>
+        <!-- Privacy & VPN Section -->
+        <section class="resource-section" data-category="privacy">
+            <h2>Privacy & VPN</h2>
+            <p>Protect your online privacy and secure your connection.</p>
 
-							<h3>Cloud Security Baseline (AWS/Azure/GCP)</h3>
-							<p>
-								Foundational security controls for major cloud providers. This checklist helps you establish a secure baseline 
-								configuration for cloud infrastructure, covering IAM, network security, logging, encryption, and compliance.
-							</p>
-							<p><strong>Includes:</strong> Identity management, network configuration, data encryption, logging setup, cost controls</p>
-							<p><a href="#" class="button">Download PDF</a></p>
+            <div class="resource-grid">
+                <div class="resource-card featured">
+                    <div class="resource-header">
+                        <span class="resource-icon">🔒</span>
+                        <div class="resource-title">
+                            <h3>NordVPN <span class="badge badge-recommended">Recommended</span></h3>
+                        </div>
+                    </div>
+                    <p class="resource-description">Military-grade encryption with a strict no-logs policy. Essential for remote work, public WiFi, and protecting your privacy online.</p>
+                    <ul class="resource-features">
+                        <li>5,500+ servers in 60 countries</li>
+                        <li>Threat Protection (malware blocking)</li>
+                        <li>Double VPN & Onion over VPN</li>
+                        <li>24/7 customer support</li>
+                    </ul>
+                    <div class="resource-cta">
+                        <a href="https://www.jdoqocy.com/click-101630293-13999888?url=https%3A%2F%2Fnordcheckout.com%2F%3Fproduct_group%3Dnordvpn%26product%3D2-year&cjsku=nordvpn-2y" target="_blank" class="resource-btn resource-btn-primary">Get 2-Year Plan (Best Value)</a>
+                        <a href="https://www.jdoqocy.com/click-101630293-13999888?url=https%3A%2F%2Fnordcheckout.com%2F%3Fproduct_group%3Dnordvpn%26product%3D1-year&cjsku=nordvpn-1y" target="_blank" class="resource-btn resource-btn-secondary">1-Year Plan</a>
+                    </div>
+                    <img src="https://www.tqlkg.com/image-101630293-13999888" width="1" height="1" style="display:none;" alt="">
+                </div>
 
-							<h3>Incident Response Playbook</h3>
-							<p>
-								Quick reference guide for responding to security incidents. Covers detection, containment, investigation, remediation, 
-								and recovery. Includes templates for incident documentation and communication plans.
-							</p>
-							<p><strong>Includes:</strong> Response procedures, escalation paths, evidence collection, communication templates</p>
-							<p><a href="#" class="button">Download PDF</a></p>
-						</article>
+                <div class="resource-card">
+                    <div class="resource-header">
+                        <span class="resource-icon">🦊</span>
+                        <div class="resource-title">
+                            <h3>Mullvad VPN <span class="badge badge-opensource">Privacy-First</span></h3>
+                        </div>
+                    </div>
+                    <p class="resource-description">Anonymous VPN that doesn't require an email to sign up. Simple flat-rate pricing with no upsells.</p>
+                    <ul class="resource-features">
+                        <li>No account needed - just a number</li>
+                        <li>€5/month flat rate</li>
+                        <li>Open source clients</li>
+                        <li>Accepts cash & crypto payments</li>
+                    </ul>
+                    <div class="resource-cta">
+                        <a href="https://mullvad.net/" target="_blank" class="resource-btn resource-btn-secondary">Visit Mullvad</a>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-					<!-- How-To Guides -->
-						<article class="box post post-excerpt">
-							<header>
-								<h2>How-To Guides</h2>
-								<p>Detailed tutorials for implementing security controls</p>
-							</header>
-							
-							<h3>Setting Up Two-Factor Authentication</h3>
-							<p>
-								Complete guide to implementing 2FA for your applications and services. Covers different 2FA methods (TOTP, SMS, 
-								hardware keys), implementation approaches, and user experience best practices.
-							</p>
-							<p><a href="#" class="button">Read Guide</a></p>
+        <!-- Security Software Section -->
+        <section class="resource-section" data-category="security">
+            <h2>Security Software</h2>
+            <p>Protect your devices from malware, phishing, and other threats.</p>
 
-							<h3>Implementing Content Security Policy (CSP)</h3>
-							<p>
-								Step-by-step tutorial for adding Content Security Policy headers to prevent XSS attacks. Includes policy examples, 
-								testing strategies, and common pitfalls to avoid.
-							</p>
-							<p><a href="#" class="button">Read Guide</a></p>
+            <div class="resource-grid">
+                <div class="resource-card featured">
+                    <div class="resource-header">
+                        <span class="resource-icon">🛡️</span>
+                        <div class="resource-title">
+                            <h3>Malwarebytes Premium <span class="badge badge-recommended">Recommended</span></h3>
+                        </div>
+                    </div>
+                    <p class="resource-description">Industry-leading anti-malware that catches threats traditional antivirus misses. Great for remediation and real-time protection.</p>
+                    <ul class="resource-features">
+                        <li>Advanced ransomware protection</li>
+                        <li>Real-time threat detection</li>
+                        <li>Browser Guard extension</li>
+                        <li>Exploit protection</li>
+                    </ul>
+                    <div class="resource-cta">
+                        <a href="https://www.anrdoezrs.net/click-101630293-12580492" target="_blank" class="resource-btn resource-btn-primary">Get Malwarebytes Premium</a>
+                    </div>
+                    <img src="https://www.tqlkg.com/image-101630293-12580492" width="1" height="1" style="display:none;" alt="">
+                </div>
 
-							<h3>Database Security Hardening</h3>
-							<p>
-								Practical guide to securing databases (MySQL, PostgreSQL, MongoDB). Covers access controls, encryption, backup 
-								strategies, and common misconfigurations that lead to breaches.
-							</p>
-							<p><a href="#" class="button">Read Guide</a></p>
+                <div class="resource-card">
+                    <div class="resource-header">
+                        <span class="resource-icon">🔐</span>
+                        <div class="resource-title">
+                            <h3>1Password <span class="badge badge-recommended">Recommended</span></h3>
+                        </div>
+                    </div>
+                    <p class="resource-description">The password manager trusted by security professionals. Generates, stores, and autofills strong unique passwords.</p>
+                    <ul class="resource-features">
+                        <li>Watchtower security alerts</li>
+                        <li>Cross-platform sync</li>
+                        <li>Secure document storage</li>
+                        <li>Family & team sharing</li>
+                    </ul>
+                    <div class="resource-cta">
+                        <a href="https://1password.com/" target="_blank" class="resource-btn resource-btn-secondary">Try 1Password</a>
+                    </div>
+                </div>
 
-							<h3>API Security Best Practices</h3>
-							<p>
-								Comprehensive guide to securing REST and GraphQL APIs. Covers authentication methods, rate limiting, input validation, 
-								error handling, and preventing common API vulnerabilities.
-							</p>
-							<p><a href="#" class="button">Read Guide</a></p>
-						</article>
+                <div class="resource-card">
+                    <div class="resource-header">
+                        <span class="resource-icon">🔓</span>
+                        <div class="resource-title">
+                            <h3>Bitwarden <span class="badge badge-free">Free Tier</span> <span class="badge badge-opensource">Open Source</span></h3>
+                        </div>
+                    </div>
+                    <p class="resource-description">Open-source password manager with a generous free tier. Great alternative if you're on a budget.</p>
+                    <ul class="resource-features">
+                        <li>Unlimited passwords (free)</li>
+                        <li>Self-hosting option</li>
+                        <li>Open source & audited</li>
+                        <li>Premium at $10/year</li>
+                    </ul>
+                    <div class="resource-cta">
+                        <a href="https://bitwarden.com/" target="_blank" class="resource-btn resource-btn-secondary">Get Bitwarden Free</a>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-					<!-- Templates & Tools -->
-						<article class="box post post-excerpt">
-							<header>
-								<h2>Templates & Tools</h2>
-								<p>Ready-to-use resources for your security program</p>
-							</header>
-							
-							<h3>Security Policy Templates</h3>
-							<p>
-								Customizable security policy templates covering password policies, acceptable use, data handling, incident response, 
-								and vendor management. Designed for small businesses establishing their first security policies.
-							</p>
-							<p><a href="#" class="button">Download Templates</a></p>
+        <!-- Learning Resources Section -->
+        <section class="resource-section" data-category="learning">
+            <h2>Learning Platforms</h2>
+            <p>Level up your security skills with these training resources.</p>
 
-							<h3>Vulnerability Tracking Spreadsheet</h3>
-							<p>
-								Simple Excel/Google Sheets template for tracking discovered vulnerabilities, remediation status, and risk levels. 
-								Perfect for teams without dedicated vulnerability management tools.
-							</p>
-							<p><a href="#" class="button">Download Template</a></p>
+            <div class="resource-grid">
+                <div class="resource-card">
+                    <div class="resource-header">
+                        <span class="resource-icon">🎯</span>
+                        <div class="resource-title">
+                            <h3>TryHackMe <span class="badge badge-free">Free Labs</span></h3>
+                        </div>
+                    </div>
+                    <p class="resource-description">Gamified cybersecurity training with browser-based labs. Perfect for beginners learning hands-on skills.</p>
+                    <ul class="resource-features">
+                        <li>Guided learning paths</li>
+                        <li>Browser-based VMs (no setup)</li>
+                        <li>CTF-style challenges</li>
+                        <li>Free tier available</li>
+                    </ul>
+                    <div class="resource-cta">
+                        <a href="https://tryhackme.com/" target="_blank" class="resource-btn resource-btn-secondary">Start Learning</a>
+                    </div>
+                </div>
 
-							<h3>Security Assessment Questionnaire</h3>
-							<p>
-								Use this questionnaire to evaluate the security posture of your systems or third-party vendors. Covers infrastructure, 
-								applications, data protection, and compliance requirements.
-							</p>
-							<p><a href="#" class="button">Download Template</a></p>
-						</article>
+                <div class="resource-card">
+                    <div class="resource-header">
+                        <span class="resource-icon">🧪</span>
+                        <div class="resource-title">
+                            <h3>HackTheBox <span class="badge badge-free">Free Labs</span></h3>
+                        </div>
+                    </div>
+                    <p class="resource-description">Advanced penetration testing labs. More challenging than TryHackMe - great for CTF practice.</p>
+                    <ul class="resource-features">
+                        <li>Real-world vulnerable machines</li>
+                        <li>Active community</li>
+                        <li>Pro Labs for enterprises</li>
+                        <li>CPTS certification</li>
+                    </ul>
+                    <div class="resource-cta">
+                        <a href="https://www.hackthebox.com/" target="_blank" class="resource-btn resource-btn-secondary">Join HackTheBox</a>
+                    </div>
+                </div>
 
-					<!-- Recommended Tools -->
-						<article class="box post post-excerpt">
-							<header>
-								<h2>Recommended Security Tools</h2>
-								<p>Tools we use and recommend for vulnerability management</p>
-							</header>
-							<div class="info">
-								<ul class="stats">
-									<li><a href="#" class="icon fa-tools">Tested</a></li>
-									<li><a href="#" class="icon fa-thumbs-up">Recommended</a></li>
-								</ul>
-							</div>
-							
-							<h3>Galaxy.ai - AI-Powered Security Platform</h3>
-							<p>
-								<strong>What it is:</strong> Galaxy.ai is an AI-powered security platform that helps teams identify and remediate 
-								vulnerabilities faster. It combines vulnerability scanning, risk prioritization, and automated remediation guidance 
-								into a single platform.
-							</p>
-							<p>
-								<strong>Who it's for:</strong> Development teams, security professionals, and organizations looking to streamline 
-								their vulnerability management process without requiring deep security expertise.
-							</p>
-							<p>
-								<strong>Why we recommend it:</strong> The AI-powered risk prioritization helps you focus on what actually matters 
-								instead of drowning in vulnerability reports. The platform provides contextual remediation guidance similar to what 
-								we cover in our guides, but automated and integrated into your workflow.
-							</p>
-							<p>
-								<strong>Key features:</strong>
-			</p>
-			<ul style="margin-left: 2em;">
-				<li>AI-powered vulnerability scanning and prioritization</li>
-				<li>Automated remediation recommendations</li>
-				<li>Integration with CI/CD pipelines</li>
-				<li>Developer-friendly interface</li>
-				<li>Continuous monitoring and alerting</li>
-			</ul>
-			<p style="margin-top: 1em;">
-				<a href="https://galaxy.ai/?ref=robertb6" class="button" target="_blank" rel="noopener">Try Galaxy.ai</a>
-				<span style="font-size: 0.85em; color: #888; margin-left: 1em;">Affiliate link - supports FixTheVuln</span>
-			</p>
-			<p style="font-size: 0.85em; color: #666; margin-top: 1em;">
-				<strong>Note:</strong> We may earn a small commission if you sign up through our link, at no extra cost to you. 
-				We only recommend tools we genuinely believe are valuable for the community.
-			</p>
-						</article>
+                <div class="resource-card">
+                    <div class="resource-header">
+                        <span class="resource-icon">🕸️</span>
+                        <div class="resource-title">
+                            <h3>PortSwigger Web Security Academy <span class="badge badge-free">100% Free</span></h3>
+                        </div>
+                    </div>
+                    <p class="resource-description">The gold standard for web security training. Created by the makers of Burp Suite.</p>
+                    <ul class="resource-features">
+                        <li>Completely free</li>
+                        <li>Interactive labs</li>
+                        <li>Covers all OWASP Top 10</li>
+                        <li>From basics to expert</li>
+                    </ul>
+                    <div class="resource-cta">
+                        <a href="https://portswigger.net/web-security" target="_blank" class="resource-btn resource-btn-secondary">Start Free Training</a>
+                    </div>
+                </div>
 
-					<!-- Learning Paths -->
-						<article class="box post post-excerpt">
-							<header>
-								<h2>Learning Paths</h2>
-								<p>Structured education for different roles</p>
-							</header>
-							
-							<h3>For Developers: Application Security Fundamentals</h3>
-							<p>
-								Learn the essential security controls every developer should know. This learning path covers secure coding practices, 
-								common vulnerabilities, and how to build security into your development workflow.
-							</p>
-							<p>
-								<strong>Topics:</strong> Input validation, authentication & authorization, session management, XSS prevention, 
-				SQL injection prevention, API security, dependency management
-			</p>
-			<p><a href="#" class="button">Start Learning</a></p>
+                <div class="resource-card">
+                    <div class="resource-header">
+                        <span class="resource-icon">🤖</span>
+                        <div class="resource-title">
+                            <h3>Galaxy.ai</h3>
+                        </div>
+                    </div>
+                    <p class="resource-description">Access multiple AI tools with one subscription. Use AI to accelerate your security research and learning.</p>
+                    <ul class="resource-features">
+                        <li>Multiple AI models in one place</li>
+                        <li>Great for code analysis</li>
+                        <li>Security research assistance</li>
+                        <li>Documentation generation</li>
+                    </ul>
+                    <div class="resource-cta">
+                        <a href="https://galaxy.ai/?ref=robertb6" target="_blank" class="resource-btn resource-btn-primary">Try Galaxy.ai</a>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-			<h3>For IT Admins: Infrastructure Security Essentials</h3>
-			<p>
-				Master the fundamentals of securing infrastructure. This path covers server hardening, network security, patch management, 
-				and monitoring for security events.
-			</p>
-			<p>
-				<strong>Topics:</strong> Server hardening, firewall configuration, patch management, log monitoring, backup strategies, 
-				access control
-			</p>
-			<p><a href="#" class="button">Start Learning</a></p>
+        <!-- Free Tools Section -->
+        <section class="free-tools-section" data-category="free">
+            <h2>Free Security Tools (No Affiliate Links)</h2>
+            <p style="color: #2e7d32; margin-bottom: 1.5rem;">These are genuinely free tools we use ourselves - no affiliate relationships.</p>
 
-			<h3>For Small Business Owners: Security Basics</h3>
-			<p>
-				Understand the essential security measures every small business needs. This path focuses on practical, cost-effective 
-				security without requiring technical expertise.
-			</p>
-			<p>
-				<strong>Topics:</strong> Password management, employee training, data backup, basic network security, vendor security, 
-				incident response planning
-			</p>
-			<p><a href="#" class="button">Start Learning</a></p>
-						</article>
+            <div class="resource-grid">
+                <div class="resource-card" style="background: white;">
+                    <div class="resource-header">
+                        <span class="resource-icon">🦠</span>
+                        <div class="resource-title">
+                            <h3>VirusTotal</h3>
+                        </div>
+                    </div>
+                    <p class="resource-description">Scan files and URLs with 70+ antivirus engines. Essential for malware analysis.</p>
+                    <a href="https://www.virustotal.com/" target="_blank" class="resource-btn resource-btn-secondary">Use VirusTotal →</a>
+                </div>
 
-					<!-- Newsletter CTA -->
-						<article class="box post post-excerpt">
-							<header>
-								<h2>Stay Updated</h2>
-								<p>Get new resources delivered to your inbox</p>
-							</header>
-							<p>
-								We regularly publish new checklists, guides, and tutorials. Subscribe to our weekly newsletter to get notified 
-								when new resources are available. We'll also send you a curated summary of the week's most important vulnerabilities.
-							</p>
-							<form method="post" action="#" style="margin-top: 1em;">
-								<div class="row gtr-50">
-									<div class="col-8 col-12-mobile">
-										<input type="email" name="email" placeholder="your@email.com" required />
-									</div>
-									<div class="col-4 col-12-mobile">
-										<button type="submit" class="button" style="width: 100%;">Subscribe</button>
-									</div>
-								</div>
-							</form>
-						</article>
+                <div class="resource-card" style="background: white;">
+                    <div class="resource-header">
+                        <span class="resource-icon">🔒</span>
+                        <div class="resource-title">
+                            <h3>SSL Labs</h3>
+                        </div>
+                    </div>
+                    <p class="resource-description">Deep analysis of your SSL/TLS configuration. Get an A+ rating.</p>
+                    <a href="https://www.ssllabs.com/ssltest/" target="_blank" class="resource-btn resource-btn-secondary">Test Your SSL →</a>
+                </div>
 
-				</div>
-			</div>
+                <div class="resource-card" style="background: white;">
+                    <div class="resource-header">
+                        <span class="resource-icon">📋</span>
+                        <div class="resource-title">
+                            <h3>Security Headers</h3>
+                        </div>
+                    </div>
+                    <p class="resource-description">Check your HTTP security headers and get recommendations.</p>
+                    <a href="https://securityheaders.com/" target="_blank" class="resource-btn resource-btn-secondary">Check Headers →</a>
+                </div>
 
-		<!-- Sidebar -->
-			<div id="sidebar">
+                <div class="resource-card" style="background: white;">
+                    <div class="resource-header">
+                        <span class="resource-icon">🔓</span>
+                        <div class="resource-title">
+                            <h3>Have I Been Pwned</h3>
+                        </div>
+                    </div>
+                    <p class="resource-description">Check if your email has been in a data breach. Essential for credential hygiene.</p>
+                    <a href="https://haveibeenpwned.com/" target="_blank" class="resource-btn resource-btn-secondary">Check Your Email →</a>
+                </div>
 
-				<!-- Logo -->
-					<h1 id="logo"><a href="index.html">FIXTHEVULN</a></h1>
+                <div class="resource-card" style="background: white;">
+                    <div class="resource-header">
+                        <span class="resource-icon">🌐</span>
+                        <div class="resource-title">
+                            <h3>Shodan</h3>
+                        </div>
+                    </div>
+                    <p class="resource-description">Search engine for internet-connected devices. Find exposed services.</p>
+                    <a href="https://www.shodan.io/" target="_blank" class="resource-btn resource-btn-secondary">Explore Shodan →</a>
+                </div>
 
-				<!-- Nav -->
-					<nav id="nav">
-						<ul>
-							<li><a href="index.html">Latest Posts</a></li>
-							<li><a href="#">Remediation Guides</a></li>
-							<li><a href="about.html">About</a></li>
-							<li class="current"><a href="resources.html">Resources</a></li>
-							<li><a href="contact.html">Contact</a></li>
-						</ul>
-					</nav>
+                <div class="resource-card" style="background: white;">
+                    <div class="resource-header">
+                        <span class="resource-icon">🔍</span>
+                        <div class="resource-title">
+                            <h3>URLScan.io</h3>
+                        </div>
+                    </div>
+                    <p class="resource-description">Scan websites for malicious content and phishing indicators.</p>
+                    <a href="https://urlscan.io/" target="_blank" class="resource-btn resource-btn-secondary">Scan a URL →</a>
+                </div>
+            </div>
+        </section>
 
-				<!-- Popular Downloads -->
-					<section class="box text-style1">
-						<div class="inner">
-							<header>
-								<h3>Most Downloaded</h3>
-							</header>
-							<p style="font-size: 0.9em; line-height: 1.8em;">
-								1. Application Security Checklist<br/>
-								2. WordPress Hardening Guide<br/>
-								3. Cloud Security Baseline<br/>
-								4. Incident Response Playbook
-							</p>
-						</div>
-					</section>
+        <!-- Newsletter -->
+        <div class="newsletter-section">
+            <h2>Get Security Updates</h2>
+            <p>Weekly tips, new tool recommendations, and vulnerability alerts delivered to your inbox.</p>
+            <form class="newsletter-form" onsubmit="handleNewsletter(event)">
+                <input type="email" placeholder="Enter your email" required id="newsletter-email">
+                <button type="submit">Subscribe Free</button>
+            </form>
+            <p style="font-size: 0.8rem; margin-top: 1rem; opacity: 0.8;">No spam. Unsubscribe anytime.</p>
+        </div>
 
-				<!-- Categories -->
-					<section class="box recent-posts">
-						<header>
-							<h2>Resource Categories</h2>
-						</header>
-						<ul>
-							<li>Security Checklists</li>
-							<li>How-To Guides</li>
-							<li>Templates & Tools</li>
-							<li>Learning Paths</li>
-							<li>Best Practices</li>
-						</ul>
-					</section>
+        <div class="comparison-note">
+            <strong>How we choose recommendations:</strong> We evaluate tools based on security effectiveness, ease of use, value for money, and company reputation. We personally use or extensively test products before recommending them. Affiliate partnerships don't influence our recommendations - we only partner with products we'd recommend anyway.
+        </div>
 
-				<!-- Community -->
-					<section class="box recent-comments">
-						<header>
-							<h2>Community</h2>
-						</header>
-						<p style="font-size: 0.9em; padding: 0 1.5em;">
-							Have suggestions for new resources? Found an error in a guide? 
-							<a href="contact.html">Let us know!</a> This project is built for 
-							the community.
-						</p>
-					</section>
+        <section class="cta">
+            <h2>Learn Security Fundamentals</h2>
+            <p>Start with our free learning path to build a solid security foundation:</p>
+            <a href="start-here.html" class="cta-button">Start Learning →</a>
+        </section>
+    </main>
 
-				<!-- License Info -->
-					<section class="box text-style1">
-						<div class="inner">
-							<header>
-								<h3>Usage Rights</h3>
-							</header>
-							<p style="font-size: 0.85em;">
-								All resources are free to use, share, and adapt for your own needs. 
-								We only ask that you credit FixTheVuln when sharing with others.
-							</p>
-						</div>
-					</section>
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 RmVuln. Quick reference for security professionals.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
 
-				<!-- Support -->
-					<section class="box text-style1">
-						<div class="inner">
-							<p style="font-size: 0.8em; text-align: center; color: #888;">
-								<strong>Support This Project</strong><br/>
-								<a href="https://www.etsy.com/shop/BlizfulStore?ref=seller-platform-mcnav" target="_blank" rel="noopener" style="color: #666;">
-									Check out our Etsy shop
-								</a> - Patriotic gifts & apparel
-							</p>
-						</div>
-					</section>
+    <script>
+        function filterResources(category) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
 
-				<!-- Copyright -->
-					<ul id="copyright">
-						<li>&copy; 2026 FixTheVuln.</li>
-						<li>Security Education for Everyone</li>
-					</ul>
+            document.querySelectorAll('.resource-section').forEach(section => {
+                if (category === 'all' || section.dataset.category === category) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+        }
 
-			</div>
-
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
-
-	</body>
+        function handleNewsletter(e) {
+            e.preventDefault();
+            const email = document.getElementById('newsletter-email').value;
+            alert('Thanks for subscribing! (Demo: ' + email + ')');
+            document.getElementById('newsletter-email').value = '';
+        }
+    </script>
+</body>
 </html>
