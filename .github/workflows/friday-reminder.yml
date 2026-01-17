@@ -1,0 +1,111 @@
+name: Friday Review Reminder
+
+on:
+  schedule:
+    # Runs every Friday at 5 PM UTC (adjust to your timezone)
+    # For PST: 9 AM, EST: 12 PM
+    - cron: '0 17 * * 5'
+  workflow_dispatch:
+    # Allows manual trigger for testing
+
+jobs:
+  create-reminder:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check pending vulnerabilities
+        id: check
+        run: |
+          PENDING_COUNT=0
+          if [ -f "data/pending_review.json" ]; then
+            PENDING_COUNT=$(python3 -c "import json; data=json.load(open('data/pending_review.json')); print(len(data.get('vulnerabilities', [])))" 2>/dev/null || echo "0")
+          fi
+          echo "pending_count=$PENDING_COUNT" >> $GITHUB_OUTPUT
+
+          # Check for open PRs
+          echo "Checking for open vulnerability PRs..."
+
+      - name: Get open PRs
+        id: prs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          OPEN_PRS=$(gh pr list --search "vulnerability" --json number,title,url --jq '.[] | "- [#\(.number): \(.title)](\(.url))"' 2>/dev/null || echo "None")
+          echo "open_prs<<EOF" >> $GITHUB_OUTPUT
+          echo "$OPEN_PRS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          PR_COUNT=$(gh pr list --search "vulnerability" --json number --jq 'length' 2>/dev/null || echo "0")
+          echo "pr_count=$PR_COUNT" >> $GITHUB_OUTPUT
+
+      - name: Create reminder issue
+        if: steps.check.outputs.pending_count != '0' || steps.prs.outputs.pr_count != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DATE=$(date +'%B %d, %Y')
+          WEEKEND_DATE=$(date -d "+2 days" +'%B %d' 2>/dev/null || date -v+2d +'%B %d')
+
+          ISSUE_BODY="## Weekend Review Reminder
+
+          Happy Friday! Here's your weekly vulnerability review summary.
+
+          ### Pending Items
+
+          - **Vulnerabilities awaiting review:** ${{ steps.check.outputs.pending_count }}
+          - **Open Pull Requests:** ${{ steps.prs.outputs.pr_count }}
+
+          ### Open PRs to Review
+
+          ${{ steps.prs.outputs.open_prs }}
+
+          ### Quick Actions
+
+          1. Review \`data/pending_review.json\` for new CVEs
+          2. Check the open PR(s) above
+          3. For items to publish on the site:
+             - Set \`include_on_site: true\`
+             - Write a clear remediation summary
+             - Assign priority level
+          4. Merge approved PRs to update the site
+
+          ### Review Checklist
+
+          - [ ] Reviewed pending vulnerabilities
+          - [ ] Added custom remediation text for selected CVEs
+          - [ ] Merged PR(s) to publish updates
+          - [ ] Verified site displays new content correctly
+
+          ---
+
+          *This is an automated reminder. Have a great weekend!*
+
+          *P.S. If no action is needed, feel free to close this issue.*"
+
+          # Check if similar issue already exists this week
+          EXISTING=$(gh issue list --label "weekly-review" --state open --json number --jq '.[0].number' 2>/dev/null || echo "")
+
+          if [ -n "$EXISTING" ]; then
+            echo "Updating existing issue #$EXISTING"
+            gh issue edit $EXISTING --body "$ISSUE_BODY"
+          else
+            echo "Creating new reminder issue"
+            gh issue create \
+              --title "Weekend Review: ${{ steps.check.outputs.pending_count }} vulnerabilities pending ($DATE)" \
+              --body "$ISSUE_BODY" \
+              --label "weekly-review"
+          fi
+
+      - name: No action needed
+        if: steps.check.outputs.pending_count == '0' && steps.prs.outputs.pr_count == '0'
+        run: |
+          echo "No pending vulnerabilities or PRs. Skipping reminder."
+          echo "### All caught up!" >> $GITHUB_STEP_SUMMARY
+          echo "No pending vulnerabilities to review this week." >> $GITHUB_STEP_SUMMARY
