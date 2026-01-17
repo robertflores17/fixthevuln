@@ -760,13 +760,21 @@ Content-Security-Policy: default-src 'self'</code>
         <section style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); padding: 2rem; border-radius: 12px; color: white; margin-top: 3rem; text-align: center;" aria-labelledby="newsletter-heading">
             <h2 id="newsletter-heading" style="color: white; margin-bottom: 0.5rem;">Stay Updated</h2>
             <p style="margin-bottom: 1.5rem; opacity: 0.95;">Get weekly security tips, new guides, and vulnerability alerts.</p>
-            <form style="display: flex; gap: 0.5rem; max-width: 500px; margin: 0 auto; flex-wrap: wrap; justify-content: center;" onsubmit="event.preventDefault(); alert('Thanks for subscribing! (Demo)');" aria-label="Newsletter subscription">
-                <label for="email-input" class="visually-hidden">Email address</label>
-                <input type="email" id="email-input" placeholder="Enter your email" required style="flex: 1; min-width: 200px; padding: 0.75rem 1rem; border: none; border-radius: 6px; font-size: 1rem;" aria-label="Email address for newsletter">
+            <form id="newsletter-form" style="display: flex; gap: 0.5rem; max-width: 500px; margin: 0 auto; flex-wrap: wrap; justify-content: center;" aria-label="Newsletter subscription">
+                <label for="newsletter-email" class="visually-hidden">Email address</label>
+                <input type="email" id="newsletter-email" name="email" placeholder="Enter your email" required style="flex: 1; min-width: 200px; padding: 0.75rem 1rem; border: none; border-radius: 6px; font-size: 1rem;">
                 <button type="submit" style="padding: 0.75rem 1.5rem; background: white; color: #28a745; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">Subscribe Free</button>
             </form>
             <p style="font-size: 0.8rem; margin-top: 1rem; opacity: 0.8;">No spam. Unsubscribe anytime.</p>
         </section>
+        <script>
+            document.getElementById('newsletter-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('newsletter-email').value;
+                const magicLink = 'https://magic.beehiiv.com/v1/c30396f1-32dc-4655-b79b-afc1beb7eaea?email=' + encodeURIComponent(email);
+                window.location.href = magicLink;
+            });
+        </script>
 
         <!-- Recommended Tools (Brief) -->
         <section style="background: var(--bg-tertiary); padding: 2rem; border-radius: 12px; margin-top: 2rem; text-align: center;">
