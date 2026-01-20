@@ -48,6 +48,16 @@ def load_seen_cves():
     return set()
 
 
+def load_pending_reviews():
+    """Load existing pending reviews to preserve in-progress work."""
+    if PENDING_FILE.exists():
+        with open(PENDING_FILE, 'r') as f:
+            data = json.load(f)
+            # Return dict keyed by CVE ID for easy lookup
+            return {v['cveID']: v for v in data.get('vulnerabilities', [])}
+    return {}
+
+
 def save_seen_cves(cve_ids):
     """Save list of seen CVE IDs."""
     SEEN_FILE.parent.mkdir(parents=True, exist_ok=True)
@@ -218,12 +228,21 @@ def main():
     print(f"New CVEs to review: {len(new_vulns)}")
 
     if new_vulns:
-        # Save pending review JSON
+        # Load existing pending reviews to preserve in-progress work
+        existing_pending = load_pending_reviews()
+
+        # Merge: keep existing reviews, add new ones
+        for vuln in new_vulns:
+            cve_id = vuln['cveID']
+            if cve_id not in existing_pending:
+                existing_pending[cve_id] = vuln
+
+        # Save merged pending review JSON
         pending = {
             "last_updated": datetime.now().isoformat(),
-            "total_pending": len(new_vulns),
+            "total_pending": len(existing_pending),
             "instructions": "Fill in: cvss, short_description, fix, include_on_site",
-            "vulnerabilities": new_vulns
+            "vulnerabilities": list(existing_pending.values())
         }
         with open(PENDING_FILE, 'w') as f:
             json.dump(pending, f, indent=2)
@@ -233,7 +252,7 @@ def main():
         with open(DATA_DIR / "REVIEW.md", 'w') as f:
             f.write(review_md)
 
-        print(f"\nSaved {len(new_vulns)} CVEs to:")
+        print(f"\nAdded {len(new_vulns)} new CVEs (total pending: {len(existing_pending)})")
         print(f"  - data/pending_review.json (edit this)")
         print(f"  - data/REVIEW.md (review guide with expert links)")
 
