@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Archive of Known Exploited Vulnerabilities (KEV) with remediation guidance. Historical CVE database for security professionals.">
+    <meta name="keywords" content="CVE archive, KEV catalog, vulnerability history, CISA KEV, security patches, vulnerability remediation">
+    <meta name="author" content="FixTheVuln">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="KEV Archive - Known Exploited Vulnerabilities - FixTheVuln">
+    <meta property="og:description" content="Historical archive of actively exploited vulnerabilities with remediation guidance.">
+    <meta property="og:type" content="website">
+    <title>KEV Archive - Known Exploited Vulnerabilities - FixTheVuln</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .kev-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+        .kev-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            border-left: 3px solid #dc3545;
+        }
+        /* Dynamic CVSS color coding */
+        .kev-card.cvss-critical { border-left-color: #dc3545; } /* Red: 9-10 or Zero-Day */
+        .kev-card.cvss-high { border-left-color: #fd7e14; }     /* Orange: 7-8.9 */
+        .kev-card.cvss-medium { border-left-color: #ffc107; }   /* Yellow: 4-6.9 */
+        .kev-card.cvss-low { border-left-color: #17a2b8; }      /* Blue: 0.1-3.9 */
+        .kev-card.cvss-none { border-left-color: #6c757d; }     /* Gray: Unknown/N/A */
+        .kev-card h4 {
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            margin: 0 0 0.25rem 0;
+        }
+        .kev-card .cve-id {
+            color: #dc3545;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .kev-card p {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin: 0 0 0.5rem 0;
+            line-height: 1.4;
+        }
+        .kev-card .kev-fix {
+            background: #d4edda;
+            border-radius: 4px;
+            padding: 0.4rem 0.6rem;
+            font-size: 0.75rem;
+            color: #155724;
+        }
+        [data-theme="dark"] .kev-card .kev-fix {
+            background: rgba(40, 167, 69, 0.2);
+            color: #a8e6cf;
+        }
+        .archive-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .archive-header h2 {
+            color: white;
+            margin: 0 0 0.5rem 0;
+        }
+        .archive-header p {
+            margin: 0;
+            opacity: 0.9;
+        }
+        .cvss-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+        .cvss-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .cvss-legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+        .year-section {
+            margin-bottom: 2rem;
+        }
+        .year-section h3 {
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link" style="position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden;">Skip to main content</a>
+
+    <header role="banner">
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>FixTheVuln</h1></a>
+            <p class="tagline">KEV Archive</p>
+            <p class="subtitle">Historical Known Exploited Vulnerabilities</p>
+        </div>
+    </header>
+
+    <main id="main-content" class="container" role="main">
+        <a href="index.html" class="back-link">&larr; Back to Home</a>
+
+        <div class="archive-header">
+            <h2>Vulnerability Archive</h2>
+            <p>Historical record of actively exploited vulnerabilities from CISA's KEV catalog. Use this archive for research, audit trails, and understanding threat evolution.</p>
+        </div>
+
+        <!-- CVSS Legend -->
+        <div class="cvss-legend">
+            <div class="cvss-legend-item">
+                <div class="cvss-legend-color" style="background: #dc3545;"></div>
+                <span>Critical (9-10 / Zero-Day)</span>
+            </div>
+            <div class="cvss-legend-item">
+                <div class="cvss-legend-color" style="background: #fd7e14;"></div>
+                <span>High (7-8.9)</span>
+            </div>
+            <div class="cvss-legend-item">
+                <div class="cvss-legend-color" style="background: #ffc107;"></div>
+                <span>Medium (4-6.9)</span>
+            </div>
+            <div class="cvss-legend-item">
+                <div class="cvss-legend-color" style="background: #17a2b8;"></div>
+                <span>Low (0.1-3.9)</span>
+            </div>
+            <div class="cvss-legend-item">
+                <div class="cvss-legend-color" style="background: #6c757d;"></div>
+                <span>Unknown</span>
+            </div>
+        </div>
+
+        <!-- Dynamic Archive Content - populated by JavaScript -->
+        <div id="archive-content">
+            <p style="text-align: center; color: var(--text-muted);">Loading archived vulnerabilities...</p>
+        </div>
+
+        <div style="text-align: center; margin-top: 2rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 8px;">
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">For the latest actively exploited vulnerabilities, check the official source:</p>
+            <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank" rel="noopener" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">View Full CISA KEV Catalog</a>
+        </div>
+    </main>
+
+    <footer role="contentinfo">
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Educational resources for security professionals.</p>
+            <p>Support us: <a href="https://www.etsy.com/shop/SmartSheetByRobert?ref=seller-platform-mcnav" target="_blank" rel="noopener">SmartSheetByRobert</a></p>
+        </div>
+    </footer>
+
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode">
+        <span id="theme-icon">&#127769;</span>
+    </button>
+
+    <script>
+        // Dark mode toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('FixTheVuln-theme', newTheme);
+            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19';
+        }
+
+        // Load saved theme
+        (function() {
+            const savedTheme = localStorage.getItem('FixTheVuln-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('theme-icon').textContent = '\u2600\uFE0F';
+            }
+        })();
+
+        // KEV Archive Loading System
+        const KEVArchive = {
+            // CVSS color mapping
+            cvssColors: {
+                critical: '#dc3545',  // Red: 9-10 or Zero-Day
+                high: '#fd7e14',      // Orange: 7-8.9
+                medium: '#ffc107',    // Yellow: 4-6.9
+                low: '#17a2b8',       // Blue: 0.1-3.9
+                none: '#6c757d'       // Gray: Unknown/N/A
+            },
+
+            // Get CVSS color class
+            getCvssClass: function(cvss, isZeroDay) {
+                if (isZeroDay || cvss >= 9) return 'cvss-critical';
+                if (cvss >= 7) return 'cvss-high';
+                if (cvss >= 4) return 'cvss-medium';
+                if (cvss > 0) return 'cvss-low';
+                return 'cvss-none';
+            },
+
+            // Get actual color value for inline styling
+            getCvssColor: function(cvss, isZeroDay) {
+                if (isZeroDay || cvss >= 9) return this.cvssColors.critical;
+                if (cvss >= 7) return this.cvssColors.high;
+                if (cvss >= 4) return this.cvssColors.medium;
+                if (cvss > 0) return this.cvssColors.low;
+                return this.cvssColors.none;
+            },
+
+            // Format CVSS display
+            formatCvss: function(cvss, isZeroDay) {
+                if (isZeroDay) return 'Zero-Day';
+                if (cvss === null) return 'N/A';
+                return cvss.toString();
+            },
+
+            // Create a KEV card
+            createCard: function(vuln) {
+                const cvssClass = this.getCvssClass(vuln.cvss || 0, vuln.isZeroDay);
+                const cvssColor = this.getCvssColor(vuln.cvss || 0, vuln.isZeroDay);
+                const cvssDisplay = this.formatCvss(vuln.cvss, vuln.isZeroDay);
+
+                return `
+                    <div class="kev-card ${cvssClass}">
+                        <h4>${vuln.title}</h4>
+                        <div class="cve-id" style="color: ${cvssColor};">${vuln.id} | ${cvssDisplay}</div>
+                        <p>${vuln.description}</p>
+                        <div class="kev-fix"><strong>Fix:</strong> ${vuln.fix}</div>
+                    </div>
+                `;
+            },
+
+            // Get year from CVE ID or dateAdded
+            getYear: function(vuln) {
+                // Try to extract year from CVE ID (e.g., CVE-2025-xxxxx)
+                const cveMatch = vuln.id.match(/CVE-(\d{4})/);
+                if (cveMatch) return cveMatch[1];
+                // Fallback to dateAdded
+                return new Date(vuln.dateAdded).getFullYear().toString();
+            },
+
+            // Load and render archived vulnerabilities grouped by year
+            loadArchive: async function() {
+                try {
+                    const response = await fetch('data/kev-data.json');
+                    const data = await response.json();
+
+                    // Filter archived vulnerabilities
+                    const archivedVulns = data.vulnerabilities.filter(v => v.archived);
+
+                    // Group by year
+                    const byYear = {};
+                    archivedVulns.forEach(vuln => {
+                        const year = this.getYear(vuln);
+                        if (!byYear[year]) byYear[year] = [];
+                        byYear[year].push(vuln);
+                    });
+
+                    // Sort years descending, but put "legacy" (pre-2020) at the end
+                    const years = Object.keys(byYear).sort((a, b) => {
+                        if (parseInt(a) < 2020) return 1;
+                        if (parseInt(b) < 2020) return -1;
+                        return parseInt(b) - parseInt(a);
+                    });
+
+                    // Build HTML
+                    let html = '';
+                    years.forEach(year => {
+                        const yearLabel = parseInt(year) < 2020 ? `Legacy Vulnerabilities (${year})` : `${year} Vulnerabilities`;
+                        const vulns = byYear[year].sort((a, b) => (b.cvss || 0) - (a.cvss || 0)); // Sort by CVSS within year
+
+                        html += `
+                            <section class="year-section">
+                                <h3>${yearLabel}</h3>
+                                <div class="kev-grid">
+                                    ${vulns.map(v => this.createCard(v)).join('')}
+                                </div>
+                            </section>
+                        `;
+                    });
+
+                    // Render
+                    const container = document.getElementById('archive-content');
+                    if (container) {
+                        container.innerHTML = html || '<p style="text-align: center;">No archived vulnerabilities found.</p>';
+                    }
+                } catch (error) {
+                    console.error('Failed to load KEV archive:', error);
+                    const container = document.getElementById('archive-content');
+                    if (container) {
+                        container.innerHTML = '<p style="text-align: center; color: var(--text-muted);">Failed to load archive. Please refresh the page.</p>';
+                    }
+                }
+            }
+        };
+
+        // Load archive when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            KEVArchive.loadArchive();
+        });
+    </script>
+</body>
+</html>
