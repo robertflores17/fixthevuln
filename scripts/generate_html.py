@@ -99,6 +99,31 @@ def save_kev_data(data):
         json.dump(data, f, indent=2)
 
 
+def cleanup_pending(pending_data, processed_ids):
+    """
+    Remove processed CVEs from pending_review.json.
+    Keeps it as a clean inbox of unreviewed items.
+    """
+    original_count = len(pending_data.get('vulnerabilities', []))
+
+    # Filter out processed entries
+    pending_data['vulnerabilities'] = [
+        v for v in pending_data.get('vulnerabilities', [])
+        if v.get('cveID') not in processed_ids
+    ]
+
+    # Update count
+    pending_data['total_pending'] = len(pending_data['vulnerabilities'])
+    pending_data['last_updated'] = datetime.now().isoformat()
+
+    # Save
+    with open(PENDING_FILE, 'w') as f:
+        json.dump(pending_data, f, indent=2)
+
+    removed = original_count - len(pending_data['vulnerabilities'])
+    return removed
+
+
 def main():
     print("=" * 60)
     print("KEV Data Importer")
@@ -163,21 +188,30 @@ def main():
     if added:
         save_kev_data(kev_data)
 
+    # Cleanup pending_review.json - remove processed entries
+    # (both newly added AND already existing in kev-data.json)
+    processed_ids = set(added + skipped)
+    removed_count = 0
+    if processed_ids:
+        removed_count = cleanup_pending(pending_data, processed_ids)
+
     # Summary
     print("-" * 60)
     print("SUMMARY")
     print("-" * 60)
-    print(f"  Added:   {len(added)} vulnerabilities")
-    print(f"  Skipped: {len(skipped)} (already in kev-data.json)")
-    print(f"  Total:   {len(kev_data['vulnerabilities'])} vulnerabilities in database")
+    print(f"  Added to site:    {len(added)} vulnerabilities")
+    print(f"  Already existed:  {len(skipped)} (skipped duplicates)")
+    print(f"  Removed from pending: {removed_count} entries")
+    print(f"  Total in database: {len(kev_data['vulnerabilities'])} vulnerabilities")
 
     if added:
         print(f"\nSaved to: {KEV_DATA_FILE}")
         print("\nThe homepage will automatically display these.")
         print("To move to archive later, set 'archived': true in kev-data.json")
 
-    if skipped:
-        print(f"\nSkipped (duplicates): {', '.join(skipped)}")
+    if removed_count:
+        print(f"\nCleaned up: {PENDING_FILE}")
+        print(f"Remaining in pending: {len(pending_data['vulnerabilities'])} CVEs to review")
 
     # Count active vs archived
     active = sum(1 for v in kev_data['vulnerabilities'] if not v.get('archived', False))
