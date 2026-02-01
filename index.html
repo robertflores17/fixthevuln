@@ -896,24 +896,38 @@ Content-Security-Policy: default-src 'self'</code>
                 `;
             },
 
-            // Load and render KEV cards for homepage (non-archived only)
+            // Load and render KEV cards for homepage (always 9 tiles)
             loadHomeKEV: async function() {
+                const HOMEPAGE_TILES = 9;
                 try {
                     const response = await fetch('data/kev-data.json');
                     const data = await response.json();
 
-                    // Filter non-archived vulnerabilities, sorted by date (newest first)
+                    // Active (non-archived) first, then archived to fill remaining slots
                     const activeVulns = data.vulnerabilities
                         .filter(v => !v.archived)
                         .sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
 
-                    // Count archived for the button text
-                    const archivedCount = data.vulnerabilities.filter(v => v.archived).length;
+                    const archivedVulns = data.vulnerabilities
+                        .filter(v => v.archived)
+                        .sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+
+                    // Always show exactly HOMEPAGE_TILES: active first, backfill from archived
+                    let displayVulns = activeVulns.slice(0, HOMEPAGE_TILES);
+                    if (displayVulns.length < HOMEPAGE_TILES) {
+                        const remaining = HOMEPAGE_TILES - displayVulns.length;
+                        displayVulns = displayVulns.concat(archivedVulns.slice(0, remaining));
+                    }
+
+                    // Count total archived (not shown on homepage)
+                    const totalCount = data.vulnerabilities.length;
+                    const shownCount = displayVulns.length;
+                    const archivedCount = totalCount - shownCount;
 
                     // Render cards
                     const grid = document.getElementById('kev-grid-home');
                     if (grid) {
-                        grid.innerHTML = activeVulns.map(v => this.createCard(v)).join('');
+                        grid.innerHTML = displayVulns.map(v => this.createCard(v)).join('');
                     }
 
                     // Update archive button text
