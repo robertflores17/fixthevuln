@@ -19,12 +19,23 @@
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1rem;
         }
+        .kev-card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .kev-card-link:hover .kev-card,
+        .kev-card-link:focus .kev-card {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
         .kev-card {
             background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 1rem;
             border-left: 3px solid #dc3545;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
         /* Dynamic CVSS color coding */
         .kev-card.cvss-critical { border-left-color: #dc3545; } /* Red: 9-10 or Zero-Day */
@@ -243,19 +254,22 @@
                 return cvss.toString();
             },
 
-            // Create a KEV card
+            // Create a KEV card (links to NVD)
             createCard: function(vuln) {
                 const cvssClass = this.getCvssClass(vuln.cvss || 0, vuln.isZeroDay);
                 const cvssColor = this.getCvssColor(vuln.cvss || 0, vuln.isZeroDay);
                 const cvssDisplay = this.formatCvss(vuln.cvss, vuln.isZeroDay);
+                const nvdUrl = `https://nvd.nist.gov/vuln/detail/${encodeURIComponent(vuln.id)}`;
 
                 return `
-                    <div class="kev-card ${cvssClass}">
-                        <h4>${vuln.title}</h4>
-                        <div class="cve-id" style="color: ${cvssColor};">${vuln.id} | ${cvssDisplay}</div>
-                        <p>${vuln.description}</p>
-                        <div class="kev-fix"><strong>Fix:</strong> ${vuln.fix}</div>
-                    </div>
+                    <a href="${nvdUrl}" target="_blank" rel="noopener" class="kev-card-link" title="View ${vuln.id} on NVD">
+                        <div class="kev-card ${cvssClass}">
+                            <h4>${vuln.title}</h4>
+                            <div class="cve-id" style="color: ${cvssColor};">${vuln.id} | ${cvssDisplay}</div>
+                            <p>${vuln.description}</p>
+                            <div class="kev-fix"><strong>Fix:</strong> ${vuln.fix}</div>
+                        </div>
+                    </a>
                 `;
             },
 
