@@ -89,7 +89,7 @@ def fetch_cvss_from_nvd(cve_id):
         cve_data = vulns[0].get('cve', {})
         metrics = cve_data.get('metrics', {})
 
-        # Try CVSS v3.1, then v3.0, then v2.0
+        # Try CVSS v3.1, then v3.0
         for key in ('cvssMetricV31', 'cvssMetricV30'):
             metric_list = metrics.get(key, [])
             if metric_list:
@@ -101,6 +101,13 @@ def fetch_cvss_from_nvd(cve_id):
         v2_list = metrics.get('cvssMetricV2', [])
         if v2_list:
             score = v2_list[0].get('cvssData', {}).get('baseScore')
+            if score is not None:
+                return str(score)
+
+        # Fallback to CVSS v4.0 if v3 and v2 are unavailable
+        v4_list = metrics.get('cvssMetricV40', [])
+        if v4_list:
+            score = v4_list[0].get('cvssData', {}).get('baseScore')
             if score is not None:
                 return str(score)
 
