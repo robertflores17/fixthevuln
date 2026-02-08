@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+        <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Encryption cheat sheet covering AES, RSA, and hashing algorithms. When to use symmetric vs asymmetric encryption, recommended key sizes, and implementation best practices.">
     <meta name="keywords" content="encryption cheat sheet, AES, RSA, hashing algorithms, symmetric encryption, asymmetric encryption, cryptography guide">
@@ -18,7 +20,7 @@
     <meta name="twitter:description" content="Encryption cheat sheet covering AES, RSA, and hashing algorithms. When to use symmetric vs asymmetric encryption, recommended key sizes, and implementation best practices.">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.min.css">
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -41,7 +43,39 @@
         ]
     }
     </script>
-</head>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+                {
+                        "@type": "Question",
+                        "name": "What is the difference between symmetric and asymmetric encryption?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Symmetric encryption uses the same key for encryption and decryption (e.g., AES), making it fast but requiring secure key exchange. Asymmetric encryption uses a public/private key pair (e.g., RSA), which is slower but solves the key distribution problem."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Which hashing algorithm should I use for passwords?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Use Argon2 (recommended by OWASP), bcrypt, or scrypt for password hashing. These are deliberately slow algorithms designed to resist brute-force attacks. Never use MD5, SHA-1, or SHA-256 directly for passwords."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "What key size should I use for AES encryption?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "AES-256 is recommended for most applications. AES-128 is still considered secure but AES-256 provides a larger security margin. Always use AES in GCM mode for authenticated encryption."
+                        }
+                }
+        ]
+}
+    </script>
+    </head>
 <body>
 <!-- Social Share Bar -->
 <div class="share-bar">
@@ -68,6 +102,17 @@
     </header>
 
     <main class="container">
+        <div class="key-takeaways">
+            <h2>Key Takeaways</h2>
+            <ul>
+            <li>Use AES-256 for symmetric encryption — it's the industry standard</li>
+            <li>Use RSA-2048 or higher (preferably 4096) for asymmetric encryption</li>
+            <li>Never use MD5 or SHA-1 for security — use SHA-256 or SHA-3 instead</li>
+            <li>Use bcrypt, scrypt, or Argon2 for password hashing — never plain SHA/MD5</li>
+            <li>Always use authenticated encryption (AES-GCM) to prevent tampering</li>
+            </ul>
+        </div>
+
         <a href="index.html" class="back-link">&larr; Back to Home</a>
 
         <section class="intro">

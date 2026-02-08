@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+        <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Database security hardening guide for MySQL, PostgreSQL, MongoDB, and MSSQL. SQL injection prevention, access controls, encryption, and secure configuration.">
     <meta name="keywords" content="database security, SQL injection prevention, MySQL hardening, PostgreSQL security, MongoDB security, MSSQL hardening, database encryption">
@@ -18,7 +20,7 @@
     <meta name="twitter:description" content="Database security hardening guide for MySQL, PostgreSQL, MongoDB, and MSSQL. SQL injection prevention, access controls, encryption, and secure configuration.">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.min.css">
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -41,7 +43,39 @@
         ]
     }
     </script>
-</head>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+                {
+                        "@type": "Question",
+                        "name": "How do I prevent SQL injection?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Use parameterized queries (prepared statements) in every database query. Never concatenate user input into SQL strings. Additionally, use an ORM, validate input types, and apply least-privilege database accounts."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Should I encrypt my database?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. Enable Transparent Data Encryption (TDE) for data at rest and require TLS for all database connections. For sensitive fields like passwords, use application-level encryption with bcrypt or Argon2 hashing."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "How do I secure MySQL?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Run mysql_secure_installation, remove anonymous accounts, disable remote root login, use strong passwords, restrict user privileges to specific databases, enable the audit log plugin, and require SSL for connections."
+                        }
+                }
+        ]
+}
+    </script>
+    </head>
 <body>
 <!-- Social Share Bar -->
 <div class="share-bar">
@@ -140,7 +174,18 @@ using (SqlCommand cmd = new SqlCommand("SELECT * FROM users WHERE id = @id", con
                 </div>
             </div>
 
-            <div class="vuln-item">
+        <div class="key-takeaways">
+            <h2>Key Takeaways</h2>
+            <ul>
+            <li>Always use parameterized queries — never concatenate user input into SQL</li>
+            <li>Apply least-privilege access: applications should never use the database admin account</li>
+            <li>Enable encryption at rest and in transit (TLS) for all database connections</li>
+            <li>Regularly backup databases and test your restore procedures</li>
+            <li>Audit and log all database access, especially privileged operations</li>
+            </ul>
+        </div>
+
+        <div class="vuln-item">
                 <h2>2. Input Validation & Sanitization</h2>
                 <div class="code-block">
                     <code># Whitelist validation - only allow expected characters

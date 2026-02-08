@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+        <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Linux server hardening guide with SSH security, firewall configuration, user permissions, and CIS benchmark recommendations. Essential for Security+ and RHCSA prep.">
     <meta name="keywords" content="Linux hardening, server security, SSH hardening, firewall configuration, iptables, ufw, Linux permissions, system security">
@@ -18,7 +20,7 @@
     <meta name="twitter:description" content="Linux server hardening guide with SSH security, firewall configuration, user permissions, and CIS benchmark recommendations. Essential for Security+ and RHCSA prep.">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.min.css">
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -41,7 +43,39 @@
         ]
     }
     </script>
-</head>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+                {
+                        "@type": "Question",
+                        "name": "What are the first steps to harden a Linux server?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Start by updating all packages, disabling root SSH login, configuring key-based authentication, setting up a firewall (ufw or iptables), and removing unnecessary services. These basics prevent the majority of common attacks."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "How do I disable root SSH login on Linux?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Edit /etc/ssh/sshd_config and set PermitRootLogin to 'no', then restart the SSH service with 'sudo systemctl restart sshd'. Always ensure you have another sudo user configured first."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "What firewall should I use on Linux?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "UFW (Uncomplicated Firewall) is recommended for beginners as a frontend for iptables. For advanced use, configure iptables or nftables directly. Allow only the ports your services need."
+                        }
+                }
+        ]
+}
+    </script>
+    </head>
 <body>
 <!-- Social Share Bar -->
 <div class="share-bar">
@@ -75,6 +109,17 @@
 
     <main class="container">
         <div class="content-wrapper">
+        <div class="key-takeaways">
+            <h2>Key Takeaways</h2>
+            <ul>
+            <li>Disable root SSH login and use key-based authentication instead of passwords</li>
+            <li>Configure firewall rules (iptables/ufw) to allow only necessary ports</li>
+            <li>Keep the system updated with automatic security patches enabled</li>
+            <li>Remove unnecessary services and packages to reduce attack surface</li>
+            <li>Set proper file permissions — never use 777 on production files</li>
+            </ul>
+        </div>
+
             <div class="info-box">
                 <strong>Why Linux Hardening Matters:</strong> Default Linux installations prioritize ease of use over security. Hardening reduces the attack surface by disabling unnecessary services, enforcing strong authentication, and implementing defense-in-depth.
             </div>

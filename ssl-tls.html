@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+        <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="SSL/TLS hardening guide with secure HTTPS configuration for Apache, Nginx, and IIS. Cipher suites, certificate management, and TLS 1.3 best practices.">
     <title>SSL/TLS Hardening Guide | HTTPS Configuration Best Practices - FixTheVuln</title>
@@ -17,7 +19,7 @@
     <meta name="twitter:description" content="SSL/TLS hardening guide with secure HTTPS configuration for Apache, Nginx, and IIS. Cipher suites, certificate management, and TLS 1.3 best practices.">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.min.css">
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -40,7 +42,39 @@
         ]
     }
     </script>
-</head>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+                {
+                        "@type": "Question",
+                        "name": "What is the difference between SSL and TLS?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "SSL (Secure Sockets Layer) is the predecessor to TLS (Transport Layer Security). All SSL versions are deprecated and insecure. When people say 'SSL,' they usually mean TLS. Use TLS 1.2 or 1.3 only."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "How do I get a free SSL certificate?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Use Let's Encrypt, a free, automated Certificate Authority. Install certbot on your server and run 'sudo certbot --apache' or 'sudo certbot --nginx' to automatically obtain and configure certificates with auto-renewal."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "How do I test my SSL/TLS configuration?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Use SSL Labs Server Test (ssllabs.com/ssltest) to get a detailed security rating. Aim for an A+ grade. Also check with testssl.sh for command-line testing and Mozilla's SSL Configuration Generator for recommended settings."
+                        }
+                }
+        ]
+}
+    </script>
+    </head>
 <body>
 <!-- Social Share Bar -->
 <div class="share-bar">
@@ -106,7 +140,18 @@ sudo certbot renew --dry-run</code>
                 <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed certificate installation guide →</a>
             </div>
 
-            <div class="vuln-item">
+        <div class="key-takeaways">
+            <h2>Key Takeaways</h2>
+            <ul>
+            <li>Use TLS 1.2 or TLS 1.3 only — disable TLS 1.0, 1.1, and all SSL versions</li>
+            <li>Enable HSTS (HTTP Strict Transport Security) with a minimum 1-year max-age</li>
+            <li>Use strong cipher suites and disable weak ciphers like RC4 and 3DES</li>
+            <li>Automate certificate renewal with Let's Encrypt and certbot</li>
+            <li>Test your configuration with SSL Labs (ssllabs.com) — aim for an A+ rating</li>
+            </ul>
+        </div>
+
+        <div class="vuln-item">
                 <h2>2. Disable Weak SSL/TLS Protocols</h2>
                 
                 <h3>Apache Configuration</h3>

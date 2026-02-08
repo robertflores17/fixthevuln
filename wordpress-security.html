@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+        <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Essential WordPress security hardening checklist. Protect against brute force, SQL injection, XSS, and plugin vulnerabilities. Step-by-step remediation guide.">
     <title>WordPress Security Hardening Checklist 2026 - FixTheVuln</title>
@@ -17,7 +19,7 @@
     <meta name="twitter:description" content="Essential WordPress security hardening checklist. Protect against brute force, SQL injection, XSS, and plugin vulnerabilities. Step-by-step remediation guide.">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.min.css">
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -40,7 +42,39 @@
         ]
     }
     </script>
-</head>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+                {
+                        "@type": "Question",
+                        "name": "How do I secure a WordPress site?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Keep everything updated (core, plugins, themes), use strong passwords with MFA, install a security plugin (Wordfence/Sucuri), disable XML-RPC, limit login attempts, move wp-config.php outside web root, and maintain regular backups."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "What is the biggest WordPress security risk?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Outdated plugins are the #1 WordPress security risk, responsible for about 56% of all WordPress vulnerabilities. Always update plugins promptly, remove unused plugins, and only install plugins from trusted sources with recent updates."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Should I disable XML-RPC in WordPress?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes, unless you specifically need it for Jetpack or the WordPress mobile app. XML-RPC is commonly exploited for brute force attacks and DDoS amplification. Disable it via .htaccess, Nginx config, or a security plugin."
+                        }
+                }
+        ]
+}
+    </script>
+    </head>
 <body>
 <!-- Social Share Bar -->
 <div class="share-bar">
@@ -100,7 +134,18 @@ wp theme list --status=active
                 </div>
             </div>
 
-            <div class="vuln-item">
+        <div class="key-takeaways">
+            <h2>Key Takeaways</h2>
+            <ul>
+            <li>Keep WordPress core, plugins, and themes updated — most breaches exploit known vulnerabilities</li>
+            <li>Use strong admin credentials and rename the default 'admin' username</li>
+            <li>Install a security plugin like Wordfence or Sucuri for WAF and malware scanning</li>
+            <li>Disable XML-RPC and file editing from the WordPress dashboard</li>
+            <li>Implement regular automated backups — test restores periodically</li>
+            </ul>
+        </div>
+
+        <div class="vuln-item">
                 <h2>2. Secure wp-config.php</h2>
                 
                 <h3>Move wp-config.php Outside Web Root</h3>

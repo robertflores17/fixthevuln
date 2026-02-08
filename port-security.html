@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+        <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Complete network port security guide with common ports cheat sheet. TCP/UDP port numbers, security risks, and hardening steps for Security+ and CEH exam prep.">
     <title>Network Port Security Guide | Common Ports Cheat Sheet - FixTheVuln</title>
@@ -17,7 +19,7 @@
     <meta name="twitter:description" content="Complete network port security guide with common ports cheat sheet. TCP/UDP port numbers, security risks, and hardening steps for Security+ and CEH exam prep.">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.min.css">
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -40,7 +42,39 @@
         ]
     }
     </script>
-</head>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+                {
+                        "@type": "Question",
+                        "name": "What are the most commonly attacked network ports?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "The most targeted ports are: SSH (22), RDP (3389), SMB (445), Telnet (23), FTP (21), HTTP (80), MySQL (3306), and MSSQL (1433). These are frequently targeted by automated scanners and botnets."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "How do I check which ports are open on my server?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Use 'nmap -sV localhost' to scan local ports, or 'sudo ss -tlnp' to see listening ports. For external scanning, use 'nmap -sV your-public-ip' from another machine or use online tools like shodan.io."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Should I change the default SSH port?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Changing SSH from port 22 to a non-standard port reduces automated brute-force attempts significantly (security through obscurity). It's not a replacement for key-based auth and fail2ban, but it reduces log noise by 99%."
+                        }
+                }
+        ]
+}
+    </script>
+    </head>
 <body>
 <!-- Social Share Bar -->
 <div class="share-bar">
@@ -220,7 +254,18 @@ sudo systemctl restart sshd</code>
                 <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed SSH hardening guide →</a>
             </div>
 
-            <div class="vuln-item">
+        <div class="key-takeaways">
+            <h2>Key Takeaways</h2>
+            <ul>
+            <li>Close all unnecessary ports — only open what your services actively require</li>
+            <li>Common attack targets: SSH (22), RDP (3389), SMB (445), Telnet (23)</li>
+            <li>Use firewall rules to restrict port access to specific IP ranges</li>
+            <li>Regularly scan your systems with nmap to verify only expected ports are open</li>
+            <li>Move SSH to a non-standard port and disable Telnet completely</li>
+            </ul>
+        </div>
+
+        <div class="vuln-item">
                 <h2>Port 3389 - RDP (Remote Desktop Protocol)</h2>
                 <p><strong>Service:</strong> Windows Remote Desktop</p>
                 <p><strong>Risk:</strong> Brute force, BlueKeep vulnerability, credential theft</p>

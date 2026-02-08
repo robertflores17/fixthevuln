@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+        <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Log management guide covering what to log, retention policies, SIEM basics, and security logging best practices. Essential for incident response and compliance.">
     <meta name="keywords" content="log management, SIEM, security logging, log retention, audit logging, centralized logging, log analysis">
@@ -18,7 +20,7 @@
     <meta name="twitter:description" content="Log management guide covering what to log, retention policies, SIEM basics, and security logging best practices. Essential for incident response and compliance.">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.min.css">
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -41,7 +43,39 @@
         ]
     }
     </script>
-</head>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+                {
+                        "@type": "Question",
+                        "name": "What should I log for security?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "At minimum, log: authentication successes and failures, authorization failures, privilege escalation, data access and modifications, system configuration changes, and application errors. Include timestamps, user IDs, source IPs, and action details."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "How long should I keep security logs?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Retention depends on compliance: PCI DSS requires 1 year (3 months readily available), HIPAA requires 6 years, SOX requires 7 years. For general security, keep at least 90 days of detailed logs and 1 year of summary logs."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "What is a SIEM?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "A SIEM (Security Information and Event Management) is a system that collects, correlates, and analyzes log data from multiple sources to detect security threats. Popular options include Splunk, Elastic SIEM (ELK Stack), Microsoft Sentinel, and open-source Wazuh."
+                        }
+                }
+        ]
+}
+    </script>
+    </head>
 <body>
 <!-- Social Share Bar -->
 <div class="share-bar">
@@ -68,6 +102,17 @@
     </header>
 
     <main class="container">
+        <div class="key-takeaways">
+            <h2>Key Takeaways</h2>
+            <ul>
+            <li>Log authentication events, authorization failures, and data access at minimum</li>
+            <li>Never log sensitive data like passwords, tokens, or credit card numbers</li>
+            <li>Centralize logs using a SIEM (Splunk, ELK Stack, or cloud-native solutions)</li>
+            <li>Set log retention policies based on compliance requirements (PCI DSS: 1 year, HIPAA: 6 years)</li>
+            <li>Set up real-time alerts for critical security events like multiple failed logins</li>
+            </ul>
+        </div>
+
         <a href="index.html" class="back-link">&larr; Back to Home</a>
 
         <section class="intro">
