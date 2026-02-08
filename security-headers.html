@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+        <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Complete HTTP security headers checklist with implementation examples. CSP, HSTS, X-Frame-Options, and more. Test and fix your web application headers.">
     <title>HTTP Security Headers Checklist & Implementation Guide - FixTheVuln</title>
@@ -17,7 +19,7 @@
     <meta name="twitter:description" content="Complete HTTP security headers checklist with implementation examples. CSP, HSTS, X-Frame-Options, and more. Test and fix your web application headers.">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.min.css">
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -40,7 +42,39 @@
         ]
     }
     </script>
-</head>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+                {
+                        "@type": "Question",
+                        "name": "What are HTTP security headers?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "HTTP security headers are response headers that instruct browsers to enable security features. Key headers include Content-Security-Policy (CSP), Strict-Transport-Security (HSTS), X-Frame-Options, and X-Content-Type-Options."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "What is Content-Security-Policy (CSP)?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "CSP is an HTTP header that tells browsers which sources of content are trusted. It prevents XSS attacks by blocking inline scripts and restricting where scripts, styles, and other resources can be loaded from."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "How do I check my security headers?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Use securityheaders.com to scan your website and get a grade from A+ to F. It checks for all major security headers and provides remediation guidance for missing or misconfigured headers."
+                        }
+                }
+        ]
+}
+    </script>
+    </head>
 <body>
 <!-- Social Share Bar -->
 <div class="share-bar">
@@ -128,7 +162,18 @@ app.use((req, res, next) => {
                 <a href="https://fixthevuln.com" class="detailed-link" target="_blank">See detailed CSP guide →</a>
             </div>
 
-            <div class="vuln-item">
+        <div class="key-takeaways">
+            <h2>Key Takeaways</h2>
+            <ul>
+            <li>Content-Security-Policy (CSP) is the most important header — it prevents XSS attacks</li>
+            <li>Enable HSTS to force HTTPS and prevent protocol downgrade attacks</li>
+            <li>Set X-Content-Type-Options: nosniff to prevent MIME-type sniffing</li>
+            <li>Use X-Frame-Options: DENY to prevent clickjacking attacks</li>
+            <li>Test your headers at securityheaders.com — aim for an A+ rating</li>
+            </ul>
+        </div>
+
+        <div class="vuln-item">
                 <h2>Strict-Transport-Security (HSTS)</h2>
                 <p><strong>Protection Against:</strong> Man-in-the-middle attacks, SSL stripping, protocol downgrade attacks</p>
                 <p><strong>Priority:</strong> Critical</p>

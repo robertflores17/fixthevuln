@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+        <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Container security cheat sheet for Docker hardening and Kubernetes security. Image scanning, runtime protection, and DevSecOps best practices.">
     <meta name="keywords" content="container security, Docker hardening, Kubernetes security, image scanning, DevSecOps, container best practices, pod security">
@@ -18,7 +20,7 @@
     <meta name="twitter:description" content="Container security cheat sheet for Docker hardening and Kubernetes security. Image scanning, runtime protection, and DevSecOps best practices.">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.min.css">
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -41,7 +43,39 @@
         ]
     }
     </script>
-</head>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+                {
+                        "@type": "Question",
+                        "name": "How do I scan Docker images for vulnerabilities?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Use tools like Trivy (open source), Snyk Container, or Docker Scout. Run scans in your CI/CD pipeline with 'docker run aquasec/trivy image your-image:tag' to catch vulnerabilities before deployment."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Why should containers run as non-root?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Running as root inside a container means a container escape vulnerability gives the attacker root access to the host. Use the USER directive in Dockerfiles and set runAsNonRoot: true in Kubernetes security contexts."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "What is the most secure Docker base image?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Google's distroless images are the most secure as they contain only the application and runtime dependencies \u2014 no shell, package manager, or OS utilities. Alpine Linux is a good alternative at ~5MB with a minimal attack surface."
+                        }
+                }
+        ]
+}
+    </script>
+    </head>
 <body>
 <!-- Social Share Bar -->
 <div class="share-bar">
@@ -68,6 +102,17 @@
     </header>
 
     <main class="container">
+        <div class="key-takeaways">
+            <h2>Key Takeaways</h2>
+            <ul>
+            <li>Scan container images for vulnerabilities before deployment using Trivy or Snyk</li>
+            <li>Run containers as non-root users — never use the root user inside containers</li>
+            <li>Use minimal base images (Alpine, distroless) to reduce attack surface</li>
+            <li>Never store secrets in container images or environment variables in Dockerfiles</li>
+            <li>Implement network policies in Kubernetes to restrict pod-to-pod communication</li>
+            </ul>
+        </div>
+
         <a href="index.html" class="back-link">&larr; Back to Home</a>
 
         <section class="intro">
