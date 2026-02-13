@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Certification Study Planner | FixTheVuln</title>
+    <meta name="description" content="Free study planner for 30+ IT certifications — CompTIA A+, Security+, Network+, CySA+, PenTest+, CISSP, CCNA, AWS, Azure AZ-900, SC-900, CEH, CISA, CISM, GIAC. Generate a personalized study plan in seconds.">
+    <meta name="keywords" content="certification study planner, CompTIA A+ study plan, Security+ study guide, CISSP study plan, AWS Cloud Practitioner, AZ-900, CCNA study guide, CEH exam prep, CySA+ planner, CISA CISM, GIAC GSEC, IT certification exam prep">
+    <meta property="og:title" content="Free Certification Study Planner — 30+ IT Certs | FixTheVuln">
+    <meta property="og:description" content="Generate a personalized study plan for CompTIA, ISC2, AWS, Microsoft, Cisco, EC-Council, ISACA, GIAC, and Google Cloud certifications. Free tool.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fixthevuln.com/planner">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* ============================================================
+           CSS VARIABLES & RESET
+           ============================================================ */
+        :root {
+            /* Dark theme (default — matches cybersecurity vibe) */
+            --bg-root: #06090f;
+            --bg-surface: #0c1219;
+            --bg-card: #111a25;
+            --bg-card-hover: #162030;
+            --bg-input: #0e1620;
+            --border: #1c2a3a;
+            --border-focus: #2563eb;
+            --text-primary: #e8edf4;
+            --text-secondary: #7a8ba0;
+            --text-muted: #4a5b6e;
+            --accent: #2563eb;
+            --accent-glow: rgba(37, 99, 235, 0.15);
+            --accent-hover: #3b82f6;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --purple: #8b5cf6;
+            --cyan: #06b6d4;
+            --gradient-brand: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #06b6d4 100%);
+            --gradient-card: linear-gradient(145deg, rgba(37, 99, 235, 0.06) 0%, rgba(124, 58, 237, 0.03) 100%);
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.5);
+            --shadow-glow: 0 0 20px rgba(37, 99, 235, 0.2);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --font-mono: 'IBM Plex Mono', 'Menlo', monospace;
+            --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .theme-light {
+            --bg-root: #f4f6f9;
+            --bg-surface: #ffffff;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f8fafc;
+            --bg-input: #f1f5f9;
+            --border: #e2e8f0;
+            --border-focus: #2563eb;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --accent: #2563eb;
+            --accent-glow: rgba(37, 99, 235, 0.08);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.1);
+            --shadow-glow: 0 0 20px rgba(37, 99, 235, 0.1);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-root);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ============================================================
+           BACKGROUND TEXTURE
+           ============================================================ */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(37, 99, 235, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(124, 58, 237, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.03) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ============================================================
+           LAYOUT
+           ============================================================ */
+        .planner-shell {
+            position: relative;
+            z-index: 1;
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 24px 16px 60px;
+        }
+
+        @media (min-width: 640px) {
+            .planner-shell { padding: 40px 24px 80px; }
+        }
+
+        /* ============================================================
+           NAV BAR
+           ============================================================ */
+        .nav-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-bar a {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+        .nav-bar a:hover { color: var(--accent-hover); }
+        .nav-controls { display: flex; gap: 8px; }
+        .btn-icon {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 8px 12px;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .btn-icon:hover { background: var(--bg-card-hover); border-color: var(--accent); }
+
+        /* ============================================================
+           HERO / HEADER
+           ============================================================ */
+        .hero {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 20px;
+            background: var(--accent-glow);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            margin-bottom: 16px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent);
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+        .hero h1 {
+            font-size: clamp(28px, 5vw, 40px);
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 12px;
+            background: var(--gradient-brand);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero p {
+            font-size: 16px;
+            color: var(--text-secondary);
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        /* ============================================================
+           FORM CARD
+           ============================================================ */
+        .form-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-md);
+            background-image: var(--gradient-card);
+        }
+
+        .form-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            font-family: var(--font-mono);
+        }
+
+        .form-group { margin-bottom: 20px; }
+
+        /* Cert selector */
+        .cert-groups {
+            max-height: 420px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .cert-vendor-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--accent);
+            margin: 16px 0 6px;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+        .cert-vendor-label:first-child { margin-top: 0; }
+        .cert-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        @media (max-width: 700px) {
+            .cert-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 480px) {
+            .cert-grid { grid-template-columns: 1fr; }
+        }
+        .cert-option {
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
+            border: 2px solid var(--border);
+            background: var(--bg-input);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+        .cert-option:hover { border-color: var(--text-muted); }
+        .cert-option.selected {
+            border-color: var(--accent);
+            background: var(--accent-glow);
+            box-shadow: var(--shadow-glow);
+        }
+        .cert-option-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .cert-option-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+            font-family: var(--font-mono);
+        }
+
+        /* Selects & inputs */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        @media (max-width: 480px) {
+            .form-row { grid-template-columns: 1fr; }
+            .form-row-2 { grid-template-columns: 1fr; }
+        }
+
+        select, input[type="date"] {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 600;
+            font-family: var(--font-sans);
+            transition: border-color 0.2s;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+        select { background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%237a8ba0' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+        select:focus, input[type="date"]:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        /* ADHD Toggle */
+        .toggle-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 18px;
+            border-radius: var(--radius-md);
+            border: 2px solid var(--border);
+            background: var(--bg-input);
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 20px;
+        }
+        .toggle-card.active {
+            border-color: var(--purple);
+            background: rgba(139, 92, 246, 0.08);
+        }
+        .toggle-card-text h3 { font-size: 14px; font-weight: 700; }
+        .toggle-card-text p { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+        .toggle-switch {
+            width: 44px; height: 24px;
+            border-radius: 12px;
+            background: var(--text-muted);
+            position: relative;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+        .toggle-switch.on { background: var(--purple); }
+        .toggle-switch::after {
+            content: '';
+            width: 18px; height: 18px;
+            border-radius: 9px;
+            background: #fff;
+            position: absolute;
+            top: 3px; left: 3px;
+            transition: left 0.2s;
+        }
+        .toggle-switch.on::after { left: 23px; }
+
+        /* Generate button */
+        .btn-generate {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: var(--radius-md);
+            background: var(--gradient-brand);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: var(--font-sans);
+            cursor: pointer;
+            letter-spacing: 0.3px;
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: var(--shadow-glow);
+        }
+        .btn-generate:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 24px rgba(37, 99, 235, 0.35);
+        }
+        .btn-generate:active { transform: translateY(0); }
+
+        /* ============================================================
+           PLANNER VIEW
+           ============================================================ */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 20px;
+            align-items: center;
+            padding: 20px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-md);
+            background-image: var(--gradient-card);
+        }
+        .stats-bar h2 {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        .stats-bar-meta {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .stats-bar-meta strong { color: var(--purple); }
+        .progress-track {
+            margin-top: 10px;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: var(--gradient-brand);
+            transition: width 0.5s ease;
+        }
+        .progress-text {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            margin-top: 6px;
+            text-align: right;
+        }
+
+        /* Ring */
+        .ring-wrap { flex-shrink: 0; }
+        .ring-wrap svg text {
+            fill: var(--text-primary);
+            font-family: var(--font-mono);
+        }
+
+        /* Tabs */
+        .tab-bar {
+            display: flex;
+            gap: 4px;
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 4px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-sans);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            background: var(--bg-surface);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Week card */
+        .week-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: 10px;
+            transition: box-shadow 0.2s;
+        }
+        .week-card:hover { box-shadow: var(--shadow-sm); }
+        .week-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .week-header:hover { background: var(--bg-card-hover); }
+        .week-num {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .week-title {
+            font-size: 15px;
+            font-weight: 700;
+            flex: 1;
+        }
+        .week-badge {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            color: #fff;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .week-count {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .week-arrow {
+            font-size: 14px;
+            color: var(--text-muted);
+            transition: transform 0.3s;
+        }
+        .week-arrow.open { transform: rotate(180deg); }
+
+        .week-body { padding: 0 18px 18px; }
+        .milestone-box {
+            padding: 12px 16px;
+            background: var(--accent-glow);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            margin-bottom: 14px;
+        }
+        .milestone-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 1px;
+            font-family: var(--font-mono);
+            margin-bottom: 4px;
+        }
+        .milestone-text { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+
+        /* Task row */
+        .task-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-input);
+            border: 1px solid transparent;
+            margin-bottom: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .task-row:hover { border-color: var(--border); }
+        .task-row.done {
+            opacity: 0.55;
+            background: rgba(16, 185, 129, 0.05);
+            border-color: rgba(16, 185, 129, 0.15);
+        }
+        .task-check {
+            width: 20px; height: 20px;
+            border-radius: 5px;
+            border: 2px solid var(--text-muted);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            font-size: 12px;
+            color: transparent;
+        }
+        .task-row.done .task-check {
+            background: var(--success);
+            border-color: var(--success);
+            color: #fff;
+        }
+        .task-name {
+            flex: 1;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .task-row.done .task-name { text-decoration: line-through; }
+        .task-type-badge {
+            font-size: 8px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 3px;
+            color: #fff;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+        }
+        .task-mins {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            flex-shrink: 0;
+        }
+
+        .week-quote {
+            text-align: center;
+            font-size: 12px;
+            font-style: italic;
+            color: var(--text-muted);
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Domains tab */
+        .domain-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 10px;
+        }
+        .domain-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .domain-name { font-size: 15px; font-weight: 700; }
+        .domain-pct {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--accent);
+            font-family: var(--font-mono);
+        }
+        .domain-bar {
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 14px;
+        }
+        .domain-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: var(--gradient-brand);
+        }
+        .domain-topics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .topic-tag {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Stats tab */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        @media (max-width: 480px) {
+            .stat-grid { grid-template-columns: 1fr; }
+        }
+        .stat-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 18px 16px;
+            text-align: center;
+        }
+        .stat-icon { font-size: 20px; margin-bottom: 6px; }
+        .stat-value {
+            font-size: 22px;
+            font-weight: 800;
+            font-family: var(--font-mono);
+        }
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        .weekly-bars { margin-bottom: 16px; }
+        .weekly-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .weekly-bar-label {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            width: 28px;
+        }
+        .weekly-bar-track {
+            flex: 1;
+            height: 10px;
+            background: var(--border);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .weekly-bar-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.4s;
+        }
+        .weekly-bar-pct {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 700;
+            width: 36px;
+            text-align: right;
+        }
+
+        /* Exam date card */
+        .exam-card {
+            background: var(--accent-glow);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            text-align: center;
+        }
+        .exam-card-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 1px;
+            font-family: var(--font-mono);
+            margin-bottom: 6px;
+        }
+        .exam-card-date {
+            font-size: 22px;
+            font-weight: 800;
+        }
+        .exam-card-meta {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        /* ============================================================
+           CTA / AFFILIATE SECTION
+           ============================================================ */
+        .cta-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-top: 24px;
+            text-align: center;
+            background-image: var(--gradient-card);
+        }
+        .cta-box h3 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+        .cta-box p { font-size: 14px; color: var(--text-secondary); margin-bottom: 16px; }
+        .cta-links { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        .cta-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 18px;
+            border-radius: var(--radius-sm);
+            background: var(--accent);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .cta-link:hover { background: var(--accent-hover); transform: translateY(-1px); }
+        .cta-link.secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+        .cta-link.secondary:hover { border-color: var(--accent); }
+
+        /* Email capture */
+        .email-capture {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-top: 16px;
+            text-align: center;
+            background-image: var(--gradient-card);
+        }
+        .email-capture h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+        .email-capture p { font-size: 13px; color: var(--text-secondary); margin-bottom: 14px; }
+        .email-row {
+            display: flex;
+            gap: 8px;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+        .email-row input[type="email"] {
+            flex: 1;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: var(--font-sans);
+        }
+        .email-row input[type="email"]:focus { outline: none; border-color: var(--accent); }
+        .email-row button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--radius-sm);
+            background: var(--accent);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            font-family: var(--font-sans);
+        }
+
+        /* Footer */
+        .planner-footer {
+            text-align: center;
+            margin-top: 32px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .planner-footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: fadeIn 0.35s ease forwards; }
+        .delay-1 { animation-delay: 0.05s; opacity: 0; }
+        .delay-2 { animation-delay: 0.1s; opacity: 0; }
+        .delay-3 { animation-delay: 0.15s; opacity: 0; }
+        .delay-4 { animation-delay: 0.2s; opacity: 0; }
+    </style>
+</head>
+
+<body id="plannerBody">
+    <div class="planner-shell" id="app"></div>
+
+    <script>
+    // ================================================================
+    // DATA — Certification Blueprints
+    // ================================================================
+    const CERTS = {
+        // ── CompTIA ──────────────────────────────────────────────
+        "itf-plus": {
+            name: "CompTIA ITF+", code: "FC0-U71", questions: 75,
+            pass: "650/900", duration: 60,
+            domains: [
+                { name: "IT Concepts & Terminology", weight: 17, topics: ["Data Types","Computing Basics","Troubleshooting","Units of Measure","Notation Systems"], diff: "easy" },
+                { name: "Infrastructure", weight: 22, topics: ["Device Types","Peripherals","Internal Components","Networking Concepts","Storage Types"], diff: "easy" },
+                { name: "Applications & Software", weight: 18, topics: ["Software Management","OS Basics","Application Types","Web Browsers","Software Licensing"], diff: "easy" },
+                { name: "Software Development", weight: 12, topics: ["Programming Concepts","Logic","Variables & Data Types","Programming Languages","QA Testing"], diff: "medium" },
+                { name: "Database Fundamentals", weight: 11, topics: ["Database Concepts","Data Structures","Schemas","SQL Basics","Data Manipulation"], diff: "medium" },
+                { name: "Security", weight: 20, topics: ["Confidentiality","Authentication","Malware","Social Engineering","Password Best Practices"], diff: "easy" }
+            ]
+        },
+        "a-plus-core1": {
+            name: "CompTIA A+ Core 1", code: "220-1101", questions: 90,
+            pass: "675/900", duration: 90,
+            domains: [
+                { name: "Mobile Devices", weight: 15, topics: ["Laptop Hardware","Mobile Displays","Mobile Connectivity","Mobile Accessories","Printer Config"], diff: "medium" },
+                { name: "Networking", weight: 20, topics: ["TCP/IP","Ports & Protocols","Network Hardware","Wireless Standards","Network Services"], diff: "medium" },
+                { name: "Hardware", weight: 25, topics: ["Cables & Connectors","RAM Types","Storage Devices","Motherboards","Power Supplies"], diff: "easy" },
+                { name: "Virtualization & Cloud", weight: 11, topics: ["Cloud Models","Virtual Machines","Client-Side Virtualization","Cloud Connectivity","Shared Resources"], diff: "medium" },
+                { name: "Hardware & Network Troubleshooting", weight: 29, topics: ["Troubleshooting Methodology","Display Issues","Storage Failures","Network Connectivity","Printer Problems"], diff: "hard" }
+            ]
+        },
+        "a-plus-core2": {
+            name: "CompTIA A+ Core 2", code: "220-1102", questions: 90,
+            pass: "700/900", duration: 90,
+            domains: [
+                { name: "Operating Systems", weight: 31, topics: ["Windows Editions","macOS & Linux","OS Installation","Command Line","File Systems"], diff: "medium" },
+                { name: "Security", weight: 25, topics: ["Physical Security","Malware Types","Social Engineering","Windows Security","Mobile Device Security"], diff: "hard" },
+                { name: "Software Troubleshooting", weight: 22, topics: ["OS Problems","App Crashes","Browser Issues","Malware Removal","Mobile OS Troubleshooting"], diff: "hard" },
+                { name: "Operational Procedures", weight: 22, topics: ["Documentation","Change Management","Disaster Recovery","Safety Procedures","Communication Skills"], diff: "easy" }
+            ]
+        },
+        "network-plus": {
+            name: "CompTIA Network+", code: "N10-009", questions: 90,
+            pass: "720/900", duration: 90,
+            domains: [
+                { name: "Networking Fundamentals", weight: 24, topics: ["OSI Model","TCP/IP","Ports & Protocols","Topologies","IPv4/IPv6"], diff: "medium" },
+                { name: "Network Implementation", weight: 19, topics: ["Routing","Switching","Wireless Standards","WAN Technologies","VLANs"], diff: "hard" },
+                { name: "Network Operations", weight: 16, topics: ["Monitoring Tools","DNS/DHCP","NTP","Documentation","Backup/Recovery"], diff: "medium" },
+                { name: "Network Security", weight: 19, topics: ["Firewalls","VPN","ACLs","IDS/IPS","Network Hardening"], diff: "hard" },
+                { name: "Network Troubleshooting", weight: 22, topics: ["Methodology","Cable Issues","Wireless Problems","Performance","CLI Tools"], diff: "hard" }
+            ]
+        },
+        "security-plus": {
+            name: "CompTIA Security+", code: "SY0-701", questions: 90,
+            pass: "750/900", duration: 90,
+            domains: [
+                { name: "General Security Concepts", weight: 12, topics: ["CIA Triad","Zero Trust","Security Controls","AAA","Gap Analysis"], diff: "medium" },
+                { name: "Threats, Vulnerabilities & Mitigations", weight: 22, topics: ["Malware Types","Social Engineering","Application Attacks","IoC Analysis","Vuln Scanning"], diff: "hard" },
+                { name: "Security Architecture", weight: 18, topics: ["Network Architecture","Cloud Security","Virtualization","Resilience","Embedded Systems"], diff: "hard" },
+                { name: "Security Operations", weight: 28, topics: ["Monitoring","Incident Response","Digital Forensics","Log Management","SOAR/SIEM"], diff: "hard" },
+                { name: "Security Program Management", weight: 20, topics: ["Governance","Risk Management","Compliance","Security Awareness","Audits"], diff: "medium" }
+            ]
+        },
+        "linux-plus": {
+            name: "CompTIA Linux+", code: "XK0-005", questions: 90,
+            pass: "720/900", duration: 90,
+            domains: [
+                { name: "System Management", weight: 32, topics: ["Process Management","Service Config","Package Management","User & Group Admin","Disk Management"], diff: "hard" },
+                { name: "Security", weight: 21, topics: ["Permissions","Authentication","Firewall Config","SELinux/AppArmor","SSH Hardening"], diff: "hard" },
+                { name: "Scripting & Automation", weight: 19, topics: ["Bash Scripting","Cron Jobs","Version Control","Shell Variables","Regex"], diff: "medium" },
+                { name: "Networking", weight: 16, topics: ["Network Config","DNS","Firewalls","Remote Access","Network Troubleshooting"], diff: "medium" },
+                { name: "Troubleshooting", weight: 12, topics: ["System Logs","Hardware Issues","Boot Problems","Storage Issues","Performance Tuning"], diff: "hard" }
+            ]
+        },
+        "cloud-plus": {
+            name: "CompTIA Cloud+", code: "CV0-004", questions: 90,
+            pass: "750/900", duration: 90,
+            domains: [
+                { name: "Cloud Architecture & Design", weight: 26, topics: ["Cloud Models","High Availability","Capacity Planning","Deployment Models","Solution Design"], diff: "medium" },
+                { name: "Security", weight: 22, topics: ["Identity Management","Data Security","Network Security","Compliance","Incident Response"], diff: "hard" },
+                { name: "Deployment", weight: 24, topics: ["Migration","Provisioning","Automation","Orchestration","Testing"], diff: "medium" },
+                { name: "Operations & Support", weight: 18, topics: ["Monitoring","Optimization","Backup & Recovery","Logging","Maintenance"], diff: "medium" },
+                { name: "Troubleshooting", weight: 10, topics: ["Connectivity Issues","Performance Problems","Security Issues","Automation Failures","Deployment Errors"], diff: "hard" }
+            ]
+        },
+        "data-plus": {
+            name: "CompTIA Data+", code: "DA0-001", questions: 90,
+            pass: "675/900", duration: 90,
+            domains: [
+                { name: "Data Concepts & Environments", weight: 25, topics: ["Data Types","Databases","Data Schemas","Data Processing","Data Warehousing"], diff: "medium" },
+                { name: "Data Mining", weight: 17, topics: ["ETL Processes","Data Collection","Data Cleansing","Data Manipulation","Query Optimization"], diff: "medium" },
+                { name: "Data Analysis", weight: 23, topics: ["Statistical Methods","Hypothesis Testing","Descriptive Stats","Inferential Stats","Analysis Types"], diff: "hard" },
+                { name: "Visualization", weight: 23, topics: ["Chart Types","Dashboards","Reporting","Visual Design","Data Storytelling"], diff: "medium" },
+                { name: "Data Governance & Quality", weight: 12, topics: ["Data Governance","Master Data","Data Quality","Data Ethics","Regulatory Compliance"], diff: "easy" }
+            ]
+        },
+        "cysa-plus": {
+            name: "CompTIA CySA+", code: "CS0-003", questions: 85,
+            pass: "750/900", duration: 165,
+            domains: [
+                { name: "Security Operations", weight: 33, topics: ["Threat Intelligence","Threat Hunting","SIEM Tuning","Email Analysis","EDR"], diff: "hard" },
+                { name: "Vulnerability Management", weight: 30, topics: ["Vuln Scanning","CVSS Scoring","Remediation","Risk Prioritization","Asset Inventory"], diff: "hard" },
+                { name: "Incident Response", weight: 20, topics: ["IR Lifecycle","Containment","Eradication","Recovery","Lessons Learned"], diff: "hard" },
+                { name: "Reporting & Communication", weight: 17, topics: ["Metrics & KPIs","Executive Reporting","Compliance Reports","Vuln Disclosure","Stakeholder Comms"], diff: "medium" }
+            ]
+        },
+        "pentest-plus": {
+            name: "CompTIA PenTest+", code: "PT0-002", questions: 85,
+            pass: "750/900", duration: 165,
+            domains: [
+                { name: "Planning & Scoping", weight: 14, topics: ["Engagement Planning","Rules of Engagement","Compliance Requirements","Scoping","Authorization"], diff: "medium" },
+                { name: "Information Gathering & Vuln Scanning", weight: 22, topics: ["OSINT","Active Recon","Vuln Scanners","Nmap","Enumeration"], diff: "hard" },
+                { name: "Attacks & Exploits", weight: 30, topics: ["Network Attacks","Web App Attacks","Wireless Attacks","Social Engineering","Post-Exploitation"], diff: "hard" },
+                { name: "Reporting & Communication", weight: 18, topics: ["Report Writing","Remediation Guidance","Risk Rating","Executive Summary","Debrief"], diff: "medium" },
+                { name: "Tools & Code Analysis", weight: 16, topics: ["Scripting","Bash/Python","Code Review","Exploit Frameworks","Custom Tools"], diff: "hard" }
+            ]
+        },
+        "casp-plus": {
+            name: "CompTIA CASP+", code: "CAS-004", questions: 90,
+            pass: "Pass/Fail", duration: 165,
+            domains: [
+                { name: "Security Architecture", weight: 29, topics: ["Network Architecture","Cloud Security","Virtualization","Zero Trust","Secure Baselines"], diff: "hard" },
+                { name: "Security Operations", weight: 30, topics: ["Threat Management","Vulnerability Management","Incident Response","Forensics","SOAR"], diff: "hard" },
+                { name: "Security Engineering & Crypto", weight: 26, topics: ["Cryptographic Protocols","PKI","Key Management","Secure Protocols","Hardware Security"], diff: "hard" },
+                { name: "Governance, Risk & Compliance", weight: 15, topics: ["Risk Management","Policy Frameworks","Legal & Regulatory","Privacy","Business Impact"], diff: "hard" }
+            ]
+        },
+        // ── ISC2 ─────────────────────────────────────────────────
+        "isc2-cc": {
+            name: "ISC2 CC", code: "CC", questions: 100,
+            pass: "700/1000", duration: 120,
+            domains: [
+                { name: "Security Principles", weight: 26, topics: ["CIA Triad","Authentication","Non-repudiation","Privacy","Security Governance"], diff: "easy" },
+                { name: "BC, DR & Incident Response", weight: 10, topics: ["Business Continuity","Disaster Recovery","Incident Response","Incident Handling","Recovery Plans"], diff: "medium" },
+                { name: "Access Controls", weight: 22, topics: ["Physical Controls","Logical Controls","Access Models","RBAC","Least Privilege"], diff: "medium" },
+                { name: "Network Security", weight: 24, topics: ["Network Architecture","Firewalls","IDS/IPS","VPN","Wireless Security"], diff: "medium" },
+                { name: "Security Operations", weight: 18, topics: ["Data Handling","Logging","Monitoring","Change Management","Security Awareness"], diff: "easy" }
+            ]
+        },
+        "sscp": {
+            name: "ISC2 SSCP", code: "SSCP", questions: 125,
+            pass: "700/1000", duration: 180,
+            domains: [
+                { name: "Security Operations & Administration", weight: 16, topics: ["Security Concepts","Asset Management","Change Management","Security Awareness","Compliance"], diff: "medium" },
+                { name: "Access Controls", weight: 15, topics: ["Authentication","Authorization","Identity Management","Access Models","Account Lifecycle"], diff: "medium" },
+                { name: "Risk Identification & Analysis", weight: 15, topics: ["Risk Assessment","Vulnerability Management","Security Monitoring","Threat Intelligence","Risk Treatment"], diff: "hard" },
+                { name: "Incident Response & Recovery", weight: 14, topics: ["Incident Handling","Forensics","BCP","DRP","Evidence Collection"], diff: "hard" },
+                { name: "Cryptography", weight: 10, topics: ["Symmetric Encryption","Asymmetric Encryption","Hashing","PKI","Digital Signatures"], diff: "hard" },
+                { name: "Network & Comm Security", weight: 16, topics: ["Network Architecture","Secure Protocols","Firewalls","VPN","Wireless Security"], diff: "hard" },
+                { name: "Systems & Application Security", weight: 14, topics: ["Malware","Endpoint Security","Cloud Security","Virtualization","Secure SDLC"], diff: "medium" }
+            ]
+        },
+        "cissp": {
+            name: "ISC2 CISSP", code: "CISSP", questions: 150,
+            pass: "700/1000", duration: 180,
+            domains: [
+                { name: "Security & Risk Management", weight: 16, topics: ["Governance","Compliance","Legal/Regulatory","BCP","Ethics"], diff: "hard" },
+                { name: "Asset Security", weight: 10, topics: ["Data Classification","Data Handling","Privacy","Retention","Ownership"], diff: "medium" },
+                { name: "Security Architecture", weight: 13, topics: ["Security Models","Cryptography","Physical Security","Secure Design","IoT"], diff: "hard" },
+                { name: "Communication & Network Security", weight: 13, topics: ["Network Architecture","Secure Protocols","Firewalls","VPN","Wireless"], diff: "hard" },
+                { name: "Identity & Access Management", weight: 13, topics: ["Authentication","Authorization","Federation","MFA","Access Control"], diff: "medium" },
+                { name: "Security Assessment & Testing", weight: 12, topics: ["Vuln Assessment","Pen Testing","Log Reviews","Code Review","SOC Reports"], diff: "hard" },
+                { name: "Security Operations", weight: 13, topics: ["Incident Management","DR","Forensics","Monitoring","Change Mgmt"], diff: "hard" },
+                { name: "Software Development Security", weight: 10, topics: ["SDLC","Secure Coding","API Security","DevSecOps","OWASP"], diff: "hard" }
+            ]
+        },
+        "ccsp": {
+            name: "ISC2 CCSP", code: "CCSP", questions: 150,
+            pass: "700/1000", duration: 240,
+            domains: [
+                { name: "Cloud Concepts & Architecture", weight: 17, topics: ["Cloud Reference Architecture","Cloud Deployment Models","Cloud Service Models","Shared Responsibility","Cloud Design Patterns"], diff: "hard" },
+                { name: "Cloud Data Security", weight: 20, topics: ["Data Lifecycle","Data Classification","Data Retention","DLP","Encryption & Key Mgmt"], diff: "hard" },
+                { name: "Cloud Platform & Infrastructure Security", weight: 17, topics: ["Compute Security","Network Security","Hypervisor Hardening","Storage Security","Audit & Compliance"], diff: "hard" },
+                { name: "Cloud Application Security", weight: 17, topics: ["Secure SDLC","API Security","Identity Federation","App Security Testing","DevSecOps"], diff: "hard" },
+                { name: "Cloud Security Operations", weight: 16, topics: ["Incident Response","Forensics","Monitoring","BCM","Continuous Improvement"], diff: "hard" },
+                { name: "Legal, Risk & Compliance", weight: 13, topics: ["Legal Requirements","Privacy","Audit","Risk Management","Contracts & SLAs"], diff: "medium" }
+            ]
+        },
+        // ── AWS ──────────────────────────────────────────────────
+        "cloud-practitioner": {
+            name: "AWS Cloud Practitioner", code: "CLF-C02", questions: 65,
+            pass: "700/1000", duration: 90,
+            domains: [
+                { name: "Cloud Concepts", weight: 24, topics: ["Cloud Value Proposition","AWS Well-Architected","Cloud Economics","Migration Strategies","Cloud Architecture"], diff: "easy" },
+                { name: "Security & Compliance", weight: 30, topics: ["Shared Responsibility","IAM","Security Services","Compliance Programs","Encryption"], diff: "medium" },
+                { name: "Cloud Technology & Services", weight: 34, topics: ["EC2 & Compute","S3 & Storage","VPC & Networking","RDS & Databases","Lambda & Serverless"], diff: "medium" },
+                { name: "Billing, Pricing & Support", weight: 12, topics: ["Pricing Models","Cost Management","Support Plans","Free Tier","AWS Organizations"], diff: "easy" }
+            ]
+        },
+        "aws-saa": {
+            name: "AWS Solutions Architect Assoc.", code: "SAA-C03", questions: 65,
+            pass: "720/1000", duration: 130,
+            domains: [
+                { name: "Secure Architectures", weight: 30, topics: ["IAM Policies","VPC Security","Encryption at Rest/Transit","AWS Organizations","Security Services"], diff: "hard" },
+                { name: "Resilient Architectures", weight: 26, topics: ["Multi-AZ","Auto Scaling","Decoupling","Disaster Recovery","Backup Strategies"], diff: "hard" },
+                { name: "High-Performing Architectures", weight: 24, topics: ["Caching","CDN","Database Optimization","Compute Selection","Storage Tiering"], diff: "hard" },
+                { name: "Cost-Optimized Architectures", weight: 20, topics: ["Pricing Models","Reserved vs Spot","S3 Storage Classes","Right-Sizing","Cost Explorer"], diff: "medium" }
+            ]
+        },
+        "aws-dva": {
+            name: "AWS Developer Associate", code: "DVA-C02", questions: 65,
+            pass: "720/1000", duration: 130,
+            domains: [
+                { name: "Development with AWS Services", weight: 32, topics: ["Lambda","DynamoDB","API Gateway","S3","SQS & SNS"], diff: "hard" },
+                { name: "Security", weight: 26, topics: ["IAM","Cognito","KMS","Secrets Manager","API Auth"], diff: "hard" },
+                { name: "Deployment", weight: 24, topics: ["Elastic Beanstalk","CodePipeline","CloudFormation","SAM","Docker/ECS"], diff: "medium" },
+                { name: "Troubleshooting & Optimization", weight: 18, topics: ["CloudWatch","X-Ray","Lambda Optimization","Caching","Error Handling"], diff: "hard" }
+            ]
+        },
+        "aws-soa": {
+            name: "AWS SysOps Administrator", code: "SOA-C02", questions: 65,
+            pass: "720/1000", duration: 180,
+            domains: [
+                { name: "Monitoring, Logging & Remediation", weight: 20, topics: ["CloudWatch","EventBridge","AWS Config","CloudTrail","Automated Remediation"], diff: "hard" },
+                { name: "Reliability & Business Continuity", weight: 16, topics: ["Backup Strategies","Multi-AZ","DR Planning","Auto Scaling","Route 53 Failover"], diff: "hard" },
+                { name: "Deployment & Automation", weight: 18, topics: ["CloudFormation","Systems Manager","OpsWorks","CodeDeploy","AMI Management"], diff: "medium" },
+                { name: "Security & Compliance", weight: 16, topics: ["IAM","Security Groups","NACLs","AWS Config Rules","GuardDuty"], diff: "hard" },
+                { name: "Networking & Content Delivery", weight: 18, topics: ["VPC Design","ELB","CloudFront","Route 53","VPN & Direct Connect"], diff: "hard" },
+                { name: "Cost & Performance Optimization", weight: 12, topics: ["Cost Explorer","Trusted Advisor","Right-Sizing","Reserved Instances","S3 Lifecycle"], diff: "medium" }
+            ]
+        },
+        // ── Microsoft ────────────────────────────────────────────
+        "az-900": {
+            name: "Microsoft AZ-900", code: "AZ-900", questions: 50,
+            pass: "700/1000", duration: 65,
+            domains: [
+                { name: "Cloud Concepts", weight: 25, topics: ["Cloud Models","Cloud Benefits","Cloud Service Types","CapEx vs OpEx","Shared Responsibility"], diff: "easy" },
+                { name: "Azure Architecture & Services", weight: 35, topics: ["Regions & Availability Zones","Azure Compute","Azure Networking","Azure Storage","Azure Identity"], diff: "medium" },
+                { name: "Azure Management & Governance", weight: 30, topics: ["Cost Management","Azure Policy","Resource Tags","Azure Monitor","ARM Templates"], diff: "medium" },
+                { name: "Azure Security & Compliance", weight: 10, topics: ["Microsoft Defender","Azure Firewall","NSGs","Entra ID","RBAC"], diff: "medium" }
+            ]
+        },
+        "ai-900": {
+            name: "Microsoft AI-900", code: "AI-900", questions: 50,
+            pass: "700/1000", duration: 60,
+            domains: [
+                { name: "AI Workloads & Considerations", weight: 20, topics: ["AI vs ML","Responsible AI","Fairness","Transparency","Accountability"], diff: "easy" },
+                { name: "Machine Learning on Azure", weight: 25, topics: ["Regression","Classification","Clustering","Azure ML Studio","Automated ML"], diff: "medium" },
+                { name: "Computer Vision", weight: 15, topics: ["Image Classification","Object Detection","OCR","Azure AI Vision","Custom Vision"], diff: "medium" },
+                { name: "Natural Language Processing", weight: 20, topics: ["Text Analytics","Sentiment Analysis","Language Understanding","Translation","Azure OpenAI"], diff: "medium" },
+                { name: "Generative AI", weight: 20, topics: ["Azure OpenAI Service","Prompt Engineering","Copilot","Responsible GenAI","RAG Patterns"], diff: "medium" }
+            ]
+        },
+        "dp-900": {
+            name: "Microsoft DP-900", code: "DP-900", questions: 50,
+            pass: "700/1000", duration: 65,
+            domains: [
+                { name: "Core Data Concepts", weight: 28, topics: ["Data Types","File Formats","Databases","Data Processing","Data Analytics Roles"], diff: "easy" },
+                { name: "Relational Data on Azure", weight: 22, topics: ["Azure SQL","Relational Concepts","Normalization","SQL Queries","Azure Database Services"], diff: "medium" },
+                { name: "Non-Relational Data on Azure", weight: 18, topics: ["Cosmos DB","Table Storage","Blob Storage","NoSQL Concepts","Semi-Structured Data"], diff: "medium" },
+                { name: "Analytics on Azure", weight: 32, topics: ["Azure Synapse","Power BI","Data Factory","Azure Databricks","Real-Time Analytics"], diff: "medium" }
+            ]
+        },
+        "ms-900": {
+            name: "Microsoft MS-900", code: "MS-900", questions: 50,
+            pass: "700/1000", duration: 60,
+            domains: [
+                { name: "Cloud Concepts", weight: 13, topics: ["Cloud Benefits","Public vs Private Cloud","IaaS vs SaaS","Cloud Economics","Shared Responsibility"], diff: "easy" },
+                { name: "Microsoft 365 Apps & Services", weight: 47, topics: ["Teams","SharePoint","Exchange Online","OneDrive","Microsoft 365 Apps"], diff: "medium" },
+                { name: "Security, Compliance & Privacy", weight: 28, topics: ["Identity & Access","Threat Protection","Compliance Center","Information Protection","Trust Center"], diff: "medium" },
+                { name: "Microsoft 365 Pricing & Support", weight: 12, topics: ["Licensing Options","Subscription Models","Support Options","SLAs","Cost Management"], diff: "easy" }
+            ]
+        },
+        "sc-900": {
+            name: "Microsoft SC-900", code: "SC-900", questions: 50,
+            pass: "700/1000", duration: 65,
+            domains: [
+                { name: "Security, Compliance & Identity Concepts", weight: 15, topics: ["Shared Responsibility","Zero Trust","Defense in Depth","Encryption","Hashing"], diff: "easy" },
+                { name: "Microsoft Entra", weight: 25, topics: ["Entra ID","Authentication Methods","Conditional Access","RBAC","Identity Governance"], diff: "medium" },
+                { name: "Microsoft Security Solutions", weight: 35, topics: ["Microsoft Defender","Microsoft Sentinel","DDoS Protection","Azure Firewall","Secure Score"], diff: "medium" },
+                { name: "Microsoft Compliance Solutions", weight: 25, topics: ["Compliance Manager","Data Classification","Information Protection","Insider Risk","eDiscovery"], diff: "medium" }
+            ]
+        },
+        "az-104": {
+            name: "Microsoft AZ-104", code: "AZ-104", questions: 55,
+            pass: "700/1000", duration: 100,
+            domains: [
+                { name: "Manage Azure Identities & Governance", weight: 20, topics: ["Entra ID Users & Groups","RBAC","Azure Policy","Management Groups","Subscriptions"], diff: "medium" },
+                { name: "Implement & Manage Storage", weight: 15, topics: ["Storage Accounts","Blob Storage","Azure Files","Storage Security","Redundancy Options"], diff: "medium" },
+                { name: "Deploy & Manage Compute", weight: 25, topics: ["Virtual Machines","App Services","Containers","Azure Kubernetes","VM Scale Sets"], diff: "hard" },
+                { name: "Implement Virtual Networking", weight: 20, topics: ["VNets","NSGs","Azure DNS","VPN Gateway","Load Balancer"], diff: "hard" },
+                { name: "Monitor & Maintain Resources", weight: 20, topics: ["Azure Monitor","Log Analytics","Alerts","Backup","Azure Advisor"], diff: "medium" }
+            ]
+        },
+        "az-500": {
+            name: "Microsoft AZ-500", code: "AZ-500", questions: 55,
+            pass: "700/1000", duration: 100,
+            domains: [
+                { name: "Manage Identity & Access", weight: 28, topics: ["Entra ID","Conditional Access","PIM","MFA","App Registration"], diff: "hard" },
+                { name: "Secure Networking", weight: 22, topics: ["NSGs","Azure Firewall","DDoS Protection","Private Endpoints","Application Gateway"], diff: "hard" },
+                { name: "Secure Compute, Storage & Databases", weight: 22, topics: ["VM Security","Container Security","Storage Encryption","SQL Security","Key Vault"], diff: "hard" },
+                { name: "Manage Security Operations", weight: 28, topics: ["Microsoft Sentinel","Defender for Cloud","Security Alerts","Threat Detection","Security Policies"], diff: "hard" }
+            ]
+        },
+        // ── Cisco ────────────────────────────────────────────────
+        "ccna": {
+            name: "Cisco CCNA", code: "200-301", questions: 100,
+            pass: "825/1000", duration: 120,
+            domains: [
+                { name: "Network Fundamentals", weight: 20, topics: ["TCP/IP Model","IPv4/IPv6","Cabling","Topologies","Interface Config"], diff: "medium" },
+                { name: "Network Access", weight: 20, topics: ["VLANs","EtherChannel","Spanning Tree","Wireless","Switch Config"], diff: "hard" },
+                { name: "IP Connectivity", weight: 25, topics: ["Static Routing","OSPF","First Hop Redundancy","NAT","IPv6 Routing"], diff: "hard" },
+                { name: "IP Services", weight: 10, topics: ["DHCP","DNS","NTP","SNMP","Syslog"], diff: "medium" },
+                { name: "Security Fundamentals", weight: 15, topics: ["ACLs","Port Security","AAA","Wireless Security","VPN Concepts"], diff: "hard" },
+                { name: "Automation & Programmability", weight: 10, topics: ["REST APIs","Ansible","Puppet","JSON/YAML","SDN Concepts"], diff: "medium" }
+            ]
+        },
+        // ── EC-Council ───────────────────────────────────────────
+        "ceh": {
+            name: "EC-Council CEH", code: "312-50v12", questions: 125,
+            pass: "70%", duration: 240,
+            domains: [
+                { name: "Reconnaissance & Footprinting", weight: 21, topics: ["OSINT","DNS Enumeration","Network Scanning","Social Engineering Recon","Google Dorking"], diff: "hard" },
+                { name: "System Hacking & Attack Techniques", weight: 17, topics: ["Password Cracking","Privilege Escalation","Covering Tracks","Rootkits","Steganography"], diff: "hard" },
+                { name: "Network & Web App Hacking", weight: 30, topics: ["SQL Injection","XSS","Session Hijacking","DoS Attacks","Firewall Evasion"], diff: "hard" },
+                { name: "Wireless, Mobile, IoT & Cloud", weight: 20, topics: ["Wireless Attacks","Mobile Threats","IoT Vulnerabilities","Cloud Security","Bluetooth Hacking"], diff: "hard" },
+                { name: "Cryptography & Countermeasures", weight: 12, topics: ["Encryption Algorithms","PKI","Hash Functions","Crypto Attacks","VPN Protocols"], diff: "medium" }
+            ]
+        },
+        // ── ISACA ────────────────────────────────────────────────
+        "cisa": {
+            name: "ISACA CISA", code: "CISA", questions: 150,
+            pass: "450/800", duration: 240,
+            domains: [
+                { name: "IS Auditing Process", weight: 21, topics: ["Audit Standards","Risk-Based Auditing","Audit Planning","Evidence Collection","Audit Reporting"], diff: "hard" },
+                { name: "IT Governance & Management", weight: 17, topics: ["IT Governance","IT Strategy","IT Policies","Resource Management","Performance Monitoring"], diff: "hard" },
+                { name: "IS Acquisition & Development", weight: 12, topics: ["SDLC","Project Management","Application Controls","Business Cases","Testing Methodologies"], diff: "medium" },
+                { name: "IS Operations & Resilience", weight: 23, topics: ["IT Service Management","BCP/DRP","Incident Management","Change Management","Asset Management"], diff: "hard" },
+                { name: "Protection of Information Assets", weight: 27, topics: ["Data Classification","Access Controls","Encryption","Network Security","Physical Security"], diff: "hard" }
+            ]
+        },
+        "cism": {
+            name: "ISACA CISM", code: "CISM", questions: 150,
+            pass: "450/800", duration: 240,
+            domains: [
+                { name: "Information Security Governance", weight: 17, topics: ["Security Strategy","Governance Frameworks","Roles & Responsibilities","Risk Appetite","Board Reporting"], diff: "hard" },
+                { name: "Information Risk Management", weight: 20, topics: ["Risk Assessment","Risk Treatment","Risk Monitoring","Threat Landscape","Vulnerability Assessment"], diff: "hard" },
+                { name: "Information Security Program", weight: 33, topics: ["Program Development","Security Architecture","Controls Implementation","Security Awareness","Resource Management"], diff: "hard" },
+                { name: "Incident Management", weight: 30, topics: ["Incident Response Plan","Detection & Analysis","Containment & Recovery","Post-Incident Review","BCP Integration"], diff: "hard" }
+            ]
+        },
+        // ── GIAC ─────────────────────────────────────────────────
+        "gsec": {
+            name: "GIAC GSEC", code: "GSEC", questions: 180,
+            pass: "73%", duration: 300,
+            domains: [
+                { name: "Network Security & Defense", weight: 25, topics: ["Firewalls","IDS/IPS","Network Architecture","VPN","Wireless Security"], diff: "hard" },
+                { name: "Cryptography & Access Control", weight: 20, topics: ["Symmetric & Asymmetric Crypto","PKI","Hashing","Authentication","Authorization"], diff: "hard" },
+                { name: "Incident Handling & Response", weight: 20, topics: ["Incident Process","Forensics Basics","Log Analysis","Malware Analysis","Evidence Handling"], diff: "hard" },
+                { name: "Security Architecture & Policy", weight: 20, topics: ["Security Models","Defense in Depth","Security Policy","Hardening","Patch Management"], diff: "hard" },
+                { name: "Risk Management & Compliance", weight: 15, topics: ["Risk Assessment","Frameworks","Legal & Regulatory","Audit","Business Continuity"], diff: "medium" }
+            ]
+        },
+        "gcih": {
+            name: "GIAC GCIH", code: "GCIH", questions: 106,
+            pass: "70%", duration: 240,
+            domains: [
+                { name: "Incident Handling Process", weight: 25, topics: ["Preparation","Identification","Containment","Eradication","Recovery"], diff: "hard" },
+                { name: "Hacker Exploits & Attacks", weight: 25, topics: ["Reconnaissance","Scanning","Exploitation","Pivoting","Data Exfiltration"], diff: "hard" },
+                { name: "Hacker Tools", weight: 20, topics: ["Metasploit","Nmap","Wireshark","Netcat","Password Tools"], diff: "hard" },
+                { name: "Incident Handling Tools", weight: 15, topics: ["SIEM","Log Analysis","Memory Forensics","Network Forensics","Endpoint Detection"], diff: "hard" },
+                { name: "Incident Prevention & Detection", weight: 15, topics: ["IDS/IPS","Firewalls","Security Monitoring","Threat Intel","Honeypots"], diff: "hard" }
+            ]
+        },
+        // ── Google Cloud ─────────────────────────────────────────
+        "gcp-cdl": {
+            name: "Google Cloud Digital Leader", code: "CDL", questions: 50,
+            pass: "70%", duration: 90,
+            domains: [
+                { name: "Digital Transformation with GCP", weight: 17, topics: ["Cloud Adoption","Business Value","Innovation","Total Cost of Ownership","Change Management"], diff: "easy" },
+                { name: "Data & Google Cloud", weight: 23, topics: ["BigQuery","Cloud Storage","Dataflow","Looker","Data Analytics"], diff: "medium" },
+                { name: "Infrastructure & App Modernization", weight: 23, topics: ["Compute Engine","GKE","Cloud Run","App Engine","Anthos"], diff: "medium" },
+                { name: "Google Cloud Security & Operations", weight: 21, topics: ["IAM","Cloud Armor","Security Command Center","Cloud Monitoring","Cloud Logging"], diff: "medium" },
+                { name: "Google Cloud Pricing", weight: 16, topics: ["Pricing Models","Committed Use","Preemptible VMs","Billing Reports","Cost Management"], diff: "easy" }
+            ]
+        }
+    };
+
+    // Vendor grouping for the cert selector UI
+    const CERT_GROUPS = [
+        { vendor: "CompTIA", certs: ["itf-plus","a-plus-core1","a-plus-core2","network-plus","security-plus","linux-plus","cloud-plus","data-plus","cysa-plus","pentest-plus","casp-plus"] },
+        { vendor: "ISC2", certs: ["isc2-cc","sscp","cissp","ccsp"] },
+        { vendor: "AWS", certs: ["cloud-practitioner","aws-saa","aws-dva","aws-soa"] },
+        { vendor: "Microsoft", certs: ["az-900","ai-900","dp-900","ms-900","sc-900","az-104","az-500"] },
+        { vendor: "Cisco", certs: ["ccna"] },
+        { vendor: "EC-Council", certs: ["ceh"] },
+        { vendor: "ISACA", certs: ["cisa","cism"] },
+        { vendor: "GIAC", certs: ["gsec","gcih"] },
+        { vendor: "Google Cloud", certs: ["gcp-cdl"] }
+    ];
+
+    const QUOTES = [
+        "The expert in anything was once a beginner.",
+        "Discipline beats motivation every single day.",
+        "Success is the sum of small efforts repeated daily.",
+        "Progress, not perfection.",
+        "You don't have to be great to start — start to be great.",
+        "One domain at a time. One day at a time.",
+        "Your future self will thank you for studying today.",
+        "Consistency is the mother of mastery.",
+        "The certification is earned in the daily grind.",
+        "Trust the process. The results will follow."
+    ];
+
+    const TYPE_COLORS = {
+        study: "#2563eb", practice: "#ef4444", review: "#10b981",
+        lab: "#8b5cf6", break: "#6b7280"
+    };
+    const DIFF_COLORS = { easy: "#10b981", medium: "#f59e0b", hard: "#ef4444", exam: "#f97316" };
+
+    // ================================================================
+    // STATE + PERSISTENCE
+    // ================================================================
+    function loadState() {
+        try {
+            const saved = localStorage.getItem("ftv_planner_state");
+            if (saved) return JSON.parse(saved);
+        } catch (e) {}
+        return null;
+    }
+
+    function saveState() {
+        try {
+            localStorage.setItem("ftv_planner_state", JSON.stringify(state));
+        } catch (e) {}
+    }
+
+    const defaultState = {
+        screen: "setup",
+        dark: true,
+        cert: "security-plus",
+        weeks: 8,
+        hpd: 2,
+        dpw: 5,
+        adhd: false,
+        practiceWks: 1,
+        startDate: new Date().toISOString().split("T")[0],
+        plan: null,
+        completed: {},
+        expandedWeek: 1,
+        tab: "plan"
+    };
+
+    let state = loadState() || { ...defaultState };
+
+    // ================================================================
+    // PLAN GENERATOR
+    // ================================================================
+    function generatePlan() {
+        const bp = CERTS[state.cert];
+        const studyWks = state.weeks - state.practiceWks;
+        const sorted = [...bp.domains].sort((a, b) => b.weight - a.weight);
+
+        let queue = [];
+        sorted.forEach(d => {
+            const n = Math.max(1, Math.round(studyWks * d.weight / 100));
+            for (let i = 0; i < n; i++) queue.push(d);
+        });
+        while (queue.length < studyWks) queue.push(sorted[0]);
+        queue = queue.slice(0, studyWks);
+
+        const weeks = [];
+        for (let w = 1; w <= state.weeks; w++) {
+            const isPractice = w > studyWks;
+            const domain = isPractice ? null : queue[w - 1];
+            const progress = Math.round((w / state.weeks) * 100);
+            let tasks;
+
+            if (isPractice) {
+                tasks = [
+                    { task: "Full practice exam simulation", minutes: bp.duration, type: "practice" },
+                    { task: "Review incorrect answers", minutes: 60, type: "review" },
+                    { task: "Deep-dive on weakest areas", minutes: 45, type: "study" },
+                    { task: "Flashcard blitz — key terms", minutes: 30, type: "review" },
+                    { task: "Confidence quiz (25 Qs)", minutes: 25, type: "practice" }
+                ];
+            } else if (state.adhd) {
+                const t = domain.topics;
+                tasks = [
+                    { task: "Read: " + (t[0] || "Overview"), minutes: 20, type: "study" },
+                    { task: "Break — stretch & hydrate", minutes: 5, type: "break" },
+                    { task: "Study: " + (t[1] || "Key concepts"), minutes: 20, type: "study" },
+                    { task: "Active recall — write 5 things", minutes: 10, type: "review" },
+                    { task: "Reward break", minutes: 5, type: "break" },
+                    { task: "Practice questions (10-15)", minutes: 20, type: "practice" },
+                    { task: "Lab: " + (t[2] || "Scenario exercise"), minutes: 15, type: "lab" },
+                    { task: "Wrap-up — plan tomorrow", minutes: 5, type: "review" }
+                ];
+            } else {
+                const t = domain.topics;
+                tasks = [
+                    { task: "Study: " + (t[0] || "Core concepts"), minutes: 45, type: "study" },
+                    { task: "Deep dive: " + (t[1] || "Advanced topics"), minutes: 45, type: "study" },
+                    { task: "Practice questions (20-30)", minutes: 30, type: "practice" },
+                    { task: "Review mistakes + notes", minutes: 20, type: "review" },
+                    { task: "Lab: " + (t[2] || "Hands-on scenario"), minutes: 40, type: "lab" }
+                ];
+            }
+
+            weeks.push({
+                num: w,
+                title: isPractice ? "Practice Exam " + (w - studyWks) : domain.name,
+                domain: isPractice ? "All Domains" : domain.name,
+                weight: isPractice ? 100 : domain.weight,
+                diff: isPractice ? "exam" : domain.diff,
+                tasks, progress,
+                milestone: isPractice
+                    ? "Score " + bp.pass + " or higher on practice exam #" + (w - studyWks)
+                    : "Master " + domain.topics.slice(0, 2).join(" & ") + " — pass domain quiz",
+                quote: QUOTES[w % QUOTES.length]
+            });
+        }
+
+        const start = new Date(state.startDate);
+        const exam = new Date(start);
+        exam.setDate(exam.getDate() + state.weeks * 7);
+
+        state.plan = {
+            bp, weeks,
+            totalHours: state.hpd * state.dpw * state.weeks,
+            examDate: exam.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
+            startFormatted: start.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+        };
+        state.completed = {};
+        state.expandedWeek = 1;
+        state.tab = "plan";
+        state.screen = "planner";
+        saveState();
+        render();
+    }
+
+    // ================================================================
+    // RENDER ENGINE
+    // ================================================================
+    function render() {
+        saveState();
+        const app = document.getElementById("app");
+        document.getElementById("plannerBody").className = state.dark ? "" : "theme-light";
+
+        if (state.screen === "setup") {
+            app.innerHTML = renderSetup();
+            bindSetup();
+        } else {
+            app.innerHTML = renderPlanner();
+            bindPlanner();
+        }
+    }
+
+    // ---- SETUP SCREEN ----
+    function renderSetup() {
+        const certOptions = CERT_GROUPS.map(g => {
+            const cards = g.certs.map(key => {
+                const c = CERTS[key];
+                return `<div class="cert-option ${state.cert === key ? 'selected' : ''}" data-cert="${key}">
+                    <div class="cert-option-name">${c.name}</div>
+                    <div class="cert-option-meta">${c.code} · ${c.domains.length} domains</div>
+                </div>`;
+            }).join("");
+            return `<div class="cert-vendor-label">${g.vendor}</div><div class="cert-grid">${cards}</div>`;
+        }).join("");
+
+        return `
+        <nav class="nav-bar">
+            <a href="/">← Back to FixTheVuln</a>
+            <div class="nav-controls">
+                <button class="btn-icon" id="themeToggle">${state.dark ? '☀️' : '🌙'}</button>
+            </div>
+        </nav>
+
+        <div class="hero animate-in">
+            <div class="hero-badge">🛡️ FixTheVuln Tools</div>
+            <h1>Certification Study Planner</h1>
+            <p>Generate a personalized, AI-structured study plan for your next IT certification exam — free.</p>
+        </div>
+
+        <div class="form-card animate-in delay-1">
+            <div class="form-group">
+                <span class="form-label">Certification</span>
+                <div class="cert-groups">${certOptions}</div>
+            </div>
+
+            <div class="form-group">
+                <span class="form-label">Schedule</span>
+                <div class="form-row">
+                    <div>
+                        <select id="selWeeks">${[4,6,8,10,12,16,20].map(w => `<option value="${w}" ${state.weeks===w?'selected':''}>${w} weeks</option>`).join("")}</select>
+                    </div>
+                    <div>
+                        <select id="selHpd">${[1,1.5,2,2.5,3,4].map(h => `<option value="${h}" ${state.hpd===h?'selected':''}>${h}h/day</option>`).join("")}</select>
+                    </div>
+                    <div>
+                        <select id="selDpw">${[3,4,5,6,7].map(d => `<option value="${d}" ${state.dpw===d?'selected':''}>${d} days/wk</option>`).join("")}</select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-row-2">
+                    <div>
+                        <span class="form-label">Start Date</span>
+                        <input type="date" id="selStart" value="${state.startDate}">
+                    </div>
+                    <div>
+                        <span class="form-label">Practice Exam Weeks</span>
+                        <select id="selPractice">${[0,1,2,3].map(p => `<option value="${p}" ${state.practiceWks===p?'selected':''}>${p} week${p!==1?'s':''}</option>`).join("")}</select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toggle-card ${state.adhd ? 'active' : ''}" id="adhdToggle">
+                <div class="toggle-card-text">
+                    <h3>🧠 ADHD-Friendly Mode</h3>
+                    <p>Shorter tasks (15-20 min), built-in breaks, dopamine rewards</p>
+                </div>
+                <div class="toggle-switch ${state.adhd ? 'on' : ''}"></div>
+            </div>
+
+            <button class="btn-generate" id="btnGenerate">Generate My Study Plan →</button>
+        </div>
+
+        <div class="planner-footer animate-in delay-2">
+            Powered by structured AI validation · <a href="/">FixTheVuln.com</a> · <a href="https://www.etsy.com/shop/SmartSheetByRobert" target="_blank">Printable planners on Etsy</a>
+        </div>
+        `;
+    }
+
+    function bindSetup() {
+        document.querySelectorAll(".cert-option").forEach(el => {
+            el.onclick = () => { state.cert = el.dataset.cert; render(); };
+        });
+        document.getElementById("selWeeks").onchange = e => { state.weeks = +e.target.value; };
+        document.getElementById("selHpd").onchange = e => { state.hpd = +e.target.value; };
+        document.getElementById("selDpw").onchange = e => { state.dpw = +e.target.value; };
+        document.getElementById("selStart").onchange = e => { state.startDate = e.target.value; };
+        document.getElementById("selPractice").onchange = e => { state.practiceWks = +e.target.value; };
+        document.getElementById("adhdToggle").onclick = () => { state.adhd = !state.adhd; render(); };
+        document.getElementById("themeToggle").onclick = () => { state.dark = !state.dark; render(); };
+        document.getElementById("btnGenerate").onclick = generatePlan;
+    }
+
+    // ---- PLANNER SCREEN ----
+    function renderPlanner() {
+        const p = state.plan;
+        const bp = p.bp;
+        const totalTasks = p.weeks.reduce((s, w) => s + w.tasks.length, 0);
+        const totalDone = Object.keys(state.completed).length;
+        const pct = totalTasks ? Math.round(totalDone / totalTasks * 100) : 0;
+
+        // SVG ring
+        const ringSize = 68, ringStroke = 5;
+        const r = (ringSize - ringStroke) / 2;
+        const circ = 2 * Math.PI * r;
+        const ringOffset = circ - (pct / 100) * circ;
+        const ringColor = pct >= 100 ? "#10b981" : "#3b82f6";
+
+        const ring = `<svg width="${ringSize}" height="${ringSize}" style="transform:rotate(-90deg)">
+            <circle cx="${ringSize/2}" cy="${ringSize/2}" r="${r}" fill="none" stroke="var(--border)" stroke-width="${ringStroke}"/>
+            <circle cx="${ringSize/2}" cy="${ringSize/2}" r="${r}" fill="none" stroke="${ringColor}" stroke-width="${ringStroke}"
+                stroke-dasharray="${circ}" stroke-dashoffset="${ringOffset}" stroke-linecap="round" style="transition:stroke-dashoffset 0.5s"/>
+            <text x="${ringSize/2}" y="${ringSize/2}" text-anchor="middle" dominant-baseline="central"
+                font-size="13" font-weight="700" style="transform:rotate(90deg);transform-origin:center">${pct}%</text>
+        </svg>`;
+
+        let tabContent = "";
+        if (state.tab === "plan") tabContent = renderWeeklyPlan(p);
+        else if (state.tab === "domains") tabContent = renderDomains(bp);
+        else tabContent = renderStats(p, totalTasks, totalDone, pct);
+
+        return `
+        <nav class="nav-bar">
+            <a href="#" id="backBtn">← New Plan</a>
+            <div class="nav-controls">
+                <button class="btn-icon" id="themeToggle2">${state.dark ? '☀️' : '🌙'}</button>
+            </div>
+        </nav>
+
+        <div class="stats-bar animate-in">
+            <div>
+                <h2>${bp.name}</h2>
+                <div class="stats-bar-meta">
+                    ${bp.code} · ${bp.questions} questions · Pass: ${bp.pass}<br>
+                    ${p.startFormatted} → ${p.examDate} · ${p.totalHours}h total
+                    ${state.adhd ? ' · <strong>ADHD Mode</strong>' : ''}
+                </div>
+                <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+                <div class="progress-text">${totalDone}/${totalTasks} tasks completed</div>
+            </div>
+            <div class="ring-wrap">${ring}</div>
+        </div>
+
+        <div class="tab-bar animate-in delay-1">
+            <button class="tab-btn ${state.tab==='plan'?'active':''}" data-tab="plan">Weekly Plan</button>
+            <button class="tab-btn ${state.tab==='domains'?'active':''}" data-tab="domains">Domains</button>
+            <button class="tab-btn ${state.tab==='stats'?'active':''}" data-tab="stats">Stats</button>
+        </div>
+
+        <div class="animate-in delay-2">${tabContent}</div>
+
+        <!-- CTA: Etsy + Affiliate -->
+        <div class="cta-box animate-in delay-3">
+            <h3>Want a printable version?</h3>
+            <p>Get beautifully formatted PDF planners for offline study — available on Etsy.</p>
+            <div class="cta-links">
+                <a class="cta-link" href="https://www.etsy.com/shop/SmartSheetByRobert" target="_blank">📄 Browse Planners on Etsy</a>
+                <a class="cta-link secondary" href="https://www.jdoqocy.com/click-101630293-13756265" target="_blank">🔒 Protect your study with NordVPN</a><img src="https://www.ftjcfx.com/image-101630293-13756265" width="1" height="1" border="0" alt="" style="position:absolute"/>
+            </div>
+        </div>
+
+        <!-- Email capture -->
+        <div class="email-capture animate-in delay-4">
+            <h3>Get weekly study tips & cert updates</h3>
+            <p>Join the FixTheVuln newsletter — zero spam, pure security knowledge.</p>
+            <div class="email-row">
+                <input type="email" placeholder="you@example.com" id="emailInput">
+                <button id="emailBtn">Subscribe</button>
+            </div>
+        </div>
+
+        <div class="planner-footer">
+            <a href="/">FixTheVuln.com</a> · <a href="https://www.etsy.com/shop/SmartSheetByRobert" target="_blank">SmartSheetByRobert</a> · <a href="https://rmvuln.com" target="_blank">RmVuln.com</a>
+        </div>
+        `;
+    }
+
+    function renderWeeklyPlan(p) {
+        return p.weeks.map(w => {
+            const done = w.tasks.filter((_, i) => state.completed[w.num + "-" + i]).length;
+            const isOpen = state.expandedWeek === w.num;
+
+            let body = "";
+            if (isOpen) {
+                const taskRows = w.tasks.map((t, i) => {
+                    const key = w.num + "-" + i;
+                    const isDone = !!state.completed[key];
+                    return `<div class="task-row ${isDone ? 'done' : ''}" data-task="${key}">
+                        <div class="task-check">${isDone ? '✓' : ''}</div>
+                        <span class="task-name">${t.task}</span>
+                        <span class="task-type-badge" style="background:${TYPE_COLORS[t.type]||'#6b7280'}">${t.type.toUpperCase()}</span>
+                        <span class="task-mins">${t.minutes}m</span>
+                    </div>`;
+                }).join("");
+
+                body = `<div class="week-body">
+                    <div class="milestone-box">
+                        <div class="milestone-label">MILESTONE</div>
+                        <div class="milestone-text">${w.milestone}</div>
+                    </div>
+                    ${taskRows}
+                    <div class="week-quote">"${w.quote}"</div>
+                </div>`;
+            }
+
+            return `<div class="week-card">
+                <div class="week-header" data-week="${w.num}">
+                    <div>
+                        <span class="week-num">Week ${w.num}</span>
+                        <span class="week-badge" style="background:${DIFF_COLORS[w.diff]||'#6b7280'};margin-left:8px">${w.diff}</span>
+                    </div>
+                    <span class="week-title">${w.title}</span>
+                    <span class="week-count">${done}/${w.tasks.length}</span>
+                    <span class="week-arrow ${isOpen ? 'open' : ''}">▼</span>
+                </div>
+                ${body}
+            </div>`;
+        }).join("");
+    }
+
+    function renderDomains(bp) {
+        return bp.domains.map(d => `
+            <div class="domain-card">
+                <div class="domain-header">
+                    <div>
+                        <div class="domain-name">${d.name}</div>
+                        <div style="font-size:12px;color:var(--text-muted);margin-top:2px">${d.weight}% of exam · ${d.diff}</div>
+                    </div>
+                    <div class="domain-pct">${d.weight}%</div>
+                </div>
+                <div class="domain-bar"><div class="domain-bar-fill" style="width:${d.weight * 3}%"></div></div>
+                <div class="domain-topics">${d.topics.map(t => `<span class="topic-tag">${t}</span>`).join("")}</div>
+            </div>
+        `).join("");
+    }
+
+    function renderStats(p, totalTasks, totalDone, pct) {
+        const weeksLeft = p.weeks.filter(w => !w.tasks.every((_, i) => state.completed[w.num + "-" + i])).length;
+
+        const bars = p.weeks.map(w => {
+            const wDone = w.tasks.filter((_, i) => state.completed[w.num + "-" + i]).length;
+            const wPct = Math.round(wDone / w.tasks.length * 100);
+            const color = wPct >= 100 ? "#10b981" : "#3b82f6";
+            return `<div class="weekly-bar-row">
+                <span class="weekly-bar-label">W${w.num}</span>
+                <div class="weekly-bar-track"><div class="weekly-bar-fill" style="width:${wPct}%;background:${color}"></div></div>
+                <span class="weekly-bar-pct" style="color:${wPct>=100?'#10b981':'var(--text-muted)'}">${wPct}%</span>
+            </div>`;
+        }).join("");
+
+        return `
+        <div class="stat-grid">
+            <div class="stat-box"><div class="stat-icon">⏱️</div><div class="stat-value">${p.totalHours}h</div><div class="stat-label">Total Hours</div></div>
+            <div class="stat-box"><div class="stat-icon">✅</div><div class="stat-value">${totalDone}/${totalTasks}</div><div class="stat-label">Completed</div></div>
+            <div class="stat-box"><div class="stat-icon">📅</div><div class="stat-value">${weeksLeft}</div><div class="stat-label">Weeks Left</div></div>
+        </div>
+        <div class="form-card weekly-bars">
+            <span class="form-label" style="margin-bottom:14px;display:block">Weekly Progress</span>
+            ${bars}
+        </div>
+        <div class="exam-card">
+            <div class="exam-card-label">TARGET EXAM DATE</div>
+            <div class="exam-card-date">${p.examDate}</div>
+            <div class="exam-card-meta">${p.bp.questions} questions · ${p.bp.duration} minutes · Pass: ${p.bp.pass}</div>
+        </div>
+        `;
+    }
+
+    function bindPlanner() {
+        document.getElementById("backBtn").onclick = e => { e.preventDefault(); state.screen = "setup"; render(); };
+        document.getElementById("themeToggle2").onclick = () => { state.dark = !state.dark; render(); };
+
+        document.querySelectorAll(".tab-btn").forEach(el => {
+            el.onclick = () => { state.tab = el.dataset.tab; render(); };
+        });
+
+        document.querySelectorAll(".week-header").forEach(el => {
+            el.onclick = () => {
+                const w = +el.dataset.week;
+                state.expandedWeek = state.expandedWeek === w ? null : w;
+                render();
+            };
+        });
+
+        document.querySelectorAll(".task-row").forEach(el => {
+            el.onclick = () => {
+                const key = el.dataset.task;
+                if (state.completed[key]) delete state.completed[key];
+                else state.completed[key] = true;
+                render();
+            };
+        });
+
+        const emailBtn = document.getElementById("emailBtn");
+        if (emailBtn) {
+            emailBtn.onclick = () => {
+                const input = document.getElementById("emailInput");
+                if (input && input.value) {
+                    const email = encodeURIComponent(input.value.trim());
+                    fetch("https://magic.beehiiv.com/v1/c30396f1-32dc-4655-b79b-afc1beb7eaea?email=" + email, { mode: "no-cors" });
+                    emailBtn.textContent = "Check your email ✓";
+                    emailBtn.style.background = "#10b981";
+                    input.value = "";
+                }
+            };
+        }
+    }
+
+    // ================================================================
+    // INIT
+    // ================================================================
+    render();
+    </script>
+</body>
+</html>
