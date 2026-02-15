@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+        <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Free online subnet calculator. Calculate subnet ranges, usable hosts, CIDR notation, wildcard masks, and network addresses instantly. Essential for Network+ and CCNA.">
+    <meta name="keywords" content="subnet calculator, CIDR calculator, IP subnet, network calculator, subnet mask, usable hosts, wildcard mask, Network+, CCNA">
+    <title>Free Subnet / CIDR Calculator | Network Calculator - FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/subnet-calculator.html">
+    <meta property="og:title" content="Free Subnet / CIDR Calculator | Network Calculator - FixTheVuln">
+    <meta property="og:description" content="Free online subnet calculator. Calculate subnet ranges, usable hosts, CIDR notation, wildcard masks, and network addresses instantly.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fixthevuln.com/subnet-calculator.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Free Subnet / CIDR Calculator | Network Calculator - FixTheVuln">
+    <meta name="twitter:description" content="Free online subnet calculator. Calculate subnet ranges, usable hosts, CIDR notation, wildcard masks, and network addresses instantly.">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.min.css">
+    <style>
+        .calc-container {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+        .input-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        .input-field {
+            flex: 1;
+            min-width: 200px;
+        }
+        .input-field label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-size: 0.9rem;
+        }
+        .input-field input, .input-field select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Courier New', monospace;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+        .input-field input:focus, .input-field select:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        .calc-btn {
+            padding: 0.75rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .calc-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .result-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            border-left: 4px solid #667eea;
+        }
+        .result-card .label {
+            font-size: 0.8rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+        .result-card .value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+        }
+        .result-card .binary {
+            font-size: 0.75rem;
+            color: #888;
+            font-family: 'Courier New', monospace;
+            margin-top: 0.25rem;
+            word-break: break-all;
+        }
+        .quick-ref {
+            margin-top: 2rem;
+        }
+        .quick-ref table {
+            width: 100%;
+        }
+        .quick-ref td, .quick-ref th {
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+        }
+        .error-msg {
+            color: #dc3545;
+            background: #f8d7da;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-top: 1rem;
+            display: none;
+            font-size: 0.9rem;
+        }
+        .preset-btns {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .preset-btn {
+            padding: 0.4rem 0.8rem;
+            border: 1px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .preset-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Subnet / CIDR Calculator",
+        "description": "Free online subnet calculator. Calculate subnet ranges, usable hosts, CIDR notation, wildcard masks, and network addresses instantly.",
+        "url": "https://fixthevuln.com/subnet-calculator.html",
+        "applicationCategory": "NetworkingApplication",
+        "applicationSubCategory": "Network Calculator",
+        "operatingSystem": "Any (Web Browser)",
+        "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+        },
+        "featureList": "IPv4 subnet calculation, CIDR notation, usable host range, wildcard mask, binary conversion",
+        "keywords": "subnet calculator, CIDR calculator, IP subnet, network address, broadcast address",
+        "dateModified": "2026-02-15",
+        "author": {
+                "@type": "Organization",
+                "name": "FixTheVuln",
+                "url": "https://fixthevuln.com"
+        }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Tools", "item": "https://fixthevuln.com/tools.html" },
+            { "@type": "ListItem", "position": 3, "name": "Subnet Calculator" }
+        ]
+    }
+    </script>
+    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="blog/feed.xml">
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="index.html" class="site-nav-logo">FixTheVuln</a>
+        <div class="site-nav-links">
+            <a href="guides.html">Guides</a>
+            <a href="tools.html">Tools</a>
+            <a href="compliance.html">Compliance</a>
+            <a href="resources.html">Resources</a>
+            <a href="blog/">Blog</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header class="content-header">
+        <div class="container">
+            <h1>Subnet / CIDR Calculator</h1>
+            <p>Calculate subnet ranges, usable hosts, and CIDR notation instantly</p>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Last updated: February 2026</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
+            <span>By <strong>FixTheVuln Team</strong></span>
+            <span aria-hidden="true">&middot;</span>
+            <span>100% client-side &mdash; no data sent to any server</span>
+        </div>
+        <a href="tools.html" class="back-link">&larr; Back to Tools</a>
+
+        <!-- Calculator -->
+        <div class="calc-container">
+            <h2 style="margin-top: 0;">Calculate Subnet</h2>
+
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">Enter an IP address with CIDR prefix (e.g., 192.168.1.0/24) or choose a prefix length below.</p>
+
+            <div class="preset-btns">
+                <span style="font-size: 0.85rem; color: #666; margin-right: 0.25rem; align-self: center;">Common:</span>
+                <button class="preset-btn" onclick="setPreset('192.168.1.0', 24)">/24 (256)</button>
+                <button class="preset-btn" onclick="setPreset('10.0.0.0', 8)">/8 (Class A)</button>
+                <button class="preset-btn" onclick="setPreset('172.16.0.0', 16)">/16 (Class B)</button>
+                <button class="preset-btn" onclick="setPreset('192.168.1.0', 28)">/28 (16)</button>
+                <button class="preset-btn" onclick="setPreset('192.168.1.0', 30)">/30 (P2P)</button>
+            </div>
+
+            <div class="input-group">
+                <div class="input-field">
+                    <label for="ip-input">IP Address</label>
+                    <input type="text" id="ip-input" placeholder="192.168.1.0" value="192.168.1.0" autocomplete="off" spellcheck="false">
+                </div>
+                <div class="input-field" style="max-width: 160px;">
+                    <label for="prefix-input">CIDR Prefix</label>
+                    <select id="prefix-input">
+                    </select>
+                </div>
+                <button class="calc-btn" onclick="calculate()">Calculate</button>
+            </div>
+
+            <div id="error-msg" class="error-msg"></div>
+
+            <div id="results" style="display: none;">
+                <h3 style="margin-bottom: 0.5rem;">Results</h3>
+                <div class="results-grid">
+                    <div class="result-card">
+                        <div class="label">Network Address</div>
+                        <div class="value" id="r-network">-</div>
+                        <div class="binary" id="r-network-bin"></div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">Broadcast Address</div>
+                        <div class="value" id="r-broadcast">-</div>
+                        <div class="binary" id="r-broadcast-bin"></div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">Subnet Mask</div>
+                        <div class="value" id="r-mask">-</div>
+                        <div class="binary" id="r-mask-bin"></div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">Wildcard Mask</div>
+                        <div class="value" id="r-wildcard">-</div>
+                        <div class="binary" id="r-wildcard-bin"></div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">First Usable Host</div>
+                        <div class="value" id="r-first">-</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">Last Usable Host</div>
+                        <div class="value" id="r-last">-</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">Total Addresses</div>
+                        <div class="value" id="r-total">-</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">Usable Hosts</div>
+                        <div class="value" id="r-usable">-</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">CIDR Notation</div>
+                        <div class="value" id="r-cidr">-</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">IP Class</div>
+                        <div class="value" id="r-class">-</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">IP Type</div>
+                        <div class="value" id="r-type">-</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">Binary IP</div>
+                        <div class="value" id="r-ip-bin" style="font-size: 0.85rem;">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Reference Table -->
+        <section class="vulnerability-card quick-ref">
+            <h2>CIDR Quick Reference</h2>
+            <div style="overflow-x: auto;">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>CIDR</th>
+                            <th>Subnet Mask</th>
+                            <th>Wildcard</th>
+                            <th>Total IPs</th>
+                            <th>Usable Hosts</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>/32</td><td>255.255.255.255</td><td>0.0.0.0</td><td>1</td><td>1</td></tr>
+                        <tr><td>/31</td><td>255.255.255.254</td><td>0.0.0.1</td><td>2</td><td>2</td></tr>
+                        <tr><td>/30</td><td>255.255.255.252</td><td>0.0.0.3</td><td>4</td><td>2</td></tr>
+                        <tr><td>/29</td><td>255.255.255.248</td><td>0.0.0.7</td><td>8</td><td>6</td></tr>
+                        <tr><td>/28</td><td>255.255.255.240</td><td>0.0.0.15</td><td>16</td><td>14</td></tr>
+                        <tr><td>/27</td><td>255.255.255.224</td><td>0.0.0.31</td><td>32</td><td>30</td></tr>
+                        <tr><td>/26</td><td>255.255.255.192</td><td>0.0.0.63</td><td>64</td><td>62</td></tr>
+                        <tr><td>/25</td><td>255.255.255.128</td><td>0.0.0.127</td><td>128</td><td>126</td></tr>
+                        <tr><td>/24</td><td>255.255.255.0</td><td>0.0.0.255</td><td>256</td><td>254</td></tr>
+                        <tr><td>/23</td><td>255.255.254.0</td><td>0.0.1.255</td><td>512</td><td>510</td></tr>
+                        <tr><td>/22</td><td>255.255.252.0</td><td>0.0.3.255</td><td>1,024</td><td>1,022</td></tr>
+                        <tr><td>/21</td><td>255.255.248.0</td><td>0.0.7.255</td><td>2,048</td><td>2,046</td></tr>
+                        <tr><td>/20</td><td>255.255.240.0</td><td>0.0.15.255</td><td>4,096</td><td>4,094</td></tr>
+                        <tr><td>/16</td><td>255.255.0.0</td><td>0.0.255.255</td><td>65,536</td><td>65,534</td></tr>
+                        <tr><td>/12</td><td>255.240.0.0</td><td>0.15.255.255</td><td>1,048,576</td><td>1,048,574</td></tr>
+                        <tr><td>/8</td><td>255.0.0.0</td><td>0.255.255.255</td><td>16,777,216</td><td>16,777,214</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Private IP Ranges -->
+        <section class="vulnerability-card">
+            <h2>Private IPv4 Address Ranges (RFC 1918)</h2>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th>Range</th>
+                        <th>CIDR</th>
+                        <th>Addresses</th>
+                        <th>Common Use</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>A</strong></td>
+                        <td>10.0.0.0 &ndash; 10.255.255.255</td>
+                        <td>10.0.0.0/8</td>
+                        <td>16,777,216</td>
+                        <td>Large enterprise networks</td>
+                    </tr>
+                    <tr>
+                        <td><strong>B</strong></td>
+                        <td>172.16.0.0 &ndash; 172.31.255.255</td>
+                        <td>172.16.0.0/12</td>
+                        <td>1,048,576</td>
+                        <td>Medium networks, cloud VPCs</td>
+                    </tr>
+                    <tr>
+                        <td><strong>C</strong></td>
+                        <td>192.168.0.0 &ndash; 192.168.255.255</td>
+                        <td>192.168.0.0/16</td>
+                        <td>65,536</td>
+                        <td>Home and small office networks</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Etsy CTA -->
+        <section style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 2rem; border-radius: 12px; color: white; margin-top: 2rem; text-align: center; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: -15px; right: -15px; width: 100px; height: 100px; background: rgba(102, 126, 234, 0.12); border-radius: 50%;"></div>
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.7rem; opacity: 0.7; margin-bottom: 0.4rem;">SmartSheetByRobert</p>
+            <h2 style="color: white; margin-bottom: 0.5rem; font-size: 1.3rem;">Studying for Network+ or CCNA?</h2>
+            <p style="opacity: 0.9; margin-bottom: 1rem; max-width: 550px; margin-left: auto; margin-right: auto; font-size: 0.95rem; line-height: 1.5;">Structured 8-week study planners with domain trackers, practice test logs, and reference sheets. Standard + ADHD-friendly editions.</p>
+            <div style="display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap;">
+                <a href="https://www.etsy.com/shop/SmartSheetByRobert?ref=seller-platform-mcnav&section_id=57227085" target="_blank" rel="noopener" style="background: rgba(255,255,255,0.12); color: white; padding: 0.45rem 0.9rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.25);">CompTIA</a>
+                <a href="https://www.etsy.com/shop/SmartSheetByRobert?ref=seller-platform-mcnav&section_id=57187730" target="_blank" rel="noopener" style="background: rgba(255,255,255,0.12); color: white; padding: 0.45rem 0.9rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.25);">Cisco</a>
+                <a href="resources.html#certification-planners" style="color: rgba(255,255,255,0.7); padding: 0.45rem 0.75rem; text-decoration: none; font-size: 0.85rem;">See All &rarr;</a>
+            </div>
+        </section>
+
+        <section class="cta">
+            <h2>Need More Networking Tools?</h2>
+            <p>Check out our port security reference and other interactive tools:</p>
+            <a href="tools.html" class="cta-button">View All Tools &rarr;</a>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Educational resources for security professionals.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank" rel="noopener">FixTheVuln.com</a> | <a href="https://www.etsy.com/shop/SmartSheetByRobert?ref=seller-platform-mcnav" target="_blank" rel="noopener">SmartSheetByRobert</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode">
+        <span id="theme-icon">🌙</span>
+    </button>
+
+    <script>
+        // Dark mode toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('fixthevuln-theme', newTheme);
+            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+        (function() {
+            const savedTheme = localStorage.getItem('fixthevuln-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('theme-icon').textContent = '☀️';
+            }
+        })();
+
+        // Populate prefix dropdown
+        (function() {
+            const sel = document.getElementById('prefix-input');
+            for (let i = 0; i <= 32; i++) {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = '/' + i;
+                if (i === 24) opt.selected = true;
+                sel.appendChild(opt);
+            }
+        })();
+
+        // Handle CIDR in IP field (e.g. "192.168.1.0/24")
+        document.getElementById('ip-input').addEventListener('input', function() {
+            const val = this.value.trim();
+            if (val.includes('/')) {
+                const parts = val.split('/');
+                const prefix = parseInt(parts[1], 10);
+                if (!isNaN(prefix) && prefix >= 0 && prefix <= 32) {
+                    this.value = parts[0];
+                    document.getElementById('prefix-input').value = prefix;
+                }
+            }
+        });
+
+        function setPreset(ip, prefix) {
+            document.getElementById('ip-input').value = ip;
+            document.getElementById('prefix-input').value = prefix;
+            calculate();
+        }
+
+        function parseIP(str) {
+            const parts = str.trim().split('.');
+            if (parts.length !== 4) return null;
+            const octets = parts.map(p => {
+                const n = parseInt(p, 10);
+                if (isNaN(n) || n < 0 || n > 255 || p !== String(n)) return -1;
+                return n;
+            });
+            if (octets.some(o => o === -1)) return null;
+            return octets;
+        }
+
+        function ipToInt(octets) {
+            return ((octets[0] << 24) | (octets[1] << 16) | (octets[2] << 8) | octets[3]) >>> 0;
+        }
+
+        function intToIP(num) {
+            return [
+                (num >>> 24) & 255,
+                (num >>> 16) & 255,
+                (num >>> 8) & 255,
+                num & 255
+            ].join('.');
+        }
+
+        function intToBinary(num) {
+            return [
+                ((num >>> 24) & 255).toString(2).padStart(8, '0'),
+                ((num >>> 16) & 255).toString(2).padStart(8, '0'),
+                ((num >>> 8) & 255).toString(2).padStart(8, '0'),
+                (num & 255).toString(2).padStart(8, '0')
+            ].join('.');
+        }
+
+        function getIPClass(firstOctet) {
+            if (firstOctet < 128) return 'A';
+            if (firstOctet < 192) return 'B';
+            if (firstOctet < 224) return 'C';
+            if (firstOctet < 240) return 'D (Multicast)';
+            return 'E (Reserved)';
+        }
+
+        function getIPType(ipInt) {
+            const first = (ipInt >>> 24) & 255;
+            const second = (ipInt >>> 16) & 255;
+            // 10.0.0.0/8
+            if (first === 10) return 'Private (RFC 1918)';
+            // 172.16.0.0/12
+            if (first === 172 && second >= 16 && second <= 31) return 'Private (RFC 1918)';
+            // 192.168.0.0/16
+            if (first === 192 && second === 168) return 'Private (RFC 1918)';
+            // 127.0.0.0/8
+            if (first === 127) return 'Loopback';
+            // 169.254.0.0/16
+            if (first === 169 && second === 254) return 'Link-Local (APIPA)';
+            // 224-239 multicast
+            if (first >= 224 && first <= 239) return 'Multicast';
+            // 240-255 reserved
+            if (first >= 240) return 'Reserved';
+            return 'Public';
+        }
+
+        function calculate() {
+            const errorEl = document.getElementById('error-msg');
+            const resultsEl = document.getElementById('results');
+            errorEl.style.display = 'none';
+            resultsEl.style.display = 'none';
+
+            const ipStr = document.getElementById('ip-input').value.trim();
+            const prefix = parseInt(document.getElementById('prefix-input').value, 10);
+
+            const octets = parseIP(ipStr);
+            if (!octets) {
+                errorEl.textContent = 'Invalid IP address. Please enter a valid IPv4 address (e.g., 192.168.1.0).';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            if (isNaN(prefix) || prefix < 0 || prefix > 32) {
+                errorEl.textContent = 'Invalid prefix length. Must be between 0 and 32.';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            const ipInt = ipToInt(octets);
+            const maskInt = prefix === 0 ? 0 : (0xFFFFFFFF << (32 - prefix)) >>> 0;
+            const wildcardInt = (~maskInt) >>> 0;
+            const networkInt = (ipInt & maskInt) >>> 0;
+            const broadcastInt = (networkInt | wildcardInt) >>> 0;
+            const totalAddresses = Math.pow(2, 32 - prefix);
+
+            let usableHosts;
+            if (prefix === 32) usableHosts = 1;
+            else if (prefix === 31) usableHosts = 2;
+            else usableHosts = totalAddresses - 2;
+
+            let firstUsable, lastUsable;
+            if (prefix === 32) {
+                firstUsable = intToIP(networkInt);
+                lastUsable = intToIP(networkInt);
+            } else if (prefix === 31) {
+                firstUsable = intToIP(networkInt);
+                lastUsable = intToIP(broadcastInt);
+            } else {
+                firstUsable = intToIP(networkInt + 1);
+                lastUsable = intToIP(broadcastInt - 1);
+            }
+
+            document.getElementById('r-network').textContent = intToIP(networkInt);
+            document.getElementById('r-network-bin').textContent = intToBinary(networkInt);
+            document.getElementById('r-broadcast').textContent = intToIP(broadcastInt);
+            document.getElementById('r-broadcast-bin').textContent = intToBinary(broadcastInt);
+            document.getElementById('r-mask').textContent = intToIP(maskInt);
+            document.getElementById('r-mask-bin').textContent = intToBinary(maskInt);
+            document.getElementById('r-wildcard').textContent = intToIP(wildcardInt);
+            document.getElementById('r-wildcard-bin').textContent = intToBinary(wildcardInt);
+            document.getElementById('r-first').textContent = firstUsable;
+            document.getElementById('r-last').textContent = lastUsable;
+            document.getElementById('r-total').textContent = totalAddresses.toLocaleString();
+            document.getElementById('r-usable').textContent = usableHosts.toLocaleString();
+            document.getElementById('r-cidr').textContent = intToIP(networkInt) + '/' + prefix;
+            document.getElementById('r-class').textContent = 'Class ' + getIPClass(octets[0]);
+            document.getElementById('r-type').textContent = getIPType(ipInt);
+            document.getElementById('r-ip-bin').textContent = intToBinary(ipInt);
+
+            resultsEl.style.display = 'block';
+        }
+
+        // Auto-calculate on load
+        calculate();
+    </script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
