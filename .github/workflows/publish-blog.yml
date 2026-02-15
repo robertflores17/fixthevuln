@@ -1,0 +1,58 @@
+name: Publish Blog Posts
+
+on:
+  schedule:
+    # Every Tuesday at 6:00 AM PT (14:00 UTC)
+    - cron: '0 14 * * 2'
+  workflow_dispatch: # Manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+        with:
+          python-version: '3.11'
+
+      - name: Run blog publisher
+        id: publish
+        run: |
+          python3 scripts/publish_editorial.py
+
+          if [[ -n $(git status --porcelain) ]]; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push changes
+        if: steps.publish.outputs.changes == 'true'
+        run: |
+          git config user.name "FixTheVuln Bot"
+          git config user.email "bot@fixthevuln.com"
+
+          git add blog/ data/blog_metadata.json sitemap.xml drafts/
+          git commit -m "Publish new blog posts [skip ci]"
+          git push
+
+      - name: Summary
+        if: steps.publish.outputs.changes == 'true'
+        run: |
+          echo "Blog posts published successfully" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Published posts:" >> $GITHUB_STEP_SUMMARY
+          git diff HEAD~1 --name-only | grep "^blog/" | sed 's/^/- /' >> $GITHUB_STEP_SUMMARY
+
+      - name: No changes
+        if: steps.publish.outputs.changes == 'false'
+        run: echo "No new blog posts to publish" >> $GITHUB_STEP_SUMMARY
