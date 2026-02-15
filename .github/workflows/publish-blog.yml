@@ -24,6 +24,12 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Generate CVE pages
+        run: python3 scripts/generate_cve_pages.py
+
+      - name: Generate certification comparisons
+        run: python3 scripts/generate_comparisons.py
+
       - name: Generate weekly threat roundup
         run: python3 scripts/generate_threat_roundup.py
 
@@ -35,6 +41,9 @@ jobs:
 
       - name: Repurpose content for social
         run: python3 scripts/repurpose_content.py
+
+      - name: Generate Reddit post templates
+        run: python3 scripts/generate_reddit_posts.py
 
       - name: Inject blog cross-links into guide pages
         run: python3 scripts/inject_blog_links.py
@@ -54,7 +63,7 @@ jobs:
           git config user.name "FixTheVuln Bot"
           git config user.email "bot@fixthevuln.com"
 
-          git add blog/ data/ drafts/ sitemap.xml *.html
+          git add blog/ cve/ comparisons/ data/ drafts/ sitemap.xml *.html
           git commit -m "Weekly blog publish + marketing content [skip ci]"
           git push
 
