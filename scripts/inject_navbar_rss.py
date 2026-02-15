@@ -20,7 +20,7 @@ ROOT_NAV = """<nav class="site-nav">
     </div>
 </nav>"""
 
-BLOG_NAV = """<nav class="site-nav">
+SUBDIR_NAV = """<nav class="site-nav">
     <div class="container">
         <a href="../index.html" class="site-nav-logo">FixTheVuln</a>
         <div class="site-nav-links">
@@ -34,12 +34,23 @@ BLOG_NAV = """<nav class="site-nav">
 </nav>"""
 
 ROOT_RSS = '    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="blog/feed.xml">'
+SUBDIR_RSS = '    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="../blog/feed.xml">'
 BLOG_RSS = '    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="feed.xml">'
+
+SUBDIRS = ['blog', 'cve', 'comparisons']
+
+
+def get_subdir(rel_path):
+    """Return the subdirectory name if file is in one, else None."""
+    for sd in SUBDIRS:
+        if rel_path.startswith(sd + '/'):
+            return sd
+    return None
 
 
 def process_file(filepath):
     rel = os.path.relpath(filepath, BASE_DIR)
-    is_blog = rel.startswith('blog/')
+    subdir = get_subdir(rel)
 
     with open(filepath, 'r', encoding='utf-8') as f:
         content = f.read()
@@ -48,11 +59,10 @@ def process_file(filepath):
 
     # --- Inject navbar ---
     if 'site-nav' not in content:
-        # Find <body> or <body ...> tag
         body_match = re.search(r'<body[^>]*>', content)
         if body_match:
             insert_pos = body_match.end()
-            nav = BLOG_NAV if is_blog else ROOT_NAV
+            nav = SUBDIR_NAV if subdir else ROOT_NAV
             content = content[:insert_pos] + '\n' + nav + content[insert_pos:]
             modified = True
             print(f'  NAV added: {rel}')
@@ -63,10 +73,14 @@ def process_file(filepath):
 
     # --- Inject RSS autodiscovery ---
     if 'application/rss+xml' not in content:
-        # Insert before </head>
         head_end = content.find('</head>')
         if head_end > 0:
-            rss_link = BLOG_RSS if is_blog else ROOT_RSS
+            if subdir == 'blog':
+                rss_link = BLOG_RSS
+            elif subdir:
+                rss_link = SUBDIR_RSS
+            else:
+                rss_link = ROOT_RSS
             content = content[:head_end] + rss_link + '\n' + content[head_end:]
             modified = True
             print(f'  RSS added: {rel}')
@@ -83,7 +97,8 @@ def process_file(filepath):
 def main():
     # Collect all HTML files
     html_files = sorted(glob.glob(os.path.join(BASE_DIR, '*.html')))
-    html_files += sorted(glob.glob(os.path.join(BASE_DIR, 'blog', '*.html')))
+    for sd in SUBDIRS:
+        html_files += sorted(glob.glob(os.path.join(BASE_DIR, sd, '*.html')))
 
     print(f'Processing {len(html_files)} HTML files...\n')
 
