@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+        <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="HIPAA Security Rule guide - healthcare data protection requirements, PHI safeguards, breach notification, and compliance checklist for IT professionals.">
+    <meta name="keywords" content="HIPAA, HIPAA compliance, PHI, healthcare security, HIPAA Security Rule, protected health information, HIPAA checklist, healthcare IT">
+    <title>HIPAA Security Guide - Healthcare Data Protection - FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/hipaa-guide.html">
+    <meta property="og:title" content="HIPAA Security Guide - Healthcare Data Protection - FixTheVuln">
+    <meta property="og:description" content="HIPAA Security Rule guide - healthcare data protection requirements, PHI safeguards, breach notification, and compliance checklist for IT professionals.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fixthevuln.com/hipaa-guide.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="HIPAA Security Guide - Healthcare Data Protection - FixTheVuln">
+    <meta name="twitter:description" content="HIPAA Security Rule guide - healthcare data protection requirements, PHI safeguards, breach notification, and compliance checklist for IT professionals.">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.min.css">
+    <style>
+        .safeguard-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #667eea;
+        }
+        .safeguard-card h4 {
+            margin: 0 0 0.5rem 0;
+            color: #333;
+        }
+        .safeguard-card p {
+            margin: 0;
+            color: #666;
+        }
+        .phi-example {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        .phi-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        .phi-content h4 {
+            margin: 0 0 0.25rem 0;
+            color: #333;
+        }
+        .phi-content p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .penalty-tier {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .tier-1 { background: #fff3cd; color: #856404; }
+        .tier-2 { background: #ffe0b2; color: #e65100; }
+        .tier-3 { background: #ffcdd2; color: #c62828; }
+        .tier-4 { background: #d32f2f; color: white; }
+        .hipaa-checklist {
+            background: #e7f3ff;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .hipaa-checklist h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .timeline-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: #667eea;
+            color: white;
+        }
+    </style>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Compliance", "item": "https://fixthevuln.com/compliance.html" },
+            { "@type": "ListItem", "position": 3, "name": "HIPAA Guide" }
+        ]
+    }
+    </script>
+    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="blog/feed.xml">
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="index.html" class="site-nav-logo">FixTheVuln</a>
+        <div class="site-nav-links">
+            <a href="guides.html">Guides</a>
+            <a href="tools.html">Tools</a>
+            <a href="compliance.html">Compliance</a>
+            <a href="resources.html">Resources</a>
+            <a href="blog/">Blog</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>FixTheVuln</h1></a>
+            <p class="tagline">HIPAA Security Guide</p>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Last updated: February 2026</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
+            <span>By <strong>FixTheVuln Team</strong></span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Peer-reviewed security content</span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Sources: HHS.gov, NIST SP 800-66</span>
+        </div>
+        <a href="compliance.html" class="back-link">&larr; Back to Compliance</a>
+
+        <section class="intro">
+            <h2>HIPAA Security Quick Reference</h2>
+            <p>The Health Insurance Portability and Accountability Act (HIPAA) establishes national standards for protecting sensitive patient health information. This guide covers the Security Rule requirements, breach notification obligations, and a practical compliance checklist for healthcare IT professionals.</p>
+        </section>
+
+        <!-- Key Definitions -->
+        <section class="vulnerability-card">
+            <h2>Key Definitions</h2>
+            <table class="styled-table">
+                <tbody>
+                    <tr>
+                        <td><strong>PHI</strong></td>
+                        <td>Protected Health Information - any individually identifiable health information held or transmitted by a covered entity (includes name, DOB, SSN, medical records, billing info linked to health data)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ePHI</strong></td>
+                        <td>Electronic PHI - PHI that is created, stored, transmitted, or received electronically</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Covered Entity</strong></td>
+                        <td>Health plans, healthcare clearinghouses, and healthcare providers who transmit health information electronically</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Business Associate</strong></td>
+                        <td>Any person or entity that performs functions involving the use or disclosure of PHI on behalf of a covered entity (cloud providers, billing companies, IT contractors)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>BAA</strong></td>
+                        <td>Business Associate Agreement - required contract between a covered entity and business associate that establishes permitted uses and disclosures of PHI</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Minimum Necessary</strong></td>
+                        <td>Only the minimum amount of PHI needed to accomplish the intended purpose should be used or disclosed</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 18 PHI Identifiers -->
+        <section class="vulnerability-card">
+            <h2>The 18 PHI Identifiers</h2>
+            <p>HIPAA defines 18 types of information that qualify as PHI when linked to health data:</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 0.5rem; margin-top: 1rem;">
+                <div class="phi-example"><span class="phi-icon">1.</span><div class="phi-content"><h4>Names</h4></div></div>
+                <div class="phi-example"><span class="phi-icon">2.</span><div class="phi-content"><h4>Geographic data</h4><p>Smaller than state level</p></div></div>
+                <div class="phi-example"><span class="phi-icon">3.</span><div class="phi-content"><h4>Dates</h4><p>Birth, admission, discharge, death</p></div></div>
+                <div class="phi-example"><span class="phi-icon">4.</span><div class="phi-content"><h4>Phone numbers</h4></div></div>
+                <div class="phi-example"><span class="phi-icon">5.</span><div class="phi-content"><h4>Fax numbers</h4></div></div>
+                <div class="phi-example"><span class="phi-icon">6.</span><div class="phi-content"><h4>Email addresses</h4></div></div>
+                <div class="phi-example"><span class="phi-icon">7.</span><div class="phi-content"><h4>SSN</h4></div></div>
+                <div class="phi-example"><span class="phi-icon">8.</span><div class="phi-content"><h4>Medical record numbers</h4></div></div>
+                <div class="phi-example"><span class="phi-icon">9.</span><div class="phi-content"><h4>Health plan beneficiary #</h4></div></div>
+                <div class="phi-example"><span class="phi-icon">10.</span><div class="phi-content"><h4>Account numbers</h4></div></div>
+                <div class="phi-example"><span class="phi-icon">11.</span><div class="phi-content"><h4>Certificate/license #</h4></div></div>
+                <div class="phi-example"><span class="phi-icon">12.</span><div class="phi-content"><h4>Vehicle identifiers</h4></div></div>
+                <div class="phi-example"><span class="phi-icon">13.</span><div class="phi-content"><h4>Device identifiers</h4></div></div>
+                <div class="phi-example"><span class="phi-icon">14.</span><div class="phi-content"><h4>Web URLs</h4></div></div>
+                <div class="phi-example"><span class="phi-icon">15.</span><div class="phi-content"><h4>IP addresses</h4></div></div>
+                <div class="phi-example"><span class="phi-icon">16.</span><div class="phi-content"><h4>Biometric identifiers</h4></div></div>
+                <div class="phi-example"><span class="phi-icon">17.</span><div class="phi-content"><h4>Full-face photographs</h4></div></div>
+                <div class="phi-example"><span class="phi-icon">18.</span><div class="phi-content"><h4>Any other unique ID</h4></div></div>
+            </div>
+        </section>
+
+        <!-- Security Rule - Three Safeguards -->
+        <section class="vulnerability-card">
+            <h2>Security Rule: Three Safeguard Categories</h2>
+            <p>The HIPAA Security Rule requires covered entities and business associates to implement safeguards in three categories to protect ePHI:</p>
+
+            <h3 style="margin-top: 1.5rem; color: #667eea;">Administrative Safeguards (&#167;164.308)</h3>
+            <div class="safeguard-card">
+                <h4>Security Management Process</h4>
+                <p>Conduct risk assessments, implement risk management policies, apply sanctions for violations, and review system activity.</p>
+            </div>
+            <div class="safeguard-card">
+                <h4>Assigned Security Responsibility</h4>
+                <p>Designate a security official responsible for developing and implementing security policies and procedures.</p>
+            </div>
+            <div class="safeguard-card">
+                <h4>Workforce Security</h4>
+                <p>Implement procedures for authorization, supervision, clearance, and termination of workforce members who access ePHI.</p>
+            </div>
+            <div class="safeguard-card">
+                <h4>Information Access Management</h4>
+                <p>Implement role-based access controls. Grant access only to ePHI necessary for job functions.</p>
+            </div>
+            <div class="safeguard-card">
+                <h4>Security Awareness Training</h4>
+                <p>Provide regular security training including phishing awareness, password management, log-in monitoring, and malware protection.</p>
+            </div>
+            <div class="safeguard-card">
+                <h4>Contingency Plan</h4>
+                <p>Establish data backup, disaster recovery, and emergency mode operation plans. Test and revise periodically.</p>
+            </div>
+
+            <h3 style="margin-top: 1.5rem; color: #667eea;">Physical Safeguards (&#167;164.310)</h3>
+            <div class="safeguard-card">
+                <h4>Facility Access Controls</h4>
+                <p>Limit physical access to facilities with ePHI. Implement badge access, visitor logs, and locked server rooms.</p>
+            </div>
+            <div class="safeguard-card">
+                <h4>Workstation Use &amp; Security</h4>
+                <p>Define proper workstation use policies. Implement physical safeguards to restrict access to workstations with ePHI.</p>
+            </div>
+            <div class="safeguard-card">
+                <h4>Device and Media Controls</h4>
+                <p>Govern receipt, removal, disposal, and re-use of hardware and electronic media containing ePHI. Require encryption and secure wiping.</p>
+            </div>
+
+            <h3 style="margin-top: 1.5rem; color: #667eea;">Technical Safeguards (&#167;164.312)</h3>
+            <div class="safeguard-card">
+                <h4>Access Control</h4>
+                <p>Implement unique user identification, emergency access procedures, automatic logoff, and encryption/decryption of ePHI.</p>
+            </div>
+            <div class="safeguard-card">
+                <h4>Audit Controls</h4>
+                <p>Implement hardware, software, and procedural mechanisms to record and examine activity in systems containing ePHI.</p>
+            </div>
+            <div class="safeguard-card">
+                <h4>Integrity Controls</h4>
+                <p>Implement policies and procedures to protect ePHI from improper alteration or destruction. Use checksums and digital signatures.</p>
+            </div>
+            <div class="safeguard-card">
+                <h4>Transmission Security</h4>
+                <p>Implement technical measures to guard against unauthorized access to ePHI transmitted over networks. Use TLS/encryption.</p>
+            </div>
+            <div class="safeguard-card">
+                <h4>Authentication</h4>
+                <p>Implement procedures to verify that a person or entity seeking access to ePHI is who they claim to be. Use MFA where possible.</p>
+            </div>
+        </section>
+
+        <!-- Breach Notification Rule -->
+        <section class="vulnerability-card">
+            <h2>Breach Notification Rule</h2>
+            <p>When a breach of unsecured PHI occurs, specific notification requirements apply:</p>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Requirement</th>
+                        <th>Timeline</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Individual Notice</strong></td>
+                        <td><span class="timeline-badge">60 days</span></td>
+                        <td>Written notice to affected individuals within 60 days of discovering the breach</td>
+                    </tr>
+                    <tr>
+                        <td><strong>HHS Notification</strong></td>
+                        <td><span class="timeline-badge">60 days</span> / Annual</td>
+                        <td>Breaches affecting 500+ individuals: notify HHS within 60 days. Smaller breaches: annual log submission.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Media Notice</strong></td>
+                        <td><span class="timeline-badge">60 days</span></td>
+                        <td>Breaches affecting 500+ residents of a state: notify prominent media outlets in that state</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Business Associate</strong></td>
+                        <td><span class="timeline-badge">60 days</span></td>
+                        <td>BAs must notify the covered entity of breaches without unreasonable delay (max 60 days)</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p style="margin-top: 1rem; font-size: 0.9rem; color: #666;"><strong>Safe Harbor:</strong> If PHI is encrypted per NIST standards and the encryption key is not compromised, the data is considered "secured" and breach notification is not required.</p>
+        </section>
+
+        <!-- Business Associate Agreements -->
+        <section class="vulnerability-card">
+            <h2>Business Associate Agreements (BAAs)</h2>
+            <p>A BAA is required whenever a covered entity shares PHI with a third party. Key requirements:</p>
+            <ul style="margin-top: 1rem;">
+                <li>Define permitted and required uses/disclosures of PHI</li>
+                <li>Require the BA to implement appropriate safeguards</li>
+                <li>Require the BA to report breaches and security incidents</li>
+                <li>Require the BA to ensure any subcontractors also sign BAAs</li>
+                <li>Require return or destruction of PHI at contract termination</li>
+                <li>Authorize termination if the BA violates the agreement</li>
+            </ul>
+            <div style="background: #fff3cd; border-radius: 8px; padding: 1rem; margin-top: 1rem; font-size: 0.9rem; color: #856404;">
+                <strong>Common Mistake:</strong> Cloud services (AWS, Azure, GCP), email providers, EHR vendors, shredding companies, and even IT consultants who may access systems containing PHI all require BAAs.
+            </div>
+        </section>
+
+        <!-- Penalty Tiers -->
+        <section class="vulnerability-card">
+            <h2>Penalty Tiers for Non-Compliance</h2>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Tier</th>
+                        <th>Knowledge Level</th>
+                        <th>Per Violation</th>
+                        <th>Annual Maximum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="penalty-tier tier-1">Tier 1</span></td>
+                        <td>Unaware (and would not have known by exercising reasonable diligence)</td>
+                        <td>$137 - $68,928</td>
+                        <td>$2,067,813</td>
+                    </tr>
+                    <tr>
+                        <td><span class="penalty-tier tier-2">Tier 2</span></td>
+                        <td>Reasonable cause (not willful neglect)</td>
+                        <td>$1,379 - $68,928</td>
+                        <td>$2,067,813</td>
+                    </tr>
+                    <tr>
+                        <td><span class="penalty-tier tier-3">Tier 3</span></td>
+                        <td>Willful neglect (corrected within 30 days)</td>
+                        <td>$13,785 - $68,928</td>
+                        <td>$2,067,813</td>
+                    </tr>
+                    <tr>
+                        <td><span class="penalty-tier tier-4">Tier 4</span></td>
+                        <td>Willful neglect (not corrected)</td>
+                        <td>$68,928+</td>
+                        <td>$2,067,813</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p style="margin-top: 1rem; font-size: 0.9rem; color: #666;"><strong>Criminal penalties:</strong> Knowingly obtaining or disclosing PHI can result in fines up to $250,000 and up to 10 years imprisonment.</p>
+        </section>
+
+        <!-- IT Compliance Checklist -->
+        <section class="vulnerability-card">
+            <h2>Healthcare IT Compliance Checklist</h2>
+
+            <div class="hipaa-checklist">
+                <h3>Risk Assessment &amp; Management</h3>
+                <ul>
+                    <li>Conduct annual risk assessment identifying threats to ePHI</li>
+                    <li>Document risk analysis results and remediation plans</li>
+                    <li>Review and update policies at least annually</li>
+                    <li>Maintain an inventory of all systems that store, process, or transmit ePHI</li>
+                    <li>Evaluate risks when implementing new systems or technologies</li>
+                </ul>
+            </div>
+
+            <div class="hipaa-checklist">
+                <h3>Access Controls &amp; Authentication</h3>
+                <ul>
+                    <li>Assign unique user IDs to every workforce member</li>
+                    <li>Implement role-based access control (RBAC) for ePHI systems</li>
+                    <li>Deploy multi-factor authentication for remote access</li>
+                    <li>Configure automatic session timeout/logoff</li>
+                    <li>Implement emergency access ("break the glass") procedures</li>
+                    <li>Review access rights quarterly and upon role changes</li>
+                </ul>
+            </div>
+
+            <div class="hipaa-checklist">
+                <h3>Encryption &amp; Data Protection</h3>
+                <ul>
+                    <li>Encrypt ePHI at rest (AES-256 recommended)</li>
+                    <li>Encrypt ePHI in transit (TLS 1.2+ required)</li>
+                    <li>Encrypt portable devices and removable media</li>
+                    <li>Implement secure email for PHI transmission</li>
+                    <li>Use NIST-validated encryption modules</li>
+                </ul>
+            </div>
+
+            <div class="hipaa-checklist">
+                <h3>Audit &amp; Monitoring</h3>
+                <ul>
+                    <li>Enable audit logging on all systems with ePHI</li>
+                    <li>Log access to patient records (who, when, what)</li>
+                    <li>Review audit logs regularly for unauthorized access</li>
+                    <li>Retain audit logs for at least 6 years</li>
+                    <li>Implement intrusion detection/prevention systems</li>
+                    <li>Monitor for unusual data access patterns</li>
+                </ul>
+            </div>
+
+            <div class="hipaa-checklist">
+                <h3>Backup &amp; Disaster Recovery</h3>
+                <ul>
+                    <li>Perform regular backups of ePHI (encrypted)</li>
+                    <li>Store backups in a secure, off-site location</li>
+                    <li>Test restoration procedures at least annually</li>
+                    <li>Document and test disaster recovery plan</li>
+                    <li>Define RPO (Recovery Point Objective) and RTO (Recovery Time Objective)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- HIPAA vs Other Frameworks -->
+        <section class="vulnerability-card">
+            <h2>HIPAA vs. Other Frameworks</h2>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Aspect</th>
+                        <th>HIPAA</th>
+                        <th>GDPR</th>
+                        <th>PCI DSS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Scope</strong></td>
+                        <td>Healthcare data (PHI) in the US</td>
+                        <td>Personal data of EU residents</td>
+                        <td>Payment card data globally</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Applies To</strong></td>
+                        <td>Covered entities &amp; BAs</td>
+                        <td>Any organization processing EU data</td>
+                        <td>Any org handling cardholder data</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Breach Notification</strong></td>
+                        <td>Within 60 days</td>
+                        <td>Within 72 hours</td>
+                        <td>Varies by card brand</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Max Penalty</strong></td>
+                        <td>~$2M/year + criminal</td>
+                        <td>4% of global revenue</td>
+                        <td>$100K/month + penalties</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Encryption</strong></td>
+                        <td>Addressable (strongly recommended)</td>
+                        <td>Appropriate technical measures</td>
+                        <td>Required for stored/transmitted data</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Etsy CTA -->
+        <section style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 2rem; border-radius: 12px; color: white; margin-top: 2rem; text-align: center; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: -15px; right: -15px; width: 100px; height: 100px; background: rgba(102, 126, 234, 0.12); border-radius: 50%;"></div>
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.7rem; opacity: 0.7; margin-bottom: 0.4rem;">SmartSheetByRobert</p>
+            <h2 style="color: white; margin-bottom: 0.5rem; font-size: 1.3rem;">Studying for Healthcare IT Certifications?</h2>
+            <p style="opacity: 0.9; margin-bottom: 1rem; max-width: 550px; margin-left: auto; margin-right: auto; font-size: 0.95rem; line-height: 1.5;">Structured 8-week study planners for Security+, CISSP, and other certifications relevant to healthcare IT security. Standard + ADHD-friendly editions.</p>
+            <div style="display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap;">
+                <a href="https://www.etsy.com/shop/SmartSheetByRobert?ref=seller-platform-mcnav&section_id=57227085" target="_blank" rel="noopener" style="background: rgba(255,255,255,0.12); color: white; padding: 0.45rem 0.9rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.25);">CompTIA</a>
+                <a href="https://www.etsy.com/shop/SmartSheetByRobert?ref=seller-platform-mcnav&section_id=57213094" target="_blank" rel="noopener" style="background: rgba(255,255,255,0.12); color: white; padding: 0.45rem 0.9rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.25);">(ISC)2</a>
+                <a href="resources.html#certification-planners" style="color: rgba(255,255,255,0.7); padding: 0.45rem 0.75rem; text-decoration: none; font-size: 0.85rem;">See All &rarr;</a>
+            </div>
+        </section>
+
+        <section class="cta">
+            <h2>Need Detailed HIPAA Implementation Guides?</h2>
+            <p>For comprehensive tutorials and compliance audit preparation:</p>
+            <a href="https://fixthevuln.com" class="cta-button" target="_blank">Visit FixTheVuln.com &rarr;</a>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Educational resources for security professionals.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank" rel="noopener">FixTheVuln.com</a> | <a href="https://www.etsy.com/shop/SmartSheetByRobert?ref=seller-platform-mcnav" target="_blank" rel="noopener">SmartSheetByRobert</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode">
+        <span id="theme-icon">🌙</span>
+    </button>
+
+    <script>
+        // Dark mode toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('fixthevuln-theme', newTheme);
+
+            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+
+        // Load saved theme
+        (function() {
+            const savedTheme = localStorage.getItem('fixthevuln-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('theme-icon').textContent = '☀️';
+            }
+        })();
+    </script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
