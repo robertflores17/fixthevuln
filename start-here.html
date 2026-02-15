@@ -693,9 +693,8 @@
         <div class="newsletter-box">
             <h3>Stay Updated</h3>
             <p>Get weekly security tips, new guides, and vulnerability alerts.</p>
-            <form class="newsletter-form" action="https://fixthevuln.us16.list-manage.com/subscribe/post?u=e32df369f30106dbd7c6eaa51&amp;id=c955cdf618&amp;f_id=00b31ce1f0" method="post" target="_blank">
-                <input type="email" name="EMAIL" placeholder="Enter your email" required id="newsletter-email">
-                <div aria-hidden="true" style="position:absolute;left:-5000px;"><input type="text" name="b_e32df369f30106dbd7c6eaa51_c955cdf618" tabindex="-1" value=""></div>
+            <form class="newsletter-form" onsubmit="handleNewsletterSubmit(event)">
+                <input type="email" placeholder="Enter your email" required id="newsletter-email">
                 <button type="submit">Subscribe</button>
             </form>
             <p style="font-size: 1rem; margin-top: 1rem; opacity: 0.8;">No spam. Unsubscribe anytime.</p>
@@ -780,6 +779,12 @@
             });
         }
 
+
+        function handleNewsletterSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('newsletter-email').value;
+            window.location.href = 'https://magic.beehiiv.com/v1/c30396f1-32dc-4655-b79b-afc1beb7eaea?email=' + encodeURIComponent(email);
+        }
 
         // Initialize on page load
         initProgress();
