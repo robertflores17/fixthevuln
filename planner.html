@@ -1586,11 +1586,10 @@
         <div class="email-capture animate-in delay-4">
             <h3>Get weekly study tips & cert updates</h3>
             <p>Join the FixTheVuln newsletter — zero spam, pure security knowledge.</p>
-            <form class="email-row" action="https://fixthevuln.us16.list-manage.com/subscribe/post?u=e32df369f30106dbd7c6eaa51&amp;id=c955cdf618&amp;f_id=00b31ce1f0" method="post" target="_blank">
-                <input type="email" name="EMAIL" placeholder="you@example.com" id="emailInput" required>
-                <div aria-hidden="true" style="position:absolute;left:-5000px;"><input type="text" name="b_e32df369f30106dbd7c6eaa51_c955cdf618" tabindex="-1" value=""></div>
-                <button type="submit" id="emailBtn">Subscribe</button>
-            </form>
+            <div class="email-row">
+                <input type="email" placeholder="you@example.com" id="emailInput">
+                <button id="emailBtn">Subscribe</button>
+            </div>
         </div>
 
         <div class="planner-footer">
@@ -1718,6 +1717,19 @@
             };
         });
 
+        const emailBtn = document.getElementById("emailBtn");
+        if (emailBtn) {
+            emailBtn.onclick = () => {
+                const input = document.getElementById("emailInput");
+                if (input && input.value) {
+                    const email = encodeURIComponent(input.value.trim());
+                    fetch("https://magic.beehiiv.com/v1/c30396f1-32dc-4655-b79b-afc1beb7eaea?email=" + email, { mode: "no-cors" });
+                    emailBtn.textContent = "Check your email ✓";
+                    emailBtn.style.background = "#10b981";
+                    input.value = "";
+                }
+            };
+        }
     }
 
     // ================================================================
