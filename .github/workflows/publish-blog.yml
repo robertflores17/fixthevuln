@@ -1,4 +1,4 @@
-name: Publish Blog Posts
+name: Publish Blog Posts & Marketing Content
 
 on:
   schedule:
@@ -24,11 +24,24 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Run blog publisher
-        id: publish
-        run: |
-          python3 scripts/publish_editorial.py
+      - name: Generate weekly threat roundup
+        run: python3 scripts/generate_threat_roundup.py
 
+      - name: Publish blog posts
+        run: python3 scripts/publish_editorial.py
+
+      - name: Generate social media copy
+        run: python3 scripts/generate_social_posts.py
+
+      - name: Repurpose content for social
+        run: python3 scripts/repurpose_content.py
+
+      - name: Inject blog cross-links into guide pages
+        run: python3 scripts/inject_blog_links.py
+
+      - name: Check for changes
+        id: changes
+        run: |
           if [[ -n $(git status --porcelain) ]]; then
             echo "changes=true" >> $GITHUB_OUTPUT
           else
@@ -36,23 +49,23 @@ jobs:
           fi
 
       - name: Commit and push changes
-        if: steps.publish.outputs.changes == 'true'
+        if: steps.changes.outputs.changes == 'true'
         run: |
           git config user.name "FixTheVuln Bot"
           git config user.email "bot@fixthevuln.com"
 
-          git add blog/ data/blog_metadata.json sitemap.xml drafts/
-          git commit -m "Publish new blog posts [skip ci]"
+          git add blog/ data/ drafts/ sitemap.xml *.html
+          git commit -m "Weekly blog publish + marketing content [skip ci]"
           git push
 
       - name: Summary
-        if: steps.publish.outputs.changes == 'true'
+        if: steps.changes.outputs.changes == 'true'
         run: |
-          echo "Blog posts published successfully" >> $GITHUB_STEP_SUMMARY
+          echo "Marketing pipeline completed" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Published posts:" >> $GITHUB_STEP_SUMMARY
-          git diff HEAD~1 --name-only | grep "^blog/" | sed 's/^/- /' >> $GITHUB_STEP_SUMMARY
+          echo "Changes:" >> $GITHUB_STEP_SUMMARY
+          git diff HEAD~1 --name-only | sed 's/^/- /' >> $GITHUB_STEP_SUMMARY
 
       - name: No changes
-        if: steps.publish.outputs.changes == 'false'
-        run: echo "No new blog posts to publish" >> $GITHUB_STEP_SUMMARY
+        if: steps.changes.outputs.changes == 'false'
+        run: echo "No new content to publish" >> $GITHUB_STEP_SUMMARY

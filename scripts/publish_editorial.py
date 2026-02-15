@@ -172,6 +172,7 @@ class BlogPublisher:
         if new_posts:
             self._update_metadata(new_posts)
             self._generate_blog_index()
+            self._generate_rss_feed()
             self._update_sitemap(new_posts)
         else:
             print('  No new drafts to publish.')
@@ -199,6 +200,7 @@ class BlogPublisher:
 
         self._update_metadata([fm])
         self._generate_blog_index()
+        self._generate_rss_feed()
         self._update_sitemap([fm])
         return [fm]
 
@@ -538,6 +540,52 @@ class BlogPublisher:
         else:
             (self.blog_dir / 'index.html').write_text(html, encoding='utf-8')
             print(f'  GENERATED blog/index.html')
+
+    # -- RSS feed -----------------------------------------------------------
+
+    def _generate_rss_feed(self):
+        """Generate blog/feed.xml RSS 2.0 feed."""
+        posts = sorted(self.metadata['posts'], key=lambda p: p['date'], reverse=True)[:20]
+
+        items = []
+        for p in posts:
+            try:
+                dt = datetime.strptime(p['date'], '%Y-%m-%d')
+                pub_date = dt.strftime('%a, %d %b %Y 00:00:00 GMT')
+            except ValueError:
+                pub_date = p['date']
+
+            title_esc = self._esc(p['title'])
+            excerpt_esc = self._esc(p.get('excerpt', ''))
+            link = f"https://fixthevuln.com{p['url']}"
+
+            items.append(f'''    <item>
+      <title>{title_esc}</title>
+      <link>{link}</link>
+      <description>{excerpt_esc}</description>
+      <pubDate>{pub_date}</pubDate>
+      <guid>{link}</guid>
+    </item>''')
+
+        rss = f'''<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>FixTheVuln Blog</title>
+    <link>https://fixthevuln.com/blog/</link>
+    <description>Expert cybersecurity insights, threat analysis, and IT certification study guides.</description>
+    <language>en-us</language>
+    <lastBuildDate>{datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT')}</lastBuildDate>
+    <atom:link href="https://fixthevuln.com/blog/feed.xml" rel="self" type="application/rss+xml"/>
+{chr(10).join(items)}
+  </channel>
+</rss>
+'''
+
+        if self.dry_run:
+            print('  DRY-RUN would write blog/feed.xml')
+        else:
+            (self.blog_dir / 'feed.xml').write_text(rss, encoding='utf-8')
+            print('  GENERATED blog/feed.xml')
 
     # -- sitemap ------------------------------------------------------------
 
