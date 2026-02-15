@@ -333,7 +333,7 @@ class BlogPublisher:
         <div class="container">
             <h1>{self._esc(title)}</h1>
             <p>Expert cybersecurity insights for IT professionals</p>
-            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Last updated: {date_display}</p>
+            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">Last updated: {date_display}</p>
         </div>
     </header>
 
@@ -500,7 +500,7 @@ class BlogPublisher:
         <div class="container">
             <h1>FixTheVuln Blog</h1>
             <p>Expert cybersecurity insights for IT professionals</p>
-            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Threat analysis &middot; Certification prep &middot; Vulnerability research</p>
+            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">Threat analysis &middot; Certification prep &middot; Vulnerability research</p>
         </div>
     </header>
 
