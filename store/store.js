@@ -202,6 +202,13 @@ const cartEmpty     = document.getElementById('cartEmpty');
 const cartFooter    = document.getElementById('cartFooter');
 const cartTotal     = document.getElementById('cartTotal');
 const btnCheckout   = document.getElementById('btnCheckout');
+// ─── HTML SANITIZATION ─────────────────────
+function esc(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
 // ─── TOAST & CONFIRM HELPERS ────────────────
 function showToast(message, type = 'info', duration = 4000) {
   const container = document.getElementById('toastContainer');
@@ -318,13 +325,13 @@ function renderProducts() {
     const inCart = cart.some(item => item.key === cartKey);
 
     return `
-      <div class="product-card ${product.popular ? 'popular' : ''}" data-vendor="${product.vendor}">
+      <div class="product-card ${product.popular ? 'popular' : ''}" data-vendor="${esc(product.vendor)}">
         <div class="product-popular">Popular</div>
-        <div class="product-vendor">${vendorDisplayName(product.vendor)}</div>
-        <div class="product-name">${product.name}</div>
-        <div class="product-meta">${product.meta}</div>
+        <div class="product-vendor">${esc(vendorDisplayName(product.vendor))}</div>
+        <div class="product-name">${esc(product.name)}</div>
+        <div class="product-meta">${esc(product.meta)}</div>
         <div class="product-features">
-          ${product.tags.map(t => `<span class="product-tag">${t}</span>`).join('')}
+          ${product.tags.map(t => `<span class="product-tag">${esc(t)}</span>`).join('')}
         </div>
         ${selectedVariant === 'bundle' ? '<div class="product-bundle-note">📦 Standard + Dark + ADHD</div>' : ''}
         <div class="product-bottom">
@@ -333,9 +340,9 @@ function renderProducts() {
             ${selectedVariant === 'bundle' ? `<span class="original">$${(PRICING.standard + PRICING.adhd + PRICING.dark).toFixed(2)}</span>` : ''}
           </div>
           <button class="btn-add ${inCart ? 'added' : ''}"
-                  data-product-id="${product.id}"
-                  data-product-name="${product.name.replace(/"/g, '&quot;')}"
-                  data-variant="${selectedVariant}"
+                  data-product-id="${esc(product.id)}"
+                  data-product-name="${esc(product.name)}"
+                  data-variant="${esc(selectedVariant)}"
                   data-price="${price}"
                   ${inCart ? 'disabled' : ''}>
             ${inCart ? '✓ Added' : 'Add to Cart'}
@@ -440,11 +447,11 @@ function updateCartUI() {
     cartItems.innerHTML = cart.map(item => `
       <div class="cart-item">
         <div class="cart-item-info">
-          <div class="cart-item-name">${item.name}</div>
-          <div class="cart-item-variant">${item.variantLabel}</div>
-          <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+          <div class="cart-item-name">${esc(item.name)}</div>
+          <div class="cart-item-variant">${esc(item.variantLabel)}</div>
+          <div class="cart-item-price">$${Number(item.price).toFixed(2)}</div>
         </div>
-        <button class="cart-item-remove" data-cart-key="${item.key}">Remove</button>
+        <button class="cart-item-remove" data-cart-key="${esc(item.key)}">Remove</button>
       </div>
     `).join('');
 
@@ -506,23 +513,23 @@ function renderCareerPaths() {
     return `
       <div class="career-card">
         <div class="career-card-header">
-          <span class="career-icon">${path.icon}</span>
+          <span class="career-icon">${esc(path.icon)}</span>
           <span class="savings-badge">Save ${savings}%</span>
         </div>
-        <div class="career-name">${path.name}</div>
-        <div class="career-desc">${path.desc}</div>
+        <div class="career-name">${esc(path.name)}</div>
+        <div class="career-desc">${esc(path.desc)}</div>
         <div class="career-certs">
-          ${path.certs.map(c => `<div class="career-cert-item">✓ ${c}</div>`).join('')}
+          ${path.certs.map(c => `<div class="career-cert-item">✓ ${esc(c)}</div>`).join('')}
         </div>
-        <div class="career-includes">${path.certCount} planners · ${variantLabel} format</div>
+        <div class="career-includes">${path.certCount} planners · ${esc(variantLabel)} format</div>
         <div class="product-bottom">
           <div class="product-price">
             $${price.toFixed(2)}
             <span class="original">$${indivPrice.toFixed(2)}</span>
           </div>
           <button class="btn-add btn-add-career ${inCart ? 'added' : ''}"
-                  data-path-id="${path.id}"
-                  data-path-name="${path.name.replace(/"/g, '&quot;')}"
+                  data-path-id="${esc(path.id)}"
+                  data-path-name="${esc(path.name)}"
                   data-cert-count="${path.certCount}"
                   ${inCart ? 'disabled' : ''}>
             ${inCart ? '✓ Added' : 'Add to Cart'}

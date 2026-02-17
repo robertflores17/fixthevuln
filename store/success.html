@@ -6,6 +6,7 @@
   <title>Download Your Planner | FixTheVuln Store</title>
   <link rel="icon" href="/favicon.ico" sizes="any">
   <meta name="robots" content="noindex">
+  <meta name="referrer" content="no-referrer">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="store.css">
@@ -292,6 +293,13 @@
       }
     });
 
+    // HTML sanitization
+    function esc(str) {
+      const d = document.createElement('div');
+      d.textContent = String(str);
+      return d.innerHTML;
+    }
+
     // Verify payment and show downloads
     async function init() {
       const params = new URLSearchParams(window.location.search);
@@ -339,7 +347,7 @@
         // Render career path groups
         for (const [pathId, downloads] of Object.entries(grouped)) {
           const pathName = CAREER_PATH_NAMES[pathId] || pathId;
-          html += `<div class="download-group-header">${pathName} Career Path</div>`;
+          html += `<div class="download-group-header">${esc(pathName)} Career Path</div>`;
           html += downloads.map(dl => renderDownloadCard(dl)).join('');
         }
 
@@ -353,8 +361,10 @@
 
         downloadList.innerHTML = html;
 
-        // Show "Download All" button if 2+ files
-        allDownloadUrls = data.downloads.map(dl => dl.url);
+        // Show "Download All" button if 2+ files (only allow URLs from our worker)
+        allDownloadUrls = data.downloads
+          .map(dl => dl.url)
+          .filter(url => url && url.startsWith('https://fixthevuln-checkout.'));
         if (allDownloadUrls.length >= 2) {
           document.getElementById('downloadAllWrap').style.display = 'block';
         }
@@ -394,15 +404,17 @@
     function renderDownloadCard(dl) {
       const certName = CERT_NAMES[dl.certId] || dl.certId;
       const variantLabel = VARIANT_LABELS[dl.variant] || dl.variant;
-      const isZip = dl.filename.endsWith('.zip');
+      const isZip = dl.filename && dl.filename.endsWith('.zip');
       const btnLabel = isZip ? 'Download ZIP' : 'Download PDF';
+      // Validate URL starts with expected domain to prevent javascript: injection
+      const safeUrl = dl.url && dl.url.startsWith('https://fixthevuln-checkout.') ? dl.url : '#';
       return `
         <div class="download-card">
           <div class="download-info">
-            <h3>${certName} <span class="variant-badge">${variantLabel}</span></h3>
-            <p>${dl.filename}</p>
+            <h3>${esc(certName)} <span class="variant-badge">${esc(variantLabel)}</span></h3>
+            <p>${esc(dl.filename)}</p>
           </div>
-          <a class="btn-download" href="${dl.url}" download>${btnLabel}</a>
+          <a class="btn-download" href="${esc(safeUrl)}" download>${btnLabel}</a>
         </div>
       `;
     }
