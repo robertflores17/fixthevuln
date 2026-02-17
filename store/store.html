@@ -4,13 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Certification Study Planners | FixTheVuln Store</title>
-  <meta name="description" content="Professional PDF study planners for 34+ IT certifications. Standard and ADHD-friendly formats. Instant download after purchase.">
+  <meta name="description" content="Professional PDF study planners for 30+ IT certifications. Standard, ADHD-friendly, and Dark Mode formats. Instant download after purchase.">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <!-- Open Graph -->
+  <meta property="og:title" content="Certification Study Planners | FixTheVuln Store">
+  <meta property="og:description" content="Professional PDF study planners for 30+ IT certifications. Standard, ADHD-friendly, and Dark Mode formats. Instant download.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://fixthevuln.com/store/store.html">
+  <meta property="og:image" content="https://fixthevuln.com/assets/store-og.png">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Certification Study Planners | FixTheVuln Store">
+  <meta name="twitter:description" content="PDF study planners for 30+ IT certifications. Standard, ADHD-friendly & Dark Mode. Instant download.">
+  <meta name="twitter:image" content="https://fixthevuln.com/assets/store-og.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="store.css">
   <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
+  <a href="#productGrid" class="skip-nav">Skip to products</a>
 
   <!-- Navigation -->
   <nav class="nav-bar">
@@ -18,7 +31,7 @@
     <div class="nav-controls">
       <button class="btn-icon" id="cartToggle" aria-label="Shopping cart">
         <span class="cart-icon">🛒</span>
-        <span class="cart-badge" id="cartBadge">0</span>
+        <span class="cart-badge" id="cartBadge" aria-live="polite" aria-label="0 items in cart">0</span>
       </button>
       <button class="btn-icon" id="themeToggle" aria-label="Toggle theme">☀️</button>
     </div>
@@ -28,7 +41,7 @@
   <section class="hero animate-in">
     <div class="hero-badge">🛡️ FixTheVuln Store</div>
     <h1>Certification Study Planners</h1>
-    <p class="hero-sub">Professional PDF study planners for 34+ IT certifications.<br>Beautifully formatted. Instant download. Yours forever.</p>
+    <p class="hero-sub">Professional PDF study planners for 30+ IT certifications.<br>Beautifully formatted. Instant download. Yours forever.</p>
     <div class="hero-features">
       <span class="hero-chip">📄 Instant PDF Download</span>
       <span class="hero-chip">🧠 ADHD-Friendly Options</span>
@@ -40,26 +53,30 @@
   <!-- Format Selector -->
   <section class="format-section animate-in delay-1">
     <h2 class="section-title">Choose Your Format</h2>
-    <div class="format-cards">
-      <button class="format-card active" data-variant="standard">
+    <div class="format-cards" role="radiogroup" aria-label="Planner format">
+      <button class="format-card active" data-variant="standard" role="radio" aria-checked="true">
         <div class="format-icon">📋</div>
         <div class="format-name">Standard</div>
         <div class="format-desc">Clean, professional layout</div>
+        <div class="format-price">$5.99<span>/cert</span></div>
       </button>
-      <button class="format-card" data-variant="adhd">
+      <button class="format-card" data-variant="adhd" role="radio" aria-checked="false">
         <div class="format-icon">🧠</div>
         <div class="format-name">ADHD-Friendly</div>
         <div class="format-desc">Shorter tasks, built-in breaks, rewards</div>
+        <div class="format-price">$5.99<span>/cert</span></div>
       </button>
-      <button class="format-card" data-variant="dark">
+      <button class="format-card" data-variant="dark" role="radio" aria-checked="false">
         <div class="format-icon">🌙</div>
         <div class="format-name">Dark Mode</div>
         <div class="format-desc">Easy on the eyes, great for screens</div>
+        <div class="format-price">$5.99<span>/cert</span></div>
       </button>
-      <button class="format-card" data-variant="bundle">
+      <button class="format-card" data-variant="bundle" role="radio" aria-checked="false">
         <div class="format-icon">📦</div>
         <div class="format-name">3-Format Bundle</div>
         <div class="format-desc">Standard + Dark + ADHD for one cert</div>
+        <div class="format-price">$11.99<span>/cert</span></div>
       </button>
     </div>
   </section>
@@ -183,14 +200,17 @@
     </div>
   </aside>
 
-  <!-- Success Modal (shown after checkout redirect) -->
-  <div class="modal-overlay" id="successModal">
-    <div class="modal-content">
-      <div class="modal-icon">✅</div>
-      <h2>Payment Successful!</h2>
-      <p>Thank you for your purchase. Your download link has been sent to your email.</p>
-      <p class="modal-sub">Check your inbox (and spam folder) for the download link.</p>
-      <button class="btn-primary" onclick="document.getElementById('successModal').classList.remove('active')">Continue Browsing</button>
+  <!-- Toast notifications -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Confirmation modal (replaces native confirm()) -->
+  <div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+      <p id="confirmMessage"></p>
+      <div class="confirm-actions">
+        <button class="confirm-btn confirm-cancel" id="confirmCancel">Cancel</button>
+        <button class="confirm-btn confirm-ok" id="confirmOk">Remove &amp; Add Path</button>
+      </div>
     </div>
   </div>
 
@@ -201,6 +221,8 @@
       <a href="/planner">Free Study Planner</a>
       <a href="/practice-tests.html">Quizzes</a>
       <a href="/resources.html">Resources</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/terms.html">Terms</a>
     </div>
     <p class="footer-copy">&copy; 2026 FixTheVuln. Educational resources for security professionals.</p>
   </footer>
