@@ -120,6 +120,19 @@
       font-weight: 600;
       margin-left: 8px;
     }
+    .email-confirmation {
+      background: rgba(34, 197, 94, 0.08);
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      border-radius: var(--radius-md);
+      padding: 14px 20px;
+      font-size: 14px;
+      color: var(--text-primary);
+      margin-bottom: 28px;
+      display: none;
+    }
+    .email-confirmation strong {
+      color: var(--text-primary);
+    }
   </style>
 </head>
 <body>
@@ -143,15 +156,20 @@
     <div id="successState" style="display:none">
       <div class="success-icon">✅</div>
       <h1>Payment Successful!</h1>
-      <p class="success-sub">Thank you for your purchase. Your downloads are ready.</p>
+      <p class="success-sub">Thank you for your business! Your downloads are ready below.</p>
+
+      <div class="email-confirmation" id="emailConfirmation">
+        ✉️ A receipt and download links have been sent to <strong id="emailAddress"></strong>
+      </div>
 
       <div class="download-list" id="downloadList">
         <!-- Download cards injected by JS -->
       </div>
 
       <div class="expiry-notice">
-        🕐 Download links expire in <strong>24 hours</strong>. Save your files after downloading.<br>
-        Need help? Contact us at the email on fixthevuln.com.
+        🕐 Download links expire in <strong>24 hours</strong>. Save your files after downloading.
+        We've also emailed your download links for safekeeping.<br>
+        Need help? Contact us at <a href="mailto:hello@fixthevuln.com" style="color:var(--accent);font-weight:600">hello@fixthevuln.com</a>
       </div>
 
       <a href="store.html" class="back-link">← Browse more planners</a>
@@ -282,6 +300,12 @@
             </div>
           `;
         }).join('');
+
+        // Show email confirmation banner if email available
+        if (data.email) {
+          document.getElementById('emailAddress').textContent = data.email;
+          document.getElementById('emailConfirmation').style.display = 'block';
+        }
 
         document.getElementById('loadingState').style.display = 'none';
         document.getElementById('successState').style.display = 'block';
