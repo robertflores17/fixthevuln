@@ -32,6 +32,7 @@ const CAREER_PATHS = [
     certs: ['CompTIA A+ Core 1', 'CompTIA A+ Core 2', 'CompTIA Network+', 'CompTIA Security+'],
     certIds: ['comptia-a-plus-1201', 'comptia-a-plus-1202', 'comptia-network-plus', 'comptia-security-plus'],
     certCount: 4,
+    vendors: ['comptia'],
     icon: '🏆',
   },
   {
@@ -41,6 +42,7 @@ const CAREER_PATHS = [
     certs: ['CompTIA A+ Core 1', 'CompTIA A+ Core 2'],
     certIds: ['comptia-a-plus-1201', 'comptia-a-plus-1202'],
     certCount: 2,
+    vendors: ['comptia'],
     icon: '💻',
   },
   {
@@ -50,6 +52,7 @@ const CAREER_PATHS = [
     certs: ['CompTIA Security+', 'CompTIA CySA+', 'CompTIA PenTest+', 'CompTIA CASP+'],
     certIds: ['comptia-security-plus', 'comptia-cysa-plus', 'comptia-pentest-plus', 'comptia-casp-plus'],
     certCount: 4,
+    vendors: ['comptia'],
     icon: '🔐',
   },
   {
@@ -59,6 +62,7 @@ const CAREER_PATHS = [
     certs: ['CompTIA Security+', 'ISC2 CISSP'],
     certIds: ['comptia-security-plus', 'isc2-cissp'],
     certCount: 2,
+    vendors: ['comptia', 'isc2'],
     icon: '🛡️',
   },
   {
@@ -68,6 +72,7 @@ const CAREER_PATHS = [
     certs: ['AWS Cloud Practitioner', 'AWS Solutions Architect', 'AWS Developer'],
     certIds: ['aws-cloud-practitioner', 'aws-solutions-architect', 'aws-developer'],
     certCount: 3,
+    vendors: ['aws'],
     icon: '☁️',
   },
   {
@@ -77,6 +82,7 @@ const CAREER_PATHS = [
     certs: ['Azure Fundamentals (AZ-900)', 'Azure Administrator (AZ-104)', 'Azure Architect (AZ-305)'],
     certIds: ['ms-az-900', 'ms-az-104', 'ms-az-305'],
     certCount: 3,
+    vendors: ['microsoft'],
     icon: '🔷',
   },
   {
@@ -86,6 +92,7 @@ const CAREER_PATHS = [
     certs: ['AWS Cloud Practitioner', 'Azure Fundamentals', 'Google Cloud Engineer'],
     certIds: ['aws-cloud-practitioner', 'ms-az-900', 'google-ace'],
     certCount: 3,
+    vendors: ['aws', 'microsoft', 'google'],
     icon: '🌐',
   },
   {
@@ -95,6 +102,7 @@ const CAREER_PATHS = [
     certs: ['ISACA CISA', 'ISACA CISM', 'ISACA CRISC'],
     certIds: ['isaca-cisa', 'isaca-cism', 'isaca-crisc'],
     certCount: 3,
+    vendors: ['isaca'],
     icon: '📊',
   },
   {
@@ -104,6 +112,7 @@ const CAREER_PATHS = [
     certs: ['ISC2 CC', 'ISC2 SSCP', 'ISC2 CISSP'],
     certIds: ['isc2-cc', 'isc2-sscp', 'isc2-cissp'],
     certCount: 3,
+    vendors: ['isc2'],
     icon: '🎓',
   },
   {
@@ -113,6 +122,7 @@ const CAREER_PATHS = [
     certs: ['Cisco CCNA', 'Cisco CCNP ENCOR', 'Cisco CyberOps'],
     certIds: ['cisco-ccna', 'cisco-ccnp-encor', 'cisco-cyberops'],
     certCount: 3,
+    vendors: ['cisco'],
     icon: '🌐',
   },
 ];
@@ -192,7 +202,38 @@ const cartEmpty     = document.getElementById('cartEmpty');
 const cartFooter    = document.getElementById('cartFooter');
 const cartTotal     = document.getElementById('cartTotal');
 const btnCheckout   = document.getElementById('btnCheckout');
-const successModal  = document.getElementById('successModal');
+// ─── TOAST & CONFIRM HELPERS ────────────────
+function showToast(message, type = 'info', duration = 4000) {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast${type !== 'info' ? ` toast-${type}` : ''}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.classList.add('toast-out');
+    toast.addEventListener('animationend', () => toast.remove());
+  }, duration);
+}
+
+function showConfirm(message) {
+  return new Promise(resolve => {
+    const overlay = document.getElementById('confirmOverlay');
+    document.getElementById('confirmMessage').textContent = message;
+    overlay.classList.add('active');
+    const okBtn = document.getElementById('confirmOk');
+    const cancelBtn = document.getElementById('confirmCancel');
+    function cleanup(result) {
+      overlay.classList.remove('active');
+      okBtn.removeEventListener('click', onOk);
+      cancelBtn.removeEventListener('click', onCancel);
+      resolve(result);
+    }
+    function onOk() { cleanup(true); }
+    function onCancel() { cleanup(false); }
+    okBtn.addEventListener('click', onOk);
+    cancelBtn.addEventListener('click', onCancel);
+  });
+}
 
 // ─── INIT ───────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
@@ -202,7 +243,6 @@ document.addEventListener('DOMContentLoaded', () => {
   renderProducts();
   renderCareerPaths();
   updateCartUI();
-  checkForSuccess();
 });
 
 // ─── THEME TOGGLE ───────────────────────────
@@ -232,14 +272,16 @@ function initFormatSelector() {
   const cards = document.querySelectorAll('.format-card');
   // Set initial active state
   cards.forEach(c => {
-    if (c.dataset.variant === selectedVariant) c.classList.add('active');
-    else c.classList.remove('active');
+    const isActive = c.dataset.variant === selectedVariant;
+    c.classList.toggle('active', isActive);
+    c.setAttribute('aria-checked', String(isActive));
   });
 
   cards.forEach(card => {
     card.addEventListener('click', () => {
-      cards.forEach(c => c.classList.remove('active'));
+      cards.forEach(c => { c.classList.remove('active'); c.setAttribute('aria-checked', 'false'); });
       card.classList.add('active');
+      card.setAttribute('aria-checked', 'true');
       selectedVariant = card.dataset.variant;
       localStorage.setItem('ftv_variant', selectedVariant);
       renderProducts();
@@ -257,6 +299,7 @@ function initVendorTabs() {
       tab.classList.add('active');
       selectedVendor = tab.dataset.vendor;
       renderProducts();
+      renderCareerPaths();
     });
   });
 }
@@ -290,7 +333,10 @@ function renderProducts() {
             ${selectedVariant === 'bundle' ? `<span class="original">$${(PRICING.standard + PRICING.adhd + PRICING.dark).toFixed(2)}</span>` : ''}
           </div>
           <button class="btn-add ${inCart ? 'added' : ''}"
-                  onclick="addToCart('${product.id}', '${escapeStr(product.name)}', '${selectedVariant}', ${price})"
+                  data-product-id="${product.id}"
+                  data-product-name="${product.name.replace(/"/g, '&quot;')}"
+                  data-variant="${selectedVariant}"
+                  data-price="${price}"
                   ${inCart ? 'disabled' : ''}>
             ${inCart ? '✓ Added' : 'Add to Cart'}
           </button>
@@ -299,6 +345,19 @@ function renderProducts() {
     `;
   }).join('');
 }
+
+// ─── EVENT DELEGATION ──────────────────────
+productGrid.addEventListener('click', (e) => {
+  const btn = e.target.closest('.btn-add');
+  if (!btn || btn.disabled) return;
+  addToCart(btn.dataset.productId, btn.dataset.productName, btn.dataset.variant, parseFloat(btn.dataset.price));
+});
+
+careerPathGrid.addEventListener('click', (e) => {
+  const btn = e.target.closest('.btn-add-career');
+  if (!btn || btn.disabled) return;
+  addCareerPathToCart(btn.dataset.pathId, btn.dataset.pathName, parseInt(btn.dataset.certCount, 10));
+});
 
 function vendorDisplayName(vendor) {
   const map = {
@@ -312,10 +371,6 @@ function vendorDisplayName(vendor) {
     google: 'Google Cloud',
   };
   return map[vendor] || vendor;
-}
-
-function escapeStr(str) {
-  return str.replace(/'/g, "\\'");
 }
 
 // ─── CART MANAGEMENT ────────────────────────
@@ -332,7 +387,7 @@ function addToCart(productId, productName, variant, price) {
     return path && path.certIds.includes(productId);
   });
   if (overlappingPath) {
-    alert(`"${productName}" is already included in the "${overlappingPath.name}" in your cart. No need to add it separately!`);
+    showToast(`"${productName}" is already included in the "${overlappingPath.name}" in your cart.`, 'warning');
     return;
   }
 
@@ -371,6 +426,7 @@ function updateCartUI() {
   // Badge
   cartBadge.textContent = cart.length;
   cartBadge.setAttribute('data-count', cart.length);
+  cartBadge.setAttribute('aria-label', `${cart.length} item${cart.length !== 1 ? 's' : ''} in cart`);
 
   // Cart items
   if (cart.length === 0) {
@@ -388,7 +444,7 @@ function updateCartUI() {
           <div class="cart-item-variant">${item.variantLabel}</div>
           <div class="cart-item-price">$${item.price.toFixed(2)}</div>
         </div>
-        <button class="cart-item-remove" onclick="removeFromCart('${item.key}')">Remove</button>
+        <button class="cart-item-remove" data-cart-key="${item.key}">Remove</button>
       </div>
     `).join('');
 
@@ -411,6 +467,12 @@ function closeCart() {
   document.body.style.overflow = '';
 }
 
+cartItems.addEventListener('click', (e) => {
+  const btn = e.target.closest('.cart-item-remove');
+  if (!btn) return;
+  removeFromCart(btn.dataset.cartKey);
+});
+
 document.getElementById('cartToggle').addEventListener('click', openCart);
 document.getElementById('cartClose').addEventListener('click', closeCart);
 cartOverlay.addEventListener('click', closeCart);
@@ -425,7 +487,15 @@ function renderCareerPaths() {
   const isBundle = selectedVariant === 'bundle';
   const variantLabel = VARIANT_LABELS[selectedVariant];
 
-  careerPathGrid.innerHTML = CAREER_PATHS.map(path => {
+  const filtered = selectedVendor === 'all'
+    ? CAREER_PATHS
+    : CAREER_PATHS.filter(p => p.vendors.includes(selectedVendor));
+
+  // Show/hide career section if no paths match
+  const careerSection = careerPathGrid.closest('.career-section');
+  if (careerSection) careerSection.style.display = filtered.length === 0 ? 'none' : '';
+
+  careerPathGrid.innerHTML = filtered.map(path => {
     const tier = CAREER_PATH_PRICING[path.certCount];
     const price = isBundle ? tier.bundle : tier.single;
     const indivPrice = isBundle ? tier.indivBundle : tier.indivSingle;
@@ -451,7 +521,9 @@ function renderCareerPaths() {
             <span class="original">$${indivPrice.toFixed(2)}</span>
           </div>
           <button class="btn-add btn-add-career ${inCart ? 'added' : ''}"
-                  onclick="addCareerPathToCart('${path.id}', '${escapeStr(path.name)}', ${path.certCount})"
+                  data-path-id="${path.id}"
+                  data-path-name="${path.name.replace(/"/g, '&quot;')}"
+                  data-cert-count="${path.certCount}"
                   ${inCart ? 'disabled' : ''}>
             ${inCart ? '✓ Added' : 'Add to Cart'}
           </button>
@@ -461,7 +533,7 @@ function renderCareerPaths() {
   }).join('');
 }
 
-function addCareerPathToCart(pathId, pathName, certCount) {
+async function addCareerPathToCart(pathId, pathName, certCount) {
   const key = `cp__${pathId}__${selectedVariant}`;
   if (cart.some(item => item.key === key)) return;
 
@@ -475,7 +547,7 @@ function addCareerPathToCart(pathId, pathName, certCount) {
     });
     if (overlaps.length > 0) {
       const names = overlaps.map(o => o.name).join(', ');
-      const proceed = confirm(`You have ${names} individually in your cart (same format). The career path already includes ${overlaps.length === 1 ? 'it' : 'them'} — remove ${overlaps.length === 1 ? 'it' : 'them'} to avoid paying twice?`);
+      const proceed = await showConfirm(`You have ${names} individually in your cart (same format). The career path already includes ${overlaps.length === 1 ? 'it' : 'them'} — remove ${overlaps.length === 1 ? 'it' : 'them'} to avoid paying twice?`);
       if (proceed) {
         overlaps.forEach(o => { cart = cart.filter(item => item.key !== o.key); });
       }
@@ -532,36 +604,22 @@ btnCheckout.addEventListener('click', async () => {
     const data = await response.json();
 
     if (data.error) {
-      alert(data.error);
+      showToast(data.error, 'error');
       return;
     }
 
     // Redirect to Stripe Checkout
     const result = await stripe.redirectToCheckout({ sessionId: data.sessionId });
     if (result.error) {
-      alert(result.error.message);
+      showToast(result.error.message, 'error');
     }
 
   } catch (err) {
     console.error('Checkout error:', err);
-    alert('Something went wrong. Please try again.');
+    showToast('Something went wrong. Please try again.', 'error');
   } finally {
     btnCheckout.disabled = false;
     btnCheckout.textContent = 'Proceed to Checkout →';
   }
 });
 
-// ─── CHECK FOR SUCCESS REDIRECT ─────────────
-function checkForSuccess() {
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('success') === 'true') {
-    successModal.classList.add('active');
-    // Clear cart after successful purchase
-    cart = [];
-    saveCart();
-    updateCartUI();
-    renderProducts();
-    // Clean URL
-    window.history.replaceState({}, '', window.location.pathname);
-  }
-}

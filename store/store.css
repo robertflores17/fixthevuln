@@ -104,6 +104,28 @@ body {
 .delay-3 { animation-delay: 0.3s; }
 
 /* ============================================
+   Skip Navigation
+   ============================================ */
+
+.skip-nav {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  background: var(--accent);
+  color: white;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 999;
+  text-decoration: none;
+}
+
+.skip-nav:focus {
+  top: 8px;
+}
+
+/* ============================================
    Navigation
    ============================================ */
 
@@ -304,6 +326,19 @@ body {
   font-size: 12px;
   color: var(--text-secondary);
   line-height: 1.4;
+}
+
+.format-price {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--accent);
+  margin-top: 8px;
+}
+
+.format-price span {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
 }
 
 /* ============================================
@@ -949,71 +984,126 @@ body {
 }
 
 /* ============================================
-   Success Modal
+   Toast Notifications
    ============================================ */
 
-.modal-overlay {
+.toast-container {
+  position: fixed;
+  top: 80px;
+  right: 24px;
+  z-index: 400;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius-md);
+  padding: 14px 20px;
+  font-size: 14px;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-lg);
+  max-width: 360px;
+  pointer-events: auto;
+  animation: toastIn 0.3s ease-out;
+  line-height: 1.5;
+}
+
+.toast.toast-warning {
+  border-left-color: var(--warning);
+}
+
+.toast.toast-error {
+  border-left-color: var(--danger);
+}
+
+.toast.toast-out {
+  animation: toastOut 0.25s ease-in forwards;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(40px); }
+}
+
+/* ============================================
+   Confirmation Modal
+   ============================================ */
+
+.confirm-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
-  z-index: 300;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 500;
   display: none;
   align-items: center;
   justify-content: center;
-  padding: 32px;
+  padding: 24px;
 }
 
-.modal-overlay.active {
+.confirm-overlay.active {
   display: flex;
 }
 
-.modal-content {
+.confirm-box {
   background: var(--bg-surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  padding: 48px 40px;
-  max-width: 460px;
-  text-align: center;
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  max-width: 420px;
+  width: 100%;
 }
 
-.modal-icon {
-  font-size: 56px;
-  margin-bottom: 16px;
-}
-
-.modal-content h2 {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 12px;
-}
-
-.modal-content p {
+.confirm-box p {
   font-size: 15px;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   line-height: 1.6;
-  margin-bottom: 8px;
+  margin-bottom: 20px;
 }
 
-.modal-sub {
-  font-size: 13px !important;
-  color: var(--text-muted) !important;
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
 }
 
-.btn-primary {
-  background: var(--accent);
-  color: white;
+.confirm-btn {
   border: none;
-  border-radius: var(--radius-md);
-  padding: 12px 28px;
-  font-size: 15px;
+  border-radius: var(--radius-sm);
+  padding: 10px 20px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
-  margin-top: 16px;
   font-family: var(--font-sans);
+  transition: all 0.2s;
 }
 
-.btn-primary:hover {
+.confirm-cancel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.confirm-cancel:hover {
+  border-color: var(--text-muted);
+  color: var(--text-primary);
+}
+
+.confirm-ok {
+  background: var(--accent);
+  color: white;
+}
+
+.confirm-ok:hover {
   background: var(--accent-hover);
 }
 
