@@ -100,6 +100,29 @@
     .error-state {
       color: var(--danger);
     }
+    .btn-download-all {
+      display: inline-block;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 12px 28px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: var(--font-sans);
+      margin-bottom: 24px;
+    }
+    .btn-download-all:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+    }
+    .btn-download-all:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
     .download-group-header {
       font-size: 14px;
       font-weight: 700;
@@ -153,13 +176,17 @@
       <h1>Payment Successful!</h1>
       <p class="success-sub">Thank you for your purchase. Your downloads are ready.</p>
 
+      <div id="downloadAllWrap" style="display:none">
+        <button class="btn-download-all" id="btnDownloadAll" onclick="downloadAll()">Download All Files</button>
+      </div>
+
       <div class="download-list" id="downloadList">
         <!-- Download cards injected by JS -->
       </div>
 
       <div class="expiry-notice">
         🕐 Download links expire in <strong>24 hours</strong>. Save your files after downloading.<br>
-        Need help? Contact us at the email on fixthevuln.com.
+        Need help? Contact us at <strong>hello@fixthevuln.com</strong>.
       </div>
 
       <a href="store.html" class="back-link">← Browse more planners</a>
@@ -169,7 +196,7 @@
     <div id="errorState" style="display:none">
       <div class="success-icon">❌</div>
       <h1 class="error-state">Verification Failed</h1>
-      <p class="success-sub">We couldn't verify your payment. If you were charged, please contact support.</p>
+      <p class="success-sub">We couldn't verify your payment. If you were charged, please contact <strong>hello@fixthevuln.com</strong>.</p>
       <a href="store.html" class="back-link">← Back to store</a>
     </div>
   </div>
@@ -322,6 +349,12 @@
 
         downloadList.innerHTML = html;
 
+        // Show "Download All" button if 2+ files
+        allDownloadUrls = data.downloads.map(dl => dl.url);
+        if (allDownloadUrls.length >= 2) {
+          document.getElementById('downloadAllWrap').style.display = 'block';
+        }
+
         document.getElementById('loadingState').style.display = 'none';
         document.getElementById('successState').style.display = 'block';
 
@@ -330,6 +363,29 @@
         showError();
       }
     }
+
+    let allDownloadUrls = [];
+
+    function downloadAll() {
+      const btn = document.getElementById('btnDownloadAll');
+      btn.disabled = true;
+      btn.textContent = 'Starting downloads...';
+      allDownloadUrls.forEach((url, i) => {
+        setTimeout(() => {
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = '';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          if (i === allDownloadUrls.length - 1) {
+            btn.textContent = 'All downloads started!';
+          }
+        }, i * 600);
+      });
+    }
+    // Expose to onclick
+    window.downloadAll = downloadAll;
 
     function renderDownloadCard(dl) {
       const certName = CERT_NAMES[dl.certId] || dl.certId;
