@@ -13,14 +13,14 @@ const PRICING = {
   standard: 5.99,
   adhd:     5.99,
   dark:     5.99,
-  bundle:   11.99,  // All 3 formats — save ~$6
+  bundle:   11.99,  // Standard + Dark + ADHD for one cert — save ~$6
 };
 
 const VARIANT_LABELS = {
   standard: 'Standard',
   adhd:     'ADHD-Friendly',
   dark:     'Dark Mode',
-  bundle:   'Complete Bundle (All 3)',
+  bundle:   '3-Format Bundle (Standard + Dark + ADHD)',
 };
 
 // ─── PRODUCT CATALOG ────────────────────────
@@ -178,6 +178,7 @@ function renderProducts() {
         <div class="product-features">
           ${product.tags.map(t => `<span class="product-tag">${t}</span>`).join('')}
         </div>
+        ${selectedVariant === 'bundle' ? '<div class="product-bundle-note">Includes: Standard + Dark Mode + ADHD-Friendly PDFs</div>' : ''}
         <div class="product-bottom">
           <div class="product-price">
             $${price.toFixed(2)}
@@ -308,6 +309,8 @@ btnCheckout.addEventListener('click', async () => {
   btnCheckout.textContent = 'Processing...';
 
   try {
+    const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+
     const response = await fetch(CHECKOUT_API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -329,16 +332,15 @@ btnCheckout.addEventListener('click', async () => {
       return;
     }
 
-    // Redirect directly to Stripe Checkout URL
-    if (data.url) {
-      window.location.href = data.url;
-    } else {
-      alert('No checkout URL returned. Please try again.');
+    // Redirect to Stripe Checkout
+    const result = await stripe.redirectToCheckout({ sessionId: data.sessionId });
+    if (result.error) {
+      alert(result.error.message);
     }
 
   } catch (err) {
     console.error('Checkout error:', err);
-    alert('Checkout error: ' + err.message);
+    alert('Something went wrong. Please try again.');
   } finally {
     btnCheckout.disabled = false;
     btnCheckout.textContent = 'Proceed to Checkout →';
