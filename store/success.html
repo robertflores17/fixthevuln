@@ -100,6 +100,14 @@
     .error-state {
       color: var(--danger);
     }
+    .download-group-header {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      padding: 12px 0 4px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 4px;
+    }
     .back-link {
       color: var(--accent);
       text-decoration: none;
@@ -119,19 +127,6 @@
       font-size: 11px;
       font-weight: 600;
       margin-left: 8px;
-    }
-    .email-confirmation {
-      background: rgba(34, 197, 94, 0.08);
-      border: 1px solid rgba(34, 197, 94, 0.25);
-      border-radius: var(--radius-md);
-      padding: 14px 20px;
-      font-size: 14px;
-      color: var(--text-primary);
-      margin-bottom: 28px;
-      display: none;
-    }
-    .email-confirmation strong {
-      color: var(--text-primary);
     }
   </style>
 </head>
@@ -156,20 +151,15 @@
     <div id="successState" style="display:none">
       <div class="success-icon">✅</div>
       <h1>Payment Successful!</h1>
-      <p class="success-sub">Thank you for your business! Your downloads are ready below.</p>
-
-      <div class="email-confirmation" id="emailConfirmation">
-        ✉️ A receipt and download links have been sent to <strong id="emailAddress"></strong>
-      </div>
+      <p class="success-sub">Thank you for your purchase. Your downloads are ready.</p>
 
       <div class="download-list" id="downloadList">
         <!-- Download cards injected by JS -->
       </div>
 
       <div class="expiry-notice">
-        🕐 Download links expire in <strong>24 hours</strong>. Save your files after downloading.
-        We've also emailed your download links for safekeeping.<br>
-        Need help? Contact us at <a href="mailto:hello@fixthevuln.com" style="color:var(--accent);font-weight:600">hello@fixthevuln.com</a>
+        🕐 Download links expire in <strong>24 hours</strong>. Save your files after downloading.<br>
+        Need help? Contact us at the email on fixthevuln.com.
       </div>
 
       <a href="store.html" class="back-link">← Browse more planners</a>
@@ -202,6 +192,19 @@
       adhd: 'ADHD-Friendly',
       dark: 'Dark Mode',
       bundle: 'Complete Bundle',
+    };
+
+    const CAREER_PATH_NAMES = {
+      'comptia-trifecta': 'CompTIA Trifecta',
+      'comptia-a-plus': 'CompTIA A+ Complete',
+      'comptia-security-track': 'CompTIA Security Track',
+      'security-pro': 'Security Pro',
+      'aws-track': 'AWS Track',
+      'azure-track': 'Azure Track',
+      'cloud-fundamentals': 'Cloud Fundamentals',
+      'isaca-grc': 'ISACA GRC',
+      'isc2-path': 'ISC2 Path',
+      'cisco-path': 'Cisco Path',
     };
 
     const CERT_NAMES = {
@@ -285,27 +288,39 @@
         // Clear the cart
         localStorage.removeItem('ftv_cart');
 
-        // Show downloads
+        // Show downloads, grouped by career path
         const downloadList = document.getElementById('downloadList');
-        downloadList.innerHTML = data.downloads.map(dl => {
-          const certName = CERT_NAMES[dl.certId] || dl.certId;
-          const variantLabel = VARIANT_LABELS[dl.variant] || dl.variant;
-          return `
-            <div class="download-card">
-              <div class="download-info">
-                <h3>${certName} <span class="variant-badge">${variantLabel}</span></h3>
-                <p>${dl.filename}</p>
-              </div>
-              <a class="btn-download" href="${dl.url}" download>Download PDF</a>
-            </div>
-          `;
-        }).join('');
 
-        // Show email confirmation banner if email available
-        if (data.email) {
-          document.getElementById('emailAddress').textContent = data.email;
-          document.getElementById('emailConfirmation').style.display = 'block';
+        // Separate career path downloads from individual downloads
+        const grouped = {};
+        const individual = [];
+        for (const dl of data.downloads) {
+          if (dl.careerPathId) {
+            if (!grouped[dl.careerPathId]) grouped[dl.careerPathId] = [];
+            grouped[dl.careerPathId].push(dl);
+          } else {
+            individual.push(dl);
+          }
         }
+
+        let html = '';
+
+        // Render career path groups
+        for (const [pathId, downloads] of Object.entries(grouped)) {
+          const pathName = CAREER_PATH_NAMES[pathId] || pathId;
+          html += `<div class="download-group-header">${pathName} Career Path</div>`;
+          html += downloads.map(dl => renderDownloadCard(dl)).join('');
+        }
+
+        // Render individual downloads
+        if (individual.length > 0) {
+          if (Object.keys(grouped).length > 0) {
+            html += `<div class="download-group-header">Individual Planners</div>`;
+          }
+          html += individual.map(dl => renderDownloadCard(dl)).join('');
+        }
+
+        downloadList.innerHTML = html;
 
         document.getElementById('loadingState').style.display = 'none';
         document.getElementById('successState').style.display = 'block';
@@ -314,6 +329,22 @@
         console.error('Verification error:', err);
         showError();
       }
+    }
+
+    function renderDownloadCard(dl) {
+      const certName = CERT_NAMES[dl.certId] || dl.certId;
+      const variantLabel = VARIANT_LABELS[dl.variant] || dl.variant;
+      const isZip = dl.filename.endsWith('.zip');
+      const btnLabel = isZip ? 'Download ZIP' : 'Download PDF';
+      return `
+        <div class="download-card">
+          <div class="download-info">
+            <h3>${certName} <span class="variant-badge">${variantLabel}</span></h3>
+            <p>${dl.filename}</p>
+          </div>
+          <a class="btn-download" href="${dl.url}" download>${btnLabel}</a>
+        </div>
+      `;
     }
 
     function showError() {
