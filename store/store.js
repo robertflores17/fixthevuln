@@ -23,6 +23,98 @@ const VARIANT_LABELS = {
   bundle:   '3-Format Bundle (Standard + Dark + ADHD)',
 };
 
+// ─── CAREER PATH BUNDLES ────────────────────
+const CAREER_PATHS = [
+  {
+    id: 'comptia-trifecta',
+    name: 'CompTIA Trifecta',
+    desc: 'The essential IT foundation: A+ (both cores), Network+, and Security+',
+    certs: ['CompTIA A+ Core 1', 'CompTIA A+ Core 2', 'CompTIA Network+', 'CompTIA Security+'],
+    certCount: 4,
+    icon: '🏆',
+  },
+  {
+    id: 'comptia-a-plus',
+    name: 'CompTIA A+ Complete',
+    desc: 'Both A+ exams in one bundle — start your IT career',
+    certs: ['CompTIA A+ Core 1', 'CompTIA A+ Core 2'],
+    certCount: 2,
+    icon: '💻',
+  },
+  {
+    id: 'comptia-security-track',
+    name: 'CompTIA Security Track',
+    desc: 'Full security progression from Security+ through CASP+',
+    certs: ['CompTIA Security+', 'CompTIA CySA+', 'CompTIA PenTest+', 'CompTIA CASP+'],
+    certCount: 4,
+    icon: '🔐',
+  },
+  {
+    id: 'security-pro',
+    name: 'Security Pro',
+    desc: 'Cross-vendor security combo: CompTIA Security+ and ISC2 CISSP',
+    certs: ['CompTIA Security+', 'ISC2 CISSP'],
+    certCount: 2,
+    icon: '🛡️',
+  },
+  {
+    id: 'aws-track',
+    name: 'AWS Track',
+    desc: 'AWS cloud career path: Practitioner → Architect → Developer',
+    certs: ['AWS Cloud Practitioner', 'AWS Solutions Architect', 'AWS Developer'],
+    certCount: 3,
+    icon: '☁️',
+  },
+  {
+    id: 'azure-track',
+    name: 'Azure Track',
+    desc: 'Microsoft Azure path: Fundamentals → Admin → Architect',
+    certs: ['Azure Fundamentals (AZ-900)', 'Azure Administrator (AZ-104)', 'Azure Architect (AZ-305)'],
+    certCount: 3,
+    icon: '🔷',
+  },
+  {
+    id: 'cloud-fundamentals',
+    name: 'Cloud Fundamentals',
+    desc: 'Multi-cloud foundations: AWS, Azure, and Google Cloud in one bundle',
+    certs: ['AWS Cloud Practitioner', 'Azure Fundamentals', 'Google Cloud Engineer'],
+    certCount: 3,
+    icon: '🌐',
+  },
+  {
+    id: 'isaca-grc',
+    name: 'ISACA GRC',
+    desc: 'Governance, Risk & Compliance trifecta: CISA, CISM, and CRISC',
+    certs: ['ISACA CISA', 'ISACA CISM', 'ISACA CRISC'],
+    certCount: 3,
+    icon: '📊',
+  },
+  {
+    id: 'isc2-path',
+    name: 'ISC2 Path',
+    desc: 'ISC2 progression: CC → SSCP → CISSP',
+    certs: ['ISC2 CC', 'ISC2 SSCP', 'ISC2 CISSP'],
+    certCount: 3,
+    icon: '🎓',
+  },
+  {
+    id: 'cisco-path',
+    name: 'Cisco Path',
+    desc: 'Cisco networking career: CCNA, CCNP ENCOR, and CyberOps',
+    certs: ['Cisco CCNA', 'Cisco CCNP ENCOR', 'Cisco CyberOps'],
+    certCount: 3,
+    icon: '🌐',
+  },
+];
+
+// Career path pricing by cert count and variant type
+const CAREER_PATH_PRICING = {
+  // { certCount: { single format price, bundle (3-format) price, individual total single, individual total bundle } }
+  2: { single: 8.99,  bundle: 16.99, indivSingle: 11.98, indivBundle: 23.98 },
+  3: { single: 12.99, bundle: 24.99, indivSingle: 17.97, indivBundle: 35.97 },
+  4: { single: 16.99, bundle: 34.99, indivSingle: 23.96, indivBundle: 47.96 },
+};
+
 // ─── PRODUCT CATALOG ────────────────────────
 const PRODUCTS = [
   // CompTIA
@@ -80,7 +172,8 @@ let selectedVariant = localStorage.getItem('ftv_variant') || 'standard';
 let selectedVendor = 'all';
 
 // ─── DOM REFS ───────────────────────────────
-const productGrid   = document.getElementById('productGrid');
+const productGrid     = document.getElementById('productGrid');
+const careerPathGrid  = document.getElementById('careerPathGrid');
 const cartBadge     = document.getElementById('cartBadge');
 const cartSidebar   = document.getElementById('cartSidebar');
 const cartOverlay   = document.getElementById('cartOverlay');
@@ -97,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initFormatSelector();
   initVendorTabs();
   renderProducts();
+  renderCareerPaths();
   updateCartUI();
   checkForSuccess();
 });
@@ -139,6 +233,7 @@ function initFormatSelector() {
       selectedVariant = card.dataset.variant;
       localStorage.setItem('ftv_variant', selectedVariant);
       renderProducts();
+      renderCareerPaths();
     });
   });
 }
@@ -242,6 +337,7 @@ function removeFromCart(key) {
   saveCart();
   updateCartUI();
   renderProducts();
+  renderCareerPaths();
 }
 
 function saveCart() {
@@ -300,6 +396,74 @@ cartOverlay.addEventListener('click', closeCart);
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeCart();
 });
+
+// ─── RENDER CAREER PATHS ───────────────────
+function renderCareerPaths() {
+  const isBundle = selectedVariant === 'bundle';
+  const variantLabel = VARIANT_LABELS[selectedVariant];
+
+  careerPathGrid.innerHTML = CAREER_PATHS.map(path => {
+    const tier = CAREER_PATH_PRICING[path.certCount];
+    const price = isBundle ? tier.bundle : tier.single;
+    const indivPrice = isBundle ? tier.indivBundle : tier.indivSingle;
+    const savings = Math.round((1 - price / indivPrice) * 100);
+    const cartKey = `cp__${path.id}__${selectedVariant}`;
+    const inCart = cart.some(item => item.key === cartKey);
+
+    return `
+      <div class="career-card">
+        <div class="career-card-header">
+          <span class="career-icon">${path.icon}</span>
+          <span class="savings-badge">Save ${savings}%</span>
+        </div>
+        <div class="career-name">${path.name}</div>
+        <div class="career-desc">${path.desc}</div>
+        <div class="career-certs">
+          ${path.certs.map(c => `<div class="career-cert-item">✓ ${c}</div>`).join('')}
+        </div>
+        <div class="career-includes">${path.certCount} planners · ${variantLabel} format</div>
+        <div class="product-bottom">
+          <div class="product-price">
+            $${price.toFixed(2)}
+            <span class="original">$${indivPrice.toFixed(2)}</span>
+          </div>
+          <button class="btn-add btn-add-career ${inCart ? 'added' : ''}"
+                  onclick="addCareerPathToCart('${path.id}', '${escapeStr(path.name)}', ${path.certCount})"
+                  ${inCart ? 'disabled' : ''}>
+            ${inCart ? '✓ Added' : 'Add to Cart'}
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function addCareerPathToCart(pathId, pathName, certCount) {
+  const key = `cp__${pathId}__${selectedVariant}`;
+  if (cart.some(item => item.key === key)) return;
+
+  const isBundle = selectedVariant === 'bundle';
+  const tier = CAREER_PATH_PRICING[certCount];
+  const price = isBundle ? tier.bundle : tier.single;
+
+  cart.push({
+    key,
+    productId: `cp:${pathId}`,
+    name: `${pathName} Career Path`,
+    variant: selectedVariant,
+    variantLabel: VARIANT_LABELS[selectedVariant],
+    price,
+  });
+
+  saveCart();
+  updateCartUI();
+  renderProducts();
+  renderCareerPaths();
+  openCart();
+
+  cartBadge.classList.add('bump');
+  setTimeout(() => cartBadge.classList.remove('bump'), 300);
+}
 
 // ─── STRIPE CHECKOUT ────────────────────────
 btnCheckout.addEventListener('click', async () => {
