@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Download Your Planner | FixTheVuln Store</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="store.css">
+  <style>
+    .success-page {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 80px 24px;
+      text-align: center;
+      min-height: 80vh;
+    }
+    .success-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+    .success-page h1 {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .success-sub {
+      color: var(--text-secondary);
+      font-size: 16px;
+      margin-bottom: 40px;
+    }
+    .download-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 40px;
+      text-align: left;
+    }
+    .download-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .download-info h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .download-info p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .btn-download {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      font-family: var(--font-sans);
+      white-space: nowrap;
+    }
+    .btn-download:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+    .expiry-notice {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+    .loading-state {
+      padding: 60px 0;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 20px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .error-state {
+      color: var(--danger);
+    }
+    .back-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 15px;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    .variant-badge {
+      display: inline-block;
+      background: var(--accent-glow);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 2px 8px;
+      border-radius: 50px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-bar">
+    <a href="/" class="nav-back">← Back to FixTheVuln</a>
+    <div class="nav-controls">
+      <button class="btn-icon" id="themeToggle" aria-label="Toggle theme">☀️</button>
+    </div>
+  </nav>
+
+  <div class="success-page" id="successPage">
+    <!-- Loading state (shown while verifying) -->
+    <div id="loadingState" class="loading-state">
+      <div class="spinner"></div>
+      <p>Verifying your payment...</p>
+    </div>
+
+    <!-- Success state (shown after verification) -->
+    <div id="successState" style="display:none">
+      <div class="success-icon">✅</div>
+      <h1>Payment Successful!</h1>
+      <p class="success-sub">Thank you for your purchase. Your downloads are ready.</p>
+
+      <div class="download-list" id="downloadList">
+        <!-- Download cards injected by JS -->
+      </div>
+
+      <div class="expiry-notice">
+        🕐 Download links expire in <strong>24 hours</strong>. Save your files after downloading.<br>
+        Need help? Contact us at the email on fixthevuln.com.
+      </div>
+
+      <a href="store.html" class="back-link">← Browse more planners</a>
+    </div>
+
+    <!-- Error state -->
+    <div id="errorState" style="display:none">
+      <div class="success-icon">❌</div>
+      <h1 class="error-state">Verification Failed</h1>
+      <p class="success-sub">We couldn't verify your payment. If you were charged, please contact support.</p>
+      <a href="store.html" class="back-link">← Back to store</a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="store-footer">
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="/planner">Free Study Planner</a>
+      <a href="store.html">Store</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 FixTheVuln. Educational resources for security professionals.</p>
+  </footer>
+
+  <script>
+    const VERIFY_URL = 'https://fixthevuln-checkout.robertflores17.workers.dev/verify';
+
+    const VARIANT_LABELS = {
+      standard: 'Standard',
+      adhd: 'ADHD-Friendly',
+      dark: 'Dark Mode',
+      bundle: 'Complete Bundle',
+    };
+
+    const CERT_NAMES = {
+      'comptia-a-plus-1201': 'CompTIA A+ Core 1',
+      'comptia-a-plus-1202': 'CompTIA A+ Core 2',
+      'comptia-security-plus': 'CompTIA Security+',
+      'comptia-network-plus': 'CompTIA Network+',
+      'comptia-linux-plus': 'CompTIA Linux+',
+      'comptia-cloud-plus': 'CompTIA Cloud+',
+      'comptia-cysa-plus': 'CompTIA CySA+',
+      'comptia-pentest-plus': 'CompTIA PenTest+',
+      'comptia-casp-plus': 'CompTIA CASP+',
+      'isc2-cc': 'ISC2 CC',
+      'isc2-sscp': 'ISC2 SSCP',
+      'isc2-cissp': 'ISC2 CISSP',
+      'isc2-ccsp': 'ISC2 CCSP',
+      'aws-cloud-practitioner': 'AWS Cloud Practitioner',
+      'aws-solutions-architect': 'AWS Solutions Architect',
+      'aws-developer': 'AWS Developer Associate',
+      'aws-cloudops': 'AWS CloudOps Engineer',
+      'aws-security-specialty': 'AWS Security Specialty',
+      'ms-az-900': 'Azure Fundamentals',
+      'ms-az-104': 'Azure Administrator',
+      'ms-az-305': 'Azure Solutions Architect',
+      'ms-sc-900': 'Security Fundamentals',
+      'ms-ai-900': 'Azure AI Fundamentals',
+      'cisco-ccna': 'Cisco CCNA',
+      'cisco-ccnp-encor': 'Cisco CCNP ENCOR',
+      'cisco-cyberops': 'Cisco CyberOps',
+      'isaca-cisa': 'ISACA CISA',
+      'isaca-cism': 'ISACA CISM',
+      'isaca-crisc': 'ISACA CRISC',
+      'giac-gsec': 'GIAC GSEC',
+      'google-ace': 'Google Cloud Engineer',
+      'google-pca': 'Google Cloud Architect',
+    };
+
+    // Theme toggle
+    const saved = localStorage.getItem('ftv_theme');
+    if (saved === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+      document.getElementById('themeToggle').textContent = '🌙';
+    }
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      if (isLight) {
+        document.documentElement.removeAttribute('data-theme');
+        document.getElementById('themeToggle').textContent = '☀️';
+        localStorage.setItem('ftv_theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        document.getElementById('themeToggle').textContent = '🌙';
+        localStorage.setItem('ftv_theme', 'light');
+      }
+    });
+
+    // Verify payment and show downloads
+    async function init() {
+      const params = new URLSearchParams(window.location.search);
+      const sessionId = params.get('session_id');
+
+      if (!sessionId) {
+        showError();
+        return;
+      }
+
+      try {
+        const response = await fetch(VERIFY_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId }),
+        });
+
+        const data = await response.json();
+
+        if (!data.verified) {
+          showError();
+          return;
+        }
+
+        // Clear the cart
+        localStorage.removeItem('ftv_cart');
+
+        // Show downloads
+        const downloadList = document.getElementById('downloadList');
+        downloadList.innerHTML = data.downloads.map(dl => {
+          const certName = CERT_NAMES[dl.certId] || dl.certId;
+          const variantLabel = VARIANT_LABELS[dl.variant] || dl.variant;
+          return `
+            <div class="download-card">
+              <div class="download-info">
+                <h3>${certName} <span class="variant-badge">${variantLabel}</span></h3>
+                <p>${dl.filename}</p>
+              </div>
+              <a class="btn-download" href="${dl.url}" download>Download PDF</a>
+            </div>
+          `;
+        }).join('');
+
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('successState').style.display = 'block';
+
+      } catch (err) {
+        console.error('Verification error:', err);
+        showError();
+      }
+    }
+
+    function showError() {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('errorState').style.display = 'block';
+    }
+
+    init();
+  </script>
+</body>
+</html>
