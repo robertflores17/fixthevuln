@@ -273,7 +273,7 @@ function renderProducts() {
         <div class="product-features">
           ${product.tags.map(t => `<span class="product-tag">${t}</span>`).join('')}
         </div>
-        ${selectedVariant === 'bundle' ? '<div class="product-bundle-note">Includes: Standard + Dark Mode + ADHD-Friendly PDFs</div>' : ''}
+        ${selectedVariant === 'bundle' ? '<div class="product-bundle-note">📦 Standard + Dark + ADHD</div>' : ''}
         <div class="product-bottom">
           <div class="product-price">
             $${price.toFixed(2)}
