@@ -308,8 +308,6 @@ btnCheckout.addEventListener('click', async () => {
   btnCheckout.textContent = 'Processing...';
 
   try {
-    const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
-
     const response = await fetch(CHECKOUT_API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -331,15 +329,16 @@ btnCheckout.addEventListener('click', async () => {
       return;
     }
 
-    // Redirect to Stripe Checkout
-    const result = await stripe.redirectToCheckout({ sessionId: data.sessionId });
-    if (result.error) {
-      alert(result.error.message);
+    // Redirect directly to Stripe Checkout URL
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      alert('No checkout URL returned. Please try again.');
     }
 
   } catch (err) {
     console.error('Checkout error:', err);
-    alert('Checkout error: ' + err.message + '\n\nDetails: ' + JSON.stringify(err));
+    alert('Checkout error: ' + err.message);
   } finally {
     btnCheckout.disabled = false;
     btnCheckout.textContent = 'Proceed to Checkout →';
