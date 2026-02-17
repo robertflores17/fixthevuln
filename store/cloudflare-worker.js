@@ -286,7 +286,7 @@ async function handleVerify(request, env, cors) {
     const purchasedItems = session.metadata.purchased_items || '';
     const rawItems = purchasedItems.split(',').filter(Boolean);
     const items = expandPurchasedItems(rawItems);
-    const downloads = generateDownloadLinks(sessionId, items, rawItems);
+    const downloads = await generateDownloadLinks(sessionId, items, rawItems, env.STRIPE_WEBHOOK_SECRET);
 
     return new Response(JSON.stringify({
       verified: true,
@@ -317,10 +317,22 @@ async function handleDownload(request, env, cors) {
       return new Response('Missing token or file', { status: 400 });
     }
 
-    // Decode and validate token
+    // Verify HMAC signature and decode token
+    const dotIndex = token.lastIndexOf('.');
+    if (dotIndex === -1) {
+      return new Response('Invalid token', { status: 403 });
+    }
+    const payload = token.substring(0, dotIndex);
+    const sig = token.substring(dotIndex + 1);
+
+    const validSig = await verifyTokenHmac(payload, sig, env.STRIPE_WEBHOOK_SECRET);
+    if (!validSig) {
+      return new Response('Invalid token', { status: 403 });
+    }
+
     let tokenData;
     try {
-      tokenData = JSON.parse(atob(token));
+      tokenData = JSON.parse(atob(payload));
     } catch {
       return new Response('Invalid token', { status: 403 });
     }
@@ -377,11 +389,36 @@ function getFilename(certId, variant) {
   return `${certId}${variantSuffix[variant] || ''}_study_planner.pdf`;
 }
 
+// ─── TOKEN HMAC SIGNING ─────────────────────────
+async function createTokenHmac(data, secret) {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw', encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false, ['sign']
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(data));
+  return Array.from(new Uint8Array(sig))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+async function verifyTokenHmac(data, signature, secret) {
+  const expected = await createTokenHmac(data, secret);
+  if (expected.length !== signature.length) return false;
+  let mismatch = 0;
+  for (let i = 0; i < expected.length; i++) {
+    mismatch |= expected.charCodeAt(i) ^ signature.charCodeAt(i);
+  }
+  return mismatch === 0;
+}
+
 // ─── SHARED: GENERATE DOWNLOAD LINKS ────────────
-function generateDownloadLinks(sessionId, items, rawItems) {
+async function generateDownloadLinks(sessionId, items, rawItems, secret) {
   const expiry = Date.now() + 24 * 60 * 60 * 1000;
-  const tokenData = JSON.stringify({ sessionId, items, expiry });
-  const token = btoa(tokenData);
+  const payload = btoa(JSON.stringify({ sessionId, items, expiry }));
+  const sig = await createTokenHmac(payload, secret);
+  const token = `${payload}.${sig}`;
 
   // Build a map: certId → careerPathId for grouping on the success page
   const certToPath = {};
@@ -483,7 +520,7 @@ async function handleWebhook(request, env) {
       const items = expandPurchasedItems(rawItems);
 
       if (items.length > 0) {
-        const downloads = generateDownloadLinks(session.id, items, rawItems);
+        const downloads = await generateDownloadLinks(session.id, items, rawItems, env.STRIPE_WEBHOOK_SECRET);
 
         // Send customer email + seller notification in parallel
         const promises = [];
@@ -509,7 +546,19 @@ async function handleWebhook(request, env) {
 
 // ─── CUSTOMER EMAIL ─────────────────────────────
 async function sendCustomerEmail(env, toEmail, downloads, items) {
-  const itemRows = downloads.map(dl => {
+  // Group downloads by career path for nicer email layout
+  const grouped = {};
+  const individual = [];
+  for (const dl of downloads) {
+    if (dl.careerPathId) {
+      if (!grouped[dl.careerPathId]) grouped[dl.careerPathId] = [];
+      grouped[dl.careerPathId].push(dl);
+    } else {
+      individual.push(dl);
+    }
+  }
+
+  function renderRow(dl) {
     const certName = CERT_NAMES[dl.certId] || dl.certId;
     const variantLabel = VARIANT_LABELS[dl.variant] || dl.variant;
     return `
@@ -523,7 +572,29 @@ async function sendCustomerEmail(env, toEmail, downloads, items) {
           <a href="${dl.url}" style="display:inline-block;background:#2563eb;color:#ffffff;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">Download</a>
         </td>
       </tr>`;
-  }).join('');
+  }
+
+  function renderGroupHeader(name) {
+    return `
+      <tr>
+        <td colspan="2" style="padding:16px 16px 8px;background:#f8fafc;border-bottom:1px solid #e5e7eb;">
+          <strong style="color:#1e293b;font-size:15px;">${name} Career Path</strong>
+        </td>
+      </tr>`;
+  }
+
+  let itemRows = '';
+  for (const [pathId, dls] of Object.entries(grouped)) {
+    const pathName = CAREER_PATH_NAMES[pathId] || pathId;
+    itemRows += renderGroupHeader(pathName);
+    itemRows += dls.map(renderRow).join('');
+  }
+  if (individual.length > 0) {
+    if (Object.keys(grouped).length > 0) {
+      itemRows += renderGroupHeader('Individual Planners');
+    }
+    itemRows += individual.map(renderRow).join('');
+  }
 
   const html = `
 <!DOCTYPE html>
@@ -581,17 +652,25 @@ async function sendCustomerEmail(env, toEmail, downloads, items) {
 
 // ─── SELLER NOTIFICATION ────────────────────────
 async function sendSellerNotification(env, customerEmail, downloads, items, amountCents) {
-  const certNames = downloads
-    .map(dl => CERT_NAMES[dl.certId] || dl.certId)
-    .join(', ');
+  // Build subject: prefer career path names over listing every cert
+  const pathNames = [...new Set(downloads.filter(dl => dl.careerPathName).map(dl => dl.careerPathName))];
+  const individualNames = downloads.filter(dl => !dl.careerPathId).map(dl => CERT_NAMES[dl.certId] || dl.certId);
+  const certNames = [...pathNames.map(n => `${n} Path`), ...individualNames].join(', ') || 'Unknown';
 
-  const itemList = downloads
-    .map(dl => {
-      const certName = CERT_NAMES[dl.certId] || dl.certId;
-      const variantLabel = VARIANT_LABELS[dl.variant] || dl.variant;
-      return `• ${certName} (${variantLabel})`;
-    })
-    .join('\n');
+  const itemList = [];
+  if (pathNames.length > 0) {
+    for (const name of pathNames) {
+      const pathDls = downloads.filter(dl => dl.careerPathName === name);
+      const variant = VARIANT_LABELS[pathDls[0]?.variant] || pathDls[0]?.variant;
+      itemList.push(`• ${name} Career Path (${variant}) — ${pathDls.length} planners`);
+    }
+  }
+  for (const dl of downloads.filter(d => !d.careerPathId)) {
+    const certName = CERT_NAMES[dl.certId] || dl.certId;
+    const variantLabel = VARIANT_LABELS[dl.variant] || dl.variant;
+    itemList.push(`• ${certName} (${variantLabel})`);
+  }
+  const itemListStr = itemList.join('\n');
 
   const amount = amountCents ? `$${(amountCents / 100).toFixed(2)}` : 'N/A';
 
@@ -614,7 +693,7 @@ async function sendSellerNotification(env, customerEmail, downloads, items, amou
         </tr>
         <tr>
           <td style="padding:8px 0;color:#64748b;font-size:14px;vertical-align:top;">Items</td>
-          <td style="padding:8px 0;color:#1e293b;font-size:14px;white-space:pre-line;">${itemList}</td>
+          <td style="padding:8px 0;color:#1e293b;font-size:14px;white-space:pre-line;">${itemListStr}</td>
         </tr>
       </table>
     </div>

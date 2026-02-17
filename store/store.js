@@ -30,6 +30,7 @@ const CAREER_PATHS = [
     name: 'CompTIA Trifecta',
     desc: 'The essential IT foundation: A+ (both cores), Network+, and Security+',
     certs: ['CompTIA A+ Core 1', 'CompTIA A+ Core 2', 'CompTIA Network+', 'CompTIA Security+'],
+    certIds: ['comptia-a-plus-1201', 'comptia-a-plus-1202', 'comptia-network-plus', 'comptia-security-plus'],
     certCount: 4,
     icon: '🏆',
   },
@@ -38,6 +39,7 @@ const CAREER_PATHS = [
     name: 'CompTIA A+ Complete',
     desc: 'Both A+ exams in one bundle — start your IT career',
     certs: ['CompTIA A+ Core 1', 'CompTIA A+ Core 2'],
+    certIds: ['comptia-a-plus-1201', 'comptia-a-plus-1202'],
     certCount: 2,
     icon: '💻',
   },
@@ -46,6 +48,7 @@ const CAREER_PATHS = [
     name: 'CompTIA Security Track',
     desc: 'Full security progression from Security+ through CASP+',
     certs: ['CompTIA Security+', 'CompTIA CySA+', 'CompTIA PenTest+', 'CompTIA CASP+'],
+    certIds: ['comptia-security-plus', 'comptia-cysa-plus', 'comptia-pentest-plus', 'comptia-casp-plus'],
     certCount: 4,
     icon: '🔐',
   },
@@ -54,6 +57,7 @@ const CAREER_PATHS = [
     name: 'Security Pro',
     desc: 'Cross-vendor security combo: CompTIA Security+ and ISC2 CISSP',
     certs: ['CompTIA Security+', 'ISC2 CISSP'],
+    certIds: ['comptia-security-plus', 'isc2-cissp'],
     certCount: 2,
     icon: '🛡️',
   },
@@ -62,6 +66,7 @@ const CAREER_PATHS = [
     name: 'AWS Track',
     desc: 'AWS cloud career path: Practitioner → Architect → Developer',
     certs: ['AWS Cloud Practitioner', 'AWS Solutions Architect', 'AWS Developer'],
+    certIds: ['aws-cloud-practitioner', 'aws-solutions-architect', 'aws-developer'],
     certCount: 3,
     icon: '☁️',
   },
@@ -70,6 +75,7 @@ const CAREER_PATHS = [
     name: 'Azure Track',
     desc: 'Microsoft Azure path: Fundamentals → Admin → Architect',
     certs: ['Azure Fundamentals (AZ-900)', 'Azure Administrator (AZ-104)', 'Azure Architect (AZ-305)'],
+    certIds: ['ms-az-900', 'ms-az-104', 'ms-az-305'],
     certCount: 3,
     icon: '🔷',
   },
@@ -78,6 +84,7 @@ const CAREER_PATHS = [
     name: 'Cloud Fundamentals',
     desc: 'Multi-cloud foundations: AWS, Azure, and Google Cloud in one bundle',
     certs: ['AWS Cloud Practitioner', 'Azure Fundamentals', 'Google Cloud Engineer'],
+    certIds: ['aws-cloud-practitioner', 'ms-az-900', 'google-ace'],
     certCount: 3,
     icon: '🌐',
   },
@@ -86,6 +93,7 @@ const CAREER_PATHS = [
     name: 'ISACA GRC',
     desc: 'Governance, Risk & Compliance trifecta: CISA, CISM, and CRISC',
     certs: ['ISACA CISA', 'ISACA CISM', 'ISACA CRISC'],
+    certIds: ['isaca-cisa', 'isaca-cism', 'isaca-crisc'],
     certCount: 3,
     icon: '📊',
   },
@@ -94,6 +102,7 @@ const CAREER_PATHS = [
     name: 'ISC2 Path',
     desc: 'ISC2 progression: CC → SSCP → CISSP',
     certs: ['ISC2 CC', 'ISC2 SSCP', 'ISC2 CISSP'],
+    certIds: ['isc2-cc', 'isc2-sscp', 'isc2-cissp'],
     certCount: 3,
     icon: '🎓',
   },
@@ -102,6 +111,7 @@ const CAREER_PATHS = [
     name: 'Cisco Path',
     desc: 'Cisco networking career: CCNA, CCNP ENCOR, and CyberOps',
     certs: ['Cisco CCNA', 'Cisco CCNP ENCOR', 'Cisco CyberOps'],
+    certIds: ['cisco-ccna', 'cisco-ccnp-encor', 'cisco-cyberops'],
     certCount: 3,
     icon: '🌐',
   },
@@ -277,7 +287,7 @@ function renderProducts() {
         <div class="product-bottom">
           <div class="product-price">
             $${price.toFixed(2)}
-            ${selectedVariant === 'bundle' ? '<span class="original">$17.97</span>' : ''}
+            ${selectedVariant === 'bundle' ? `<span class="original">$${(PRICING.standard + PRICING.adhd + PRICING.dark).toFixed(2)}</span>` : ''}
           </div>
           <button class="btn-add ${inCart ? 'added' : ''}"
                   onclick="addToCart('${product.id}', '${escapeStr(product.name)}', '${selectedVariant}', ${price})"
@@ -312,6 +322,19 @@ function escapeStr(str) {
 function addToCart(productId, productName, variant, price) {
   const key = `${productId}__${variant}`;
   if (cart.some(item => item.key === key)) return;
+
+  // Check if a career path in cart already includes this cert
+  const overlappingPath = cart.find(item => {
+    if (!item.productId.startsWith('cp:')) return false;
+    if (item.variant !== variant) return false;
+    const cpId = item.productId.replace('cp:', '');
+    const path = CAREER_PATHS.find(p => p.id === cpId);
+    return path && path.certIds.includes(productId);
+  });
+  if (overlappingPath) {
+    alert(`"${productName}" is already included in the "${overlappingPath.name}" in your cart. No need to add it separately!`);
+    return;
+  }
 
   cart.push({
     key,
@@ -441,6 +464,23 @@ function renderCareerPaths() {
 function addCareerPathToCart(pathId, pathName, certCount) {
   const key = `cp__${pathId}__${selectedVariant}`;
   if (cart.some(item => item.key === key)) return;
+
+  // Check for individual certs in cart that overlap with this career path
+  const path = CAREER_PATHS.find(p => p.id === pathId);
+  if (path) {
+    const overlaps = cart.filter(item => {
+      if (item.productId.startsWith('cp:')) return false;
+      if (item.variant !== selectedVariant) return false;
+      return path.certIds.includes(item.productId);
+    });
+    if (overlaps.length > 0) {
+      const names = overlaps.map(o => o.name).join(', ');
+      const proceed = confirm(`You have ${names} individually in your cart (same format). The career path already includes ${overlaps.length === 1 ? 'it' : 'them'} — remove ${overlaps.length === 1 ? 'it' : 'them'} to avoid paying twice?`);
+      if (proceed) {
+        overlaps.forEach(o => { cart = cart.filter(item => item.key !== o.key); });
+      }
+    }
+  }
 
   const isBundle = selectedVariant === 'bundle';
   const tier = CAREER_PATH_PRICING[certCount];
