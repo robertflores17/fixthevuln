@@ -4,7 +4,7 @@
    ============================================ */
 
 // ─── STRIPE CONFIG ──────────────────────────
-const STRIPE_PUBLISHABLE_KEY = 'pk_test_51T1c03LsJhBfQTww6CflN4WKz0Vt70OnAVFW3LJRW4oohn48gZjlhc58h7W02pGsf9LFTiQRI4eaeD53ogBEfBCS00QsHidbdE';
+const STRIPE_PUBLISHABLE_KEY = 'pk_live_51T1bzYLBnrzacKtT0qGIOSxTYOp0ZUVdsAS5pYLKDYQpbIQs2PgypNZ7ARkcQeFNkyKLyl8qmBXBvOLf0Uaqqu0200xsCUOQk2';
 const CHECKOUT_API_URL = 'https://fixthevuln-checkout.robertflores17.workers.dev';
 // ─────────────────────────────────────────────
 
