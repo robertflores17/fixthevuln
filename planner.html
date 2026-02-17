@@ -107,6 +107,16 @@
         }
 
         /* ============================================================
+           SITE NAV (matches style.min.css)
+           ============================================================ */
+        .site-nav { background: var(--bg-surface); border-bottom: 1px solid var(--border); padding: .5rem 0; position: sticky; top: 0; z-index: 999; }
+        .site-nav .container { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .5rem; max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+        .site-nav-logo { font-weight: 700; font-size: 1.1rem; color: var(--accent); text-decoration: none; }
+        .site-nav-links { display: flex; gap: .25rem; flex-wrap: wrap; }
+        .site-nav-links a { color: var(--text-secondary); text-decoration: none; padding: .35rem .65rem; border-radius: 6px; font-size: .85rem; font-weight: 500; transition: background .2s, color .2s; }
+        .site-nav-links a:hover { background: rgba(37, 99, 235, 0.1); color: var(--accent); }
+
+        /* ============================================================
            BACKGROUND TEXTURE
            ============================================================ */
         body::before {
@@ -868,6 +878,8 @@
             <a href="resources.html">Resources</a>
             <a href="practice-tests.html">Quizzes</a>
             <a href="blog/">Blog</a>
+            <a href="/store/store.html" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: .35rem .75rem; border-radius: 6px; font-size: .85rem; font-weight: 600; text-decoration: none;">Store</a>
+            <button id="siteThemeToggle" style="background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: .3rem .6rem; border-radius: 6px; cursor: pointer; font-size: .9rem;">🌙</button>
         </div>
     </div>
 </nav>
@@ -1417,6 +1429,9 @@
             app.innerHTML = renderPlanner();
             bindPlanner();
         }
+        // Update site-nav theme toggle icon
+        const siteBtn = document.getElementById("siteThemeToggle");
+        if (siteBtn) siteBtn.textContent = state.dark ? '🌙' : '☀️';
     }
 
     // ---- SETUP SCREEN ----
@@ -1433,13 +1448,6 @@
         }).join("");
 
         return `
-        <nav class="nav-bar">
-            <a href="/">← Back to FixTheVuln</a>
-            <div class="nav-controls">
-                <button class="btn-icon" id="themeToggle">${state.dark ? '☀️' : '🌙'}</button>
-            </div>
-        </nav>
-
         <div class="hero animate-in">
             <div class="hero-badge">🛡️ FixTheVuln Tools</div>
             <h1>Certification Study Planner</h1>
@@ -1510,7 +1518,7 @@
         document.getElementById("selStart").onchange = e => { state.startDate = e.target.value; };
         document.getElementById("selPractice").onchange = e => { state.practiceWks = +e.target.value; };
         document.getElementById("adhdToggle").onclick = () => { state.adhd = !state.adhd; render(); };
-        document.getElementById("themeToggle").onclick = () => { state.dark = !state.dark; render(); };
+        // Theme toggle is now in the site-nav (outside #app)
         document.getElementById("btnGenerate").onclick = generatePlan;
     }
 
@@ -1736,6 +1744,8 @@
     // ================================================================
     // INIT
     // ================================================================
+    // Bind site-nav theme toggle (outside #app, so only bind once)
+    document.getElementById("siteThemeToggle").onclick = () => { state.dark = !state.dark; render(); };
     render();
     </script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
