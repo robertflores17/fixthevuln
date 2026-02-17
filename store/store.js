@@ -339,7 +339,7 @@ btnCheckout.addEventListener('click', async () => {
 
   } catch (err) {
     console.error('Checkout error:', err);
-    alert('Something went wrong. Please try again.');
+    alert('Checkout error: ' + err.message + '\n\nDetails: ' + JSON.stringify(err));
   } finally {
     btnCheckout.disabled = false;
     btnCheckout.textContent = 'Proceed to Checkout →';
