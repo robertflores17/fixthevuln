@@ -1,0 +1,2432 @@
+{
+  "metadata": {
+    "title": "CompTIA Linux+ XK0-005 Practice Questions",
+    "version": "1.0",
+    "total_questions": 150,
+    "exam": "XK0-005",
+    "domains": {
+      "1": {
+        "name": "System Management",
+        "weight": 32,
+        "count": 48
+      },
+      "2": {
+        "name": "Security",
+        "weight": 21,
+        "count": 32
+      },
+      "3": {
+        "name": "Scripting, Containers, and Automation",
+        "weight": 19,
+        "count": 28
+      },
+      "4": {
+        "name": "Troubleshooting",
+        "weight": 28,
+        "count": 42
+      }
+    }
+  },
+  "questions": [
+    {
+      "id": 1,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "Which directory in the Linux file system hierarchy contains essential system binaries needed for single-user mode and boot?",
+      "options": [
+        "/usr/bin",
+        "/sbin",
+        "/opt",
+        "/var"
+      ],
+      "correct": 1,
+      "explanation": "/sbin contains essential system binaries required during the boot process and for system recovery in single-user mode. /usr/bin holds general user commands, /opt is for optional software, and /var stores variable data.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 2,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "Which directory stores device files in Linux?",
+      "options": [
+        "/etc",
+        "/dev",
+        "/proc",
+        "/sys"
+      ],
+      "correct": 1,
+      "explanation": "/dev contains device files (block and character devices) that represent hardware components and virtual devices. The kernel and udev create and manage these files.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 3,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "What type of file system is /proc in Linux?",
+      "options": [
+        "ext4",
+        "XFS",
+        "A virtual/pseudo file system",
+        "tmpfs"
+      ],
+      "correct": 2,
+      "explanation": "/proc is a virtual (pseudo) file system that provides an interface to kernel data structures. It does not exist on disk but is generated dynamically by the kernel to expose process and system information.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 4,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "medium",
+      "question": "Which directory contains system-wide configuration files for services and applications?",
+      "options": [
+        "/var",
+        "/etc",
+        "/usr/local",
+        "/home"
+      ],
+      "correct": 1,
+      "explanation": "/etc is the standard directory for host-specific system configuration files. Services like SSH, Apache, and PAM all store their configuration files here.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 5,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "medium",
+      "question": "Which directory typically contains log files on a Linux system?",
+      "options": [
+        "/etc/log",
+        "/var/log",
+        "/tmp/log",
+        "/usr/log"
+      ],
+      "correct": 1,
+      "explanation": "/var/log is the standard location for system and application log files. Services like syslog, Apache, and the kernel write their logs here.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 6,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "easy",
+      "question": "Which command installs a package on a Debian-based system using APT?",
+      "options": [
+        "yum install package",
+        "apt install package",
+        "zypper install package",
+        "rpm -i package"
+      ],
+      "correct": 1,
+      "explanation": "The apt install command is used on Debian-based distributions (Ubuntu, Debian, Mint) to install packages from configured repositories. yum/dnf is for RHEL-based, and zypper is for SUSE-based systems.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 7,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "easy",
+      "question": "On a RHEL-based system, which command is used to install a package?",
+      "options": [
+        "apt install package",
+        "pacman -S package",
+        "dnf install package",
+        "dpkg -i package"
+      ],
+      "correct": 2,
+      "explanation": "dnf (Dandified YUM) is the default package manager for RHEL 8+, CentOS Stream, Fedora, and related distributions. It replaced yum and handles dependency resolution automatically.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 8,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "Which command would you use to query which RPM package owns a specific file?",
+      "options": [
+        "rpm -qf /path/to/file",
+        "rpm -qi package",
+        "rpm -ql package",
+        "rpm -qa"
+      ],
+      "correct": 0,
+      "explanation": "rpm -qf queries which package owns a given file. The -q flag means query, and -f means file. This is useful for determining which package installed a particular binary or configuration file.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 9,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "Which command correctly adds a third-party repository GPG key on a Debian-based system?",
+      "options": [
+        "apt-key add keyfile.gpg",
+        "gpg --dearmor keyfile.gpg -o /etc/apt/trusted.gpg.d/keyfile.gpg",
+        "rpm --import keyfile.gpg",
+        "dnf config-manager --add-repo keyfile.gpg"
+      ],
+      "correct": 1,
+      "explanation": "Modern Debian-based systems use gpg --dearmor to convert and place keys in /etc/apt/trusted.gpg.d/. The older apt-key command is deprecated. rpm --import and dnf config-manager are for RPM-based systems.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 10,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "easy",
+      "question": "Which systemctl command starts a service immediately?",
+      "options": [
+        "systemctl enable httpd",
+        "systemctl start httpd",
+        "systemctl restart httpd",
+        "systemctl reload httpd"
+      ],
+      "correct": 1,
+      "explanation": "systemctl start immediately starts a service. enable only configures it to start at boot without starting it now. restart stops and starts it, while reload re-reads configuration without stopping.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 11,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "easy",
+      "question": "What does 'systemctl enable nginx' do?",
+      "options": [
+        "Starts nginx immediately",
+        "Configures nginx to start automatically at boot",
+        "Restarts nginx",
+        "Checks if nginx is running"
+      ],
+      "correct": 1,
+      "explanation": "systemctl enable creates symbolic links so the service starts automatically at boot. It does not start the service immediately. Use 'systemctl enable --now' to both enable and start in one command.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 12,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "medium",
+      "question": "Which systemd unit type is used to create a mount point?",
+      "options": [
+        ".service",
+        ".timer",
+        ".mount",
+        ".socket"
+      ],
+      "correct": 2,
+      "explanation": "The .mount unit type defines mount points in systemd. Each .mount file corresponds to an entry in /etc/fstab and allows systemd to manage filesystem mounts with dependencies.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 13,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "In a systemd unit file, which directive specifies that the service should be restarted if it exits unexpectedly?",
+      "options": [
+        "RestartPolicy=always",
+        "Restart=on-failure",
+        "AutoRestart=true",
+        "RestartOnFailure=yes"
+      ],
+      "correct": 1,
+      "explanation": "Restart=on-failure in the [Service] section tells systemd to restart the service when it exits with a non-zero exit code or is killed by a signal. Other valid values include always, on-abort, and on-abnormal.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 14,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "easy",
+      "question": "Which command displays all currently running processes in a tree format?",
+      "options": [
+        "ps aux",
+        "pstree",
+        "top",
+        "jobs"
+      ],
+      "correct": 1,
+      "explanation": "pstree displays running processes in a tree hierarchy showing parent-child relationships. ps aux shows a flat list, top shows a dynamic real-time view, and jobs shows shell background jobs.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 15,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "easy",
+      "question": "Which signal does 'kill -9' send to a process?",
+      "options": [
+        "SIGTERM",
+        "SIGHUP",
+        "SIGKILL",
+        "SIGINT"
+      ],
+      "correct": 2,
+      "explanation": "kill -9 sends SIGKILL, which forces immediate termination and cannot be caught or ignored by the process. SIGTERM (15) is the default graceful termination signal.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 16,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "medium",
+      "question": "Which command changes the priority (nice value) of a running process with PID 1234 to 10?",
+      "options": [
+        "nice -n 10 1234",
+        "renice 10 -p 1234",
+        "priority 10 1234",
+        "chprio 10 1234"
+      ],
+      "correct": 1,
+      "explanation": "renice changes the priority of an already running process. The syntax is renice [value] -p [PID]. nice is used only when launching a new process, not for modifying existing ones.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 17,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "medium",
+      "question": "What does pressing Ctrl+Z do to a foreground process in bash?",
+      "options": [
+        "Terminates the process",
+        "Sends SIGINT to the process",
+        "Suspends the process and places it in the background",
+        "Sends SIGKILL to the process"
+      ],
+      "correct": 2,
+      "explanation": "Ctrl+Z sends SIGTSTP (signal 20) which suspends/stops the foreground process. The process can be resumed in the foreground with 'fg' or in the background with 'bg'.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 18,
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "easy",
+      "question": "Which command creates a new user account named 'jdoe' on Linux?",
+      "options": [
+        "adduser jdoe",
+        "useradd jdoe",
+        "newuser jdoe",
+        "createuser jdoe"
+      ],
+      "correct": 1,
+      "explanation": "useradd is the standard low-level command for creating user accounts across all Linux distributions. adduser is a higher-level wrapper that may not exist on all systems.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 19,
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "easy",
+      "question": "Which file stores encrypted user passwords on a modern Linux system?",
+      "options": [
+        "/etc/passwd",
+        "/etc/shadow",
+        "/etc/group",
+        "/etc/security"
+      ],
+      "correct": 1,
+      "explanation": "/etc/shadow stores encrypted (hashed) passwords with restricted permissions (readable only by root). /etc/passwd is world-readable and historically stored passwords but now contains an 'x' placeholder.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 20,
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "medium",
+      "question": "Which command modifies user 'jdoe' to add them to the supplementary group 'developers' without removing existing groups?",
+      "options": [
+        "usermod -G developers jdoe",
+        "usermod -aG developers jdoe",
+        "groupadd developers jdoe",
+        "chgrp developers jdoe"
+      ],
+      "correct": 1,
+      "explanation": "usermod -aG appends the user to the specified supplementary group. Without the -a flag, -G replaces all supplementary groups, which could lock the user out of other groups.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 21,
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "hard",
+      "question": "Which command forces user 'jdoe' to change their password at next login?",
+      "options": [
+        "passwd --expire jdoe",
+        "chage -d 0 jdoe",
+        "usermod --password-expire jdoe",
+        "pwexpire jdoe"
+      ],
+      "correct": 1,
+      "explanation": "chage -d 0 sets the last password change date to the epoch (day 0), which forces the user to change their password at the next login. passwd --expire also works but chage -d 0 is the most precise method.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 22,
+      "domain": 1,
+      "objective": "1.6",
+      "difficulty": "easy",
+      "question": "What does the permission mode 755 mean for a file?",
+      "options": [
+        "Owner: read/write/execute, Group: read/execute, Others: read/execute",
+        "Owner: read/write, Group: read/write, Others: read",
+        "Owner: full, Group: full, Others: none",
+        "Owner: read/write/execute, Group: read/write, Others: read"
+      ],
+      "correct": 0,
+      "explanation": "755 breaks down as: owner=7 (rwx), group=5 (r-x), others=5 (r-x). This is a common permission for directories and executable scripts that need to be accessible to all users.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 23,
+      "domain": 1,
+      "objective": "1.6",
+      "difficulty": "easy",
+      "question": "Which command changes the owner of a file to user 'webadmin'?",
+      "options": [
+        "chmod webadmin file.txt",
+        "chown webadmin file.txt",
+        "chgrp webadmin file.txt",
+        "setowner webadmin file.txt"
+      ],
+      "correct": 1,
+      "explanation": "chown (change owner) sets the file's owner. chmod changes permissions, and chgrp changes only the group. chown can also set both owner and group with chown user:group file.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 24,
+      "domain": 1,
+      "objective": "1.6",
+      "difficulty": "medium",
+      "question": "What does the SUID bit do when set on an executable file?",
+      "options": [
+        "The file runs with the permissions of the group owner",
+        "The file runs with the permissions of the file owner",
+        "The file cannot be deleted by non-owners",
+        "The file can only be accessed by the owner"
+      ],
+      "correct": 1,
+      "explanation": "The SUID (Set User ID) bit causes an executable to run with the permissions of the file owner rather than the user executing it. For example, /usr/bin/passwd has SUID set so users can modify /etc/shadow.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 25,
+      "domain": 1,
+      "objective": "1.6",
+      "difficulty": "medium",
+      "question": "Which command sets a default ACL on a directory so that new files inherit read permission for user 'bob'?",
+      "options": [
+        "setfacl -m u:bob:r /data",
+        "setfacl -d -m u:bob:r /data",
+        "chmod +a bob:r /data",
+        "getfacl -d u:bob:r /data"
+      ],
+      "correct": 1,
+      "explanation": "setfacl -d -m sets a default ACL. The -d flag makes it a default ACL that new files and subdirectories will inherit. Without -d, only the directory itself gets the ACL.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 26,
+      "domain": 1,
+      "objective": "1.6",
+      "difficulty": "hard",
+      "question": "What is the effect of the sticky bit on a directory?",
+      "options": [
+        "Only the directory owner can list its contents",
+        "Files inherit the group of the directory",
+        "Only the file owner, directory owner, or root can delete files within it",
+        "All files created in the directory are executable"
+      ],
+      "correct": 2,
+      "explanation": "The sticky bit (chmod +t or 1000) on a directory prevents users from deleting or renaming files they do not own. /tmp is the classic example where this is applied.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 27,
+      "domain": 1,
+      "objective": "1.7",
+      "difficulty": "easy",
+      "question": "Which command creates a new physical volume for use with LVM?",
+      "options": [
+        "vgcreate /dev/sdb1",
+        "lvcreate /dev/sdb1",
+        "pvcreate /dev/sdb1",
+        "mkfs /dev/sdb1"
+      ],
+      "correct": 2,
+      "explanation": "pvcreate initializes a partition or disk as an LVM physical volume. This is the first step in setting up LVM before creating volume groups (vgcreate) and logical volumes (lvcreate).",
+      "link": "start-here.html"
+    },
+    {
+      "id": 28,
+      "domain": 1,
+      "objective": "1.7",
+      "difficulty": "medium",
+      "question": "Which command extends a logical volume named 'data' in volume group 'vg01' by 10 GB?",
+      "options": [
+        "lvresize -L +10G /dev/vg01/data",
+        "lvextend -L +10G /dev/vg01/data",
+        "vgextend -L +10G vg01",
+        "pvextend -L +10G /dev/vg01/data"
+      ],
+      "correct": 1,
+      "explanation": "lvextend -L +10G extends the logical volume by 10 GB. The + sign means add to existing size. After extending, you also need to resize the file system with resize2fs or xfs_growfs.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 29,
+      "domain": 1,
+      "objective": "1.7",
+      "difficulty": "medium",
+      "question": "Which RAID level provides striping with parity using a minimum of 3 disks?",
+      "options": [
+        "RAID 0",
+        "RAID 1",
+        "RAID 5",
+        "RAID 10"
+      ],
+      "correct": 2,
+      "explanation": "RAID 5 uses striping with distributed parity across a minimum of 3 disks. It provides both performance improvement and fault tolerance, surviving the failure of one disk.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 30,
+      "domain": 1,
+      "objective": "1.7",
+      "difficulty": "hard",
+      "question": "Which command creates a software RAID 5 array with three devices?",
+      "options": [
+        "mdadm --create /dev/md0 --level=5 --raid-devices=3 /dev/sd[b-d]1",
+        "raid5 --create /dev/md0 /dev/sdb1 /dev/sdc1 /dev/sdd1",
+        "mkraid --level 5 /dev/md0 /dev/sdb1 /dev/sdc1 /dev/sdd1",
+        "dmsetup create raid5 /dev/sdb1 /dev/sdc1 /dev/sdd1"
+      ],
+      "correct": 0,
+      "explanation": "mdadm --create is the standard tool for creating software RAID arrays in Linux. The --level flag sets the RAID type and --raid-devices specifies how many disks to use.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 31,
+      "domain": 1,
+      "objective": "1.7",
+      "difficulty": "easy",
+      "question": "Which command is used to create an ext4 file system on /dev/sdb1?",
+      "options": [
+        "format -t ext4 /dev/sdb1",
+        "mkfs.ext4 /dev/sdb1",
+        "newfs ext4 /dev/sdb1",
+        "fdisk -f ext4 /dev/sdb1"
+      ],
+      "correct": 1,
+      "explanation": "mkfs.ext4 formats a partition with the ext4 file system. mkfs (make filesystem) is the general command, with .ext4 specifying the type. Alternatively, mkfs -t ext4 can be used.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 32,
+      "domain": 1,
+      "objective": "1.7",
+      "difficulty": "hard",
+      "question": "An administrator needs to reduce the size of an ext4 logical volume. What is the correct order of operations?",
+      "options": [
+        "Reduce the LV first, then resize the filesystem",
+        "Unmount, resize the filesystem, then reduce the LV",
+        "Reduce the LV and filesystem simultaneously with lvreduce --resizefs",
+        "Both B and C are correct approaches"
+      ],
+      "correct": 3,
+      "explanation": "When shrinking an ext4 LV, you must resize the filesystem before reducing the LV to avoid data loss. You can either do it manually (unmount, resize2fs, lvreduce) or use lvreduce --resizefs which handles both steps safely.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 33,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "hard",
+      "question": "Which file system is the standard for mounting /boot/efi on UEFI systems?",
+      "options": [
+        "ext4",
+        "XFS",
+        "vfat (FAT32)",
+        "btrfs"
+      ],
+      "correct": 2,
+      "explanation": "The EFI System Partition (ESP) must be formatted as vfat (FAT32) per the UEFI specification. This ensures firmware compatibility across different operating systems and hardware platforms.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 34,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "medium",
+      "question": "Which systemd target is equivalent to the traditional runlevel 3 (multi-user with networking, no GUI)?",
+      "options": [
+        "graphical.target",
+        "multi-user.target",
+        "rescue.target",
+        "default.target"
+      ],
+      "correct": 1,
+      "explanation": "multi-user.target provides a full multi-user system with networking but no graphical interface, equivalent to the old runlevel 3. graphical.target corresponds to runlevel 5.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 35,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "Which command shows the dependency tree for the sshd.service unit?",
+      "options": [
+        "systemctl show sshd.service",
+        "systemctl list-dependencies sshd.service",
+        "systemctl tree sshd.service",
+        "systemctl deps sshd.service"
+      ],
+      "correct": 1,
+      "explanation": "systemctl list-dependencies displays the dependency tree for a unit, showing which other units it requires or wants. This is essential for troubleshooting service startup order issues.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 36,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "hard",
+      "question": "Which command creates a new namespace and runs a process isolated from the host PID namespace?",
+      "options": [
+        "chroot /newroot /bin/bash",
+        "unshare --pid --fork --mount-proc /bin/bash",
+        "nsenter --target 1 --pid /bin/bash",
+        "isolate --pid /bin/bash"
+      ],
+      "correct": 1,
+      "explanation": "unshare --pid creates a new PID namespace. The --fork flag is required so the first process becomes PID 1, and --mount-proc remounts /proc to reflect the new namespace.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 37,
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "medium",
+      "question": "Which file defines the default shell and home directory template for new users created with useradd?",
+      "options": [
+        "/etc/passwd",
+        "/etc/default/useradd",
+        "/etc/skel/.bashrc",
+        "/etc/login.defs"
+      ],
+      "correct": 1,
+      "explanation": "/etc/default/useradd contains default values for useradd including the default shell, home directory base, and skeleton directory. /etc/login.defs contains complementary settings like UID ranges.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 38,
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "hard",
+      "question": "Which directory contains template files that are copied to a new user's home directory upon creation?",
+      "options": [
+        "/etc/profile.d",
+        "/etc/default",
+        "/etc/skel",
+        "/usr/share/defaults"
+      ],
+      "correct": 2,
+      "explanation": "/etc/skel (skeleton) contains files like .bashrc, .bash_profile, and .profile that are automatically copied to each new user's home directory when their account is created with useradd -m.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 39,
+      "domain": 1,
+      "objective": "1.7",
+      "difficulty": "medium",
+      "question": "Which command displays information about block devices including their mount points and file system types?",
+      "options": [
+        "fdisk -l",
+        "lsblk -f",
+        "df -h",
+        "mount"
+      ],
+      "correct": 1,
+      "explanation": "lsblk -f displays block devices in a tree format with file system type, label, UUID, and mount point information. fdisk -l shows partition tables, df shows mounted filesystem usage, and mount shows current mounts.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 40,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "Which command on a SUSE-based system installs a package from the default repositories?",
+      "options": [
+        "apt install package",
+        "yum install package",
+        "zypper install package",
+        "pacman -S package"
+      ],
+      "correct": 2,
+      "explanation": "zypper is the command-line package manager for SUSE Linux Enterprise and openSUSE. It handles package installation, removal, updates, and repository management for RPM-based SUSE distributions.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 41,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "Which dpkg command lists all files installed by a specific package?",
+      "options": [
+        "dpkg -S package",
+        "dpkg -L package",
+        "dpkg -l package",
+        "dpkg -c package"
+      ],
+      "correct": 1,
+      "explanation": "dpkg -L lists all files installed by a package. dpkg -S searches for which package owns a file, dpkg -l lists packages matching a pattern with status info, and dpkg -c lists contents of a .deb file.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 42,
+      "domain": 1,
+      "objective": "1.6",
+      "difficulty": "hard",
+      "question": "Which command removes all ACL entries from a file?",
+      "options": [
+        "setfacl -x /data/file",
+        "setfacl -b /data/file",
+        "getfacl --remove /data/file",
+        "chmod -acl /data/file"
+      ],
+      "correct": 1,
+      "explanation": "setfacl -b removes all extended ACL entries from a file, reverting it to standard Unix permissions. The -x flag removes only a specific ACL entry rather than all of them.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 43,
+      "domain": 1,
+      "objective": "1.7",
+      "difficulty": "easy",
+      "question": "Which command mounts a file system listed in /etc/fstab at /mnt/data?",
+      "options": [
+        "mount /mnt/data",
+        "mount -a /mnt/data",
+        "fstab mount /mnt/data",
+        "mountall /mnt/data"
+      ],
+      "correct": 0,
+      "explanation": "When a file system is defined in /etc/fstab, running 'mount /mnt/data' is sufficient because mount reads the device information from fstab. mount -a mounts all fstab entries that are not already mounted.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 44,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "medium",
+      "question": "Which command views the journal logs for only the current boot?",
+      "options": [
+        "journalctl --boot",
+        "journalctl -b",
+        "journalctl --current",
+        "Both A and B"
+      ],
+      "correct": 3,
+      "explanation": "journalctl -b and journalctl --boot are equivalent commands that display journal entries from the current boot only. The -b flag is the short form of --boot.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 45,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "medium",
+      "question": "Which directory stores locally installed software that is not managed by the distribution's package manager?",
+      "options": [
+        "/usr/bin",
+        "/usr/local",
+        "/opt",
+        "Both B and C"
+      ],
+      "correct": 3,
+      "explanation": "Both /usr/local and /opt are used for locally installed software not managed by the package manager. /usr/local follows the standard bin/lib/share hierarchy, while /opt typically contains self-contained application directories.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 46,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "medium",
+      "question": "Which command sends SIGHUP to all processes in process group 5678?",
+      "options": [
+        "kill -1 5678",
+        "kill -HUP -5678",
+        "killall -HUP 5678",
+        "pkill -HUP -g 5678"
+      ],
+      "correct": 1,
+      "explanation": "kill -HUP -5678 sends SIGHUP to all processes in process group 5678. The negative PID signals the entire process group. This is commonly used to tell daemons to reload configuration.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 47,
+      "domain": 1,
+      "objective": "1.7",
+      "difficulty": "easy",
+      "question": "Which column in /etc/fstab specifies the mount point?",
+      "options": [
+        "First column",
+        "Second column",
+        "Third column",
+        "Fourth column"
+      ],
+      "correct": 1,
+      "explanation": "The second column in /etc/fstab specifies the mount point. The columns are: device, mount point, filesystem type, options, dump frequency, and fsck pass number.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 48,
+      "domain": 1,
+      "objective": "1.6",
+      "difficulty": "medium",
+      "question": "Which chmod command adds execute permission for the owner only?",
+      "options": [
+        "chmod +x file",
+        "chmod u+x file",
+        "chmod a+x file",
+        "chmod 100 file"
+      ],
+      "correct": 1,
+      "explanation": "chmod u+x adds execute permission for the user (owner) only. chmod +x would add execute for all (subject to umask), and chmod a+x explicitly adds it for all users.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 49,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "Which command is used to set SELinux to permissive mode temporarily?",
+      "options": [
+        "setenforce 0",
+        "setenforce permissive",
+        "selinux --permissive",
+        "setsebool permissive"
+      ],
+      "correct": 0,
+      "explanation": "setenforce 0 sets SELinux to permissive mode, where policy violations are logged but not enforced. setenforce 1 returns to enforcing mode. This change is temporary and reverts on reboot.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 50,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "Which command displays the current SELinux mode?",
+      "options": [
+        "sestatus",
+        "getenforce",
+        "seinfo",
+        "Both A and B"
+      ],
+      "correct": 3,
+      "explanation": "Both sestatus and getenforce show the current SELinux mode. getenforce returns just the mode (Enforcing, Permissive, or Disabled), while sestatus provides more detailed information including policy version.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 51,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "Which command changes the SELinux context of a file to match the default policy?",
+      "options": [
+        "chcon --restore /path/to/file",
+        "restorecon -v /path/to/file",
+        "semanage fcontext -a /path/to/file",
+        "setsebool -P file_restore on"
+      ],
+      "correct": 1,
+      "explanation": "restorecon restores the SELinux security context of files to the default defined by the policy. The -v flag provides verbose output showing what changed. chcon sets contexts manually but they can be overwritten.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 52,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "Which command permanently adds a custom SELinux file context rule for /web/content?",
+      "options": [
+        "chcon -t httpd_sys_content_t /web/content",
+        "semanage fcontext -a -t httpd_sys_content_t '/web/content(/.*)?'",
+        "restorecon -R /web/content",
+        "setsebool -P httpd_enable_content on"
+      ],
+      "correct": 1,
+      "explanation": "semanage fcontext -a adds a permanent file context rule to the SELinux policy. After adding the rule, restorecon must be run to apply it. chcon changes are temporary and lost on relabel.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 53,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "Which security framework is used by default on Ubuntu and SUSE systems instead of SELinux?",
+      "options": [
+        "Grsecurity",
+        "AppArmor",
+        "Tomoyo",
+        "SMACK"
+      ],
+      "correct": 1,
+      "explanation": "AppArmor is the default mandatory access control (MAC) framework on Ubuntu and SUSE. It uses path-based profiles rather than SELinux's label-based approach, making it generally simpler to configure.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 54,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "Which command puts an AppArmor profile into complain mode?",
+      "options": [
+        "aa-enforce /etc/apparmor.d/profile",
+        "aa-complain /etc/apparmor.d/profile",
+        "apparmor_parser -C /etc/apparmor.d/profile",
+        "Both B and C"
+      ],
+      "correct": 1,
+      "explanation": "aa-complain sets an AppArmor profile to complain mode, which logs violations without blocking them (similar to SELinux permissive). aa-enforce returns it to enforcing mode.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 55,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "easy",
+      "question": "Which command opens port 443/tcp permanently in firewalld?",
+      "options": [
+        "firewall-cmd --add-port=443/tcp --permanent",
+        "iptables -A INPUT -p tcp --dport 443 -j ACCEPT",
+        "ufw allow 443/tcp",
+        "nft add rule inet filter input tcp dport 443 accept"
+      ],
+      "correct": 0,
+      "explanation": "firewall-cmd --add-port=443/tcp --permanent opens the port and saves the rule across reboots. Without --permanent, the rule is lost on reload. After adding, run firewall-cmd --reload to apply.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 56,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "easy",
+      "question": "Which firewalld command reloads the firewall rules without dropping active connections?",
+      "options": [
+        "firewall-cmd --restart",
+        "firewall-cmd --reload",
+        "systemctl restart firewalld",
+        "firewall-cmd --refresh"
+      ],
+      "correct": 1,
+      "explanation": "firewall-cmd --reload reloads the permanent configuration without interrupting active connections. systemctl restart firewalld would restart the entire service and drop all connections.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 57,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "Which iptables command blocks all incoming traffic from IP 10.0.0.50?",
+      "options": [
+        "iptables -A INPUT -s 10.0.0.50 -j DROP",
+        "iptables -A OUTPUT -d 10.0.0.50 -j DROP",
+        "iptables -A FORWARD -s 10.0.0.50 -j REJECT",
+        "iptables -I INPUT -s 10.0.0.50 -j ACCEPT"
+      ],
+      "correct": 0,
+      "explanation": "iptables -A INPUT -s 10.0.0.50 -j DROP appends a rule to the INPUT chain that drops all incoming packets from source IP 10.0.0.50. DROP silently discards the packets without sending a response.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 58,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "Which nftables command creates a new table and chain for filtering incoming traffic?",
+      "options": [
+        "nft add table inet filter && nft add chain inet filter input { type filter hook input priority 0 \\; }",
+        "nft create filter input inet",
+        "nft new table filter chain input",
+        "nft init inet filter input"
+      ],
+      "correct": 0,
+      "explanation": "nftables uses a two-step process: first create a table (nft add table), then add chains to it. The chain definition includes the type, hook point, and priority. inet family handles both IPv4 and IPv6.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 59,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "Which SSH configuration directive disables root login over SSH?",
+      "options": [
+        "DenyRoot yes",
+        "PermitRootLogin no",
+        "RootLogin disabled",
+        "AllowRoot no"
+      ],
+      "correct": 1,
+      "explanation": "PermitRootLogin no in /etc/ssh/sshd_config prevents direct root logins via SSH. This is a security best practice; administrators should log in as regular users and use sudo for privilege escalation.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 60,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "Which command generates an SSH key pair for user authentication?",
+      "options": [
+        "ssh-keygen",
+        "ssh-add",
+        "ssh-copy-id",
+        "ssh-agent"
+      ],
+      "correct": 0,
+      "explanation": "ssh-keygen generates public/private key pairs for SSH authentication. By default it creates RSA keys, but Ed25519 is recommended: ssh-keygen -t ed25519. The keys are stored in ~/.ssh/.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 61,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "Which command copies your SSH public key to a remote server for passwordless authentication?",
+      "options": [
+        "scp ~/.ssh/id_rsa.pub user@host:/root/.ssh/",
+        "ssh-copy-id user@host",
+        "ssh-add user@host",
+        "ssh-keygen -c user@host"
+      ],
+      "correct": 1,
+      "explanation": "ssh-copy-id installs your public key in the remote user's ~/.ssh/authorized_keys file with correct permissions. Manual copying with scp is possible but ssh-copy-id handles permissions automatically.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 62,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "Which SSH directive limits SSH access to only specific users?",
+      "options": [
+        "AllowUsers user1 user2",
+        "PermitUsers user1 user2",
+        "SSHUsers user1 user2",
+        "AuthorizedUsers user1 user2"
+      ],
+      "correct": 0,
+      "explanation": "AllowUsers in sshd_config restricts SSH access to only the listed users. When this directive is used, all other users are implicitly denied. DenyUsers can be used to block specific users instead.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 63,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "Which SSH configuration change disables password authentication and allows only key-based login?",
+      "options": [
+        "AuthenticationMethods key",
+        "PasswordAuthentication no",
+        "ChallengeResponseAuthentication no",
+        "Both B and C should be set"
+      ],
+      "correct": 3,
+      "explanation": "Both PasswordAuthentication no and ChallengeResponseAuthentication no (or KbdInteractiveAuthentication no) should be set to fully disable password-based login. ChallengeResponseAuthentication can bypass PasswordAuthentication if left enabled.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 64,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "easy",
+      "question": "What does PAM stand for in Linux security?",
+      "options": [
+        "Protected Access Management",
+        "Pluggable Authentication Modules",
+        "Privileged Account Management",
+        "Public Access Mechanism"
+      ],
+      "correct": 1,
+      "explanation": "PAM stands for Pluggable Authentication Modules. It provides a flexible framework for authenticating users, allowing system administrators to configure authentication policies through module stacking in /etc/pam.d/.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 65,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "medium",
+      "question": "Which PAM module enforces password complexity requirements?",
+      "options": [
+        "pam_unix.so",
+        "pam_pwquality.so",
+        "pam_limits.so",
+        "pam_securetty.so"
+      ],
+      "correct": 1,
+      "explanation": "pam_pwquality.so (or its predecessor pam_cracklib.so) enforces password complexity rules such as minimum length, character classes, and dictionary checks. It is configured in /etc/security/pwquality.conf.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 66,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "hard",
+      "question": "In a PAM configuration, what does the 'requisite' control flag mean?",
+      "options": [
+        "The module must succeed, but processing continues regardless",
+        "The module must succeed; if it fails, return failure immediately without processing remaining modules",
+        "The module is optional and its result is ignored",
+        "The module is only processed if previous modules succeeded"
+      ],
+      "correct": 1,
+      "explanation": "The 'requisite' control flag means the module must succeed. If it fails, PAM immediately returns failure to the application without processing any remaining modules in the stack, unlike 'required' which continues processing.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 67,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "Which firewalld zone is typically used for the most trusted internal networks?",
+      "options": [
+        "public",
+        "trusted",
+        "internal",
+        "dmz"
+      ],
+      "correct": 1,
+      "explanation": "The 'trusted' zone accepts all incoming traffic and is for the most trusted networks. The 'internal' zone is for somewhat trusted networks, 'public' is the default restrictive zone, and 'dmz' is for demilitarized zone servers.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 68,
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "easy",
+      "question": "Which command configures sudo access for users and groups?",
+      "options": [
+        "suconfig",
+        "visudo",
+        "sudoedit /etc/sudo.conf",
+        "chmod /etc/sudoers"
+      ],
+      "correct": 1,
+      "explanation": "visudo safely edits the /etc/sudoers file with syntax checking. It locks the file during editing and validates the configuration before saving, preventing syntax errors that could lock out sudo access.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 69,
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "medium",
+      "question": "Which sudoers entry allows user 'deploy' to run only systemctl commands without a password?",
+      "options": [
+        "deploy ALL=(ALL) NOPASSWD: /usr/bin/systemctl",
+        "deploy ALL=(ALL) ALL",
+        "deploy ALL=(root) PASSWD: /usr/bin/systemctl",
+        "deploy NOPASSWD: systemctl"
+      ],
+      "correct": 0,
+      "explanation": "This sudoers entry grants user 'deploy' the ability to run /usr/bin/systemctl as any user on any host without a password prompt. Using the full path limits the command scope for security.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 70,
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "hard",
+      "question": "Which command finds all files on the system with the SUID bit set?",
+      "options": [
+        "find / -perm -4000 -type f",
+        "find / -perm 777 -type f",
+        "locate --suid /",
+        "ls -la / --suid"
+      ],
+      "correct": 0,
+      "explanation": "find / -perm -4000 -type f searches the entire filesystem for regular files with the SUID bit set. The -4000 represents the SUID permission. Regular auditing of SUID files is important for security.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 71,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "Which command creates an SSH tunnel forwarding local port 8080 to remote port 80 on server 10.0.0.5?",
+      "options": [
+        "ssh -L 8080:localhost:80 user@10.0.0.5",
+        "ssh -R 8080:localhost:80 user@10.0.0.5",
+        "ssh -D 8080 user@10.0.0.5",
+        "ssh -T 8080:80 user@10.0.0.5"
+      ],
+      "correct": 0,
+      "explanation": "ssh -L creates a local port forward: traffic to local port 8080 is tunneled through SSH and forwarded to port 80 on the remote side. -R creates a reverse tunnel, and -D creates a SOCKS proxy.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 72,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "What does the SELinux boolean 'httpd_can_network_connect' control?",
+      "options": [
+        "Whether Apache can bind to privileged ports",
+        "Whether Apache can make outgoing network connections",
+        "Whether Apache can read user home directories",
+        "Whether Apache can write to /var/log"
+      ],
+      "correct": 1,
+      "explanation": "The httpd_can_network_connect boolean controls whether the Apache web server is allowed to initiate outgoing network connections (e.g., to a database or API server). By default it is off for security.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 73,
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "medium",
+      "question": "Which command locks a user account preventing them from logging in?",
+      "options": [
+        "usermod -L username",
+        "passwd -d username",
+        "userdel username",
+        "chage -E -1 username"
+      ],
+      "correct": 0,
+      "explanation": "usermod -L locks an account by prefixing the password hash in /etc/shadow with an exclamation mark (!), preventing password authentication. passwd -l also works. usermod -U unlocks the account.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 74,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "hard",
+      "question": "Which PAM module limits the number of concurrent login sessions for a user?",
+      "options": [
+        "pam_pwquality.so",
+        "pam_limits.so",
+        "pam_access.so",
+        "pam_tally2.so"
+      ],
+      "correct": 1,
+      "explanation": "pam_limits.so enforces resource limits defined in /etc/security/limits.conf, including maximum number of logins (maxlogins), maximum open files, CPU time, and memory limits per user or group.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 75,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "Which iptables chain handles packets destined for the local system?",
+      "options": [
+        "OUTPUT",
+        "FORWARD",
+        "INPUT",
+        "PREROUTING"
+      ],
+      "correct": 2,
+      "explanation": "The INPUT chain processes packets destined for the local system. OUTPUT handles locally-generated outgoing packets, FORWARD handles routed packets, and PREROUTING is a netfilter hook for NAT before routing.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 76,
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "easy",
+      "question": "Which file contains the password aging policy settings like minimum and maximum password age?",
+      "options": [
+        "/etc/passwd",
+        "/etc/shadow",
+        "/etc/login.defs",
+        "/etc/security/policy"
+      ],
+      "correct": 2,
+      "explanation": "/etc/login.defs contains default password aging policies including PASS_MAX_DAYS, PASS_MIN_DAYS, PASS_MIN_LEN, and PASS_WARN_AGE. These defaults apply to newly created user accounts.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 77,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "Which file must be edited to permanently change the SELinux mode to disabled?",
+      "options": [
+        "/etc/selinux/config",
+        "/etc/sysconfig/selinux",
+        "/boot/grub2/grub.cfg",
+        "Both A and B"
+      ],
+      "correct": 0,
+      "explanation": "/etc/selinux/config is the primary configuration file for setting the SELinux mode (enforcing, permissive, or disabled). Changes require a reboot to take effect. /etc/sysconfig/selinux is typically a symlink to this file.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 78,
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "hard",
+      "question": "An administrator notices unauthorized cron jobs. Which directory should be checked for system-wide cron jobs that run hourly?",
+      "options": [
+        "/var/spool/cron/",
+        "/etc/cron.hourly/",
+        "/etc/crontab",
+        "/etc/cron.d/"
+      ],
+      "correct": 1,
+      "explanation": "/etc/cron.hourly/ contains scripts that are executed every hour by the system. Scripts placed here by an attacker would run automatically. All /etc/cron.* directories and /var/spool/cron/ should be audited.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 79,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "Which command lists all active firewalld rules in the public zone?",
+      "options": [
+        "firewall-cmd --list-all --zone=public",
+        "firewall-cmd --get-zones",
+        "firewall-cmd --state",
+        "iptables -L -n"
+      ],
+      "correct": 0,
+      "explanation": "firewall-cmd --list-all --zone=public displays all configured services, ports, rich rules, and other settings for the public zone. --get-zones lists available zones, and --state shows whether firewalld is running.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 80,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "medium",
+      "question": "Which PAM module locks out a user after a specified number of failed login attempts?",
+      "options": [
+        "pam_limits.so",
+        "pam_faillock.so",
+        "pam_access.so",
+        "pam_securetty.so"
+      ],
+      "correct": 1,
+      "explanation": "pam_faillock.so (which replaced pam_tally2.so) tracks failed authentication attempts and locks accounts after a configurable number of failures. It is configured in /etc/security/faillock.conf.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 81,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "Which line should be the first line of a bash script to specify the interpreter?",
+      "options": [
+        "#/bin/bash",
+        "#!/bin/bash",
+        "//bin/bash",
+        "@bash"
+      ],
+      "correct": 1,
+      "explanation": "#!/bin/bash is the shebang (hashbang) line that tells the kernel which interpreter to use when executing the script. It must be the very first line of the file with no preceding whitespace.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 82,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "In bash, which variable holds the exit status of the last executed command?",
+      "options": [
+        "$#",
+        "$0",
+        "$?",
+        "$$"
+      ],
+      "correct": 2,
+      "explanation": "$? contains the exit status of the most recently executed command. An exit status of 0 indicates success, and non-zero indicates failure. $# is the argument count, $0 is the script name, and $$ is the process ID.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 83,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "Which bash construct is used for a conditional test?",
+      "options": [
+        "if [ condition ]; then ... fi",
+        "if ( condition ) { ... }",
+        "if condition then end",
+        "test condition do ... done"
+      ],
+      "correct": 0,
+      "explanation": "Bash uses if [ condition ]; then ... fi for conditional tests. The square brackets are shorthand for the 'test' command. Double brackets [[ ]] provide extended test features like pattern matching.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 84,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "Which bash loop iterates over each file in the current directory?",
+      "options": [
+        "for file in *; do echo $file; done",
+        "foreach file (*) echo $file; end",
+        "while file in *; do echo $file; done",
+        "loop file (*) { echo $file }"
+      ],
+      "correct": 0,
+      "explanation": "The for...in loop iterates over a list of items. 'for file in *' expands the glob to all files in the current directory and processes each one. The loop body is between 'do' and 'done'.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 85,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "Which operator in bash redirects both stdout and stderr to a file?",
+      "options": [
+        "> file",
+        "2> file",
+        "&> file",
+        "1> file"
+      ],
+      "correct": 2,
+      "explanation": "&> redirects both standard output (fd 1) and standard error (fd 2) to the specified file. This is equivalent to >file 2>&1. Using > alone redirects only stdout.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 86,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "In bash, what does the 'set -e' option do?",
+      "options": [
+        "Enables verbose mode",
+        "Exits the script immediately if any command returns a non-zero exit status",
+        "Enables debug mode",
+        "Sets environment variables"
+      ],
+      "correct": 1,
+      "explanation": "set -e (errexit) causes the script to exit immediately when any command fails (returns non-zero). This is a best practice for catching errors early. set -u (nounset) and set -o pipefail are commonly used together.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 87,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "What is the output of: echo ${var:-default} when var is unset?",
+      "options": [
+        "An empty string",
+        "var",
+        "default",
+        "An error message"
+      ],
+      "correct": 2,
+      "explanation": "${var:-default} is parameter expansion that returns 'default' if var is unset or null. This is useful for providing fallback values in scripts. ${var:=default} also assigns the default value to var.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 88,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "Which bash command reads input line by line from a file?",
+      "options": [
+        "for line in $(cat file); do echo $line; done",
+        "while IFS= read -r line; do echo \"$line\"; done < file",
+        "read file | while line; do echo $line; done",
+        "cat file | for line; do echo $line; done"
+      ],
+      "correct": 1,
+      "explanation": "while IFS= read -r line correctly reads a file line by line preserving whitespace (IFS=) and backslashes (-r). The for loop with $(cat file) splits on whitespace, not newlines, which causes incorrect behavior.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 89,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "Which cron expression runs a job every day at 2:30 AM?",
+      "options": [
+        "30 2 * * *",
+        "2 30 * * *",
+        "* * 2 30 *",
+        "0 2 30 * *"
+      ],
+      "correct": 0,
+      "explanation": "In cron format: minute hour day-of-month month day-of-week. '30 2 * * *' means minute 30, hour 2, every day, every month, every day of week. This runs daily at 2:30 AM.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 90,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "Which command edits the crontab for the current user?",
+      "options": [
+        "cron -e",
+        "crontab -e",
+        "vi /etc/crontab",
+        "edit-cron"
+      ],
+      "correct": 1,
+      "explanation": "crontab -e opens the current user's crontab file in the default editor. Each user has their own crontab stored in /var/spool/cron/. The system-wide crontab is /etc/crontab.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 91,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "Which command schedules a one-time job to run at 3:00 PM today?",
+      "options": [
+        "crontab 3:00 PM command",
+        "at 3:00 PM",
+        "once 15:00 command",
+        "schedule --at 15:00 command"
+      ],
+      "correct": 1,
+      "explanation": "The 'at' command schedules one-time jobs. After running 'at 3:00 PM', you enter the commands interactively and press Ctrl+D to submit. atq lists pending at jobs, and atrm removes them.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 92,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "Which systemd feature can replace cron for scheduling recurring tasks?",
+      "options": [
+        "systemd.service",
+        "systemd.timer",
+        "systemd.schedule",
+        "systemd.cron"
+      ],
+      "correct": 1,
+      "explanation": "systemd.timer units can trigger .service units on a schedule, replacing traditional cron jobs. They offer advantages like logging integration with journald, dependency management, and calendar-based scheduling.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 93,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "easy",
+      "question": "Which command pulls a Docker image from Docker Hub?",
+      "options": [
+        "docker get nginx",
+        "docker pull nginx",
+        "docker download nginx",
+        "docker fetch nginx"
+      ],
+      "correct": 1,
+      "explanation": "docker pull downloads a container image from a registry (Docker Hub by default). The image is stored locally and can then be used to create containers with docker run.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 94,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "easy",
+      "question": "Which command lists all running Docker containers?",
+      "options": [
+        "docker ps",
+        "docker list",
+        "docker containers",
+        "docker show"
+      ],
+      "correct": 0,
+      "explanation": "docker ps lists all currently running containers. Add the -a flag (docker ps -a) to also show stopped containers. docker container ls is the newer equivalent command.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 95,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "Which Docker command runs a container in detached mode with port 8080 mapped to container port 80?",
+      "options": [
+        "docker run -d -p 8080:80 nginx",
+        "docker run -it -p 80:8080 nginx",
+        "docker start -d --port 8080:80 nginx",
+        "docker create -p 8080:80 nginx"
+      ],
+      "correct": 0,
+      "explanation": "docker run -d runs the container in detached (background) mode. -p 8080:80 maps host port 8080 to container port 80. The format is always host_port:container_port.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 96,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "Which Dockerfile instruction sets the command that runs when the container starts?",
+      "options": [
+        "RUN",
+        "CMD",
+        "EXEC",
+        "START"
+      ],
+      "correct": 1,
+      "explanation": "CMD specifies the default command to execute when a container starts. RUN executes commands during the image build process. ENTRYPOINT is similar to CMD but is harder to override at runtime.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 97,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "Which command enters a running Docker container with an interactive shell?",
+      "options": [
+        "docker attach container_id",
+        "docker exec -it container_id /bin/bash",
+        "docker shell container_id",
+        "docker connect container_id bash"
+      ],
+      "correct": 1,
+      "explanation": "docker exec -it runs a new command inside a running container. -i keeps stdin open and -t allocates a pseudo-TTY. docker attach connects to the main process, which may not be a shell.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 98,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "Which Docker command removes all stopped containers, unused networks, dangling images, and build cache?",
+      "options": [
+        "docker clean all",
+        "docker system prune",
+        "docker rm --all",
+        "docker purge"
+      ],
+      "correct": 1,
+      "explanation": "docker system prune removes stopped containers, unused networks, dangling images, and build cache. Adding -a also removes all unused images. Adding --volumes removes unused volumes as well.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 99,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "easy",
+      "question": "Which git command initializes a new repository in the current directory?",
+      "options": [
+        "git create",
+        "git init",
+        "git new",
+        "git start"
+      ],
+      "correct": 1,
+      "explanation": "git init creates a new Git repository by initializing a .git directory in the current folder. This sets up the necessary data structures for version tracking.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 100,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "easy",
+      "question": "Which git command stages all modified files for the next commit?",
+      "options": [
+        "git commit -a",
+        "git add .",
+        "git stage all",
+        "git push ."
+      ],
+      "correct": 1,
+      "explanation": "git add . stages all changes (new, modified, deleted files) in the current directory and subdirectories for the next commit. git add -A stages all changes in the entire repository.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 101,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "Which git command creates a new branch and switches to it?",
+      "options": [
+        "git branch new-feature",
+        "git checkout -b new-feature",
+        "git switch --new new-feature",
+        "Both B and C"
+      ],
+      "correct": 3,
+      "explanation": "Both 'git checkout -b' and 'git switch -c' (or --create) create a new branch and switch to it in one step. git branch alone creates the branch but does not switch to it.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 102,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "Which git command shows the differences between the working directory and the staging area?",
+      "options": [
+        "git diff",
+        "git diff --staged",
+        "git log --diff",
+        "git status -v"
+      ],
+      "correct": 0,
+      "explanation": "git diff shows unstaged changes (working directory vs staging area). git diff --staged (or --cached) shows changes that have been staged for the next commit compared to the last commit.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 103,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "Which bash test operator checks if a file exists and is a regular file?",
+      "options": [
+        "-e",
+        "-f",
+        "-d",
+        "-r"
+      ],
+      "correct": 1,
+      "explanation": "The -f test operator returns true if the path exists and is a regular file (not a directory or device). -e checks if any file/directory exists, -d checks for directories, and -r checks read permission.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 104,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "What does the following bash command do: awk -F: '{print $1, $3}' /etc/passwd",
+      "options": [
+        "Prints the username and UID of all users",
+        "Prints the first 3 lines of /etc/passwd",
+        "Prints the password hashes for all users",
+        "Sorts users by their UID"
+      ],
+      "correct": 0,
+      "explanation": "awk -F: sets the field separator to colon. $1 is the first field (username) and $3 is the third field (UID) in /etc/passwd. This extracts and prints the username and numeric user ID for each account.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 105,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "Which cron expression runs a job at 6 AM on the first day of every month?",
+      "options": [
+        "0 6 1 * *",
+        "6 0 1 * *",
+        "0 6 * 1 *",
+        "* 6 1 * *"
+      ],
+      "correct": 0,
+      "explanation": "In cron format (min hour dom month dow): '0 6 1 * *' means minute 0, hour 6, day 1, every month, any day of week. This runs exactly at 6:00 AM on the 1st of each month.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 106,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "Which command creates a Docker volume named 'appdata'?",
+      "options": [
+        "docker volume create appdata",
+        "docker create volume appdata",
+        "docker mount --name appdata",
+        "docker storage add appdata"
+      ],
+      "correct": 0,
+      "explanation": "docker volume create creates a named volume that persists data independently of container lifecycle. Volumes are the preferred mechanism for persisting data in Docker containers.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 107,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "In bash, what is the purpose of 'trap' command?",
+      "options": [
+        "To catch syntax errors in the script",
+        "To capture and handle signals received by the script",
+        "To log command execution for debugging",
+        "To prevent the script from being killed"
+      ],
+      "correct": 1,
+      "explanation": "The trap command sets up signal handlers in a bash script. For example, 'trap cleanup EXIT' calls the cleanup function when the script exits. Common signals to trap include EXIT, SIGINT, SIGTERM, and ERR.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 108,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "Which Dockerfile instruction creates a layer that is cached and only rebuilt when the specified files change?",
+      "options": [
+        "ADD",
+        "COPY",
+        "RUN",
+        "All of the above create cached layers"
+      ],
+      "correct": 3,
+      "explanation": "Every Dockerfile instruction that modifies the filesystem creates a new layer. Docker caches each layer and only rebuilds from the point where a change is detected. Ordering instructions from least to most frequently changed optimizes build speed.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 109,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "Which command displays real-time system resource usage including CPU, memory, and running processes?",
+      "options": [
+        "ps aux",
+        "top",
+        "uptime",
+        "free -m"
+      ],
+      "correct": 1,
+      "explanation": "top provides a dynamic real-time view of system resource usage, showing CPU utilization, memory usage, load averages, and individual process details. It updates every few seconds by default.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 110,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "Which command shows current memory usage in a human-readable format?",
+      "options": [
+        "mem",
+        "free -h",
+        "vmstat -m",
+        "cat /proc/mem"
+      ],
+      "correct": 1,
+      "explanation": "free -h displays total, used, free, shared, buffer/cache, and available memory in human-readable units (KB, MB, GB). The 'available' column shows memory that can be used by new applications.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 111,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "Which command shows disk space usage for all mounted file systems?",
+      "options": [
+        "du -sh /",
+        "df -h",
+        "fdisk -l",
+        "lsblk"
+      ],
+      "correct": 1,
+      "explanation": "df -h (disk free) shows the size, used space, available space, and usage percentage for all mounted file systems in human-readable format. du shows disk usage for specific directories.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 112,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "Which command displays virtual memory statistics including CPU, I/O, and swap activity?",
+      "options": [
+        "free",
+        "vmstat",
+        "meminfo",
+        "sar"
+      ],
+      "correct": 1,
+      "explanation": "vmstat reports virtual memory statistics including processes, memory, paging, block I/O, traps, and CPU activity. Running 'vmstat 1 5' shows 5 snapshots at 1-second intervals for trend analysis.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 113,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "Which command monitors disk I/O statistics in real time?",
+      "options": [
+        "iotop",
+        "iostat",
+        "diskstat",
+        "Both A and B"
+      ],
+      "correct": 3,
+      "explanation": "Both iotop and iostat monitor disk I/O. iostat (from sysstat package) shows per-device I/O statistics, while iotop shows per-process I/O usage similar to how top shows CPU usage.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 114,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "A system is experiencing high load average but low CPU usage. What is the most likely cause?",
+      "options": [
+        "Too many running processes",
+        "Excessive memory usage",
+        "I/O wait from disk or network bottlenecks",
+        "Kernel panic"
+      ],
+      "correct": 2,
+      "explanation": "High load average with low CPU usage typically indicates I/O wait. Processes are counted in load average while waiting for disk or network I/O, even though they are not consuming CPU cycles. Check with iostat and iotop.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 115,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "Which command displays the IP address configuration for all network interfaces?",
+      "options": [
+        "ifconfig",
+        "ip addr show",
+        "netstat -i",
+        "Both A and B"
+      ],
+      "correct": 3,
+      "explanation": "Both ifconfig and 'ip addr show' display IP address information. However, ifconfig is deprecated in favor of the ip command from the iproute2 package. 'ip a' is the shorthand form.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 116,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "Which command displays active network connections and listening ports?",
+      "options": [
+        "ss -tuln",
+        "netstat -tuln",
+        "ip link show",
+        "Both A and B"
+      ],
+      "correct": 3,
+      "explanation": "Both ss and netstat display network connections. ss -tuln shows TCP/UDP listening sockets with numeric output. ss is the modern replacement for netstat and is faster on systems with many connections.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 117,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "Which command adds a static route to the 10.10.0.0/16 network via gateway 192.168.1.1?",
+      "options": [
+        "ip route add 10.10.0.0/16 via 192.168.1.1",
+        "route add -net 10.10.0.0/16 gw 192.168.1.1",
+        "netstat -r add 10.10.0.0/16 192.168.1.1",
+        "Both A and B"
+      ],
+      "correct": 3,
+      "explanation": "Both the ip route command and the legacy route command can add static routes. 'ip route add' is the modern approach. These routes are temporary and lost on reboot unless made persistent via configuration files.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 118,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "Which tool manages NetworkManager connections from the command line?",
+      "options": [
+        "netctl",
+        "nmcli",
+        "iwconfig",
+        "wpa_supplicant"
+      ],
+      "correct": 1,
+      "explanation": "nmcli is the command-line interface for NetworkManager. It can create, modify, and activate network connections. Example: 'nmcli con mod eth0 ipv4.addresses 192.168.1.100/24' sets a static IP.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 119,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "Which file on a Linux system defines the DNS name servers for resolution?",
+      "options": [
+        "/etc/hostname",
+        "/etc/resolv.conf",
+        "/etc/hosts",
+        "/etc/nsswitch.conf"
+      ],
+      "correct": 1,
+      "explanation": "/etc/resolv.conf contains the DNS nameserver addresses used for name resolution. It typically has 'nameserver' entries. On systems with NetworkManager or systemd-resolved, this file may be auto-generated.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 120,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "Which command tests DNS resolution and shows the full query path including the authoritative server?",
+      "options": [
+        "ping domain.com",
+        "nslookup domain.com",
+        "dig domain.com",
+        "host domain.com"
+      ],
+      "correct": 2,
+      "explanation": "dig (Domain Information Groper) provides the most detailed DNS query output including query time, authoritative servers, TTL values, and the complete DNS response. It is the preferred tool for DNS troubleshooting.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 121,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "easy",
+      "question": "Which command displays the system journal logs managed by systemd?",
+      "options": [
+        "syslog",
+        "dmesg",
+        "journalctl",
+        "logger"
+      ],
+      "correct": 2,
+      "explanation": "journalctl queries and displays logs from the systemd journal. It supports filtering by unit (-u), time range (--since/--until), priority (-p), and boot (-b). The journal captures both syslog and stdout/stderr output.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 122,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "easy",
+      "question": "Which command shows kernel ring buffer messages?",
+      "options": [
+        "journalctl -k",
+        "dmesg",
+        "cat /var/log/kern.log",
+        "Both A and B"
+      ],
+      "correct": 3,
+      "explanation": "Both dmesg and journalctl -k display kernel ring buffer messages. These include hardware detection, driver loading, and kernel errors. dmesg is the traditional tool, while journalctl -k integrates with the systemd journal.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 123,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "Which journalctl command follows new log entries in real time for the nginx service?",
+      "options": [
+        "journalctl -u nginx -f",
+        "journalctl --follow nginx",
+        "journalctl -t nginx --live",
+        "journalctl nginx --tail"
+      ],
+      "correct": 0,
+      "explanation": "journalctl -u nginx -f shows logs for the nginx unit and follows (-f) new entries in real time, similar to tail -f. The -u flag filters by systemd unit name.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 124,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "Which rsyslog configuration file defines where log messages are stored based on facility and severity?",
+      "options": [
+        "/etc/syslog.conf",
+        "/etc/rsyslog.conf",
+        "/var/log/rsyslog.conf",
+        "/etc/logrotate.conf"
+      ],
+      "correct": 1,
+      "explanation": "/etc/rsyslog.conf is the main configuration file for rsyslog. It defines rules that match log messages by facility (auth, mail, kern) and severity (emerg, alert, crit, err, warning, notice, info, debug) to output destinations.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 125,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "Which command configures log rotation and is typically run daily by cron?",
+      "options": [
+        "logrotate",
+        "journalctl --rotate",
+        "rsyslog --rotate",
+        "rotatelog"
+      ],
+      "correct": 0,
+      "explanation": "logrotate manages the automatic rotation, compression, and removal of log files based on rules in /etc/logrotate.conf and /etc/logrotate.d/. It prevents log files from consuming all disk space.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 126,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "easy",
+      "question": "Which command displays the system's current hostname?",
+      "options": [
+        "hostname",
+        "hostnamectl",
+        "uname -n",
+        "All of the above"
+      ],
+      "correct": 3,
+      "explanation": "All three commands display the hostname. hostname shows just the name, hostnamectl provides more details (static, transient, pretty hostname plus OS info), and uname -n shows the node name.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 127,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "easy",
+      "question": "Which command shows how long the system has been running?",
+      "options": [
+        "uptime",
+        "runtime",
+        "boottime",
+        "systemctl status"
+      ],
+      "correct": 0,
+      "explanation": "uptime shows how long the system has been running, the number of logged-in users, and the load averages for the last 1, 5, and 15 minutes. It reads from /proc/uptime.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 128,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "medium",
+      "question": "Which command lists all loaded kernel modules?",
+      "options": [
+        "modprobe -l",
+        "lsmod",
+        "insmod --list",
+        "kmod list"
+      ],
+      "correct": 1,
+      "explanation": "lsmod lists all currently loaded kernel modules along with their size and which other modules use them. The information comes from /proc/modules.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 129,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "medium",
+      "question": "Which command loads a kernel module and its dependencies?",
+      "options": [
+        "insmod modulename",
+        "modprobe modulename",
+        "loadmod modulename",
+        "kmod insert modulename"
+      ],
+      "correct": 1,
+      "explanation": "modprobe loads a kernel module and automatically resolves and loads any dependencies. insmod loads a module but does not handle dependencies, so modprobe is preferred for most use cases.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 130,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "hard",
+      "question": "Which file is used to blacklist a kernel module from loading at boot?",
+      "options": [
+        "/etc/modules",
+        "/etc/modprobe.d/blacklist.conf",
+        "/boot/grub2/grub.cfg",
+        "/etc/sysctl.conf"
+      ],
+      "correct": 1,
+      "explanation": "Files in /etc/modprobe.d/ with 'blacklist modulename' entries prevent kernel modules from loading automatically. This is commonly used to prevent problematic or unwanted drivers from loading.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 131,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "easy",
+      "question": "Which GRUB2 configuration file should an administrator edit to set boot parameters?",
+      "options": [
+        "/boot/grub2/grub.cfg",
+        "/etc/default/grub",
+        "/etc/grub.conf",
+        "/boot/grub/menu.lst"
+      ],
+      "correct": 1,
+      "explanation": "/etc/default/grub is the file administrators should edit to change GRUB2 settings. After editing, run grub2-mkconfig (or update-grub on Debian) to regenerate /boot/grub2/grub.cfg. Never edit grub.cfg directly.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 132,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "medium",
+      "question": "Which command regenerates the GRUB2 configuration file on a RHEL-based system?",
+      "options": [
+        "update-grub",
+        "grub2-mkconfig -o /boot/grub2/grub.cfg",
+        "grub-install /dev/sda",
+        "grub2-update"
+      ],
+      "correct": 1,
+      "explanation": "grub2-mkconfig -o /boot/grub2/grub.cfg regenerates the GRUB2 configuration on RHEL-based systems. On Debian-based systems, 'update-grub' is the equivalent wrapper script.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 133,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "hard",
+      "question": "During boot troubleshooting, an administrator needs to boot into single-user mode. Which kernel parameter should be added at the GRUB2 prompt?",
+      "options": [
+        "runlevel=1",
+        "single",
+        "systemd.unit=rescue.target",
+        "Both B and C work"
+      ],
+      "correct": 3,
+      "explanation": "Both 'single' (traditional SysV parameter) and 'systemd.unit=rescue.target' boot the system into single-user/rescue mode with a root shell. On systemd systems, rescue.target is the proper method.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 134,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "Which command shows the top 10 processes consuming the most memory?",
+      "options": [
+        "ps aux --sort=-%mem | head -11",
+        "top -o MEM",
+        "free --top 10",
+        "vmstat --processes 10"
+      ],
+      "correct": 0,
+      "explanation": "ps aux --sort=-%mem sorts processes by memory usage in descending order. Piping to head -11 shows the header plus top 10 processes. The - prefix means descending order.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 135,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "A server cannot resolve external DNS names but can ping external IPs. Which is the most likely issue?",
+      "options": [
+        "The default gateway is misconfigured",
+        "The firewall is blocking all outbound traffic",
+        "The DNS server configuration in /etc/resolv.conf is incorrect",
+        "The network interface is down"
+      ],
+      "correct": 2,
+      "explanation": "If IP connectivity works (ping by IP succeeds) but DNS resolution fails, the issue is with DNS configuration. Check /etc/resolv.conf for correct nameserver entries and verify the DNS server is reachable on port 53.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 136,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "Which command identifies which process is using the most I/O bandwidth?",
+      "options": [
+        "top",
+        "iotop",
+        "vmstat",
+        "mpstat"
+      ],
+      "correct": 1,
+      "explanation": "iotop displays per-process I/O usage similar to how top displays CPU usage. It shows read/write rates and cumulative I/O for each process, making it easy to identify I/O-heavy processes.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 137,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "Which command tests network connectivity to a remote host using ICMP?",
+      "options": [
+        "telnet host",
+        "ping host",
+        "traceroute host",
+        "curl host"
+      ],
+      "correct": 1,
+      "explanation": "ping sends ICMP echo request packets to test basic network connectivity and measures round-trip time. It is the most fundamental network troubleshooting tool.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 138,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "Which command shows the network path (hops) packets take to reach a destination?",
+      "options": [
+        "ping -t host",
+        "traceroute host",
+        "route get host",
+        "pathping host"
+      ],
+      "correct": 1,
+      "explanation": "traceroute displays each hop along the network path to the destination, showing IP addresses and round-trip times. It helps identify where network latency or packet loss occurs.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 139,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "Which journalctl command shows only error-level and above messages?",
+      "options": [
+        "journalctl -p err",
+        "journalctl --level=error",
+        "journalctl --errors-only",
+        "journalctl -f error"
+      ],
+      "correct": 0,
+      "explanation": "journalctl -p err filters journal entries by priority level 'err' (error) and above (crit, alert, emerg). Priority levels follow syslog conventions from 0 (emerg) to 7 (debug).",
+      "link": "start-here.html"
+    },
+    {
+      "id": 140,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "medium",
+      "question": "Which command displays detailed hardware information about the system?",
+      "options": [
+        "lshw",
+        "hwinfo",
+        "dmidecode",
+        "All of the above"
+      ],
+      "correct": 3,
+      "explanation": "All three commands provide hardware information. lshw gives a comprehensive hardware listing, hwinfo provides detailed hardware probe data, and dmidecode reads DMI/SMBIOS data from the BIOS including model, serial number, and RAM details.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 141,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "medium",
+      "question": "A service fails to start after boot. Which command shows why it failed?",
+      "options": [
+        "systemctl status servicename",
+        "journalctl -u servicename",
+        "systemctl show servicename",
+        "Both A and B"
+      ],
+      "correct": 3,
+      "explanation": "Both 'systemctl status' and 'journalctl -u' help diagnose service failures. systemctl status shows the current state and recent log lines, while journalctl -u shows the complete journal for that unit.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 142,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "Which command shows disk usage for a specific directory?",
+      "options": [
+        "df -h /data",
+        "du -sh /data",
+        "ls -lh /data",
+        "stat /data"
+      ],
+      "correct": 1,
+      "explanation": "du -sh /data shows the total disk usage for the /data directory. The -s flag gives a summary total, and -h makes it human-readable. df shows filesystem-level usage, not directory-level.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 143,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "Which command captures network traffic on interface eth0 and saves it to a file for analysis?",
+      "options": [
+        "tcpdump -i eth0 -w capture.pcap",
+        "wireshark -i eth0 -o capture.pcap",
+        "netstat --capture eth0",
+        "ip monitor eth0 > capture.log"
+      ],
+      "correct": 0,
+      "explanation": "tcpdump -i specifies the interface and -w writes raw packets to a pcap file. This file can later be analyzed with tcpdump -r or imported into Wireshark for detailed protocol analysis.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 144,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "What does a load average of '4.00 2.00 1.00' indicate on a single-CPU system?",
+      "options": [
+        "The system was idle for the last 15 minutes",
+        "The system is currently overloaded with the load decreasing over time",
+        "The system is underloaded",
+        "There are exactly 4 processes running"
+      ],
+      "correct": 1,
+      "explanation": "Load averages show 1, 5, and 15-minute averages of processes waiting for CPU. On a single-CPU system, a load of 4.00 means 4 processes are competing for 1 CPU. The decreasing pattern (4, 2, 1) shows load is trending upward recently.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 145,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "Which command sends a custom log message to the system journal?",
+      "options": [
+        "logger 'Custom message'",
+        "journalctl --write 'Custom message'",
+        "syslog 'Custom message'",
+        "log --message 'Custom message'"
+      ],
+      "correct": 0,
+      "explanation": "The logger command writes messages to the system log (syslog/journal). It is useful in scripts for logging events: 'logger -p auth.warning -t myscript \"Login attempt detected\"' specifies facility, priority, and tag.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 146,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "hard",
+      "question": "Which sysctl parameter controls whether the Linux kernel allows IP forwarding?",
+      "options": [
+        "net.ipv4.ip_forward",
+        "net.core.forwarding",
+        "kernel.ip_routing",
+        "net.ipv4.route.enable"
+      ],
+      "correct": 0,
+      "explanation": "net.ipv4.ip_forward controls IP packet forwarding between interfaces. Setting it to 1 enables routing. Make it persistent by adding net.ipv4.ip_forward=1 to /etc/sysctl.conf or a file in /etc/sysctl.d/.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 147,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "hard",
+      "question": "A system fails to boot with 'kernel panic - not syncing: VFS: Unable to mount root fs'. What is the most likely cause?",
+      "options": [
+        "The GRUB configuration has an incorrect root= parameter or missing initramfs",
+        "The network interface is not configured",
+        "SELinux is in enforcing mode",
+        "The swap partition is full"
+      ],
+      "correct": 0,
+      "explanation": "This kernel panic occurs when the kernel cannot find or mount the root filesystem. Common causes include incorrect root= boot parameter, missing or corrupt initramfs/initrd, or a missing disk driver needed to access the root device.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 148,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "Which command shows per-CPU utilization statistics?",
+      "options": [
+        "vmstat",
+        "mpstat -P ALL",
+        "top -1",
+        "Both B and C"
+      ],
+      "correct": 3,
+      "explanation": "Both mpstat -P ALL (from the sysstat package) and top with '1' pressed show individual CPU core statistics. This is essential for identifying if load is evenly distributed or concentrated on specific cores.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 149,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "Which command shows which process is listening on TCP port 443?",
+      "options": [
+        "ss -tlnp | grep 443",
+        "netstat -tlnp | grep 443",
+        "lsof -i :443",
+        "All of the above"
+      ],
+      "correct": 3,
+      "explanation": "All three commands can identify which process is listening on a specific port. ss and netstat with -p show the process name/PID, and lsof -i lists processes using the specified network port.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 150,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "hard",
+      "question": "After a failed kernel update, an administrator needs to boot using the previous kernel. Where is this done?",
+      "options": [
+        "By editing /etc/default/grub and setting GRUB_DEFAULT",
+        "By selecting the previous kernel from the GRUB boot menu",
+        "By running 'kernel --rollback' from rescue mode",
+        "Both A and B"
+      ],
+      "correct": 3,
+      "explanation": "The previous kernel can be selected from the GRUB boot menu at startup (under 'Advanced options'). For a permanent change, edit GRUB_DEFAULT in /etc/default/grub and regenerate the config with grub2-mkconfig.",
+      "link": "start-here.html"
+    }
+  ]
+}
