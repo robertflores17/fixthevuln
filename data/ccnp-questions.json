@@ -1,0 +1,2442 @@
+{
+  "metadata": {
+    "title": "Cisco CCNP Enterprise 350-401 ENCOR Practice Questions",
+    "version": "1.0",
+    "total_questions": 150,
+    "exam": "350-401",
+    "domains": {
+      "1": {
+        "name": "Architecture",
+        "weight": 15,
+        "count": 23
+      },
+      "2": {
+        "name": "Virtualization",
+        "weight": 10,
+        "count": 15
+      },
+      "3": {
+        "name": "Infrastructure",
+        "weight": 30,
+        "count": 45
+      },
+      "4": {
+        "name": "Network Assurance",
+        "weight": 10,
+        "count": 15
+      },
+      "5": {
+        "name": "Security",
+        "weight": 20,
+        "count": 30
+      },
+      "6": {
+        "name": "Automation",
+        "weight": 15,
+        "count": 22
+      }
+    }
+  },
+  "questions": [
+    {
+      "id": 1,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "Which Cisco architecture provides automated campus network segmentation using identity-based policies?",
+      "options": [
+        "SD-WAN",
+        "Meraki Dashboard",
+        "DNA Spaces",
+        "SD-Access"
+      ],
+      "correct": 3,
+      "explanation": "SD-Access uses Cisco Identity Services Engine (ISE) and DNA Center to automate campus network segmentation with identity-based group policies, leveraging VXLAN and LISP in the underlay/overlay.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 2,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "medium",
+      "question": "In Cisco SD-Access, what is the role of the control plane node?",
+      "options": [
+        "Connects the fabric to external Layer 3 networks",
+        "Encrypts all east-west traffic within the fabric",
+        "Provides default gateway functionality for endpoints",
+        "Maintains the host-tracking database using LISP map server/resolver"
+      ],
+      "correct": 3,
+      "explanation": "The control plane node in SD-Access runs LISP as the map server and map resolver (MS/MR), maintaining the Endpoint Identifier (EID) to Routing Locator (RLOC) mapping database for host tracking.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 3,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "Which overlay encapsulation protocol does Cisco SD-Access use to transport data across the fabric?",
+      "options": [
+        "GRE",
+        "IPsec",
+        "MPLS",
+        "VXLAN"
+      ],
+      "correct": 3,
+      "explanation": "SD-Access uses VXLAN (Virtual Extensible LAN) as the data plane encapsulation to create the overlay network, allowing Layer 2 and Layer 3 traffic to traverse the fabric underlay.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 4,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "In an SD-Access fabric, what is the purpose of the Scalable Group Tag (SGT) carried within the VXLAN header?",
+      "options": [
+        "To apply micro-segmentation policy based on group identity without relying on IP addresses",
+        "To enforce macro-segmentation between VNs",
+        "To provide QoS marking for traffic prioritization across the fabric",
+        "To identify the VLAN membership of the source endpoint"
+      ],
+      "correct": 0,
+      "explanation": "The SGT enables micro-segmentation by tagging traffic with a group identity. Policy enforcement points use SGT-based access control lists (SGACLs) to permit or deny traffic regardless of IP addresses, enabling scalable identity-based security.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 5,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "easy",
+      "question": "Which SD-WAN component is responsible for centralized policy configuration and management?",
+      "options": [
+        "vEdge router",
+        "vBond orchestrator",
+        "vSmart controller",
+        "vManage"
+      ],
+      "correct": 3,
+      "explanation": "vManage is the centralized network management system (NMS) for Cisco SD-WAN, providing a GUI dashboard for configuration, monitoring, and policy management across the entire SD-WAN fabric.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 6,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "medium",
+      "question": "In Cisco SD-WAN, which component distributes control plane policies and routing information to the edge routers using OMP?",
+      "options": [
+        "vBond orchestrator",
+        "vSmart controller",
+        "WAN Edge router",
+        "vManage"
+      ],
+      "correct": 1,
+      "explanation": "The vSmart controller uses the Overlay Management Protocol (OMP) to distribute routing information, policies, and encryption keys to WAN Edge routers, functioning as a centralized route reflector for the overlay network.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 7,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "What is the primary function of the vBond orchestrator in the Cisco SD-WAN architecture?",
+      "options": [
+        "Distributing routing updates via OMP to all fabric nodes",
+        "Enforcing data plane security policies on edge routers",
+        "Authenticating and orchestrating initial connectivity between SD-WAN components",
+        "Providing centralized logging and telemetry collection"
+      ],
+      "correct": 2,
+      "explanation": "The vBond orchestrator is the first point of contact for all SD-WAN components. It authenticates devices, facilitates NAT traversal, and orchestrates the initial secure connections between vManage, vSmart, and WAN Edge routers.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 8,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "medium",
+      "question": "Which protocol does LISP use to separate endpoint identity from network location?",
+      "options": [
+        "It relies on DNS for hostname-to-location resolution",
+        "It maps EIDs to RLOCs using a mapping system",
+        "It uses ARP tables to resolve MAC-to-IP mappings",
+        "It uses MPLS labels to identify endpoint locations"
+      ],
+      "correct": 1,
+      "explanation": "LISP (Locator/ID Separation Protocol) decouples endpoint identifiers (EIDs) from routing locators (RLOCs). A mapping system (Map Server/Map Resolver) maintains the EID-to-RLOC database, enabling mobility and multihoming.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 9,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "hard",
+      "question": "In a VXLAN fabric, what identifier is used to segment Layer 2 traffic across the overlay, extending beyond the traditional 4096 VLAN limit?",
+      "options": [
+        "MPLS label",
+        "VXLAN Network Identifier (VNI)",
+        "VRF ID",
+        "GRE key"
+      ],
+      "correct": 1,
+      "explanation": "The VXLAN Network Identifier (VNI) is a 24-bit field that supports up to 16 million logical segments, overcoming the 4096 VLAN limit of 802.1Q. Each VNI maps to a unique Layer 2 broadcast domain in the overlay.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 10,
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "easy",
+      "question": "What is the standard port number used by VXLAN for UDP encapsulation?",
+      "options": [
+        "UDP 500",
+        "TCP 443",
+        "UDP 4789",
+        "UDP 8472"
+      ],
+      "correct": 2,
+      "explanation": "IANA has assigned UDP port 4789 as the standard VXLAN port. VXLAN encapsulates Layer 2 frames within UDP packets, using the outer UDP header with destination port 4789 by default.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 11,
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "medium",
+      "question": "Which device in a VXLAN fabric performs the encapsulation and decapsulation of overlay frames?",
+      "options": [
+        "VTEP (VXLAN Tunnel Endpoint)",
+        "Route Reflector",
+        "Map Server",
+        "Spine switch"
+      ],
+      "correct": 0,
+      "explanation": "The VTEP (VXLAN Tunnel Endpoint) is responsible for encapsulating original Layer 2 frames into VXLAN/UDP/IP headers and decapsulating them at the remote end. VTEPs are typically located on leaf switches or hypervisor virtual switches.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 12,
+      "domain": 1,
+      "objective": "1.6",
+      "difficulty": "easy",
+      "question": "In a Cisco campus network using a three-tier architecture, which layer aggregates traffic from access layer switches?",
+      "options": [
+        "Core layer",
+        "Service layer",
+        "Access layer",
+        "Distribution layer"
+      ],
+      "correct": 3,
+      "explanation": "The distribution layer sits between access and core, aggregating traffic from multiple access switches, enforcing policies, and providing redundant paths to the core layer.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 13,
+      "domain": 1,
+      "objective": "1.6",
+      "difficulty": "hard",
+      "question": "When designing a collapsed core architecture, which two layers are merged into a single tier?",
+      "options": [
+        "Distribution and core",
+        "Access and services",
+        "Core and access",
+        "Access and distribution"
+      ],
+      "correct": 0,
+      "explanation": "A collapsed core design merges the distribution and core layers into a single tier, which is suitable for smaller campuses where a separate core layer would add unnecessary cost and complexity.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 14,
+      "domain": 1,
+      "objective": "1.7",
+      "difficulty": "medium",
+      "question": "Which Cisco wireless deployment model uses a centralized WLC to manage lightweight access points and handle all client data traffic?",
+      "options": [
+        "Autonomous AP deployment",
+        "Cisco Mobility Express",
+        "Centralized (local mode)",
+        "FlexConnect (local switching)"
+      ],
+      "correct": 2,
+      "explanation": "In centralized (local mode) deployment, lightweight APs tunnel all client data traffic back to the WLC via CAPWAP. The WLC handles switching decisions centrally, providing consistent policy enforcement.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 15,
+      "domain": 1,
+      "objective": "1.7",
+      "difficulty": "hard",
+      "question": "What advantage does FlexConnect local switching mode offer over centralized WLC deployment for branch offices?",
+      "options": [
+        "Higher throughput because all traffic is inspected by the WLC",
+        "Client traffic is switched locally at the AP, reducing WAN bandwidth usage",
+        "Eliminates the need for any WLC in the architecture",
+        "Provides stronger encryption than centralized mode"
+      ],
+      "correct": 1,
+      "explanation": "FlexConnect local switching allows APs in remote branches to switch client data traffic directly to the local network, avoiding the need to tunnel all data across the WAN to a centralized WLC, thus reducing bandwidth consumption and latency.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 16,
+      "domain": 1,
+      "objective": "1.8",
+      "difficulty": "medium",
+      "question": "In SD-Access, what is the role of the fabric border node?",
+      "options": [
+        "Provides DHCP relay services for wireless clients",
+        "Connects the SD-Access fabric to external networks such as the internet or data center",
+        "Runs the LISP map server for host tracking",
+        "Acts as the default gateway for all endpoints in the fabric"
+      ],
+      "correct": 1,
+      "explanation": "The fabric border node connects the SD-Access fabric to networks outside the fabric domain, such as the internet, WAN, or data center. It translates between the fabric overlay (VXLAN/LISP) and traditional routing protocols.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 17,
+      "domain": 1,
+      "objective": "1.8",
+      "difficulty": "hard",
+      "question": "Which SD-Access fabric node provides the anycast gateway function for endpoints?",
+      "options": [
+        "Edge node",
+        "Border node",
+        "Control plane node",
+        "Intermediate node"
+      ],
+      "correct": 0,
+      "explanation": "The fabric edge node provides the anycast gateway for connected endpoints using a shared IP and MAC address across all edge nodes. This enables seamless roaming because every edge node responds to the same gateway address.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 18,
+      "domain": 1,
+      "objective": "1.9",
+      "difficulty": "easy",
+      "question": "What is the primary benefit of using an overlay network in enterprise architecture?",
+      "options": [
+        "Increases the maximum cable distance for Ethernet",
+        "Eliminates the need for physical cabling",
+        "Provides logical separation of traffic independent of the physical underlay topology",
+        "Replaces the need for routing protocols"
+      ],
+      "correct": 2,
+      "explanation": "Overlay networks create logical topologies on top of the physical underlay, allowing traffic segmentation, mobility, and policy enforcement independent of the physical infrastructure layout.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 19,
+      "domain": 1,
+      "objective": "1.9",
+      "difficulty": "medium",
+      "question": "Which two technologies form the underlay and overlay in Cisco SD-Access? (Choose the best answer.)",
+      "options": [
+        "IS-IS for the underlay, VXLAN with LISP for the overlay",
+        "OSPF for the underlay, GRE for the overlay",
+        "EIGRP for the underlay, IPsec for the overlay",
+        "BGP for the underlay, MPLS for the overlay"
+      ],
+      "correct": 0,
+      "explanation": "Cisco SD-Access uses IS-IS as the underlay routing protocol to provide IP reachability between fabric nodes, and VXLAN for data plane encapsulation with LISP for control plane host tracking in the overlay.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 20,
+      "domain": 1,
+      "objective": "1.10",
+      "difficulty": "hard",
+      "question": "In a spine-leaf data center topology used with VXLAN, what is the primary role of the spine switches?",
+      "options": [
+        "Terminate VXLAN tunnels and host VTEPs",
+        "Act as transit nodes routing traffic between leaf switches at Layer 3",
+        "Run the LISP map server for endpoint tracking",
+        "Provide Layer 2 connectivity to servers"
+      ],
+      "correct": 1,
+      "explanation": "In a spine-leaf architecture, spine switches provide Layer 3 transit between leaf switches. Every leaf connects to every spine, creating equal-cost paths. VTEPs and endpoint connectivity reside on the leaf switches, not the spines.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 21,
+      "domain": 1,
+      "objective": "1.10",
+      "difficulty": "easy",
+      "question": "What is one key advantage of a spine-leaf topology over a traditional three-tier architecture in a data center?",
+      "options": [
+        "Simplified management using a single switch",
+        "Predictable and consistent latency between any two endpoints",
+        "Native support for STP-based redundancy",
+        "Lower cost due to fewer switches required"
+      ],
+      "correct": 1,
+      "explanation": "Spine-leaf topologies ensure that every leaf is exactly the same number of hops from every other leaf (through a spine), providing predictable and low latency for east-west traffic patterns common in modern data centers.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 22,
+      "domain": 1,
+      "objective": "1.11",
+      "difficulty": "medium",
+      "question": "Which Cisco technology centralizes wireless and wired policy management and provides fabric orchestration for SD-Access?",
+      "options": [
+        "Cisco Prime Infrastructure",
+        "Cisco ACI",
+        "Cisco vManage",
+        "Cisco DNA Center (Catalyst Center)"
+      ],
+      "correct": 3,
+      "explanation": "Cisco DNA Center (now Catalyst Center) is the centralized management and orchestration platform for SD-Access. It automates fabric provisioning, policy creation, and assurance for both wired and wireless networks.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 23,
+      "domain": 1,
+      "objective": "1.11",
+      "difficulty": "hard",
+      "question": "When deploying SD-Access with DNA Center, what role does Cisco ISE play in the architecture?",
+      "options": [
+        "It provides the policy engine for authentication, authorization, and SGT assignment",
+        "It serves as the DHCP server for all fabric endpoints",
+        "It manages AP firmware upgrades and RF optimization",
+        "It functions as the LISP map server for the control plane"
+      ],
+      "correct": 0,
+      "explanation": "Cisco ISE is the policy engine in SD-Access, handling 802.1X/MAB authentication, assigning Scalable Group Tags (SGTs) based on identity, and distributing SGT-to-IP mappings. DNA Center integrates with ISE to automate policy deployment.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 24,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "What does VRF (Virtual Routing and Forwarding) enable on a single physical router?",
+      "options": [
+        "Compression of routing table entries",
+        "Automatic failover between routing protocols",
+        "Encryption of all routing updates",
+        "Multiple isolated routing table instances"
+      ],
+      "correct": 3,
+      "explanation": "VRF allows a single physical router to maintain multiple independent routing tables, effectively creating virtual routers. Each VRF instance has its own routing table, enabling traffic isolation between different tenants or segments.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 25,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "Which command assigns an interface to a VRF instance named 'CUSTOMER_A' on a Cisco IOS-XE router?",
+      "options": [
+        "vrf forwarding CUSTOMER_A",
+        "ip vrf member CUSTOMER_A",
+        "ip vrf CUSTOMER_A",
+        "vrf definition CUSTOMER_A"
+      ],
+      "correct": 0,
+      "explanation": "The 'vrf forwarding CUSTOMER_A' command is applied under the interface configuration to assign that interface to the specified VRF. Note that applying this command removes any existing IP address, which must be reconfigured.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 26,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "What happens to the IP address configured on an interface when you assign it to a VRF using the 'vrf forwarding' command?",
+      "options": [
+        "The interface enters error-disabled state until the VRF is fully configured",
+        "The IP address remains but becomes unreachable until a route distinguisher is set",
+        "The IP address is automatically migrated to the VRF routing table",
+        "The IP address is removed and must be re-applied after the VRF assignment"
+      ],
+      "correct": 3,
+      "explanation": "When assigning an interface to a VRF, IOS-XE removes any existing IP address configuration as a safety measure. The administrator must re-apply the IP address after the VRF assignment to prevent accidental route leaking between VRFs.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 27,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "In VRF-Lite, what is the key difference compared to full MPLS VPN?",
+      "options": [
+        "VRF-Lite supports only IPv6, not IPv4",
+        "VRF-Lite can only create two VRF instances per router",
+        "VRF-Lite does not require MPLS labels or an MPLS core network",
+        "VRF-Lite requires BGP as the only routing protocol"
+      ],
+      "correct": 2,
+      "explanation": "VRF-Lite provides VRF functionality without requiring MPLS in the transport network. Each hop maintains separate VRF instances with dedicated sub-interfaces or physical links between devices, making it simpler but less scalable than MPLS VPN.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 28,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "When configuring VRF-Lite between two routers, what must be configured on the interconnecting link?",
+      "options": [
+        "A GRE tunnel with IPsec encryption",
+        "Both routers must assign the interconnecting interfaces to the same VRF",
+        "An MPLS LDP session between the routers",
+        "A dedicated VLAN for each VRF is required with no sub-interfaces"
+      ],
+      "correct": 1,
+      "explanation": "In VRF-Lite, both ends of an interconnecting link must be assigned to the same VRF instance. Typically 802.1Q sub-interfaces are used to carry multiple VRFs over a single physical link, with each sub-interface in its respective VRF.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 29,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "What type of tunnel encapsulation does GRE (Generic Routing Encapsulation) provide?",
+      "options": [
+        "Multipoint tunnel with automatic neighbor discovery",
+        "Encrypted point-to-point tunnel with built-in authentication",
+        "Unencrypted point-to-point tunnel that can carry multiprotocol traffic",
+        "Layer 2 tunnel that bridges Ethernet frames between sites"
+      ],
+      "correct": 2,
+      "explanation": "GRE creates unencrypted point-to-point tunnels capable of encapsulating virtually any Layer 3 protocol. GRE itself does not provide encryption; IPsec is typically added on top of GRE when confidentiality is required.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 30,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "Which protocol number does GRE use in the IP header?",
+      "options": [
+        "Protocol 47 (GRE)",
+        "Protocol 6 (TCP)",
+        "Protocol 17 (UDP)",
+        "Protocol 50 (ESP)"
+      ],
+      "correct": 0,
+      "explanation": "GRE uses IP protocol number 47. This is important for firewall and ACL configurations, as GRE traffic must be permitted using protocol 47, not TCP or UDP port numbers.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 31,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "medium",
+      "question": "What is the primary advantage of using IPsec over GRE (GRE over IPsec) instead of standalone IPsec tunnels?",
+      "options": [
+        "GRE over IPsec eliminates all encryption overhead",
+        "GRE over IPsec does not require IKE for key exchange",
+        "GRE over IPsec supports multicast and routing protocol traffic, which native IPsec tunnel mode does not",
+        "GRE over IPsec provides faster throughput than standalone IPsec"
+      ],
+      "correct": 2,
+      "explanation": "Native IPsec tunnel mode does not support multicast traffic, which is required by dynamic routing protocols like OSPF and EIGRP. GRE encapsulation converts multicast to unicast before IPsec encryption, enabling routing protocol adjacencies over the tunnel.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 32,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "hard",
+      "question": "When configuring a GRE tunnel on Cisco IOS-XE, which command sets the tunnel encapsulation to GRE?",
+      "options": [
+        "tunnel mode gre ip",
+        "tunnel mode ipsec ipv4",
+        "encapsulation gre",
+        "tunnel protection ipsec"
+      ],
+      "correct": 0,
+      "explanation": "The 'tunnel mode gre ip' command configures the tunnel interface to use GRE encapsulation over IPv4. This is actually the default mode on Cisco IOS, but specifying it explicitly ensures the correct encapsulation type.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 33,
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "easy",
+      "question": "What type of hypervisor runs directly on the physical hardware without a host operating system?",
+      "options": [
+        "Container runtime",
+        "Type 1 (bare-metal) hypervisor",
+        "Type 2 hypervisor",
+        "Paravirtualized hypervisor"
+      ],
+      "correct": 1,
+      "explanation": "A Type 1 (bare-metal) hypervisor such as VMware ESXi or Cisco NFVIS runs directly on the physical hardware, providing better performance and security than Type 2 hypervisors that run on top of a host OS.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 34,
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "medium",
+      "question": "Which Cisco platform uses Network Functions Virtualization (NFV) to run virtual network services on x86 hardware at branch sites?",
+      "options": [
+        "Cisco Nexus 9000",
+        "Cisco Catalyst 9000",
+        "Cisco ENCS (Enterprise Network Compute System)",
+        "Cisco ASR 9000"
+      ],
+      "correct": 2,
+      "explanation": "The Cisco ENCS platform is designed for branch NFV deployments, running NFVIS as a Type 1 hypervisor to host virtual routers, firewalls, and WAN optimization appliances on a single x86 hardware platform.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 35,
+      "domain": 2,
+      "objective": "2.6",
+      "difficulty": "hard",
+      "question": "In a VXLAN-based data center fabric using MP-BGP EVPN, what is the purpose of Route Type 2 advertisements?",
+      "options": [
+        "Advertising IP prefix routes for inter-subnet routing",
+        "Advertising multicast group memberships for BUM traffic",
+        "Advertising MAC and MAC/IP host routes for endpoint reachability",
+        "Advertising Ethernet Segment routes for multihoming"
+      ],
+      "correct": 2,
+      "explanation": "EVPN Route Type 2 (MAC/IP Advertisement) distributes MAC addresses and optionally associated IP addresses learned from endpoints. This enables efficient unicast forwarding in the VXLAN fabric by populating remote VTEP forwarding tables.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 36,
+      "domain": 2,
+      "objective": "2.6",
+      "difficulty": "medium",
+      "question": "Which technology provides a control plane for VXLAN in modern data center deployments, eliminating the need for multicast-based flood-and-learn?",
+      "options": [
+        "MP-BGP EVPN",
+        "OSPF",
+        "IS-IS",
+        "LISP"
+      ],
+      "correct": 0,
+      "explanation": "MP-BGP EVPN provides a standards-based control plane for VXLAN, distributing MAC/IP reachability information. This eliminates the need for multicast-based flood-and-learn, improving scalability and convergence in data center fabrics.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 37,
+      "domain": 2,
+      "objective": "2.7",
+      "difficulty": "medium",
+      "question": "What is the maximum number of virtual network segments supported by the 24-bit VXLAN Network Identifier (VNI)?",
+      "options": [
+        "Approximately 16 million",
+        "Approximately 4 billion",
+        "65,536",
+        "4,096"
+      ],
+      "correct": 0,
+      "explanation": "The VNI is a 24-bit field, supporting up to 2^24 (approximately 16.7 million) unique network segments. This vastly exceeds the 4,096 VLAN limit of 802.1Q, making VXLAN suitable for large multi-tenant environments.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 38,
+      "domain": 2,
+      "objective": "2.7",
+      "difficulty": "hard",
+      "question": "In a DMVPN Phase 3 deployment, which NHRP feature allows spoke-to-spoke traffic to take a direct path without traversing the hub?",
+      "options": [
+        "NHRP holdtime adjustment",
+        "NHRP redirect and shortcut",
+        "NHRP authentication",
+        "NHRP registration"
+      ],
+      "correct": 1,
+      "explanation": "DMVPN Phase 3 uses NHRP redirect (sent by the hub) and NHRP shortcut (installed by the spoke) to enable direct spoke-to-spoke tunnels on demand. This eliminates the hub as a transit point, reducing latency and hub bandwidth usage.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 39,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "Which OSPF area type blocks all external LSAs (Type 5) from being flooded into it?",
+      "options": [
+        "NSSA (Not-So-Stubby Area)",
+        "Backbone area (Area 0)",
+        "Transit area",
+        "Stub area"
+      ],
+      "correct": 3,
+      "explanation": "A stub area blocks Type 5 external LSAs from entering the area. The ABR injects a default route instead, reducing the routing table size for routers within the stub area while still providing reachability to external destinations.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 40,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "What distinguishes an OSPF NSSA from a regular stub area?",
+      "options": [
+        "NSSA uses a different SPF algorithm for route calculation",
+        "NSSA does not require an ABR connection to Area 0",
+        "NSSA allows local redistribution into OSPF using Type 7 LSAs, which are converted to Type 5 at the ABR",
+        "NSSA allows Type 5 LSAs but blocks Type 3 LSAs"
+      ],
+      "correct": 2,
+      "explanation": "NSSA still blocks external Type 5 LSAs like a stub area, but it allows local redistribution of external routes as Type 7 LSAs. The ABR then converts these Type 7 LSAs to Type 5 LSAs before flooding them into the backbone.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 41,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "In OSPF, when is a Type 4 (ASBR Summary) LSA generated?",
+      "options": [
+        "When virtual links are configured across a transit area",
+        "When an ABR needs to advertise the path to an ASBR in a different area",
+        "When a router becomes the DR on a multi-access segment",
+        "When a stub area needs a default route injected"
+      ],
+      "correct": 1,
+      "explanation": "Type 4 LSAs are generated by ABRs to advertise the location of ASBRs to routers in other areas. Since Type 1 (Router) LSAs are area-scoped, routers outside the ASBR's area need Type 4 LSAs to reach the ASBR for external route forwarding.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 42,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "Which OSPF network type uses a Designated Router (DR) and Backup DR election by default?",
+      "options": [
+        "Point-to-point",
+        "Loopback",
+        "Broadcast",
+        "Point-to-multipoint"
+      ],
+      "correct": 2,
+      "explanation": "Broadcast network types (such as Ethernet) elect a DR and BDR to reduce OSPF adjacency flooding. All other routers form adjacencies only with the DR/BDR, reducing the number of LSA exchanges on multi-access segments.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 43,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "What is the OSPF default cost formula for an interface?",
+      "options": [
+        "10^7 / interface bandwidth in bps",
+        "Hop count to destination",
+        "Reference bandwidth / interface bandwidth",
+        "Interface bandwidth / 1000"
+      ],
+      "correct": 2,
+      "explanation": "OSPF calculates interface cost as reference bandwidth divided by the interface bandwidth. The default reference bandwidth is 100 Mbps (10^8 bps). For high-speed links, the reference bandwidth should be increased using 'auto-cost reference-bandwidth'.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 44,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "In OSPFv3, what fundamental change was made compared to OSPFv2 regarding address handling?",
+      "options": [
+        "OSPFv3 eliminated the concept of areas entirely",
+        "OSPFv3 replaced LSAs with BGP-style path attributes",
+        "OSPFv3 runs per-link rather than per-subnet and carries address families in LSAs",
+        "OSPFv3 uses TCP instead of IP protocol 89"
+      ],
+      "correct": 2,
+      "explanation": "OSPFv3 decouples the protocol from specific address families by running per-link rather than per-subnet. It uses link-local addresses for neighbor discovery and can carry both IPv4 and IPv6 prefixes in LSAs using address family support.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 45,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "easy",
+      "question": "What is the default administrative distance of EIGRP internal routes on Cisco IOS?",
+      "options": [
+        "120",
+        "170",
+        "110",
+        "90"
+      ],
+      "correct": 3,
+      "explanation": "EIGRP internal routes have an administrative distance of 90, making them preferred over OSPF (110), IS-IS (115), and RIP (120) routes by default. EIGRP external routes have a higher AD of 170.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 46,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "In EIGRP, what is the Feasibility Condition used for?",
+      "options": [
+        "Ensuring loop-free backup paths by requiring the reported distance of a feasible successor to be less than the feasible distance of the successor",
+        "Selecting the route with the lowest hop count",
+        "Calculating the composite metric based on bandwidth and delay",
+        "Determining the DR election on broadcast segments"
+      ],
+      "correct": 0,
+      "explanation": "The Feasibility Condition guarantees loop-free backup paths in EIGRP. A neighbor qualifies as a feasible successor only if its reported distance (advertised distance) is strictly less than the current feasible distance (best metric) for that prefix.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 47,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "EIGRP uses named mode configuration in modern IOS. Which of the following is a benefit of EIGRP named mode over classic mode?",
+      "options": [
+        "Named mode provides a single hierarchical configuration with per-address-family and per-interface sections",
+        "Named mode eliminates the need for an autonomous system number",
+        "Named mode uses TCP for reliable delivery instead of RTP",
+        "Named mode supports only IPv6, not IPv4"
+      ],
+      "correct": 0,
+      "explanation": "EIGRP named mode consolidates all configuration under a single router eigrp section with address-family and af-interface subsections. This hierarchical structure is cleaner, supports both IPv4 and IPv6 under one process, and provides per-interface tuning.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 48,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "easy",
+      "question": "Which BGP attribute is used first in the best path selection process to prefer a specific route?",
+      "options": [
+        "Local Preference",
+        "AS Path length",
+        "Weight (Cisco proprietary)",
+        "MED (Multi-Exit Discriminator)"
+      ],
+      "correct": 2,
+      "explanation": "Weight is a Cisco-proprietary attribute evaluated first in BGP best path selection. It is local to the router and not advertised to peers. The route with the highest weight is preferred. After weight, local preference is the next attribute evaluated.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 49,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "What is the default Local Preference value for BGP routes, and how is it used?",
+      "options": [
+        "0; the lowest value is preferred for inbound traffic engineering",
+        "200; the highest value is preferred for inter-AS path selection",
+        "100; the lowest value is preferred for outbound traffic engineering",
+        "100; the highest value is preferred, used to influence outbound path selection within an AS"
+      ],
+      "correct": 3,
+      "explanation": "The default BGP Local Preference is 100, and the highest value wins. It is shared among all iBGP peers within an AS and is used for outbound traffic engineering - influencing which exit point the AS uses to reach external destinations.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 50,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "hard",
+      "question": "In BGP, what is the purpose of the MED (Multi-Exit Discriminator) attribute?",
+      "options": [
+        "To signal a neighboring AS which entry point to prefer when multiple links exist between the two ASes",
+        "To prevent route loops in iBGP by tracking the originator ID",
+        "To override the weight attribute for locally originated routes",
+        "To influence outbound path selection within the local AS"
+      ],
+      "correct": 0,
+      "explanation": "MED is used for inbound traffic engineering between two ASes. When an AS advertises the same prefix via multiple exit points with different MEDs, the receiving AS prefers the path with the lowest MED, choosing the preferred entry point.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 51,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "What is the primary purpose of a BGP route reflector in an iBGP deployment?",
+      "options": [
+        "To translate between eBGP and iBGP path attributes",
+        "To eliminate the need for a full mesh of iBGP peerings by reflecting routes to clients",
+        "To encrypt BGP updates between autonomous systems",
+        "To load balance traffic across multiple BGP paths"
+      ],
+      "correct": 1,
+      "explanation": "A BGP route reflector overcomes the iBGP full-mesh requirement by reflecting routes learned from one iBGP peer to other iBGP peers. This dramatically reduces the number of required peering sessions from n*(n-1)/2 to n.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 52,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "medium",
+      "question": "In BGP, what mechanism prevents routing loops in iBGP by not advertising routes learned from one iBGP peer to another iBGP peer?",
+      "options": [
+        "The iBGP split-horizon rule",
+        "MED comparison",
+        "AS Path prepending",
+        "Route dampening"
+      ],
+      "correct": 0,
+      "explanation": "The iBGP split-horizon rule prevents a router from advertising a route learned via iBGP to another iBGP peer. This is why a full mesh or route reflectors/confederations are needed, as routes would otherwise not propagate to all iBGP speakers.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 53,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "hard",
+      "question": "Which BGP community attribute instructs the receiving router not to advertise the route to any eBGP peers?",
+      "options": [
+        "local-AS",
+        "no-export",
+        "internet",
+        "no-advertise"
+      ],
+      "correct": 1,
+      "explanation": "The no-export community tells the receiving BGP speaker not to advertise the route to any eBGP peers, keeping the route within the local AS. The no-advertise community is more restrictive, preventing advertisement to any peer (iBGP or eBGP).",
+      "link": "start-here.html"
+    },
+    {
+      "id": 54,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "easy",
+      "question": "What is the default BGP hold time advertised during the OPEN message exchange?",
+      "options": [
+        "300 seconds",
+        "180 seconds",
+        "60 seconds",
+        "30 seconds"
+      ],
+      "correct": 1,
+      "explanation": "BGP uses a default hold time of 180 seconds (3 minutes), with keepalive messages sent every 60 seconds (one-third of the hold time). If no keepalive or update is received within the hold time, the neighbor is declared dead.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 55,
+      "domain": 3,
+      "objective": "3.6",
+      "difficulty": "medium",
+      "question": "Which command configures OSPF to advertise a default route into the OSPF domain regardless of whether one exists in the routing table?",
+      "options": [
+        "default-information originate always",
+        "default-information originate",
+        "redistribute static default",
+        "ip route 0.0.0.0 0.0.0.0 null0"
+      ],
+      "correct": 0,
+      "explanation": "The 'default-information originate always' command forces OSPF to generate and advertise a default route (Type 5 LSA) even if no default route exists in the local routing table. Without 'always', a default route must be present locally.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 56,
+      "domain": 3,
+      "objective": "3.6",
+      "difficulty": "hard",
+      "question": "When redistributing EIGRP routes into OSPF, which metric type is assigned to the redistributed routes by default?",
+      "options": [
+        "E2 (external type 2)",
+        "Inter-area (O IA)",
+        "N1 (NSSA external type 1)",
+        "E1 (external type 1)"
+      ],
+      "correct": 0,
+      "explanation": "By default, routes redistributed into OSPF are assigned the E2 (external type 2) metric. E2 routes use only the external metric and do not add the internal cost to the ASBR, unlike E1 routes which accumulate the total path cost.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 57,
+      "domain": 3,
+      "objective": "3.7",
+      "difficulty": "easy",
+      "question": "What transport protocol and port does BGP use to establish neighbor sessions?",
+      "options": [
+        "UDP port 520",
+        "TCP port 179",
+        "TCP port 180",
+        "UDP port 179"
+      ],
+      "correct": 1,
+      "explanation": "BGP uses TCP port 179 for reliable, connection-oriented communication between neighbors. The TCP session must be established before BGP peers can exchange OPEN, UPDATE, KEEPALIVE, and NOTIFICATION messages.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 58,
+      "domain": 3,
+      "objective": "3.7",
+      "difficulty": "medium",
+      "question": "In DMVPN, which protocol resolves the NBMA (public IP) address of a spoke from its tunnel (private IP) address?",
+      "options": [
+        "IPsec IKE",
+        "OSPF",
+        "NHRP (Next Hop Resolution Protocol)",
+        "GRE"
+      ],
+      "correct": 2,
+      "explanation": "NHRP provides the address resolution mechanism in DMVPN, mapping tunnel (private) IP addresses to NBMA (public) IP addresses. Spokes register with the hub (NHS), and the hub responds to resolution requests to enable direct spoke-to-spoke tunnels.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 59,
+      "domain": 3,
+      "objective": "3.7",
+      "difficulty": "hard",
+      "question": "What is the key difference between DMVPN Phase 2 and Phase 3 regarding spoke-to-spoke communication?",
+      "options": [
+        "Phase 2 does not support spoke-to-spoke tunnels at all",
+        "Phase 2 requires specific routing to support direct spoke-to-spoke tunnels, while Phase 3 uses NHRP shortcuts to override next-hop routing",
+        "Phase 2 uses IPsec while Phase 3 uses plain GRE",
+        "Phase 3 requires static NHRP mappings for all spokes"
+      ],
+      "correct": 1,
+      "explanation": "In Phase 2, the routing table must specifically point to the spoke's tunnel address as the next-hop for direct communication to work. Phase 3 overcomes this with NHRP redirect/shortcut, dynamically overriding the routing table's next-hop.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 60,
+      "domain": 3,
+      "objective": "3.8",
+      "difficulty": "easy",
+      "question": "What is the primary function of the Wireless LAN Controller (WLC) in a Cisco wireless architecture?",
+      "options": [
+        "Performing NAT for wireless traffic leaving the network",
+        "Centralizing management, configuration, and control of lightweight access points",
+        "Providing PoE power to access points",
+        "Serving as the DHCP server for all wireless clients"
+      ],
+      "correct": 1,
+      "explanation": "The WLC centralizes the management and control of lightweight APs using the CAPWAP protocol. It handles AP configuration, firmware updates, RF management, security policies, client roaming, and can also switch client data traffic centrally.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 61,
+      "domain": 3,
+      "objective": "3.8",
+      "difficulty": "medium",
+      "question": "Which access point mode is used for monitoring the RF environment, detecting rogue devices, and performing wireless IDS functions without serving clients?",
+      "options": [
+        "Bridge mode",
+        "Monitor mode",
+        "FlexConnect mode",
+        "Local mode"
+      ],
+      "correct": 1,
+      "explanation": "In monitor mode, the AP scans all channels to detect rogue APs, interfering devices, and perform wireless intrusion detection. It does not serve client traffic, dedicating all resources to RF monitoring and security.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 62,
+      "domain": 3,
+      "objective": "3.8",
+      "difficulty": "hard",
+      "question": "What type of wireless roaming occurs when a client moves between APs managed by different WLCs in the same mobility group?",
+      "options": [
+        "Autonomous roaming",
+        "Inter-controller (Layer 3) roaming",
+        "Intra-controller roaming",
+        "Layer 2 roaming"
+      ],
+      "correct": 1,
+      "explanation": "Inter-controller roaming occurs when a client moves between APs on different WLCs. If the client remains in the same subnet, it is Layer 2 inter-controller roaming. If subnets differ, Layer 3 mobility tunneling between WLCs maintains the client's session and IP address.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 63,
+      "domain": 3,
+      "objective": "3.9",
+      "difficulty": "medium",
+      "question": "Which wireless standard operates on both the 2.4 GHz and 5 GHz bands and introduced MU-MIMO for downlink transmissions?",
+      "options": [
+        "802.11ac Wave 2 (Wi-Fi 5)",
+        "802.11n (Wi-Fi 4)",
+        "802.11ax (Wi-Fi 6)",
+        "802.11g"
+      ],
+      "correct": 0,
+      "explanation": "802.11ac Wave 2 (Wi-Fi 5) operates on 5 GHz and introduced downlink MU-MIMO, allowing an AP to transmit to multiple clients simultaneously. While 802.11ac is 5 GHz only, Wave 2 MU-MIMO was a key advancement for high-density environments.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 64,
+      "domain": 3,
+      "objective": "3.9",
+      "difficulty": "hard",
+      "question": "What technology in 802.11ax (Wi-Fi 6) improves efficiency in high-density environments by allowing multiple clients to transmit simultaneously on different sub-channels?",
+      "options": [
+        "OFDMA (Orthogonal Frequency Division Multiple Access)",
+        "Beamforming",
+        "Channel bonding",
+        "DFS (Dynamic Frequency Selection)"
+      ],
+      "correct": 0,
+      "explanation": "OFDMA divides a channel into smaller sub-channels (Resource Units) that can be allocated to different clients simultaneously, enabling efficient multi-user access. This is a key Wi-Fi 6 improvement for high-density venues with many concurrent devices.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 65,
+      "domain": 3,
+      "objective": "3.10",
+      "difficulty": "easy",
+      "question": "Which protocol is used between a lightweight AP and a Cisco WLC for control and data tunneling?",
+      "options": [
+        "LWAPP",
+        "SNMP",
+        "CAPWAP",
+        "RADIUS"
+      ],
+      "correct": 2,
+      "explanation": "CAPWAP (Control and Provisioning of Wireless Access Points) is the standardized protocol used between lightweight APs and WLCs. It replaced the proprietary LWAPP and uses UDP ports 5246 (control) and 5247 (data).",
+      "link": "start-here.html"
+    },
+    {
+      "id": 66,
+      "domain": 3,
+      "objective": "3.10",
+      "difficulty": "medium",
+      "question": "What mechanism does a Cisco AP use to discover available WLCs during initial deployment?",
+      "options": [
+        "CDP advertisements from neighboring switches",
+        "Only static configuration is supported",
+        "CAPWAP discovery using DHCP option 43, DNS, or broadcast",
+        "SNMP trap messages"
+      ],
+      "correct": 2,
+      "explanation": "Cisco APs use multiple CAPWAP discovery methods: DHCP option 43 (vendor-specific), DNS resolution of 'CISCO-CAPWAP-CONTROLLER', subnet broadcast, and previously known WLC addresses. This provides flexible zero-touch AP provisioning.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 67,
+      "domain": 3,
+      "objective": "3.10",
+      "difficulty": "hard",
+      "question": "In a Cisco wireless deployment, what is the purpose of RF profiles on a WLC?",
+      "options": [
+        "Configuring the CAPWAP tunnel MTU between AP and WLC",
+        "Setting up RADIUS server IP addresses for 802.1X authentication",
+        "Configuring customized radio parameters including power levels, channels, and data rates for different AP groups",
+        "Defining SSID-to-VLAN mappings for each AP group"
+      ],
+      "correct": 2,
+      "explanation": "RF profiles allow administrators to define customized radio settings (transmit power, channel assignment, data rates, RRM thresholds) for groups of APs. This enables different RF behavior in areas like auditoriums vs. offices within the same WLC.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 68,
+      "domain": 3,
+      "objective": "3.11",
+      "difficulty": "easy",
+      "question": "What is the purpose of QoS (Quality of Service) in an enterprise network?",
+      "options": [
+        "Increasing the total available bandwidth on all links",
+        "Encrypting traffic based on its priority level",
+        "Reducing the number of VLANs required in the network",
+        "Prioritizing certain traffic types to ensure performance for latency-sensitive applications"
+      ],
+      "correct": 3,
+      "explanation": "QoS does not increase bandwidth; it manages existing bandwidth by classifying, marking, and scheduling traffic. This ensures latency-sensitive applications like voice and video receive preferential treatment during periods of congestion.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 69,
+      "domain": 3,
+      "objective": "3.11",
+      "difficulty": "medium",
+      "question": "Which DSCP value is recommended for voice (VoIP bearer) traffic according to Cisco best practices?",
+      "options": [
+        "DSCP 46 (EF - Expedited Forwarding)",
+        "DSCP 26 (AF31)",
+        "DSCP 0 (Best Effort)",
+        "DSCP 34 (AF41)"
+      ],
+      "correct": 0,
+      "explanation": "DSCP 46 (EF - Expedited Forwarding) is the standard marking for voice bearer traffic. EF provides low latency, low jitter, and low loss treatment, which are critical requirements for real-time voice communications.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 70,
+      "domain": 3,
+      "objective": "3.11",
+      "difficulty": "hard",
+      "question": "In the Cisco QoS model, what is the difference between traffic policing and traffic shaping?",
+      "options": [
+        "There is no functional difference; they are interchangeable terms",
+        "Policing drops or re-marks excess traffic immediately, while shaping buffers and delays excess traffic to smooth the rate",
+        "Policing buffers excess traffic while shaping drops it",
+        "Shaping is only used on WAN interfaces while policing is used on LAN interfaces"
+      ],
+      "correct": 1,
+      "explanation": "Policing enforces a rate limit by dropping or re-marking traffic that exceeds the configured rate, resulting in a bursty profile. Shaping buffers excess traffic and transmits it at a configured rate over time, producing a smoother output.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 71,
+      "domain": 3,
+      "objective": "3.12",
+      "difficulty": "medium",
+      "question": "Which QoS mechanism uses a priority queue to provide strict scheduling for real-time traffic like voice?",
+      "options": [
+        "Weighted Fair Queuing (WFQ)",
+        "Class-Based Weighted Fair Queuing (CBWFQ)",
+        "FIFO queuing",
+        "Low Latency Queuing (LLQ)"
+      ],
+      "correct": 3,
+      "explanation": "LLQ combines CBWFQ with a strict priority queue. Voice and other real-time traffic are placed in the priority queue and scheduled first, ensuring minimal latency and jitter. A policer on the priority queue prevents starvation of other queues.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 72,
+      "domain": 3,
+      "objective": "3.12",
+      "difficulty": "hard",
+      "question": "What is the relationship between 802.1p CoS values and DSCP in a QoS trust boundary?",
+      "options": [
+        "They are the same value and require no translation",
+        "DSCP values are automatically derived from CoS with no configuration",
+        "CoS is a 3-bit Layer 2 marking (0-7) in the 802.1Q tag, while DSCP is a 6-bit Layer 3 marking (0-63) in the IP header; mapping between them is needed at the trust boundary",
+        "CoS replaces DSCP when traffic enters a VLAN trunk"
+      ],
+      "correct": 2,
+      "explanation": "CoS (3 bits, values 0-7) operates at Layer 2 within the 802.1Q VLAN tag, while DSCP (6 bits, values 0-63) operates at Layer 3 in the IP header. At the trust boundary, a QoS policy maps between CoS and DSCP to maintain consistent marking across layers.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 73,
+      "domain": 3,
+      "objective": "3.13",
+      "difficulty": "easy",
+      "question": "What is the maximum MTU size for a standard Ethernet frame (excluding the preamble and FCS)?",
+      "options": [
+        "1518 bytes",
+        "1492 bytes",
+        "9000 bytes",
+        "1500 bytes"
+      ],
+      "correct": 3,
+      "explanation": "The standard Ethernet MTU is 1500 bytes for the payload. The total frame size including headers is 1518 bytes (14-byte Ethernet header + 1500-byte payload + 4-byte FCS). Jumbo frames extend this to 9000+ bytes.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 74,
+      "domain": 3,
+      "objective": "3.13",
+      "difficulty": "medium",
+      "question": "When implementing VXLAN, why might you need to increase the MTU on the underlay network?",
+      "options": [
+        "VXLAN compresses frames requiring a smaller MTU",
+        "VXLAN adds a 50-byte overhead to the original frame, so the underlay MTU must accommodate the larger encapsulated packet to avoid fragmentation",
+        "The MTU increase is only needed for IPv6 traffic",
+        "VXLAN requires jumbo frames for all traffic"
+      ],
+      "correct": 1,
+      "explanation": "VXLAN encapsulation adds approximately 50 bytes of overhead (outer Ethernet 14 + outer IP 20 + outer UDP 8 + VXLAN 8). To avoid fragmentation of the encapsulated packets, the underlay MTU should be at least 1550 bytes, or ideally 9000+ (jumbo).",
+      "link": "start-here.html"
+    },
+    {
+      "id": 75,
+      "domain": 3,
+      "objective": "3.14",
+      "difficulty": "medium",
+      "question": "Which First Hop Redundancy Protocol (FHRP) is Cisco proprietary and uses an active/standby model with a virtual IP and MAC address?",
+      "options": [
+        "HSRP",
+        "VRRP",
+        "GLBP",
+        "CARP"
+      ],
+      "correct": 0,
+      "explanation": "HSRP (Hot Standby Router Protocol) is Cisco proprietary and provides gateway redundancy using an active/standby model. One router forwards traffic while the other stands by, sharing a virtual IP and MAC address for seamless failover.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 76,
+      "domain": 3,
+      "objective": "3.14",
+      "difficulty": "hard",
+      "question": "What unique capability does GLBP (Gateway Load Balancing Protocol) provide compared to HSRP and VRRP?",
+      "options": [
+        "GLBP supports IPv6 while HSRP and VRRP do not",
+        "GLBP enables active-active load balancing across multiple gateways using different virtual MAC addresses for the same virtual IP",
+        "GLBP provides sub-second failover while HSRP takes minutes",
+        "GLBP does not require a virtual IP address"
+      ],
+      "correct": 1,
+      "explanation": "GLBP is unique among FHRPs because it allows multiple routers to actively forward traffic simultaneously. It assigns different virtual MAC addresses to clients via ARP responses while using a single virtual IP, achieving true load balancing.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 77,
+      "domain": 3,
+      "objective": "3.15",
+      "difficulty": "easy",
+      "question": "Which Cisco IOS command displays the current routing table?",
+      "options": [
+        "show ip route",
+        "show ip interface brief",
+        "show ip protocols",
+        "show ip arp"
+      ],
+      "correct": 0,
+      "explanation": "The 'show ip route' command displays the IP routing table, showing all known routes, their sources (connected, static, OSPF, EIGRP, BGP, etc.), metrics, next-hop addresses, and outgoing interfaces.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 78,
+      "domain": 3,
+      "objective": "3.15",
+      "difficulty": "medium",
+      "question": "When multiple routing protocols offer a route to the same destination, which factor determines which route is installed in the routing table?",
+      "options": [
+        "The route with the most specific prefix length",
+        "The route with the lowest administrative distance",
+        "The route with the highest metric",
+        "The route learned most recently"
+      ],
+      "correct": 1,
+      "explanation": "Administrative distance (AD) is used to rank the trustworthiness of routing sources. When multiple protocols advertise the same prefix, the route with the lowest AD is preferred and installed. If ADs are equal, the metric is used as a tiebreaker.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 79,
+      "domain": 3,
+      "objective": "3.16",
+      "difficulty": "hard",
+      "question": "In a multicast environment, what is the function of the PIM (Protocol Independent Multicast) Rendezvous Point (RP)?",
+      "options": [
+        "It acts as the root of the shared distribution tree where sources and receivers meet in PIM Sparse Mode",
+        "It converts multicast traffic to unicast for non-multicast-capable routers",
+        "It assigns IGMP group addresses to multicast applications",
+        "It encrypts all multicast streams for secure delivery"
+      ],
+      "correct": 0,
+      "explanation": "In PIM Sparse Mode, the RP serves as the root of the shared multicast tree (*,G). Sources register with the RP, and receivers join via the RP. Once traffic flows, the network can optionally switch to a source-specific shortest path tree (S,G).",
+      "link": "start-here.html"
+    },
+    {
+      "id": 80,
+      "domain": 3,
+      "objective": "3.16",
+      "difficulty": "medium",
+      "question": "Which IGMP version allows a host to report interest in a specific source for a multicast group (source-specific multicast)?",
+      "options": [
+        "IGMPv1",
+        "IGMPv2",
+        "IGMPv3",
+        "IGMP Snooping"
+      ],
+      "correct": 2,
+      "explanation": "IGMPv3 introduces source filtering, allowing hosts to specify which sources they want to receive multicast traffic from (INCLUDE mode) or block (EXCLUDE mode). This enables Source-Specific Multicast (SSM) for more efficient multicast delivery.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 81,
+      "domain": 3,
+      "objective": "3.17",
+      "difficulty": "easy",
+      "question": "What is the purpose of a static route with a floating administrative distance?",
+      "options": [
+        "To provide a permanent primary route that cannot be overridden",
+        "To serve as a backup route that is only used when the primary dynamic route fails",
+        "To load balance traffic across multiple paths",
+        "To redistribute static routes into OSPF"
+      ],
+      "correct": 1,
+      "explanation": "A floating static route has a manually configured AD higher than the primary route's AD. It remains in the routing table as a backup but is not used for forwarding unless the primary route (with lower AD) is withdrawn.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 82,
+      "domain": 3,
+      "objective": "3.17",
+      "difficulty": "hard",
+      "question": "What is the effect of configuring 'maximum-paths 8' under an OSPF routing process?",
+      "options": [
+        "OSPF will only store 8 routes in its LSDB",
+        "OSPF will install up to 8 equal-cost paths in the routing table for load balancing",
+        "OSPF will form adjacencies with a maximum of 8 neighbors",
+        "OSPF will limit the total number of routes advertised to 8"
+      ],
+      "correct": 1,
+      "explanation": "The 'maximum-paths' command controls how many equal-cost routes OSPF installs in the routing table for a single destination. With 'maximum-paths 8', up to 8 equal-cost paths are used for ECMP (Equal-Cost Multi-Path) load balancing.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 83,
+      "domain": 3,
+      "objective": "3.18",
+      "difficulty": "medium",
+      "question": "Which Cisco IOS feature allows policy-based routing (PBR) to forward traffic based on criteria other than the destination IP address?",
+      "options": [
+        "Route maps applied with 'ip policy route-map'",
+        "OSPF distribute-list filtering",
+        "Prefix lists applied to routing protocol updates",
+        "Standard ACLs applied to interfaces"
+      ],
+      "correct": 0,
+      "explanation": "PBR uses route maps applied to an interface with 'ip policy route-map' to match traffic based on source IP, protocol, port, or packet size, then set the next-hop, interface, or other forwarding parameters independent of the routing table.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 84,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "Which protocol is used to collect interface counters, CPU usage, and other device statistics via a community string-based polling mechanism?",
+      "options": [
+        "RESTCONF",
+        "Syslog",
+        "NetFlow",
+        "SNMP"
+      ],
+      "correct": 3,
+      "explanation": "SNMP (Simple Network Management Protocol) uses GET/SET operations with community strings (v1/v2c) or username-based authentication (v3) to poll devices for management information stored in the MIB (Management Information Base).",
+      "link": "start-here.html"
+    },
+    {
+      "id": 85,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "Which SNMPv3 security level provides authentication and encryption for SNMP messages?",
+      "options": [
+        "authNoPriv",
+        "authEncrypt",
+        "noAuthNoPriv",
+        "authPriv"
+      ],
+      "correct": 3,
+      "explanation": "SNMPv3 authPriv provides both authentication (using MD5/SHA) and encryption (using DES/AES). This is the most secure SNMPv3 level, protecting against both spoofing and eavesdropping, unlike v1/v2c community strings sent in cleartext.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 86,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "What is the difference between SNMP polling (GET) and SNMP traps?",
+      "options": [
+        "Traps use TCP for reliability while GET uses UDP",
+        "GET can only read data while traps can modify device configuration",
+        "GET is push-based while traps are pull-based",
+        "GET is initiated by the NMS to request data from the agent, while traps are unsolicited notifications sent from the agent to the NMS when an event occurs"
+      ],
+      "correct": 3,
+      "explanation": "SNMP GET operations are initiated by the NMS (pull model) to query specific OIDs on demand. Traps are asynchronous notifications pushed from the agent to the NMS when predefined events occur (e.g., link down), providing real-time alerting.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 87,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "What does Cisco IP SLA (Service Level Agreement) technology measure?",
+      "options": [
+        "The MTBF (Mean Time Between Failures) of hardware components",
+        "Network performance metrics such as latency, jitter, and packet loss between devices",
+        "Storage throughput on attached NAS devices",
+        "The power consumption of network devices"
+      ],
+      "correct": 1,
+      "explanation": "Cisco IP SLA generates synthetic traffic (ICMP echo, UDP jitter, HTTP, etc.) to measure network performance metrics like round-trip time, jitter, packet loss, and availability between an IP SLA source and a responder.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 88,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "Which IP SLA operation type is best suited for measuring one-way jitter and packet loss for VoIP quality assessment?",
+      "options": [
+        "HTTP GET",
+        "UDP jitter",
+        "DNS lookup",
+        "ICMP echo"
+      ],
+      "correct": 1,
+      "explanation": "The UDP jitter operation sends a sequence of UDP packets and measures one-way delay, jitter, and packet loss in both directions. This is ideal for VoIP quality assessment because it measures the exact metrics that affect call quality (MOS score).",
+      "link": "start-here.html"
+    },
+    {
+      "id": 89,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "How can IP SLA be combined with static routing to provide automatic failover when a tracked path becomes unreliable?",
+      "options": [
+        "IP SLA sends SNMP traps to trigger a script that changes routes",
+        "IP SLA directly modifies the routing table when performance degrades",
+        "IP SLA modifies OSPF cost values dynamically",
+        "IP SLA results are linked to a tracked object, which can remove a static route when the tracked probe fails"
+      ],
+      "correct": 3,
+      "explanation": "IP SLA probes are linked to tracked objects using the 'track' command. A static route references the track number, and when the IP SLA probe fails, the tracked object goes down, causing the static route to be removed from the routing table.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 90,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "Which Syslog severity level represents an emergency condition where the system is unusable?",
+      "options": [
+        "Level 3 (Error)",
+        "Level 7 (Debug)",
+        "Level 0 (Emergency)",
+        "Level 5 (Notification)"
+      ],
+      "correct": 2,
+      "explanation": "Syslog severity level 0 (Emergency) indicates the most critical condition where the system is unusable. The levels range from 0 (most severe) to 7 (least severe/debug), following the mnemonic 'Every Awesome Cisco Engineer Will Need Ice-cream Daily'.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 91,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "What is the advantage of using NetFlow over SNMP for traffic analysis?",
+      "options": [
+        "NetFlow provides per-flow granularity with source/destination IPs, ports, and protocol information, while SNMP only provides aggregate interface counters",
+        "NetFlow works on all devices while SNMP requires specific hardware",
+        "NetFlow consumes less device resources than SNMP polling",
+        "NetFlow encrypts all collected data while SNMP does not"
+      ],
+      "correct": 0,
+      "explanation": "NetFlow (and its evolution, Flexible NetFlow) exports detailed per-flow records including 5-tuple information (source/destination IP, ports, protocol). SNMP only provides aggregate interface statistics like total bytes in/out, lacking per-flow visibility.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 92,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "easy",
+      "question": "What is the purpose of Cisco DNA Center Assurance?",
+      "options": [
+        "Providing real-time network health monitoring, issue detection, and guided remediation using analytics and machine learning",
+        "Configuring VLANs and routing protocols on switches",
+        "Creating IPSEC VPN tunnels between branch sites",
+        "Managing software licenses for Cisco devices"
+      ],
+      "correct": 0,
+      "explanation": "DNA Center Assurance uses telemetry, analytics, and machine learning to monitor network health in real-time. It correlates data from multiple sources to identify issues proactively and provides guided remediation steps to resolve problems quickly.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 93,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "medium",
+      "question": "Which telemetry method sends data from a network device to a collector as soon as changes occur, without being polled?",
+      "options": [
+        "Model-driven telemetry with dial-out (push) mode",
+        "CLI screen scraping",
+        "SNMP GET request",
+        "Periodic SNMP bulk walk"
+      ],
+      "correct": 0,
+      "explanation": "Model-driven telemetry in dial-out mode pushes data from network devices to collectors in near real-time when changes occur or at configured intervals. This is more efficient than SNMP polling, providing faster detection and lower overhead.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 94,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "hard",
+      "question": "In Cisco SD-WAN, which component provides application-aware routing by measuring real-time path performance metrics?",
+      "options": [
+        "vManage dashboard analytics",
+        "NetFlow exports from vBond orchestrator",
+        "BFD (Bidirectional Forwarding Detection) probes between WAN Edge routers",
+        "SNMP polling from vSmart to WAN edges"
+      ],
+      "correct": 2,
+      "explanation": "SD-WAN uses BFD probes between WAN Edge routers to continuously measure latency, jitter, and packet loss on each transport path. Application-aware routing policies reference these real-time metrics to dynamically steer traffic to the best-performing path.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 95,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "medium",
+      "question": "What does SPAN (Switched Port Analyzer) allow an administrator to do?",
+      "options": [
+        "Compress traffic on trunk links",
+        "Encrypt traffic between switch ports",
+        "Mirror traffic from one or more source ports/VLANs to a destination port for analysis",
+        "Authenticate switch ports using 802.1X"
+      ],
+      "correct": 2,
+      "explanation": "SPAN copies (mirrors) traffic from specified source ports or VLANs to a destination port where a packet analyzer or IDS can inspect it. This enables non-intrusive traffic monitoring without affecting the original traffic flow.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 96,
+      "domain": 4,
+      "objective": "4.6",
+      "difficulty": "easy",
+      "question": "What is the function of Flexible NetFlow compared to traditional NetFlow v5?",
+      "options": [
+        "Flexible NetFlow uses TCP instead of UDP for export",
+        "Flexible NetFlow eliminates the need for a flow collector",
+        "Flexible NetFlow allows customization of the flow record fields to match specific monitoring requirements",
+        "Flexible NetFlow only works with IPv6 traffic"
+      ],
+      "correct": 2,
+      "explanation": "Flexible NetFlow allows administrators to define custom flow records by selecting which fields to include (e.g., DSCP, MAC addresses, VLAN IDs). Traditional NetFlow v5 uses a fixed set of fields, limiting flexibility for specific monitoring needs.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 97,
+      "domain": 4,
+      "objective": "4.6",
+      "difficulty": "hard",
+      "question": "When configuring model-driven telemetry on Cisco IOS-XE, which protocol can be used for gRPC-based streaming of YANG model data?",
+      "options": [
+        "TFTP",
+        "gNMI (gRPC Network Management Interface)",
+        "SSH/SCP",
+        "SNMP v3"
+      ],
+      "correct": 1,
+      "explanation": "gNMI uses gRPC as the transport to stream YANG-modeled data from devices in real-time. It supports subscriptions for event-driven or periodic updates, providing a modern, high-performance alternative to SNMP for network telemetry.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 98,
+      "domain": 4,
+      "objective": "4.7",
+      "difficulty": "medium",
+      "question": "Which debug tool on Cisco IOS-XE captures packets at the data plane level with minimal performance impact compared to traditional debug commands?",
+      "options": [
+        "Embedded Packet Capture (EPC)",
+        "SNMP packet trace",
+        "debug ip packet",
+        "Syslog debug mode"
+      ],
+      "correct": 0,
+      "explanation": "Embedded Packet Capture (EPC) uses hardware-based packet capture capabilities to capture traffic on interfaces with minimal CPU impact. Unlike 'debug ip packet' which is process-switched and CPU-intensive, EPC is suitable for production environments.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 99,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "What is the primary function of an Access Control List (ACL) on a Cisco router?",
+      "options": [
+        "Load balancing traffic across multiple paths",
+        "Compressing packet headers to save bandwidth",
+        "Encrypting traffic between router interfaces",
+        "Filtering traffic by permitting or denying packets based on defined criteria"
+      ],
+      "correct": 3,
+      "explanation": "ACLs filter network traffic by evaluating packets against ordered rules that permit or deny based on criteria such as source/destination IP, protocol, and port numbers. ACLs are applied to interfaces to control inbound or outbound traffic flow.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 100,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "What is the implicit action at the end of every Cisco IOS ACL?",
+      "options": [
+        "Deny any (implicit deny all)",
+        "Log and permit",
+        "Forward to management plane",
+        "Permit any"
+      ],
+      "correct": 0,
+      "explanation": "Every Cisco ACL has an implicit 'deny any' at the end. Any traffic that does not match an explicit permit or deny entry is dropped. Administrators must explicitly add 'permit any' at the end if they want to allow unmatched traffic.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 101,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "Which protocol does TACACS+ use for transport?",
+      "options": [
+        "TCP port 49",
+        "UDP port 1812",
+        "UDP port 1645",
+        "TCP port 389"
+      ],
+      "correct": 0,
+      "explanation": "TACACS+ uses TCP port 49 for reliable transport. RADIUS uses UDP ports 1812/1813 (or legacy 1645/1646), and LDAP uses TCP port 389.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 102,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "What is a key advantage of TACACS+ over RADIUS for device administration?",
+      "options": [
+        "It supports multicast authentication",
+        "It encrypts only the password field in packets",
+        "It separates authentication, authorization, and accounting into independent functions",
+        "It uses connectionless UDP for faster performance"
+      ],
+      "correct": 2,
+      "explanation": "TACACS+ separates AAA into three independent functions, allowing granular control over each. RADIUS combines authentication and authorization into a single function and only encrypts the password field, whereas TACACS+ encrypts the entire packet body.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 103,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "hard",
+      "question": "When configuring a Cisco router for AAA with TACACS+, which command correctly defines the method list so that TACACS+ is tried first and local authentication is used as fallback?",
+      "options": [
+        "aaa authentication login default local group tacacs+",
+        "aaa authentication login default group tacacs+ local",
+        "aaa authentication login default group tacacs+ none",
+        "aaa authentication login tacacs+ local default"
+      ],
+      "correct": 1,
+      "explanation": "The command 'aaa authentication login default group tacacs+ local' defines a default method list that tries the TACACS+ server group first and falls back to the local database if TACACS+ is unreachable. The order of methods matters, as they are tried sequentially.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 104,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "easy",
+      "question": "What is the primary purpose of Control Plane Policing (CoPP)?",
+      "options": [
+        "To rate-limit and filter traffic destined to the router's control plane",
+        "To encrypt management traffic to the router",
+        "To block all ICMP traffic to the router",
+        "To prioritize data-plane forwarding over management traffic"
+      ],
+      "correct": 0,
+      "explanation": "CoPP protects the control plane of a network device by using a QoS policy to rate-limit or filter traffic destined to the route processor. This prevents denial-of-service attacks from overwhelming the CPU.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 105,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "Unicast Reverse Path Forwarding (uRPF) in strict mode drops a packet when which condition is true?",
+      "options": [
+        "The source address is in the routing table but the ingress interface does not match the best return path",
+        "The packet TTL has expired",
+        "The source MAC address is not in the CAM table",
+        "The destination address is not in the routing table"
+      ],
+      "correct": 0,
+      "explanation": "In strict mode, uRPF checks that the source IP address of an incoming packet exists in the routing table AND that the best return route points back out the same interface the packet arrived on. If either condition fails, the packet is dropped.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 106,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "hard",
+      "question": "An engineer applies an extended ACL to filter traffic on a router. The ACL contains only explicit deny statements for specific hosts. What happens to traffic not matching any ACE in the list?",
+      "options": [
+        "It is denied by the implicit deny any any at the end",
+        "It is permitted by default",
+        "It is redirected to the null interface",
+        "It is logged and then forwarded"
+      ],
+      "correct": 0,
+      "explanation": "Every Cisco ACL has an implicit 'deny any' at the end. If the engineer only configured explicit deny statements without a 'permit any' at the end, all traffic not matching the explicit denies is still denied by the implicit rule.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 107,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "easy",
+      "question": "In 802.1X authentication, what role does the network access switch play?",
+      "options": [
+        "Policy server",
+        "Authentication server",
+        "Supplicant",
+        "Authenticator"
+      ],
+      "correct": 3,
+      "explanation": "In 802.1X, the switch acts as the authenticator, sitting between the supplicant (the endpoint requesting access) and the authentication server (typically a RADIUS server like Cisco ISE).",
+      "link": "start-here.html"
+    },
+    {
+      "id": 108,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "What is MAB (MAC Authentication Bypass) used for in an 802.1X deployment?",
+      "options": [
+        "To authenticate devices that do not support an 802.1X supplicant by using their MAC address",
+        "To encrypt MAC addresses during the authentication process",
+        "To assign a unique MAC address to each authenticated session",
+        "To bypass authentication entirely for all devices on a VLAN"
+      ],
+      "correct": 0,
+      "explanation": "MAB is a fallback mechanism for devices like printers or IP phones that lack an 802.1X supplicant. The switch sends the device's MAC address to the RADIUS server as the credential for authentication.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 109,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "On a Cisco switch configured for 802.1X with multi-auth host mode, what behavior is expected?",
+      "options": [
+        "Only one device is allowed per port, regardless of VLAN",
+        "Multiple devices can authenticate individually on the same port",
+        "One device is allowed on the data VLAN and one on the voice VLAN",
+        "The port disables 802.1X and permits all traffic after the first successful authentication"
+      ],
+      "correct": 1,
+      "explanation": "Multi-auth host mode allows multiple devices to individually authenticate on the same switch port. Each device must complete its own 802.1X or MAB authentication before being granted network access, making it ideal for ports connected to hubs or IP phones with daisy-chained PCs.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 110,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "easy",
+      "question": "Which wireless security protocol introduced Simultaneous Authentication of Equals (SAE) to replace the PSK four-way handshake?",
+      "options": [
+        "WPA2",
+        "WEP",
+        "WPA",
+        "WPA3"
+      ],
+      "correct": 3,
+      "explanation": "WPA3-Personal uses SAE (Simultaneous Authentication of Equals), a secure key establishment protocol based on the Dragonfly handshake, to replace the PSK-based four-way handshake used in WPA2-Personal. SAE provides protection against offline dictionary attacks.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 111,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "medium",
+      "question": "Which EAP method creates a TLS tunnel and then uses legacy authentication methods (such as MSCHAPv2) inside that tunnel?",
+      "options": [
+        "EAP-TLS",
+        "PEAP",
+        "EAP-MD5",
+        "EAP-FAST"
+      ],
+      "correct": 1,
+      "explanation": "PEAP (Protected EAP) establishes a TLS tunnel between the supplicant and the authentication server, then runs an inner authentication method like MSCHAPv2 inside that protected tunnel. EAP-TLS requires mutual certificate-based authentication without an inner method.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 112,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "hard",
+      "question": "An enterprise deploys WPA3-Enterprise with 192-bit security mode. Which underlying suite of cryptographic algorithms is required?",
+      "options": [
+        "CNSA suite with AES-256-GCM and SHA-384",
+        "TKIP with SHA-512",
+        "AES-128 with SHA-256",
+        "3DES with SHA-256"
+      ],
+      "correct": 0,
+      "explanation": "WPA3-Enterprise 192-bit mode mandates the CNSA (Commercial National Security Algorithm) suite, which includes AES-256-GCM for encryption and SHA-384 for hashing. This provides a consistent minimum security level aligned with government-grade requirements.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 113,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "easy",
+      "question": "In Cisco TrustSec, what is a Security Group Tag (SGT)?",
+      "options": [
+        "A 16-bit value assigned to a user or device that classifies traffic for policy enforcement",
+        "A VLAN number assigned to a security zone",
+        "A QoS marking applied to security-related packets",
+        "An encryption key used for MACsec communication"
+      ],
+      "correct": 0,
+      "explanation": "An SGT is a 16-bit tag assigned to users, devices, or traffic that represents the security group of the source. TrustSec uses SGTs to enforce policy through Security Group ACLs (SGACLs) without relying on IP-based ACLs.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 114,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "medium",
+      "question": "What is the function of MACsec (IEEE 802.1AE) on a network link?",
+      "options": [
+        "It provides Layer 2 hop-by-hop encryption, integrity, and replay protection",
+        "It replaces 802.1X by using MAC addresses for authentication",
+        "It authenticates users at Layer 3 before granting access",
+        "It tunnels Layer 2 frames across a Layer 3 WAN"
+      ],
+      "correct": 0,
+      "explanation": "MACsec (802.1AE) provides Layer 2 encryption, integrity checking, and replay protection on a hop-by-hop basis between directly connected devices. It secures Ethernet frames on the wire, protecting against eavesdropping and tampering at Layer 2.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 115,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "hard",
+      "question": "In a TrustSec environment using inline SGT tagging, where is the SGT value inserted in the Ethernet frame?",
+      "options": [
+        "In a CMD (Cisco Meta Data) field inserted between the Layer 2 header and the Layer 3 header",
+        "In the IP header options field",
+        "In the 802.1Q VLAN tag priority bits",
+        "In the TCP header between the source and destination ports"
+      ],
+      "correct": 0,
+      "explanation": "With inline tagging, TrustSec inserts the SGT into a Cisco Meta Data (CMD) field, also called the EtherType-based TrustSec header, placed between the Layer 2 header and the Layer 3 payload. This method requires TrustSec-capable hardware on all devices in the path.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 116,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "easy",
+      "question": "Which type of ACL on a Cisco router can filter traffic based on both source and destination IP addresses?",
+      "options": [
+        "Extended ACL",
+        "Reflexive ACL",
+        "MAC ACL",
+        "Standard ACL"
+      ],
+      "correct": 0,
+      "explanation": "Extended ACLs can filter traffic based on source and destination IP addresses, protocol type, and port numbers. Standard ACLs filter only on the source IP address.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 117,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "Which RADIUS attribute is commonly used to assign a VLAN to a user after successful 802.1X authentication?",
+      "options": [
+        "Attribute 6 (Service-Type)",
+        "Attribute 25 (Class)",
+        "Attribute 26 (Vendor-Specific)",
+        "Attribute 64 (Tunnel-Type), Attribute 65 (Tunnel-Medium-Type), and Attribute 81 (Tunnel-Private-Group-ID)"
+      ],
+      "correct": 3,
+      "explanation": "Dynamic VLAN assignment via RADIUS uses three attributes together: Tunnel-Type (set to VLAN), Tunnel-Medium-Type (set to 802), and Tunnel-Private-Group-ID (set to the VLAN name or number). These are returned in the Access-Accept message.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 118,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "hard",
+      "question": "An engineer configures a Zone-Based Firewall (ZBF) on a Cisco IOS router. Traffic between two interfaces in the same zone is allowed by default. What happens to traffic between an interface in a zone and an interface that has NOT been assigned to any zone?",
+      "options": [
+        "Traffic is permitted only from the unassigned interface to the zone",
+        "Traffic is denied in both directions",
+        "Traffic is permitted in both directions by default",
+        "Traffic is inspected and selectively forwarded"
+      ],
+      "correct": 1,
+      "explanation": "In a Zone-Based Firewall, if an interface has not been assigned to a zone, traffic between it and any zone member interface is dropped by default. All interfaces must be explicitly assigned to zones and have policies defined for inter-zone traffic to flow.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 119,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "easy",
+      "question": "In the 802.1X framework, what is the role of the RADIUS server?",
+      "options": [
+        "It acts as the supplicant requesting network access",
+        "It functions as the authentication server validating credentials",
+        "It replaces the switch as the network access device",
+        "It serves as the authenticator controlling port access"
+      ],
+      "correct": 1,
+      "explanation": "The RADIUS server functions as the authentication server in the 802.1X framework. It validates the supplicant's credentials and returns an Access-Accept or Access-Reject to the authenticator (the switch).",
+      "link": "start-here.html"
+    },
+    {
+      "id": 120,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "medium",
+      "question": "Which EAP method requires a digital certificate on both the client and the authentication server for mutual authentication?",
+      "options": [
+        "PEAP",
+        "EAP-TLS",
+        "LEAP",
+        "EAP-FAST"
+      ],
+      "correct": 1,
+      "explanation": "EAP-TLS requires X.509 certificates on both the client (supplicant) and the authentication server to perform mutual authentication. This makes it one of the most secure EAP methods but also the most complex to deploy due to PKI requirements.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 121,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "medium",
+      "question": "What is the purpose of an SGACL (Security Group ACL) in Cisco TrustSec?",
+      "options": [
+        "To define policy that permits or denies traffic based on source and destination SGT values",
+        "To encrypt traffic between TrustSec-enabled switches",
+        "To assign SGTs to users during authentication",
+        "To map IP addresses to VLAN assignments"
+      ],
+      "correct": 0,
+      "explanation": "SGACLs define the access control policy between security groups by referencing source and destination SGT values. This allows topology-independent policy enforcement, since the policy follows the SGT regardless of the IP address or network location.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 122,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "hard",
+      "question": "When configuring uRPF in loose mode on a Cisco router, what is the minimum condition for a packet to be forwarded?",
+      "options": [
+        "The source IP must match the interface's connected subnet",
+        "The source IP must exist in the routing table via any interface",
+        "The packet must arrive on the interface with the lowest metric route to the source",
+        "The source and destination IPs must be in the same routing table entry"
+      ],
+      "correct": 1,
+      "explanation": "In loose mode, uRPF only verifies that the source IP address exists somewhere in the routing table, regardless of which interface the packet arrived on. This is less restrictive than strict mode and is typically used on interfaces with asymmetric routing.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 123,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "Which field does RADIUS encrypt in its Access-Request packets by default?",
+      "options": [
+        "Only the username",
+        "Both the username and password",
+        "The entire packet payload",
+        "Only the user password"
+      ],
+      "correct": 3,
+      "explanation": "RADIUS only encrypts the user password field in Access-Request packets using a shared secret and MD5 hashing. The rest of the packet, including the username, is sent in cleartext, which is a key difference from TACACS+ that encrypts the entire packet body.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 124,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "What is the default behavior of an 802.1X-enabled switch port before the supplicant authenticates?",
+      "options": [
+        "The port is administratively shut down",
+        "All traffic is permitted until a violation occurs",
+        "Only DHCP traffic is permitted for IP assignment",
+        "Only EAPOL frames are allowed; all other traffic is blocked"
+      ],
+      "correct": 3,
+      "explanation": "Before successful 802.1X authentication, the switch port in an unauthorized state only allows EAPOL (Extensible Authentication Protocol over LAN) frames through. All other traffic, including DHCP, ARP, and data, is blocked until the port transitions to an authorized state.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 125,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "hard",
+      "question": "An engineer is troubleshooting a WPA3-Personal connection failure. The client receives an 'SAE authentication rejected' message. What is the most likely cause?",
+      "options": [
+        "The client and AP have a PMF (Protected Management Frames) mismatch",
+        "The client does not support AES encryption",
+        "The RADIUS server rejected the client's certificate",
+        "The client is using an incorrect passphrase during the SAE commit exchange"
+      ],
+      "correct": 3,
+      "explanation": "In WPA3-Personal with SAE, a rejected authentication during the commit exchange most commonly indicates that the client and AP are using different passphrases. SAE does not use RADIUS or certificates; it is a PSK-based protocol that replaces the traditional four-way handshake.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 126,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "easy",
+      "question": "Which Cisco platform is primarily used to define and manage TrustSec policies, including SGT assignments and SGACLs?",
+      "options": [
+        "Cisco Prime Infrastructure",
+        "Cisco DNA Center",
+        "Cisco Stealthwatch",
+        "Cisco ISE (Identity Services Engine)"
+      ],
+      "correct": 3,
+      "explanation": "Cisco ISE is the central policy engine for TrustSec. It assigns SGTs to users and devices during authentication and defines SGACL policies that are pushed to TrustSec-enabled network devices for enforcement.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 127,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "In a Zone-Based Firewall configuration, what are the three possible actions a policy-map can apply to traffic between zones?",
+      "options": [
+        "Forward, filter, and encrypt",
+        "Inspect, pass, and drop",
+        "Allow, deny, and log",
+        "Permit, reject, and redirect"
+      ],
+      "correct": 1,
+      "explanation": "Zone-Based Firewall policy-maps support three actions: inspect (stateful inspection that allows return traffic), pass (forward without inspection), and drop (silently discard). These actions are applied in class-maps within the policy-map.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 128,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "hard",
+      "question": "A network administrator configures AAA authorization on a Cisco router with the command 'aaa authorization exec default group tacacs+ if-authenticated'. What happens if the TACACS+ server is unreachable?",
+      "options": [
+        "The router falls back to local authorization",
+        "The user is granted access only if they were previously authenticated successfully",
+        "The user is denied access completely",
+        "The user is placed in a restricted VLAN"
+      ],
+      "correct": 1,
+      "explanation": "The 'if-authenticated' keyword acts as a fallback that permits access for users who have already successfully completed authentication, even if the authorization server is unreachable. This prevents lockout scenarios when the TACACS+ server goes down.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 129,
+      "domain": 6,
+      "objective": "6.1",
+      "difficulty": "easy",
+      "question": "Which Python library is commonly used for interacting with network devices via SSH in network automation scripts?",
+      "options": [
+        "Flask",
+        "Beautiful Soup",
+        "Netmiko",
+        "NumPy"
+      ],
+      "correct": 2,
+      "explanation": "Netmiko is a Python library built on top of Paramiko that simplifies SSH connections to network devices from multiple vendors. It provides methods for sending commands, entering configuration mode, and handling device-specific prompts.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 130,
+      "domain": 6,
+      "objective": "6.1",
+      "difficulty": "medium",
+      "question": "In a Python script using the 'requests' library to interact with a REST API, which method is used to create a new resource?",
+      "options": [
+        "requests.post()",
+        "requests.get()",
+        "requests.patch()",
+        "requests.delete()"
+      ],
+      "correct": 0,
+      "explanation": "The requests.post() method sends an HTTP POST request, which is the standard method for creating new resources via a REST API. GET retrieves data, DELETE removes resources, and PATCH partially updates existing resources.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 131,
+      "domain": 6,
+      "objective": "6.2",
+      "difficulty": "easy",
+      "question": "What transport protocol and encoding does NETCONF use by default?",
+      "options": [
+        "HTTPS with JSON encoding",
+        "gRPC with Protobuf encoding",
+        "TCP with YAML encoding",
+        "SSH with XML encoding"
+      ],
+      "correct": 3,
+      "explanation": "NETCONF uses SSH as its transport protocol and XML for encoding data. It operates on TCP port 830 by default and uses YANG data models to define the structure of the configuration and operational data.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 132,
+      "domain": 6,
+      "objective": "6.2",
+      "difficulty": "medium",
+      "question": "Which NETCONF operation is used to replace the entire running configuration with a new configuration?",
+      "options": [
+        "<edit-config> with merge operation",
+        "<edit-config> with replace operation on the root",
+        "<copy-config>",
+        "<delete-config>"
+      ],
+      "correct": 1,
+      "explanation": "Using <edit-config> with the 'replace' operation at the root level replaces the entire target configuration. Alternatively, <copy-config> can copy a complete configuration from one datastore to another, but <edit-config> with replace at the root provides more explicit control.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 133,
+      "domain": 6,
+      "objective": "6.2",
+      "difficulty": "hard",
+      "question": "RESTCONF uses which HTTP methods to map to NETCONF operations? Select the correct mapping for creating a new data resource that must not already exist.",
+      "options": [
+        "PATCH",
+        "GET",
+        "POST",
+        "PUT"
+      ],
+      "correct": 2,
+      "explanation": "In RESTCONF, POST is used to create a new resource and will return an error if the resource already exists. PUT creates or replaces a resource (it succeeds whether the resource exists or not). PATCH merges with existing data, and GET retrieves data.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 134,
+      "domain": 6,
+      "objective": "6.3",
+      "difficulty": "easy",
+      "question": "What does Cisco DNA Center use as its primary approach to network management?",
+      "options": [
+        "CLI-based management with Telnet access",
+        "Manual device-by-device configuration via console",
+        "Intent-based networking with centralized policy and automation",
+        "Distributed management via SNMP polling only"
+      ],
+      "correct": 2,
+      "explanation": "Cisco DNA Center is the management and command center for intent-based networking. It translates business intent into network policies and automates their deployment across the enterprise network through centralized management.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 135,
+      "domain": 6,
+      "objective": "6.3",
+      "difficulty": "medium",
+      "question": "Which API category in Cisco DNA Center provides access to network device inventory, topology, and health information?",
+      "options": [
+        "Site Management APIs",
+        "Task APIs",
+        "Know Your Network APIs",
+        "Command Runner APIs"
+      ],
+      "correct": 2,
+      "explanation": "The Know Your Network APIs in DNA Center provide access to device inventory, network health, client health, topology, and issue information. Command Runner APIs execute CLI commands, while Site Management APIs handle site hierarchy and settings.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 136,
+      "domain": 6,
+      "objective": "6.3",
+      "difficulty": "hard",
+      "question": "When using the Cisco DNA Center Intent API to provision a new device, the API returns a task ID. What is the correct workflow to determine the final status of the operation?",
+      "options": [
+        "Send a GET request to the device inventory API immediately",
+        "The task ID is the final confirmation; no further action is needed",
+        "Poll the Task API using the task ID until it returns a success or failure status",
+        "Resubmit the original provisioning request with the task ID appended"
+      ],
+      "correct": 2,
+      "explanation": "DNA Center uses asynchronous task processing for long-running operations. After receiving a task ID, you must poll the Task API endpoint with that ID to check whether the operation completed successfully or encountered an error.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 137,
+      "domain": 6,
+      "objective": "6.4",
+      "difficulty": "easy",
+      "question": "Which configuration management tool uses 'playbooks' written in YAML to define automation tasks?",
+      "options": [
+        "Puppet",
+        "SaltStack",
+        "Ansible",
+        "Chef"
+      ],
+      "correct": 2,
+      "explanation": "Ansible uses YAML-based playbooks to define automation tasks. Ansible is agentless and connects to devices via SSH or APIs. Puppet uses manifests written in Puppet DSL, and Chef uses recipes written in Ruby.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 138,
+      "domain": 6,
+      "objective": "6.4",
+      "difficulty": "medium",
+      "question": "What is a key architectural difference between Ansible and Puppet?",
+      "options": [
+        "Ansible requires agents on managed nodes while Puppet does not",
+        "Ansible is agentless and push-based while Puppet uses agents and is pull-based",
+        "Puppet uses YAML for configuration while Ansible uses Ruby",
+        "Ansible requires a master server while Puppet does not"
+      ],
+      "correct": 1,
+      "explanation": "Ansible is agentless and uses a push model, connecting to devices via SSH to execute tasks. Puppet requires an agent installed on each managed node that periodically pulls its desired configuration from a Puppet master server.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 139,
+      "domain": 6,
+      "objective": "6.5",
+      "difficulty": "easy",
+      "question": "Which data serialization format uses indentation (whitespace) to represent hierarchy and does not use brackets or tags?",
+      "options": [
+        "YAML",
+        "XML",
+        "CSV",
+        "JSON"
+      ],
+      "correct": 0,
+      "explanation": "YAML (YAML Ain't Markup Language) uses indentation with spaces to represent hierarchical data structure. It does not use curly braces (like JSON) or angle-bracket tags (like XML), making it human-readable and commonly used in automation tools like Ansible.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 140,
+      "domain": 6,
+      "objective": "6.5",
+      "difficulty": "medium",
+      "question": "A network engineer receives API output in JSON format: {\"interface\": {\"name\": \"GigabitEthernet0/1\", \"status\": \"up\"}}. How would this same data be represented as a Python dictionary?",
+      "options": [
+        "It is identical since Python dictionaries use the same syntax as JSON",
+        "Python requires converting JSON to a tuple before use",
+        "Python dictionaries cannot represent nested data structures",
+        "Python uses single quotes: {'interface': {'name': 'GigabitEthernet0/1', 'status': 'up'}}"
+      ],
+      "correct": 0,
+      "explanation": "JSON and Python dictionaries share very similar syntax. The json.loads() function in Python parses a JSON string directly into a native Python dictionary. The structure, including nesting, maps one-to-one, though Python displays strings with single quotes by default.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 141,
+      "domain": 6,
+      "objective": "6.6",
+      "difficulty": "easy",
+      "question": "What is Cisco EEM (Embedded Event Manager) used for on a network device?",
+      "options": [
+        "To automate actions on the device in response to specific events",
+        "To manage software image upgrades remotely",
+        "To provide external syslog collection",
+        "To monitor NetFlow data exports"
+      ],
+      "correct": 0,
+      "explanation": "EEM allows network administrators to define automated actions (applets or scripts) that execute in response to specific events on the device, such as syslog messages, interface state changes, SNMP traps, or timer-based triggers.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 142,
+      "domain": 6,
+      "objective": "6.6",
+      "difficulty": "medium",
+      "question": "An engineer writes an EEM applet that triggers when interface GigabitEthernet0/1 goes down. Which event detector should be used?",
+      "options": [
+        "event interface name GigabitEthernet0/1 parameter down",
+        "event timer watchdog",
+        "event track state",
+        "event syslog pattern"
+      ],
+      "correct": 3,
+      "explanation": "While a dedicated interface event detector exists, the most common and flexible approach is to use the syslog event detector with a pattern matching the interface down syslog message (e.g., LINK-3-UPDOWN). The event syslog pattern detector triggers the applet when the matching log message is generated.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 143,
+      "domain": 6,
+      "objective": "6.6",
+      "difficulty": "hard",
+      "question": "In an EEM applet, what is the purpose of the 'action' command with the 'cli' keyword?",
+      "options": [
+        "To execute IOS CLI commands as part of the automated response",
+        "To define the event that triggers the applet",
+        "To log the event to an external syslog server",
+        "To send an SNMP notification to a management station"
+      ],
+      "correct": 0,
+      "explanation": "The 'action cli command' syntax within an EEM applet executes IOS CLI commands as automated responses to the triggering event. This allows the applet to perform configuration changes, collect show command output, or take corrective actions without manual intervention.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 144,
+      "domain": 6,
+      "objective": "6.7",
+      "difficulty": "medium",
+      "question": "What is model-driven telemetry and how does it differ from traditional SNMP polling?",
+      "options": [
+        "It pushes data from the device to the collector based on subscriptions, rather than the collector polling the device",
+        "It requires manual CLI commands to export data",
+        "It uses SNMP traps exclusively instead of polling",
+        "It only works with NetFlow-based data collection"
+      ],
+      "correct": 0,
+      "explanation": "Model-driven telemetry uses a push-based approach where network devices stream operational data to collectors based on configured subscriptions. Unlike SNMP polling (pull-based), this provides near-real-time data with lower overhead on the device CPU.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 145,
+      "domain": 6,
+      "objective": "6.7",
+      "difficulty": "hard",
+      "question": "Which transport protocol is commonly used for gRPC-based model-driven telemetry from Cisco IOS-XE devices?",
+      "options": [
+        "HTTP/2 with Protocol Buffers (GPB) encoding",
+        "SSH with YANG-encoded data",
+        "TCP with XML payload",
+        "UDP with JSON payload"
+      ],
+      "correct": 0,
+      "explanation": "gRPC uses HTTP/2 as its transport and Protocol Buffers (GPB) for efficient binary serialization. Cisco IOS-XE supports gRPC dial-in and dial-out telemetry subscriptions, providing high-performance streaming of operational data encoded in GPB format.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 146,
+      "domain": 6,
+      "objective": "6.2",
+      "difficulty": "hard",
+      "question": "What is a YANG model in the context of network programmability?",
+      "options": [
+        "A Python library for parsing CLI output from network devices",
+        "A proprietary Cisco protocol for device provisioning",
+        "A JSON schema used exclusively by RESTCONF",
+        "A data modeling language used to define the structure, syntax, and semantics of network configuration and state data"
+      ],
+      "correct": 3,
+      "explanation": "YANG (Yet Another Next Generation) is a data modeling language defined in RFC 7950 that describes the structure and constraints of configuration and operational data. NETCONF and RESTCONF use YANG models to define what data can be read or written on a network device.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 147,
+      "domain": 6,
+      "objective": "6.1",
+      "difficulty": "hard",
+      "question": "A Python script uses the 'ncclient' library to connect to a Cisco IOS-XE device. Which protocol does ncclient implement?",
+      "options": [
+        "RESTCONF",
+        "gRPC",
+        "NETCONF",
+        "SNMP"
+      ],
+      "correct": 2,
+      "explanation": "The ncclient library is a Python client for NETCONF. It handles the SSH transport, XML encoding, and NETCONF RPC operations such as <get>, <get-config>, and <edit-config>, making it straightforward to programmatically manage network device configurations.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 148,
+      "domain": 6,
+      "objective": "6.4",
+      "difficulty": "hard",
+      "question": "In an Ansible playbook targeting Cisco IOS devices, which connection plugin should be used?",
+      "options": [
+        "connection: local",
+        "connection: network_cli",
+        "connection: ssh",
+        "connection: paramiko"
+      ],
+      "correct": 1,
+      "explanation": "The 'network_cli' connection plugin is specifically designed for network device automation in Ansible. It handles the persistent SSH connection, privilege escalation (enable mode), and platform-specific CLI interactions required for managing Cisco IOS and other network operating systems.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 149,
+      "domain": 6,
+      "objective": "6.3",
+      "difficulty": "medium",
+      "question": "In Cisco SD-WAN, which component is responsible for centralized policy configuration and distribution to the network fabric?",
+      "options": [
+        "vManage",
+        "vEdge router",
+        "vBond orchestrator",
+        "vSmart controller"
+      ],
+      "correct": 3,
+      "explanation": "The vSmart controller is responsible for centralized policy enforcement and distribution in the SD-WAN fabric. While vManage provides the management GUI and API, vSmart implements and propagates data and application-aware routing policies to the WAN edge devices via OMP.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 150,
+      "domain": 6,
+      "objective": "6.5",
+      "difficulty": "medium",
+      "question": "Which Python module is used to parse XML data returned by NETCONF operations?",
+      "options": [
+        "csv",
+        "yaml",
+        "json",
+        "lxml.etree"
+      ],
+      "correct": 3,
+      "explanation": "The lxml.etree module (or the built-in xml.etree.ElementTree) is used to parse and manipulate XML data in Python. Since NETCONF returns data in XML format, engineers use these modules to extract specific elements from the response for further processing.",
+      "link": "start-here.html"
+    }
+  ]
+}
