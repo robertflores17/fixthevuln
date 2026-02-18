@@ -180,7 +180,7 @@ If you're studying for Security+ or working in IT security, this breakdown maps 
 
 Read the full analysis: {url}
 
-Studying for a certification? Check out our study planners at SmartSheetByRobert.etsy.com — structured 8-week plans with domain trackers and exam strategies."""
+Studying for a certification? Check out our study planners at SmartSheetByRobert.etsy.com — structured plans with domain trackers and exam strategies."""
 
     return {
         'post': fb_post,

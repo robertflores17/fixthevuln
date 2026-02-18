@@ -20,7 +20,7 @@ from pathlib import Path
 # CTA variations for Etsy
 ETSY_CTAS = [
     "Studying for Security+? Grab the study planner at SmartSheetByRobert.etsy.com",
-    "Need a study system? SmartSheetByRobert.etsy.com has 8-week planners for every major IT cert.",
+    "Need a study system? SmartSheetByRobert.etsy.com has planners for every major IT cert.",
     "Get organized for your exam: SmartSheetByRobert.etsy.com",
     "The ADHD-friendly cert study planner: SmartSheetByRobert.etsy.com",
 ]
@@ -278,7 +278,7 @@ We just published a breakdown of the latest cybersecurity threats — and mapped
 But knowing the threats is just step one. You need a SYSTEM to study effectively.
 
 That's why we built structured study planners:
-- 8-week study schedules
+- study schedules
 - Domain-by-domain trackers
 - Practice exam schedules
 - Time blocking templates
@@ -297,7 +297,7 @@ Read it here: {post_url}
 If you're preparing for Security+ or any IT certification, pair this knowledge with a structured study system.
 
 Our planners at SmartSheetByRobert.etsy.com include:
-- 8-week study schedules for every major IT cert
+- study schedules for every major IT cert
 - Domain trackers and progress monitoring
 - ADHD-friendly layouts with time blocking
 
