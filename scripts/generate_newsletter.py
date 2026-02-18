@@ -137,7 +137,7 @@ Read the full post here:
 
 ---
 
-Studying for a certification? Our study planners give you a structured 8-week plan with domain trackers, practice exam schedules, and proven strategies.
+Studying for a certification? Our study planners give you a structured plan with domain trackers, practice exam schedules, and proven strategies.
 
 Browse planners: https://SmartSheetByRobert.etsy.com
 
