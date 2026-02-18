@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive IT career path guide for 9 cybersecurity and IT roles. See which certifications to pursue — SOC Analyst, Penetration Tester, Cloud Engineer, Security Architect, and more. Free quizzes and study planners for each cert.">
+    <meta name="keywords" content="IT career path, cybersecurity career roadmap, SOC analyst certifications, penetration tester certifications, cloud engineer certifications, Security+ career path, CISSP career path, AWS certification path, Azure certification path, CCNA career path, certification roadmap">
+    <title>IT Career Paths — Certification Roadmaps for 9 Cybersecurity & IT Roles - FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/career-paths.html">
+    <meta property="og:title" content="IT Career Paths — Certification Roadmaps for 9 Cybersecurity & IT Roles - FixTheVuln">
+    <meta property="og:description" content="Interactive career path guide: pick your target role, see which certifications to pursue and in what order. 9 roles, 20+ certs, free quizzes and planners.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fixthevuln.com/career-paths.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="IT Career Paths — Certification Roadmaps for 9 Roles - FixTheVuln">
+    <meta name="twitter:description" content="Interactive career path guide: pick your target role, see which certifications to pursue and in what order. 9 roles, 20+ certs, free quizzes and planners.">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.min.css">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": "IT Career Paths — Certification Roadmaps",
+        "description": "Role-based certification roadmaps for 9 cybersecurity and IT career paths",
+        "numberOfItems": 9,
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "SOC Analyst", "description": "Security+ → CySA+ → CISSP" },
+            { "@type": "ListItem", "position": 2, "name": "Penetration Tester", "description": "Security+ → PenTest+ → CEH → OSCP" },
+            { "@type": "ListItem", "position": 3, "name": "Security Manager / GRC", "description": "Security+ → CISM → CISSP" },
+            { "@type": "ListItem", "position": 4, "name": "Network Engineer", "description": "A+ → Network+ → CCNA → CCNP" },
+            { "@type": "ListItem", "position": 5, "name": "Cloud Engineer (AWS)", "description": "AWS Cloud Practitioner → AWS Solutions Architect → AWS Security Specialty" },
+            { "@type": "ListItem", "position": 6, "name": "Cloud Engineer (Azure)", "description": "AZ-900 → SC-900 → AZ-104 → AZ-500" },
+            { "@type": "ListItem", "position": 7, "name": "IT Support / Help Desk", "description": "A+ → Network+ → Security+" },
+            { "@type": "ListItem", "position": 8, "name": "Systems Administrator", "description": "A+ → Linux+ → Network+ → Security+" },
+            { "@type": "ListItem", "position": 9, "name": "Security Architect", "description": "Security+ → CySA+ → CASP+ → CISSP" }
+        ]
+    }
+    </script>
+    <style>
+        /* Hero */
+        .path-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2.5rem 2rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .path-hero h1 {
+            color: white;
+            margin-bottom: 0.5rem;
+            font-size: 1.75rem;
+        }
+        .path-hero p {
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1.05rem;
+        }
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .hero-stat {
+            background: rgba(255,255,255,0.15);
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Role Selector */
+        .role-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .role-btn {
+            padding: 0.6rem 1.25rem;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #555;
+            transition: all 0.2s ease;
+        }
+        .role-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        .role-btn.active {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+
+        /* Role Detail */
+        .role-detail {
+            display: none;
+        }
+        .role-detail.active {
+            display: block;
+        }
+        .role-header {
+            margin-bottom: 1.5rem;
+        }
+        .role-header h2 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+        .role-header p {
+            color: #666;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Cert Path Flowchart */
+        .cert-path {
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            overflow-x: auto;
+            padding: 1rem 0;
+        }
+        .cert-node {
+            background: white;
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid #e0e0e0;
+            border-left: 4px solid #ccc;
+            min-width: 180px;
+            max-width: 220px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+        .cert-node:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+        }
+        .cert-node.entry-level { border-left-color: #28a745; }
+        .cert-node.mid-level { border-left-color: #667eea; }
+        .cert-node.senior-level { border-left-color: #764ba2; }
+        .cert-node.expert-level { border-left-color: #dc3545; }
+
+        .level-label {
+            display: inline-block;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            width: fit-content;
+        }
+        .entry-level .level-label { background: #d4edda; color: #155724; }
+        .mid-level .level-label { background: #dce5ff; color: #2952a3; }
+        .senior-level .level-label { background: #e8daff; color: #4a2178; }
+        .expert-level .level-label { background: #f8d7da; color: #721c24; }
+
+        .cert-node h3 {
+            color: #333;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+        .exam-code {
+            color: #888;
+            font-size: 0.8rem;
+            margin-bottom: 0.75rem;
+        }
+        .vendor-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #667eea;
+            margin-bottom: 0.35rem;
+        }
+        .cert-actions {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            margin-top: auto;
+        }
+        .badge-quiz, .badge-planner {
+            display: inline-block;
+            padding: 0.3rem 0.6rem;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .badge-quiz {
+            background: #28a745;
+            color: white;
+        }
+        .badge-quiz:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+        .badge-planner {
+            background: #667eea;
+            color: white;
+        }
+        .badge-planner:hover {
+            background: #5a6fd6;
+            transform: translateY(-1px);
+        }
+        .badge-na {
+            display: inline-block;
+            padding: 0.3rem 0.6rem;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            background: #f0f0f0;
+            color: #999;
+        }
+
+        /* Arrow connectors */
+        .path-arrow {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            color: #bbb;
+            padding: 0 0.5rem;
+            flex-shrink: 0;
+            font-weight: 700;
+        }
+
+        /* Also available note */
+        .also-available {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: #666;
+            border: 1px dashed #ddd;
+        }
+        .also-available strong {
+            color: #555;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2.5rem;
+            border: 1px solid #e0e0e0;
+        }
+        .cta-section h2 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        .cta-section p {
+            color: #666;
+            margin-bottom: 1.25rem;
+        }
+        .cta-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .cta-link {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .cta-link-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .cta-link-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .cta-link-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        .cta-link-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .path-hero h1 {
+                font-size: 1.35rem;
+            }
+            .hero-stats {
+                gap: 0.75rem;
+            }
+            .hero-stat {
+                font-size: 0.8rem;
+                padding: 0.5rem 0.75rem;
+            }
+            .role-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+            .cert-path {
+                flex-direction: column;
+                align-items: center;
+            }
+            .cert-node {
+                min-width: auto;
+                max-width: 100%;
+                width: 100%;
+            }
+            .path-arrow {
+                transform: rotate(90deg);
+                padding: 0.25rem 0;
+            }
+        }
+
+        /* Dark mode support */
+        [data-theme="dark"] .role-btn {
+            background: #1a1a2e;
+            border-color: #333;
+            color: #ccc;
+        }
+        [data-theme="dark"] .role-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        [data-theme="dark"] .role-btn.active {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+        [data-theme="dark"] .cert-node {
+            background: #1a1a2e;
+            border-color: #333;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        [data-theme="dark"] .cert-node h3 {
+            color: #e0e0e0;
+        }
+        [data-theme="dark"] .exam-code {
+            color: #888;
+        }
+        [data-theme="dark"] .role-header h2 {
+            color: #e0e0e0;
+        }
+        [data-theme="dark"] .role-header p {
+            color: #aaa;
+        }
+        [data-theme="dark"] .also-available {
+            background: #1a1a2e;
+            border-color: #333;
+            color: #aaa;
+        }
+        [data-theme="dark"] .cta-section {
+            background: #1a1a2e;
+            border-color: #333;
+        }
+        [data-theme="dark"] .cta-section h2 {
+            color: #e0e0e0;
+        }
+        [data-theme="dark"] .cta-section p {
+            color: #aaa;
+        }
+        [data-theme="dark"] .badge-na {
+            background: #2a2a3e;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="index.html" class="site-nav-logo">FixTheVuln</a>
+        <div class="site-nav-links">
+            <a href="guides.html">Guides</a>
+            <a href="tools.html">Tools</a>
+            <a href="compliance.html">Compliance</a>
+            <a href="resources.html">Resources</a>
+            <a href="practice-tests.html">Quizzes</a>
+            <a href="career-paths.html">Career Paths</a>
+            <a href="blog/">Blog</a>
+            <a href="/store/store.html" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: .35rem .75rem; border-radius: 6px; font-size: .85rem; font-weight: 600; text-decoration: none;">Store</a>
+        </div>
+    </div>
+</nav>
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit"><svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg></a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></a>
+</div>
+
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>FixTheVuln</h1></a>
+            <p class="tagline">IT Career Paths</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="index.html" class="back-link">&larr; Back to Home</a>
+
+        <div class="path-hero">
+            <h1>IT Career Paths &mdash; Find Your Certification Roadmap</h1>
+            <p>Select your target role to see which certifications to pursue and in what order</p>
+            <div class="hero-stats">
+                <span class="hero-stat">9 Career Paths</span>
+                <span class="hero-stat">20+ Certifications</span>
+                <span class="hero-stat">Free Quizzes & Planners</span>
+            </div>
+        </div>
+
+        <!-- Role Selector -->
+        <div class="role-selector" id="role-selector"></div>
+
+        <!-- Role Detail Panels (generated by JS) -->
+        <div id="role-panels"></div>
+
+        <!-- CTA -->
+        <div class="cta-section">
+            <h2>Ready to Start Studying?</h2>
+            <p>Practice with free quizzes or generate a personalized study plan for any certification.</p>
+            <div class="cta-links">
+                <a href="practice-tests.html" class="cta-link cta-link-primary">Browse All Practice Tests</a>
+                <a href="planner.html" class="cta-link cta-link-secondary">Study Planner</a>
+                <a href="comparisons/" class="cta-link cta-link-secondary">Compare Certifications</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank" rel="noopener">FixTheVuln.com</a> | <a href="/store/store.html">FixTheVuln Store</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;"><strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.</p>
+            <p style="font-size: 0.8rem; color: #888; margin-top: 0.75rem;"><strong>Disclaimer:</strong> These career paths are general recommendations for educational purposes. Certification names and trademarks (CompTIA&reg;, Security+&reg;, CISSP&reg;, (ISC)&sup2;&reg;, Cisco&reg;, CCNA&reg;, AWS&reg;, Microsoft&reg;, Azure&reg;, CEH&reg;, EC-Council&reg;, CISM&reg;, ISACA&reg;, OSCP&reg;, OffSec&reg;) are property of their respective owners. FixTheVuln is not affiliated with or endorsed by any certification vendor.</p>
+        </div>
+    </footer>
+
+<script>
+(function() {
+    // ========== CAREER PATH DATA ==========
+    var ROLES = [
+        {
+            id: 'soc-analyst',
+            name: 'SOC Analyst',
+            description: 'Security Operations Center analysts monitor networks for threats, investigate security alerts, and respond to incidents. This is one of the most common entry points into cybersecurity, with strong demand and clear progression to senior analyst and management roles.',
+            certs: [
+                { name: 'Security+', code: 'SY0-701', vendor: 'CompTIA', level: 'entry', quiz: 'security-quiz.html', planner: 'planner.html' },
+                { name: 'CySA+', code: 'CS0-003', vendor: 'CompTIA', level: 'mid', quiz: 'cysa-plus-quiz.html', planner: 'planner.html' },
+                { name: 'CISSP', code: 'ISC2', vendor: 'ISC2', level: 'senior', quiz: 'cissp-quiz.html', planner: 'planner.html' }
+            ]
+        },
+        {
+            id: 'pentester',
+            name: 'Penetration Tester',
+            description: 'Penetration testers (ethical hackers) simulate attacks against systems and applications to find vulnerabilities before malicious actors do. This role requires deep technical skills and offers some of the highest salaries in cybersecurity.',
+            certs: [
+                { name: 'Security+', code: 'SY0-701', vendor: 'CompTIA', level: 'entry', quiz: 'security-quiz.html', planner: 'planner.html' },
+                { name: 'PenTest+', code: 'PT0-002', vendor: 'CompTIA', level: 'mid', quiz: 'pentest-plus-quiz.html', planner: 'planner.html' },
+                { name: 'CEH', code: 'v13', vendor: 'EC-Council', level: 'mid', quiz: 'ceh-quiz.html', planner: 'planner.html' },
+                { name: 'OSCP', code: 'PEN-200', vendor: 'OffSec', level: 'senior', quiz: 'oscp-quiz.html', planner: null }
+            ]
+        },
+        {
+            id: 'grc',
+            name: 'Security Manager / GRC',
+            description: 'Governance, Risk, and Compliance (GRC) professionals develop security policies, manage risk assessments, and ensure regulatory compliance. This management-track career path leads to CISO and director-level roles.',
+            certs: [
+                { name: 'Security+', code: 'SY0-701', vendor: 'CompTIA', level: 'entry', quiz: 'security-quiz.html', planner: 'planner.html' },
+                { name: 'CISM', code: 'ISACA', vendor: 'ISACA', level: 'mid', quiz: 'cism-quiz.html', planner: 'planner.html' },
+                { name: 'CISSP', code: 'ISC2', vendor: 'ISC2', level: 'senior', quiz: 'cissp-quiz.html', planner: 'planner.html' }
+            ],
+            alsoAvailable: { name: 'CISA', note: 'Also relevant: CISA (planner available)', planner: 'planner.html' }
+        },
+        {
+            id: 'network-engineer',
+            name: 'Network Engineer',
+            description: 'Network engineers design, implement, and maintain an organization\'s network infrastructure. Starting from IT fundamentals, this path progresses through vendor-neutral to Cisco-specific expertise.',
+            certs: [
+                { name: 'A+', code: '220-1101/1102', vendor: 'CompTIA', level: 'entry', quiz: 'aplus-quiz.html', planner: 'planner.html' },
+                { name: 'Network+', code: 'N10-009', vendor: 'CompTIA', level: 'entry', quiz: 'network-plus-quiz.html', planner: 'planner.html' },
+                { name: 'CCNA', code: '200-301', vendor: 'Cisco', level: 'mid', quiz: 'ccna-quiz.html', planner: 'planner.html' },
+                { name: 'CCNP', code: 'Enterprise', vendor: 'Cisco', level: 'senior', quiz: 'ccnp-quiz.html', planner: null }
+            ]
+        },
+        {
+            id: 'cloud-aws',
+            name: 'Cloud Engineer (AWS)',
+            description: 'AWS cloud engineers architect, deploy, and manage cloud infrastructure on Amazon Web Services. Cloud skills are among the most in-demand in IT, with AWS holding the largest market share.',
+            certs: [
+                { name: 'AWS Cloud Practitioner', code: 'CLF-C02', vendor: 'AWS', level: 'entry', quiz: 'aws-clf-quiz.html', planner: 'planner.html' },
+                { name: 'AWS Solutions Architect', code: 'SAA-C03', vendor: 'AWS', level: 'mid', quiz: 'aws-saa-quiz.html', planner: 'planner.html' },
+                { name: 'AWS Security Specialty', code: 'SCS-C02', vendor: 'AWS', level: 'senior', quiz: 'aws-security-quiz.html', planner: null }
+            ]
+        },
+        {
+            id: 'cloud-azure',
+            name: 'Cloud Engineer (Azure)',
+            description: 'Azure cloud engineers build and manage cloud solutions on Microsoft Azure. With deep enterprise adoption, Azure skills are highly valued, especially in organizations already using Microsoft technologies.',
+            certs: [
+                { name: 'AZ-900', code: 'Azure Fundamentals', vendor: 'Microsoft', level: 'entry', quiz: 'az900-quiz.html', planner: 'planner.html' },
+                { name: 'SC-900', code: 'Security Fundamentals', vendor: 'Microsoft', level: 'entry', quiz: 'sc900-quiz.html', planner: 'planner.html' },
+                { name: 'AZ-104', code: 'Azure Administrator', vendor: 'Microsoft', level: 'mid', quiz: null, planner: 'planner.html' },
+                { name: 'AZ-500', code: 'Azure Security', vendor: 'Microsoft', level: 'senior', quiz: null, planner: 'planner.html' }
+            ]
+        },
+        {
+            id: 'helpdesk',
+            name: 'IT Support / Help Desk',
+            description: 'IT support and help desk technicians are the front line of technical support, troubleshooting hardware, software, and network issues. This is the most accessible entry point into IT with a clear path into specialized roles.',
+            certs: [
+                { name: 'A+', code: '220-1101/1102', vendor: 'CompTIA', level: 'entry', quiz: 'aplus-quiz.html', planner: 'planner.html' },
+                { name: 'Network+', code: 'N10-009', vendor: 'CompTIA', level: 'mid', quiz: 'network-plus-quiz.html', planner: 'planner.html' },
+                { name: 'Security+', code: 'SY0-701', vendor: 'CompTIA', level: 'mid', quiz: 'security-quiz.html', planner: 'planner.html' }
+            ]
+        },
+        {
+            id: 'sysadmin',
+            name: 'Systems Administrator',
+            description: 'Systems administrators manage and maintain servers, operating systems, and IT infrastructure. This role requires broad technical knowledge across hardware, Linux/Windows, networking, and security.',
+            certs: [
+                { name: 'A+', code: '220-1101/1102', vendor: 'CompTIA', level: 'entry', quiz: 'aplus-quiz.html', planner: 'planner.html' },
+                { name: 'Linux+', code: 'XK0-005', vendor: 'CompTIA', level: 'mid', quiz: 'linux-plus-quiz.html', planner: 'planner.html' },
+                { name: 'Network+', code: 'N10-009', vendor: 'CompTIA', level: 'mid', quiz: 'network-plus-quiz.html', planner: 'planner.html' },
+                { name: 'Security+', code: 'SY0-701', vendor: 'CompTIA', level: 'senior', quiz: 'security-quiz.html', planner: 'planner.html' }
+            ]
+        },
+        {
+            id: 'security-architect',
+            name: 'Security Architect',
+            description: 'Security architects design and oversee an organization\'s entire security infrastructure. This senior-level role requires deep expertise across multiple security domains and is one of the highest-paid positions in cybersecurity.',
+            certs: [
+                { name: 'Security+', code: 'SY0-701', vendor: 'CompTIA', level: 'entry', quiz: 'security-quiz.html', planner: 'planner.html' },
+                { name: 'CySA+', code: 'CS0-003', vendor: 'CompTIA', level: 'mid', quiz: 'cysa-plus-quiz.html', planner: 'planner.html' },
+                { name: 'CASP+', code: 'CAS-004', vendor: 'CompTIA', level: 'senior', quiz: 'casp-plus-quiz.html', planner: 'planner.html' },
+                { name: 'CISSP', code: 'ISC2', vendor: 'ISC2', level: 'expert', quiz: 'cissp-quiz.html', planner: 'planner.html' }
+            ]
+        }
+    ];
+
+    var LEVEL_LABELS = { entry: 'Entry', mid: 'Intermediate', senior: 'Advanced', expert: 'Expert' };
+
+    // ========== RENDER FUNCTIONS ==========
+    function buildSelector() {
+        var container = document.getElementById('role-selector');
+        ROLES.forEach(function(role, i) {
+            var btn = document.createElement('button');
+            btn.className = 'role-btn' + (i === 0 ? ' active' : '');
+            btn.setAttribute('data-role', role.id);
+            btn.textContent = role.name;
+            btn.addEventListener('click', function() { selectRole(role.id); });
+            container.appendChild(btn);
+        });
+    }
+
+    function buildPanels() {
+        var container = document.getElementById('role-panels');
+        ROLES.forEach(function(role, i) {
+            var panel = document.createElement('div');
+            panel.className = 'role-detail' + (i === 0 ? ' active' : '');
+            panel.id = 'panel-' + role.id;
+
+            var html = '<div class="role-header">';
+            html += '<h2>' + role.name + '</h2>';
+            html += '<p>' + role.description + '</p>';
+            html += '</div>';
+            html += '<div class="cert-path">';
+
+            role.certs.forEach(function(cert, j) {
+                if (j > 0) {
+                    html += '<div class="path-arrow">&rarr;</div>';
+                }
+                html += '<div class="cert-node ' + cert.level + '-level">';
+                html += '<span class="level-label">' + LEVEL_LABELS[cert.level] + '</span>';
+                html += '<span class="vendor-label">' + cert.vendor + '</span>';
+                html += '<h3>' + cert.name + '</h3>';
+                html += '<span class="exam-code">' + cert.code + '</span>';
+                html += '<div class="cert-actions">';
+                if (cert.quiz) {
+                    html += '<a href="' + cert.quiz + '" class="badge-quiz">Practice Quiz</a>';
+                } else {
+                    html += '<span class="badge-na">No quiz yet</span>';
+                }
+                if (cert.planner) {
+                    html += '<a href="' + cert.planner + '" class="badge-planner">Study Planner</a>';
+                }
+                html += '</div>';
+                html += '</div>';
+            });
+
+            html += '</div>';
+
+            if (role.alsoAvailable) {
+                html += '<div class="also-available">';
+                html += '<strong>Also relevant:</strong> ' + role.alsoAvailable.name;
+                if (role.alsoAvailable.planner) {
+                    html += ' &mdash; <a href="' + role.alsoAvailable.planner + '">Study Planner available</a>';
+                }
+                html += '</div>';
+            }
+
+            panel.innerHTML = html;
+            container.appendChild(panel);
+        });
+    }
+
+    function selectRole(roleId) {
+        // Update buttons
+        var btns = document.querySelectorAll('.role-btn');
+        for (var i = 0; i < btns.length; i++) {
+            btns[i].classList.toggle('active', btns[i].getAttribute('data-role') === roleId);
+        }
+        // Update panels
+        var panels = document.querySelectorAll('.role-detail');
+        for (var j = 0; j < panels.length; j++) {
+            panels[j].classList.toggle('active', panels[j].id === 'panel-' + roleId);
+        }
+        // Update hash without scroll
+        history.replaceState(null, '', '#' + roleId);
+    }
+
+    // ========== INIT ==========
+    buildSelector();
+    buildPanels();
+
+    // Deep-link from hash
+    var hash = window.location.hash.replace('#', '');
+    if (hash) {
+        var valid = ROLES.some(function(r) { return r.id === hash; });
+        if (valid) selectRole(hash);
+    }
+})();
+</script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
