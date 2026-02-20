@@ -11,7 +11,7 @@ from datetime import datetime
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 LATEST_FILE = DATA_DIR / ".latest_published.json"
-OUTPUT_FILE = DATA_DIR / "cve-social-posts.json"
+OUTPUT_FILE = DATA_DIR / "cve-social-posts.txt"
 
 
 def build_highlights(cves):
@@ -158,27 +158,41 @@ def main():
 
     count = len(cves)
     highlights = build_highlights(cves)
+    individual = generate_individual_posts(cves)
 
-    output = {
-        "generated": date,
-        "cve_count": count,
-        "batch_posts": {
-            "linkedin": generate_linkedin(count, highlights, date),
-            "twitter": generate_twitter(count, highlights, date),
-            "reddit_title": generate_reddit_title(count, highlights),
-            "reddit_body": generate_reddit_body(count, highlights),
-            "newsletter_subject": generate_newsletter_subject(count, highlights),
-            "newsletter_body": generate_newsletter_body(count, cves, highlights, date),
-        },
-        "individual_posts": generate_individual_posts(cves),
-    }
+    sep = "=" * 60
+    sections = []
+
+    sections.append(f"CVE Social Posts — {date} ({count} CVEs)")
+    sections.append(sep)
+
+    sections.append("\n--- LINKEDIN ---\n")
+    sections.append(generate_linkedin(count, highlights, date))
+
+    sections.append(f"\n{sep}\n\n--- X / TWITTER ---\n")
+    sections.append(generate_twitter(count, highlights, date))
+
+    sections.append(f"\n{sep}\n\n--- REDDIT ---\n")
+    sections.append(f"Title: {generate_reddit_title(count, highlights)}\n")
+    sections.append(generate_reddit_body(count, highlights))
+
+    sections.append(f"\n{sep}\n\n--- NEWSLETTER ---\n")
+    sections.append(f"Subject: {generate_newsletter_subject(count, highlights)}\n")
+    sections.append(generate_newsletter_body(count, cves, highlights, date))
+
+    if individual:
+        sections.append(f"\n{sep}\n\n--- INDIVIDUAL CVE POSTS (CVSS 8.0+) ---")
+        for post in individual:
+            sections.append(f"\n{'- ' * 30}\n{post['cveID']} (CVSS {post['cvss']})\n")
+            sections.append(f"X / Twitter:\n{post['twitter']}\n")
+            sections.append(f"LinkedIn:\n{post['linkedin']}")
 
     with open(OUTPUT_FILE, 'w') as f:
-        json.dump(output, f, indent=2, ensure_ascii=False)
+        f.write("\n".join(sections) + "\n")
 
     print(f"Social posts generated: {OUTPUT_FILE}")
     print(f"  Batch posts for {count} CVEs")
-    print(f"  Individual posts for {len(output['individual_posts'])} high-severity CVEs")
+    print(f"  Individual posts for {len(individual)} high-severity CVEs")
 
 
 if __name__ == "__main__":
