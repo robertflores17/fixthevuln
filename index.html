@@ -451,6 +451,15 @@
             </div>
         </section>
 
+        <!-- Latest Update Banner -->
+        <div id="latest-update" style="display: none; margin-top: 2rem; padding: 1rem 1.5rem; background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1)); border: 1px solid var(--border-color); border-left: 4px solid #667eea; border-radius: 8px;">
+            <p style="margin: 0; color: var(--text-primary); font-size: 0.95rem; line-height: 1.6;">
+                <strong id="update-date" style="color: #667eea;"></strong>
+                <span id="update-summary"></span>
+                <span id="update-signed" style="color: var(--text-muted); font-style: italic;"></span>
+            </p>
+        </div>
+
         <!-- KEV Section - Known Exploited Vulnerabilities (JSON-driven) -->
         <section class="kev-section" aria-labelledby="kev-heading">
             <h2 id="kev-heading">Actively Exploited Vulnerabilities</h2>
@@ -1008,9 +1017,25 @@
             }
         };
 
+        // Load latest update banner
+        async function loadLatestUpdate() {
+            try {
+                const resp = await fetch('data/latest-update.json');
+                if (!resp.ok) return;
+                const data = await resp.json();
+                const d = new Date(data.date + 'T00:00:00');
+                const formatted = d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                document.getElementById('update-date').textContent = formatted + ' — ';
+                document.getElementById('update-summary').textContent = data.summary + ' ';
+                document.getElementById('update-signed').textContent = '— ' + data.signedBy;
+                document.getElementById('latest-update').style.display = 'block';
+            } catch(e) {}
+        }
+
         // Load KEV data when page loads
         document.addEventListener('DOMContentLoaded', function() {
             KEVSystem.loadHomeKEV();
+            loadLatestUpdate();
         });
     </script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
