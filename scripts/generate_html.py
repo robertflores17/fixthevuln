@@ -18,6 +18,7 @@ from datetime import datetime
 DATA_DIR = Path(__file__).parent.parent / "data"
 PENDING_FILE = DATA_DIR / "pending_review.json"
 KEV_DATA_FILE = DATA_DIR / "kev-data.json"
+COMMIT_SUMMARY_FILE = DATA_DIR / ".commit_summary.txt"
 
 
 def parse_cvss(cvss_str):
@@ -124,6 +125,41 @@ def cleanup_pending(pending_data, processed_ids):
     return removed
 
 
+def write_commit_summary(added_ids, vulns_lookup):
+    """Write a short commit summary for the workflow to use."""
+    if not added_ids:
+        # No summary needed
+        if COMMIT_SUMMARY_FILE.exists():
+            COMMIT_SUMMARY_FILE.unlink()
+        return
+
+    # Build vendor list from processed CVEs (deduplicated, order preserved)
+    vendors = []
+    seen = set()
+    for cve_id in added_ids:
+        v = vulns_lookup.get(cve_id, {})
+        vendor = v.get('vendor', '').strip()
+        if vendor and vendor not in seen:
+            vendors.append(vendor)
+            seen.add(vendor)
+
+    count = len(added_ids)
+
+    if count <= 3:
+        # List CVE IDs directly
+        title = f"Publish {', '.join(added_ids)}"
+    else:
+        # Summarize with count + vendor names
+        shown = vendors[:5]
+        title = f"Publish {count} new CVEs: {', '.join(shown)}"
+        if len(vendors) > 5:
+            title += ", more"
+
+    summary = f"{title}\n\n-- Robert\n[skip ci]"
+    with open(COMMIT_SUMMARY_FILE, 'w') as f:
+        f.write(summary)
+
+
 def main():
     print("=" * 60)
     print("KEV Data Importer")
@@ -194,6 +230,10 @@ def main():
     removed_count = 0
     if processed_ids:
         removed_count = cleanup_pending(pending_data, processed_ids)
+
+    # Write commit summary for the workflow
+    vulns_lookup = {v.get('cveID'): v for v in to_publish}
+    write_commit_summary(added, vulns_lookup)
 
     # Summary
     print("-" * 60)
