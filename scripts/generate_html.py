@@ -19,6 +19,7 @@ DATA_DIR = Path(__file__).parent.parent / "data"
 PENDING_FILE = DATA_DIR / "pending_review.json"
 KEV_DATA_FILE = DATA_DIR / "kev-data.json"
 COMMIT_SUMMARY_FILE = DATA_DIR / ".commit_summary.txt"
+LATEST_PUBLISHED_FILE = DATA_DIR / ".latest_published.json"
 
 
 def parse_cvss(cvss_str):
@@ -160,6 +161,30 @@ def write_commit_summary(added_ids, vulns_lookup):
         f.write(summary)
 
 
+def write_latest_published(added_ids, vulns_lookup):
+    """Save published CVE details so the social script can read them."""
+    if not added_ids:
+        if LATEST_PUBLISHED_FILE.exists():
+            LATEST_PUBLISHED_FILE.unlink()
+        return
+
+    entries = []
+    for cve_id in added_ids:
+        v = vulns_lookup.get(cve_id, {})
+        entries.append({
+            "cveID": cve_id,
+            "vendor": v.get('vendor', ''),
+            "product": v.get('product', ''),
+            "title": v.get('title', ''),
+            "cvss": v.get('cvss', ''),
+            "short_description": v.get('short_description', ''),
+            "ransomware": v.get('ransomware', 'Unknown'),
+        })
+
+    with open(LATEST_PUBLISHED_FILE, 'w') as f:
+        json.dump({"published": entries, "date": datetime.now().strftime('%Y-%m-%d')}, f, indent=2)
+
+
 def main():
     print("=" * 60)
     print("KEV Data Importer")
@@ -231,9 +256,10 @@ def main():
     if processed_ids:
         removed_count = cleanup_pending(pending_data, processed_ids)
 
-    # Write commit summary for the workflow
+    # Write commit summary and published CVE details for the workflow
     vulns_lookup = {v.get('cveID'): v for v in to_publish}
     write_commit_summary(added, vulns_lookup)
+    write_latest_published(added, vulns_lookup)
 
     # Summary
     print("-" * 60)
