@@ -2,7 +2,7 @@
 """
 Generate copy-paste-ready social media and newsletter content
 for newly published CVEs. Reads .latest_published.json written
-by generate_html.py and outputs data/cve-social-posts.json.
+by generate_html.py and outputs data/cve-social-posts.txt.
 """
 
 import json
@@ -89,6 +89,36 @@ def generate_reddit_body(count, highlights):
 Remediation steps for each one at [fixthevuln.com](https://fixthevuln.com)"""
 
 
+def generate_facebook(count, highlights, date):
+    top = highlights[:4]
+    bullets = "\n".join(f"- {h}" for h in top)
+    if count > len(top):
+        bullets += f"\n- +{count - len(top)} more"
+
+    return f"""{count} new vulnerabilities just added to CISA's Known Exploited Vulnerabilities catalog.
+
+{bullets}
+
+Remediation steps and full breakdown here: https://fixthevuln.com
+
+#cybersecurity #infosec #CISAKEV #vulnerabilitymanagement"""
+
+
+def generate_instagram(count, highlights, date):
+    top = highlights[:5]
+    bullets = "\n".join(f"- {h}" for h in top)
+    if count > len(top):
+        bullets += f"\n- +{count - len(top)} more"
+
+    return f"""{count} new exploited vulnerabilities added to the CISA KEV catalog.
+
+{bullets}
+
+Remediation guides at fixthevuln.com (link in bio)
+
+#cybersecurity #infosec #CISAKEV #hacking #ethicalhacking #vulnerability #vulnerabilitymanagement #pentesting #cybersecurityawareness #informationsecurity"""
+
+
 def generate_newsletter_subject(count, highlights):
     top_vendor = highlights[0].split(" (")[0].strip() if highlights else "Multiple Vendors"
     if count <= 3:
@@ -136,6 +166,8 @@ def generate_individual_posts(cves):
             "cvss": c.get('cvss', ''),
             "twitter": f"{cve_id}: {label} — CVSS {cvss}{tag}. Patch now.\n\nDetails at fixthevuln.com\n\n#cybersecurity #CISAKEV",
             "linkedin": f"{cve_id} — {label} (CVSS {cvss}){tag}\n\n{desc}\n\nRemediation steps at fixthevuln.com\n\n#cybersecurity #vulnerabilitymanagement",
+            "facebook": f"{cve_id} — {label} (CVSS {cvss}){tag}\n\n{desc}\n\nRemediation steps: https://fixthevuln.com\n\n#cybersecurity #infosec #CISAKEV",
+            "instagram": f"{cve_id} — {label} (CVSS {cvss}){tag}\n\n{desc}\n\nRemediation at fixthevuln.com (link in bio)\n\n#cybersecurity #infosec #CISAKEV #hacking #ethicalhacking #vulnerability #pentesting #cybersecurityawareness",
         })
 
     return posts
@@ -169,6 +201,12 @@ def main():
     sections.append("\n--- LINKEDIN ---\n")
     sections.append(generate_linkedin(count, highlights, date))
 
+    sections.append(f"\n{sep}\n\n--- FACEBOOK ---\n")
+    sections.append(generate_facebook(count, highlights, date))
+
+    sections.append(f"\n{sep}\n\n--- INSTAGRAM ---\n")
+    sections.append(generate_instagram(count, highlights, date))
+
     sections.append(f"\n{sep}\n\n--- X / TWITTER ---\n")
     sections.append(generate_twitter(count, highlights, date))
 
@@ -184,8 +222,10 @@ def main():
         sections.append(f"\n{sep}\n\n--- INDIVIDUAL CVE POSTS (CVSS 8.0+) ---")
         for post in individual:
             sections.append(f"\n{'- ' * 30}\n{post['cveID']} (CVSS {post['cvss']})\n")
-            sections.append(f"X / Twitter:\n{post['twitter']}\n")
-            sections.append(f"LinkedIn:\n{post['linkedin']}")
+            sections.append(f"LinkedIn:\n{post['linkedin']}\n")
+            sections.append(f"Facebook:\n{post['facebook']}\n")
+            sections.append(f"Instagram:\n{post['instagram']}\n")
+            sections.append(f"X / Twitter:\n{post['twitter']}")
 
     with open(OUTPUT_FILE, 'w') as f:
         f.write("\n".join(sections) + "\n")
