@@ -20,6 +20,7 @@ PENDING_FILE = DATA_DIR / "pending_review.json"
 KEV_DATA_FILE = DATA_DIR / "kev-data.json"
 COMMIT_SUMMARY_FILE = DATA_DIR / ".commit_summary.txt"
 LATEST_PUBLISHED_FILE = DATA_DIR / ".latest_published.json"
+LATEST_UPDATE_FILE = DATA_DIR / "latest-update.json"
 
 
 def parse_cvss(cvss_str):
@@ -185,6 +186,47 @@ def write_latest_published(added_ids, vulns_lookup):
         json.dump({"published": entries, "date": datetime.now().strftime('%Y-%m-%d')}, f, indent=2)
 
 
+def write_latest_update(added_ids, vulns_lookup):
+    """Write latest-update.json for the homepage to display."""
+    if not added_ids:
+        return
+
+    # Build vendor list (deduplicated, order preserved)
+    vendors = []
+    seen = set()
+    for cve_id in added_ids:
+        v = vulns_lookup.get(cve_id, {})
+        vendor = v.get('vendor', '').strip()
+        if vendor and vendor not in seen:
+            vendors.append(vendor)
+            seen.add(vendor)
+
+    count = len(added_ids)
+    date = datetime.now().strftime('%Y-%m-%d')
+
+    # Build summary text
+    if count <= 3:
+        vendor_str = ", ".join(vendors)
+    else:
+        shown = vendors[:5]
+        vendor_str = ", ".join(shown)
+        if len(vendors) > 5:
+            vendor_str += ", and more"
+
+    summary = f"Reviewed and published {count} new CVEs: {vendor_str}."
+
+    update = {
+        "date": date,
+        "count": count,
+        "summary": summary,
+        "cves": added_ids,
+        "signedBy": "Robert"
+    }
+
+    with open(LATEST_UPDATE_FILE, 'w') as f:
+        json.dump(update, f, indent=2)
+
+
 def main():
     print("=" * 60)
     print("KEV Data Importer")
@@ -260,6 +302,7 @@ def main():
     vulns_lookup = {v.get('cveID'): v for v in to_publish}
     write_commit_summary(added, vulns_lookup)
     write_latest_published(added, vulns_lookup)
+    write_latest_update(added, vulns_lookup)
 
     # Summary
     print("-" * 60)
