@@ -24,6 +24,330 @@
     <link rel="canonical" href="https://fixthevuln.com/about.html">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
     <link rel="stylesheet" href="style.min.css?v=2">
+    <style>
+        .about-hero {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .about-hero::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 200px;
+            height: 200px;
+            background: rgba(102, 126, 234, 0.12);
+            border-radius: 50%;
+        }
+        .about-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            left: -40px;
+            width: 150px;
+            height: 150px;
+            background: rgba(118, 75, 162, 0.1);
+            border-radius: 50%;
+        }
+        .about-hero h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 0 0.75rem 0;
+            position: relative;
+            z-index: 1;
+        }
+        .about-hero p {
+            font-size: 1.1rem;
+            opacity: 0.92;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            padding: 2rem 1rem;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            display: block;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
+        .about-section {
+            margin-bottom: 3rem;
+        }
+        .about-section h2 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .about-section h2 .section-icon {
+            font-size: 1.3rem;
+        }
+        .approach-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 4px solid #667eea;
+            transition: transform 0.2s ease;
+        }
+        .approach-card:hover {
+            transform: translateX(4px);
+        }
+        .approach-card h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.05rem;
+            color: var(--text-primary);
+        }
+        .approach-card p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            line-height: 1.6;
+        }
+        .audience-grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+        .audience-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+            border-top: 3px solid #667eea;
+            transition: transform 0.2s ease;
+        }
+        .audience-card:nth-child(2) { border-top-color: #764ba2; }
+        .audience-card:nth-child(3) { border-top-color: #28a745; }
+        .audience-card:nth-child(4) { border-top-color: #17a2b8; }
+        .audience-card:hover {
+            transform: translateY(-4px);
+        }
+        .audience-card .card-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .audience-card h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+        .audience-card p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .diff-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .diff-list li {
+            padding: 1rem 1.25rem;
+            background: var(--bg-secondary);
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+        .diff-list li .check {
+            color: #28a745;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+        .content-grid {
+            display: grid;
+            gap: 0.75rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+        .content-card {
+            padding: 1.25rem;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            border-left: 3px solid #667eea;
+        }
+        .content-card:nth-child(2) { border-left-color: #764ba2; }
+        .content-card:nth-child(3) { border-left-color: #28a745; }
+        .content-card:nth-child(4) { border-left-color: #17a2b8; }
+        .content-card h3 {
+            margin: 0 0 0.4rem 0;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+        .content-card p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .source-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+        .source-tag {
+            background: var(--bg-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            font-weight: 500;
+        }
+        .author-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        .author-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .author-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 0.25rem 0;
+        }
+        .author-title {
+            font-size: 0.85rem;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .author-card p {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin: 0 0 0.75rem 0;
+        }
+        .linkedin-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid #667eea;
+            transition: all 0.2s ease;
+            margin-top: 0.5rem;
+        }
+        .linkedin-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        .linkedin-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+        .cta-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2.5rem 2rem;
+            border-radius: 12px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-banner::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+        }
+        .cta-banner h2 {
+            margin: 0 0 0.75rem 0;
+            color: white;
+            font-size: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        .cta-banner p {
+            margin: 0 0 1.5rem 0;
+            opacity: 0.92;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+        .cta-banner .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+        .cta-banner .btn-primary {
+            background: white;
+            color: #667eea;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+        }
+        .cta-banner .btn-primary:hover { transform: translateY(-2px); }
+        .cta-banner .btn-secondary {
+            background: rgba(255, 255, 255, 0.18);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+        }
+        .cta-banner .btn-secondary:hover { transform: translateY(-2px); }
+    </style>
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -74,189 +398,234 @@
         <div class="container">
             <a href="index.html" style="text-decoration: none; color: inherit;"><h1>FixTheVuln</h1></a>
             <p class="tagline">About Us</p>
-            <p class="subtitle">Making enterprise-grade security knowledge accessible to everyone</p>
-            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Last updated: February 2026</p>
         </div>
     </header>
 
     <nav aria-label="Breadcrumb" style="background: var(--bg-secondary); padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);">
         <div class="container">
-            <a href="index.html" style="color: var(--accent-color); text-decoration: none;">Home</a>
+            <a href="index.html" style="color: var(--accent-primary); text-decoration: none;">Home</a>
             <span style="margin: 0 0.5rem; color: var(--text-secondary);">/</span>
             <span style="color: var(--text-secondary);">About</span>
         </div>
     </nav>
 
+    <!-- Hero Banner -->
+    <div class="about-hero" role="img" aria-label="About FixTheVuln hero banner">
+        <h2>Making Security Knowledge Accessible</h2>
+        <p>Enterprise-grade vulnerability remediation education — free, practical, and built for the people who need it most.</p>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+        <div class="stat-item">
+            <span class="stat-number">60+</span>
+            <div class="stat-label">Security Resources</div>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">10</span>
+            <div class="stat-label">Interactive Tools</div>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">1,200+</span>
+            <div class="stat-label">Practice Questions</div>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">100%</span>
+            <div class="stat-label">Free Forever</div>
+        </div>
+    </div>
+
     <main id="main-content" class="container" role="main">
-        <div class="content-wrapper" style="max-width: 800px; margin: 0 auto; padding: 2rem 0;">
+        <div style="max-width: 860px; margin: 0 auto; padding: 2.5rem 0;">
 
-            <section style="margin-bottom: 3rem;">
-                <h2 style="color: var(--accent-color); margin-bottom: 1rem;">What is FixTheVuln?</h2>
-                <p>FixTheVuln is a security education project dedicated to helping small businesses, developers, and IT professionals understand and remediate vulnerabilities. We believe that effective security shouldn't require an enterprise budget or a team of specialists—it should be accessible to everyone.</p>
-                <p>Every day, we aggregate the latest security vulnerabilities from trusted sources like CISA, the National Vulnerability Database, and leading security news outlets. But we don't stop at just reporting—we provide context, explain the risks, and share practical remediation steps you can implement immediately.</p>
+            <!-- What is FixTheVuln -->
+            <section class="about-section">
+                <h2><span class="section-icon" aria-hidden="true">&#x1f6e1;&#xfe0f;</span> What is FixTheVuln?</h2>
+                <p style="font-size: 1.05rem; line-height: 1.8; color: var(--text-secondary);">FixTheVuln is a security education project dedicated to helping small businesses, developers, and IT professionals understand and remediate vulnerabilities. We believe that effective security shouldn't require an enterprise budget or a team of specialists — it should be accessible to everyone.</p>
+                <p style="font-size: 1.05rem; line-height: 1.8; color: var(--text-secondary);">Every day, we aggregate the latest security vulnerabilities from trusted sources like CISA, the National Vulnerability Database, and leading security news outlets. But we don't stop at just reporting — we provide context, explain the risks, and share practical remediation steps you can implement immediately.</p>
             </section>
 
-            <section style="margin-bottom: 3rem;">
-                <h2 style="color: var(--accent-color); margin-bottom: 1rem;">Why FixTheVuln Exists</h2>
-                <p>The cybersecurity industry has a knowledge gap problem. Large enterprises have dedicated security teams and expensive tools, while small businesses and independent developers struggle to keep up with the constant stream of new vulnerabilities. Many security resources are either too technical for non-experts or too expensive for small organizations.</p>
-                <p>FixTheVuln bridges that gap. We translate complex security advisories into actionable guidance. We focus on practical remediation—the actual steps you need to take to protect your systems—not just identifying problems.</p>
+            <!-- Why FixTheVuln Exists -->
+            <section class="about-section">
+                <h2><span class="section-icon" aria-hidden="true">&#x1f4a1;</span> Why FixTheVuln Exists</h2>
+                <div style="background: rgba(102, 126, 234, 0.08); border-left: 4px solid #667eea; border-radius: 0 8px 8px 0; padding: 1.5rem; margin-bottom: 1rem;">
+                    <p style="margin: 0; color: var(--text-primary); font-size: 1.05rem; line-height: 1.7; font-style: italic;">The cybersecurity industry has a knowledge gap problem. Large enterprises have dedicated security teams and expensive tools, while small businesses and independent developers struggle to keep up.</p>
+                </div>
+                <p style="font-size: 1.05rem; line-height: 1.8; color: var(--text-secondary);">Many security resources are either too technical for non-experts or too expensive for small organizations. FixTheVuln bridges that gap. We translate complex security advisories into actionable guidance, focusing on practical remediation — the actual steps you need to take to protect your systems — not just identifying problems.</p>
             </section>
 
-            <section style="margin-bottom: 3rem;">
-                <h2 style="color: var(--accent-color); margin-bottom: 1rem;">Our Approach</h2>
-                <p>We believe in pragmatic, risk-based security. Not every vulnerability requires immediate action, and not every fix needs to be perfect. Our content helps you:</p>
+            <!-- Our Approach -->
+            <section class="about-section">
+                <h2><span class="section-icon" aria-hidden="true">&#x1f3af;</span> Our Approach</h2>
+                <p style="font-size: 1.05rem; line-height: 1.7; color: var(--text-secondary); margin-bottom: 1rem;">We believe in pragmatic, risk-based security. Not every vulnerability requires immediate action, and not every fix needs to be perfect. Our content helps you:</p>
 
-                <div style="background: var(--bg-secondary); padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
-                    <h3 style="margin-top: 0; font-size: 1.1rem;">Understand the Real Risk</h3>
-                    <p style="margin-bottom: 0;">We cut through CVSS scores and vendor hype to explain what actually matters for your specific situation. A "critical" vulnerability affecting software you don't use isn't your priority.</p>
+                <div class="approach-card">
+                    <h3>Understand the Real Risk</h3>
+                    <p>We cut through CVSS scores and vendor hype to explain what actually matters for your specific situation. A "critical" vulnerability affecting software you don't use isn't your priority.</p>
                 </div>
-
-                <div style="background: var(--bg-secondary); padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
-                    <h3 style="margin-top: 0; font-size: 1.1rem;">Take Practical Action</h3>
-                    <p style="margin-bottom: 0;">Our remediation guidance focuses on what you can actually do with the resources you have. Quick wins, workarounds, and step-by-step fixes—not theoretical best practices that require enterprise infrastructure.</p>
+                <div class="approach-card" style="border-left-color: #764ba2;">
+                    <h3>Take Practical Action</h3>
+                    <p>Our remediation guidance focuses on what you can actually do with the resources you have. Quick wins, workarounds, and step-by-step fixes — not theoretical best practices that require enterprise infrastructure.</p>
                 </div>
-
-                <div style="background: var(--bg-secondary); padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
-                    <h3 style="margin-top: 0; font-size: 1.1rem;">Stay Current</h3>
-                    <p style="margin-bottom: 0;">Security moves fast. Our automated daily updates ensure you're always aware of newly disclosed vulnerabilities, while our original content provides deeper analysis of significant issues.</p>
-                </div>
-            </section>
-
-            <section style="margin-bottom: 3rem;">
-                <h2 style="color: var(--accent-color); margin-bottom: 1rem;">Who This Is For</h2>
-
-                <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
-                    <div style="background: var(--bg-secondary); padding: 1.25rem; border-radius: 8px; border-left: 4px solid var(--accent-color);">
-                        <h3 style="margin-top: 0; font-size: 1rem;">Small Business Owners</h3>
-                        <p style="margin-bottom: 0; font-size: 0.9rem;">You need to protect your business but don't have a dedicated security team. We help you understand which vulnerabilities actually threaten your systems.</p>
-                    </div>
-
-                    <div style="background: var(--bg-secondary); padding: 1.25rem; border-radius: 8px; border-left: 4px solid var(--accent-color);">
-                        <h3 style="margin-top: 0; font-size: 1rem;">Developers & DevOps Teams</h3>
-                        <p style="margin-bottom: 0; font-size: 0.9rem;">You're responsible for securing applications and infrastructure but security isn't your only job. We provide guidance you can implement without derailing your roadmap.</p>
-                    </div>
-
-                    <div style="background: var(--bg-secondary); padding: 1.25rem; border-radius: 8px; border-left: 4px solid var(--accent-color);">
-                        <h3 style="margin-top: 0; font-size: 1rem;">IT Professionals</h3>
-                        <p style="margin-bottom: 0; font-size: 0.9rem;">You manage systems and need to stay current on vulnerabilities. We aggregate the noise into a clear daily feed and help you prioritize what matters.</p>
-                    </div>
-
-                    <div style="background: var(--bg-secondary); padding: 1.25rem; border-radius: 8px; border-left: 4px solid var(--accent-color);">
-                        <h3 style="margin-top: 0; font-size: 1rem;">Security Enthusiasts</h3>
-                        <p style="margin-bottom: 0; font-size: 0.9rem;">You're learning about cybersecurity and want to understand real-world vulnerabilities and remediation techniques. We provide educational content that builds practical skills.</p>
-                    </div>
+                <div class="approach-card" style="border-left-color: #28a745;">
+                    <h3>Stay Current</h3>
+                    <p>Security moves fast. Our automated daily updates ensure you're always aware of newly disclosed vulnerabilities, while our original content provides deeper analysis of significant issues.</p>
                 </div>
             </section>
 
-            <section style="margin-bottom: 3rem;">
-                <h2 style="color: var(--accent-color); margin-bottom: 1rem;">What Makes Us Different</h2>
-                <ul style="list-style: none; padding: 0;">
-                    <li style="padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);">
-                        <strong>Education-First:</strong> We're not selling you enterprise security tools or expensive consulting. Our goal is to teach you how to protect your own systems.
+            <!-- Who This Is For -->
+            <section class="about-section">
+                <h2><span class="section-icon" aria-hidden="true">&#x1f465;</span> Who This Is For</h2>
+                <div class="audience-grid">
+                    <div class="audience-card">
+                        <span class="card-icon" aria-hidden="true">&#x1f3e2;</span>
+                        <h3>Small Business Owners</h3>
+                        <p>You need to protect your business but don't have a dedicated security team. We help you understand which vulnerabilities actually threaten your systems.</p>
+                    </div>
+                    <div class="audience-card">
+                        <span class="card-icon" aria-hidden="true">&#x1f4bb;</span>
+                        <h3>Developers & DevOps Teams</h3>
+                        <p>You're responsible for securing applications and infrastructure but security isn't your only job. We provide guidance you can implement without derailing your roadmap.</p>
+                    </div>
+                    <div class="audience-card">
+                        <span class="card-icon" aria-hidden="true">&#x1f5a5;&#xfe0f;</span>
+                        <h3>IT Professionals</h3>
+                        <p>You manage systems and need to stay current on vulnerabilities. We aggregate the noise into a clear daily feed and help you prioritize what matters.</p>
+                    </div>
+                    <div class="audience-card">
+                        <span class="card-icon" aria-hidden="true">&#x1f393;</span>
+                        <h3>Security Enthusiasts</h3>
+                        <p>You're learning about cybersecurity and want to understand real-world vulnerabilities and remediation techniques. We provide content that builds practical skills.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- What Makes Us Different -->
+            <section class="about-section">
+                <h2><span class="section-icon" aria-hidden="true">&#x2b50;</span> What Makes Us Different</h2>
+                <ul class="diff-list">
+                    <li>
+                        <span class="check" aria-hidden="true">&#x2713;</span>
+                        <span><strong>Education-First:</strong> We're not selling you enterprise security tools or expensive consulting. Our goal is to teach you how to protect your own systems.</span>
                     </li>
-                    <li style="padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);">
-                        <strong>Practical Focus:</strong> We prioritize actionable remediation steps over theoretical security concepts. Every post answers: "What should I actually do about this?"
+                    <li>
+                        <span class="check" aria-hidden="true">&#x2713;</span>
+                        <span><strong>Practical Focus:</strong> We prioritize actionable remediation steps over theoretical security concepts. Every post answers: "What should I actually do about this?"</span>
                     </li>
-                    <li style="padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);">
-                        <strong>Accessible Content:</strong> We explain vulnerabilities in plain language without dumbing down the technical details. You'll understand both what's wrong and how to fix it.
+                    <li>
+                        <span class="check" aria-hidden="true">&#x2713;</span>
+                        <span><strong>Accessible Content:</strong> We explain vulnerabilities in plain language without dumbing down the technical details. You'll understand both what's wrong and how to fix it.</span>
                     </li>
-                    <li style="padding: 0.75rem 0;">
-                        <strong>Community-Driven:</strong> This project exists to serve the community. All our daily vulnerability updates are free, and we continually add educational resources based on what people need.
+                    <li>
+                        <span class="check" aria-hidden="true">&#x2713;</span>
+                        <span><strong>Community-Driven:</strong> This project exists to serve the community. All our daily vulnerability updates are free, and we continually add educational resources based on what people need.</span>
                     </li>
                 </ul>
             </section>
 
-            <section style="margin-bottom: 3rem;">
-                <h2 style="color: var(--accent-color); margin-bottom: 1rem;">Our Content</h2>
-                <ul style="list-style: none; padding: 0;">
-                    <li style="padding: 1rem; background: var(--bg-secondary); margin-bottom: 0.5rem; border-radius: 8px;">
-                        <strong>Daily Vulnerability Updates:</strong> Every morning, we publish summaries of the latest disclosed vulnerabilities from CISA's Known Exploited Vulnerabilities catalog and major security news sources.
-                    </li>
-                    <li style="padding: 1rem; background: var(--bg-secondary); margin-bottom: 0.5rem; border-radius: 8px;">
-                        <strong>Deep-Dive Analysis:</strong> For significant vulnerabilities, we publish detailed remediation guides that walk through detection, mitigation, and permanent fixes.
-                    </li>
-                    <li style="padding: 1rem; background: var(--bg-secondary); margin-bottom: 0.5rem; border-radius: 8px;">
-                        <strong>How-To Guides:</strong> Step-by-step tutorials for common security tasks like hardening WordPress, securing Docker containers, and implementing proper authentication.
-                    </li>
-                    <li style="padding: 1rem; background: var(--bg-secondary); border-radius: 8px;">
-                        <strong>Security Checklists:</strong> Free downloadable checklists for various security scenarios—launching a new application, responding to a breach, conducting security reviews, etc.
-                    </li>
-                </ul>
-            </section>
-
-            <section style="margin-bottom: 3rem;">
-                <h2 style="color: var(--accent-color); margin-bottom: 1rem;">Our Sources</h2>
-                <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
-                    <span style="background: var(--bg-secondary); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">CISA Known Exploited Vulnerabilities</span>
-                    <span style="background: var(--bg-secondary); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">National Vulnerability Database (NVD)</span>
-                    <span style="background: var(--bg-secondary); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">Bleeping Computer</span>
-                    <span style="background: var(--bg-secondary); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">The Hacker News</span>
-                    <span style="background: var(--bg-secondary); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">Security Research Community</span>
-                </div>
-            </section>
-
-            <section style="margin-bottom: 3rem;">
-                <h2 style="color: var(--accent-color); margin-bottom: 1rem;">About the Author</h2>
-                <div style="background: var(--bg-secondary); padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--accent-color);">
-                    <div style="display: flex; align-items: flex-start; gap: 1.25rem; flex-wrap: wrap;">
-                        <div style="flex: 1; min-width: 250px;">
-                            <h3 style="margin-top: 0; font-size: 1.15rem; color: var(--text-primary);">Robert Flores, CISSP</h3>
-                            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.75rem;">11 years of experience in vulnerability management and remediation across enterprise environments.</p>
-                            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.75rem;">After spending over a decade helping organizations prioritize and fix security vulnerabilities, I built FixTheVuln to make that same knowledge accessible to everyone &mdash; especially small teams and independent professionals who don't have a dedicated security staff.</p>
-                            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0;">Every guide, tool, and recommendation on this site comes from hands-on experience triaging real CVEs, hardening production systems, and working through compliance frameworks.</p>
-                            <div style="margin-top: 1rem;">
-                                <a href="https://www.linkedin.com/in/rflores-vuln-mgmt-expert/" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 0.4rem; color: var(--accent-color); text-decoration: none; font-weight: 600; font-size: 0.9rem;">
-                                    <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: currentColor;"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                                    Connect on LinkedIn
-                                </a>
-                            </div>
-                        </div>
+            <!-- Our Content -->
+            <section class="about-section">
+                <h2><span class="section-icon" aria-hidden="true">&#x1f4da;</span> Our Content</h2>
+                <div class="content-grid">
+                    <div class="content-card">
+                        <h3>Daily Vulnerability Updates</h3>
+                        <p>Every morning, we publish summaries of the latest disclosed vulnerabilities from CISA's Known Exploited Vulnerabilities catalog and major security news sources.</p>
+                    </div>
+                    <div class="content-card">
+                        <h3>Deep-Dive Analysis</h3>
+                        <p>For significant vulnerabilities, we publish detailed remediation guides that walk through detection, mitigation, and permanent fixes.</p>
+                    </div>
+                    <div class="content-card">
+                        <h3>How-To Guides</h3>
+                        <p>Step-by-step tutorials for common security tasks like hardening WordPress, securing Docker containers, and implementing proper authentication.</p>
+                    </div>
+                    <div class="content-card">
+                        <h3>Security Checklists</h3>
+                        <p>Free downloadable checklists for various security scenarios — launching a new application, responding to a breach, conducting security reviews, and more.</p>
                     </div>
                 </div>
             </section>
 
-            <section style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem; border-radius: 12px; text-align: center; color: white;">
-                <h2 style="margin-top: 0; color: white;">Stay Connected</h2>
-                <p>Have questions about a specific vulnerability? Need clarification on a remediation step? We read every message and do our best to help.</p>
-                <div style="margin-top: 1.5rem;">
-                    <a href="contact.html" style="display: inline-block; background: white; color: #667eea; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; margin: 0.25rem;">Get in Touch</a>
-                    <a href="resources.html" style="display: inline-block; background: rgba(255,255,255,0.2); color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; margin: 0.25rem;">Browse Resources</a>
+            <!-- Our Sources -->
+            <section class="about-section">
+                <h2><span class="section-icon" aria-hidden="true">&#x1f50d;</span> Our Sources</h2>
+                <div class="source-tags">
+                    <span class="source-tag">CISA Known Exploited Vulnerabilities</span>
+                    <span class="source-tag">National Vulnerability Database (NVD)</span>
+                    <span class="source-tag">Bleeping Computer</span>
+                    <span class="source-tag">The Hacker News</span>
+                    <span class="source-tag">Security Research Community</span>
+                </div>
+            </section>
+
+            <!-- About the Author -->
+            <section class="about-section">
+                <h2><span class="section-icon" aria-hidden="true">&#x270d;&#xfe0f;</span> About the Author</h2>
+                <div class="author-card">
+                    <h3 class="author-name">Robert Flores, CISSP</h3>
+                    <div class="author-title">11 Years in Vulnerability Management & Remediation</div>
+                    <p>After spending over a decade helping organizations prioritize and fix security vulnerabilities, I built FixTheVuln to make that same knowledge accessible to everyone — especially small teams and independent professionals who don't have a dedicated security staff.</p>
+                    <p style="margin-bottom: 0;">Every guide, tool, and recommendation on this site comes from hands-on experience triaging real CVEs, hardening production systems, and working through compliance frameworks.</p>
+                    <a href="https://www.linkedin.com/in/rflores-vuln-mgmt-expert/" target="_blank" rel="noopener" class="linkedin-btn">
+                        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                        Connect on LinkedIn
+                    </a>
+                </div>
+            </section>
+
+            <!-- CTA Banner -->
+            <section class="about-section">
+                <div class="cta-banner">
+                    <h2>Stay Connected</h2>
+                    <p>Have questions about a specific vulnerability? Need clarification on a remediation step? We read every message and do our best to help.</p>
+                    <div class="btn-group">
+                        <a href="mailto:hello@FixTheVuln.com" class="btn-primary">Get in Touch</a>
+                        <a href="resources.html" class="btn-secondary">Browse Resources</a>
+                    </div>
                 </div>
             </section>
 
         </div>
     </main>
 
-    <footer role="contentinfo" style="background: var(--bg-secondary); padding: 2rem 0; margin-top: 3rem; border-top: 1px solid var(--border-color);">
-        <div class="container" style="text-align: center;">
-            <p style="margin: 0; color: var(--text-secondary);">&copy; 2026 FixTheVuln. Security Education for Everyone.</p>
-            <p style="margin: 0.5rem 0 0 0;">
-                <a href="index.html" style="color: var(--accent-color); text-decoration: none; margin: 0 0.5rem;">Home</a>
-                <a href="about.html" style="color: var(--accent-color); text-decoration: none; margin: 0 0.5rem;">About</a>
-                <a href="contact.html" style="color: var(--accent-color); text-decoration: none; margin: 0 0.5rem;">Contact</a>
-                <a href="resources.html" style="color: var(--accent-color); text-decoration: none; margin: 0 0.5rem;">Resources</a>
+    <footer role="contentinfo">
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Educational resources for security professionals.</p>
+            <p><a href="index.html">Home</a> | <a href="about.html">About</a> | <a href="https://fixthevuln.com" target="_blank" rel="noopener">FixTheVuln.com</a> | <a href="/store/store.html">FixTheVuln Store</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
             </p>
         </div>
     </footer>
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode">
+        <span id="theme-icon">&#x1f319;</span>
+    </button>
 
     <script>
         // Dark mode toggle
-        const darkModeToggle = document.createElement('button');
-        darkModeToggle.innerHTML = '🌙';
-        darkModeToggle.style.cssText = 'position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; border-radius: 50%; border: none; background: var(--bg-secondary); cursor: pointer; font-size: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 1000;';
-        document.body.appendChild(darkModeToggle);
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
-        if (localStorage.getItem('darkMode') === 'true') {
-            document.body.classList.add('dark-mode');
-            darkModeToggle.innerHTML = '☀️';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('FixTheVuln-theme', newTheme);
+
+            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19';
         }
 
-        darkModeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-            const isDark = document.body.classList.contains('dark-mode');
-            localStorage.setItem('darkMode', isDark);
-            darkModeToggle.innerHTML = isDark ? '☀️' : '🌙';
-        });
+        // Load saved theme
+        (function() {
+            const savedTheme = localStorage.getItem('FixTheVuln-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('theme-icon').textContent = '\u2600\uFE0F';
+            }
+        })();
     </script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
