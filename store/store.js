@@ -184,6 +184,9 @@ const PRODUCTS = [
   // Google Cloud
   { id: 'google-ace',              vendor: 'google',    name: 'Google Associate Cloud Engineer', meta: 'ACE · 5 domains',   popular: false, tags: ['GCP', 'Compute', 'Networking'] },
   { id: 'google-pca',              vendor: 'google',    name: 'Google Professional Cloud Architect', meta: 'PCA · 6 domains', popular: false, tags: ['Architecture', 'Design', 'Migration'] },
+
+  // Security Ops
+  { id: 'vuln-remediation-planner', vendor: 'secops',   name: 'Vulnerability Remediation Planner', meta: 'Remediation tracker · SLA deadlines', popular: true, tags: ['Remediation Tracker', 'SLA Deadlines', 'Scan Import Log', 'Owner Assignment'] },
 ];
 
 // ─── STATE ──────────────────────────────────
@@ -376,6 +379,7 @@ function vendorDisplayName(vendor) {
     isaca: 'ISACA',
     giac: 'GIAC',
     google: 'Google Cloud',
+    secops: 'Security Ops',
   };
   return map[vendor] || vendor;
 }

@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+        <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="How to track vulnerability remediation at scale. Free interactive checklist, DefectDojo setup, SLA frameworks, and the group-by-action workflow that turns 100 CVEs into 3 patch actions.">
+    <meta name="keywords" content="vulnerability tracking, vulnerability remediation, DefectDojo, vulnerability management, SLA framework, remediation workflow, patch management, CVE tracking">
+    <title>Vulnerability Tracking Guide | Track Remediation at Scale - FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/vuln-tracking.html">
+    <meta property="og:title" content="Vulnerability Tracking Guide | Track Remediation at Scale - FixTheVuln">
+    <meta property="og:description" content="How to track vulnerability remediation at scale. Free interactive checklist, DefectDojo setup, SLA frameworks, and the group-by-action workflow.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fixthevuln.com/vuln-tracking.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Vulnerability Tracking Guide | Track Remediation at Scale - FixTheVuln">
+    <meta name="twitter:description" content="How to track vulnerability remediation at scale. Free interactive checklist, DefectDojo setup, SLA frameworks, and the group-by-action workflow.">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.min.css?v=2">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "Vulnerability Tracking & Remediation at Scale",
+        "description": "How to track vulnerability remediation at scale with free tools, SLA frameworks, and the group-by-action workflow.",
+        "dateModified": "2026-02-21",
+        "author": { "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" },
+        "publisher": { "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Guides", "item": "https://fixthevuln.com/guides.html" },
+            { "@type": "ListItem", "position": 3, "name": "Vulnerability Tracking" }
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+                {
+                        "@type": "Question",
+                        "name": "What is the best free tool for tracking vulnerability remediation?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "DefectDojo is the leading open-source vulnerability management platform. It imports scan results from 150+ tools, assigns owners, tracks SLA deadlines, deduplicates findings, and auto-verifies fixes on re-scan. It replaces spreadsheets for teams of any size."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "How do I manage 100+ vulnerabilities without losing track?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Group vulnerabilities by remediation action instead of tracking each CVE individually. For example, 100 NGINX CVEs may only require 3 patch actions (update NGINX, update OpenSSL, change a config). This reduces your tracking workload by 90% and gives admins clear, actionable tasks."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "What SLA timeframes should I use for vulnerability remediation?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "A common SLA framework is: Critical severity within 48 hours, High within 7 days, Medium within 30 days, and Low within 90 days. Adjust based on your organization's risk tolerance, but document the policy and enforce it consistently with automated tracking."
+                        }
+                }
+        ]
+}
+    </script>
+        <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="blog/feed.xml">
+    <style>
+        .checklist-section { background: var(--bg-secondary); border-radius: 10px; padding: 1.5rem; margin: 1.5rem 0; }
+        .checklist-section h3 { color: var(--text-primary); margin-bottom: 0.75rem; font-size: 1.1rem; }
+        .checklist-phase { margin-bottom: 1.25rem; }
+        .checklist-phase h4 { color: var(--accent-color, #667eea); margin-bottom: 0.5rem; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .checklist-item { display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.4rem 0; }
+        .checklist-item input[type="checkbox"] { margin-top: 0.25rem; accent-color: #667eea; width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; }
+        .checklist-item label { cursor: pointer; color: var(--text-primary); font-size: 0.95rem; line-height: 1.4; }
+        .checklist-item input:checked + label { text-decoration: line-through; opacity: 0.6; }
+        .checklist-progress { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+        .checklist-progress-bar { flex: 1; height: 8px; background: var(--bg-tertiary, #e2e8f0); border-radius: 4px; overflow: hidden; }
+        .checklist-progress-fill { height: 100%; background: linear-gradient(135deg, #667eea, #28a745); border-radius: 4px; transition: width 0.3s ease; }
+        .checklist-progress-text { font-size: 0.85rem; color: var(--text-secondary); white-space: nowrap; }
+        .btn-reset-checklist { background: none; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem; transition: all 0.2s; }
+        .btn-reset-checklist:hover { border-color: #e74c3c; color: #e74c3c; }
+        .workflow-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.5rem; margin: 1rem 0; }
+        .workflow-step { text-align: center; padding: 0.75rem 0.5rem; background: var(--bg-secondary); border-radius: 8px; border: 1px solid var(--border-color); position: relative; }
+        .workflow-step .step-num { display: inline-block; width: 24px; height: 24px; line-height: 24px; background: #667eea; color: white; border-radius: 50%; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .workflow-step .step-label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-primary); }
+        .sla-table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+        .sla-table th, .sla-table td { padding: 0.6rem 0.75rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .sla-table th { background: var(--bg-secondary); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); }
+        .sla-crit { color: #e74c3c; font-weight: 700; }
+        .sla-high { color: #e67e22; font-weight: 700; }
+        .sla-med { color: #f1c40f; font-weight: 700; }
+        .sla-low { color: #3498db; font-weight: 700; }
+    </style>
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="index.html" class="site-nav-logo">FixTheVuln</a>
+        <div class="site-nav-links">
+            <a href="guides.html">Guides</a>
+            <a href="tools.html">Tools</a>
+            <a href="compliance.html">Compliance</a>
+            <a href="resources.html">Resources</a>
+            <a href="practice-tests.html">Quizzes</a>
+            <a href="career-paths.html">Career Paths</a>
+            <a href="blog/">Blog</a>
+            <a href="/store/store.html" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: .35rem .75rem; border-radius: 6px; font-size: .85rem; font-weight: 600; text-decoration: none;">Store</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header class="content-header">
+        <div class="container">
+            <h1>Vulnerability Tracking & Remediation</h1>
+            <p>Stop using spreadsheets. Track, prioritize, and verify fixes at scale.</p>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Last updated: February 21, 2026</p>
+        </div>
+    </header>
+
+    <div style="width: 100%; height: 250px; overflow: hidden;">
+        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&h=250&fit=crop" loading="lazy"
+             alt="Dashboard with vulnerability tracking metrics and charts"
+             style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+
+    <main class="container">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
+            <span>By <strong>FixTheVuln Team</strong></span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Peer-reviewed security content</span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Sources: CISA, NIST, OWASP</span>
+        </div>
+        <div class="content-wrapper">
+        <div class="key-takeaways">
+            <h2>Key Takeaways</h2>
+            <ul>
+            <li>Spreadsheets break down past ~50 vulnerabilities &mdash; use DefectDojo or Jira for tracking</li>
+            <li>Group vulnerabilities by remediation action, not by CVE (100 NGINX CVEs = 3 patch actions)</li>
+            <li>Define SLA deadlines: Critical 48hr, High 7d, Medium 30d, Low 90d</li>
+            <li>Always re-scan after patching to verify the fix &mdash; never close findings on trust alone</li>
+            <li>Assign every finding an owner &mdash; unowned vulnerabilities never get fixed</li>
+            </ul>
+        </div>
+
+            <!-- Section 1: Why Spreadsheets Break Down -->
+            <h2>Why Spreadsheets Break Down</h2>
+
+            <div class="vuln-item">
+                <h2>The Problem at Scale</h2>
+
+                <div class="warning-box">
+                    <strong>If you're tracking vulnerabilities in Excel or Google Sheets, you will lose findings.</strong> Spreadsheets have no SLA enforcement, no deduplication, no owner assignment workflow, and no way to verify fixes automatically.
+                </div>
+
+                <p>Here's what typically goes wrong when teams outgrow spreadsheets:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Problem</th>
+                            <th>What Happens</th>
+                            <th>Impact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>No SLA tracking</td>
+                            <td>Critical vulns sit for months with no escalation</td>
+                            <td>Audit failures, breach risk</td>
+                        </tr>
+                        <tr>
+                            <td>No deduplication</td>
+                            <td>Same CVE appears 50 times across scan imports</td>
+                            <td>Inflated counts, wasted effort</td>
+                        </tr>
+                        <tr>
+                            <td>No owner assignment</td>
+                            <td>Findings exist but nobody is accountable</td>
+                            <td>Vulns never get fixed</td>
+                        </tr>
+                        <tr>
+                            <td>No re-scan verification</td>
+                            <td>Admin says "done" but the vuln persists</td>
+                            <td>False sense of security</td>
+                        </tr>
+                        <tr>
+                            <td>Manual data entry</td>
+                            <td>Copy-paste errors, stale data, version conflicts</td>
+                            <td>Decisions based on bad data</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="info-box">
+                    <strong>The real question isn't "what tool?" &mdash; it's "what workflow?"</strong> Even the best tool fails without a clear process: Discover &rarr; Prioritize &rarr; Assign &rarr; Remediate &rarr; Verify &rarr; Close.
+                </div>
+            </div>
+
+            <!-- Section 2: Free Tools -->
+            <h2>Free Tools for Vulnerability Tracking</h2>
+
+            <div class="vuln-item">
+                <h2>DefectDojo (Recommended)</h2>
+
+                <div class="success-box">
+                    <strong>DefectDojo</strong> is the leading open-source vulnerability management platform. It imports results from 150+ scanners, deduplicates findings, assigns owners, enforces SLAs, and auto-verifies fixes on re-scan.
+                </div>
+
+                <h3>Quick Setup</h3>
+                <div class="code-block">
+                    <code># Clone and start with Docker Compose
+git clone https://github.com/DefectDojo/django-DefectDojo.git
+cd django-DefectDojo
+
+# Start DefectDojo (first run takes ~5 min)
+docker compose up -d
+
+# Access at http://localhost:8080
+# Default credentials: admin / admin
+# CHANGE THE PASSWORD IMMEDIATELY</code>
+                </div>
+
+                <h3>Why DefectDojo Wins</h3>
+                <ul>
+                    <li><strong>Auto-import:</strong> Upload Nessus, Qualys, Burp, OWASP ZAP, Trivy, Nuclei, and 150+ other formats</li>
+                    <li><strong>Deduplication:</strong> Merges duplicate findings across multiple scans automatically</li>
+                    <li><strong>Owner assignment:</strong> Assign findings to teams or individuals with due dates</li>
+                    <li><strong>SLA enforcement:</strong> Configure per-severity deadlines with escalation alerts</li>
+                    <li><strong>Re-scan verification:</strong> Re-import a scan and DefectDojo auto-closes verified fixes</li>
+                    <li><strong>API-first:</strong> Full REST API for CI/CD integration</li>
+                </ul>
+
+                <div class="code-block">
+                    <code># Import scan results via API
+curl -X POST "http://localhost:8080/api/v2/import-scan/" \
+  -H "Authorization: Token YOUR_API_TOKEN" \
+  -F "scan_type=Nessus Scan" \
+  -F "file=@nessus_results.csv" \
+  -F "engagement=1" \
+  -F "verified=false"</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>Jira / ServiceNow Integration</h2>
+
+                <p>If your org already uses Jira or ServiceNow, pipe scan results into your existing ticketing system instead of building a separate workflow.</p>
+
+                <h3>Jira Approach</h3>
+                <div class="code-block">
+                    <code># Create Jira tickets from scan findings (Python example)
+from jira import JIRA
+
+jira = JIRA(server="https://yourorg.atlassian.net",
+            basic_auth=("email", "api_token"))
+
+for finding in critical_findings:
+    jira.create_issue(
+        project="VULN",
+        summary=f"[{finding['severity']}] {finding['title']}",
+        description=f"Asset: {finding['host']}\n"
+                    f"CVE: {finding['cve']}\n"
+                    f"Remediation: {finding['fix']}",
+        issuetype={"name": "Bug"},
+        priority={"name": "Highest"},
+        assignee={"accountId": finding['owner_id']},
+    )</code>
+                </div>
+
+                <div class="info-box">
+                    <strong>Tip:</strong> DefectDojo has built-in Jira integration &mdash; it can auto-create and sync Jira tickets for every finding, giving you the best of both worlds.
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>OWASP Dependency-Track</h2>
+
+                <p>For <strong>software composition analysis (SCA)</strong> specifically, Dependency-Track monitors your SBOM for new CVEs and tracks remediation status per component.</p>
+
+                <div class="code-block">
+                    <code># Run Dependency-Track with Docker
+docker compose up -d
+
+# Upload SBOM via API
+curl -X PUT "http://localhost:8081/api/v1/bom" \
+  -H "X-Api-Key: YOUR_KEY" \
+  -H "Content-Type: application/vnd.cyclonedx+json" \
+  -d @sbom.json</code>
+                </div>
+
+                <ul>
+                    <li>Monitors CycloneDX and SPDX SBOMs continuously</li>
+                    <li>Alerts when new CVEs affect your dependencies</li>
+                    <li>Policy engine for auto-flagging based on severity, CVSS, license</li>
+                    <li>Pairs well with DefectDojo for a complete vulnerability management stack</li>
+                </ul>
+            </div>
+
+            <!-- Section 3: Group by Action -->
+            <h2>Group by Remediation Action, Not CVE</h2>
+
+            <div class="vuln-item">
+                <h2>The "100 CVEs = 3 Actions" Insight</h2>
+
+                <div class="success-box">
+                    <strong>The single most impactful workflow change:</strong> Stop tracking individual CVEs and start grouping by the action that fixes them. 100 NGINX vulnerabilities usually means 3 patch actions, not 100 separate tasks.
+                </div>
+
+                <h3>Example: NGINX Vulnerability Report</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Remediation Action</th>
+                            <th>CVEs Fixed</th>
+                            <th>Owner</th>
+                            <th>Effort</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Update NGINX to 1.27.x</td>
+                            <td>72 CVEs</td>
+                            <td>Infra Team</td>
+                            <td>1 change window</td>
+                        </tr>
+                        <tr>
+                            <td>Update OpenSSL to 3.2.x</td>
+                            <td>23 CVEs</td>
+                            <td>Infra Team</td>
+                            <td>Same window</td>
+                        </tr>
+                        <tr>
+                            <td>Disable SSLv3 / weak ciphers</td>
+                            <td>5 CVEs</td>
+                            <td>Security Team</td>
+                            <td>Config change</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>When you hand an admin a spreadsheet with 100 rows of CVE-XXXX-XXXXX, they freeze. When you hand them 3 actionable tasks with clear owners, things get done.</p>
+
+                <h3>How to Group Findings</h3>
+                <div class="code-block">
+                    <code># Group Nessus findings by solution (Python pseudocode)
+from collections import defaultdict
+
+groups = defaultdict(list)
+for finding in scan_results:
+    # Use the "solution" or "fix" field as the grouping key
+    action = finding.get("solution", "Manual review needed")
+    groups[action].append(finding)
+
+for action, findings in groups.items():
+    print(f"ACTION: {action}")
+    print(f"  Fixes {len(findings)} CVEs")
+    print(f"  Highest severity: {max(f['cvss'] for f in findings)}")
+    print()</code>
+                </div>
+
+                <div class="info-box">
+                    <strong>DefectDojo does this automatically.</strong> Its "Finding Grouping" feature clusters findings by component, CWE, or custom fields so you see actions instead of individual CVEs.
+                </div>
+            </div>
+
+            <!-- Section 4: Remediation Workflow -->
+            <h2>The Remediation Workflow</h2>
+
+            <div class="vuln-item">
+                <h2>7-Step Lifecycle</h2>
+
+                <div class="workflow-steps">
+                    <div class="workflow-step">
+                        <span class="step-num">1</span>
+                        <span class="step-label">Discover</span>
+                    </div>
+                    <div class="workflow-step">
+                        <span class="step-num">2</span>
+                        <span class="step-label">Prioritize</span>
+                    </div>
+                    <div class="workflow-step">
+                        <span class="step-num">3</span>
+                        <span class="step-label">Assign</span>
+                    </div>
+                    <div class="workflow-step">
+                        <span class="step-num">4</span>
+                        <span class="step-label">Remediate</span>
+                    </div>
+                    <div class="workflow-step">
+                        <span class="step-num">5</span>
+                        <span class="step-label">Re-scan</span>
+                    </div>
+                    <div class="workflow-step">
+                        <span class="step-num">6</span>
+                        <span class="step-label">Verify</span>
+                    </div>
+                    <div class="workflow-step">
+                        <span class="step-num">7</span>
+                        <span class="step-label">Close</span>
+                    </div>
+                </div>
+
+                <ol>
+                    <li><strong>Discover</strong> &mdash; Run scheduled scans (Nessus, Qualys, Trivy, etc.) and import results into your tracker</li>
+                    <li><strong>Prioritize</strong> &mdash; Rank by CVSS + asset criticality + exploitability (CISA KEV, EPSS score)</li>
+                    <li><strong>Assign</strong> &mdash; Every finding gets an owner and an SLA deadline. No owner = no accountability = no fix</li>
+                    <li><strong>Remediate</strong> &mdash; Owner applies the patch, config change, or compensating control</li>
+                    <li><strong>Re-scan</strong> &mdash; Run the same scanner against the same target to confirm the fix</li>
+                    <li><strong>Verify</strong> &mdash; Compare re-scan results. Finding gone = verified. Still present = reopen</li>
+                    <li><strong>Close</strong> &mdash; Mark as resolved with evidence (scan diff, change ticket, deployment record)</li>
+                </ol>
+
+                <div class="warning-box">
+                    <strong>Never close a finding without re-scan verification.</strong> "The admin said they patched it" is not evidence. Scanners don't lie &mdash; re-scan and prove it.
+                </div>
+            </div>
+
+            <!-- Section 5: SLA Framework -->
+            <h2>SLA Framework</h2>
+
+            <div class="vuln-item">
+                <h2>Remediation Deadlines by Severity</h2>
+
+                <table class="sla-table">
+                    <thead>
+                        <tr>
+                            <th>Severity</th>
+                            <th>CVSS Range</th>
+                            <th>SLA Deadline</th>
+                            <th>Escalation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="sla-crit">Critical</span></td>
+                            <td>9.0 &ndash; 10.0</td>
+                            <td>48 hours</td>
+                            <td>CISO after 24hr</td>
+                        </tr>
+                        <tr>
+                            <td><span class="sla-high">High</span></td>
+                            <td>7.0 &ndash; 8.9</td>
+                            <td>7 days</td>
+                            <td>Director after 5d</td>
+                        </tr>
+                        <tr>
+                            <td><span class="sla-med">Medium</span></td>
+                            <td>4.0 &ndash; 6.9</td>
+                            <td>30 days</td>
+                            <td>Manager after 21d</td>
+                        </tr>
+                        <tr>
+                            <td><span class="sla-low">Low</span></td>
+                            <td>0.1 &ndash; 3.9</td>
+                            <td>90 days</td>
+                            <td>Quarterly review</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="info-box">
+                    <strong>CISA BOD 22-01</strong> requires federal agencies to remediate Known Exploited Vulnerabilities (KEV) within specific timeframes. Even if you're not federal, the KEV catalog is a great prioritization signal &mdash; if CISA says it's actively exploited, fix it first.
+                </div>
+
+                <h3>Exception Handling</h3>
+                <p>Not every vuln can be fixed on time. Document exceptions formally:</p>
+                <ul>
+                    <li><strong>Risk acceptance:</strong> Business owner signs off that the risk is acceptable (with justification)</li>
+                    <li><strong>Compensating control:</strong> WAF rule, network segmentation, or monitoring mitigates the risk</li>
+                    <li><strong>Vendor dependency:</strong> Patch not yet available &mdash; track vendor advisory for release date</li>
+                    <li><strong>End of life:</strong> System can't be patched &mdash; create migration plan with timeline</li>
+                </ul>
+            </div>
+
+            <!-- Section 6: Interactive Checklist -->
+            <h2>Remediation Lifecycle Checklist</h2>
+
+            <div class="checklist-section" id="remediationChecklist">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                    <h3 style="margin: 0;">Track Your Progress</h3>
+                    <button class="btn-reset-checklist" onclick="resetChecklist()">Reset Checklist</button>
+                </div>
+                <div class="checklist-progress">
+                    <div class="checklist-progress-bar">
+                        <div class="checklist-progress-fill" id="progressFill" style="width: 0%;"></div>
+                    </div>
+                    <span class="checklist-progress-text" id="progressText">0 / 20</span>
+                </div>
+
+                <!-- Phase 1: Setup -->
+                <div class="checklist-phase">
+                    <h4>Phase 1: Setup & Tooling</h4>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cl-1" data-cl>
+                        <label for="cl-1">Deploy vulnerability tracker (DefectDojo, Jira, or equivalent)</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cl-2" data-cl>
+                        <label for="cl-2">Configure scanner integrations (Nessus, Qualys, Trivy, etc.)</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cl-3" data-cl>
+                        <label for="cl-3">Define SLA deadlines per severity level</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cl-4" data-cl>
+                        <label for="cl-4">Set up escalation alerts for overdue findings</label>
+                    </div>
+                </div>
+
+                <!-- Phase 2: Discovery -->
+                <div class="checklist-phase">
+                    <h4>Phase 2: Discovery & Import</h4>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cl-5" data-cl>
+                        <label for="cl-5">Run initial vulnerability scans across all assets</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cl-6" data-cl>
+                        <label for="cl-6">Import scan results into tracker</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cl-7" data-cl>
+                        <label for="cl-7">Enable deduplication to merge repeat findings</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cl-8" data-cl>
+                        <label for="cl-8">Group findings by remediation action (not individual CVE)</label>
+                    </div>
+                </div>
+
+                <!-- Phase 3: Prioritization -->
+                <div class="checklist-phase">
+                    <h4>Phase 3: Prioritization & Assignment</h4>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cl-9" data-cl>
+                        <label for="cl-9">Cross-reference with CISA KEV catalog for active exploitation</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cl-10" data-cl>
+                        <label for="cl-10">Factor in asset criticality (crown jewels vs. dev servers)</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cl-11" data-cl>
+                        <label for="cl-11">Assign an owner to every finding or finding group</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cl-12" data-cl>
+                        <label for="cl-12">Set SLA due dates based on severity</label>
+                    </div>
+                </div>
+
+                <!-- Phase 4: Remediation -->
+                <div class="checklist-phase">
+                    <h4>Phase 4: Remediation</h4>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cl-13" data-cl>
+                        <label for="cl-13">Schedule change windows for critical/high patches</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cl-14" data-cl>
+                        <label for="cl-14">Apply patches or configuration changes</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cl-15" data-cl>
+                        <label for="cl-15">Document compensating controls for exceptions</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cl-16" data-cl>
+                        <label for="cl-16">Get risk acceptance sign-off for deferred items</label>
+                    </div>
+                </div>
+
+                <!-- Phase 5: Verification -->
+                <div class="checklist-phase">
+                    <h4>Phase 5: Verification & Closure</h4>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cl-17" data-cl>
+                        <label for="cl-17">Re-scan patched systems with the same scanner</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cl-18" data-cl>
+                        <label for="cl-18">Compare re-scan results to confirm fixes</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cl-19" data-cl>
+                        <label for="cl-19">Close verified findings with evidence</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="cl-20" data-cl>
+                        <label for="cl-20">Generate remediation report for stakeholders</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <h2>Frequently Asked Questions</h2>
+
+            <div class="vuln-item">
+                <h3>What is the best free tool for tracking vulnerability remediation?</h3>
+                <p><strong>DefectDojo</strong> is the leading open-source vulnerability management platform. It imports scan results from 150+ tools, assigns owners, tracks SLA deadlines, deduplicates findings, and auto-verifies fixes on re-scan. It replaces spreadsheets for teams of any size.</p>
+            </div>
+
+            <div class="vuln-item">
+                <h3>How do I manage 100+ vulnerabilities without losing track?</h3>
+                <p>Group vulnerabilities by <strong>remediation action</strong> instead of tracking each CVE individually. For example, 100 NGINX CVEs may only require 3 patch actions (update NGINX, update OpenSSL, change a config). This reduces your tracking workload by 90% and gives admins clear, actionable tasks.</p>
+            </div>
+
+            <div class="vuln-item">
+                <h3>What SLA timeframes should I use for vulnerability remediation?</h3>
+                <p>A common SLA framework is: <strong>Critical</strong> severity within 48 hours, <strong>High</strong> within 7 days, <strong>Medium</strong> within 30 days, and <strong>Low</strong> within 90 days. Adjust based on your organization's risk tolerance, but document the policy and enforce it consistently with automated tracking.</p>
+            </div>
+
+            <!-- Related Content -->
+            <section style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
+                <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Related Resources</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+                    <a href="version-alerting.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Version-Specific Alerting</a>
+                    <a href="incident-response.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Incident Response</a>
+                    <a href="log-management.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Log Management</a>
+                </div>
+            </section>
+
+            <a href="guides.html" class="back-link">&larr; Back to Guides</a>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
+            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a> | Shop planners: <a href="/store/store.html">FixTheVuln Store</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode">
+        <span id="theme-icon">&#127769;</span>
+    </button>
+
+    <script>
+        // Dark mode toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('fixthevuln-theme', newTheme);
+
+            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19';
+        }
+
+        // Load saved theme
+        (function() {
+            const savedTheme = localStorage.getItem('fixthevuln-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('theme-icon').textContent = '\u2600\uFE0F';
+            }
+        })();
+
+        // Checklist localStorage persistence
+        const CL_KEY = 'ftv-vuln-checklist';
+
+        function loadChecklist() {
+            const saved = JSON.parse(localStorage.getItem(CL_KEY) || '{}');
+            document.querySelectorAll('[data-cl]').forEach(cb => {
+                cb.checked = !!saved[cb.id];
+            });
+            updateProgress();
+        }
+
+        function saveChecklist() {
+            const state = {};
+            document.querySelectorAll('[data-cl]').forEach(cb => {
+                if (cb.checked) state[cb.id] = true;
+            });
+            localStorage.setItem(CL_KEY, JSON.stringify(state));
+            updateProgress();
+        }
+
+        function resetChecklist() {
+            localStorage.removeItem(CL_KEY);
+            document.querySelectorAll('[data-cl]').forEach(cb => { cb.checked = false; });
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const all = document.querySelectorAll('[data-cl]');
+            const checked = document.querySelectorAll('[data-cl]:checked');
+            const pct = all.length ? Math.round((checked.length / all.length) * 100) : 0;
+            document.getElementById('progressFill').style.width = pct + '%';
+            document.getElementById('progressText').textContent = checked.length + ' / ' + all.length;
+        }
+
+        // Attach listeners
+        document.querySelectorAll('[data-cl]').forEach(cb => {
+            cb.addEventListener('change', saveChecklist);
+        });
+
+        // Init
+        loadChecklist();
+    </script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
