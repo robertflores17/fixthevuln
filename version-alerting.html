@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+        <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Free guide to version-specific vulnerability alerting. Get CVE notifications filtered by exact product versions using OpenCVE, Vulners, NVD API, and scanning tools like Nuclei and WPScan.">
+    <meta name="keywords" content="vulnerability alerting, CVE notifications, version-specific alerts, OpenCVE, Vulners, NVD API, CPE matching, Nuclei, WPScan, vulnerability scanner, web app security">
+    <title>Version-Specific Vulnerability Alerting Guide | CVE Alerts by Product Version - FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/version-alerting.html">
+    <meta property="og:title" content="Version-Specific Vulnerability Alerting Guide - FixTheVuln">
+    <meta property="og:description" content="Free guide to version-specific vulnerability alerting. Get CVE notifications filtered by exact product versions using OpenCVE, Vulners, NVD API, and scanning tools.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fixthevuln.com/version-alerting.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Version-Specific Vulnerability Alerting Guide - FixTheVuln">
+    <meta name="twitter:description" content="Free guide to version-specific vulnerability alerting. Get CVE notifications filtered by exact product versions using OpenCVE, Vulners, NVD API, and scanning tools.">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.min.css?v=2">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "Version-Specific Vulnerability Alerting",
+        "description": "Guide to getting CVE notifications filtered by exact product and version using free tools like OpenCVE, Vulners, NVD API, Nuclei, and WPScan.",
+        "datePublished": "2026-02-21",
+        "dateModified": "2026-02-21",
+        "author": { "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" },
+        "publisher": { "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Guides", "item": "https://fixthevuln.com/guides.html" },
+            { "@type": "ListItem", "position": 3, "name": "Version-Specific Vulnerability Alerting" }
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "Can I get CVE alerts filtered by a specific software version?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Yes. OpenCVE lets you subscribe to alerts using CPE strings that include vendor, product, and version (e.g., cpe:2.3:a:moodle:moodle:4.3.0). Vulners also supports version-specific software inventory tracking with its free tier. For a DIY approach, the NVD API allows CPE-based queries filtered to exact version ranges."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Why does my vulnerability scanner miss web apps like Moodle, Nextcloud, or WordPress?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Traditional vulnerability scanners like Rapid7 InsightVM and Nessus rely on package manager inventories (apt, yum, rpm). Web applications installed from tarballs, git clones, or manual uploads don't appear in those inventories. You need application-layer scanners like Nuclei, WPScan, or Droopescan that fingerprint the running application via HTTP to detect versions."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What is a CPE string and how do I find the right one for my software?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "CPE (Common Platform Enumeration) is a standardized naming scheme for software. A CPE string looks like cpe:2.3:a:vendor:product:version. You can search for CPE strings at nvd.nist.gov/products/cpe. For example, WordPress 6.4.2 is cpe:2.3:a:wordpress:wordpress:6.4.2:*:*:*:*:*:*:* and Nextcloud Server 28.0.0 is cpe:2.3:a:nextcloud:nextcloud_server:28.0.0:*:*:*:*:*:*:*."
+                }
+            }
+        ]
+    }
+    </script>
+    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="blog/feed.xml">
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="index.html" class="site-nav-logo">FixTheVuln</a>
+        <div class="site-nav-links">
+            <a href="guides.html">Guides</a>
+            <a href="tools.html">Tools</a>
+            <a href="compliance.html">Compliance</a>
+            <a href="resources.html">Resources</a>
+            <a href="practice-tests.html">Quizzes</a>
+            <a href="career-paths.html">Career Paths</a>
+            <a href="blog/">Blog</a>
+            <a href="/store/store.html" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: .35rem .75rem; border-radius: 6px; font-size: .85rem; font-weight: 600; text-decoration: none;">Store</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header class="content-header">
+        <div class="container">
+            <h1>Version-Specific Vulnerability Alerting</h1>
+            <p>Get CVE notifications for the exact software versions you run</p>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Last updated: February 21, 2026</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
+            <span>By <strong>FixTheVuln Team</strong></span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Peer-reviewed security content</span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Sources: NVD, CISA, OWASP</span>
+        </div>
+        <div class="content-wrapper">
+        <div class="key-takeaways">
+            <h2>Key Takeaways</h2>
+            <ul>
+            <li><strong>OpenCVE</strong> (free, self-hosted or SaaS) lets you subscribe to CVE alerts by vendor, product, <em>and version</em> using CPE strings</li>
+            <li><strong>Vulners</strong> free tier tracks a software inventory with version-specific vulnerability matching</li>
+            <li>Traditional scanners (InsightVM, Nessus) miss web apps installed outside package managers &mdash; use <strong>Nuclei</strong>, <strong>WPScan</strong>, or <strong>Droopescan</strong> to fill the gap</li>
+            <li>The <strong>NVD API</strong> supports CPE-based queries if you want a DIY alerting pipeline</li>
+            <li>Combine version-aware alerting <em>plus</em> application-layer scanning for full coverage</li>
+            </ul>
+        </div>
+
+            <!-- Section 1: The Problem -->
+            <h2>The Problem: Why Traditional Scanners Miss Unpackaged Web Apps</h2>
+
+            <div class="vuln-item">
+                <div class="info-box">
+                    <strong>The Gap:</strong> Vulnerability scanners like Rapid7 InsightVM, Nessus, and Qualys detect software by querying the OS package manager (apt, yum, rpm, Windows registry). Web applications installed from tarballs, git clones, or manual uploads &mdash; Moodle, Nextcloud, WordPress, Joomla, GitLab &mdash; are invisible to these agents.
+                </div>
+
+                <p>If you deploy WordPress by extracting a zip into <code>/var/www/html</code>, or install Moodle from a tarball, your scanner's host agent won't see it. You'll get zero CVE hits for software that may have critical vulnerabilities.</p>
+
+                <h3>What Scanners See vs. What They Miss</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Detected (package manager)</th>
+                            <th>Missed (unpackaged)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Apache httpd (apt/yum)</td>
+                            <td>WordPress (zip extract)</td>
+                        </tr>
+                        <tr>
+                            <td>PHP runtime (apt/yum)</td>
+                            <td>Moodle (tarball)</td>
+                        </tr>
+                        <tr>
+                            <td>OpenSSL (apt/yum)</td>
+                            <td>Nextcloud (manual install)</td>
+                        </tr>
+                        <tr>
+                            <td>PostgreSQL (apt/yum)</td>
+                            <td>Joomla, Drupal, GitLab Omnibus</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>You need two things to close this gap: <strong>version-specific CVE alerting</strong> (to know when a vulnerability drops) and <strong>application-layer scanning</strong> (to detect what's actually running).</p>
+            </div>
+
+            <!-- Section 2: Version-Specific Alerting Tools -->
+            <h2>Version-Specific Alerting Tools</h2>
+
+            <div class="vuln-item">
+                <h2>1. OpenCVE &mdash; CPE-Based CVE Subscriptions (Free)</h2>
+
+                <div class="success-box">
+                    <strong>Best for:</strong> Teams that want email/webhook alerts filtered by exact vendor + product + version. Self-hosted option available.
+                </div>
+
+                <p><strong>OpenCVE</strong> is an open-source CVE alerting platform. You subscribe to CPE strings and get notified only when new CVEs match your products and versions.</p>
+
+                <h3>How to Set Up Version-Specific Alerts</h3>
+                <div class="code-block">
+                    <code># 1. Find your CPE at https://nvd.nist.gov/products/cpe/search
+#    Example CPEs:
+#    WordPress 6.4.2  → cpe:2.3:a:wordpress:wordpress:6.4.2:*:*:*:*:*:*:*
+#    Moodle 4.3.0     → cpe:2.3:a:moodle:moodle:4.3.0:*:*:*:*:*:*:*
+#    Nextcloud 28.0.0 → cpe:2.3:a:nextcloud:nextcloud_server:28.0.0:*:*:*:*:*:*:*
+
+# 2. In OpenCVE, add the CPE as a subscription
+#    Dashboard → Subscriptions → Add Vendor/Product
+#    Select vendor: "moodle", product: "moodle"
+
+# 3. For self-hosted OpenCVE (Docker):
+git clone https://github.com/opencve/opencve-docker.git
+cd opencve-docker
+docker compose up -d
+
+# 4. Configure email or webhook notifications
+#    Settings → Notifications → Add email/Slack/webhook</code>
+                </div>
+
+                <h3>OpenCVE Features</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Free SaaS</th>
+                            <th>Self-Hosted</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CVE alerts by vendor/product</td>
+                            <td>Yes</td>
+                            <td>Yes</td>
+                        </tr>
+                        <tr>
+                            <td>Email notifications</td>
+                            <td>Yes</td>
+                            <td>Yes</td>
+                        </tr>
+                        <tr>
+                            <td>Webhook integrations</td>
+                            <td>Paid</td>
+                            <td>Yes</td>
+                        </tr>
+                        <tr>
+                            <td>CVSS filtering</td>
+                            <td>Yes</td>
+                            <td>Yes</td>
+                        </tr>
+                        <tr>
+                            <td>API access</td>
+                            <td>Paid</td>
+                            <td>Yes</td>
+                        </tr>
+                        <tr>
+                            <td>Custom deployment</td>
+                            <td>No</td>
+                            <td>Yes</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="vuln-item">
+                <h2>2. Vulners &mdash; Software Inventory with Version Tracking (Free Tier)</h2>
+
+                <div class="success-box">
+                    <strong>Best for:</strong> Building a software inventory and getting matched against known vulnerabilities, including version-specific results.
+                </div>
+
+                <p><strong>Vulners</strong> maintains a massive vulnerability database and offers a free tier that lets you define a software inventory with specific versions. It continuously matches your inventory against new CVEs.</p>
+
+                <h3>Using the Vulners API</h3>
+                <div class="code-block">
+                    <code># Search for vulnerabilities by software + version
+curl "https://vulners.com/api/v3/burp/software/" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "software": "wordpress",
+    "version": "6.4.2",
+    "type": "software"
+  }'
+
+# Or use the Python library
+pip install vulners
+
+import vulners
+api = vulners.VulnersApi(api_key="YOUR_FREE_API_KEY")
+results = api.software_audit(
+    os="debian",
+    os_version="12",
+    package=["wordpress 6.4.2"]
+)</code>
+                </div>
+
+                <p>Vulners also aggregates advisories from multiple sources (NVD, vendor advisories, exploit databases) so you get a unified view.</p>
+            </div>
+
+            <div class="vuln-item">
+                <h2>3. NVD API + CPE Matching (DIY Approach)</h2>
+
+                <div class="info-box">
+                    <strong>Best for:</strong> Teams that want full control and already have scripting/automation capabilities. Build your own alerting pipeline.
+                </div>
+
+                <p>The <strong>NVD (National Vulnerability Database) API</strong> is free and lets you query CVEs filtered by CPE name, including version ranges. You can build a cron job that checks for new CVEs matching your software stack.</p>
+
+                <h3>NVD API Query Examples</h3>
+                <div class="code-block">
+                    <code># Query CVEs for a specific CPE (WordPress 6.4.2)
+# API docs: https://nvd.nist.gov/developers/vulnerabilities
+curl "https://services.nvd.nist.gov/rest/json/cves/2.0?\
+cpeName=cpe:2.3:a:wordpress:wordpress:6.4.2:*:*:*:*:*:*:*"
+
+# Query CVEs modified in the last 7 days for Moodle
+curl "https://services.nvd.nist.gov/rest/json/cves/2.0?\
+cpeName=cpe:2.3:a:moodle:moodle:*:*:*:*:*:*:*:*&\
+lastModStartDate=2026-02-14T00:00:00.000&\
+lastModEndDate=2026-02-21T00:00:00.000"
+
+# Python script for automated checking
+import requests, json, smtplib
+from datetime import datetime, timedelta
+
+API_URL = "https://services.nvd.nist.gov/rest/json/cves/2.0"
+MY_CPES = [
+    "cpe:2.3:a:wordpress:wordpress:6.4.2:*:*:*:*:*:*:*",
+    "cpe:2.3:a:moodle:moodle:4.3.0:*:*:*:*:*:*:*",
+    "cpe:2.3:a:nextcloud:nextcloud_server:28.0.0:*:*:*:*:*:*:*",
+]
+
+for cpe in MY_CPES:
+    end = datetime.utcnow()
+    start = end - timedelta(days=1)
+    params = {
+        "cpeName": cpe,
+        "lastModStartDate": start.strftime("%Y-%m-%dT%H:%M:%S.000"),
+        "lastModEndDate": end.strftime("%Y-%m-%dT%H:%M:%S.000"),
+    }
+    resp = requests.get(API_URL, params=params)
+    data = resp.json()
+    if data.get("totalResults", 0) > 0:
+        print(f"NEW CVEs for {cpe}:")
+        for vuln in data["vulnerabilities"]:
+            cve = vuln["cve"]
+            print(f"  {cve['id']}: {cve['descriptions'][0]['value']}")</code>
+                </div>
+
+                <div class="warning-box">
+                    <strong>NVD API Rate Limits:</strong> Without an API key, you're limited to 5 requests per 30 seconds. Request a free API key at <code>https://nvd.nist.gov/developers/request-an-api-key</code> to get 50 requests per 30 seconds.
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>4. CISA KEV &mdash; Actively Exploited Vulnerabilities</h2>
+
+                <div class="info-box">
+                    <strong>Best for:</strong> Prioritizing patching. The CISA Known Exploited Vulnerabilities catalog tracks CVEs that are confirmed to be exploited in the wild.
+                </div>
+
+                <p>While not version-specific, the <strong>CISA KEV</strong> catalog is essential for prioritization. If a CVE for your software appears here, it's being actively exploited and patching is urgent.</p>
+
+                <div class="code-block">
+                    <code># CISA KEV JSON feed (full catalog)
+curl https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
+
+# RSS feed for new additions
+# https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
+
+# Filter KEV entries for your products with jq
+curl -s https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json | \
+  jq '.vulnerabilities[] | select(.product | test("wordpress|moodle|nextcloud"; "i"))'</code>
+                </div>
+            </div>
+
+            <!-- Section 3: Filling the Scanner Gap -->
+            <h2>Filling the Scanner Gap: Detecting Unpackaged Web Apps</h2>
+
+            <div class="vuln-item">
+                <h2>5. Nuclei &mdash; Version Fingerprinting + CVE Detection</h2>
+
+                <div class="success-box">
+                    <strong>Best for:</strong> Scanning web applications to detect versions and match them against known CVEs. Works across thousands of technologies.
+                </div>
+
+                <p><strong>Nuclei</strong> by ProjectDiscovery uses YAML-based templates to fingerprint application versions via HTTP responses and check for known vulnerabilities. It has 8,000+ community templates covering CVE detection, version fingerprinting, and misconfigurations.</p>
+
+                <div class="code-block">
+                    <code># Install Nuclei
+go install -v github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
+# or
+brew install nuclei
+
+# Scan a web app for known CVEs
+nuclei -u https://moodle.example.com -t cves/
+
+# Scan for version detection + CVEs
+nuclei -u https://wordpress.example.com -t technologies/ -t cves/
+
+# Scan multiple targets from a file
+nuclei -l targets.txt -t cves/ -severity critical,high
+
+# WordPress-specific CVE checks
+nuclei -u https://example.com -t cves/ -tags wordpress
+
+# Output as JSON for integration with alerting
+nuclei -u https://example.com -t cves/ -json -o results.json</code>
+                </div>
+
+                <h3>Example: Nuclei Detecting a Moodle Version</h3>
+                <div class="code-block">
+                    <code># Nuclei template (simplified) for Moodle version detection
+id: moodle-version
+info:
+  name: Moodle Version Detection
+  severity: info
+  tags: tech,moodle
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/lib/upgrade.txt"
+    extractors:
+      - type: regex
+        group: 1
+        regex:
+          - 'Moodle ([0-9]+\.[0-9]+(?:\.[0-9]+)?)'</code>
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>6. WPScan &mdash; WordPress-Specific Scanning</h2>
+
+                <div class="success-box">
+                    <strong>Best for:</strong> WordPress sites. Detects core version, plugin versions, and theme versions with CVE matching.
+                </div>
+
+                <p><strong>WPScan</strong> is the gold standard for WordPress vulnerability scanning. It fingerprints core, plugin, and theme versions and matches them against the WPScan Vulnerability Database.</p>
+
+                <div class="code-block">
+                    <code># Install WPScan
+gem install wpscan
+# or
+docker pull wpscanteam/wpscan
+
+# Basic scan with version detection
+wpscan --url https://wordpress.example.com
+
+# Enumerate plugins and themes with version detection
+wpscan --url https://wordpress.example.com \
+  --enumerate vp,vt \
+  --api-token YOUR_WPSCAN_TOKEN
+
+# Output as JSON
+wpscan --url https://wordpress.example.com \
+  --format json \
+  --output results.json
+
+# Scan with aggressive plugin detection
+wpscan --url https://wordpress.example.com \
+  --enumerate ap --plugins-detection aggressive</code>
+                </div>
+
+                <div class="info-box">
+                    <strong>WPScan API:</strong> The free tier gives you 25 API requests/day, enough for scanning a handful of WordPress sites daily. This provides CVE data for detected plugin/theme versions.
+                </div>
+            </div>
+
+            <div class="vuln-item">
+                <h2>7. Droopescan &mdash; Moodle, Drupal, SilverStripe</h2>
+
+                <p><strong>Droopescan</strong> is a plugin-based scanner that fingerprints CMS applications that other tools often miss.</p>
+
+                <div class="code-block">
+                    <code># Install Droopescan
+pip install droopescan
+
+# Scan a Moodle instance
+droopescan scan moodle -u https://moodle.example.com
+
+# Scan Drupal
+droopescan scan drupal -u https://drupal.example.com
+
+# Scan SilverStripe
+droopescan scan silverstripe -u https://silverstripe.example.com
+
+# Scan multiple URLs from a file
+droopescan scan moodle -U targets.txt</code>
+                </div>
+            </div>
+
+            <!-- Section 4: Putting It Together -->
+            <h2>Putting It Together: Recommended Workflow</h2>
+
+            <div class="vuln-item">
+                <p>No single tool solves the full problem. Here's a practical workflow that combines version-specific alerting with application-layer scanning:</p>
+
+                <h3>Step 1: Build Your Software Inventory</h3>
+                <div class="code-block">
+                    <code># Create a software inventory with exact versions
+# inventory.csv
+product,version,cpe,url
+WordPress,6.4.2,cpe:2.3:a:wordpress:wordpress:6.4.2:*:*:*:*:*:*:*,https://blog.example.com
+Moodle,4.3.0,cpe:2.3:a:moodle:moodle:4.3.0:*:*:*:*:*:*:*,https://lms.example.com
+Nextcloud,28.0.0,cpe:2.3:a:nextcloud:nextcloud_server:28.0.0:*:*:*:*:*:*:*,https://cloud.example.com</code>
+                </div>
+
+                <h3>Step 2: Set Up Alerting</h3>
+                <p>Subscribe to your CPEs in OpenCVE (or build a script against the NVD API). This gives you <strong>reactive notification</strong> when a new CVE is published.</p>
+
+                <h3>Step 3: Schedule Scanning</h3>
+                <div class="code-block">
+                    <code># Weekly scan with Nuclei for all web apps
+# Add to cron: 0 6 * * 1 /usr/local/bin/scan-webapps.sh
+#!/bin/bash
+
+# Scan all targets for CVEs
+nuclei -l /opt/scans/targets.txt \
+  -t cves/ \
+  -severity critical,high \
+  -json -o /opt/scans/results-$(date +%F).json
+
+# WordPress-specific scans
+wpscan --url https://blog.example.com \
+  --api-token $WPSCAN_TOKEN \
+  --format json \
+  --output /opt/scans/wp-$(date +%F).json
+
+# Moodle scan
+droopescan scan moodle -u https://lms.example.com</code>
+                </div>
+
+                <h3>Step 4: Cross-Reference with CISA KEV</h3>
+                <p>When you get an alert from OpenCVE or a scan finding from Nuclei, check if the CVE appears in the CISA KEV catalog. If it does, treat it as a <strong>drop-everything priority</strong>.</p>
+
+                <h3>Summary: Tool Coverage Map</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Need</th>
+                            <th>Tool</th>
+                            <th>Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CVE alerts by product + version</td>
+                            <td>OpenCVE</td>
+                            <td>Free (self-hosted or SaaS)</td>
+                        </tr>
+                        <tr>
+                            <td>Software inventory + vuln matching</td>
+                            <td>Vulners</td>
+                            <td>Free tier available</td>
+                        </tr>
+                        <tr>
+                            <td>DIY CVE alerting pipeline</td>
+                            <td>NVD API</td>
+                            <td>Free</td>
+                        </tr>
+                        <tr>
+                            <td>Actively exploited CVE tracking</td>
+                            <td>CISA KEV</td>
+                            <td>Free</td>
+                        </tr>
+                        <tr>
+                            <td>Web app fingerprinting + CVEs</td>
+                            <td>Nuclei</td>
+                            <td>Free (open source)</td>
+                        </tr>
+                        <tr>
+                            <td>WordPress scanning</td>
+                            <td>WPScan</td>
+                            <td>Free (25 API req/day)</td>
+                        </tr>
+                        <tr>
+                            <td>Moodle / Drupal scanning</td>
+                            <td>Droopescan</td>
+                            <td>Free (open source)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- FAQ Section -->
+            <h2>Frequently Asked Questions</h2>
+
+            <div class="vuln-item">
+                <h3>Can I get CVE alerts filtered by a specific software version?</h3>
+                <p>Yes. <strong>OpenCVE</strong> lets you subscribe to alerts using CPE strings that include vendor, product, and version (e.g., <code>cpe:2.3:a:moodle:moodle:4.3.0</code>). <strong>Vulners</strong> also supports version-specific software inventory tracking with its free tier. For a DIY approach, the <strong>NVD API</strong> allows CPE-based queries filtered to exact version ranges.</p>
+
+                <h3>Why does my vulnerability scanner miss web apps like Moodle, Nextcloud, or WordPress?</h3>
+                <p>Traditional vulnerability scanners like Rapid7 InsightVM and Nessus rely on package manager inventories (apt, yum, rpm). Web applications installed from tarballs, git clones, or manual uploads don't appear in those inventories. You need application-layer scanners like <strong>Nuclei</strong>, <strong>WPScan</strong>, or <strong>Droopescan</strong> that fingerprint the running application via HTTP to detect versions.</p>
+
+                <h3>What is a CPE string and how do I find the right one for my software?</h3>
+                <p>CPE (Common Platform Enumeration) is a standardized naming scheme for software. A CPE string looks like <code>cpe:2.3:a:vendor:product:version</code>. You can search for CPE strings at <strong>nvd.nist.gov/products/cpe</strong>. For example, WordPress 6.4.2 is <code>cpe:2.3:a:wordpress:wordpress:6.4.2:*:*:*:*:*:*:*</code> and Nextcloud Server 28.0.0 is <code>cpe:2.3:a:nextcloud:nextcloud_server:28.0.0:*:*:*:*:*:*:*</code>.</p>
+            </div>
+
+            <!-- Related Content -->
+            <section style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
+                <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Related Resources</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+                    <a href="wordpress-security.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">WordPress Security</a>
+                    <a href="container-security.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Container Security</a>
+                    <a href="linux-hardening.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Linux Hardening</a>
+                </div>
+            </section>
+
+            <a href="guides.html" class="back-link">&larr; Back to Guides</a>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
+            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a> | Shop planners: <a href="/store/store.html">FixTheVuln Store</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode">
+        <span id="theme-icon">🌙</span>
+    </button>
+
+    <script>
+        // Dark mode toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('fixthevuln-theme', newTheme);
+
+            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+
+        // Load saved theme
+        (function() {
+            const savedTheme = localStorage.getItem('fixthevuln-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('theme-icon').textContent = '☀️';
+            }
+        })();
+    </script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
