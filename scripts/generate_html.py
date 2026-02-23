@@ -220,7 +220,7 @@ def write_latest_update(added_ids, vulns_lookup):
         "count": count,
         "summary": summary,
         "cves": added_ids,
-        "signedBy": "Robert"
+        "signedBy": "Robert, CISSP"
     }
 
     with open(LATEST_UPDATE_FILE, 'w') as f:
