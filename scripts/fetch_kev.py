@@ -302,7 +302,7 @@ def generate_html_card(vuln):
 def generate_review_markdown(vulns):
     """Generate markdown for weekend review with expert links."""
     lines = [
-        "# KEV Review - Week of " + datetime.now().strftime('%Y-%m-%d'),
+        "# Daily KEV Review — " + datetime.now().strftime('%Y-%m-%d'),
         "",
         f"**CVEs to review:** {len(vulns)}",
         "",
@@ -351,6 +351,129 @@ def generate_review_markdown(vulns):
     lines.append("```")
 
     return "\n".join(lines)
+
+
+def generate_review_summary(vulns):
+    """Generate a concise REVIEW_SUMMARY.md for the GitHub PR body and step summary."""
+    today = datetime.now().strftime('%Y-%m-%d')
+    total = len(vulns)
+
+    # Classify by severity tier
+    critical, high, medium, low = [], [], [], []
+    ransomware_count = 0
+
+    for v in vulns:
+        try:
+            score = float(v.get('cvss', 0) or 0)
+        except (ValueError, TypeError):
+            score = 0.0
+
+        if score >= 9.0:
+            critical.append(v)
+        elif score >= 7.0:
+            high.append(v)
+        elif score >= 4.0:
+            medium.append(v)
+        else:
+            low.append(v)
+
+        if v.get('ransomware') == 'Known':
+            ransomware_count += 1
+
+    # Sort all vulns by CVSS descending for the table
+    def cvss_sort_key(v):
+        try:
+            return float(v.get('cvss', 0) or 0)
+        except (ValueError, TypeError):
+            return 0.0
+
+    sorted_vulns = sorted(vulns, key=cvss_sort_key, reverse=True)
+
+    # Build header
+    lines = [
+        f"# Daily KEV Review — {today}",
+        "",
+        f"**New CVEs:** {total} | **Critical:** {len(critical)} | **High:** {len(high)} | **Medium:** {len(medium)} | **Low:** {len(low)} | **Ransomware-linked:** {ransomware_count}",
+        "",
+    ]
+
+    # Severity breakdown table
+    lines.append("## Severity Breakdown")
+    lines.append("")
+    lines.append("| CVE | Vendor | Product | CVSS | Ransomware | Due Date |")
+    lines.append("|-----|--------|---------|------|------------|----------|")
+
+    for v in sorted_vulns:
+        cve = v.get('cveID', 'Unknown')
+        vendor = v.get('vendor', 'Unknown')
+        product = v.get('product', '')
+        cvss = v.get('cvss', 'N/A') or 'N/A'
+        ransomware = v.get('ransomware', 'Unknown')
+        due = v.get('dueDate', '')
+        lines.append(f"| {cve} | {vendor} | {product} | {cvss} | {ransomware} | {due} |")
+
+    lines.append("")
+
+    # Deadline alert
+    due_dates = {}
+    overdue = []
+    today_dt = datetime.now()
+
+    for v in vulns:
+        due = v.get('dueDate', '')
+        if not due:
+            continue
+        try:
+            due_dt = datetime.strptime(due, '%Y-%m-%d')
+        except ValueError:
+            continue
+
+        if due_dt < today_dt:
+            overdue.append(v)
+        else:
+            due_dates.setdefault(due, []).append(v)
+
+    lines.append("## Deadline Alert")
+
+    if due_dates:
+        nearest = min(due_dates.keys())
+        nearest_count = len(due_dates[nearest])
+        lines.append(f"- **Nearest due date:** {nearest} ({nearest_count} CVE{'s' if nearest_count != 1 else ''})")
+    else:
+        lines.append("- **Nearest due date:** None")
+
+    if overdue:
+        lines.append(f"- **Overdue:** {len(overdue)} CVE{'s' if len(overdue) != 1 else ''}")
+    else:
+        lines.append("- **Overdue:** None")
+
+    lines.append("")
+
+    # Vendor summary
+    vendor_counts = {}
+    for v in vulns:
+        vendor = v.get('vendor', 'Unknown')
+        vendor_counts[vendor] = vendor_counts.get(vendor, 0) + 1
+
+    # Sort by count descending
+    sorted_vendors = sorted(vendor_counts.items(), key=lambda x: x[1], reverse=True)
+
+    lines.append("## Vendor Summary")
+    for vendor, count in sorted_vendors:
+        lines.append(f"- {vendor}: {count} CVE{'s' if count != 1 else ''}")
+    lines.append("")
+
+    # Quick review instructions
+    lines.append("## Quick Review")
+    lines.append("1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links")
+    lines.append("2. Edit `data/pending_review.json` — set `include_on_site: true` for approved CVEs")
+    lines.append("3. Push to main — auto-publish workflow handles the rest")
+
+    summary_path = DATA_DIR / "REVIEW_SUMMARY.md"
+    with open(summary_path, 'w') as f:
+        f.write("\n".join(lines) + "\n")
+
+    print(f"  - data/REVIEW_SUMMARY.md (quick summary for PR)")
 
 
 # ---------------------------------------------------------------------------
@@ -583,6 +706,9 @@ def cmd_fetch():
         review_md = generate_review_markdown(new_vulns)
         with open(DATA_DIR / "REVIEW.md", 'w') as f:
             f.write(review_md)
+
+        # Generate concise summary for PR body and step summary
+        generate_review_summary(new_vulns)
 
         print(f"\nAdded {len(new_vulns)} new CVEs (total pending: {len(existing_pending)})")
         print(f"  - data/pending_review.json (review & set include_on_site: true)")
