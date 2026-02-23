@@ -344,10 +344,18 @@ async function handleDownload(request, env, cors) {
 
     // Verify the file was part of the purchase
     const requestedFile = decodeURIComponent(file);
-    const validFiles = tokenData.items.map(item => {
-      const [certId, variant] = item.split('__');
-      return getFilename(certId, variant);
-    });
+    let validFiles;
+
+    if (tokenData.type === 'sprint-kit') {
+      // Sprint kit tokens store filenames directly in items[]
+      validFiles = tokenData.items;
+    } else {
+      // Planner tokens use certId__variant format
+      validFiles = tokenData.items.map(item => {
+        const [certId, variant] = item.split('__');
+        return getFilename(certId, variant);
+      });
+    }
 
     if (!validFiles.includes(requestedFile)) {
       return new Response('File not part of purchase', { status: 403 });
@@ -513,25 +521,35 @@ async function handleWebhook(request, env) {
 
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
-      const customerEmail = session.customer_details?.email;
-      const amountCents = session.amount_total;
-      const purchasedItems = session.metadata?.purchased_items || '';
-      const rawItems = purchasedItems.split(',').filter(Boolean);
-      const items = expandPurchasedItems(rawItems);
+      // Skip subscription checkouts — those are handled by invoice.paid
+      if (session.mode === 'subscription') {
+        console.log('Skipping subscription checkout (handled by invoice.paid)');
+      } else {
+        const customerEmail = session.customer_details?.email;
+        const amountCents = session.amount_total;
+        const purchasedItems = session.metadata?.purchased_items || '';
+        const rawItems = purchasedItems.split(',').filter(Boolean);
+        const items = expandPurchasedItems(rawItems);
 
-      if (items.length > 0) {
-        const downloads = await generateDownloadLinks(session.id, items, rawItems, env.STRIPE_WEBHOOK_SECRET);
+        if (items.length > 0) {
+          const downloads = await generateDownloadLinks(session.id, items, rawItems, env.STRIPE_WEBHOOK_SECRET);
 
-        // Send customer email + seller notification in parallel
-        const promises = [];
+          // Send customer email + seller notification in parallel
+          const promises = [];
 
-        if (customerEmail) {
-          promises.push(sendCustomerEmail(env, customerEmail, downloads, items));
+          if (customerEmail) {
+            promises.push(sendCustomerEmail(env, customerEmail, downloads, items));
+          }
+          promises.push(sendSellerNotification(env, customerEmail, downloads, items, amountCents));
+
+          await Promise.allSettled(promises);
         }
-        promises.push(sendSellerNotification(env, customerEmail, downloads, items, amountCents));
-
-        await Promise.allSettled(promises);
       }
+    }
+
+    // ─── SPRINT KIT SUBSCRIPTION: invoice.paid ───
+    if (event.type === 'invoice.paid') {
+      await handleInvoicePaid(event.data.object, env);
     }
   } catch (err) {
     // Log but still return 200 to prevent retries
@@ -649,6 +667,291 @@ async function sendCustomerEmail(env, toEmail, downloads, items) {
     }),
   });
 }
+
+// ═══════════════════════════════════════════════════
+// SPRINT KIT SUBSCRIPTION DELIVERY
+// ═══════════════════════════════════════════════════
+
+// ─── SPRINT KIT HELPERS ─────────────────────────
+function getCurrentKitFilename() {
+  const now = new Date();
+  const year = now.getUTCFullYear();
+  const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+  return `patch-sprint-kit-${year}-${month}.pdf`;
+}
+
+function getPreviousMonthKitFilename() {
+  const now = new Date();
+  now.setUTCMonth(now.getUTCMonth() - 1);
+  const year = now.getUTCFullYear();
+  const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+  return `patch-sprint-kit-${year}-${month}.pdf`;
+}
+
+function getKitMonthLabel(filename) {
+  // Extract "2026-03" from "patch-sprint-kit-2026-03.pdf"
+  const match = filename.match(/patch-sprint-kit-(\d{4})-(\d{2})\.pdf/);
+  if (!match) return filename;
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  return `${months[parseInt(match[2], 10) - 1]} ${match[1]}`;
+}
+
+async function createSprintKitToken(filename, secret) {
+  // 7-day expiry for subscription products (vs 24hr for one-time purchases)
+  const expiry = Date.now() + 7 * 24 * 60 * 60 * 1000;
+  const payload = btoa(JSON.stringify({
+    type: 'sprint-kit',
+    items: [filename],
+    expiry,
+  }));
+  const sig = await createTokenHmac(payload, secret);
+  return `${payload}.${sig}`;
+}
+
+function sprintKitDownloadUrl(token, filename) {
+  return `https://fixthevuln-checkout.robertflores17.workers.dev/download?token=${encodeURIComponent(token)}&file=${encodeURIComponent(filename)}`;
+}
+
+// ─── INVOICE.PAID HANDLER ───────────────────────
+async function handleInvoicePaid(invoice, env) {
+  // Only handle subscription invoices (skip one-time payments)
+  if (!invoice.subscription) return;
+
+  const customerEmail = invoice.customer_email;
+  const billingReason = invoice.billing_reason; // 'subscription_create', 'subscription_cycle', etc.
+
+  if (!customerEmail) {
+    console.error('Sprint kit invoice.paid: no customer email');
+    return;
+  }
+
+  const amountCents = invoice.amount_paid;
+
+  // Determine which kit to send
+  const currentKit = getCurrentKitFilename();
+  const previousKit = getPreviousMonthKitFilename();
+
+  // Check R2 for current month's kit
+  let kitFilename = currentKit;
+  let kitExists = await env.PLANNERS.head(currentKit);
+
+  if (!kitExists) {
+    // Fallback to previous month
+    kitExists = await env.PLANNERS.head(previousKit);
+    if (kitExists) {
+      kitFilename = previousKit;
+    } else {
+      // No kit available yet — send welcome email
+      await Promise.allSettled([
+        sendSprintKitWelcomeEmail(env, customerEmail),
+        sendSellerSprintKitNotification(env, customerEmail, null, billingReason, amountCents),
+      ]);
+      return;
+    }
+  }
+
+  // Generate 7-day download token and send PDF email
+  const token = await createSprintKitToken(kitFilename, env.STRIPE_WEBHOOK_SECRET);
+  const downloadUrl = sprintKitDownloadUrl(token, kitFilename);
+
+  await Promise.allSettled([
+    sendSprintKitEmail(env, customerEmail, downloadUrl, kitFilename, billingReason),
+    sendSellerSprintKitNotification(env, customerEmail, kitFilename, billingReason, amountCents),
+  ]);
+}
+
+// ─── SPRINT KIT CUSTOMER EMAIL ──────────────────
+async function sendSprintKitEmail(env, toEmail, downloadUrl, filename, billingReason) {
+  const monthLabel = getKitMonthLabel(filename);
+  const isFirstInvoice = billingReason === 'subscription_create';
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#f0fdf4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <div style="max-width:600px;margin:0 auto;padding:40px 20px;">
+    <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+      <!-- Header (green theme for ops kit) -->
+      <div style="background:linear-gradient(135deg,#10b981,#06b6d4);padding:32px 24px;text-align:center;">
+        <h1 style="color:#ffffff;margin:0;font-size:24px;font-weight:700;">FixTheVuln</h1>
+        <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:15px;">
+          ${isFirstInvoice ? 'Welcome to the Patch Tuesday Sprint Kit!' : `Your ${monthLabel} Sprint Kit is ready!`}
+        </p>
+      </div>
+      <!-- Body -->
+      <div style="padding:32px 24px;">
+        <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 24px;">
+          ${isFirstInvoice
+            ? 'Thank you for subscribing! Your first Patch Tuesday Sprint Kit PDF is ready to download. Each month after Patch Tuesday, you\'ll receive a fresh kit pre-filled with that cycle\'s CISA KEV vulnerabilities.'
+            : `Your ${monthLabel} Patch Tuesday Sprint Kit is here — pre-filled with this cycle's CISA KEV vulnerabilities, CVSS scores, and EPSS exploit predictions.`
+          }
+        </p>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+          <tr>
+            <td style="padding:16px;border:1px solid #d1fae5;border-radius:8px;background:#f0fdf4;">
+              <strong style="color:#1e293b;font-size:15px;">Patch Tuesday Sprint Kit — ${monthLabel}</strong>
+              <br><span style="color:#64748b;font-size:13px;">${filename}</span>
+              <br><span style="color:#64748b;font-size:12px;">Cover + Triage Matrix + Sprint Calendar + Test Checklist + SLA Tracker + Exec Summary</span>
+            </td>
+            <td style="padding:16px;text-align:right;vertical-align:middle;">
+              <a href="${downloadUrl}" style="display:inline-block;background:linear-gradient(135deg,#10b981,#06b6d4);color:#ffffff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">Download PDF</a>
+            </td>
+          </tr>
+        </table>
+        <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:14px 16px;margin-bottom:24px;">
+          <p style="margin:0;color:#92400e;font-size:13px;">
+            ⏰ <strong>Download link expires in 7 days.</strong> Please save your file after downloading.
+          </p>
+        </div>
+        <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0;">
+          Questions? Reply to this email or contact
+          <a href="mailto:hello@fixthevuln.com" style="color:#10b981;">hello@fixthevuln.com</a>
+        </p>
+      </div>
+      <!-- Footer -->
+      <div style="border-top:1px solid #e5e7eb;padding:20px 24px;text-align:center;">
+        <p style="margin:0;color:#94a3b8;font-size:12px;">&copy; 2026 FixTheVuln &middot; Security operations resources</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: 'FixTheVuln <hello@fixthevuln.com>',
+      to: [toEmail],
+      subject: `Your ${monthLabel} Patch Tuesday Sprint Kit`,
+      html,
+    }),
+  });
+}
+
+// ─── SPRINT KIT WELCOME EMAIL ───────────────────
+// Sent when subscriber signs up before the month's kit is generated
+async function sendSprintKitWelcomeEmail(env, toEmail) {
+  const html = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#f0fdf4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <div style="max-width:600px;margin:0 auto;padding:40px 20px;">
+    <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+      <div style="background:linear-gradient(135deg,#10b981,#06b6d4);padding:32px 24px;text-align:center;">
+        <h1 style="color:#ffffff;margin:0;font-size:24px;font-weight:700;">FixTheVuln</h1>
+        <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:15px;">Welcome to the Patch Tuesday Sprint Kit!</p>
+      </div>
+      <div style="padding:32px 24px;">
+        <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">
+          Thank you for subscribing! Your first Patch Tuesday Sprint Kit is being prepared.
+        </p>
+        <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">
+          After next Patch Tuesday, you'll receive an email with your PDF — pre-filled with that cycle's
+          CISA KEV vulnerabilities, CVSS scores, and EPSS exploit predictions.
+        </p>
+        <div style="background:#f0fdf4;border:1px solid #d1fae5;border-radius:8px;padding:16px;margin-bottom:24px;">
+          <p style="margin:0 0 8px;color:#1e293b;font-size:14px;font-weight:600;">What's included each month:</p>
+          <ul style="margin:0;padding-left:20px;color:#475569;font-size:14px;line-height:1.8;">
+            <li>Triage Matrix — pre-filled with CISA KEV CVEs + CVSS + EPSS</li>
+            <li>14-Day Sprint Calendar — dated from Patch Tuesday</li>
+            <li>Testing & Rollback Checklist — pre-filled vendors/products</li>
+            <li>SLA Compliance Tracker — severity tiers</li>
+            <li>Executive Summary — pre-filled metrics + signature block</li>
+          </ul>
+        </div>
+        <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0;">
+          In the meantime, use the <a href="https://fixthevuln.com/store/patch-tuesday-kit.html" style="color:#10b981;">free browser tool</a> to start planning.
+        </p>
+      </div>
+      <div style="border-top:1px solid #e5e7eb;padding:20px 24px;text-align:center;">
+        <p style="margin:0;color:#94a3b8;font-size:12px;">&copy; 2026 FixTheVuln &middot; Security operations resources</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: 'FixTheVuln <hello@fixthevuln.com>',
+      to: [toEmail],
+      subject: 'Welcome to the Patch Tuesday Sprint Kit!',
+      html,
+    }),
+  });
+}
+
+// ─── SELLER SPRINT KIT NOTIFICATION ─────────────
+async function sendSellerSprintKitNotification(env, customerEmail, filename, billingReason, amountCents) {
+  const reasonLabels = {
+    'subscription_create': 'New subscription',
+    'subscription_cycle': 'Monthly renewal',
+    'subscription_update': 'Subscription update',
+  };
+  const reason = reasonLabels[billingReason] || billingReason;
+  const kitInfo = filename ? getKitMonthLabel(filename) : 'Kit not yet generated (welcome email sent)';
+  const amount = amountCents ? `$${(amountCents / 100).toFixed(2)}/mo` : '$4.99/mo';
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#f0fdf4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <div style="max-width:600px;margin:0 auto;padding:40px 20px;">
+    <div style="background:#ffffff;border-radius:12px;padding:32px 24px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+      <h2 style="color:#1e293b;margin:0 0 20px;font-size:20px;">Sprint Kit Subscription 📋</h2>
+      <table style="width:100%;border-collapse:collapse;">
+        <tr>
+          <td style="padding:8px 0;color:#64748b;font-size:14px;width:120px;">Customer</td>
+          <td style="padding:8px 0;color:#1e293b;font-size:14px;font-weight:600;">${customerEmail}</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 0;color:#64748b;font-size:14px;">Type</td>
+          <td style="padding:8px 0;color:#1e293b;font-size:14px;font-weight:600;">${reason}</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 0;color:#64748b;font-size:14px;">Amount</td>
+          <td style="padding:8px 0;color:#1e293b;font-size:14px;font-weight:600;">${amount}</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 0;color:#64748b;font-size:14px;">Kit Sent</td>
+          <td style="padding:8px 0;color:#1e293b;font-size:14px;font-weight:600;">${kitInfo}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: 'FixTheVuln Store <hello@fixthevuln.com>',
+      to: ['hello@fixthevuln.com'],
+      subject: `Sprint Kit: ${customerEmail} (${reason})`,
+      html,
+    }),
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// PLANNER STORE (EXISTING)
+// ═══════════════════════════════════════════════════
 
 // ─── SELLER NOTIFICATION ────────────────────────
 async function sendSellerNotification(env, customerEmail, downloads, items, amountCents) {

@@ -1,0 +1,98 @@
+name: Generate Patch Tuesday Sprint Kit
+
+on:
+  schedule:
+    # Wednesday after 2nd Tuesday (Patch Tuesday) at 12PM Pacific (20:00 UTC)
+    # 2nd Tuesday falls on days 8-14, so Wednesday after is days 9-15
+    - cron: '0 20 9-15 * 3'
+  workflow_dispatch:
+    inputs:
+      month:
+        description: 'Target month (YYYY-MM format, e.g. 2026-03)'
+        required: false
+        type: string
+
+jobs:
+  generate-and-upload:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Set up Python
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install reportlab
+
+      - name: Fetch latest KEV data
+        run: python scripts/fetch_kev.py
+
+      - name: Generate Sprint Kit PDF
+        id: generate
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+          TARGET_MONTH: ${{ github.event.inputs.month }}
+        run: |
+          if [ -n "$TARGET_MONTH" ]; then
+            python scripts/generate_sprint_kit.py --month "$TARGET_MONTH"
+          else
+            python scripts/generate_sprint_kit.py
+          fi
+
+      - name: Upload PDF to R2
+        if: steps.generate.outputs.has_cves != 'false'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          # Install wrangler
+          npm install -g wrangler
+
+          # Find the generated PDF
+          PDF_FILE=$(ls data/sprint-kits/patch-sprint-kit-*.pdf 2>/dev/null | head -1)
+          if [ -z "$PDF_FILE" ]; then
+            echo "Error: No PDF found in data/sprint-kits/"
+            exit 1
+          fi
+          PDF_NAME=$(basename "$PDF_FILE")
+
+          echo "Uploading $PDF_NAME to R2..."
+          wrangler r2 object put "fixthevuln-planners/$PDF_NAME" \
+            --file="$PDF_FILE" \
+            --content-type="application/pdf"
+
+          echo "pdf_name=$PDF_NAME" >> $GITHUB_OUTPUT
+
+      - name: Commit manifest update
+        if: steps.generate.outputs.has_cves != 'false'
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+
+          git add data/sprint-kit-manifest.json
+          if git diff --staged --quiet; then
+            echo "No manifest changes to commit"
+          else
+            git commit -m "Update sprint kit manifest ($(date +'%Y-%m-%d'))"
+            git push
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### Patch Tuesday Sprint Kit" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f "data/sprint-kit-manifest.json" ]; then
+            echo "Manifest:" >> $GITHUB_STEP_SUMMARY
+            echo '```json' >> $GITHUB_STEP_SUMMARY
+            cat data/sprint-kit-manifest.json >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "CVE count: ${{ steps.generate.outputs.cve_count }}" >> $GITHUB_STEP_SUMMARY
