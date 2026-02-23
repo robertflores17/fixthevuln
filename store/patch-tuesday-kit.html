@@ -4,19 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Patch Tuesday Sprint Kit | FixTheVuln Store</title>
-  <meta name="description" content="Monthly patch management sprint kit with fillable triage matrix, 14-day sprint calendar, testing checklists, SLA tracker, and executive summary templates. $4.99/month.">
+  <meta name="description" content="Monthly patch management sprint kit for Windows, Linux, macOS & network devices. Fillable triage matrix, 14-day sprint calendar, testing checklists, SLA tracker, and executive summary. $4.99/month.">
   <link rel="icon" href="/favicon.ico" sizes="any">
   <!-- Open Graph -->
   <meta property="og:title" content="Patch Tuesday Sprint Kit | FixTheVuln Store">
   <meta property="og:description" content="Monthly patch management sprint kit: triage matrix, 14-day sprint calendar, testing checklists, SLA tracker & executive summary. $4.99/month.">
   <meta property="og:type" content="product">
   <meta property="og:url" content="https://fixthevuln.com/store/patch-tuesday-kit.html">
-  <meta property="og:image" content="https://fixthevuln.com/assets/store-og.png">
+  <meta property="og:image" content="https://fixthevuln.com/store/patch-kit-og.png">
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Patch Tuesday Sprint Kit | FixTheVuln Store">
   <meta name="twitter:description" content="Monthly patch management sprint kit: triage matrix, 14-day sprint calendar, testing checklists, SLA tracker & executive summary.">
-  <meta name="twitter:image" content="https://fixthevuln.com/assets/store-og.png">
+  <meta name="twitter:image" content="https://fixthevuln.com/store/patch-kit-og.png">
   <!-- Schema.org Product -->
   <script type="application/ld+json">
   {
@@ -1052,7 +1052,7 @@
     <section class="kit-hero animate-in">
       <div class="kit-hero-badge">Security Operations Kit</div>
       <h1>Patch Tuesday Sprint Kit</h1>
-      <p class="kit-hero-sub">Everything your VM team needs to triage, test, deploy, and report on patches &mdash; every month. Fillable templates you can print or use on-screen.</p>
+      <p class="kit-hero-sub">Everything your VM team needs to triage, test, deploy, and report on patches &mdash; every month. Covers Windows, Linux, macOS, network devices, and third-party apps. Fillable templates you can print or use on-screen.</p>
       <div class="kit-chips">
         <span class="kit-chip">Triage Matrix</span>
         <span class="kit-chip">14-Day Sprint Calendar</span>
@@ -1167,8 +1167,8 @@
               <li><input type="checkbox"> Snapshot/backup of target systems taken</li>
               <li><input type="checkbox"> Change request approved and documented</li>
               <li><input type="checkbox"> Test environment mirrors production config</li>
-              <li><input type="checkbox"> Patch dependencies and prerequisites verified</li>
-              <li><input type="checkbox"> Rollback procedure documented and tested</li>
+              <li><input type="checkbox"> Patch dependencies verified (Windows, Linux repos, firmware)</li>
+              <li><input type="checkbox"> Rollback procedure documented per platform</li>
               <li><input type="checkbox"> Maintenance window communicated to stakeholders</li>
               <li><input type="checkbox"> Monitoring alerts configured for deployment window</li>
             </ul>
@@ -1181,8 +1181,8 @@
               <li><input type="checkbox"> Patches applied in correct order</li>
               <li><input type="checkbox"> System reboots completed (if required)</li>
               <li><input type="checkbox"> Services restarted and confirmed running</li>
-              <li><input type="checkbox"> Patch installation verified (version check)</li>
-              <li><input type="checkbox"> No new errors in system/application logs</li>
+              <li><input type="checkbox"> Patch installation verified (version check per OS)</li>
+              <li><input type="checkbox"> No new errors in event logs / syslog / journald</li>
               <li><input type="checkbox"> Network connectivity confirmed</li>
             </ul>
           </div>
@@ -1209,7 +1209,7 @@
               <li><input type="checkbox"> Network connectivity loss (&gt;5 min)</li>
               <li><input type="checkbox"> Performance degradation &gt;20% from baseline</li>
               <li><input type="checkbox"> Data integrity issues detected</li>
-              <li><input type="checkbox"> Blue screen / kernel panic on restart</li>
+              <li><input type="checkbox"> Blue screen / kernel panic / boot failure on restart</li>
               <li><input type="checkbox"> Rollback initiated &mdash; snapshot restored</li>
             </ul>
           </div>
@@ -1471,18 +1471,18 @@
     (function buildSprintCalendar() {
       const container = document.getElementById('sprintCalendar');
       const days = [
-        { day: 1, phase: 'download', title: 'Download & Review Patches', items: ['Download vendor advisories (Microsoft, Adobe, etc.)', 'Review CISA KEV additions', 'Cross-reference with EPSS scores', 'Identify zero-days requiring emergency action'] },
-        { day: 2, phase: 'classify', title: 'Classify & Prioritize', items: ['Map CVEs to affected assets in inventory', 'Assign severity using CVSS + KEV + EPSS', 'Identify business-critical systems', 'Fill out Triage Matrix (Template 1)'] },
-        { day: 3, phase: 'classify', title: 'Test Environment Prep', items: ['Update test/staging environment to match production', 'Create VM snapshots for rollback', 'Prepare deployment groups (pilot, wave 1, wave 2)', 'Document rollback procedures'] },
-        { day: 4, phase: 'test', title: 'Test Critical Patches', items: ['Deploy critical (P1) patches to test environment', 'Run automated regression tests', 'Verify application compatibility', 'Document test results and any issues'] },
-        { day: 5, phase: 'test', title: 'Test High-Priority Patches', items: ['Deploy high (P2) patches to test environment', 'Run integration tests for dependent systems', 'Performance baseline comparison', 'Update test results log'] },
-        { day: 6, phase: 'deploy-crit', title: 'Deploy Critical to Pilot', items: ['Deploy P1 patches to pilot group (5-10% of fleet)', 'Monitor for 4+ hours post-deployment', 'Check application logs for errors', 'Confirm no performance degradation'] },
-        { day: 7, phase: 'deploy-crit', title: 'Deploy Critical to Production', items: ['Expand P1 patches to full production', 'Monitor dashboards and alerting systems', 'Verify vulnerability scan shows remediation', 'Update CMDB / asset inventory'] },
-        { day: 8, phase: 'deploy-prod', title: 'Deploy High to Pilot', items: ['Deploy P2 patches to pilot group', 'Run smoke tests on critical workflows', 'Monitor resource utilization (CPU, memory, disk)', 'Collect user feedback from pilot group'] },
-        { day: 9, phase: 'deploy-prod', title: 'Deploy High to Wave 1', items: ['Expand P2 to first production wave (~50%)', 'Monitor for 4+ hours', 'Validate no service disruptions', 'Escalate any issues to engineering'] },
-        { day: 10, phase: 'deploy-prod', title: 'Deploy High to Full Production', items: ['Complete P2 rollout to remaining systems', 'Confirm all high-priority CVEs patched', 'Run targeted vulnerability scan', 'Update patch status in Triage Matrix'] },
-        { day: 11, phase: 'deploy-rest', title: 'Deploy Medium & Low', items: ['Deploy P3/P4 patches to test, then production', 'These carry lower risk — larger deployment waves OK', 'Monitor for compatibility issues', 'Document any deferred patches'] },
-        { day: 12, phase: 'deploy-rest', title: 'Verify & Validate', items: ['Full vulnerability scan of all patched systems', 'Compare pre/post patch scan results', 'Confirm all SLA-tracked CVEs addressed', 'Identify any missed or failed patches'] },
+        { day: 1, phase: 'download', title: 'Download & Review Patches', items: ['Download vendor advisories (Microsoft, Adobe, Apple, Cisco, etc.)', 'Check Linux distro security trackers (RHEL, Ubuntu, SUSE)', 'Review CISA KEV additions', 'Cross-reference with EPSS scores', 'Identify zero-days requiring emergency action'] },
+        { day: 2, phase: 'classify', title: 'Classify & Prioritize', items: ['Map CVEs to affected assets — Windows, Linux, macOS, network', 'Assign severity using CVSS + KEV + EPSS', 'Identify business-critical systems across all platforms', 'Fill out Triage Matrix (Template 1)'] },
+        { day: 3, phase: 'classify', title: 'Test Environment Prep', items: ['Update test/staging for each OS (Windows, Linux, macOS)', 'Create VM snapshots and config backups for network devices', 'Prepare deployment groups (pilot, wave 1, wave 2)', 'Document rollback procedures per platform'] },
+        { day: 4, phase: 'test', title: 'Test Critical Patches', items: ['Deploy P1 patches to test — Windows (WSUS/SCCM/Intune)', 'Deploy P1 patches to test — Linux (yum/apt/zypper)', 'Test network device firmware updates in lab', 'Document test results and any issues'] },
+        { day: 5, phase: 'test', title: 'Test High-Priority Patches', items: ['Deploy P2 patches to test across all platforms', 'Run integration tests for dependent systems', 'Performance baseline comparison', 'Test third-party app updates (browsers, Java, etc.)'] },
+        { day: 6, phase: 'deploy-crit', title: 'Deploy Critical to Pilot', items: ['Deploy P1 to pilot group (5-10% per platform)', 'Monitor for 4+ hours post-deployment', 'Check application logs and syslog/journald for errors', 'Confirm no performance degradation'] },
+        { day: 7, phase: 'deploy-crit', title: 'Deploy Critical to Production', items: ['Expand P1 patches to full production — all platforms', 'Monitor dashboards and alerting systems', 'Verify vulnerability scan shows remediation', 'Update CMDB / asset inventory'] },
+        { day: 8, phase: 'deploy-prod', title: 'Deploy High to Pilot', items: ['Deploy P2 patches to pilot group — Windows + Linux + macOS', 'Run smoke tests on critical workflows', 'Monitor resource utilization (CPU, memory, disk)', 'Deploy network device updates to non-production'] },
+        { day: 9, phase: 'deploy-prod', title: 'Deploy High to Wave 1', items: ['Expand P2 to first production wave (~50%)', 'Monitor for 4+ hours', 'Validate no service disruptions across platforms', 'Escalate any issues to engineering'] },
+        { day: 10, phase: 'deploy-prod', title: 'Deploy High to Full Production', items: ['Complete P2 rollout to remaining systems', 'Deploy network device firmware to production', 'Run targeted vulnerability scan — all platforms', 'Update patch status in Triage Matrix'] },
+        { day: 11, phase: 'deploy-rest', title: 'Deploy Medium & Low', items: ['Deploy P3/P4 patches across all OS platforms', 'Update third-party apps (Adobe, Chrome, Java, Python)', 'Apply macOS supplemental updates and XProtect', 'Document any deferred patches with justification'] },
+        { day: 12, phase: 'deploy-rest', title: 'Verify & Validate', items: ['Full vulnerability scan of all patched systems', 'Compare pre/post scan results across Windows, Linux, macOS', 'Verify network device firmware versions match target', 'Identify any missed or failed patches'] },
         { day: 13, phase: 'exceptions', title: 'Exceptions & Rollback Decisions', items: ['Review any failed deployments', 'Document exception requests with business justification', 'Set compensating controls for deferred patches', 'Get management sign-off on exceptions'] },
         { day: 14, phase: 'report', title: 'Compliance Reporting', items: ['Complete SLA Compliance Tracker (Template 4)', 'Write Executive Summary (Template 5)', 'Archive all documentation for audit trail', 'Conduct brief retrospective — lessons learned'] },
       ];
