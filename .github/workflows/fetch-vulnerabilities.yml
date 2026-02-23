@@ -2,9 +2,9 @@ name: Fetch CISA KEV Vulnerabilities
 
 on:
   schedule:
-    # Runs every Saturday at 7 AM Pacific (15:00 UTC)
+    # Runs daily at 7 AM Pacific (15:00 UTC)
     # Note: During Daylight Saving Time, this will be 8 AM PDT
-    - cron: '0 15 * * 6'
+    - cron: '0 15 * * *'
   workflow_dispatch:
     # Allows manual trigger for testing
 
@@ -112,7 +112,7 @@ jobs:
           else
             echo "Creating new PR"
             gh pr create \
-              --title "Weekly Vulnerability Update - Review Needed ($(date +'%Y-%m-%d'))" \
+              --title "Daily Vulnerability Update - Review Needed ($(date +'%Y-%m-%d'))" \
               --body "$PR_BODY" \
               --base main \
               --head "$BRANCH_NAME"
