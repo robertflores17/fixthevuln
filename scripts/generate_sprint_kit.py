@@ -40,6 +40,9 @@ from reportlab.platypus import (
     PageBreak, KeepTogether
 )
 from reportlab.platypus.flowables import HRFlowable, Flowable
+from reportlab.graphics.shapes import Drawing, String
+from reportlab.graphics.charts.piecharts import Pie
+from reportlab.graphics.charts.barcharts import HorizontalBarChart
 
 # ── AcroForm Flowable Subclasses ─────────────────────
 # These allow interactive PDF form fields inside Platypus Table cells.
@@ -105,6 +108,20 @@ class AcroCheckbox(Flowable):
             annotationFlags='print',
             relative=True,
         )
+
+
+class ChartFlowable(Flowable):
+    """Wraps a ReportLab Drawing for use in Platypus layouts."""
+
+    def __init__(self, drawing):
+        super().__init__()
+        self.drawing = drawing
+
+    def wrap(self, availWidth, availHeight):
+        return self.drawing.width, self.drawing.height
+
+    def draw(self):
+        self.drawing.drawOn(self.canv, 0, 0)
 
 
 # ── Configuration ────────────────────────────────────
@@ -226,6 +243,97 @@ def epss_interpretation(percentile):
         if percentile >= threshold:
             return label, color
     return 'Below Median', LOW_BLUE
+
+
+def calculate_pps(entry):
+    """Compute Patch Priority Score (0-100) from CVSS, EPSS percentile, and ransomware signal."""
+    cvss = entry.get('cvss', 0) or 0
+    epss_pctl = entry.get('epss_percentile', 0) or 0
+    rw = 100 if entry.get('ransomware') == 'Known' else 0
+
+    cvss_norm = (cvss / 10.0) * 100
+    epss_scaled = epss_pctl * 100
+
+    pps = (cvss_norm * 0.40) + (epss_scaled * 0.45) + (rw * 0.15)
+    return int(round(min(pps, 100)))
+
+
+def pps_label(score):
+    """Return (label, color_hex) for a PPS score."""
+    if score >= 80:
+        return ('CRITICAL', '#dc2626')
+    if score >= 60:
+        return ('HIGH', '#ea580c')
+    if score >= 40:
+        return ('MODERATE', '#ca8a04')
+    return ('LOW', '#2563eb')
+
+
+def generate_executive_narrative(entries, sev, vendors, cwes):
+    """Build a data-driven executive narrative string."""
+    total = len(entries)
+    vendor_count = len(vendors)
+    critical = sev['critical']
+
+    pps_scores = [e.get('pps', 0) for e in entries]
+    avg_pps = sum(pps_scores) / len(pps_scores) if pps_scores else 0
+
+    parts = []
+
+    # Opening
+    parts.append(
+        f"This Patch Tuesday cycle includes {total} vulnerabilities across "
+        f"{vendor_count} vendor{'s' if vendor_count != 1 else ''}, "
+        f"with {critical} rated critical severity."
+    )
+
+    # EPSS paragraph
+    top5_entries = [e for e in entries if e.get('epss_percentile', 0) >= 0.95]
+    if top5_entries:
+        top_entry = max(top5_entries, key=lambda e: e.get('pps', 0))
+        parts.append(
+            f"{len(top5_entries)} CVE{'s' if len(top5_entries) != 1 else ''} "
+            f"rank in the EPSS Top 5% for exploitation likelihood, indicating active or "
+            f"imminent exploitation. The highest-risk vulnerability is {top_entry['cveID']} "
+            f"({top_entry['vendor']} {top_entry['product']}, CVSS {top_entry.get('cvss', 0):.1f}, "
+            f"PPS {top_entry.get('pps', 0)}), which should be prioritized for immediate remediation."
+        )
+
+    # Ransomware paragraph
+    rw_entries = [e for e in entries if e.get('ransomware') == 'Known']
+    if rw_entries:
+        rw_cves = ", ".join(e['cveID'] for e in rw_entries[:5])
+        if len(rw_entries) > 5:
+            rw_cves += f", +{len(rw_entries) - 5} more"
+        parts.append(
+            f"{len(rw_entries)} vulnerabilit{'ies' if len(rw_entries) != 1 else 'y'} "
+            f"{'are' if len(rw_entries) != 1 else 'is'} linked to known ransomware campaigns: "
+            f"{rw_cves}. These represent elevated organizational risk and should be escalated."
+        )
+
+    # CWE paragraph
+    if cwes:
+        top_cwe_id, top_cwe_name, top_cwe_count = cwes[0]
+        parts.append(
+            f"The most prevalent weakness type is {top_cwe_id} \u2014 {top_cwe_name} "
+            f"({top_cwe_count} instance{'s' if top_cwe_count != 1 else ''}), suggesting a pattern "
+            f"that may warrant focused vendor communication or compensating controls."
+        )
+
+    # Closing
+    if avg_pps >= 60:
+        risk_level = "HIGH"
+    elif avg_pps >= 40:
+        risk_level = "MODERATE"
+    else:
+        risk_level = "LOW"
+
+    parts.append(
+        f"Overall cycle risk is {risk_level} based on an average "
+        f"Patch Priority Score of {avg_pps:.0f}/100."
+    )
+
+    return "\n\n".join(parts)
 
 
 def get_previous_month_data(current_year, current_month):
@@ -455,8 +563,12 @@ def build_enriched_cve_list(kev_vulns, epss_data):
     # Enrich with CVSS
     entries = enrich_with_cvss(entries, epss_data)
 
-    # Sort: CVSS desc, then EPSS desc
-    entries.sort(key=lambda e: (e.get('cvss', 0) or 0, e.get('epss', 0) or 0), reverse=True)
+    # Compute Patch Priority Score for each entry
+    for entry in entries:
+        entry['pps'] = calculate_pps(entry)
+
+    # Sort by PPS descending (single composite score drives priority)
+    entries.sort(key=lambda e: e.get('pps', 0), reverse=True)
 
     return entries
 
@@ -616,6 +728,9 @@ def build_cover_page(entries, month_label, cycle_start, cycle_end, styles):
     # Stats row
     sev = severity_breakdown(entries)
     ransomware_count = sum(1 for e in entries if e.get('ransomware') == 'Known')
+    pps_scores = [e.get('pps', 0) for e in entries]
+    avg_pps = int(round(sum(pps_scores) / len(pps_scores))) if pps_scores else 0
+    avg_pps_lbl, avg_pps_color = pps_label(avg_pps)
 
     stats_data = [[
         Paragraph(f'<font size="22"><b>{len(entries)}</b></font><br/><font size="9" color="#64748b">Total CVEs</font>', ParagraphStyle('s', alignment=TA_CENTER)),
@@ -623,9 +738,10 @@ def build_cover_page(entries, month_label, cycle_start, cycle_end, styles):
         Paragraph(f'<font size="22" color="#ea580c"><b>{sev["high"]}</b></font><br/><font size="9" color="#64748b">High</font>', ParagraphStyle('s', alignment=TA_CENTER)),
         Paragraph(f'<font size="22" color="#ca8a04"><b>{sev["medium"]}</b></font><br/><font size="9" color="#64748b">Medium</font>', ParagraphStyle('s', alignment=TA_CENTER)),
         Paragraph(f'<font size="22" color="#2563eb"><b>{sev["low"]}</b></font><br/><font size="9" color="#64748b">Low</font>', ParagraphStyle('s', alignment=TA_CENTER)),
+        Paragraph(f'<font size="22" color="{avg_pps_color}"><b>{avg_pps}</b></font><br/><font size="9" color="#64748b">Avg PPS</font>', ParagraphStyle('s', alignment=TA_CENTER)),
     ]]
 
-    stats_table = Table(stats_data, colWidths=[1.3 * inch] * 5)
+    stats_table = Table(stats_data, colWidths=[1.08 * inch] * 6)
     stats_table.setStyle(TableStyle([
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
@@ -636,8 +752,13 @@ def build_cover_page(entries, month_label, cycle_start, cycle_end, styles):
         ('BACKGROUND', (0, 0), (-1, -1), HexColor('#f8fafc')),
     ]))
     elements.append(stats_table)
+    elements.append(Spacer(1, 4))
+    elements.append(Paragraph(
+        "PPS = Patch Priority Score (40% CVSS + 45% EPSS Percentile + 15% Ransomware Signal)",
+        styles['SmallText']
+    ))
 
-    elements.append(Spacer(1, 0.4 * inch))
+    elements.append(Spacer(1, 0.3 * inch))
 
     # Cycle info
     cycle_text = f"Patch Tuesday Cycle: {cycle_start.strftime('%b %d')} \u2013 {cycle_end.strftime('%b %d, %Y')}"
@@ -701,7 +822,7 @@ def build_triage_matrix(entries, styles):
     elements.append(Paragraph("1. Triage Matrix", styles['SectionHeader']))  # Section 1 stays as-is
     elements.append(Paragraph(
         "Pre-filled with CISA KEV vulnerabilities for this Patch Tuesday cycle. "
-        "Sorted by risk (CVSS descending, then EPSS). Mark your triage decision in the Priority column.",
+        "Sorted by Patch Priority Score (PPS) descending. Mark your triage decision in the Priority column.",
         styles['KitBody']
     ))
     elements.append(Spacer(1, 10))
@@ -714,11 +835,12 @@ def build_triage_matrix(entries, styles):
         Paragraph('<b>EPSS</b>', styles['CellText']),
         Paragraph('<b>Due Date</b>', styles['CellText']),
         Paragraph('<b>KR</b>', styles['CellText']),
+        Paragraph('<b>PPS</b>', styles['CellText']),
         Paragraph('<b>Priority</b>', styles['CellText']),
         Paragraph('<b>Owner</b>', styles['CellText']),
     ]
 
-    col_widths = [1.1 * inch, 1.55 * inch, 0.5 * inch, 0.55 * inch, 0.7 * inch, 0.35 * inch, 0.95 * inch, 1.1 * inch]
+    col_widths = [1.05 * inch, 1.25 * inch, 0.45 * inch, 0.5 * inch, 0.7 * inch, 0.35 * inch, 0.45 * inch, 0.9 * inch, 1.05 * inch]
 
     rows = [header]
     for i, e in enumerate(entries):
@@ -726,6 +848,8 @@ def build_triage_matrix(entries, styles):
         sev_label, sev_color = severity_label(cvss)
         epss = e.get('epss', 0) or 0
         rw = 'Yes' if e.get('ransomware') == 'Known' else ''
+        pps = e.get('pps', 0)
+        pps_lbl, pps_color = pps_label(pps)
 
         rows.append([
             Paragraph(f'<font size="7">{e["cveID"]}</font>', styles['CellText']),
@@ -734,8 +858,9 @@ def build_triage_matrix(entries, styles):
             Paragraph(f'<font size="7">{epss:.3f}</font>', styles['CellText']),
             Paragraph(f'<font size="7">{e.get("dueDate", "")}</font>', styles['CellText']),
             Paragraph(f'<font size="7" color="#dc2626">{rw}</font>', styles['CellText']),
-            AcroTextField(name=f'triage_priority_{i}', width=60, height=14),
-            AcroTextField(name=f'triage_owner_{i}', width=71, height=14),
+            Paragraph(f'<font size="8" color="{pps_color}"><b>{pps}</b></font>', styles['CellText']),
+            AcroTextField(name=f'triage_priority_{i}', width=56, height=14),
+            AcroTextField(name=f'triage_owner_{i}', width=66, height=14),
         ])
 
     table = Table(rows, colWidths=col_widths, repeatRows=1)
@@ -754,21 +879,24 @@ def build_triage_matrix(entries, styles):
         ('GRID', (0, 0), (-1, -1), 0.5, BORDER_GRAY),
         ('BOX', (0, 0), (-1, -1), 1, TEXT_MED),
         # Extra padding for form field rows
-        ('BOTTOMPADDING', (6, 1), (7, -1), 8),
+        ('BOTTOMPADDING', (7, 1), (8, -1), 8),
     ]
 
     for i in range(1, len(rows)):
         bg = ROW_ALT if i % 2 == 0 else ROW_WHITE
         table_style.append(('BACKGROUND', (0, i), (-1, i), bg))
 
+    # Add legend as final row spanning all columns so it never splits to a separate page
+    legend_text = "KR = Known Ransomware  |  EPSS = Exploit Prediction Scoring (0\u20131)  |  PPS = Patch Priority Score \u2014 40% CVSS + 45% EPSS + 15% Ransomware (0\u2013100)"
+    legend_row = [Paragraph(f'<font size="7" color="#94a3b8">{legend_text}</font>', styles['CellText'])] + [''] * 8
+    rows.append(legend_row)
+    table_style.append(('SPAN', (0, len(rows) - 1), (-1, len(rows) - 1)))
+    table_style.append(('BACKGROUND', (0, len(rows) - 1), (-1, len(rows) - 1), ROW_WHITE))
+    table_style.append(('TOPPADDING', (0, len(rows) - 1), (-1, len(rows) - 1), 6))
+    table_style.append(('BOTTOMPADDING', (0, len(rows) - 1), (-1, len(rows) - 1), 4))
+
     table.setStyle(TableStyle(table_style))
     elements.append(table)
-
-    elements.append(Spacer(1, 10))
-    elements.append(Paragraph(
-        "KR = Known Ransomware Campaign Use  |  EPSS = Exploit Prediction Scoring System (0\u20131, higher = more likely exploited)",
-        styles['SmallText']
-    ))
 
     elements.append(PageBreak())
     return elements
@@ -1370,6 +1498,90 @@ def build_sla_tracker(entries, styles):
     return elements
 
 
+def build_severity_donut(sev):
+    """Build a severity distribution donut chart Drawing."""
+    d = Drawing(200, 200)
+
+    # Title — positioned above label zone
+    d.add(String(100, 188, 'Severity Distribution', fontSize=10,
+                 fontName='Helvetica-Bold', textAnchor='middle',
+                 fillColor=HexColor('#1e293b')))
+
+    segments = []
+    colors = []
+    labels = []
+    tier_data = [
+        ('Critical', sev.get('critical', 0), HexColor('#dc2626')),
+        ('High', sev.get('high', 0), HexColor('#ea580c')),
+        ('Medium', sev.get('medium', 0), HexColor('#ca8a04')),
+        ('Low', sev.get('low', 0), HexColor('#2563eb')),
+    ]
+
+    for label, count, color in tier_data:
+        if count > 0:
+            segments.append(count)
+            colors.append(color)
+            labels.append(f'{label}: {count}')
+
+    if not segments:
+        return d
+
+    pie = Pie()
+    pie.x = 30
+    pie.y = 10
+    pie.width = 130
+    pie.height = 130
+    pie.data = segments
+    pie.labels = labels
+    pie.simpleLabels = 0
+    pie.innerRadiusFraction = 0.5
+    pie.slices.strokeWidth = 1
+    pie.slices.strokeColor = white
+
+    for i, color in enumerate(colors):
+        pie.slices[i].fillColor = color
+        pie.slices[i].labelRadius = 1.35
+        pie.slices[i].fontName = 'Helvetica'
+        pie.slices[i].fontSize = 8
+
+    d.add(pie)
+    return d
+
+
+def build_epss_bar_chart(top5, top20, above, below):
+    """Build an EPSS risk distribution horizontal bar chart Drawing."""
+    d = Drawing(280, 200)
+
+    # Title
+    d.add(String(140, 188, 'EPSS Risk Distribution', fontSize=10,
+                 fontName='Helvetica-Bold', textAnchor='middle',
+                 fillColor=HexColor('#1e293b')))
+
+    bc = HorizontalBarChart()
+    bc.x = 90
+    bc.y = 15
+    bc.width = 170
+    bc.height = 130
+    bc.data = [[top5, top20, above, below]]
+    bc.categoryAxis.categoryNames = ['Top 5%', 'Top 20%', 'Above Med', 'Below Med']
+    bc.categoryAxis.labels.fontName = 'Helvetica'
+    bc.categoryAxis.labels.fontSize = 8
+    bc.categoryAxis.labels.dx = -5
+    bc.valueAxis.valueMin = 0
+    bc.valueAxis.valueMax = max(top5, top20, above, below, 1) + 1
+    bc.valueAxis.valueStep = max(1, (max(top5, top20, above, below, 1) + 1) // 5) or 1
+    bc.valueAxis.labels.fontName = 'Helvetica'
+    bc.valueAxis.labels.fontSize = 7
+    bc.bars.strokeWidth = 0
+
+    bar_colors = [HexColor('#dc2626'), HexColor('#ea580c'), HexColor('#ca8a04'), HexColor('#2563eb')]
+    for i, color in enumerate(bar_colors):
+        bc.bars[0, i].fillColor = color
+
+    d.add(bc)
+    return d
+
+
 def build_executive_summary(entries, month_label, cycle_start, cycle_end, styles):
     """Page: Executive Summary with pre-filled metrics, CWE analysis, risk highlights, and EPSS distribution."""
     elements = []
@@ -1419,6 +1631,27 @@ def build_executive_summary(entries, month_label, cycle_start, cycle_end, styles
 
     elements.append(Spacer(1, 14))
 
+    # ── Visual Charts (side by side) ──
+    epss_top5 = sum(1 for e in entries if e.get('epss_percentile', 0) >= 0.95)
+    epss_top20 = sum(1 for e in entries if 0.80 <= e.get('epss_percentile', 0) < 0.95)
+    epss_above_median = sum(1 for e in entries if 0.50 <= e.get('epss_percentile', 0) < 0.80)
+    epss_below_median = sum(1 for e in entries if e.get('epss_percentile', 0) < 0.50)
+
+    donut_drawing = build_severity_donut(sev)
+    bar_drawing = build_epss_bar_chart(epss_top5, epss_top20, epss_above_median, epss_below_median)
+
+    chart_row = [[ChartFlowable(donut_drawing), ChartFlowable(bar_drawing)]]
+    chart_table = Table(chart_row, colWidths=[3.2 * inch, 3.8 * inch])
+    chart_table.setStyle(TableStyle([
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('TOPPADDING', (0, 0), (-1, -1), 6),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+    ]))
+    elements.append(chart_table)
+
+    elements.append(Spacer(1, 14))
+
     # ── CWE Analysis table ──
     cwes = cwe_analysis(entries)
     if cwes:
@@ -1457,10 +1690,6 @@ def build_executive_summary(entries, month_label, cycle_start, cycle_end, styles
     elements.append(Paragraph("<b>Risk Highlights</b>", styles['KitBody']))
     elements.append(Spacer(1, 4))
 
-    # EPSS Top 5% count
-    epss_top5 = sum(1 for e in entries if e.get('epss_percentile', 0) >= 0.95)
-    epss_top20 = sum(1 for e in entries if 0.80 <= e.get('epss_percentile', 0) < 0.95)
-
     risk_bullets = []
     if epss_top5 > 0:
         risk_bullets.append(f'{epss_top5} CVE{"s" if epss_top5 != 1 else ""} in EPSS Top 5% (highest exploitation likelihood)')
@@ -1481,9 +1710,6 @@ def build_executive_summary(entries, month_label, cycle_start, cycle_end, styles
     # ── EPSS Risk Distribution ──
     elements.append(Paragraph("<b>EPSS Exploitation Likelihood Distribution</b>", styles['KitBody']))
     elements.append(Spacer(1, 4))
-
-    epss_above_median = sum(1 for e in entries if 0.50 <= e.get('epss_percentile', 0) < 0.80)
-    epss_below_median = sum(1 for e in entries if e.get('epss_percentile', 0) < 0.50)
 
     epss_dist_header = [
         Paragraph('<b>EPSS Tier</b>', styles['CellText']),
@@ -1521,20 +1747,46 @@ def build_executive_summary(entries, month_label, cycle_start, cycle_end, styles
 
     elements.append(Spacer(1, 14))
 
-    # ── Narrative sections (fillable text areas) ──
-    narrative_fields = [
-        ("Key Risks &amp; Exceptions", 'exec_risks'),
-        ("Recommendations for Next Cycle", 'exec_recommendations'),
-    ]
+    # ── Auto-Generated Executive Narrative ──
+    narrative_text = generate_executive_narrative(entries, sev, vendors, cwes)
 
-    for section_title, field_name in narrative_fields:
-        elements.append(Paragraph(f'<b>{section_title}</b>', styles['KitBody']))
-        elements.append(Spacer(1, 4))
-        elements.append(AcroTextField(
-            name=field_name, width=468, height=80,
-            multiline=True, fontsize=9, maxlen=0,
-        ))
-        elements.append(Spacer(1, 8))
+    elements.append(Paragraph('<b>Key Risks &amp; Analysis</b>', styles['KitBody']))
+    elements.append(Spacer(1, 4))
+    elements.append(Paragraph(
+        '<font size="8" color="#64748b"><i>(Auto-generated from cycle data)</i></font>',
+        styles['SmallText']
+    ))
+    elements.append(Spacer(1, 3))
+
+    # Render each paragraph of the narrative
+    narrative_style = ParagraphStyle(
+        'Narrative', parent=styles['DetailBody'],
+        fontSize=9, leading=13, textColor=TEXT_DARK,
+        spaceBefore=2, spaceAfter=6
+    )
+    for para in narrative_text.split('\n\n'):
+        if para.strip():
+            elements.append(Paragraph(para.strip(), narrative_style))
+
+    elements.append(Spacer(1, 8))
+
+    # Additional Notes (fillable)
+    elements.append(Paragraph('<b>Additional Notes</b>', styles['KitBody']))
+    elements.append(Spacer(1, 4))
+    elements.append(AcroTextField(
+        name='exec_notes', width=468, height=60,
+        multiline=True, fontsize=9, maxlen=0,
+    ))
+    elements.append(Spacer(1, 8))
+
+    # Recommendations for Next Cycle (fillable)
+    elements.append(Paragraph('<b>Recommendations for Next Cycle</b>', styles['KitBody']))
+    elements.append(Spacer(1, 4))
+    elements.append(AcroTextField(
+        name='exec_recommendations', width=468, height=60,
+        multiline=True, fontsize=9, maxlen=0,
+    ))
+    elements.append(Spacer(1, 8))
 
     elements.append(Spacer(1, 12))
 
