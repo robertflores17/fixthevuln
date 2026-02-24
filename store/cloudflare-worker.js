@@ -549,7 +549,31 @@ async function handleWebhook(request, env) {
 
     // ─── SPRINT KIT SUBSCRIPTION: invoice.paid ───
     if (event.type === 'invoice.paid') {
-      await handleInvoicePaid(event.data.object, env);
+      const obj = event.data.object;
+      let invoice;
+
+      if (obj.object === 'invoice') {
+        // Older API versions send the full invoice directly
+        invoice = obj;
+      } else {
+        // API version 2026-01-28+ sends invoice_payment object
+        const invoiceId = obj.invoice;
+        if (invoiceId) {
+          const invoiceResp = await fetch(
+            `https://api.stripe.com/v1/invoices/${encodeURIComponent(invoiceId)}`,
+            { headers: { 'Authorization': `Bearer ${env.STRIPE_SECRET_KEY}` } }
+          );
+          invoice = await invoiceResp.json();
+          if (invoice.error) {
+            console.error('Failed to fetch invoice:', invoice.error);
+            invoice = null;
+          }
+        }
+      }
+
+      if (invoice) {
+        await handleInvoicePaid(invoice, env);
+      }
     }
   } catch (err) {
     // Log but still return 200 to prevent retries
@@ -715,10 +739,11 @@ function sprintKitDownloadUrl(token, filename) {
 // ─── INVOICE.PAID HANDLER ───────────────────────
 async function handleInvoicePaid(invoice, env) {
   // Only handle subscription invoices (skip one-time payments)
-  if (!invoice.subscription) return;
+  const billingReason = invoice.billing_reason || '';
+  const isSubscription = invoice.subscription || billingReason.startsWith('subscription');
+  if (!isSubscription) return;
 
   const customerEmail = invoice.customer_email;
-  const billingReason = invoice.billing_reason; // 'subscription_create', 'subscription_cycle', etc.
 
   if (!customerEmail) {
     console.error('Sprint kit invoice.paid: no customer email');

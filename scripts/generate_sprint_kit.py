@@ -3,13 +3,15 @@
 Generate monthly Patch Tuesday Sprint Kit PDF.
 
 Pulls CISA KEV CVEs for the current Patch Tuesday cycle, enriches with
-EPSS scores, and generates a professional multi-page PDF containing:
-  1. Cover page with severity breakdown
+EPSS scores, and generates a professional multi-page intelligence PDF containing:
+  1. Cover page with severity breakdown, EPSS high-risk callout
   2. Triage Matrix (pre-filled with CVE data)
-  3. 14-Day Sprint Calendar (dated from Patch Tuesday)
-  4. Testing & Rollback Checklist (pre-filled vendors/products)
-  5. SLA Compliance Tracker (blank)
-  6. Executive Summary (pre-filled metrics, blank narrative)
+  3. Month-over-Month Trend (comparison with previous cycle)
+  4. CVE Remediation Details (descriptions, CWE, EPSS, advisory links)
+  5. 14-Day Sprint Calendar (data-driven tasks, due date callouts)
+  6. Testing & Rollback Checklist (pre-filled vendors/products)
+  7. SLA Compliance Tracker (pre-filled severity counts & deadlines)
+  8. Executive Summary (CWE analysis, risk highlights, EPSS distribution)
 
 Usage:
   python scripts/generate_sprint_kit.py                    # current month
@@ -37,7 +39,73 @@ from reportlab.platypus import (
     SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer,
     PageBreak, KeepTogether
 )
-from reportlab.platypus.flowables import HRFlowable
+from reportlab.platypus.flowables import HRFlowable, Flowable
+
+# ── AcroForm Flowable Subclasses ─────────────────────
+# These allow interactive PDF form fields inside Platypus Table cells.
+
+class AcroTextField(Flowable):
+    """Interactive text field that drops into Table cells."""
+
+    def __init__(self, name, width=60, height=14, multiline=False,
+                 fontsize=8, maxlen=0):
+        super().__init__()
+        self.field_name = name
+        self.width = width
+        self.height = height
+        self.multiline = multiline
+        self.fontsize = fontsize
+        self.maxlen = maxlen
+
+    def wrap(self, availWidth, availHeight):
+        return (self.width, self.height)
+
+    def draw(self):
+        self.canv.acroForm.textfield(
+            name=self.field_name,
+            x=0, y=0,
+            width=self.width,
+            height=self.height,
+            fontSize=self.fontsize,
+            fontName='Helvetica',
+            borderWidth=0.5,
+            borderColor=HexColor('#cbd5e1'),
+            fillColor=HexColor('#f8fafc'),
+            textColor=HexColor('#1e293b'),
+            fieldFlags='multiline' if self.multiline else '',
+            maxlen=self.maxlen,
+            forceBorder=True,
+            annotationFlags='print',
+            relative=True,
+        )
+
+
+class AcroCheckbox(Flowable):
+    """Interactive checkbox that drops into Table cells."""
+
+    def __init__(self, name, size=12):
+        super().__init__()
+        self.field_name = name
+        self.size = size
+
+    def wrap(self, availWidth, availHeight):
+        return (self.size, self.size)
+
+    def draw(self):
+        self.canv.acroForm.checkbox(
+            name=self.field_name,
+            x=0, y=0,
+            size=self.size,
+            borderWidth=0.5,
+            borderColor=HexColor('#cbd5e1'),
+            fillColor=HexColor('#f8fafc'),
+            buttonStyle='check',
+            fieldFlags='',
+            forceBorder=True,
+            annotationFlags='print',
+            relative=True,
+        )
+
 
 # ── Configuration ────────────────────────────────────
 DATA_DIR = Path(__file__).parent.parent / "data"
@@ -66,6 +134,130 @@ HIGH_ORANGE = HexColor('#ea580c')
 MEDIUM_YELLOW = HexColor('#ca8a04')
 LOW_BLUE = HexColor('#2563eb')
 BORDER_GRAY = HexColor('#e2e8f0')
+
+# ── CWE Name Mapping (top ~30 common CWEs) ─────────
+CWE_NAMES = {
+    'CWE-20': 'Improper Input Validation',
+    'CWE-22': 'Path Traversal',
+    'CWE-77': 'Command Injection',
+    'CWE-78': 'OS Command Injection',
+    'CWE-79': 'Cross-site Scripting (XSS)',
+    'CWE-89': 'SQL Injection',
+    'CWE-94': 'Code Injection',
+    'CWE-119': 'Buffer Overflow',
+    'CWE-120': 'Classic Buffer Overflow',
+    'CWE-122': 'Heap-based Buffer Overflow',
+    'CWE-125': 'Out-of-bounds Read',
+    'CWE-190': 'Integer Overflow',
+    'CWE-200': 'Information Exposure',
+    'CWE-269': 'Improper Privilege Management',
+    'CWE-284': 'Improper Access Control',
+    'CWE-287': 'Improper Authentication',
+    'CWE-306': 'Missing Authentication',
+    'CWE-352': 'Cross-Site Request Forgery (CSRF)',
+    'CWE-416': 'Use After Free',
+    'CWE-434': 'Unrestricted File Upload',
+    'CWE-476': 'NULL Pointer Dereference',
+    'CWE-502': 'Deserialization of Untrusted Data',
+    'CWE-601': 'Open Redirect',
+    'CWE-611': 'XML External Entity (XXE)',
+    'CWE-668': 'Exposure of Resource to Wrong Sphere',
+    'CWE-693': 'Protection Mechanism Failure',
+    'CWE-787': 'Out-of-bounds Write',
+    'CWE-798': 'Use of Hard-coded Credentials',
+    'CWE-862': 'Missing Authorization',
+    'CWE-863': 'Incorrect Authorization',
+    'CWE-918': 'Server-Side Request Forgery (SSRF)',
+}
+
+# ── URL label patterns for advisory links ───────────
+URL_LABELS = [
+    ('nvd.nist.gov', 'NVD Detail'),
+    ('microsoft.com', 'Microsoft Advisory'),
+    ('dell.com', 'Dell Support'),
+    ('gitlab.com', 'GitLab Advisory'),
+    ('github.com', 'GitHub Advisory'),
+    ('roundcube.net', 'Roundcube Advisory'),
+    ('oracle.com', 'Oracle Advisory'),
+    ('apache.org', 'Apache Advisory'),
+    ('mozilla.org', 'Mozilla Advisory'),
+    ('cisco.com', 'Cisco Advisory'),
+    ('adobe.com', 'Adobe Advisory'),
+    ('google.com', 'Google Advisory'),
+    ('beyondtrust.com', 'BeyondTrust Advisory'),
+    ('synacor.com', 'Synacor Advisory'),
+    ('zimbra.com', 'Zimbra Advisory'),
+]
+
+# ── EPSS interpretation tiers ───────────────────────
+EPSS_TIERS = [
+    (0.95, 'Top 5%', CRITICAL_RED),
+    (0.80, 'Top 20%', HIGH_ORANGE),
+    (0.50, 'Above Median', MEDIUM_YELLOW),
+    (0.0, 'Below Median', LOW_BLUE),
+]
+
+
+# ══════════════════════════════════════════════════════
+# Helper functions
+# ══════════════════════════════════════════════════════
+
+def parse_notes(notes_str):
+    """Parse semicolon-separated URL string into labeled advisory links."""
+    if not notes_str:
+        return []
+    links = []
+    for raw_url in notes_str.split(';'):
+        url = raw_url.strip()
+        if not url:
+            continue
+        label = 'Reference'
+        for pattern, name in URL_LABELS:
+            if pattern in url:
+                label = name
+                break
+        links.append({'label': label, 'url': url})
+    return links
+
+
+def epss_interpretation(percentile):
+    """Return (tier_label, color) for an EPSS percentile (0-1)."""
+    for threshold, label, color in EPSS_TIERS:
+        if percentile >= threshold:
+            return label, color
+    return 'Below Median', LOW_BLUE
+
+
+def get_previous_month_data(current_year, current_month):
+    """Load previous month's data from manifest for trend comparison."""
+    if not MANIFEST_FILE.exists():
+        return None
+
+    with open(MANIFEST_FILE) as f:
+        manifest = json.load(f)
+
+    # Calculate previous month
+    if current_month == 1:
+        prev_year, prev_month = current_year - 1, 12
+    else:
+        prev_year, prev_month = current_year, current_month - 1
+
+    key = f"{prev_year}-{prev_month:02d}"
+    return manifest.get(key)
+
+
+def cwe_analysis(entries):
+    """Return sorted list of (cwe_id, cwe_name, count) tuples."""
+    counts = {}
+    for e in entries:
+        for cwe_id in e.get('cwes', []):
+            counts[cwe_id] = counts.get(cwe_id, 0) + 1
+    result = []
+    for cwe_id, count in counts.items():
+        name = CWE_NAMES.get(cwe_id, 'Other')
+        result.append((cwe_id, name, count))
+    result.sort(key=lambda x: x[2], reverse=True)
+    return result
 
 
 # ══════════════════════════════════════════════════════
@@ -254,6 +446,7 @@ def build_enriched_cve_list(kev_vulns, epss_data):
             'ransomware': vuln.get('knownRansomwareCampaignUse', 'Unknown'),
             'cwes': vuln.get('cwes', []),
             'requiredAction': vuln.get('requiredAction', ''),
+            'notes': vuln.get('notes', ''),
             'cvss': None,  # Will be filled by NVD
             'epss': epss['score'],
             'epss_percentile': epss['percentile'],
@@ -357,6 +550,32 @@ def get_styles():
         fontSize=8, leading=10, textColor=TEXT_LIGHT,
         alignment=TA_CENTER
     ))
+    styles.add(ParagraphStyle(
+        'DetailTitle', parent=styles['Normal'],
+        fontSize=11, leading=14, textColor=TEXT_DARK,
+        fontName='Helvetica-Bold', spaceBefore=2, spaceAfter=2
+    ))
+    styles.add(ParagraphStyle(
+        'DetailBody', parent=styles['Normal'],
+        fontSize=9, leading=12, textColor=TEXT_DARK,
+        spaceAfter=2
+    ))
+    styles.add(ParagraphStyle(
+        'DetailSmall', parent=styles['Normal'],
+        fontSize=8, leading=10, textColor=TEXT_MED,
+        spaceAfter=1
+    ))
+    styles.add(ParagraphStyle(
+        'LinkText', parent=styles['Normal'],
+        fontSize=8, leading=10, textColor=BRAND_TEAL,
+        leftIndent=12
+    ))
+    styles.add(ParagraphStyle(
+        'RiskBullet', parent=styles['Normal'],
+        fontSize=9, leading=13, textColor=TEXT_DARK,
+        leftIndent=16, bulletIndent=6,
+        spaceBefore=2, spaceAfter=2
+    ))
 
     return styles
 
@@ -412,8 +631,8 @@ def build_cover_page(entries, month_label, cycle_start, cycle_end, styles):
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
         ('BOX', (0, 0), (-1, -1), 1, BORDER_GRAY),
         ('INNERGRID', (0, 0), (-1, -1), 0.5, BORDER_GRAY),
-        ('TOPPADDING', (0, 0), (-1, -1), 12),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+        ('TOPPADDING', (0, 0), (-1, -1), 14),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 16),
         ('BACKGROUND', (0, 0), (-1, -1), HexColor('#f8fafc')),
     ]))
     elements.append(stats_table)
@@ -433,6 +652,15 @@ def build_cover_page(entries, month_label, cycle_start, cycle_end, styles):
             ParagraphStyle('warn', alignment=TA_CENTER, fontSize=11)
         ))
 
+    # EPSS high-risk callout
+    epss_top5 = sum(1 for e in entries if e.get('epss_percentile', 0) >= 0.95)
+    if epss_top5 > 0:
+        elements.append(Spacer(1, 6))
+        elements.append(Paragraph(
+            f'<font color="#ea580c"><b>{epss_top5} CVE{"s" if epss_top5 != 1 else ""} in EPSS Top 5% exploitation likelihood</b></font>',
+            ParagraphStyle('epss_warn', alignment=TA_CENTER, fontSize=11)
+        ))
+
     elements.append(Spacer(1, 0.5 * inch))
 
     # Vendor summary
@@ -449,11 +677,13 @@ def build_cover_page(entries, month_label, cycle_start, cycle_end, styles):
     # Contents
     elements.append(Paragraph("Kit Contents", styles['SubHeader']))
     contents = [
-        "1. Triage Matrix \u2014 Pre-filled with CISA KEV CVEs, CVSS & EPSS scores",
-        "2. 14-Day Sprint Calendar \u2014 Dated from Patch Tuesday, daily checklists",
-        "3. Testing & Rollback Checklist \u2014 Pre-filled vendors/products from triage data",
-        "4. SLA Compliance Tracker \u2014 Severity tiers with target/actual tracking",
-        "5. Executive Summary \u2014 Pre-filled metrics, blank narrative & signature sections",
+        "1. Triage Matrix \u2014 Pre-filled CVE data with CVSS & EPSS scores",
+        "2. Month-over-Month Trend \u2014 Comparison with previous cycle",
+        "3. CVE Remediation Details \u2014 Descriptions, CWE, EPSS context, advisory links",
+        "4. 14-Day Sprint Calendar \u2014 Data-driven tasks from Patch Tuesday",
+        "5. Testing & Rollback Checklist \u2014 Pre-filled vendors/products",
+        "6. SLA Compliance Tracker \u2014 Pre-filled severity counts & deadlines",
+        "7. Executive Summary \u2014 CWE analysis, risk highlights, EPSS distribution",
     ]
     for item in contents:
         elements.append(Paragraph(item, ParagraphStyle(
@@ -468,7 +698,7 @@ def build_triage_matrix(entries, styles):
     """Page 2+: Pre-filled triage matrix table."""
     elements = []
 
-    elements.append(Paragraph("1. Triage Matrix", styles['SectionHeader']))
+    elements.append(Paragraph("1. Triage Matrix", styles['SectionHeader']))  # Section 1 stays as-is
     elements.append(Paragraph(
         "Pre-filled with CISA KEV vulnerabilities for this Patch Tuesday cycle. "
         "Sorted by risk (CVSS descending, then EPSS). Mark your triage decision in the Priority column.",
@@ -483,15 +713,15 @@ def build_triage_matrix(entries, styles):
         Paragraph('<b>CVSS</b>', styles['CellText']),
         Paragraph('<b>EPSS</b>', styles['CellText']),
         Paragraph('<b>Due Date</b>', styles['CellText']),
-        Paragraph('<b>RW</b>', styles['CellText']),
+        Paragraph('<b>KR</b>', styles['CellText']),
         Paragraph('<b>Priority</b>', styles['CellText']),
         Paragraph('<b>Owner</b>', styles['CellText']),
     ]
 
-    col_widths = [1.1 * inch, 1.8 * inch, 0.5 * inch, 0.55 * inch, 0.7 * inch, 0.35 * inch, 0.65 * inch, 0.85 * inch]
+    col_widths = [1.1 * inch, 1.55 * inch, 0.5 * inch, 0.55 * inch, 0.7 * inch, 0.35 * inch, 0.95 * inch, 1.1 * inch]
 
     rows = [header]
-    for e in entries:
+    for i, e in enumerate(entries):
         cvss = e.get('cvss', 0) or 0
         sev_label, sev_color = severity_label(cvss)
         epss = e.get('epss', 0) or 0
@@ -504,8 +734,8 @@ def build_triage_matrix(entries, styles):
             Paragraph(f'<font size="7">{epss:.3f}</font>', styles['CellText']),
             Paragraph(f'<font size="7">{e.get("dueDate", "")}</font>', styles['CellText']),
             Paragraph(f'<font size="7" color="#dc2626">{rw}</font>', styles['CellText']),
-            Paragraph('', styles['CellText']),  # blank for user
-            Paragraph('', styles['CellText']),  # blank for user
+            AcroTextField(name=f'triage_priority_{i}', width=60, height=14),
+            AcroTextField(name=f'triage_owner_{i}', width=71, height=14),
         ])
 
     table = Table(rows, colWidths=col_widths, repeatRows=1)
@@ -518,11 +748,13 @@ def build_triage_matrix(entries, styles):
         ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
         ('VALIGN', (0, 0), (-1, -1), 'TOP'),
         ('TOPPADDING', (0, 0), (-1, -1), 4),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
         ('LEFTPADDING', (0, 0), (-1, -1), 4),
         ('RIGHTPADDING', (0, 0), (-1, -1), 4),
         ('GRID', (0, 0), (-1, -1), 0.5, BORDER_GRAY),
         ('BOX', (0, 0), (-1, -1), 1, TEXT_MED),
+        # Extra padding for form field rows
+        ('BOTTOMPADDING', (6, 1), (7, -1), 8),
     ]
 
     for i in range(1, len(rows)):
@@ -534,7 +766,7 @@ def build_triage_matrix(entries, styles):
 
     elements.append(Spacer(1, 10))
     elements.append(Paragraph(
-        "RW = Known Ransomware Campaign  |  EPSS = Exploit Prediction Scoring System (0\u20131, higher = more likely exploited)",
+        "KR = Known Ransomware Campaign Use  |  EPSS = Exploit Prediction Scoring System (0\u20131, higher = more likely exploited)",
         styles['SmallText']
     ))
 
@@ -542,14 +774,295 @@ def build_triage_matrix(entries, styles):
     return elements
 
 
-def build_sprint_calendar(cycle_start, styles):
-    """Page: 14-Day Sprint Calendar dated from Patch Tuesday."""
+def build_cve_detail_pages(entries, styles):
+    """Pages: Detailed CVE remediation guidance (~3 per page)."""
     elements = []
 
-    elements.append(Paragraph("2. 14-Day Sprint Calendar", styles['SectionHeader']))
+    elements.append(Paragraph("3. CVE Remediation Details", styles['SectionHeader']))
+    elements.append(Paragraph(
+        "Detailed guidance for each vulnerability in this cycle. Includes weakness type, "
+        "exploitation likelihood, vendor advisories, and required actions.",
+        styles['KitBody']
+    ))
+    elements.append(Spacer(1, 8))
+
+    for idx, e in enumerate(entries):
+        cvss = e.get('cvss', 0) or 0
+        sev_label_str, sev_color = severity_label(cvss)
+        epss_pct = e.get('epss_percentile', 0)
+        tier_label, tier_color = epss_interpretation(epss_pct)
+
+        # ── Severity + CVE ID + CVSS header row ──
+        header_text = (
+            f'<font color="{sev_color.hexval()}">[{sev_label_str}]</font> '
+            f'<b>{e["cveID"]}</b>'
+            f'<font size="9" color="#475569">  &mdash;  CVSS {cvss:.1f}</font>'
+        )
+        elements.append(Paragraph(header_text, styles['DetailTitle']))
+
+        # ── Vulnerability name ──
+        name = e.get('name', '')
+        if name:
+            elements.append(Paragraph(
+                f'<i>{name}</i>', styles['DetailSmall']
+            ))
+
+        # ── Description ──
+        desc = e.get('description', '')
+        if desc:
+            # Truncate very long descriptions
+            if len(desc) > 300:
+                desc = desc[:297] + '...'
+            elements.append(Paragraph(desc, styles['DetailBody']))
+
+        # ── Metadata line: CWE + EPSS + Due Date ──
+        meta_parts = []
+
+        cwes = e.get('cwes', [])
+        if cwes:
+            cwe_strs = []
+            for cwe_id in cwes:
+                cwe_name = CWE_NAMES.get(cwe_id, '')
+                cwe_strs.append(f'{cwe_id} ({cwe_name})' if cwe_name else cwe_id)
+            meta_parts.append(f'<b>Weakness:</b> {", ".join(cwe_strs)}')
+
+        epss_score = e.get('epss', 0) or 0
+        if epss_score > 0:
+            meta_parts.append(
+                f'<b>EPSS:</b> {epss_score:.4f} &mdash; '
+                f'<font color="{tier_color.hexval()}">{tier_label} most likely exploited</font>'
+            )
+
+        due = e.get('dueDate', '')
+        rw = e.get('ransomware', 'Unknown')
+        if due:
+            meta_parts.append(f'<b>Due Date:</b> {due}  |  <b>Ransomware:</b> {rw}')
+
+        for part in meta_parts:
+            elements.append(Paragraph(part, styles['DetailSmall']))
+
+        # ── Required action ──
+        action = e.get('requiredAction', '')
+        if action:
+            elements.append(Paragraph(
+                f'<b>Required Action:</b> {action}', styles['DetailSmall']
+            ))
+
+        # ── Vendor advisories from notes ──
+        links = parse_notes(e.get('notes', ''))
+        if links:
+            elements.append(Paragraph('<b>Vendor Advisories:</b>', styles['DetailSmall']))
+            for link in links:
+                # Truncate long URLs for display
+                display_url = link['url']
+                if len(display_url) > 70:
+                    display_url = display_url[:67] + '...'
+                elements.append(Paragraph(
+                    f'&bull; {link["label"]}: {display_url}',
+                    styles['LinkText']
+                ))
+
+        # Separator between CVEs
+        elements.append(Spacer(1, 4))
+        elements.append(HRFlowable(
+            width="100%", thickness=0.5, color=BORDER_GRAY,
+            spaceBefore=2, spaceAfter=6
+        ))
+
+        # Page break every 3 CVEs (but not after the last one)
+        if (idx + 1) % 3 == 0 and idx < len(entries) - 1:
+            elements.append(PageBreak())
+
+    elements.append(PageBreak())
+    return elements
+
+
+def build_trend_page(entries, year, month, styles):
+    """Page: Month-over-month trend comparison."""
+    elements = []
+
+    elements.append(Paragraph("2. Month-over-Month Trend", styles['SectionHeader']))
+
+    prev_data = get_previous_month_data(year, month)
+
+    if not prev_data:
+        elements.append(Paragraph(
+            "First report &mdash; trend data will be available starting next month "
+            "when a comparison baseline exists.",
+            styles['KitBody']
+        ))
+        elements.append(Spacer(1, 20))
+
+        # Still show current month stats as a baseline table
+        elements.append(Paragraph("Current Month Baseline", styles['SubHeader']))
+        sev = severity_breakdown(entries)
+        vendors = vendor_summary(entries)
+        ransomware_count = sum(1 for e in entries if e.get('ransomware') == 'Known')
+
+        baseline_rows = [
+            [Paragraph('<b>Metric</b>', styles['CellText']),
+             Paragraph('<b>Value</b>', styles['CellText'])],
+            [Paragraph('Total CVEs', styles['CellText']),
+             Paragraph(str(len(entries)), styles['CellText'])],
+            [Paragraph('Critical', styles['CellText']),
+             Paragraph(str(sev['critical']), styles['CellText'])],
+            [Paragraph('High', styles['CellText']),
+             Paragraph(str(sev['high']), styles['CellText'])],
+            [Paragraph('Medium', styles['CellText']),
+             Paragraph(str(sev['medium']), styles['CellText'])],
+            [Paragraph('Low', styles['CellText']),
+             Paragraph(str(sev['low']), styles['CellText'])],
+            [Paragraph('Ransomware-Linked', styles['CellText']),
+             Paragraph(str(ransomware_count), styles['CellText'])],
+            [Paragraph('Unique Vendors', styles['CellText']),
+             Paragraph(str(len(vendors)), styles['CellText'])],
+        ]
+
+        baseline_table = Table(baseline_rows, colWidths=[3.0 * inch, 3.5 * inch])
+        baseline_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), HEADER_BG),
+            ('TEXTCOLOR', (0, 0), (-1, 0), white),
+            ('GRID', (0, 0), (-1, -1), 0.5, BORDER_GRAY),
+            ('BOX', (0, 0), (-1, -1), 1, TEXT_MED),
+            ('TOPPADDING', (0, 0), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('LEFTPADDING', (0, 0), (-1, -1), 8),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ]))
+        elements.append(baseline_table)
+
+    else:
+        elements.append(Paragraph(
+            "Comparison with previous Patch Tuesday cycle. Delta shows change from last month.",
+            styles['KitBody']
+        ))
+        elements.append(Spacer(1, 10))
+
+        sev = severity_breakdown(entries)
+        vendors = vendor_summary(entries)
+        ransomware_count = sum(1 for e in entries if e.get('ransomware') == 'Known')
+        prev_sev = prev_data.get('severity', {})
+
+        def delta_str(current, previous):
+            diff = current - previous
+            if diff > 0:
+                return f'+{diff}'
+            elif diff < 0:
+                return str(diff)
+            return '0'
+
+        def delta_pct(current, previous):
+            if previous == 0:
+                return 'NEW' if current > 0 else '—'
+            pct = ((current - previous) / previous) * 100
+            if pct > 0:
+                return f'+{pct:.0f}%'
+            elif pct < 0:
+                return f'{pct:.0f}%'
+            return '0%'
+
+        metrics = [
+            ('Total CVEs', len(entries), prev_data.get('total_cves', 0)),
+            ('Critical', sev['critical'], prev_sev.get('critical', 0)),
+            ('High', sev['high'], prev_sev.get('high', 0)),
+            ('Medium', sev['medium'], prev_sev.get('medium', 0)),
+            ('Low', sev['low'], prev_sev.get('low', 0)),
+            ('Ransomware-Linked', ransomware_count, prev_data.get('ransomware_linked', 0)),
+            ('Unique Vendors', len(vendors), len(prev_data.get('top_vendors', []))),
+        ]
+
+        header = [
+            Paragraph('<b>Metric</b>', styles['CellText']),
+            Paragraph('<b>This Month</b>', styles['CellText']),
+            Paragraph('<b>Last Month</b>', styles['CellText']),
+            Paragraph('<b>Delta</b>', styles['CellText']),
+            Paragraph('<b>% Change</b>', styles['CellText']),
+        ]
+
+        trend_rows = [header]
+        for label, current, previous in metrics:
+            d = delta_str(current, previous)
+            d_color = '#dc2626' if current > previous else '#10b981' if current < previous else '#475569'
+            trend_rows.append([
+                Paragraph(f'<font size="9"><b>{label}</b></font>', styles['CellText']),
+                Paragraph(f'<font size="9">{current}</font>', styles['CellText']),
+                Paragraph(f'<font size="9">{previous}</font>', styles['CellText']),
+                Paragraph(f'<font size="9" color="{d_color}">{d}</font>', styles['CellText']),
+                Paragraph(f'<font size="9" color="{d_color}">{delta_pct(current, previous)}</font>', styles['CellText']),
+            ])
+
+        trend_table = Table(trend_rows, colWidths=[1.6 * inch, 1.1 * inch, 1.1 * inch, 1.1 * inch, 1.1 * inch])
+        trend_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), HEADER_BG),
+            ('TEXTCOLOR', (0, 0), (-1, 0), white),
+            ('GRID', (0, 0), (-1, -1), 0.5, BORDER_GRAY),
+            ('BOX', (0, 0), (-1, -1), 1, TEXT_MED),
+            ('TOPPADDING', (0, 0), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('LEFTPADDING', (0, 0), (-1, -1), 8),
+            ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ]))
+        elements.append(trend_table)
+
+        # New/recurring vendor analysis
+        elements.append(Spacer(1, 20))
+        elements.append(Paragraph("Vendor Analysis", styles['SubHeader']))
+
+        prev_vendor_names = {v['vendor'] for v in prev_data.get('top_vendors', [])}
+        current_vendor_names = {v for v, _ in vendors}
+        new_vendors = current_vendor_names - prev_vendor_names
+        recurring = current_vendor_names & prev_vendor_names
+
+        if new_vendors:
+            elements.append(Paragraph(
+                f'<b>New vendors this cycle:</b> {", ".join(sorted(new_vendors))}',
+                styles['KitBody']
+            ))
+        if recurring:
+            elements.append(Paragraph(
+                f'<b>Recurring vendors:</b> {", ".join(sorted(recurring))}',
+                styles['KitBody']
+            ))
+
+    elements.append(PageBreak())
+    return elements
+
+
+def build_sprint_calendar(cycle_start, entries, styles):
+    """Page: 14-Day Sprint Calendar dated from Patch Tuesday with data-driven tasks."""
+    elements = []
+
+    sev = severity_breakdown(entries)
+    vendors = vendor_summary(entries)
+    total = len(entries)
+
+    # Build vendor deployment string
+    vendor_str = ", ".join(f"{v} ({c} CVEs)" for v, c in vendors[:4])
+    if len(vendors) > 4:
+        vendor_str += f", +{len(vendors) - 4} more"
+
+    # Critical CVE IDs for Wave 1
+    critical_cves = [e['cveID'] for e in entries if (e.get('cvss', 0) or 0) >= 9.0]
+    critical_str = ", ".join(critical_cves[:4])
+    if len(critical_cves) > 4:
+        critical_str += f", +{len(critical_cves) - 4} more"
+
+    # Build due date map: which CVEs are due on which day within the 14-day sprint
+    due_date_flags = {}
+    for e in entries:
+        try:
+            due_dt = datetime.strptime(e.get('dueDate', ''), '%Y-%m-%d')
+            day_offset = (due_dt - cycle_start).days + 1  # 1-indexed
+            if 1 <= day_offset <= 14:
+                due_date_flags.setdefault(day_offset, []).append(e['cveID'])
+        except (ValueError, TypeError):
+            pass
+
+    elements.append(Paragraph("4. 14-Day Sprint Calendar", styles['SectionHeader']))
     elements.append(Paragraph(
         f"Starting from Patch Tuesday ({cycle_start.strftime('%B %d, %Y')}). "
-        "Check off tasks as your team completes each phase.",
+        "Tasks are auto-populated from this cycle's CVE data.",
         styles['KitBody']
     ))
     elements.append(Spacer(1, 10))
@@ -565,16 +1078,16 @@ def build_sprint_calendar(cycle_start, styles):
     col_widths = [0.45 * inch, 0.75 * inch, 0.9 * inch, 3.5 * inch, 0.9 * inch]
 
     phases = [
-        (1, "ASSESS", "Download & review CISA KEV updates; run vulnerability scans"),
-        (2, "ASSESS", "Complete triage matrix; assign severity priorities"),
-        (3, "PLAN", "Create deployment groups; schedule maintenance windows"),
-        (4, "PLAN", "Build test cases; prepare rollback procedures"),
+        (1, "ASSESS", f"Review {total} CVEs ({sev['critical']} Critical, {sev['high']} High) from CISA KEV"),
+        (2, "ASSESS", "Complete triage matrix; assign severity priorities and owners"),
+        (3, "PLAN", f"Plan deployment for {vendor_str}"),
+        (4, "PLAN", "Build test cases; prepare rollback procedures per vendor"),
         (5, "TEST", "Deploy patches to test/staging environment"),
         (6, "TEST", "Validate functionality; run regression tests"),
         (7, "TEST", "Sign off on test results; document exceptions"),
-        (8, "DEPLOY", "Deploy critical/high patches to production (Wave 1)"),
-        (9, "DEPLOY", "Monitor Wave 1; deploy medium patches (Wave 2)"),
-        (10, "DEPLOY", "Deploy remaining patches (Wave 3)"),
+        (8, "DEPLOY", f"Deploy critical patches (Wave 1): {critical_str}" if critical_cves else "Deploy critical/high patches to production (Wave 1)"),
+        (9, "DEPLOY", "Monitor Wave 1; deploy high-severity patches (Wave 2)"),
+        (10, "DEPLOY", "Deploy medium/low patches (Wave 3)"),
         (11, "VERIFY", "Run post-deployment vulnerability scans"),
         (12, "VERIFY", "Validate patch compliance; update CMDB"),
         (13, "REPORT", "Compile SLA metrics; draft executive summary"),
@@ -584,13 +1097,17 @@ def build_sprint_calendar(cycle_start, styles):
     rows = [header]
     for day_num, phase, tasks in phases:
         day_date = cycle_start + timedelta(days=day_num - 1)
-        # Use checkbox unicode
+        # Append due date callout if any CVEs are due on this day
+        task_text = tasks
+        if day_num in due_date_flags:
+            due_cves = due_date_flags[day_num]
+            task_text += f' <font color="#dc2626"><b>[DEADLINE: {len(due_cves)} CVE{"s" if len(due_cves) != 1 else ""} due]</b></font>'
         rows.append([
             Paragraph(f'<font size="9"><b>{day_num}</b></font>', styles['CellText']),
             Paragraph(f'<font size="8">{day_date.strftime("%b %d")}</font>', styles['CellText']),
             Paragraph(f'<font size="8"><b>{phase}</b></font>', styles['CellText']),
-            Paragraph(f'<font size="8">{tasks}</font>', styles['CellText']),
-            Paragraph('<font size="10">\u2610</font>', ParagraphStyle('cb', alignment=TA_CENTER, fontSize=10)),
+            Paragraph(f'<font size="8">{task_text}</font>', styles['CellText']),
+            AcroCheckbox(name=f'sprint_done_{day_num}', size=12),
         ])
 
     table = Table(rows, colWidths=col_widths, repeatRows=1)
@@ -616,6 +1133,8 @@ def build_sprint_calendar(cycle_start, styles):
         ('GRID', (0, 0), (-1, -1), 0.5, BORDER_GRAY),
         ('BOX', (0, 0), (-1, -1), 1, TEXT_MED),
         ('ALIGN', (4, 0), (4, -1), 'CENTER'),
+        # Extra padding for checkbox column
+        ('BOTTOMPADDING', (4, 1), (4, -1), 7),
     ]
 
     for i, (day_num, phase, tasks) in enumerate(phases, 1):
@@ -633,7 +1152,7 @@ def build_testing_checklist(entries, styles):
     """Page: Testing & Rollback Checklist pre-filled with vendor/product."""
     elements = []
 
-    elements.append(Paragraph("3. Testing & Rollback Checklist", styles['SectionHeader']))
+    elements.append(Paragraph("5. Testing &amp; Rollback Checklist", styles['SectionHeader']))
     elements.append(Paragraph(
         "Pre-filled with vendors and products from this cycle's triage data. "
         "Check off each step as testing progresses.",
@@ -656,27 +1175,30 @@ def build_testing_checklist(entries, styles):
 
     # Deduplicate by vendor+product
     seen = set()
+    check_phases = ['snapshot', 'testdeploy', 'functional', 'regression', 'proddeploy', 'rollback']
     rows = [header]
+    row_idx = 0
     for e in entries:
         key = f"{e['vendor']}|{e['product']}"
         if key in seen:
             continue
         seen.add(key)
 
-        cb = Paragraph('<font size="10">\u2610</font>', ParagraphStyle('cb', alignment=TA_CENTER, fontSize=10))
+        cbs = [AcroCheckbox(name=f'test_{phase}_{row_idx}', size=11) for phase in check_phases]
         rows.append([
             Paragraph(f'<font size="8">{e["vendor"]}<br/>{e["product"]}</font>', styles['CellText']),
             Paragraph(f'<font size="7">{e["cveID"]}</font>', styles['CellTextSmall']),
-            cb, cb, cb, cb, cb, cb,
+            *cbs,
         ])
+        row_idx += 1
 
     # Add a few blank rows for manual additions
-    for _ in range(3):
-        cb = Paragraph('<font size="10">\u2610</font>', ParagraphStyle('cb', alignment=TA_CENTER, fontSize=10))
+    for extra_i in range(3):
+        cbs = [AcroCheckbox(name=f'test_{phase}_extra_{extra_i}', size=11) for phase in check_phases]
         rows.append([
-            Paragraph('', styles['CellText']),
-            Paragraph('', styles['CellText']),
-            cb, cb, cb, cb, cb, cb,
+            AcroTextField(name=f'test_vendor_extra_{extra_i}', width=130, height=14),
+            AcroTextField(name=f'test_patch_extra_{extra_i}', width=70, height=14),
+            *cbs,
         ])
 
     table = Table(rows, colWidths=col_widths, repeatRows=1)
@@ -693,6 +1215,8 @@ def build_testing_checklist(entries, styles):
         ('RIGHTPADDING', (0, 0), (-1, -1), 3),
         ('GRID', (0, 0), (-1, -1), 0.5, BORDER_GRAY),
         ('BOX', (0, 0), (-1, -1), 1, TEXT_MED),
+        # Extra padding for form field rows
+        ('BOTTOMPADDING', (2, 1), (-1, -1), 7),
     ]
 
     for i in range(1, len(rows)):
@@ -706,14 +1230,28 @@ def build_testing_checklist(entries, styles):
     return elements
 
 
-def build_sla_tracker(styles):
-    """Page: SLA Compliance Tracker with blank tracking rows."""
+def build_sla_tracker(entries, styles):
+    """Page: SLA Compliance Tracker with pre-filled CVE counts."""
     elements = []
 
-    elements.append(Paragraph("4. SLA Compliance Tracker", styles['SectionHeader']))
+    sev = severity_breakdown(entries)
+
+    # Build earliest deadline per severity
+    def earliest_deadline(min_cvss, max_cvss):
+        dates = []
+        for e in entries:
+            cvss = e.get('cvss', 0) or 0
+            if min_cvss <= cvss <= max_cvss:
+                try:
+                    dates.append(datetime.strptime(e.get('dueDate', ''), '%Y-%m-%d'))
+                except (ValueError, TypeError):
+                    pass
+        return min(dates).strftime('%b %d, %Y') if dates else '—'
+
+    elements.append(Paragraph("6. SLA Compliance Tracker", styles['SectionHeader']))
     elements.append(Paragraph(
-        "Track patching SLA compliance by severity tier. Fill in your organization's "
-        "SLA targets and track actual completion dates.",
+        "Track patching SLA compliance by severity tier. Total CVEs and earliest deadlines "
+        "are pre-filled from this cycle's data.",
         styles['KitBody']
     ))
     elements.append(Spacer(1, 10))
@@ -739,12 +1277,13 @@ def build_sla_tracker(styles):
         CRITICAL_RED, HIGH_ORANGE, MEDIUM_YELLOW, LOW_BLUE
     ]
 
-    for i, (sev, rng, standard, target) in enumerate(sla_defaults):
+    sla_sev_keys = ['critical', 'high', 'medium', 'low']
+    for i, (sev_name, rng, standard, target) in enumerate(sla_defaults):
         sla_rows.append([
-            Paragraph(f'<font size="9" color="{sla_colors[i].hexval()}"><b>{sev}</b></font>', styles['CellText']),
+            Paragraph(f'<font size="9" color="{sla_colors[i].hexval()}"><b>{sev_name}</b></font>', styles['CellText']),
             Paragraph(f'<font size="9">{rng}</font>', styles['CellText']),
             Paragraph(f'<font size="9">{standard}</font>', styles['CellText']),
-            Paragraph(f'<font size="9">{target}</font>', styles['CellText']),
+            AcroTextField(name=f'sla_target_{sla_sev_keys[i]}', width=148, height=14),
         ])
 
     sla_table = Table(sla_rows, colWidths=[1.2 * inch, 1.2 * inch, 1.8 * inch, 2.3 * inch])
@@ -757,36 +1296,59 @@ def build_sla_tracker(styles):
         ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
         ('LEFTPADDING', (0, 0), (-1, -1), 6),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        # Extra padding for form field column
+        ('BOTTOMPADDING', (3, 1), (3, -1), 8),
     ]))
     elements.append(sla_table)
 
     elements.append(Spacer(1, 20))
 
-    # Compliance tracking table
+    # Compliance tracking table — pre-filled with counts and deadlines
     elements.append(Paragraph("Compliance Tracking", styles['SubHeader']))
 
     track_header = [
         Paragraph('<b>Severity</b>', styles['CellText']),
         Paragraph('<b>Total<br/>CVEs</b>', styles['CellText']),
+        Paragraph('<b>Earliest<br/>Deadline</b>', styles['CellText']),
         Paragraph('<b>Patched<br/>On Time</b>', styles['CellText']),
         Paragraph('<b>Patched<br/>Late</b>', styles['CellText']),
         Paragraph('<b>Not Yet<br/>Patched</b>', styles['CellText']),
-        Paragraph('<b>Exception<br/>Granted</b>', styles['CellText']),
         Paragraph('<b>Compliance<br/>%</b>', styles['CellText']),
     ]
 
+    sev_data = [
+        ('Critical', sev['critical'], earliest_deadline(9.0, 10.0)),
+        ('High', sev['high'], earliest_deadline(7.0, 8.9)),
+        ('Medium', sev['medium'], earliest_deadline(4.0, 6.9)),
+        ('Low', sev['low'], earliest_deadline(0.1, 3.9)),
+    ]
+
+    track_metrics = ['ontime', 'late', 'unpatched', 'compliance']
     track_rows = [track_header]
-    for sev in ['Critical', 'High', 'Medium', 'Low']:
+    for sev_name, count, deadline in sev_data:
+        sev_key = sev_name.lower()
         track_rows.append([
-            Paragraph(f'<font size="9"><b>{sev}</b></font>', styles['CellText']),
-        ] + [Paragraph('', styles['CellText'])] * 6)
+            Paragraph(f'<font size="9"><b>{sev_name}</b></font>', styles['CellText']),
+            Paragraph(f'<font size="9">{count}</font>', styles['CellText']),
+            Paragraph(f'<font size="8">{deadline}</font>', styles['CellText']),
+            AcroTextField(name=f'sla_ontime_{sev_key}', width=55, height=14),
+            AcroTextField(name=f'sla_late_{sev_key}', width=48, height=14),
+            AcroTextField(name=f'sla_unpatched_{sev_key}', width=55, height=14),
+            AcroTextField(name=f'sla_compliance_{sev_key}', width=62, height=14),
+        ])
 
     # Totals row
     track_rows.append([
         Paragraph('<font size="9"><b>TOTAL</b></font>', styles['CellText']),
-    ] + [Paragraph('', styles['CellText'])] * 6)
+        Paragraph(f'<font size="9"><b>{len(entries)}</b></font>', styles['CellText']),
+        Paragraph('', styles['CellText']),
+        AcroTextField(name='sla_ontime_total', width=55, height=14),
+        AcroTextField(name='sla_late_total', width=48, height=14),
+        AcroTextField(name='sla_unpatched_total', width=55, height=14),
+        AcroTextField(name='sla_compliance_total', width=62, height=14),
+    ])
 
-    track_table = Table(track_rows, colWidths=[1.0 * inch, 0.75 * inch, 0.85 * inch, 0.75 * inch, 0.85 * inch, 0.85 * inch, 1.0 * inch])
+    track_table = Table(track_rows, colWidths=[0.9 * inch, 0.65 * inch, 0.9 * inch, 0.8 * inch, 0.7 * inch, 0.8 * inch, 0.9 * inch])
     track_table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), HEADER_BG),
         ('TEXTCOLOR', (0, 0), (-1, 0), white),
@@ -799,6 +1361,8 @@ def build_sla_tracker(styles):
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
         ('BACKGROUND', (0, -1), (-1, -1), HexColor('#f1f5f9')),
         ('LINEABOVE', (0, -1), (-1, -1), 1.5, TEXT_MED),
+        # Extra padding for form field columns
+        ('BOTTOMPADDING', (3, 1), (-1, -1), 10),
     ]))
     elements.append(track_table)
 
@@ -807,10 +1371,10 @@ def build_sla_tracker(styles):
 
 
 def build_executive_summary(entries, month_label, cycle_start, cycle_end, styles):
-    """Page: Executive Summary with pre-filled metrics and blank narrative."""
+    """Page: Executive Summary with pre-filled metrics, CWE analysis, risk highlights, and EPSS distribution."""
     elements = []
 
-    elements.append(Paragraph("5. Executive Summary", styles['SectionHeader']))
+    elements.append(Paragraph("7. Executive Summary", styles['SectionHeader']))
     elements.append(Paragraph(
         f"Patch Management Report \u2014 {month_label}",
         ParagraphStyle('esub', parent=styles['SubHeader'], alignment=TA_CENTER)
@@ -853,28 +1417,126 @@ def build_executive_summary(entries, month_label, cycle_start, cycle_end, styles
     ]))
     elements.append(metrics_table)
 
-    elements.append(Spacer(1, 20))
+    elements.append(Spacer(1, 14))
 
-    # Narrative sections (blank for user)
-    narrative_sections = [
-        "Summary of Actions Taken",
-        "Key Risks & Exceptions",
-        "Recommendations for Next Cycle",
-    ]
-
-    for section_title in narrative_sections:
-        elements.append(Paragraph(f'<b>{section_title}</b>', styles['KitBody']))
+    # ── CWE Analysis table ──
+    cwes = cwe_analysis(entries)
+    if cwes:
+        elements.append(Paragraph("<b>Weakness Type Analysis (CWE)</b>", styles['KitBody']))
         elements.append(Spacer(1, 4))
 
-        # Blank lined area (3 lines)
-        for _ in range(3):
-            elements.append(HRFlowable(
-                width="100%", thickness=0.5, color=BORDER_GRAY,
-                spaceBefore=14, spaceAfter=0
-            ))
+        cwe_header = [
+            Paragraph('<b>CWE ID</b>', styles['CellText']),
+            Paragraph('<b>Weakness Type</b>', styles['CellText']),
+            Paragraph('<b>Count</b>', styles['CellText']),
+        ]
+        cwe_rows = [cwe_header]
+        for cwe_id, cwe_name, count in cwes[:5]:
+            cwe_rows.append([
+                Paragraph(f'<font size="8">{cwe_id}</font>', styles['CellText']),
+                Paragraph(f'<font size="8">{cwe_name}</font>', styles['CellText']),
+                Paragraph(f'<font size="8">{count}</font>', styles['CellText']),
+            ])
+
+        cwe_table = Table(cwe_rows, colWidths=[1.0 * inch, 3.8 * inch, 0.7 * inch])
+        cwe_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), HEADER_BG),
+            ('TEXTCOLOR', (0, 0), (-1, 0), white),
+            ('GRID', (0, 0), (-1, -1), 0.5, BORDER_GRAY),
+            ('BOX', (0, 0), (-1, -1), 1, TEXT_MED),
+            ('TOPPADDING', (0, 0), (-1, -1), 4),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+            ('LEFTPADDING', (0, 0), (-1, -1), 6),
+            ('ALIGN', (2, 0), (2, -1), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ]))
+        elements.append(cwe_table)
+        elements.append(Spacer(1, 14))
+
+    # ── Risk Highlights (auto-generated bullets) ──
+    elements.append(Paragraph("<b>Risk Highlights</b>", styles['KitBody']))
+    elements.append(Spacer(1, 4))
+
+    # EPSS Top 5% count
+    epss_top5 = sum(1 for e in entries if e.get('epss_percentile', 0) >= 0.95)
+    epss_top20 = sum(1 for e in entries if 0.80 <= e.get('epss_percentile', 0) < 0.95)
+
+    risk_bullets = []
+    if epss_top5 > 0:
+        risk_bullets.append(f'{epss_top5} CVE{"s" if epss_top5 != 1 else ""} in EPSS Top 5% (highest exploitation likelihood)')
+    if epss_top20 > 0:
+        risk_bullets.append(f'{epss_top20} CVE{"s" if epss_top20 != 1 else ""} in EPSS Top 20%')
+    if ransomware_count > 0:
+        risk_bullets.append(f'{ransomware_count} CVE{"s" if ransomware_count != 1 else ""} linked to known ransomware campaigns')
+    if vendors:
+        risk_bullets.append(f'Most affected vendor: {vendors[0][0]} with {vendors[0][1]} CVEs')
+    if sev['critical'] > 0:
+        risk_bullets.append(f'{sev["critical"]} critical-severity vulnerabilities requiring immediate attention')
+
+    for bullet in risk_bullets:
+        elements.append(Paragraph(f'\u2022 {bullet}', styles['RiskBullet']))
+
+    elements.append(Spacer(1, 14))
+
+    # ── EPSS Risk Distribution ──
+    elements.append(Paragraph("<b>EPSS Exploitation Likelihood Distribution</b>", styles['KitBody']))
+    elements.append(Spacer(1, 4))
+
+    epss_above_median = sum(1 for e in entries if 0.50 <= e.get('epss_percentile', 0) < 0.80)
+    epss_below_median = sum(1 for e in entries if e.get('epss_percentile', 0) < 0.50)
+
+    epss_dist_header = [
+        Paragraph('<b>EPSS Tier</b>', styles['CellText']),
+        Paragraph('<b>Percentile Range</b>', styles['CellText']),
+        Paragraph('<b>CVEs</b>', styles['CellText']),
+    ]
+    epss_dist_rows = [epss_dist_header]
+    epss_tiers_data = [
+        ('Top 5%', '\u2265 95th', epss_top5, CRITICAL_RED),
+        ('Top 20%', '80th \u2013 94th', epss_top20, HIGH_ORANGE),
+        ('Above Median', '50th \u2013 79th', epss_above_median, MEDIUM_YELLOW),
+        ('Below Median', '< 50th', epss_below_median, LOW_BLUE),
+    ]
+
+    for tier_name, pct_range, count, color in epss_tiers_data:
+        epss_dist_rows.append([
+            Paragraph(f'<font size="8" color="{color.hexval()}"><b>{tier_name}</b></font>', styles['CellText']),
+            Paragraph(f'<font size="8">{pct_range}</font>', styles['CellText']),
+            Paragraph(f'<font size="8">{count}</font>', styles['CellText']),
+        ])
+
+    epss_dist_table = Table(epss_dist_rows, colWidths=[1.5 * inch, 1.5 * inch, 0.7 * inch])
+    epss_dist_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), HEADER_BG),
+        ('TEXTCOLOR', (0, 0), (-1, 0), white),
+        ('GRID', (0, 0), (-1, -1), 0.5, BORDER_GRAY),
+        ('BOX', (0, 0), (-1, -1), 1, TEXT_MED),
+        ('TOPPADDING', (0, 0), (-1, -1), 4),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+        ('LEFTPADDING', (0, 0), (-1, -1), 6),
+        ('ALIGN', (2, 0), (2, -1), 'CENTER'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+    ]))
+    elements.append(epss_dist_table)
+
+    elements.append(Spacer(1, 14))
+
+    # ── Narrative sections (fillable text areas) ──
+    narrative_fields = [
+        ("Key Risks &amp; Exceptions", 'exec_risks'),
+        ("Recommendations for Next Cycle", 'exec_recommendations'),
+    ]
+
+    for section_title, field_name in narrative_fields:
+        elements.append(Paragraph(f'<b>{section_title}</b>', styles['KitBody']))
+        elements.append(Spacer(1, 4))
+        elements.append(AcroTextField(
+            name=field_name, width=468, height=80,
+            multiline=True, fontsize=9, maxlen=0,
+        ))
         elements.append(Spacer(1, 8))
 
-    elements.append(Spacer(1, 20))
+    elements.append(Spacer(1, 12))
 
     # Signature block
     elements.append(HRFlowable(width="100%", thickness=1, color=TEXT_MED, spaceBefore=0, spaceAfter=6))
@@ -885,10 +1547,10 @@ def build_executive_summary(entries, month_label, cycle_start, cycle_end, styles
         Paragraph('<font size="9"><b>Date</b></font>', styles['CellText']),
         Paragraph('<font size="9"><b>Signature</b></font>', styles['CellText']),
     ], [
-        Paragraph('', styles['CellText']),
-        Paragraph('', styles['CellText']),
-        Paragraph('', styles['CellText']),
-        Paragraph('', styles['CellText']),
+        AcroTextField(name='sig_prepared_by', width=105, height=18),
+        AcroTextField(name='sig_title', width=105, height=18),
+        AcroTextField(name='sig_date', width=85, height=18),
+        AcroTextField(name='sig_signature', width=135, height=18),
     ]]
 
     sig_table = Table(sig_data, colWidths=[1.6 * inch, 1.6 * inch, 1.3 * inch, 2.0 * inch])
@@ -898,6 +1560,8 @@ def build_executive_summary(entries, month_label, cycle_start, cycle_end, styles
         ('BOTTOMPADDING', (0, 0), (-1, -1), 20),
         ('LEFTPADDING', (0, 0), (-1, -1), 6),
         ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        # Extra padding for form field row
+        ('BOTTOMPADDING', (0, 1), (-1, 1), 22),
     ]))
     elements.append(sig_table)
 
@@ -931,15 +1595,18 @@ def generate_pdf(entries, year, month, cycle_start, cycle_end):
     # Build all pages
     elements.extend(build_cover_page(entries, month_label, cycle_start, cycle_end, styles))
     elements.extend(build_triage_matrix(entries, styles))
-    elements.extend(build_sprint_calendar(cycle_start, styles))
+    elements.extend(build_trend_page(entries, year, month, styles))
+    elements.extend(build_cve_detail_pages(entries, styles))
+    elements.extend(build_sprint_calendar(cycle_start, entries, styles))
     elements.extend(build_testing_checklist(entries, styles))
-    elements.extend(build_sla_tracker(styles))
+    elements.extend(build_sla_tracker(entries, styles))
     elements.extend(build_executive_summary(entries, month_label, cycle_start, cycle_end, styles))
 
     doc.build(elements, onFirstPage=add_footer, onLaterPages=add_footer)
 
+    page_count = doc.page
     print(f"PDF generated: {filepath}")
-    print(f"  Pages: ~6-7 (cover + 5 templates)")
+    print(f"  Pages: {page_count}")
     print(f"  CVEs: {len(entries)}")
 
     return filepath, filename
@@ -959,6 +1626,15 @@ def update_manifest(filename, year, month, entries, cycle_start, cycle_end):
     sev = severity_breakdown(entries)
     vendors = vendor_summary(entries)
 
+    # EPSS stats
+    epss_scores = [e.get('epss', 0) for e in entries if e.get('epss', 0) > 0]
+    avg_epss = sum(epss_scores) / len(epss_scores) if epss_scores else 0
+    epss_top5_count = sum(1 for e in entries if e.get('epss_percentile', 0) >= 0.95)
+
+    # Top CWEs
+    cwes = cwe_analysis(entries)
+    top_cwes = [{'id': cid, 'name': name, 'count': cnt} for cid, name, cnt in cwes[:5]]
+
     key = f"{year}-{month:02d}"
     manifest[key] = {
         'filename': filename,
@@ -968,7 +1644,11 @@ def update_manifest(filename, year, month, entries, cycle_start, cycle_end):
         'total_cves': len(entries),
         'severity': sev,
         'top_vendors': [{'vendor': v, 'count': c} for v, c in vendors[:5]],
+        'unique_vendors': len(vendors),
         'ransomware_linked': sum(1 for e in entries if e.get('ransomware') == 'Known'),
+        'avg_epss': round(avg_epss, 4),
+        'epss_top5_count': epss_top5_count,
+        'top_cwes': top_cwes,
     }
 
     with open(MANIFEST_FILE, 'w') as f:
