@@ -290,6 +290,7 @@ async function handleVerify(request, env, cors) {
 
     return new Response(JSON.stringify({
       verified: true,
+      mode: session.mode || 'payment',
       email: session.customer_details?.email || '',
       downloads,
     }), {
@@ -720,6 +721,41 @@ function getKitMonthLabel(filename) {
   return `${months[parseInt(match[2], 10) - 1]} ${match[1]}`;
 }
 
+function getNextPatchTuesday(after) {
+  const now = after || new Date();
+  let year = now.getUTCFullYear();
+  let month = now.getUTCMonth();
+  // Find 2nd Tuesday of current month
+  const firstDay = new Date(Date.UTC(year, month, 1));
+  const dayOfWeek = firstDay.getUTCDay();
+  const firstTue = ((9 - dayOfWeek) % 7) + 1;
+  const secondTue = firstTue + 7;
+  const pt = new Date(Date.UTC(year, month, secondTue));
+  // If past this month's PT, get next month's
+  if (now >= pt) {
+    month++;
+    if (month > 11) { month = 0; year++; }
+    const fd = new Date(Date.UTC(year, month, 1));
+    const dow = fd.getUTCDay();
+    const ft = ((9 - dow) % 7) + 1;
+    return new Date(Date.UTC(year, month, ft + 7));
+  }
+  return pt;
+}
+
+function formatPatchTuesday(date) {
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  return `${months[date.getUTCMonth()]} ${date.getUTCDate()}, ${date.getUTCFullYear()}`;
+}
+
+// Day after Patch Tuesday (when kits are delivered)
+function formatDeliveryDate(ptDate) {
+  const delivery = new Date(ptDate.getTime() + 24 * 60 * 60 * 1000);
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  return `${days[delivery.getUTCDay()]}, ${months[delivery.getUTCMonth()]} ${delivery.getUTCDate()}, ${delivery.getUTCFullYear()}`;
+}
+
 async function createSprintKitToken(filename, secret) {
   // 7-day expiry for subscription products (vs 24hr for one-time purchases)
   const expiry = Date.now() + 7 * 24 * 60 * 60 * 1000;
@@ -790,6 +826,13 @@ async function sendSprintKitEmail(env, toEmail, downloadUrl, filename, billingRe
   const monthLabel = getKitMonthLabel(filename);
   const isFirstInvoice = billingReason === 'subscription_create';
 
+  // Calculate next month's Patch Tuesday for "what's next" section
+  // Use a date guaranteed to be after this month's PT (25th of current month)
+  const now = new Date();
+  const afterThisMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 25));
+  const nextMonthPT = getNextPatchTuesday(afterThisMonth);
+  const nextPTFormatted = formatPatchTuesday(nextMonthPT);
+
   const html = `
 <!DOCTYPE html>
 <html>
@@ -824,14 +867,22 @@ async function sendSprintKitEmail(env, toEmail, downloadUrl, filename, billingRe
             </td>
           </tr>
         </table>
-        <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:14px 16px;margin-bottom:24px;">
+        <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:14px 16px;margin-bottom:20px;">
           <p style="margin:0;color:#92400e;font-size:13px;">
             ⏰ <strong>Download link expires in 7 days.</strong> Please save your file after downloading.
           </p>
         </div>
-        <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0;">
+        <div style="background:#f0fdf4;border:1px solid #d1fae5;border-radius:8px;padding:14px 16px;margin-bottom:24px;">
+          <p style="margin:0;color:#065f46;font-size:13px;">
+            📅 Your next kit arrives after Patch Tuesday on <strong>${nextPTFormatted}</strong>.
+          </p>
+        </div>
+        <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 12px;">
           Questions? Reply to this email or contact
           <a href="mailto:hello@fixthevuln.com" style="color:#10b981;">hello@fixthevuln.com</a>
+        </p>
+        <p style="color:#64748b;font-size:13px;line-height:1.6;margin:0;">
+          <a href="mailto:hello@fixthevuln.com?subject=Manage%20Sprint%20Kit%20Subscription" style="color:#10b981;">Manage subscription</a>
         </p>
       </div>
       <!-- Footer -->
@@ -861,6 +912,10 @@ async function sendSprintKitEmail(env, toEmail, downloadUrl, filename, billingRe
 // ─── SPRINT KIT WELCOME EMAIL ───────────────────
 // Sent when subscriber signs up before the month's kit is generated
 async function sendSprintKitWelcomeEmail(env, toEmail) {
+  const nextPT = getNextPatchTuesday();
+  const deliveryDate = formatDeliveryDate(nextPT);
+  const ptDate = formatPatchTuesday(nextPT);
+
   const html = `
 <!DOCTYPE html>
 <html>
@@ -876,10 +931,11 @@ async function sendSprintKitWelcomeEmail(env, toEmail) {
         <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">
           Thank you for subscribing! Your first Patch Tuesday Sprint Kit is being prepared.
         </p>
-        <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">
-          After next Patch Tuesday, you'll receive an email with your PDF — pre-filled with that cycle's
-          CISA KEV vulnerabilities, CVSS scores, and EPSS exploit predictions.
-        </p>
+        <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:16px;margin-bottom:20px;">
+          <p style="margin:0;color:#065f46;font-size:15px;line-height:1.6;">
+            Your first intelligence PDF will arrive by <strong>${deliveryDate}</strong> — the day after Patch Tuesday (${ptDate}).
+          </p>
+        </div>
         <div style="background:#f0fdf4;border:1px solid #d1fae5;border-radius:8px;padding:16px;margin-bottom:24px;">
           <p style="margin:0 0 8px;color:#1e293b;font-size:14px;font-weight:600;">What's included each month:</p>
           <ul style="margin:0;padding-left:20px;color:#475569;font-size:14px;line-height:1.8;">
@@ -890,8 +946,11 @@ async function sendSprintKitWelcomeEmail(env, toEmail) {
             <li>Executive Summary — pre-filled metrics + signature block</li>
           </ul>
         </div>
-        <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0;">
+        <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 16px;">
           In the meantime, use the <a href="https://fixthevuln.com/store/patch-tuesday-kit.html" style="color:#10b981;">free browser tool</a> to start planning.
+        </p>
+        <p style="color:#64748b;font-size:13px;line-height:1.6;margin:0;">
+          Need to manage your subscription? Contact <a href="mailto:hello@fixthevuln.com?subject=Manage%20Sprint%20Kit%20Subscription" style="color:#10b981;">hello@fixthevuln.com</a>
         </p>
       </div>
       <div style="border-top:1px solid #e5e7eb;padding:20px 24px;text-align:center;">

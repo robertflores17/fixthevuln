@@ -156,6 +156,127 @@
       font-weight: 600;
       margin-left: 8px;
     }
+
+    /* ─── Subscription confirmation panel ─── */
+    .subscription-confirm {
+      background: var(--bg-card);
+      border: 1px solid #10b981;
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      text-align: left;
+      margin-bottom: 32px;
+    }
+    .subscription-confirm .sub-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .subscription-confirm .sub-icon {
+      font-size: 56px;
+      margin-bottom: 12px;
+    }
+    .subscription-confirm .sub-header h1 {
+      font-size: 28px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 4px;
+    }
+    .subscription-confirm .sub-header p {
+      color: var(--text-secondary);
+      font-size: 15px;
+    }
+    .subscription-includes h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+    .subscription-includes ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 28px;
+    }
+    .subscription-includes li {
+      padding: 8px 0;
+      font-size: 14px;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .subscription-includes li:last-child {
+      border-bottom: none;
+    }
+    .subscription-includes li .check {
+      color: #10b981;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .subscription-date {
+      background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(6,182,212,0.08));
+      border: 1px solid rgba(16,185,129,0.3);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+    }
+    .subscription-date h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+    }
+    .subscription-date p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 6px;
+    }
+    .subscription-date .pt-date {
+      display: inline-block;
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .subscription-actions {
+      text-align: center;
+      margin-top: 8px;
+    }
+    .subscription-actions .btn-kit {
+      display: inline-block;
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 12px 28px;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s;
+      font-family: var(--font-sans);
+    }
+    .subscription-actions .btn-kit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+    }
+    .subscription-actions .help-link {
+      display: block;
+      margin-top: 14px;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+    .subscription-actions .help-link a {
+      color: #10b981;
+      text-decoration: none;
+    }
+    .subscription-actions .help-link a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -195,6 +316,42 @@
       </div>
 
       <a href="store.html" class="back-link">← Browse more planners</a>
+    </div>
+
+    <!-- Subscription state (shown for sprint kit subscriptions) -->
+    <div id="subscriptionState" style="display:none">
+      <div class="subscription-confirm">
+        <div class="sub-header">
+          <div class="sub-icon">✅</div>
+          <h1>You're Subscribed!</h1>
+          <p>Patch Tuesday Sprint Kit — $4.99/mo</p>
+        </div>
+
+        <div class="subscription-includes">
+          <h3>Your monthly intelligence PDF includes:</h3>
+          <ul>
+            <li><span class="check">✓</span> Pre-filled Triage Matrix with real CISA KEV data</li>
+            <li><span class="check">✓</span> Patch Priority Score for every CVE</li>
+            <li><span class="check">✓</span> 14-Day Sprint Calendar with actual dates &amp; CVE IDs</li>
+            <li><span class="check">✓</span> Testing &amp; Rollback Checklist with that month's vendors</li>
+            <li><span class="check">✓</span> Executive Summary with auto-generated narrative &amp; charts</li>
+          </ul>
+        </div>
+
+        <div class="subscription-date">
+          <h3>When to expect it</h3>
+          <p>Your PDF arrives via email within 24 hours of Patch Tuesday.</p>
+          <p>Next Patch Tuesday: <span class="pt-date" id="nextPTDate"></span></p>
+          <p style="margin-top:8px;font-size:13px;color:var(--text-muted);">Check your inbox — we just sent you a welcome email.</p>
+        </div>
+
+        <div class="subscription-actions">
+          <a href="patch-tuesday-kit.html#triage-matrix" class="btn-kit">Start with the free browser templates →</a>
+          <p class="help-link">Need help? <a href="mailto:hello@fixthevuln.com">hello@fixthevuln.com</a></p>
+        </div>
+      </div>
+
+      <a href="store.html" class="back-link">← Back to store</a>
     </div>
 
     <!-- Error state -->
@@ -295,6 +452,32 @@
       }
     });
 
+    // Patch Tuesday calculator (2nd Tuesday of the month)
+    function getNextPatchTuesday() {
+      const now = new Date();
+      let year = now.getFullYear();
+      let month = now.getMonth();
+      const firstDay = new Date(year, month, 1);
+      const dayOfWeek = firstDay.getDay();
+      const firstTue = ((9 - dayOfWeek) % 7) + 1;
+      const secondTue = firstTue + 7;
+      const pt = new Date(year, month, secondTue);
+      if (now >= pt) {
+        month++;
+        if (month > 11) { month = 0; year++; }
+        const fd = new Date(year, month, 1);
+        const dow = fd.getDay();
+        const ft = ((9 - dow) % 7) + 1;
+        return new Date(year, month, ft + 7);
+      }
+      return pt;
+    }
+
+    function formatPatchTuesday(date) {
+      const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+    }
+
     // HTML sanitization
     function esc(str) {
       const d = document.createElement('div');
@@ -328,6 +511,15 @@
 
         // Clear the cart
         localStorage.removeItem('ftv_cart');
+
+        // Subscription flow — show confirmation panel instead of downloads
+        if (data.mode === 'subscription') {
+          const ptDate = getNextPatchTuesday();
+          document.getElementById('nextPTDate').textContent = formatPatchTuesday(ptDate);
+          document.getElementById('loadingState').style.display = 'none';
+          document.getElementById('subscriptionState').style.display = 'block';
+          return;
+        }
 
         // Show downloads, grouped by career path
         const downloadList = document.getElementById('downloadList');
