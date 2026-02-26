@@ -81,7 +81,7 @@ def build_blog_links_html(matching_posts):
 
     return f'''
             {BLOG_LINK_MARKER}
-            <section style="margin-top: 1.5rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
+            <section style="margin-top: 1.5rem; margin-bottom: 1.5rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
                 <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Latest from the Blog</h3>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
 {chr(10).join(links)}
