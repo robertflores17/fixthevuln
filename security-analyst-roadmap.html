@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Free visual roadmap for aspiring Security Analysts. Learn what skills to build, which tools to master, and which certifications to earn — from SOC fundamentals to threat hunting.">
+    <meta name="keywords" content="security analyst roadmap, SOC analyst career path, cybersecurity skills, security analyst certifications, Security+ roadmap, CySA+ roadmap, CISSP career path, security analyst skills">
+    <title>Security Analyst Roadmap — Skills, Tools & Certifications - FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/security-analyst-roadmap.html">
+    <meta property="og:title" content="Security Analyst Roadmap — Skills, Tools & Certifications - FixTheVuln">
+    <meta property="og:description" content="Free visual roadmap for aspiring Security Analysts. Learn what skills to build, which tools to master, and which certifications to earn — from SOC fundamentals to threat hunting.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fixthevuln.com/security-analyst-roadmap.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Security Analyst Roadmap — Skills, Tools & Certifications - FixTheVuln">
+    <meta name="twitter:description" content="Free visual roadmap for aspiring Security Analysts. Learn what skills to build, which tools to master, and which certifications to earn.">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.min.css?v=2">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LearningResource",
+        "name": "Security Analyst Roadmap",
+        "description": "A visual career roadmap for Security Analysts covering networking, OS fundamentals, SIEM, vulnerability management, threat intelligence, web app security, and advanced specializations.",
+        "url": "https://fixthevuln.com/security-analyst-roadmap.html",
+        "educationalLevel": "Beginner to Intermediate",
+        "teaches": [
+            "Network security fundamentals",
+            "Operating system hardening",
+            "Log analysis and SIEM",
+            "Vulnerability management",
+            "Threat intelligence",
+            "Incident response",
+            "Web application security",
+            "Cloud security",
+            "Security frameworks and compliance"
+        ],
+        "author": { "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" },
+        "publisher": { "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" },
+        "inLanguage": "en",
+        "isAccessibleForFree": true
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Guides", "item": "https://fixthevuln.com/guides.html" },
+            { "@type": "ListItem", "position": 3, "name": "Security Analyst Roadmap" }
+        ]
+    }
+    </script>
+    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="blog/feed.xml">
+    <style>
+        /* Roadmap Hero */
+        .roadmap-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2.5rem 2rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .roadmap-hero h1 {
+            color: white;
+            margin-bottom: 0.5rem;
+            font-size: 1.75rem;
+        }
+        .roadmap-hero p {
+            opacity: 0.9;
+            max-width: 640px;
+            margin: 0 auto;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .hero-stat {
+            background: rgba(255,255,255,0.15);
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Legend */
+        .roadmap-legend {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+            padding: 1rem;
+            background: var(--bg-secondary, #f8f9fa);
+            border-radius: 10px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary, #666);
+        }
+        .legend-swatch {
+            width: 28px;
+            height: 4px;
+            border-radius: 2px;
+        }
+        .legend-swatch--required { background: #667eea; }
+        .legend-swatch--recommended { background: #3b82f6; border: 2px dashed #3b82f6; width: 24px; height: 0; }
+        .legend-swatch--optional { background: #9ca3af; border: 2px dashed #9ca3af; width: 24px; height: 0; }
+
+        /* Phase container */
+        .roadmap-phase {
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .roadmap-phase:not(:last-child)::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 3.5rem;
+            bottom: -1rem;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--accent-primary, #667eea), rgba(102,126,234,0.2));
+            border-radius: 2px;
+        }
+
+        /* Phase header */
+        .phase-header {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            margin-bottom: 1.25rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: white;
+            position: relative;
+        }
+        .phase-header::before {
+            content: '';
+            position: absolute;
+            left: -1.75rem;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid currentColor;
+        }
+        .phase-1 .phase-header { background: linear-gradient(135deg, #28a745, #20c997); }
+        .phase-1 .phase-header::before { border-color: #28a745; }
+        .phase-2 .phase-header { background: linear-gradient(135deg, #667eea, #5a6fd6); }
+        .phase-2 .phase-header::before { border-color: #667eea; }
+        .phase-3 .phase-header { background: linear-gradient(135deg, #764ba2, #9b59b6); }
+        .phase-3 .phase-header::before { border-color: #764ba2; }
+        .phase-4 .phase-header { background: linear-gradient(135deg, #dc3545, #e74c3c); }
+        .phase-4 .phase-header::before { border-color: #dc3545; }
+
+        .phase-timeframe {
+            font-weight: 400;
+            font-size: 0.85rem;
+            opacity: 0.85;
+        }
+
+        /* Topic grid */
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        /* Topic node */
+        .topic-node {
+            background: var(--bg-primary, white);
+            border-radius: 10px;
+            padding: 1.25rem;
+            border: 2px solid #e0e0e0;
+            transition: all 0.2s ease;
+            cursor: default;
+        }
+        .topic-node:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        }
+        .topic-node--required {
+            border-color: #667eea;
+            border-left-width: 4px;
+        }
+        .topic-node--recommended {
+            border-color: #3b82f6;
+            border-style: dashed;
+        }
+        .topic-node--optional {
+            border-color: #9ca3af;
+            border-style: dashed;
+        }
+
+        .topic-node-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.65rem;
+            margin-bottom: 0.5rem;
+        }
+        .topic-icon {
+            font-size: 1.4rem;
+            line-height: 1;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+        .topic-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-primary, #333);
+            line-height: 1.3;
+        }
+        .topic-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary, #666);
+            line-height: 1.5;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Resource badges */
+        .resource-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+        .resource-badge {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 5px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .resource-badge:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.1);
+        }
+        .badge-guide {
+            background: #28a745;
+            color: white;
+        }
+        .badge-tool {
+            background: #3b82f6;
+            color: white;
+        }
+        .badge-quiz {
+            background: #8b5cf6;
+            color: white;
+        }
+        .badge-planner {
+            background: #667eea;
+            color: white;
+        }
+        .badge-compliance {
+            background: #f59e0b;
+            color: white;
+        }
+
+        /* Cert milestone */
+        .cert-milestone {
+            background: linear-gradient(135deg, rgba(102,126,234,0.08) 0%, rgba(118,75,162,0.08) 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.25rem;
+        }
+        .cert-milestone-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .cert-milestone-icon {
+            font-size: 1.6rem;
+        }
+        .cert-milestone-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text-primary, #333);
+        }
+        .cert-milestone-sub {
+            font-size: 0.8rem;
+            color: var(--text-secondary, #666);
+        }
+        .cert-milestone-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* How to use this roadmap */
+        .how-to-use {
+            background: var(--bg-secondary, #f8f9fa);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color, #e0e0e0);
+        }
+        .how-to-use h2 {
+            font-size: 1.15rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary, #333);
+        }
+        .how-to-use ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .how-to-use li {
+            padding: 0.35rem 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary, #666);
+            line-height: 1.5;
+        }
+        .how-to-use li::before {
+            content: '→ ';
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: var(--bg-secondary, #f8f9fa);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2.5rem;
+            border: 1px solid var(--border-color, #e0e0e0);
+        }
+        .cta-section h2 {
+            color: var(--text-primary, #333);
+            margin-bottom: 0.5rem;
+        }
+        .cta-section p {
+            color: var(--text-secondary, #666);
+            margin-bottom: 1.25rem;
+        }
+        .cta-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .cta-link {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .cta-link-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .cta-link-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .cta-link-secondary {
+            background: var(--bg-primary, white);
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        .cta-link-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .roadmap-hero h1 { font-size: 1.35rem; }
+            .hero-stats { gap: 0.75rem; }
+            .hero-stat { font-size: 0.8rem; padding: 0.5rem 0.75rem; }
+            .topic-grid { grid-template-columns: 1fr; }
+            .roadmap-phase { padding-left: 2rem; }
+            .cert-milestone { flex-direction: column; align-items: flex-start; }
+            .roadmap-legend { gap: 1rem; }
+        }
+
+        /* Dark mode */
+        [data-theme="dark"] .roadmap-legend {
+            background: #1a1a2e;
+        }
+        [data-theme="dark"] .legend-item {
+            color: #aaa;
+        }
+        [data-theme="dark"] .topic-node {
+            background: #1a1a2e;
+            border-color: #333;
+        }
+        [data-theme="dark"] .topic-node--required {
+            border-color: #667eea;
+        }
+        [data-theme="dark"] .topic-node--recommended {
+            border-color: #3b82f6;
+        }
+        [data-theme="dark"] .topic-node--optional {
+            border-color: #6b7280;
+        }
+        [data-theme="dark"] .topic-node:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        [data-theme="dark"] .topic-title {
+            color: #e0e0e0;
+        }
+        [data-theme="dark"] .topic-desc {
+            color: #aaa;
+        }
+        [data-theme="dark"] .cert-milestone {
+            background: linear-gradient(135deg, rgba(102,126,234,0.12) 0%, rgba(118,75,162,0.12) 100%);
+            border-color: #667eea;
+        }
+        [data-theme="dark"] .cert-milestone-title {
+            color: #e0e0e0;
+        }
+        [data-theme="dark"] .cert-milestone-sub {
+            color: #aaa;
+        }
+        [data-theme="dark"] .how-to-use {
+            background: #1a1a2e;
+            border-color: #333;
+        }
+        [data-theme="dark"] .how-to-use h2 {
+            color: #e0e0e0;
+        }
+        [data-theme="dark"] .how-to-use li {
+            color: #aaa;
+        }
+        [data-theme="dark"] .cta-section {
+            background: #1a1a2e;
+            border-color: #333;
+        }
+        [data-theme="dark"] .cta-section h2 {
+            color: #e0e0e0;
+        }
+        [data-theme="dark"] .cta-section p {
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="index.html" class="site-nav-logo">FixTheVuln</a>
+        <div class="site-nav-links">
+            <a href="guides.html">Guides</a>
+            <a href="tools.html">Tools</a>
+            <a href="compliance.html">Compliance</a>
+            <a href="resources.html">Resources</a>
+            <a href="practice-tests.html">Quizzes</a>
+            <a href="career-paths.html">Career Paths</a>
+            <a href="blog/">Blog</a>
+            <a href="/store/store.html" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: .35rem .75rem; border-radius: 6px; font-size: .85rem; font-weight: 600; text-decoration: none;">Store</a>
+        </div>
+    </div>
+</nav>
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit"><svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg></a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></a>
+</div>
+
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>FixTheVuln</h1></a>
+            <p class="tagline">Security Analyst Roadmap</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="guides.html" class="back-link">&larr; Back to Guides</a>
+
+        <!-- Hero -->
+        <div class="roadmap-hero">
+            <h1>Security Analyst Roadmap</h1>
+            <p>A visual progression from foundational skills to advanced specializations. Certifications are milestones along the way &mdash; not the entire journey.</p>
+            <div class="hero-stats">
+                <span class="hero-stat">4 Phases</span>
+                <span class="hero-stat">17 Topics</span>
+                <span class="hero-stat">3 Cert Milestones</span>
+                <span class="hero-stat">30+ Free Resources</span>
+            </div>
+        </div>
+
+        <!-- How to use -->
+        <div class="how-to-use">
+            <h2>How to Use This Roadmap</h2>
+            <ul>
+                <li><strong>Required</strong> topics (solid border) are essential &mdash; prioritize these first</li>
+                <li><strong>Recommended</strong> topics (blue dashed border) strengthen your profile significantly</li>
+                <li><strong>Optional</strong> topics (gray dashed border) are valuable for specialization</li>
+                <li>Click resource badges to jump to the corresponding FixTheVuln guide, tool, or quiz</li>
+                <li>Timeframes are estimates &mdash; adjust based on your pace and prior experience</li>
+            </ul>
+        </div>
+
+        <!-- Legend -->
+        <div class="roadmap-legend">
+            <div class="legend-item">
+                <span class="legend-swatch legend-swatch--required"></span>
+                Required
+            </div>
+            <div class="legend-item">
+                <span class="legend-swatch legend-swatch--recommended"></span>
+                Recommended
+            </div>
+            <div class="legend-item">
+                <span class="legend-swatch legend-swatch--optional"></span>
+                Optional
+            </div>
+            <div class="legend-item">
+                <span style="background: #28a745; color: white; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">Guide</span>
+            </div>
+            <div class="legend-item">
+                <span style="background: #3b82f6; color: white; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">Tool</span>
+            </div>
+            <div class="legend-item">
+                <span style="background: #8b5cf6; color: white; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">Quiz</span>
+            </div>
+        </div>
+
+        <!-- ==================== PHASE 1 ==================== -->
+        <div class="roadmap-phase phase-1">
+            <div class="phase-header">
+                Phase 1: Foundation <span class="phase-timeframe">(Months 1&ndash;2)</span>
+            </div>
+
+            <div class="topic-grid">
+                <!-- Networking Fundamentals -->
+                <div class="topic-node topic-node--required">
+                    <div class="topic-node-header">
+                        <span class="topic-icon">🌐</span>
+                        <span class="topic-title">Networking Fundamentals</span>
+                    </div>
+                    <p class="topic-desc">OSI model, TCP/IP, common ports, subnetting, DNS, DHCP. The backbone of everything in security.</p>
+                    <div class="resource-badges">
+                        <a href="osi-layer-attacks.html" class="resource-badge badge-guide">OSI Layer Attacks</a>
+                        <a href="port-security.html" class="resource-badge badge-guide">Port Security</a>
+                        <a href="subnet-calculator.html" class="resource-badge badge-tool">Subnet Calculator</a>
+                    </div>
+                </div>
+
+                <!-- Operating Systems -->
+                <div class="topic-node topic-node--required">
+                    <div class="topic-node-header">
+                        <span class="topic-icon">💻</span>
+                        <span class="topic-title">Operating Systems</span>
+                    </div>
+                    <p class="topic-desc">Linux and Windows fundamentals &mdash; file systems, user management, services, and command-line proficiency.</p>
+                    <div class="resource-badges">
+                        <a href="linux-hardening.html" class="resource-badge badge-guide">Linux Hardening</a>
+                        <a href="windows-hardening.html" class="resource-badge badge-guide">Windows Hardening</a>
+                    </div>
+                </div>
+
+                <!-- Security Fundamentals -->
+                <div class="topic-node topic-node--required">
+                    <div class="topic-node-header">
+                        <span class="topic-icon">🔒</span>
+                        <span class="topic-title">Security Fundamentals</span>
+                    </div>
+                    <p class="topic-desc">CIA triad, authentication vs authorization, symmetric and asymmetric encryption, hashing, and PKI basics.</p>
+                    <div class="resource-badges">
+                        <a href="encryption-cheatsheet.html" class="resource-badge badge-guide">Encryption Cheat Sheet</a>
+                        <a href="password-policy.html" class="resource-badge badge-guide">Password Policy</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Milestone: Security+ -->
+            <div class="cert-milestone">
+                <div class="cert-milestone-left">
+                    <span class="cert-milestone-icon">🎯</span>
+                    <div>
+                        <div class="cert-milestone-title">Milestone: CompTIA Security+ (SY0-701)</div>
+                        <div class="cert-milestone-sub">Industry-standard entry point for security roles</div>
+                    </div>
+                </div>
+                <div class="cert-milestone-actions">
+                    <a href="security-quiz.html" class="resource-badge badge-quiz">Practice Quiz</a>
+                    <a href="planner.html" class="resource-badge badge-planner">Study Planner</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== PHASE 2 ==================== -->
+        <div class="roadmap-phase phase-2">
+            <div class="phase-header">
+                Phase 2: Core Analyst Skills <span class="phase-timeframe">(Months 3&ndash;4)</span>
+            </div>
+
+            <div class="topic-grid">
+                <!-- Log Analysis & SIEM -->
+                <div class="topic-node topic-node--required">
+                    <div class="topic-node-header">
+                        <span class="topic-icon">📊</span>
+                        <span class="topic-title">Log Analysis &amp; SIEM</span>
+                    </div>
+                    <p class="topic-desc">Log formats, parsing, correlation rules, and SIEM platforms. The daily bread of SOC work.</p>
+                    <div class="resource-badges">
+                        <a href="log-management.html" class="resource-badge badge-guide">Log Management</a>
+                        <a href="regex-tester.html" class="resource-badge badge-tool">Regex Tester</a>
+                    </div>
+                </div>
+
+                <!-- Vulnerability Management -->
+                <div class="topic-node topic-node--required">
+                    <div class="topic-node-header">
+                        <span class="topic-icon">🔍</span>
+                        <span class="topic-title">Vulnerability Management</span>
+                    </div>
+                    <p class="topic-desc">Scanning, CVSS scoring, prioritization with EPSS, and remediation tracking at scale.</p>
+                    <div class="resource-badges">
+                        <a href="owasp-top10.html" class="resource-badge badge-guide">OWASP Top 10</a>
+                        <a href="cve-lookup.html" class="resource-badge badge-guide">CVE Reference</a>
+                        <a href="vuln-tracking.html" class="resource-badge badge-guide">Vuln Tracking</a>
+                        <a href="cvss-calculator.html" class="resource-badge badge-tool">CVSS Calculator</a>
+                    </div>
+                </div>
+
+                <!-- Threat Intelligence -->
+                <div class="topic-node topic-node--required">
+                    <div class="topic-node-header">
+                        <span class="topic-icon">🎯</span>
+                        <span class="topic-title">Threat Intelligence</span>
+                    </div>
+                    <p class="topic-desc">Indicators of compromise, CISA KEV catalog, EPSS scores, and alert triage workflows.</p>
+                    <div class="resource-badges">
+                        <a href="index.html" class="resource-badge badge-tool">CISA KEV Dashboard</a>
+                        <a href="version-alerting.html" class="resource-badge badge-guide">Version-Specific Alerting</a>
+                    </div>
+                </div>
+
+                <!-- Incident Response -->
+                <div class="topic-node topic-node--required">
+                    <div class="topic-node-header">
+                        <span class="topic-icon">🚨</span>
+                        <span class="topic-title">Incident Response</span>
+                    </div>
+                    <p class="topic-desc">NIST 6-phase IR framework &mdash; preparation, detection, containment, eradication, recovery, lessons learned.</p>
+                    <div class="resource-badges">
+                        <a href="incident-response.html" class="resource-badge badge-guide">IR Guide</a>
+                    </div>
+                </div>
+
+                <!-- Security Frameworks -->
+                <div class="topic-node topic-node--recommended">
+                    <div class="topic-node-header">
+                        <span class="topic-icon">📋</span>
+                        <span class="topic-title">Security Frameworks</span>
+                    </div>
+                    <p class="topic-desc">NIST CSF, CIS Controls &mdash; understanding how organizations structure their security programs.</p>
+                    <div class="resource-badges">
+                        <a href="nist-framework.html" class="resource-badge badge-compliance">NIST Framework</a>
+                        <a href="cis-controls.html" class="resource-badge badge-compliance">CIS Controls</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== PHASE 3 ==================== -->
+        <div class="roadmap-phase phase-3">
+            <div class="phase-header">
+                Phase 3: Technical Depth <span class="phase-timeframe">(Months 4&ndash;6)</span>
+            </div>
+
+            <div class="topic-grid">
+                <!-- Web Application Security -->
+                <div class="topic-node topic-node--required">
+                    <div class="topic-node-header">
+                        <span class="topic-icon">🌐</span>
+                        <span class="topic-title">Web Application Security</span>
+                    </div>
+                    <p class="topic-desc">OWASP Top 10 in practice &mdash; injection flaws, XSS, broken authentication, and how to spot them.</p>
+                    <div class="resource-badges">
+                        <a href="owasp-top10.html" class="resource-badge badge-guide">OWASP Top 10</a>
+                        <a href="sql-injection-simulator.html" class="resource-badge badge-tool">SQL Injection Sim</a>
+                        <a href="xss-playground.html" class="resource-badge badge-tool">XSS Playground</a>
+                    </div>
+                </div>
+
+                <!-- Network Hardening -->
+                <div class="topic-node topic-node--required">
+                    <div class="topic-node-header">
+                        <span class="topic-icon">🛡️</span>
+                        <span class="topic-title">Network Hardening</span>
+                    </div>
+                    <p class="topic-desc">Security headers, SSL/TLS configuration, firewall rules, and defense-in-depth strategies.</p>
+                    <div class="resource-badges">
+                        <a href="security-headers.html" class="resource-badge badge-guide">Security Headers</a>
+                        <a href="ssl-tls.html" class="resource-badge badge-guide">SSL/TLS Hardening</a>
+                    </div>
+                </div>
+
+                <!-- API & Database Security -->
+                <div class="topic-node topic-node--recommended">
+                    <div class="topic-node-header">
+                        <span class="topic-icon">🔌</span>
+                        <span class="topic-title">API &amp; Database Security</span>
+                    </div>
+                    <p class="topic-desc">OWASP API Top 10, authentication patterns, rate limiting, SQL injection prevention, and database hardening.</p>
+                    <div class="resource-badges">
+                        <a href="api-security.html" class="resource-badge badge-guide">API Security</a>
+                        <a href="database-security.html" class="resource-badge badge-guide">Database Security</a>
+                    </div>
+                </div>
+
+                <!-- Cloud Security -->
+                <div class="topic-node topic-node--recommended">
+                    <div class="topic-node-header">
+                        <span class="topic-icon">☁️</span>
+                        <span class="topic-title">Cloud Security Basics</span>
+                    </div>
+                    <p class="topic-desc">AWS, Azure, and GCP security controls &mdash; IAM, network isolation, encryption at rest and in transit.</p>
+                    <div class="resource-badges">
+                        <a href="cloud-security.html" class="resource-badge badge-guide">Cloud Security Checklist</a>
+                    </div>
+                </div>
+
+                <!-- Secrets Management -->
+                <div class="topic-node topic-node--optional">
+                    <div class="topic-node-header">
+                        <span class="topic-icon">🔐</span>
+                        <span class="topic-title">Secrets Management &amp; Secure Config</span>
+                    </div>
+                    <p class="topic-desc">Credential storage, environment variables, secrets managers, and secure configuration practices.</p>
+                    <div class="resource-badges">
+                        <a href="secrets-management.html" class="resource-badge badge-guide">Secrets Management</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Milestone: CySA+ -->
+            <div class="cert-milestone">
+                <div class="cert-milestone-left">
+                    <span class="cert-milestone-icon">🎯</span>
+                    <div>
+                        <div class="cert-milestone-title">Milestone: CompTIA CySA+ (CS0-003)</div>
+                        <div class="cert-milestone-sub">Validates threat detection, analysis, and response skills</div>
+                    </div>
+                </div>
+                <div class="cert-milestone-actions">
+                    <a href="cysa-plus-quiz.html" class="resource-badge badge-quiz">Practice Quiz</a>
+                    <a href="planner.html" class="resource-badge badge-planner">Study Planner</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== PHASE 4 ==================== -->
+        <div class="roadmap-phase phase-4">
+            <div class="phase-header">
+                Phase 4: Advanced &amp; Specialization <span class="phase-timeframe">(Months 6+)</span>
+            </div>
+
+            <div class="topic-grid">
+                <!-- Threat Hunting -->
+                <div class="topic-node topic-node--recommended">
+                    <div class="topic-node-header">
+                        <span class="topic-icon">🔎</span>
+                        <span class="topic-title">Threat Hunting</span>
+                    </div>
+                    <p class="topic-desc">Proactive detection, hypothesis-driven investigations, and behavioral analytics beyond automated alerts.</p>
+                </div>
+
+                <!-- Malware Analysis -->
+                <div class="topic-node topic-node--optional">
+                    <div class="topic-node-header">
+                        <span class="topic-icon">🦠</span>
+                        <span class="topic-title">Malware Analysis Basics</span>
+                    </div>
+                    <p class="topic-desc">Static and dynamic analysis, sandboxing, file hashing, and understanding common malware behaviors.</p>
+                </div>
+
+                <!-- Digital Forensics -->
+                <div class="topic-node topic-node--optional">
+                    <div class="topic-node-header">
+                        <span class="topic-icon">🔬</span>
+                        <span class="topic-title">Digital Forensics</span>
+                    </div>
+                    <p class="topic-desc">Evidence handling, chain of custody, disk imaging, memory forensics, and timeline analysis.</p>
+                </div>
+
+                <!-- Compliance Deep Dive -->
+                <div class="topic-node topic-node--optional">
+                    <div class="topic-node-header">
+                        <span class="topic-icon">📜</span>
+                        <span class="topic-title">Compliance Deep Dive</span>
+                    </div>
+                    <p class="topic-desc">PCI DSS, HIPAA, GDPR, and SOC 2 &mdash; understanding regulatory requirements and audit readiness.</p>
+                    <div class="resource-badges">
+                        <a href="pci-dss.html" class="resource-badge badge-compliance">PCI DSS</a>
+                        <a href="hipaa-guide.html" class="resource-badge badge-compliance">HIPAA</a>
+                        <a href="gdpr-guide.html" class="resource-badge badge-compliance">GDPR</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Milestone: CISSP -->
+            <div class="cert-milestone">
+                <div class="cert-milestone-left">
+                    <span class="cert-milestone-icon">🎯</span>
+                    <div>
+                        <div class="cert-milestone-title">Milestone: CISSP</div>
+                        <div class="cert-milestone-sub">Gold standard for experienced security professionals (requires 5 years experience)</div>
+                    </div>
+                </div>
+                <div class="cert-milestone-actions">
+                    <a href="cissp-quiz.html" class="resource-badge badge-quiz">Practice Quiz</a>
+                    <a href="planner.html" class="resource-badge badge-planner">Study Planner</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="cta-section">
+            <h2>Ready to Start Your Journey?</h2>
+            <p>Explore certification paths for 9 IT roles, practice with free quizzes, or generate a personalized study plan.</p>
+            <div class="cta-links">
+                <a href="career-paths.html" class="cta-link cta-link-primary">View All Career Paths</a>
+                <a href="practice-tests.html" class="cta-link cta-link-secondary">Practice Quizzes</a>
+                <a href="guides.html" class="cta-link cta-link-secondary">Browse All Guides</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank" rel="noopener">FixTheVuln.com</a> | <a href="/store/store.html">FixTheVuln Store</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;"><strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.</p>
+            <p style="font-size: 0.8rem; color: #888; margin-top: 0.75rem;"><strong>Disclaimer:</strong> Certification names and trademarks (CompTIA&reg;, Security+&reg;, CySA+&reg;, CISSP&reg;, (ISC)&sup2;&reg;) are property of their respective owners. FixTheVuln is not affiliated with or endorsed by any certification vendor. Timeframes are general estimates for educational purposes.</p>
+        </div>
+    </footer>
+
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode">
+        <span id="theme-icon">🌙</span>
+    </button>
+
+    <script>
+        // Dark mode toggle
+        function toggleTheme() {
+            var html = document.documentElement;
+            var currentTheme = html.getAttribute('data-theme');
+            var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('fixthevuln-theme', newTheme);
+            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+        // Load saved theme
+        (function() {
+            var savedTheme = localStorage.getItem('fixthevuln-theme');
+            var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            var theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('theme-icon').textContent = '☀️';
+            }
+        })();
+    </script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
