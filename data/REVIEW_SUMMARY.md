@@ -1,34 +1,22 @@
-# Daily KEV Review — 2026-02-23
+# Daily KEV Review — 2026-02-26
 
-**New CVEs:** 9 | **Critical:** 4 | **High:** 4 | **Medium:** 1 | **Low:** 0 | **Ransomware-linked:** 1
+**New CVEs:** 3 | **Critical:** 1 | **High:** 2 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-22769 | Dell | RecoverPoint for Virtual Machines (RP4VMs) | 10.0 | Unknown | 2026-02-21 |
-| CVE-2025-49113 | Roundcube | Webmail | 9.9 | Unknown | 2026-03-13 |
-| CVE-2020-7796 | Synacor | Zimbra Collaboration Suite | 9.8 | Unknown | 2026-03-10 |
-| CVE-2026-1731 | BeyondTrust | Remote Support (RS) and Privileged Remote Access (PRA) | 9.8 | Known | 2026-02-16 |
-| CVE-2008-0015 | Microsoft | Windows | 8.8 | Unknown | 2026-03-10 |
-| CVE-2026-2441 | Google | Chromium | 8.8 | Unknown | 2026-03-10 |
-| CVE-2025-68461 | Roundcube | Webmail | 7.2 | Unknown | 2026-03-13 |
-| CVE-2024-7694 | TeamT5 | ThreatSonar Anti-Ransomware | 7.2 | Unknown | 2026-03-10 |
-| CVE-2021-22175 | GitLab | GitLab | 6.8 | Unknown | 2026-03-11 |
+| CVE-2026-20127 | Cisco | Catalyst SD-WAN Controller and Manager | 10.0 | Unknown | 2026-02-27 |
+| CVE-2026-25108 | Soliton Systems K.K | FileZen | 8.8 | Unknown | 2026-03-17 |
+| CVE-2022-20775 | Cisco | SD-WAN | 7.8 | Unknown | 2026-02-27 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-03-10 (4 CVEs)
-- **Overdue:** 2 CVEs
+- **Nearest due date:** 2026-02-27 (2 CVEs)
+- **Overdue:** None
 
 ## Vendor Summary
-- Roundcube: 2 CVEs
-- GitLab: 1 CVE
-- Dell: 1 CVE
-- Synacor: 1 CVE
-- TeamT5: 1 CVE
-- Microsoft: 1 CVE
-- Google: 1 CVE
-- BeyondTrust: 1 CVE
+- Cisco: 2 CVEs
+- Soliton Systems K.K: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
