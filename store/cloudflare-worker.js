@@ -11,6 +11,7 @@
 // ============================================
 
 const CERT_NAMES = {
+  // CompTIA
   'comptia-a-plus-1201': 'CompTIA A+ Core 1',
   'comptia-a-plus-1202': 'CompTIA A+ Core 2',
   'comptia-security-plus': 'CompTIA Security+',
@@ -20,36 +21,81 @@ const CERT_NAMES = {
   'comptia-cysa-plus': 'CompTIA CySA+',
   'comptia-pentest-plus': 'CompTIA PenTest+',
   'comptia-casp-plus': 'CompTIA CASP+',
+  'comptia-server-plus': 'CompTIA Server+',
+  'comptia-data-plus': 'CompTIA Data+',
+  'comptia-project-plus': 'CompTIA Project+',
+  'comptia-itf-plus': 'CompTIA ITF+',
+  // ISC2
   'isc2-cc': 'ISC2 CC',
   'isc2-sscp': 'ISC2 SSCP',
   'isc2-cissp': 'ISC2 CISSP',
   'isc2-ccsp': 'ISC2 CCSP',
+  // AWS
   'aws-cloud-practitioner': 'AWS Cloud Practitioner',
   'aws-solutions-architect': 'AWS Solutions Architect',
   'aws-developer': 'AWS Developer Associate',
   'aws-cloudops': 'AWS CloudOps Engineer',
   'aws-security-specialty': 'AWS Security Specialty',
+  'aws-database-specialty': 'AWS Database Specialty',
+  'aws-machine-learning': 'AWS Machine Learning Specialty',
+  'aws-data-engineer': 'AWS Data Engineer Associate',
+  // Microsoft
   'ms-az-900': 'Azure Fundamentals',
   'ms-az-104': 'Azure Administrator',
   'ms-az-305': 'Azure Solutions Architect',
   'ms-sc-900': 'Security Fundamentals',
   'ms-ai-900': 'Azure AI Fundamentals',
+  'ms-az-500': 'Azure Security Engineer',
+  'ms-az-204': 'Azure Developer Associate',
+  'ms-az-400': 'Azure DevOps Engineer',
+  'ms-dp-900': 'Azure Data Fundamentals',
+  'ms-ms-900': 'Microsoft 365 Fundamentals',
+  'ms-sc-300': 'Identity & Access Admin',
+  'ms-ai-102': 'Azure AI Engineer',
+  // Cisco
   'cisco-ccna': 'Cisco CCNA',
   'cisco-ccnp-encor': 'Cisco CCNP ENCOR',
   'cisco-cyberops': 'Cisco CyberOps',
+  'cisco-ccnp-security': 'Cisco CCNP Security SCOR',
+  'cisco-devnet': 'Cisco DevNet Associate',
+  // ISACA
   'isaca-cisa': 'ISACA CISA',
   'isaca-cism': 'ISACA CISM',
   'isaca-crisc': 'ISACA CRISC',
+  // GIAC
   'giac-gsec': 'GIAC GSEC',
+  'giac-gcih': 'GIAC GCIH',
+  'giac-gpen': 'GIAC GPEN',
+  'giac-gcia': 'GIAC GCIA',
+  // Google Cloud
   'google-ace': 'Google Cloud Engineer',
   'google-pca': 'Google Cloud Architect',
+  'google-cdl': 'Google Cloud Digital Leader',
+  'google-pde': 'Google Professional Data Engineer',
+  'google-pse': 'Google Cloud Security Engineer',
+  // EC-Council
+  'ec-ceh': 'EC-Council CEH v13',
+  'ec-chfi': 'EC-Council CHFI v11',
+  'ec-cnd': 'EC-Council CND v3',
+  // OffSec
+  'offsec-oscp': 'OffSec OSCP',
+  'offsec-oswa': 'OffSec OSWA',
+  'offsec-oswe': 'OffSec OSWE',
+  // HashiCorp
+  'hashicorp-terraform': 'HashiCorp Terraform Associate',
+  'hashicorp-vault': 'HashiCorp Vault Associate',
+  // Kubernetes
+  'k8s-cka': 'Kubernetes CKA',
+  'k8s-ckad': 'Kubernetes CKAD',
+  'k8s-cks': 'Kubernetes CKS',
 };
 
 const VARIANT_LABELS = {
-  standard: 'Standard',
-  adhd: 'ADHD-Friendly',
-  dark: 'Dark Mode',
-  bundle: 'Complete Bundle',
+  standard:  'Standard',
+  adhd:      'ADHD-Friendly',
+  dark:      'Dark Mode',
+  adhd_dark: 'ADHD-Friendly Dark',
+  bundle:    '4-Format Bundle',
 };
 
 // ─── CAREER PATH BUNDLES ───────────────────────
@@ -103,11 +149,51 @@ function expandPurchasedItems(rawItems) {
   return [...expanded];
 }
 
+// ─── SERVER-SIDE PRICING (source of truth) ──────
+const PRICING = {
+  standard:  599,  // cents
+  adhd:      599,
+  dark:      599,
+  adhd_dark: 599,
+  bundle:    1599,
+};
+
+// Career path pricing by cert count (cents)
+const CP_PRICING = {
+  2: { single: 899,  bundle: 1699 },
+  3: { single: 1299, bundle: 2499 },
+  4: { single: 1699, bundle: 3499 },
+};
+
+// Valid product IDs = all keys in CERT_NAMES
+const VALID_CERT_IDS = new Set(Object.keys(CERT_NAMES));
+
+function getServerPrice(productId, variant) {
+  if (productId.startsWith('cp:')) {
+    const pathId = productId.replace('cp:', '');
+    const certs = CAREER_PATHS[pathId];
+    if (!certs) return null;
+    const tier = CP_PRICING[certs.length];
+    if (!tier) return null;
+    return variant === 'bundle' ? tier.bundle : tier.single;
+  }
+  // Reject unknown product IDs
+  if (!VALID_CERT_IDS.has(productId)) return null;
+  return PRICING[variant] || null;
+}
+
+function getServerProductName(productId) {
+  if (productId.startsWith('cp:')) {
+    const pathId = productId.replace('cp:', '');
+    return (CAREER_PATH_NAMES[pathId] || pathId) + ' Career Path';
+  }
+  return CERT_NAMES[productId] || productId;
+}
+
 const ALLOWED_ORIGINS = [
   'https://fixthevuln.com',
   'http://localhost',
   'http://127.0.0.1',
-  'null', // for local file:// testing
 ];
 
 function getCorsHeaders(request) {
@@ -173,22 +259,49 @@ async function handleCheckout(request, env, cors) {
       });
     }
 
-    // Build line items using price_data
-    const line_items = items.map(item => ({
-      price_data: {
-        currency: 'usd',
-        unit_amount: Math.round(item.price * 100),
-        product_data: {
-          name: `${item.name} — ${item.variantLabel}`,
-          description: `Certification Study Planner (${item.variantLabel} format)`,
-          metadata: {
-            cert_id: item.productId,
-            variant: item.variant,
+    // Cap items to prevent abuse
+    if (items.length > 20) {
+      return new Response(JSON.stringify({ error: 'Too many items (max 20)' }), {
+        status: 400,
+        headers: { ...cors, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Build line items using SERVER-SIDE pricing + names (never trust client values)
+    const line_items = [];
+    for (const item of items) {
+      const unitAmount = getServerPrice(item.productId, item.variant);
+      if (!unitAmount) {
+        return new Response(JSON.stringify({ error: 'Invalid product or variant' }), {
+          status: 400,
+          headers: { ...cors, 'Content-Type': 'application/json' },
+        });
+      }
+      // Server-side name + variant lookup (don't trust any client-provided display values)
+      const productName = getServerProductName(item.productId);
+      const variantLabel = VARIANT_LABELS[item.variant];
+      if (!variantLabel) {
+        return new Response(JSON.stringify({ error: 'Invalid variant' }), {
+          status: 400,
+          headers: { ...cors, 'Content-Type': 'application/json' },
+        });
+      }
+      line_items.push({
+        price_data: {
+          currency: 'usd',
+          unit_amount: unitAmount,
+          product_data: {
+            name: `${productName} — ${variantLabel}`,
+            description: `Certification Study Planner (${variantLabel} format)`,
+            metadata: {
+              cert_id: item.productId,
+              variant: item.variant,
+            },
           },
         },
-      },
-      quantity: 1,
-    }));
+        quantity: 1,
+      });
+    }
 
     // Store product info in session metadata for later retrieval
     // Career paths use compact format: cp:pathId:variant
@@ -286,12 +399,13 @@ async function handleVerify(request, env, cors) {
     const purchasedItems = session.metadata.purchased_items || '';
     const rawItems = purchasedItems.split(',').filter(Boolean);
     const items = expandPurchasedItems(rawItems);
-    const downloads = await generateDownloadLinks(sessionId, items, rawItems, env.STRIPE_WEBHOOK_SECRET);
+
+    // Anchor expiry to session creation time (not current time) to prevent unlimited replays
+    const sessionCreatedMs = (session.created || Math.floor(Date.now() / 1000)) * 1000;
+    const downloads = await generateDownloadLinks(sessionId, items, rawItems, env.STRIPE_WEBHOOK_SECRET, sessionCreatedMs);
 
     return new Response(JSON.stringify({
       verified: true,
-      mode: session.mode || 'payment',
-      email: session.customer_details?.email || '',
       downloads,
     }), {
       status: 200,
@@ -345,18 +459,10 @@ async function handleDownload(request, env, cors) {
 
     // Verify the file was part of the purchase
     const requestedFile = decodeURIComponent(file);
-    let validFiles;
-
-    if (tokenData.type === 'sprint-kit') {
-      // Sprint kit tokens store filenames directly in items[]
-      validFiles = tokenData.items;
-    } else {
-      // Planner tokens use certId__variant format
-      validFiles = tokenData.items.map(item => {
-        const [certId, variant] = item.split('__');
-        return getFilename(certId, variant);
-      });
-    }
+    const validFiles = tokenData.items.map(item => {
+      const [certId, variant] = item.split('__');
+      return getFilename(certId, variant);
+    });
 
     if (!validFiles.includes(requestedFile)) {
       return new Response('File not part of purchase', { status: 403 });
@@ -386,14 +492,15 @@ async function handleDownload(request, env, cors) {
 // ─── FILENAME MAPPING ───────────────────────────
 // Maps cert_id + variant to the PDF filename in R2
 function getFilename(certId, variant) {
-  // Bundle variant returns a zip with all 3
+  // Bundle variant returns a zip with all 4 formats
   if (variant === 'bundle') {
     return `${certId}_bundle.zip`;
   }
   const variantSuffix = {
-    standard: '',
-    adhd: '_adhd',
-    dark: '_dark',
+    standard:  '',
+    adhd:      '_adhd',
+    dark:      '_dark',
+    adhd_dark: '_adhd_dark',
   };
   return `${certId}${variantSuffix[variant] || ''}_study_planner.pdf`;
 }
@@ -423,8 +530,9 @@ async function verifyTokenHmac(data, signature, secret) {
 }
 
 // ─── SHARED: GENERATE DOWNLOAD LINKS ────────────
-async function generateDownloadLinks(sessionId, items, rawItems, secret) {
-  const expiry = Date.now() + 24 * 60 * 60 * 1000;
+async function generateDownloadLinks(sessionId, items, rawItems, secret, sessionCreatedMs) {
+  // Expiry anchored to session creation time, not current time — prevents unlimited replay
+  const expiry = (sessionCreatedMs || Date.now()) + 24 * 60 * 60 * 1000;
   const payload = btoa(JSON.stringify({ sessionId, items, expiry }));
   const sig = await createTokenHmac(payload, secret);
   const token = `${payload}.${sig}`;
@@ -522,58 +630,25 @@ async function handleWebhook(request, env) {
 
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
-      // Skip subscription checkouts — those are handled by invoice.paid
-      if (session.mode === 'subscription') {
-        console.log('Skipping subscription checkout (handled by invoice.paid)');
-      } else {
-        const customerEmail = session.customer_details?.email;
-        const amountCents = session.amount_total;
-        const purchasedItems = session.metadata?.purchased_items || '';
-        const rawItems = purchasedItems.split(',').filter(Boolean);
-        const items = expandPurchasedItems(rawItems);
+      const customerEmail = session.customer_details?.email;
+      const amountCents = session.amount_total;
+      const purchasedItems = session.metadata?.purchased_items || '';
+      const rawItems = purchasedItems.split(',').filter(Boolean);
+      const items = expandPurchasedItems(rawItems);
 
-        if (items.length > 0) {
-          const downloads = await generateDownloadLinks(session.id, items, rawItems, env.STRIPE_WEBHOOK_SECRET);
+      if (items.length > 0) {
+        const sessionCreatedMs = (session.created || Math.floor(Date.now() / 1000)) * 1000;
+        const downloads = await generateDownloadLinks(session.id, items, rawItems, env.STRIPE_WEBHOOK_SECRET, sessionCreatedMs);
 
-          // Send customer email + seller notification in parallel
-          const promises = [];
+        // Send customer email + seller notification in parallel
+        const promises = [];
 
-          if (customerEmail) {
-            promises.push(sendCustomerEmail(env, customerEmail, downloads, items));
-          }
-          promises.push(sendSellerNotification(env, customerEmail, downloads, items, amountCents));
-
-          await Promise.allSettled(promises);
+        if (customerEmail) {
+          promises.push(sendCustomerEmail(env, customerEmail, downloads, items));
         }
-      }
-    }
+        promises.push(sendSellerNotification(env, customerEmail, downloads, items, amountCents));
 
-    // ─── SPRINT KIT SUBSCRIPTION: invoice.paid ───
-    if (event.type === 'invoice.paid') {
-      const obj = event.data.object;
-      let invoice;
-
-      if (obj.object === 'invoice') {
-        // Older API versions send the full invoice directly
-        invoice = obj;
-      } else {
-        // API version 2026-01-28+ sends invoice_payment object
-        const invoiceId = obj.invoice;
-        if (invoiceId) {
-          const invoiceResp = await fetch(
-            `https://api.stripe.com/v1/invoices/${encodeURIComponent(invoiceId)}`,
-            { headers: { 'Authorization': `Bearer ${env.STRIPE_SECRET_KEY}` } }
-          );
-          invoice = await invoiceResp.json();
-          if (invoice.error) {
-            console.error('Failed to fetch invoice:', invoice.error);
-            invoice = null;
-          }
-        }
-      }
-
-      if (invoice) {
-        await handleInvoicePaid(invoice, env);
+        await Promise.allSettled(promises);
       }
     }
   } catch (err) {
@@ -692,350 +767,6 @@ async function sendCustomerEmail(env, toEmail, downloads, items) {
     }),
   });
 }
-
-// ═══════════════════════════════════════════════════
-// SPRINT KIT SUBSCRIPTION DELIVERY
-// ═══════════════════════════════════════════════════
-
-// ─── SPRINT KIT HELPERS ─────────────────────────
-function getCurrentKitFilename() {
-  const now = new Date();
-  const year = now.getUTCFullYear();
-  const month = String(now.getUTCMonth() + 1).padStart(2, '0');
-  return `patch-sprint-kit-${year}-${month}.pdf`;
-}
-
-function getPreviousMonthKitFilename() {
-  const now = new Date();
-  now.setUTCMonth(now.getUTCMonth() - 1);
-  const year = now.getUTCFullYear();
-  const month = String(now.getUTCMonth() + 1).padStart(2, '0');
-  return `patch-sprint-kit-${year}-${month}.pdf`;
-}
-
-function getKitMonthLabel(filename) {
-  // Extract "2026-03" from "patch-sprint-kit-2026-03.pdf"
-  const match = filename.match(/patch-sprint-kit-(\d{4})-(\d{2})\.pdf/);
-  if (!match) return filename;
-  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  return `${months[parseInt(match[2], 10) - 1]} ${match[1]}`;
-}
-
-function getNextPatchTuesday(after) {
-  const now = after || new Date();
-  let year = now.getUTCFullYear();
-  let month = now.getUTCMonth();
-  // Find 2nd Tuesday of current month
-  const firstDay = new Date(Date.UTC(year, month, 1));
-  const dayOfWeek = firstDay.getUTCDay();
-  const firstTue = ((9 - dayOfWeek) % 7) + 1;
-  const secondTue = firstTue + 7;
-  const pt = new Date(Date.UTC(year, month, secondTue));
-  // If past this month's PT, get next month's
-  if (now >= pt) {
-    month++;
-    if (month > 11) { month = 0; year++; }
-    const fd = new Date(Date.UTC(year, month, 1));
-    const dow = fd.getUTCDay();
-    const ft = ((9 - dow) % 7) + 1;
-    return new Date(Date.UTC(year, month, ft + 7));
-  }
-  return pt;
-}
-
-function formatPatchTuesday(date) {
-  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  return `${months[date.getUTCMonth()]} ${date.getUTCDate()}, ${date.getUTCFullYear()}`;
-}
-
-// Day after Patch Tuesday (when kits are delivered)
-function formatDeliveryDate(ptDate) {
-  const delivery = new Date(ptDate.getTime() + 24 * 60 * 60 * 1000);
-  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  return `${days[delivery.getUTCDay()]}, ${months[delivery.getUTCMonth()]} ${delivery.getUTCDate()}, ${delivery.getUTCFullYear()}`;
-}
-
-async function createSprintKitToken(filename, secret) {
-  // 7-day expiry for subscription products (vs 24hr for one-time purchases)
-  const expiry = Date.now() + 7 * 24 * 60 * 60 * 1000;
-  const payload = btoa(JSON.stringify({
-    type: 'sprint-kit',
-    items: [filename],
-    expiry,
-  }));
-  const sig = await createTokenHmac(payload, secret);
-  return `${payload}.${sig}`;
-}
-
-function sprintKitDownloadUrl(token, filename) {
-  return `https://fixthevuln-checkout.robertflores17.workers.dev/download?token=${encodeURIComponent(token)}&file=${encodeURIComponent(filename)}`;
-}
-
-// ─── INVOICE.PAID HANDLER ───────────────────────
-async function handleInvoicePaid(invoice, env) {
-  // Only handle subscription invoices (skip one-time payments)
-  const billingReason = invoice.billing_reason || '';
-  const isSubscription = invoice.subscription || billingReason.startsWith('subscription');
-  if (!isSubscription) return;
-
-  const customerEmail = invoice.customer_email;
-
-  if (!customerEmail) {
-    console.error('Sprint kit invoice.paid: no customer email');
-    return;
-  }
-
-  const amountCents = invoice.amount_paid;
-
-  // Determine which kit to send
-  const currentKit = getCurrentKitFilename();
-  const previousKit = getPreviousMonthKitFilename();
-
-  // Check R2 for current month's kit
-  let kitFilename = currentKit;
-  let kitExists = await env.PLANNERS.head(currentKit);
-
-  if (!kitExists) {
-    // Fallback to previous month
-    kitExists = await env.PLANNERS.head(previousKit);
-    if (kitExists) {
-      kitFilename = previousKit;
-    } else {
-      // No kit available yet — send welcome email
-      await Promise.allSettled([
-        sendSprintKitWelcomeEmail(env, customerEmail),
-        sendSellerSprintKitNotification(env, customerEmail, null, billingReason, amountCents),
-      ]);
-      return;
-    }
-  }
-
-  // Generate 7-day download token and send PDF email
-  const token = await createSprintKitToken(kitFilename, env.STRIPE_WEBHOOK_SECRET);
-  const downloadUrl = sprintKitDownloadUrl(token, kitFilename);
-
-  await Promise.allSettled([
-    sendSprintKitEmail(env, customerEmail, downloadUrl, kitFilename, billingReason),
-    sendSellerSprintKitNotification(env, customerEmail, kitFilename, billingReason, amountCents),
-  ]);
-}
-
-// ─── SPRINT KIT CUSTOMER EMAIL ──────────────────
-async function sendSprintKitEmail(env, toEmail, downloadUrl, filename, billingReason) {
-  const monthLabel = getKitMonthLabel(filename);
-  const isFirstInvoice = billingReason === 'subscription_create';
-
-  // Calculate next month's Patch Tuesday for "what's next" section
-  // Use a date guaranteed to be after this month's PT (25th of current month)
-  const now = new Date();
-  const afterThisMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 25));
-  const nextMonthPT = getNextPatchTuesday(afterThisMonth);
-  const nextPTFormatted = formatPatchTuesday(nextMonthPT);
-
-  const html = `
-<!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"></head>
-<body style="margin:0;padding:0;background:#f0fdf4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-  <div style="max-width:600px;margin:0 auto;padding:40px 20px;">
-    <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
-      <!-- Header (green theme for ops kit) -->
-      <div style="background:linear-gradient(135deg,#10b981,#06b6d4);padding:32px 24px;text-align:center;">
-        <h1 style="color:#ffffff;margin:0;font-size:24px;font-weight:700;">FixTheVuln</h1>
-        <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:15px;">
-          ${isFirstInvoice ? 'Welcome to the Patch Tuesday Sprint Kit!' : `Your ${monthLabel} Sprint Kit is ready!`}
-        </p>
-      </div>
-      <!-- Body -->
-      <div style="padding:32px 24px;">
-        <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 24px;">
-          ${isFirstInvoice
-            ? 'Thank you for subscribing! Your first Patch Tuesday Sprint Kit PDF is ready to download. Each month after Patch Tuesday, you\'ll receive a fresh kit pre-filled with that cycle\'s CISA KEV vulnerabilities.'
-            : `Your ${monthLabel} Patch Tuesday Sprint Kit is here — pre-filled with this cycle's CISA KEV vulnerabilities, CVSS scores, and EPSS exploit predictions.`
-          }
-        </p>
-        <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
-          <tr>
-            <td style="padding:16px;border:1px solid #d1fae5;border-radius:8px;background:#f0fdf4;">
-              <strong style="color:#1e293b;font-size:15px;">Patch Tuesday Sprint Kit — ${monthLabel}</strong>
-              <br><span style="color:#64748b;font-size:13px;">${filename}</span>
-              <br><span style="color:#64748b;font-size:12px;">Cover + Triage Matrix + Sprint Calendar + Test Checklist + SLA Tracker + Exec Summary</span>
-            </td>
-            <td style="padding:16px;text-align:right;vertical-align:middle;">
-              <a href="${downloadUrl}" style="display:inline-block;background:linear-gradient(135deg,#10b981,#06b6d4);color:#ffffff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">Download PDF</a>
-            </td>
-          </tr>
-        </table>
-        <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:14px 16px;margin-bottom:20px;">
-          <p style="margin:0;color:#92400e;font-size:13px;">
-            ⏰ <strong>Download link expires in 7 days.</strong> Please save your file after downloading.
-          </p>
-        </div>
-        <div style="background:#f0fdf4;border:1px solid #d1fae5;border-radius:8px;padding:14px 16px;margin-bottom:24px;">
-          <p style="margin:0;color:#065f46;font-size:13px;">
-            📅 Your next kit arrives after Patch Tuesday on <strong>${nextPTFormatted}</strong>.
-          </p>
-        </div>
-        <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 12px;">
-          Questions? Reply to this email or contact
-          <a href="mailto:hello@fixthevuln.com" style="color:#10b981;">hello@fixthevuln.com</a>
-        </p>
-        <p style="color:#64748b;font-size:13px;line-height:1.6;margin:0;">
-          <a href="mailto:hello@fixthevuln.com?subject=Manage%20Sprint%20Kit%20Subscription" style="color:#10b981;">Manage subscription</a>
-        </p>
-      </div>
-      <!-- Footer -->
-      <div style="border-top:1px solid #e5e7eb;padding:20px 24px;text-align:center;">
-        <p style="margin:0;color:#94a3b8;font-size:12px;">&copy; 2026 FixTheVuln &middot; Security operations resources</p>
-      </div>
-    </div>
-  </div>
-</body>
-</html>`;
-
-  await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${env.RESEND_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: 'FixTheVuln <hello@fixthevuln.com>',
-      to: [toEmail],
-      subject: `Your ${monthLabel} Patch Tuesday Sprint Kit`,
-      html,
-    }),
-  });
-}
-
-// ─── SPRINT KIT WELCOME EMAIL ───────────────────
-// Sent when subscriber signs up before the month's kit is generated
-async function sendSprintKitWelcomeEmail(env, toEmail) {
-  const nextPT = getNextPatchTuesday();
-  const deliveryDate = formatDeliveryDate(nextPT);
-  const ptDate = formatPatchTuesday(nextPT);
-
-  const html = `
-<!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"></head>
-<body style="margin:0;padding:0;background:#f0fdf4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-  <div style="max-width:600px;margin:0 auto;padding:40px 20px;">
-    <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
-      <div style="background:linear-gradient(135deg,#10b981,#06b6d4);padding:32px 24px;text-align:center;">
-        <h1 style="color:#ffffff;margin:0;font-size:24px;font-weight:700;">FixTheVuln</h1>
-        <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:15px;">Welcome to the Patch Tuesday Sprint Kit!</p>
-      </div>
-      <div style="padding:32px 24px;">
-        <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 16px;">
-          Thank you for subscribing! Your first Patch Tuesday Sprint Kit is being prepared.
-        </p>
-        <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:16px;margin-bottom:20px;">
-          <p style="margin:0;color:#065f46;font-size:15px;line-height:1.6;">
-            Your first intelligence PDF will arrive by <strong>${deliveryDate}</strong> — the day after Patch Tuesday (${ptDate}).
-          </p>
-        </div>
-        <div style="background:#f0fdf4;border:1px solid #d1fae5;border-radius:8px;padding:16px;margin-bottom:24px;">
-          <p style="margin:0 0 8px;color:#1e293b;font-size:14px;font-weight:600;">What's included each month:</p>
-          <ul style="margin:0;padding-left:20px;color:#475569;font-size:14px;line-height:1.8;">
-            <li>Triage Matrix — pre-filled with CISA KEV CVEs + CVSS + EPSS</li>
-            <li>14-Day Sprint Calendar — dated from Patch Tuesday</li>
-            <li>Testing & Rollback Checklist — pre-filled vendors/products</li>
-            <li>SLA Compliance Tracker — severity tiers</li>
-            <li>Executive Summary — pre-filled metrics + signature block</li>
-          </ul>
-        </div>
-        <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 16px;">
-          In the meantime, use the <a href="https://fixthevuln.com/store/patch-tuesday-kit.html" style="color:#10b981;">free browser tool</a> to start planning.
-        </p>
-        <p style="color:#64748b;font-size:13px;line-height:1.6;margin:0;">
-          Need to manage your subscription? Contact <a href="mailto:hello@fixthevuln.com?subject=Manage%20Sprint%20Kit%20Subscription" style="color:#10b981;">hello@fixthevuln.com</a>
-        </p>
-      </div>
-      <div style="border-top:1px solid #e5e7eb;padding:20px 24px;text-align:center;">
-        <p style="margin:0;color:#94a3b8;font-size:12px;">&copy; 2026 FixTheVuln &middot; Security operations resources</p>
-      </div>
-    </div>
-  </div>
-</body>
-</html>`;
-
-  await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${env.RESEND_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: 'FixTheVuln <hello@fixthevuln.com>',
-      to: [toEmail],
-      subject: 'Welcome to the Patch Tuesday Sprint Kit!',
-      html,
-    }),
-  });
-}
-
-// ─── SELLER SPRINT KIT NOTIFICATION ─────────────
-async function sendSellerSprintKitNotification(env, customerEmail, filename, billingReason, amountCents) {
-  const reasonLabels = {
-    'subscription_create': 'New subscription',
-    'subscription_cycle': 'Monthly renewal',
-    'subscription_update': 'Subscription update',
-  };
-  const reason = reasonLabels[billingReason] || billingReason;
-  const kitInfo = filename ? getKitMonthLabel(filename) : 'Kit not yet generated (welcome email sent)';
-  const amount = amountCents ? `$${(amountCents / 100).toFixed(2)}/mo` : '$4.99/mo';
-
-  const html = `
-<!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"></head>
-<body style="margin:0;padding:0;background:#f0fdf4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-  <div style="max-width:600px;margin:0 auto;padding:40px 20px;">
-    <div style="background:#ffffff;border-radius:12px;padding:32px 24px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
-      <h2 style="color:#1e293b;margin:0 0 20px;font-size:20px;">Sprint Kit Subscription 📋</h2>
-      <table style="width:100%;border-collapse:collapse;">
-        <tr>
-          <td style="padding:8px 0;color:#64748b;font-size:14px;width:120px;">Customer</td>
-          <td style="padding:8px 0;color:#1e293b;font-size:14px;font-weight:600;">${customerEmail}</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 0;color:#64748b;font-size:14px;">Type</td>
-          <td style="padding:8px 0;color:#1e293b;font-size:14px;font-weight:600;">${reason}</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 0;color:#64748b;font-size:14px;">Amount</td>
-          <td style="padding:8px 0;color:#1e293b;font-size:14px;font-weight:600;">${amount}</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 0;color:#64748b;font-size:14px;">Kit Sent</td>
-          <td style="padding:8px 0;color:#1e293b;font-size:14px;font-weight:600;">${kitInfo}</td>
-        </tr>
-      </table>
-    </div>
-  </div>
-</body>
-</html>`;
-
-  await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${env.RESEND_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: 'FixTheVuln Store <hello@fixthevuln.com>',
-      to: ['hello@fixthevuln.com'],
-      subject: `Sprint Kit: ${customerEmail} (${reason})`,
-      html,
-    }),
-  });
-}
-
-// ═══════════════════════════════════════════════════
-// PLANNER STORE (EXISTING)
-// ═══════════════════════════════════════════════════
 
 // ─── SELLER NOTIFICATION ────────────────────────
 async function sendSellerNotification(env, customerEmail, downloads, items, amountCents) {
