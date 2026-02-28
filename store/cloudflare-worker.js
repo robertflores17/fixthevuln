@@ -356,6 +356,7 @@ async function handleCheckout(request, env, cors) {
     });
 
   } catch (err) {
+    console.error('Checkout error:', err.message);
     return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
       headers: { ...cors, 'Content-Type': 'application/json' },
