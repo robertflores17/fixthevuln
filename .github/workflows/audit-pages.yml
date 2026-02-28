@@ -1,0 +1,108 @@
+name: Weekly Educational Page Audit
+
+on:
+  schedule:
+    # Runs every Monday at 8 AM Pacific (16:00 UTC)
+    # During Daylight Saving Time this will be 9 AM PDT
+    - cron: '0 16 * * 1'
+  workflow_dispatch:
+    # Allows manual trigger for testing
+    inputs:
+      skip_links:
+        description: 'Skip external link checking (fast mode)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Set up Python
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+        with:
+          python-version: '3.11'
+
+      - name: Run page audit
+        id: audit
+        continue-on-error: true
+        run: |
+          SKIP_FLAG=""
+          if [ "${{ github.event.inputs.skip_links }}" == "true" ]; then
+            SKIP_FLAG="--skip-links"
+          fi
+
+          python scripts/audit_pages.py $SKIP_FLAG --output data/audit-report.md
+
+          # Capture exit code
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
+
+      - name: Read audit report
+        id: report
+        if: always()
+        run: |
+          if [ -f "data/audit-report.md" ]; then
+            # Store report for issue body (GitHub has 65536 char limit)
+            REPORT=$(head -c 60000 data/audit-report.md)
+            echo "report<<EOF" >> $GITHUB_OUTPUT
+            echo "$REPORT" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+            echo "has_report=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_report=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Close previous audit issues
+        if: steps.report.outputs.has_report == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Close any open audit issues from previous weeks
+          OPEN_ISSUES=$(gh issue list --label "content-audit" --state open --json number --jq '.[].number' 2>/dev/null || echo "")
+          for ISSUE_NUM in $OPEN_ISSUES; do
+            gh issue close $ISSUE_NUM --comment "Superseded by new weekly audit run." 2>/dev/null || true
+          done
+
+      - name: Create audit issue (issues found)
+        if: steps.audit.outcome == 'failure' && steps.report.outputs.has_report == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DATE=$(date +'%B %d, %Y')
+          gh issue create \
+            --title "Content Audit: Issues Found ($DATE)" \
+            --body "${{ steps.report.outputs.report }}" \
+            --label "content-audit"
+
+      - name: Create audit issue (all clear)
+        if: steps.audit.outcome == 'success' && steps.report.outputs.has_report == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DATE=$(date +'%B %d, %Y')
+          gh issue create \
+            --title "Content Audit: All Clear ($DATE)" \
+            --body "${{ steps.report.outputs.report }}" \
+            --label "content-audit"
+
+      - name: Job summary
+        if: always()
+        run: |
+          if [ -f "data/audit-report.md" ]; then
+            echo "### Weekly Page Audit Results" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            cat data/audit-report.md >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### Audit Failed" >> $GITHUB_STEP_SUMMARY
+            echo "The audit script did not produce a report." >> $GITHUB_STEP_SUMMARY
+          fi
