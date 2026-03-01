@@ -422,7 +422,7 @@ class BlogPublisher:
         return f'''
             <!-- Related Tools -->
             <section style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
-                <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Free Security Tools</h3>
+                <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Explore More</h3>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
 {chr(10).join(links_html)}
                 </div>
@@ -514,7 +514,7 @@ class BlogPublisher:
 
             <!-- Related Tools -->
             <section style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
-                <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Free Security Tools</h3>
+                <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Explore More</h3>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
                     <a href="../cvss-calculator.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">CVSS Calculator</a>
                     <a href="../security-quiz.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Security+ Quiz</a>
