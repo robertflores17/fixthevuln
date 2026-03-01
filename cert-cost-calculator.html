@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certification Cost Calculator — Total Cost & ROI | FixTheVuln</title>
+    <meta name="description" content="Free certification cost calculator. Compare exam fees, study material costs, and salary ROI for 65+ IT certifications including Security+, CISSP, AWS, Azure, and Cisco.">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <meta property="og:title" content="Cert Cost Calculator | FixTheVuln">
+    <meta property="og:description" content="Calculate total certification costs and salary ROI for 65+ IT certs.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fixthevuln.com/cert-cost-calculator.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="canonical" href="https://fixthevuln.com/cert-cost-calculator.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Cert Cost Calculator | FixTheVuln">
+    <meta name="twitter:description" content="Calculate total certification costs and salary ROI for 65+ IT certs.">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="stylesheet" href="style.min.css?v=5">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Certification Cost Calculator",
+        "description": "Calculate total certification costs and salary ROI for 65+ IT certifications",
+        "url": "https://fixthevuln.com/cert-cost-calculator.html",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "featureList": ["Exam fee breakdown", "Budget vs Premium path comparison", "Salary ROI analysis", "65+ certifications"],
+        "dateModified": "2026-03-01"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Tools", "item": "https://fixthevuln.com/tools.html" },
+            { "@type": "ListItem", "position": 3, "name": "Cert Cost Calculator" }
+        ]
+    }
+    </script>
+    <style>
+        .calc-container { max-width: 900px; margin: 0 auto; }
+        .calc-header { text-align: center; padding: 2rem 1.5rem 1rem; }
+        .calc-header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .calc-header p { color: var(--text-secondary); max-width: 600px; margin: 0 auto; }
+        .calc-select-wrap { max-width: 500px; margin: 1.5rem auto; }
+        .calc-select-wrap label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .calc-select-wrap select { width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); font-size: 1rem; }
+        .calc-results { display: none; margin-top: 2rem; }
+        .calc-results.active { display: block; }
+        .cost-overview { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .cost-stat { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 10px; padding: 1.25rem; text-align: center; }
+        .cost-stat .stat-label { font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.25rem; }
+        .cost-stat .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--accent-color); }
+        .cost-stat .stat-sub { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem; }
+        .path-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+        @media (max-width: 600px) { .path-compare { grid-template-columns: 1fr; } }
+        .path-card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; }
+        .path-card h3 { font-size: 1.1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .path-card .path-badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 50px; font-weight: 600; }
+        .path-budget .path-badge { background: #d1fae5; color: #065f46; }
+        .path-premium .path-badge { background: #dbeafe; color: #1e40af; }
+        [data-theme="dark"] .path-budget .path-badge { background: #064e3b; color: #6ee7b7; }
+        [data-theme="dark"] .path-premium .path-badge { background: #1e3a5f; color: #93c5fd; }
+        .path-line { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; }
+        .path-line:last-child { border-bottom: none; }
+        .path-total { font-weight: 700; font-size: 1.1rem; color: var(--accent-color); margin-top: 0.75rem; padding-top: 0.75rem; border-top: 2px solid var(--accent-color); display: flex; justify-content: space-between; }
+        .roi-panel { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px; padding: 1.5rem; color: white; margin-bottom: 2rem; }
+        .roi-panel h3 { color: white; margin-bottom: 1rem; }
+        .roi-bar-track { background: rgba(255,255,255,0.15); border-radius: 8px; height: 24px; margin-bottom: 0.5rem; overflow: hidden; position: relative; }
+        .roi-bar { height: 100%; border-radius: 8px; background: linear-gradient(90deg, #667eea, #10b981); display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; font-size: 0.75rem; font-weight: 700; min-width: 60px; }
+        .roi-labels { display: flex; justify-content: space-between; font-size: 0.8rem; opacity: 0.8; margin-bottom: 1rem; }
+        .roi-note { font-size: 0.85rem; opacity: 0.9; line-height: 1.5; }
+        .cross-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 2rem; }
+        .cross-link { display: block; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 10px; padding: 1rem; text-decoration: none; color: inherit; transition: transform 0.2s; }
+        .cross-link:hover { transform: translateY(-2px); }
+        .cross-link h4 { font-size: 0.9rem; margin: 0.4rem 0 0.2rem; }
+        .cross-link p { font-size: 0.8rem; color: var(--text-secondary); margin: 0; }
+        .free-resources { margin-top: 1.5rem; }
+        .free-resources h3 { font-size: 1.1rem; margin-bottom: 0.75rem; }
+        .resource-list { list-style: none; padding: 0; }
+        .resource-list li { padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); }
+        .resource-list li:last-child { border-bottom: none; }
+        .resource-list a { color: var(--accent-color); text-decoration: none; font-weight: 500; }
+        .resource-list a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="index.html" class="site-nav-logo">FixTheVuln</a>
+        <div class="site-nav-links">
+            <a href="guides.html">Guides</a>
+            <a href="tools.html">Tools</a>
+            <a href="compliance.html">Compliance</a>
+            <a href="resources.html">Resources</a>
+            <a href="practice-tests.html">Quizzes</a>
+            <a href="career-paths.html">Career Paths</a>
+            <a href="blog/">Blog</a>
+            <a href="/store/store.html" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: .35rem .75rem; border-radius: 6px; font-size: .85rem; font-weight: 600; text-decoration: none;">Store</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+<main class="container">
+    <a href="tools.html" class="back-link">&larr; Back to Tools</a>
+
+    <div class="calc-container">
+        <div class="calc-header">
+            <h1>Certification Cost Calculator</h1>
+            <p>Calculate the total cost of your next IT certification and see the salary ROI. Compare budget vs premium study paths for 65+ certs.</p>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">Last updated: March 1, 2026</p>
+        </div>
+
+        <div class="calc-select-wrap">
+            <label for="certSelect">Select a certification:</label>
+            <select id="certSelect">
+                <option value="">-- Choose a certification --</option>
+            </select>
+        </div>
+
+        <div id="calcResults" class="calc-results">
+            <div class="cost-overview" id="costOverview"></div>
+
+            <div class="path-compare">
+                <div class="path-card path-budget" id="budgetPath"></div>
+                <div class="path-card path-premium" id="premiumPath"></div>
+            </div>
+
+            <div class="roi-panel" id="roiPanel"></div>
+
+            <div class="free-resources" id="freeResources"></div>
+
+            <div class="cross-links" id="crossLinks"></div>
+        </div>
+    </div>
+
+    <!-- Blog Cross-Links -->
+    <div style="max-width: 900px; margin: 2rem auto 0;">
+    </div>
+    <!-- End Blog Cross-Links -->
+</main>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2026 FixTheVuln. Educational resources for security professionals.</p>
+        <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com">FixTheVuln.com</a> | Study Planners: <a href="/store/store.html">FixTheVuln Store</a></p>
+    </div>
+</footer>
+
+<button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode">
+    <span id="theme-icon">&#9790;</span>
+</button>
+
+<script>
+function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('fixthevuln-theme', next);
+    document.getElementById('theme-icon').textContent = next === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19';
+}
+(function() {
+    const saved = localStorage.getItem('fixthevuln-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = saved || (prefersDark ? 'dark' : 'light');
+    if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.getElementById('theme-icon').textContent = '\u2600\uFE0F';
+    }
+})();
+
+// Escape HTML for safe rendering
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+let certData = [];
+
+fetch('data/cert-costs.json')
+    .then(r => r.json())
+    .then(data => {
+        certData = data.certs || [];
+        populateDropdown();
+    })
+    .catch(() => {
+        document.getElementById('certSelect').innerHTML = '<option>Error loading data</option>';
+    });
+
+function populateDropdown() {
+    const select = document.getElementById('certSelect');
+    // Group by vendor
+    const vendors = {};
+    certData.forEach(c => {
+        if (!vendors[c.vendor]) vendors[c.vendor] = [];
+        vendors[c.vendor].push(c);
+    });
+    let html = '<option value="">-- Choose a certification --</option>';
+    Object.keys(vendors).sort().forEach(vendor => {
+        html += '<optgroup label="' + esc(vendor) + '">';
+        vendors[vendor].forEach(c => {
+            html += '<option value="' + esc(c.id) + '">' + esc(c.name) + ' (' + esc(c.exam_code) + ')</option>';
+        });
+        html += '</optgroup>';
+    });
+    select.innerHTML = html;
+    select.addEventListener('change', onCertSelect);
+}
+
+function fmt(n) {
+    return '$' + n.toLocaleString('en-US');
+}
+
+function onCertSelect(e) {
+    const id = e.target.value;
+    const results = document.getElementById('calcResults');
+    if (!id) { results.classList.remove('active'); return; }
+    const cert = certData.find(c => c.id === id);
+    if (!cert) return;
+    results.classList.add('active');
+    renderOverview(cert);
+    renderPaths(cert);
+    renderROI(cert);
+    renderResources(cert);
+    renderCrossLinks(cert);
+}
+
+function renderOverview(c) {
+    const el = document.getElementById('costOverview');
+    el.innerHTML = `
+        <div class="cost-stat">
+            <div class="stat-label">Exam Fee</div>
+            <div class="stat-value">${c.exam_fee ? fmt(c.exam_fee) : 'Varies'}</div>
+            <div class="stat-sub">${esc(c.exam_code)}</div>
+        </div>
+        <div class="cost-stat">
+            <div class="stat-label">Study Time</div>
+            <div class="stat-value">${c.study_weeks} weeks</div>
+            <div class="stat-sub">Recommended prep</div>
+        </div>
+        <div class="cost-stat">
+            <div class="stat-label">Salary Range</div>
+            <div class="stat-value">${c.salary_min ? fmt(c.salary_min) + '–' + fmt(c.salary_max) : 'N/A'}</div>
+            <div class="stat-sub">Average with cert</div>
+        </div>
+        <div class="cost-stat">
+            <div class="stat-label">Planner</div>
+            <div class="stat-value">$5.99</div>
+            <div class="stat-sub"><a href="${esc(c.planner_url)}" style="color:var(--accent-color);">View planner</a></div>
+        </div>
+    `;
+}
+
+function renderPaths(c) {
+    const fee = c.exam_fee || 0;
+    const budgetTotal = fee + 6;
+    const premiumTotal = fee + 6 + 50 + 30;
+
+    document.getElementById('budgetPath').innerHTML = `
+        <h3><span class="path-badge">Budget</span> Budget Path</h3>
+        <div class="path-line"><span>Exam voucher</span><span>${fee ? fmt(fee) : 'Varies'}</span></div>
+        <div class="path-line"><span>Study planner (PDF)</span><span>$5.99</span></div>
+        <div class="path-line"><span>Free video courses</span><span>$0</span></div>
+        <div class="path-line"><span>Free practice tests</span><span>$0</span></div>
+        <div class="path-line"><span>Official docs / labs</span><span>$0</span></div>
+        <div class="path-total"><span>Total</span><span>${fee ? fmt(budgetTotal) : 'Varies + $6'}</span></div>
+    `;
+
+    document.getElementById('premiumPath').innerHTML = `
+        <h3><span class="path-badge">Premium</span> Premium Path</h3>
+        <div class="path-line"><span>Exam voucher</span><span>${fee ? fmt(fee) : 'Varies'}</span></div>
+        <div class="path-line"><span>Study planner (PDF)</span><span>$5.99</span></div>
+        <div class="path-line"><span>Practice exam platform</span><span>~$50</span></div>
+        <div class="path-line"><span>Video course (Udemy/CBT)</span><span>~$30</span></div>
+        <div class="path-line"><span>Official study guide</span><span>~$40</span></div>
+        <div class="path-total"><span>Total</span><span>${fee ? fmt(premiumTotal + 40) : 'Varies + $126'}</span></div>
+    `;
+}
+
+function renderROI(c) {
+    const el = document.getElementById('roiPanel');
+    if (!c.salary_min || !c.salary_max) {
+        el.innerHTML = '<h3>Salary ROI</h3><p class="roi-note">Salary data not available for this certification. Check vendor resources for current market rates.</p>';
+        return;
+    }
+    const fee = c.exam_fee || 0;
+    const totalCost = fee + 6;
+    const avgSalary = Math.round((c.salary_min + c.salary_max) / 2);
+    const roiPercent = totalCost > 0 ? Math.round(((avgSalary - totalCost) / totalCost) * 100) : 0;
+    const barWidth = Math.min(100, Math.max(10, roiPercent / 500 * 100));
+
+    el.innerHTML = `
+        <h3>Salary ROI (Budget Path)</h3>
+        <div class="roi-labels">
+            <span>Investment: ${fmt(totalCost)}</span>
+            <span>Avg Salary: ${fmt(avgSalary)}/yr</span>
+        </div>
+        <div class="roi-bar-track">
+            <div class="roi-bar" style="width: ${barWidth}%">${roiPercent.toLocaleString()}x</div>
+        </div>
+        <p class="roi-note">With a budget-path investment of ${fmt(totalCost)} and an average certified salary of ${fmt(avgSalary)}/year, this certification pays for itself in <strong>${totalCost > 0 ? Math.ceil(totalCost / (avgSalary / 12)) : '< 1'} month${totalCost > 0 && Math.ceil(totalCost / (avgSalary / 12)) !== 1 ? 's' : ''}</strong>. ROI is ${roiPercent.toLocaleString()}x your investment in year one alone.</p>
+    `;
+}
+
+function renderResources(c) {
+    const el = document.getElementById('freeResources');
+    if (!c.free_resources || c.free_resources.length === 0) {
+        el.innerHTML = '';
+        return;
+    }
+    let items = c.free_resources.map(r =>
+        '<li><a href="' + esc(r.url) + '" target="_blank" rel="noopener">' + esc(r.name) + '</a></li>'
+    ).join('');
+    el.innerHTML = `<h3>Free Study Resources</h3><ul class="resource-list">${items}</ul>`;
+}
+
+function renderCrossLinks(c) {
+    const el = document.getElementById('crossLinks');
+    let html = `
+        <a class="cross-link" href="${esc(c.cert_page_url)}">
+            <span style="font-size:1.3rem;">📖</span>
+            <h4>${esc(c.name)} Study Guide</h4>
+            <p>Complete exam objectives and domain breakdown</p>
+        </a>
+        <a class="cross-link" href="${esc(c.roadmap_url)}">
+            <span style="font-size:1.3rem;">📋</span>
+            <h4>Study Roadmap</h4>
+            <p>Week-by-week study plan with free resources</p>
+        </a>
+        <a class="cross-link" href="/study-tracker.html">
+            <span style="font-size:1.3rem;">✅</span>
+            <h4>Study Tracker</h4>
+            <p>Track objective completion with progress dashboard</p>
+        </a>
+    `;
+    if (c.quiz_url) {
+        html += `
+        <a class="cross-link" href="${esc(c.quiz_url)}">
+            <span style="font-size:1.3rem;">🧪</span>
+            <h4>Practice Quiz</h4>
+            <p>Test your knowledge with free practice questions</p>
+        </a>`;
+    }
+    el.innerHTML = html;
+}
+</script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

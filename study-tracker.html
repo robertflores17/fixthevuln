@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Study Tracker — Track Exam Objectives | FixTheVuln</title>
+    <meta name="description" content="Free certification study tracker. Check off exam objectives, track progress by domain, and identify weak areas. Supports 65+ IT certifications. Progress saves locally.">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <meta property="og:title" content="Study Tracker | FixTheVuln">
+    <meta property="og:description" content="Free study tracker for 65+ IT certifications. Track objectives, find weak domains.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fixthevuln.com/study-tracker.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="canonical" href="https://fixthevuln.com/study-tracker.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Study Tracker | FixTheVuln">
+    <meta name="twitter:description" content="Free study tracker for 65+ IT certifications. Track objectives, find weak domains.">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="stylesheet" href="style.min.css?v=5">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Certification Study Tracker",
+        "description": "Track exam objective completion for 65+ IT certifications with progress dashboard and weak domain identification",
+        "url": "https://fixthevuln.com/study-tracker.html",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "featureList": ["Progress tracking", "Weak domain identification", "localStorage persistence", "65+ certifications"],
+        "dateModified": "2026-03-01"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Tools", "item": "https://fixthevuln.com/tools.html" },
+            { "@type": "ListItem", "position": 3, "name": "Study Tracker" }
+        ]
+    }
+    </script>
+    <style>
+        .tracker-container { max-width: 900px; margin: 0 auto; }
+        .tracker-header { text-align: center; padding: 2rem 1.5rem 1rem; }
+        .tracker-header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .tracker-header p { color: var(--text-secondary); max-width: 600px; margin: 0 auto; }
+        .tracker-select-wrap { max-width: 500px; margin: 1.5rem auto; }
+        .tracker-select-wrap label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .tracker-select-wrap select { width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); font-size: 1rem; }
+        .tracker-results { display: none; }
+        .tracker-results.active { display: block; }
+
+        /* Progress dashboard */
+        .progress-dashboard { display: grid; grid-template-columns: auto 1fr; gap: 2rem; align-items: center; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
+        @media (max-width: 600px) { .progress-dashboard { grid-template-columns: 1fr; justify-items: center; } }
+        .progress-ring { position: relative; width: 120px; height: 120px; }
+        .progress-ring svg { transform: rotate(-90deg); }
+        .progress-ring circle { fill: none; stroke-width: 8; }
+        .progress-ring .ring-bg { stroke: var(--border-color); }
+        .progress-ring .ring-fill { stroke: var(--accent-color); stroke-linecap: round; transition: stroke-dashoffset 0.5s ease; }
+        .progress-ring .ring-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; font-weight: 700; }
+        .progress-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        .progress-stat { text-align: center; }
+        .progress-stat .stat-val { font-size: 1.3rem; font-weight: 700; color: var(--accent-color); }
+        .progress-stat .stat-lbl { font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Weak domain alert */
+        .weak-domain-alert { background: #fef3c7; border: 1px solid #f59e0b; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; }
+        [data-theme="dark"] .weak-domain-alert { background: #451a03; border-color: #92400e; }
+        .weak-domain-alert h4 { color: #92400e; margin-bottom: 0.25rem; font-size: 0.95rem; }
+        [data-theme="dark"] .weak-domain-alert h4 { color: #fbbf24; }
+        .weak-domain-alert p { font-size: 0.85rem; color: #78350f; margin: 0; }
+        [data-theme="dark"] .weak-domain-alert p { color: #fde68a; }
+
+        /* Domain accordions */
+        .domain-accordion { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 10px; margin-bottom: 0.75rem; overflow: hidden; }
+        .domain-accordion-header { display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; cursor: pointer; user-select: none; }
+        .domain-accordion-header:hover { background: var(--bg-tertiary, rgba(128,128,128,0.08)); }
+        .domain-accordion-arrow { transition: transform 0.2s; font-size: 0.8rem; color: var(--text-secondary); flex-shrink: 0; }
+        .domain-accordion.open .domain-accordion-arrow { transform: rotate(90deg); }
+        .domain-accordion-title { flex: 1; font-weight: 600; font-size: 0.95rem; }
+        .domain-accordion-meta { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+        .domain-pct-badge { background: var(--accent-color); color: white; padding: 2px 8px; border-radius: 50px; font-size: 0.7rem; font-weight: 700; }
+        .domain-progress-mini { width: 60px; height: 6px; background: var(--border-color); border-radius: 3px; overflow: hidden; }
+        .domain-progress-mini-fill { height: 100%; background: var(--accent-color); border-radius: 3px; transition: width 0.3s; }
+        .domain-accordion-body { display: none; padding: 0 1.25rem 1rem; }
+        .domain-accordion.open .domain-accordion-body { display: block; }
+        .objective-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.6rem 0; border-bottom: 1px solid var(--border-color); }
+        .objective-item:last-child { border-bottom: none; }
+        .objective-item input[type="checkbox"] { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--accent-color); cursor: pointer; flex-shrink: 0; }
+        .objective-item label { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; cursor: pointer; }
+        .objective-item.checked label { text-decoration: line-through; opacity: 0.6; }
+        .concept-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed var(--border-color); }
+        .concept-tags span { background: var(--bg-tertiary, rgba(128,128,128,0.1)); border: 1px solid var(--border-color); border-radius: 50px; padding: 2px 8px; font-size: 0.7rem; color: var(--text-secondary); }
+
+        /* Cross links */
+        .cross-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 2rem; }
+        .cross-link { display: block; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 10px; padding: 1rem; text-decoration: none; color: inherit; transition: transform 0.2s; }
+        .cross-link:hover { transform: translateY(-2px); }
+        .cross-link h4 { font-size: 0.9rem; margin: 0.4rem 0 0.2rem; }
+        .cross-link p { font-size: 0.8rem; color: var(--text-secondary); margin: 0; }
+
+        .reset-btn { display: inline-block; margin-top: 1rem; padding: 0.5rem 1rem; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+        .reset-btn:hover { background: #dc2626; }
+    </style>
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="index.html" class="site-nav-logo">FixTheVuln</a>
+        <div class="site-nav-links">
+            <a href="guides.html">Guides</a>
+            <a href="tools.html">Tools</a>
+            <a href="compliance.html">Compliance</a>
+            <a href="resources.html">Resources</a>
+            <a href="practice-tests.html">Quizzes</a>
+            <a href="career-paths.html">Career Paths</a>
+            <a href="blog/">Blog</a>
+            <a href="/store/store.html" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: .35rem .75rem; border-radius: 6px; font-size: .85rem; font-weight: 600; text-decoration: none;">Store</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+<main class="container">
+    <a href="tools.html" class="back-link">&larr; Back to Tools</a>
+
+    <div class="tracker-container">
+        <div class="tracker-header">
+            <h1>Certification Study Tracker</h1>
+            <p>Select your certification, check off objectives as you study, and track your progress. Your progress saves automatically to your browser — pick up where you left off anytime.</p>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">Last updated: March 1, 2026</p>
+        </div>
+
+        <div class="tracker-select-wrap">
+            <label for="trackerSelect">Select a certification:</label>
+            <select id="trackerSelect">
+                <option value="">-- Choose a certification --</option>
+            </select>
+        </div>
+
+        <div id="trackerResults" class="tracker-results">
+            <div class="progress-dashboard" id="progressDashboard">
+                <div class="progress-ring" id="progressRing"></div>
+                <div class="progress-stats" id="progressStats"></div>
+            </div>
+            <div id="weakDomainAlert"></div>
+            <div id="domainAccordions"></div>
+            <div id="trackerCrossLinks" class="cross-links"></div>
+            <button class="reset-btn" id="resetBtn" style="display:none;">Reset Progress for This Cert</button>
+        </div>
+    </div>
+
+    <!-- Blog Cross-Links -->
+    <div style="max-width: 900px; margin: 2rem auto 0;">
+    </div>
+    <!-- End Blog Cross-Links -->
+</main>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2026 FixTheVuln. Educational resources for security professionals.</p>
+        <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com">FixTheVuln.com</a> | Study Planners: <a href="/store/store.html">FixTheVuln Store</a></p>
+    </div>
+</footer>
+
+<button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode">
+    <span id="theme-icon">&#9790;</span>
+</button>
+
+<script>
+function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('fixthevuln-theme', next);
+    document.getElementById('theme-icon').textContent = next === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19';
+}
+(function() {
+    const saved = localStorage.getItem('fixthevuln-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = saved || (prefersDark ? 'dark' : 'light');
+    if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.getElementById('theme-icon').textContent = '\u2600\uFE0F';
+    }
+})();
+
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+const STORAGE_KEY = 'ftv-study-tracker';
+let trackerData = [];
+let currentCert = null;
+
+function loadProgress() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
+}
+function saveProgress(data) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch {}
+}
+
+fetch('data/tracker-objectives.json')
+    .then(r => r.json())
+    .then(data => {
+        trackerData = data.certs || [];
+        populateDropdown();
+    })
+    .catch(() => {
+        document.getElementById('trackerSelect').innerHTML = '<option>Error loading data</option>';
+    });
+
+function populateDropdown() {
+    const select = document.getElementById('trackerSelect');
+    const vendors = {};
+    trackerData.forEach(c => {
+        if (!vendors[c.vendor]) vendors[c.vendor] = [];
+        vendors[c.vendor].push(c);
+    });
+    let html = '<option value="">-- Choose a certification --</option>';
+    Object.keys(vendors).sort().forEach(v => {
+        html += '<optgroup label="' + esc(v) + '">';
+        vendors[v].forEach(c => {
+            html += '<option value="' + esc(c.id) + '">' + esc(c.name) + '</option>';
+        });
+        html += '</optgroup>';
+    });
+    select.innerHTML = html;
+    select.addEventListener('change', onCertSelect);
+}
+
+function onCertSelect(e) {
+    const id = e.target.value;
+    const results = document.getElementById('trackerResults');
+    if (!id) { results.classList.remove('active'); return; }
+    currentCert = trackerData.find(c => c.id === id);
+    if (!currentCert) return;
+    results.classList.add('active');
+    renderAll();
+}
+
+function renderAll() {
+    renderDomains();
+    updateDashboard();
+    renderCrossLinks();
+    document.getElementById('resetBtn').style.display = 'inline-block';
+}
+
+function renderDomains() {
+    const progress = loadProgress();
+    const certProgress = progress[currentCert.id] || {};
+    let html = '';
+    currentCert.domains.forEach((d, di) => {
+        const domainKey = 'd' + d.number;
+        const checked = certProgress[domainKey] || [];
+        const total = d.objectives.length;
+        const done = checked.length;
+        const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+
+        let objHtml = '';
+        d.objectives.forEach((obj, oi) => {
+            const isChecked = checked.includes(oi);
+            objHtml += `
+                <div class="objective-item ${isChecked ? 'checked' : ''}">
+                    <input type="checkbox" id="obj-${di}-${oi}" data-domain="${di}" data-obj="${oi}" ${isChecked ? 'checked' : ''}>
+                    <label for="obj-${di}-${oi}">${esc(obj)}</label>
+                </div>`;
+        });
+
+        let conceptHtml = '';
+        if (d.key_concepts && d.key_concepts.length > 0) {
+            conceptHtml = '<div class="concept-tags">' + d.key_concepts.map(c => '<span>' + esc(c) + '</span>').join('') + '</div>';
+        }
+
+        html += `
+            <div class="domain-accordion" data-domain-idx="${di}">
+                <div class="domain-accordion-header" onclick="toggleAccordion(this.parentElement)">
+                    <span class="domain-accordion-arrow">&#9654;</span>
+                    <span class="domain-accordion-title">Domain ${d.number}: ${esc(d.name)}</span>
+                    <div class="domain-accordion-meta">
+                        <span class="domain-pct-badge">${esc(d.percentage)}</span>
+                        <div class="domain-progress-mini"><div class="domain-progress-mini-fill" style="width:${pct}%"></div></div>
+                        <span style="font-size:0.75rem;color:var(--text-secondary);min-width:40px;text-align:right;">${done}/${total}</span>
+                    </div>
+                </div>
+                <div class="domain-accordion-body">
+                    ${objHtml}
+                    ${conceptHtml}
+                </div>
+            </div>`;
+    });
+    document.getElementById('domainAccordions').innerHTML = html;
+
+    // Attach checkbox listeners
+    document.querySelectorAll('#domainAccordions input[type="checkbox"]').forEach(cb => {
+        cb.addEventListener('change', onCheckboxChange);
+    });
+}
+
+function toggleAccordion(el) {
+    el.classList.toggle('open');
+}
+
+function onCheckboxChange(e) {
+    const di = parseInt(e.target.dataset.domain);
+    const oi = parseInt(e.target.dataset.obj);
+    const domain = currentCert.domains[di];
+    const domainKey = 'd' + domain.number;
+
+    const progress = loadProgress();
+    if (!progress[currentCert.id]) progress[currentCert.id] = {};
+    if (!progress[currentCert.id][domainKey]) progress[currentCert.id][domainKey] = [];
+
+    const arr = progress[currentCert.id][domainKey];
+    if (e.target.checked) {
+        if (!arr.includes(oi)) arr.push(oi);
+    } else {
+        const idx = arr.indexOf(oi);
+        if (idx > -1) arr.splice(idx, 1);
+    }
+    saveProgress(progress);
+
+    // Update item styling
+    const item = e.target.closest('.objective-item');
+    item.classList.toggle('checked', e.target.checked);
+
+    // Update mini progress bar
+    const accordion = e.target.closest('.domain-accordion');
+    const total = domain.objectives.length;
+    const done = arr.length;
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    accordion.querySelector('.domain-progress-mini-fill').style.width = pct + '%';
+    accordion.querySelector('.domain-accordion-meta span:last-child').textContent = done + '/' + total;
+
+    updateDashboard();
+}
+
+function updateDashboard() {
+    const progress = loadProgress();
+    const certProgress = progress[currentCert.id] || {};
+
+    let totalObj = 0;
+    let totalDone = 0;
+    let domainStats = [];
+
+    currentCert.domains.forEach(d => {
+        const domainKey = 'd' + d.number;
+        const checked = (certProgress[domainKey] || []).length;
+        const total = d.objectives.length;
+        totalObj += total;
+        totalDone += checked;
+        const weight = parseFloat(d.percentage) || 0;
+        domainStats.push({
+            name: d.name,
+            number: d.number,
+            weight: weight,
+            total: total,
+            done: checked,
+            pct: total > 0 ? Math.round((checked / total) * 100) : 0,
+        });
+    });
+
+    const overallPct = totalObj > 0 ? Math.round((totalDone / totalObj) * 100) : 0;
+    const domainsComplete = domainStats.filter(d => d.pct === 100).length;
+
+    // Circular progress
+    const circumference = 2 * Math.PI * 52;
+    const offset = circumference - (overallPct / 100) * circumference;
+    document.getElementById('progressRing').innerHTML = `
+        <svg width="120" height="120">
+            <circle class="ring-bg" cx="60" cy="60" r="52"></circle>
+            <circle class="ring-fill" cx="60" cy="60" r="52" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"></circle>
+        </svg>
+        <div class="ring-text">${overallPct}%</div>
+    `;
+
+    document.getElementById('progressStats').innerHTML = `
+        <div class="progress-stat"><div class="stat-val">${totalDone}/${totalObj}</div><div class="stat-lbl">Objectives</div></div>
+        <div class="progress-stat"><div class="stat-val">${domainsComplete}/${currentCert.domains.length}</div><div class="stat-lbl">Domains Done</div></div>
+        <div class="progress-stat"><div class="stat-val">${overallPct}%</div><div class="stat-lbl">Complete</div></div>
+    `;
+
+    // Weak domain identification
+    const incomplete = domainStats.filter(d => d.pct < 100);
+    if (incomplete.length > 0 && totalDone > 0) {
+        // Prioritize: lowest completion + highest weight
+        incomplete.sort((a, b) => {
+            const scoreA = (100 - a.pct) * (a.weight || 1);
+            const scoreB = (100 - b.pct) * (b.weight || 1);
+            return scoreB - scoreA;
+        });
+        const weakest = incomplete[0];
+        document.getElementById('weakDomainAlert').innerHTML = `
+            <div class="weak-domain-alert">
+                <h4>Focus Area: Domain ${weakest.number} — ${esc(weakest.name)}</h4>
+                <p>This domain is ${weakest.weight}% of the exam but only ${weakest.pct}% complete. Prioritize studying here for the biggest score impact.</p>
+            </div>`;
+    } else {
+        document.getElementById('weakDomainAlert').innerHTML = '';
+    }
+}
+
+function renderCrossLinks() {
+    const id = currentCert.id;
+    document.getElementById('trackerCrossLinks').innerHTML = `
+        <a class="cross-link" href="/certs/${esc(id)}.html">
+            <span style="font-size:1.3rem;">📖</span>
+            <h4>${esc(currentCert.name)} Study Guide</h4>
+            <p>Complete exam objectives and domain breakdown</p>
+        </a>
+        <a class="cross-link" href="/roadmaps/${esc(id)}.html">
+            <span style="font-size:1.3rem;">📋</span>
+            <h4>Study Roadmap</h4>
+            <p>Week-by-week study plan with free resources</p>
+        </a>
+        <a class="cross-link" href="/cert-cost-calculator.html">
+            <span style="font-size:1.3rem;">💰</span>
+            <h4>Cost Calculator</h4>
+            <p>Total cost breakdown and ROI analysis</p>
+        </a>
+    `;
+}
+
+// Reset button
+document.getElementById('resetBtn').addEventListener('click', function() {
+    if (!currentCert) return;
+    if (!confirm('Reset all progress for ' + currentCert.name + '? This cannot be undone.')) return;
+    const progress = loadProgress();
+    delete progress[currentCert.id];
+    saveProgress(progress);
+    renderAll();
+});
+</script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

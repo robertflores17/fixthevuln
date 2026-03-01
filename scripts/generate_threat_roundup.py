@@ -14,6 +14,71 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 
+# ── CVE-to-cert domain classification ─────────────────────────────────
+DOMAIN_KEYWORDS = {
+    'comptia-security-plus': {
+        'D1 General Security Concepts': ['encryption', 'cryptograph', 'certificate', 'pki', 'hash', 'key exchange', 'access control'],
+        'D2 Threats & Vulnerabilities': ['injection', 'rce', 'remote code', 'xss', 'cross-site', 'buffer overflow', 'privilege escalation', 'malware', 'ransomware', 'phishing', 'zero-day', 'deserialization', 'bypass', 'brute force', 'social engineering'],
+        'D3 Security Architecture': ['cloud', 'container', 'microservice', 'firewall', 'segmentation', 'load balancer', 'vpn', 'waf', 'proxy', 'cdn'],
+        'D4 Security Operations': ['siem', 'log', 'monitoring', 'incident', 'patch', 'vulnerability scan', 'edr', 'endpoint', 'detection', 'response', 'forensic'],
+        'D5 Security Program Mgmt': ['compliance', 'audit', 'risk', 'governance', 'policy', 'gdpr', 'pci', 'hipaa'],
+    },
+    'aws-solutions-architect': {
+        'D1 Secure Architecture': ['iam', 'role', 'policy', 'encryption at rest', 's3', 'kms', 'vpc', 'security group'],
+        'D2 Resilient Architecture': ['availability', 'redundancy', 'failover', 'auto scaling', 'load balancing', 'disaster recovery'],
+        'D3 High-Performing': ['performance', 'caching', 'cdn', 'cloudfront', 'lambda', 'api gateway'],
+        'D4 Cost-Optimized': ['cost', 'pricing', 'reserved', 'spot', 'savings plan'],
+    },
+    'isc2-cissp': {
+        'D1 Security & Risk Mgmt': ['risk', 'compliance', 'governance', 'policy', 'legal', 'regulatory', 'audit'],
+        'D2 Asset Security': ['data classification', 'data protection', 'retention', 'privacy'],
+        'D3 Security Architecture': ['architecture', 'design', 'model', 'framework', 'cryptograph'],
+        'D4 Communication & Network': ['network', 'protocol', 'firewall', 'vpn', 'dns', 'routing', 'switching'],
+        'D5 IAM': ['authentication', 'authorization', 'identity', 'access control', 'mfa', 'sso', 'federation'],
+        'D6 Security Assessment': ['vulnerability', 'penetration', 'assessment', 'testing', 'scanning', 'audit'],
+        'D7 Security Operations': ['incident', 'response', 'forensic', 'monitoring', 'logging', 'siem', 'patch'],
+        'D8 Software Development': ['software', 'sdlc', 'code review', 'application', 'api', 'web application'],
+    },
+    'cisco-ccna': {
+        'D1 Network Fundamentals': ['tcp', 'udp', 'ip', 'subnet', 'vlan', 'routing', 'switching', 'dns', 'dhcp', 'arp'],
+        'D2 Network Access': ['ethernet', 'wireless', 'wifi', '802.1x', 'port security'],
+        'D3 IP Connectivity': ['ospf', 'eigrp', 'bgp', 'static route', 'default route'],
+        'D5 Security Fundamentals': ['acl', 'firewall', 'vpn', 'ipsec', 'aaa', 'radius', 'tacacs'],
+    },
+}
+
+
+def classify_cve(vuln):
+    """Match CVE title/description against cert domain keywords. Returns dict of cert_id → [domain names]."""
+    text = (vuln.get('title', '') + ' ' + vuln.get('description', '')).lower()
+    matches = {}
+    for cert_id, domains in DOMAIN_KEYWORDS.items():
+        cert_matches = []
+        for domain_name, keywords in domains.items():
+            for kw in keywords:
+                if kw in text:
+                    cert_matches.append(domain_name)
+                    break
+        if cert_matches:
+            matches[cert_id] = cert_matches
+    return matches
+
+
+CERT_DISPLAY_NAMES = {
+    'comptia-security-plus': 'CompTIA Security+',
+    'aws-solutions-architect': 'AWS Solutions Architect',
+    'isc2-cissp': 'ISC2 CISSP',
+    'cisco-ccna': 'Cisco CCNA',
+}
+
+CERT_CTA_SECTIONS = {
+    'comptia-security-plus': 'comptia',
+    'aws-solutions-architect': 'aws',
+    'isc2-cissp': 'isc2',
+    'cisco-ccna': 'cisco',
+}
+
+
 def main():
     repo_root = Path(__file__).resolve().parent.parent
     dry_run = '--dry-run' in sys.argv
@@ -125,13 +190,42 @@ Use the [CVSS Calculator](/cvss-calculator.html) to contextualize these scores f
     else:
         action_msg = """While none of this week's additions are critical severity, they're in the KEV catalog because they've been exploited. Don't deprioritize them — schedule patches in your next maintenance window."""
 
-    # Studying section based on count
-    if count >= 4:
-        study_angle = f"""This week's {count} new KEV entries touch multiple attack surfaces — from authentication bypasses to command injection. If you're studying for Security+, this is a live case study in **Domain 2: Threats, Vulnerabilities, and Mitigations** (22% of the exam).
+    # Classify CVEs by cert domain relevance
+    cert_cve_map = {}  # cert_id → [(cve_id, [domains])]
+    for v in recent:
+        matches = classify_cve(v)
+        for cert_id, domains in matches.items():
+            if cert_id not in cert_cve_map:
+                cert_cve_map[cert_id] = []
+            cert_cve_map[cert_id].append((v['id'], domains))
 
-Map each CVE to a vulnerability type from the SY0-701 objectives. That's how you build real exam intuition."""
+    # Build cert study angles section
+    study_angles = []
+    for cert_id in ['comptia-security-plus', 'isc2-cissp', 'aws-solutions-architect', 'cisco-ccna']:
+        if cert_id not in cert_cve_map:
+            continue
+        cert_name = CERT_DISPLAY_NAMES.get(cert_id, cert_id)
+        cve_list = cert_cve_map[cert_id]
+        lines = []
+        for cve_id, domains in cve_list:
+            domain_str = ', '.join(domains)
+            lines.append(f"- **{cve_id}** → {domain_str}")
+        study_angles.append(f"### {cert_name}\n\n" + '\n'.join(lines))
+
+    if study_angles:
+        study_angle = "These CVEs map directly to certification exam objectives. Use them as real-world case studies:\n\n" + '\n\n'.join(study_angles)
+        study_angle += f"\n\nSee all CVEs mapped to your cert: [Exploit Tracker](/exploit-tracker.html)"
     else:
-        study_angle = f"""Even with just {count} new entries, each one maps to real Security+ exam objectives. Practice identifying the vulnerability type (injection, authentication bypass, deserialization) — that's **Domain 2** material."""
+        study_angle = f"""Even with {count} new entries, each one maps to real certification exam objectives. Practice identifying the vulnerability type (injection, authentication bypass, deserialization) — that maps to Security+ **Domain 2** material.
+
+See all CVEs mapped to your cert: [Exploit Tracker](/exploit-tracker.html)"""
+
+    # Dynamic CTA routing based on cert classification
+    cta_section = 'comptia'  # default
+    if cert_cve_map:
+        # Pick the cert with most CVE matches
+        top_cert = max(cert_cve_map.keys(), key=lambda k: len(cert_cve_map[k]))
+        cta_section = CERT_CTA_SECTIONS.get(top_cert, 'comptia')
 
     # Assemble the full draft
     markdown = f"""---
@@ -142,7 +236,7 @@ date: "{today_str}"
 slug: "{slug}"
 author: "FixTheVuln Team"
 sources: "CISA Known Exploited Vulnerabilities Catalog, NVD"
-cta_section: "comptia"
+cta_section: "{cta_section}"
 ---
 
 ## Weekly Threat Summary
@@ -159,13 +253,15 @@ cta_section: "comptia"
 
 {action_msg}
 
-## Security+ Study Angle
+## Cert Study Angles
 
 {study_angle}
 
 ## Tools to Help
 
 - [CVSS Calculator](/cvss-calculator.html) — Score these vulnerabilities for your specific environment
+- [Exploit Tracker](/exploit-tracker.html) — Filter KEV vulnerabilities by certification relevance
+- [Study Tracker](/study-tracker.html) — Track your exam objective completion
 - [Security+ Practice Quiz](/security-quiz.html) — Test your knowledge of vulnerability types and mitigations
 
 ## Stay Updated

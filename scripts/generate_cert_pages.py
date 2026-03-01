@@ -5,6 +5,7 @@ visitors to quizzes and planner purchases."""
 
 import json
 import re
+from datetime import datetime
 from pathlib import Path
 from html import escape
 
@@ -198,6 +199,39 @@ def load_cert_config(config_path):
         return None
 
 
+def generate_heatmap_html(domains):
+    """Generate a horizontal bar chart showing domain weight distribution."""
+    if not domains:
+        return ''
+    # Color palette for bars (cycles if more than 6 domains)
+    colors = ['#667eea', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#06b6d4',
+              '#ec4899', '#84cc16', '#f97316', '#6366f1']
+    bars = ''
+    for i, d in enumerate(domains):
+        pct_str = d.get('percentage', '0%').replace('%', '')
+        try:
+            pct = float(pct_str)
+        except ValueError:
+            pct = 0
+        color = colors[i % len(colors)]
+        name = d.get('name', f'Domain {d.get("number", i+1)}')
+        bars += f'''
+                <div class="heatmap-row">
+                    <div class="heatmap-label">
+                        <span class="heatmap-domain-num">D{d.get("number", i+1)}</span>
+                        <span class="heatmap-domain-name">{name}</span>
+                    </div>
+                    <div class="heatmap-bar-track">
+                        <div class="heatmap-bar" style="width: {pct}%; background: {color};">{pct_str}%</div>
+                    </div>
+                </div>'''
+    return f'''
+            <div class="heatmap-container">
+                <h3 class="heatmap-title">Where to Focus Your Study Time</h3>
+                <p class="heatmap-subtitle">Domains with higher weight have more exam questions &mdash; allocate your study hours accordingly.</p>{bars}
+            </div>'''
+
+
 def generate_faq_schema(product):
     """Generate FAQ structured data for the cert page."""
     name = product['name']
@@ -249,6 +283,7 @@ def generate_page(product):
     # Load cert config for domain details
     config = load_cert_config(product['config'])
     domains_html = ''
+    heatmap_html = ''
     study_weeks = 12
     if config:
         domains = config.get('domains', [])
@@ -274,6 +309,7 @@ def generate_page(product):
                 <ul class="domain-objectives">{objectives_html}</ul>
                 {concepts_html}
             </div>'''
+        heatmap_html = generate_heatmap_html(domains)
 
     # Quiz link
     quiz_link = QUIZ_MAP.get(pid)
@@ -290,6 +326,38 @@ def generate_page(product):
     faq_schema = generate_faq_schema(product)
 
     store_page = VENDOR_STORE_PAGES.get(product['vendor'], '/store/store.html')
+
+    # Cross-link sections
+    roadmap_link = f'/roadmaps/{pid}.html'
+    cross_links_html = f'''
+        <section class="cert-section">
+            <h2>Free Study Resources</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+                <a href="{roadmap_link}" style="display:block;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.25rem;text-decoration:none;color:inherit;transition:transform 0.2s;">
+                    <span style="font-size:1.5rem;">📋</span>
+                    <h4 style="margin:0.5rem 0 0.25rem;font-size:0.95rem;">Study Roadmap</h4>
+                    <p style="font-size:0.8rem;color:var(--text-secondary);margin:0;">Week-by-week study plan with free resources</p>
+                </a>
+                <a href="/study-tracker.html" style="display:block;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.25rem;text-decoration:none;color:inherit;transition:transform 0.2s;">
+                    <span style="font-size:1.5rem;">✅</span>
+                    <h4 style="margin:0.5rem 0 0.25rem;font-size:0.95rem;">Study Tracker</h4>
+                    <p style="font-size:0.8rem;color:var(--text-secondary);margin:0;">Track objective completion with progress dashboard</p>
+                </a>
+                <a href="/cert-cost-calculator.html" style="display:block;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.25rem;text-decoration:none;color:inherit;transition:transform 0.2s;">
+                    <span style="font-size:1.5rem;">💰</span>
+                    <h4 style="margin:0.5rem 0 0.25rem;font-size:0.95rem;">Cost Calculator</h4>
+                    <p style="font-size:0.8rem;color:var(--text-secondary);margin:0;">Total cost breakdown and ROI analysis</p>
+                </a>'''
+    if quiz_link:
+        cross_links_html += f'''
+                <a href="/{quiz_link}" style="display:block;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.25rem;text-decoration:none;color:inherit;transition:transform 0.2s;">
+                    <span style="font-size:1.5rem;">🧪</span>
+                    <h4 style="margin:0.5rem 0 0.25rem;font-size:0.95rem;">Practice Quiz</h4>
+                    <p style="font-size:0.8rem;color:var(--text-secondary);margin:0;">Test your knowledge with free practice questions</p>
+                </a>'''
+    cross_links_html += '''
+            </div>
+        </section>'''
 
     page = f'''<!DOCTYPE html>
 <html lang="en">
@@ -339,6 +407,19 @@ def generate_page(product):
         .faq-item summary {{ padding: 1rem 1.25rem; font-weight: 600; cursor: pointer; list-style: none; }}
         .faq-item summary::-webkit-details-marker {{ display: none; }}
         .faq-item p {{ padding: 0 1.25rem 1rem; color: var(--text-secondary); line-height: 1.6; }}
+        .heatmap-container {{ background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; }}
+        .heatmap-title {{ font-size: 1.1rem; margin-bottom: 0.25rem; }}
+        .heatmap-subtitle {{ font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem; line-height: 1.4; }}
+        .heatmap-row {{ display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.6rem; }}
+        .heatmap-label {{ min-width: 140px; display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }}
+        .heatmap-domain-num {{ font-size: 0.7rem; font-weight: 700; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; }}
+        .heatmap-domain-name {{ font-size: 0.8rem; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+        .heatmap-bar-track {{ flex: 1; background: var(--bg-tertiary, rgba(128,128,128,0.15)); border-radius: 6px; height: 28px; overflow: hidden; }}
+        .heatmap-bar {{ height: 100%; border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; font-size: 0.75rem; font-weight: 700; color: white; min-width: 38px; transition: width 0.6s ease; }}
+        @media (max-width: 600px) {{
+            .heatmap-row {{ flex-direction: column; align-items: flex-start; gap: 0.25rem; }}
+            .heatmap-label {{ min-width: unset; }}
+        }}
     </style>
 </head>
 <body>
@@ -364,12 +445,14 @@ def generate_page(product):
             <span class="cert-badge">{vendor}</span>
             <h1>{name}</h1>
             <p class="cert-meta">{exam_code} &middot; {domain_info}</p>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">Last updated: {datetime.now().strftime('%B %-d, %Y')}</p>
         </section>
 
         <section class="cert-section">
             <h2>Exam Domains</h2>
             <p>The {name} exam covers the following domains. Focus your study time proportionally to each domain's weight.</p>
             {domains_html if domains_html else f'<p>Domain details for {name} are available in the official exam guide.</p>'}
+            {heatmap_html}
         </section>
 
         <section class="cert-section">
@@ -383,6 +466,7 @@ def generate_page(product):
                 <li>Review domain objectives weekly to track your progress and adjust your plan</li>
             </ul>
         </section>
+{cross_links_html}
 {quiz_section}
         <section class="cert-section">
             <div class="planner-cta-card">
