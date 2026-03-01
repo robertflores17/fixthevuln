@@ -230,6 +230,20 @@ const PRODUCTS = [
 
   // Security Ops
   { id: 'vuln-remediation-planner', vendor: 'secops',   name: 'Vulnerability Remediation Planner', meta: 'Remediation tracker · SLA deadlines', popular: true, tags: ['Remediation Tracker', 'SLA Deadlines', 'Scan Import Log', 'Owner Assignment'] },
+
+  // Lifestyle & Productivity
+  { id: 'budget-binder',            vendor: 'lifestyle', name: 'Budget Binder',                    meta: 'Monthly budgets · Expense tracking', popular: true, tags: ['Budget', 'Expense Tracking', 'Savings Goals', 'Debt Payoff'] },
+  { id: 'wellness-journal',         vendor: 'lifestyle', name: 'Wellness Journal',                 meta: 'Daily check-ins · Habit tracking', popular: false, tags: ['Mood Tracker', 'Gratitude', 'Sleep Log', 'Self-Care'] },
+  { id: '2026-digital-planner',     vendor: 'lifestyle', name: '2026 Digital Planner',             meta: 'Full year · Monthly & weekly views', popular: false, tags: ['Calendar', 'Goals', 'To-Do Lists', 'Habit Tracker'] },
+  { id: 'business-templates',       vendor: 'lifestyle', name: 'Business Templates',               meta: 'Invoice · Proposal · Tracker', popular: false, tags: ['Invoice', 'Project Tracker', 'Meeting Notes', 'Proposal'] },
+
+  // Education
+  { id: 'teacher-planner',          vendor: 'education', name: 'Teacher Planner',                  meta: 'Lesson plans · Grade tracking', popular: true, tags: ['Lesson Plans', 'Grade Book', 'Seating Charts', 'Parent Contact'] },
+  { id: 'student-planner',          vendor: 'education', name: 'Student Planner',                  meta: 'Assignments · Semester schedule', popular: true, tags: ['Assignment Tracker', 'Study Schedule', 'GPA Calculator', 'Exam Prep'] },
+  { id: 'adhd-student-planner',     vendor: 'education', name: 'ADHD Student Planner Spring 2026', meta: 'Focus tools · Break reminders', popular: false, tags: ['Focus Blocks', 'Energy Tracking', 'Reward System', 'Break Timer'] },
+
+  // Lifestyle Bundle
+  { id: 'lifestyle-bundle',         vendor: 'bundles',   name: 'Productivity Bundle',             meta: '3 planners · Save 25%', popular: true, tags: ['Budget Binder', '2026 Planner', 'Wellness Journal'] },
 ];
 
 // ─── STATE ──────────────────────────────────
@@ -427,6 +441,9 @@ function vendorDisplayName(vendor) {
     hashicorp: 'HashiCorp',
     k8s: 'Kubernetes',
     secops: 'Security Ops',
+    lifestyle: 'Lifestyle',
+    education: 'Education',
+    bundles: 'Bundles',
   };
   return map[vendor] || vendor;
 }

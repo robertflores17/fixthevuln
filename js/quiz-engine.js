@@ -206,6 +206,7 @@ const QuizEngine = (() => {
         document.getElementById('share-linkedin').href = `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`;
         document.getElementById('quiz-screen').style.display = 'none';
         document.getElementById('results-screen').classList.add('show');
+        injectPlannerCTA(percentage);
         saveQuizResult(percentage, elapsed);
         displayHistory();
     }
@@ -238,6 +239,27 @@ const QuizEngine = (() => {
             return `<tr><td>${date}</td><td><strong>${h.score}%</strong></td><td>${minutes}:${seconds.toString().padStart(2, '0')}</td><td>${domainLabel}</td><td>${h.count || 10}q</td></tr>`;
         }).join('');
         container.innerHTML = `<table class="styled-table" style="margin: 0;"><thead><tr><th>Date</th><th>Score</th><th>Time</th><th>Domain</th><th>Size</th></tr></thead><tbody>${rows}</tbody></table>`;
+    }
+
+    function injectPlannerCTA(percentage) {
+        const container = document.getElementById('quiz-container');
+        const productId = container && container.dataset.productId;
+        const certName = container && container.dataset.certName;
+        if (!productId || !certName) return;
+        if (document.getElementById('planner-cta')) return; // already injected
+        const resultsScreen = document.getElementById('results-screen');
+        const motivation = percentage >= 70
+            ? 'Keep the momentum going with a structured study plan.'
+            : 'A structured study plan can help you close the gap.';
+        const cta = document.createElement('div');
+        cta.id = 'planner-cta';
+        cta.style.cssText = 'margin-top:2rem;padding:24px;background:var(--bg-secondary);border:2px solid var(--accent-color);border-radius:12px;text-align:center;';
+        cta.innerHTML = '<h3 style="margin-bottom:8px;">Get the ' + certName + ' Study Planner</h3>'
+            + '<p style="color:var(--text-secondary);margin-bottom:16px;">' + motivation
+            + ' Our fillable PDF covers every exam domain with weekly schedules, progress trackers, and flashcard templates.</p>'
+            + '<a href="/store/store.html" style="display:inline-block;padding:12px 24px;background:var(--accent-color);color:white;border-radius:8px;text-decoration:none;font-weight:600;">Get the Study Planner — $5.99</a>'
+            + '<p style="color:var(--text-secondary);margin-top:8px;font-size:13px;">Also available in ADHD-Friendly, Dark Mode, and 4-Format Bundle</p>';
+        resultsScreen.appendChild(cta);
     }
 
     function init(cfg) {

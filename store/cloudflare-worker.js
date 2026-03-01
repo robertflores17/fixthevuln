@@ -90,6 +90,17 @@ const CERT_NAMES = {
   'k8s-cks': 'Kubernetes CKS',
   // Security Ops
   'vuln-remediation-planner': 'Vulnerability Remediation Planner',
+  // Lifestyle & Productivity
+  'budget-binder': 'Budget Binder',
+  'wellness-journal': 'Wellness Journal',
+  '2026-digital-planner': '2026 Digital Planner',
+  'business-templates': 'Business Templates',
+  // Education
+  'teacher-planner': 'Teacher Planner',
+  'student-planner': 'Student Planner',
+  'adhd-student-planner': 'ADHD Student Planner Spring 2026',
+  // Bundles
+  'lifestyle-bundle': 'Productivity Bundle (Budget Binder + 2026 Planner + Wellness Journal)',
 };
 
 const VARIANT_LABELS = {
