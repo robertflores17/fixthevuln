@@ -185,7 +185,7 @@ const PRODUCTS = [
   { id: 'comptia-casp-plus',       vendor: 'comptia',   name: 'CompTIA CASP+',               meta: 'CAS-005 · 4 domains',  popular: false, tags: ['Architecture', 'Engineering', 'Governance'] },
   { id: 'comptia-server-plus',    vendor: 'comptia',   name: 'CompTIA Server+',             meta: 'SK0-005 · 4 domains',  popular: false, tags: ['Server Hardware', 'Administration', 'Security'] },
   { id: 'comptia-data-plus',      vendor: 'comptia',   name: 'CompTIA Data+',               meta: 'DA0-001 · 5 domains',  popular: false, tags: ['Data Concepts', 'Mining', 'Visualization'] },
-  { id: 'comptia-project-plus',   vendor: 'comptia',   name: 'CompTIA Project+',            meta: 'PK0-005 · 5 domains',  popular: false, tags: ['Project Management', 'Agile', 'Risk'] },
+  { id: 'comptia-project-plus',   vendor: 'comptia',   name: 'CompTIA Project+',            meta: 'PK0-005 · 5 domains',  popular: false, tags: ['Project Mgmt', 'Agile', 'Risk'] },
   { id: 'comptia-itf-plus',       vendor: 'comptia',   name: 'CompTIA ITF+',                meta: 'FC0-U71 · 6 domains',  popular: false, tags: ['IT Concepts', 'Infrastructure', 'Security Basics'] },
 
   // ISC2
@@ -215,15 +215,15 @@ const PRODUCTS = [
   { id: 'ms-az-400',               vendor: 'microsoft', name: 'Azure DevOps Engineer',       meta: 'AZ-400 · 8 domains',   popular: false, tags: ['CI/CD', 'Source Control', 'Automation'] },
   { id: 'ms-dp-900',               vendor: 'microsoft', name: 'Azure Data Fundamentals',     meta: 'DP-900 · 3 domains',   popular: false, tags: ['Data Concepts', 'Relational', 'Analytics'] },
   { id: 'ms-ms-900',               vendor: 'microsoft', name: 'Microsoft 365 Fundamentals',  meta: 'MS-900 · 4 domains',   popular: false, tags: ['M365 Services', 'Security', 'Pricing'] },
-  { id: 'ms-sc-300',               vendor: 'microsoft', name: 'Identity & Access Admin',     meta: 'SC-300 · 4 domains',   popular: false, tags: ['Azure AD', 'Identity', 'Access Management'] },
-  { id: 'ms-ai-102',               vendor: 'microsoft', name: 'Azure AI Engineer',           meta: 'AI-102 · 5 domains',   popular: false, tags: ['Cognitive Services', 'Bot Service', 'NLP'] },
+  { id: 'ms-sc-300',               vendor: 'microsoft', name: 'Identity & Access Admin',     meta: 'SC-300 · 4 domains',   popular: false, tags: ['Azure AD', 'Identity', 'Access Mgmt'] },
+  { id: 'ms-ai-102',               vendor: 'microsoft', name: 'Azure AI Engineer',           meta: 'AI-102 · 5 domains',   popular: false, tags: ['AI Services', 'Bot Service', 'NLP'] },
 
   // Cisco
   { id: 'cisco-ccna',              vendor: 'cisco',     name: 'Cisco CCNA',                   meta: '200-301 · 6 domains',  popular: true,  tags: ['Networking', 'IP Connectivity', 'Security'] },
   { id: 'cisco-ccnp-encor',        vendor: 'cisco',     name: 'Cisco CCNP ENCOR',             meta: '350-401 · 6 domains',  popular: false, tags: ['Enterprise', 'Architecture', 'Automation'] },
   { id: 'cisco-cyberops',          vendor: 'cisco',     name: 'Cisco CyberOps Associate',     meta: '200-201 · 5 domains',  popular: false, tags: ['SOC', 'Threat Analysis', 'Monitoring'] },
   { id: 'cisco-ccnp-security',    vendor: 'cisco',     name: 'Cisco CCNP Security SCOR',    meta: '350-701 · 5 domains',  popular: false, tags: ['Network Security', 'Cloud Security', 'VPN'] },
-  { id: 'cisco-devnet',           vendor: 'cisco',     name: 'Cisco DevNet Associate',       meta: '200-901 · 6 domains',  popular: false, tags: ['APIs', 'Automation', 'Network Programmability'] },
+  { id: 'cisco-devnet',           vendor: 'cisco',     name: 'Cisco DevNet Associate',       meta: '200-901 · 6 domains',  popular: false, tags: ['APIs', 'Automation', 'Programmability'] },
 
   // ISACA
   { id: 'isaca-cisa',              vendor: 'isaca',     name: 'ISACA CISA',                   meta: 'CISA · 5 domains',     popular: false, tags: ['Audit', 'Governance', 'IS Management'] },
@@ -231,39 +231,39 @@ const PRODUCTS = [
   { id: 'isaca-crisc',             vendor: 'isaca',     name: 'ISACA CRISC',                  meta: 'CRISC · 4 domains',    popular: false, tags: ['Risk', 'IT Controls', 'Monitoring'] },
 
   // GIAC
-  { id: 'giac-gsec',               vendor: 'giac',      name: 'GIAC GSEC',                    meta: 'GSEC · 7 domains',     popular: false, tags: ['Defense', 'Networking', 'Incident Response'] },
-  { id: 'giac-gcih',               vendor: 'giac',      name: 'GIAC GCIH',                    meta: 'GCIH · 6 domains',     popular: false, tags: ['Incident Handling', 'Hacker Tools', 'Exploits'] },
+  { id: 'giac-gsec',               vendor: 'giac',      name: 'GIAC GSEC',                    meta: 'GSEC · 7 domains',     popular: false, tags: ['Defense', 'Networking', 'Incident Resp'] },
+  { id: 'giac-gcih',               vendor: 'giac',      name: 'GIAC GCIH',                    meta: 'GCIH · 6 domains',     popular: false, tags: ['Incident Resp', 'Hacker Tools', 'Exploits'] },
   { id: 'giac-gpen',               vendor: 'giac',      name: 'GIAC GPEN',                    meta: 'GPEN · 6 domains',     popular: false, tags: ['Pen Testing', 'Recon', 'Exploitation'] },
-  { id: 'giac-gcia',               vendor: 'giac',      name: 'GIAC GCIA',                    meta: 'GCIA · 6 domains',     popular: false, tags: ['Intrusion Analysis', 'Network Forensics', 'Monitoring'] },
+  { id: 'giac-gcia',               vendor: 'giac',      name: 'GIAC GCIA',                    meta: 'GCIA · 6 domains',     popular: false, tags: ['Intrusion', 'Net Forensics', 'Monitoring'] },
 
   // Google Cloud
   { id: 'google-ace',              vendor: 'google',    name: 'Google Associate Cloud Engineer', meta: 'ACE · 5 domains',   popular: false, tags: ['GCP', 'Compute', 'Networking'] },
   { id: 'google-pca',              vendor: 'google',    name: 'Google Professional Cloud Architect', meta: 'PCA · 6 domains', popular: false, tags: ['Architecture', 'Design', 'Migration'] },
   { id: 'google-cdl',              vendor: 'google',    name: 'Google Cloud Digital Leader',  meta: 'CDL · 3 domains',      popular: false, tags: ['Cloud Strategy', 'Business Value', 'GCP Services'] },
   { id: 'google-pde',              vendor: 'google',    name: 'Google Professional Data Engineer', meta: 'PDE · 4 domains', popular: false, tags: ['BigQuery', 'Data Pipelines', 'ML Models'] },
-  { id: 'google-pse',              vendor: 'google',    name: 'Google Cloud Security Engineer', meta: 'PSE · 6 domains',   popular: false, tags: ['IAM', 'Data Protection', 'Security Operations'] },
+  { id: 'google-pse',              vendor: 'google',    name: 'Google Cloud Security Engineer', meta: 'PSE · 6 domains',   popular: false, tags: ['IAM', 'Data Protection', 'SecOps'] },
 
   // EC-Council
   { id: 'ec-ceh',                  vendor: 'ec-council', name: 'EC-Council CEH v13',          meta: 'CEH · 20 modules',     popular: true,  tags: ['Ethical Hacking', 'Reconnaissance', 'System Hacking'] },
-  { id: 'ec-chfi',                 vendor: 'ec-council', name: 'EC-Council CHFI v11',         meta: 'CHFI · 14 modules',    popular: false, tags: ['Digital Forensics', 'Evidence', 'Incident Response'] },
-  { id: 'ec-cnd',                  vendor: 'ec-council', name: 'EC-Council CND v3',           meta: 'CND · 14 modules',     popular: false, tags: ['Network Defense', 'Threat Management', 'Perimeter Security'] },
+  { id: 'ec-chfi',                 vendor: 'ec-council', name: 'EC-Council CHFI v11',         meta: 'CHFI · 14 modules',    popular: false, tags: ['Forensics', 'Evidence', 'Incident Resp'] },
+  { id: 'ec-cnd',                  vendor: 'ec-council', name: 'EC-Council CND v3',           meta: 'CND · 14 modules',     popular: false, tags: ['Net Defense', 'Threat Mgmt', 'Perimeter'] },
 
   // OffSec
-  { id: 'offsec-oscp',             vendor: 'offsec',    name: 'OffSec OSCP',                  meta: 'PEN-200 · Practical exam', popular: true, tags: ['Penetration Testing', 'Exploitation', 'Active Directory'] },
+  { id: 'offsec-oscp',             vendor: 'offsec',    name: 'OffSec OSCP',                  meta: 'PEN-200 · Practical exam', popular: true, tags: ['Pen Testing', 'Exploitation', 'Active Directory'] },
   { id: 'offsec-oswa',             vendor: 'offsec',    name: 'OffSec OSWA',                  meta: 'WEB-200 · Practical exam', popular: false, tags: ['Web App Security', 'SQL Injection', 'XSS'] },
   { id: 'offsec-oswe',             vendor: 'offsec',    name: 'OffSec OSWE',                  meta: 'WEB-300 · Practical exam', popular: false, tags: ['Advanced Web', 'Code Review', 'Exploitation'] },
 
   // HashiCorp
-  { id: 'hashicorp-terraform',     vendor: 'hashicorp', name: 'HashiCorp Terraform Associate', meta: 'TA-003 · 9 objectives', popular: true, tags: ['IaC', 'Terraform', 'Cloud Provisioning'] },
-  { id: 'hashicorp-vault',         vendor: 'hashicorp', name: 'HashiCorp Vault Associate',    meta: 'VA-002 · 10 objectives', popular: false, tags: ['Secrets Management', 'Encryption', 'Authentication'] },
+  { id: 'hashicorp-terraform',     vendor: 'hashicorp', name: 'HashiCorp Terraform Associate', meta: 'TA-003 · 9 objectives', popular: true, tags: ['IaC', 'Terraform', 'Provisioning'] },
+  { id: 'hashicorp-vault',         vendor: 'hashicorp', name: 'HashiCorp Vault Associate',    meta: 'VA-002 · 10 objectives', popular: false, tags: ['Secrets Mgmt', 'Encryption', 'Auth'] },
 
   // Kubernetes
   { id: 'k8s-cka',                 vendor: 'k8s',       name: 'Kubernetes CKA',               meta: 'CKA · Performance-based', popular: true, tags: ['Cluster Admin', 'Networking', 'Scheduling'] },
   { id: 'k8s-ckad',                vendor: 'k8s',       name: 'Kubernetes CKAD',              meta: 'CKAD · Performance-based', popular: false, tags: ['App Design', 'Deployment', 'Services'] },
-  { id: 'k8s-cks',                 vendor: 'k8s',       name: 'Kubernetes CKS',               meta: 'CKS · Performance-based', popular: false, tags: ['Cluster Security', 'System Hardening', 'Runtime'] },
+  { id: 'k8s-cks',                 vendor: 'k8s',       name: 'Kubernetes CKS',               meta: 'CKS · Performance-based', popular: false, tags: ['Cluster Security', 'Hardening', 'Runtime'] },
 
   // Security Ops
-  { id: 'vuln-remediation-planner', vendor: 'secops',   name: 'Vulnerability Remediation Planner', meta: 'Remediation tracker · SLA deadlines', popular: true, tags: ['Remediation Tracker', 'SLA Deadlines', 'Scan Import Log', 'Owner Assignment'] },
+  { id: 'vuln-remediation-planner', vendor: 'secops',   name: 'Vulnerability Remediation Planner', meta: 'Remediation tracker · SLA deadlines', popular: true, tags: ['Remediation', 'SLA Tracking', 'Scan Import', 'Assignment'] },
 
   // Lifestyle & Productivity
   { id: 'budget-binder',            vendor: 'lifestyle', name: 'Budget Binder',                    meta: 'Monthly budgets · Expense tracking', popular: true, tags: ['Budget', 'Expense Tracking', 'Savings Goals', 'Debt Payoff'] },
@@ -273,7 +273,7 @@ const PRODUCTS = [
 
   // Education
   { id: 'teacher-planner',          vendor: 'education', name: 'Teacher Planner',                  meta: 'Lesson plans · Grade tracking', popular: true, tags: ['Lesson Plans', 'Grade Book', 'Seating Charts', 'Parent Contact'] },
-  { id: 'student-planner',          vendor: 'education', name: 'Student Planner',                  meta: 'Assignments · Semester schedule', popular: true, tags: ['Assignment Tracker', 'Study Schedule', 'GPA Calculator', 'Exam Prep'] },
+  { id: 'student-planner',          vendor: 'education', name: 'Student Planner',                  meta: 'Assignments · Semester schedule', popular: true, tags: ['Assignments', 'Study Schedule', 'GPA Calculator', 'Exam Prep'] },
   { id: 'adhd-student-planner',     vendor: 'education', name: 'ADHD Student Planner Spring 2026', meta: 'Focus tools · Break reminders', popular: false, tags: ['Focus Blocks', 'Energy Tracking', 'Reward System', 'Break Timer'] },
 
   // Lifestyle Bundle
