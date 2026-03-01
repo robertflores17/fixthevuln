@@ -67,6 +67,8 @@ SKIP_LINK_PATTERNS = [
     re.compile(r'^javascript:'),
     re.compile(r'^#'),
     re.compile(r'^tel:'),
+    re.compile(r'portswigger\.net'),           # blocks Python requests (returns 404 to bots)
+    re.compile(r'linkedin\.com/in/'),           # returns 999 to all bots
 ]
 
 # ── Staleness thresholds (days) ────────────────────────────

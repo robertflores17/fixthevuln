@@ -303,7 +303,7 @@ Our planners at SmartSheetByRobert.etsy.com include:
 
 Available for CompTIA, (ISC)2, AWS, and Cisco certifications.
 
-Shop now: https://www.etsy.com/shop/SmartSheetByRobert"""
+Shop now: https://fixthevuln.com/store/store.html"""
 
     return {
         'type': 'cta',

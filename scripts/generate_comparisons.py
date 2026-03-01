@@ -44,8 +44,17 @@ def generate_comparison_page(comp, certs):
     page_title = f'{title}: Which Certification Should You Get? - FixTheVuln'
     meta_desc = f'{title} comparison. {desc[:150]}'
 
-    # Use first cert's Etsy section for CTA
-    etsy_section = c1.get('etsy_section', '57227085')
+    # Vendor → store category page mapping
+    VENDOR_STORE = {
+        'CompTIA': '/store/comptia.html', 'ISC2': '/store/security-governance.html',
+        '(ISC)2': '/store/security-governance.html', 'AWS': '/store/aws.html',
+        'Cisco': '/store/cisco.html', 'Microsoft': '/store/microsoft.html',
+        'Google Cloud': '/store/google-cloud.html', 'EC-Council': '/store/offensive-devops.html',
+        'OffSec': '/store/offensive-devops.html', 'HashiCorp': '/store/offensive-devops.html',
+        'CNCF': '/store/offensive-devops.html', 'ISACA': '/store/security-governance.html',
+        'GIAC': '/store/security-governance.html',
+    }
+    store_url = VENDOR_STORE.get(c1.get('vendor', ''), '/store/store.html')
 
     def spec_row(label, key):
         v1 = escape_html(c1.get(key, 'N/A'))
@@ -240,13 +249,13 @@ def generate_comparison_page(comp, certs):
             </div>
         </section>
 
-        <!-- Etsy CTA -->
+        <!-- Store CTA -->
         <section style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
-            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">SmartSheetByRobert</p>
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
             <h3 style="color: white; margin-bottom: 0.5rem;">Get the Study Planner for {escape_html(c1['name'])}</h3>
             <p style="opacity: 0.9; margin-bottom: 1rem;">Structured study planners with domain trackers, time blocking, and exam strategies. Standard + ADHD-friendly editions.</p>
-            <a href="https://www.etsy.com/shop/SmartSheetByRobert?section_id={etsy_section}" target="_blank" rel="noopener" style="display: inline-block; background: #667eea; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 600;">Shop {escape_html(c1['vendor'])} Planners</a>
-            <p style="font-size: 0.8rem; opacity: 0.85; margin-top: 0.75rem;">Also available: CompTIA, (ISC)2, AWS, Cisco, and 30+ more</p>
+            <a href="{store_url}" style="display: inline-block; background: #667eea; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 600;">Shop {escape_html(c1['vendor'])} Planners</a>
+            <p style="font-size: 0.8rem; opacity: 0.85; margin-top: 0.75rem;">Also available: CompTIA, (ISC)2, AWS, Cisco, and 60+ more</p>
         </section>
 
         <a href="../index.html" class="back-link">&larr; Back to Home</a>
@@ -256,7 +265,7 @@ def generate_comparison_page(comp, certs):
     <footer>
         <div class="container">
             <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
-            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a> | Support us: <a href="https://www.etsy.com/shop/SmartSheetByRobert?ref=seller-platform-mcnav" target="_blank" rel="noopener">SmartSheetByRobert</a></p>
+            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a> | Study Planners: <a href="/store/store.html">FixTheVuln Store</a></p>
             <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
                 <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
             </p>
@@ -366,16 +375,16 @@ def generate_index_page(comparisons, certs):
 {cards_html}
         </div>
 
-        <!-- Etsy CTA -->
+        <!-- Store CTA -->
         <section style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
-            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">SmartSheetByRobert</p>
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
             <h3 style="color: white; margin-bottom: 0.5rem;">Ready to Start Studying?</h3>
-            <p style="opacity: 0.9; margin-bottom: 1rem;">Structured study planners for 30+ certifications. Standard + ADHD-friendly editions with domain trackers and exam strategies.</p>
+            <p style="opacity: 0.9; margin-bottom: 1rem;">Structured study planners for 60+ certifications. Standard + ADHD-friendly editions with domain trackers and exam strategies.</p>
             <div style="display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap;">
-                <a href="https://www.etsy.com/shop/SmartSheetByRobert?section_id=57227085" target="_blank" rel="noopener" style="background: rgba(255,255,255,0.12); color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.25);">CompTIA</a>
-                <a href="https://www.etsy.com/shop/SmartSheetByRobert?section_id=57213094" target="_blank" rel="noopener" style="background: rgba(255,255,255,0.12); color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.25);">(ISC)2</a>
-                <a href="https://www.etsy.com/shop/SmartSheetByRobert?section_id=57187684" target="_blank" rel="noopener" style="background: rgba(255,255,255,0.12); color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.25);">AWS</a>
-                <a href="https://www.etsy.com/shop/SmartSheetByRobert?section_id=57187730" target="_blank" rel="noopener" style="background: rgba(255,255,255,0.12); color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.25);">Cisco</a>
+                <a href="/store/comptia.html" style="background: rgba(255,255,255,0.12); color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.25);">CompTIA</a>
+                <a href="/store/security-governance.html" style="background: rgba(255,255,255,0.12); color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.25);">(ISC)2</a>
+                <a href="/store/aws.html" style="background: rgba(255,255,255,0.12); color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.25);">AWS</a>
+                <a href="/store/cisco.html" style="background: rgba(255,255,255,0.12); color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.25);">Cisco</a>
             </div>
         </section>
 
@@ -385,7 +394,7 @@ def generate_index_page(comparisons, certs):
     <footer>
         <div class="container">
             <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
-            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a> | Support us: <a href="https://www.etsy.com/shop/SmartSheetByRobert?ref=seller-platform-mcnav" target="_blank" rel="noopener">SmartSheetByRobert</a></p>
+            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a> | Study Planners: <a href="/store/store.html">FixTheVuln Store</a></p>
             <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
                 <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
             </p>
