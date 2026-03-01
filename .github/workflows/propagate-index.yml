@@ -1,0 +1,96 @@
+name: Propagate to Search Engines & AI Crawlers
+
+on:
+  # After blog/marketing publishes or KEV updates
+  workflow_run:
+    workflows:
+      - "Publish Blog Posts & Marketing Content"
+      - "Process KEV Updates"
+    types: [completed]
+    branches: [main]
+
+  # When HTML/sitemap/AI files change on main
+  push:
+    branches: [main]
+    paths:
+      - "**.html"
+      - "sitemap.xml"
+      - "robots.txt"
+      - "llms.txt"
+      - "llms-full.txt"
+
+  # Weekly catch-all: Wednesday 10 AM PST (18:00 UTC)
+  schedule:
+    - cron: "0 18 * * 3"
+
+  # Manual trigger with full_submit option
+  workflow_dispatch:
+    inputs:
+      full_submit:
+        description: "Submit all 401 URLs (initial seeding)"
+        required: false
+        default: "false"
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  propagate:
+    runs-on: ubuntu-latest
+    # Skip if triggered by workflow_run that failed
+    if: >-
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+        with:
+          python-version: "3.11"
+
+      - name: Regenerate llms.txt files
+        run: python3 scripts/generate_llms_txt.py
+
+      - name: Commit llms.txt changes
+        run: |
+          if [[ -n $(git status --porcelain llms.txt llms-full.txt) ]]; then
+            git config user.name "FixTheVuln Bot"
+            git config user.email "bot@fixthevuln.com"
+            git add llms.txt llms-full.txt
+            git commit -m "Update llms.txt AI discovery files [skip ci]"
+            git push
+            echo "llms_updated=true" >> $GITHUB_ENV
+          else
+            echo "llms_updated=false" >> $GITHUB_ENV
+          fi
+
+      - name: Propagate to search engines
+        # Always --full in CI (no persisted log between runs; 401 URLs is well within IndexNow's 10K limit)
+        run: python3 scripts/propagate.py --full
+
+      - name: Post results to summary
+        run: |
+          echo "## Search Engine Propagation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Trigger:** \`${{ github.event_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**llms.txt updated:** ${{ env.llms_updated }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [[ -f "data/.propagation-log.json" ]]; then
+            echo "**Last submission:**" >> $GITHUB_STEP_SUMMARY
+            python3 -c "
+          import json
+          log = json.load(open('data/.propagation-log.json'))
+          if log.get('runs'):
+            run = log['runs'][-1]
+            print(f'- URLs submitted: {run[\"urls_submitted\"]}')
+            print(f'- Mode: {run[\"mode\"]}')
+            print(f'- Commit: \`{run[\"commit\"][:8]}\`')
+            print(f'- Total lifetime submissions: {log[\"total_submissions\"]}')
+          " >> $GITHUB_STEP_SUMMARY
+          fi
