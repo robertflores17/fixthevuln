@@ -250,6 +250,18 @@ def generate_quiz_html(cfg, domains_js, total_questions):
         domains_obj_lines.append(f"                {dk}: {{name: '{dv['name']}', weight: {dv['weight']}}}")
     domains_obj = ',\n'.join(domains_obj_lines)
 
+    # Build Quiz schema assesses list
+    assesses_list = [dv['name'] for _, dv in sorted(domains_js.items(), key=lambda x: int(x[0]))]
+    quiz_schema_json = json.dumps({
+        "@context": "https://schema.org",
+        "@type": "Quiz",
+        "name": f"{name} Practice Quiz",
+        "about": {"@type": "Thing", "name": name},
+        "educationalLevel": "Professional",
+        "numberOfQuestions": total_questions,
+        "assesses": assesses_list,
+    }, indent=4, ensure_ascii=False)
+
     return f'''<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -285,6 +297,9 @@ def generate_quiz_html(cfg, domains_js, total_questions):
         ]
     }}
     </script>
+    <script type="application/ld+json">
+{quiz_schema_json}
+</script>
 </head>
 <body>
 <nav class="site-nav">

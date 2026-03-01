@@ -264,6 +264,37 @@ class BlogPublisher:
         etsy_cta = self._build_etsy_cta(fm.get('cta_section', 'comptia'))
         related_tools = self._build_related_tools()
 
+        # FAQPage schema for study guide posts only
+        faq_schema_block = ''
+        if slug.endswith('-study-guide'):
+            cert_name = re.sub(r'\s+Study Guide.*$', '', title).strip()
+            faq_a1 = f"{description} Review the complete domain breakdown and exam objectives to build a targeted study plan."
+            faq_a2 = (f"To prepare for {cert_name}, follow a structured study plan: "
+                      f"start with the exam objectives and domain weights, "
+                      f"use official study materials and practice tests, "
+                      f"and track your progress across all domains. "
+                      f"Focus extra time on heavily-weighted domains and weak areas identified through practice quizzes.")
+            faq_a3 = (f"The {cert_name} certification validates in-demand skills and is recognized by employers worldwide. "
+                      f"It demonstrates professional competency, can lead to higher salaries, "
+                      f"and opens doors to specialized roles in IT and cybersecurity. "
+                      f"Many job postings list it as a preferred or required qualification.")
+            faq_obj = {
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                "mainEntity": [
+                    {"@type": "Question", "name": f"What does the {cert_name} exam cover?",
+                     "acceptedAnswer": {"@type": "Answer", "text": faq_a1}},
+                    {"@type": "Question", "name": f"How should I prepare for {cert_name}?",
+                     "acceptedAnswer": {"@type": "Answer", "text": faq_a2}},
+                    {"@type": "Question", "name": f"Is the {cert_name} certification worth it?",
+                     "acceptedAnswer": {"@type": "Answer", "text": faq_a3}},
+                ]
+            }
+            faq_json = json.dumps(faq_obj, indent=4, ensure_ascii=False)
+            faq_schema_block = f'''    <script type="application/ld+json">
+{faq_json}
+</script>'''
+
         return f'''<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -311,6 +342,7 @@ class BlogPublisher:
         ]
     }}
     </script>
+{faq_schema_block}
 </head>
 <body>
 <!-- Social Share Bar -->

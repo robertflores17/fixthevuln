@@ -217,6 +217,40 @@ def generate_roadmap_page(product, config):
     free_res = FREE_RESOURCES.get(vendor_id, '')
     store_page = VENDOR_STORE_PAGES.get(vendor_id, '/store/store.html')
 
+    # Build FAQPage schema
+    domain_list_str = ''
+    if domains:
+        parts = []
+        for d in domains:
+            pct = d.get('percentage', '')
+            parts.append(f"{d['name']} ({pct})" if pct else d['name'])
+        domain_list_str = ', '.join(parts)
+
+    faq_a1 = (f"A structured study plan for {name} spans {num_weeks} weeks. "
+              f"Each week focuses on specific exam domains with targeted objectives, "
+              f"building knowledge progressively from foundational concepts to advanced topics.")
+    if domain_list_str:
+        faq_a2 = f"The {name} exam covers these domains: {domain_list_str}. Focus more study time on higher-weighted domains."
+    else:
+        faq_a2 = f"The {name} exam covers multiple domains. Check the official exam objectives for the complete domain breakdown and weight distribution."
+    faq_a3 = (f"The best study approach for {name} is to follow a structured roadmap: "
+              f"start with the domain heatmap to understand weight distribution, "
+              f"then work through each week's objectives sequentially. "
+              f"Use practice quizzes to test retention and track your progress with the built-in checklist.")
+
+    faq_schema_json = json.dumps({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {"@type": "Question", "name": f"How long should I study for {name}?",
+             "acceptedAnswer": {"@type": "Answer", "text": faq_a1}},
+            {"@type": "Question", "name": f"What domains does the {name} exam cover?",
+             "acceptedAnswer": {"@type": "Answer", "text": faq_a2}},
+            {"@type": "Question", "name": f"What's the best study approach for {name}?",
+             "acceptedAnswer": {"@type": "Answer", "text": faq_a3}},
+        ]
+    }, indent=4, ensure_ascii=False)
+
     quiz_link = QUIZ_MAP.get(pid, '')
     quiz_html = ''
     if quiz_link:
@@ -257,6 +291,9 @@ def generate_roadmap_page(product, config):
         ]
     }}
     </script>
+    <script type="application/ld+json">
+{faq_schema_json}
+</script>
     <style>
         .roadmap-hero {{ text-align: center; padding: 2rem 1.5rem 1rem; }}
         .roadmap-hero h1 {{ font-size: 1.8rem; margin-bottom: 0.5rem; }}
