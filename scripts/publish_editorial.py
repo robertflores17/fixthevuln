@@ -373,8 +373,8 @@ class BlogPublisher:
     # -- CTA sections -------------------------------------------------------
 
     def _build_etsy_cta(self, section_key):
-        """Build the Etsy CTA section from cta_templates.json."""
-        sections = self.cta_templates.get('etsy_sections', {})
+        """Build the Store CTA section from cta_templates.json."""
+        sections = self.cta_templates.get('store_sections', {})
         section = sections.get(section_key, sections.get('comptia', {}))
 
         if not section:
@@ -383,19 +383,23 @@ class BlogPublisher:
         title = section.get('title', 'Get the Study Planner')
         desc = section.get('description', '')
         cta_text = section.get('cta_text', 'Shop Now')
-        url = section.get('url', 'https://www.etsy.com/shop/SmartSheetByRobert')
+        url = section.get('url', '/store/store.html')
         also = section.get('also_available', '')
+
+        # Adjust path for blog subdirectory
+        if url.startswith('/'):
+            url = '..' + url
 
         also_html = f'''
                 <p style="font-size: 0.8rem; opacity: 0.85; margin-top: 0.75rem;">Also available: {self._esc(also)}</p>''' if also else ''
 
         return f'''
-            <!-- Etsy CTA -->
+            <!-- Store CTA -->
             <section style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
-                <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">SmartSheetByRobert</p>
+                <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
                 <h3 style="color: white; margin-bottom: 0.5rem;">{self._esc(title)}</h3>
                 <p style="opacity: 0.9; margin-bottom: 1rem;">{self._esc(desc)}</p>
-                <a href="{url}" target="_blank" rel="noopener" style="display: inline-block; background: #667eea; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 600;">{self._esc(cta_text)}</a>{also_html}
+                <a href="{url}" style="display: inline-block; background: #667eea; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 600;">{self._esc(cta_text)}</a>{also_html}
             </section>'''
 
     def _build_related_tools(self):

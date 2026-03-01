@@ -273,72 +273,7 @@ def generate_quiz_html(cfg, domains_js, total_questions):
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
     <link rel="stylesheet" href="style.min.css?v=2">
-    <style>
-        .quiz-container {{ background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 2rem; }}
-        .quiz-header {{ text-align: center; margin-bottom: 2rem; }}
-        .quiz-header h2 {{ color: #333; margin-bottom: 0.5rem; }}
-        .quiz-stats {{ display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-top: 1rem; }}
-        .stat-box {{ background: #f8f9fa; padding: 1rem 1.5rem; border-radius: 8px; text-align: center; }}
-        .stat-value {{ font-size: 1.5rem; font-weight: 700; color: #667eea; }}
-        .stat-label {{ font-size: 0.85rem; color: #666; }}
-        .progress-section {{ margin-bottom: 2rem; }}
-        .progress-bar {{ background: #e0e0e0; height: 10px; border-radius: 5px; overflow: hidden; }}
-        .progress-fill {{ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 100%; transition: width 0.3s ease; }}
-        .progress-text {{ text-align: center; margin-top: 0.5rem; color: #666; font-size: 0.9rem; }}
-        .category-select {{ display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-bottom: 2rem; }}
-        .category-btn {{ padding: 0.5rem 1rem; border: 2px solid #667eea; background: white; color: #667eea; border-radius: 20px; cursor: pointer; font-weight: 500; transition: all 0.2s; }}
-        .category-btn:hover, .category-btn.active {{ background: #667eea; color: white; }}
-        .question-card {{ background: #f8f9fa; border-radius: 12px; padding: 2rem; margin-bottom: 1.5rem; }}
-        .question-number {{ display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem; }}
-        .question-category {{ display: inline-block; background: #e7f3ff; color: #667eea; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; margin-left: 0.5rem; }}
-        .question-text {{ font-size: 1.1rem; color: #333; margin-bottom: 1.5rem; line-height: 1.6; }}
-        .options-list {{ display: flex; flex-direction: column; gap: 0.75rem; }}
-        .option {{ padding: 1rem 1.25rem; background: white; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.75rem; }}
-        .option:hover:not(.disabled) {{ border-color: #667eea; background: #f0f4ff; }}
-        .option.selected {{ border-color: #667eea; background: #e7f3ff; }}
-        .option.correct {{ border-color: #28a745; background: #d4edda; }}
-        .option.incorrect {{ border-color: #dc3545; background: #f8d7da; }}
-        .option.disabled {{ cursor: default; }}
-        .option-letter {{ background: #e0e0e0; color: #666; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.9rem; flex-shrink: 0; }}
-        .option.selected .option-letter {{ background: #667eea; color: white; }}
-        .option.correct .option-letter {{ background: #28a745; color: white; }}
-        .option.incorrect .option-letter {{ background: #dc3545; color: white; }}
-        .explanation {{ background: #e7f3ff; border-left: 4px solid #667eea; padding: 1rem; margin-top: 1rem; border-radius: 0 8px 8px 0; display: none; }}
-        .explanation.show {{ display: block; }}
-        .explanation h4 {{ color: #667eea; margin-bottom: 0.5rem; }}
-        .explanation p {{ color: #555; line-height: 1.6; }}
-        .explanation a {{ color: #667eea; font-weight: 600; }}
-        .quiz-actions {{ display: flex; justify-content: center; gap: 1rem; margin-top: 2rem; }}
-        .btn {{ padding: 0.75rem 2rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; }}
-        .btn-primary {{ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }}
-        .btn-primary:hover {{ transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }}
-        .btn-secondary {{ background: #f8f9fa; color: #667eea; border: 2px solid #667eea; }}
-        .btn-secondary:hover {{ background: #667eea; color: white; }}
-        .results-card {{ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; padding: 3rem 2rem; text-align: center; display: none; }}
-        .results-card.show {{ display: block; }}
-        .results-score {{ font-size: 4rem; font-weight: 700; margin-bottom: 0.5rem; }}
-        .results-grade {{ font-size: 1.5rem; margin-bottom: 1rem; opacity: 0.95; }}
-        .results-breakdown {{ display: flex; justify-content: center; gap: 2rem; margin: 2rem 0; flex-wrap: wrap; }}
-        .breakdown-item {{ background: rgba(255,255,255,0.2); padding: 1rem 1.5rem; border-radius: 8px; }}
-        .breakdown-value {{ font-size: 1.5rem; font-weight: 700; }}
-        .breakdown-label {{ font-size: 0.85rem; opacity: 0.9; }}
-        .share-section {{ margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.3); }}
-        .share-buttons {{ display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }}
-        .share-btn {{ padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; }}
-        .share-twitter {{ background: #1DA1F2; color: white; }}
-        .share-linkedin {{ background: #0077B5; color: white; }}
-        .start-screen {{ text-align: center; padding: 3rem; }}
-        .start-screen h2 {{ margin-bottom: 1rem; }}
-        .start-screen p {{ color: #666; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; }}
-        .difficulty-select {{ display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }}
-        .difficulty-btn {{ padding: 1rem 2rem; border: 2px solid #e0e0e0; background: white; border-radius: 8px; cursor: pointer; transition: all 0.2s; }}
-        .difficulty-btn:hover, .difficulty-btn.active {{ border-color: #667eea; background: #f0f4ff; }}
-        .difficulty-btn h4 {{ margin: 0 0 0.25rem 0; color: #333; }}
-        .difficulty-btn p {{ margin: 0; font-size: 0.85rem; color: #666; }}
-        .timer {{ font-size: 1.2rem; font-weight: 600; color: #667eea; }}
-        .timer.warning {{ color: #dc3545; }}
-        @media (max-width: 768px) {{ .quiz-stats {{ gap: 1rem; }} .results-breakdown {{ gap: 1rem; }} }}
-    </style>
+    <link rel="stylesheet" href="quiz.css?v=1">
     <script type="application/ld+json">
     {{
         "@context": "https://schema.org",
