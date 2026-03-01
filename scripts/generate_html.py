@@ -157,7 +157,7 @@ def write_commit_summary(added_ids, vulns_lookup):
         if len(vendors) > 5:
             title += ", more"
 
-    summary = f"{title}\n\n-- Robert\n[skip ci]"
+    summary = f"{title}\n\n-- Robert Flores\n[skip ci]"
     with open(COMMIT_SUMMARY_FILE, 'w') as f:
         f.write(summary)
 
@@ -220,7 +220,7 @@ def write_latest_update(added_ids, vulns_lookup):
         "count": count,
         "summary": summary,
         "cves": added_ids,
-        "signedBy": "Robert, CISSP"
+        "signedBy": "Robert Flores, CISSP \u00b7 FixTheVuln Founder"
     }
 
     with open(LATEST_UPDATE_FILE, 'w') as f:

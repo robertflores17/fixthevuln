@@ -141,7 +141,7 @@ def generate_newsletter_body(count, cves, highlights, date):
 {ransomware_note}
 Remediation guidance for each vulnerability at https://fixthevuln.com
 
--- Robert"""
+-- Robert Flores"""
 
 
 def generate_individual_posts(cves):

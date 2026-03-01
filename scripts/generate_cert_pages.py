@@ -208,10 +208,15 @@ def generate_heatmap_html(domains):
               '#ec4899', '#84cc16', '#f97316', '#6366f1']
     bars = ''
     for i, d in enumerate(domains):
-        pct_str = d.get('percentage', '0%').replace('%', '')
+        pct_label = d.get('percentage', '0%')
+        pct_raw = pct_label.replace('%', '').strip().lstrip('~')
         try:
-            pct = float(pct_str)
-        except ValueError:
+            if '-' in pct_raw:
+                lo, hi = pct_raw.split('-', 1)
+                pct = (float(lo) + float(hi)) / 2
+            else:
+                pct = float(pct_raw)
+        except (ValueError, TypeError):
             pct = 0
         color = colors[i % len(colors)]
         name = d.get('name', f'Domain {d.get("number", i+1)}')
@@ -222,7 +227,7 @@ def generate_heatmap_html(domains):
                         <span class="heatmap-domain-name">{name}</span>
                     </div>
                     <div class="heatmap-bar-track">
-                        <div class="heatmap-bar" style="width: {pct}%; background: {color};">{pct_str}%</div>
+                        <div class="heatmap-bar" style="width: {pct}%; background: {color};">{pct_label}</div>
                     </div>
                 </div>'''
     return f'''
