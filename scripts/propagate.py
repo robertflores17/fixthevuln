@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """Notify search engines of new/updated pages on fixthevuln.com.
 
-Submission methods:
-  1. IndexNow — batch POST to api.indexnow.org (reaches Bing, Yandex, DuckDuckGo, Seznam, Naver)
-  2. Sitemap pings — GET to Google and Bing sitemap ping endpoints
+Submission method:
+  IndexNow — batch POST to api.indexnow.org (reaches Bing, Yandex, DuckDuckGo, Seznam, Naver)
 
 Changed URL detection uses `git diff` to find HTML/XML files modified since last run.
 
@@ -182,26 +181,6 @@ def submit_indexnow(urls, dry_run=False):
     return True
 
 
-def ping_sitemaps(dry_run=False):
-    """Ping Google and Bing with sitemap URL."""
-    sitemap_url = f"{BASE_URL}/sitemap.xml"
-    endpoints = [
-        f"https://www.google.com/ping?sitemap={sitemap_url}",
-        f"https://www.bing.com/ping?sitemap={sitemap_url}",
-    ]
-
-    for endpoint in endpoints:
-        if dry_run:
-            print(f"Sitemap ping: Would GET {endpoint}")
-            continue
-
-        try:
-            req = urllib.request.Request(endpoint, method="GET")
-            with urllib.request.urlopen(req, timeout=15) as resp:
-                print(f"Sitemap ping: {endpoint.split('/')[2]} — HTTP {resp.status}")
-        except Exception as e:
-            print(f"Sitemap ping: {endpoint.split('/')[2]} — Error: {e}")
-
 
 def main():
     parser = argparse.ArgumentParser(description="Notify search engines of site updates")
@@ -264,10 +243,6 @@ def main():
 
     # Submit to IndexNow
     submit_indexnow(urls, dry_run=args.dry_run)
-    print()
-
-    # Ping sitemaps
-    ping_sitemaps(dry_run=args.dry_run)
 
     # Update log
     if not args.dry_run:
