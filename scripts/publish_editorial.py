@@ -257,7 +257,7 @@ class BlogPublisher:
         canonical = f'https://fixthevuln.com/blog/{slug}.html'
 
         try:
-            date_display = datetime.strptime(date_pub, '%Y-%m-%d').strftime('%B %Y')
+            date_display = datetime.strptime(date_pub, '%Y-%m-%d').strftime('%B %-d, %Y')
         except ValueError:
             date_display = date_pub
 
