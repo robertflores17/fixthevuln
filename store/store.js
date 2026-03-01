@@ -814,10 +814,13 @@ if (featuredGrid) {
 }
 
 // ─── STRIPE CHECKOUT ────────────────────────
+let checkoutInProgress = false;
+
 if (btnCheckout) {
   btnCheckout.addEventListener('click', async () => {
-    if (cart.length === 0) return;
+    if (cart.length === 0 || checkoutInProgress) return;
 
+    checkoutInProgress = true;
     btnCheckout.disabled = true;
     btnCheckout.textContent = 'Processing...';
 
@@ -840,6 +843,9 @@ if (btnCheckout) {
 
       if (!response.ok) {
         showToast('Checkout service error. Please try again.', 'error');
+        checkoutInProgress = false;
+        btnCheckout.disabled = false;
+        btnCheckout.textContent = 'Proceed to Checkout →';
         return;
       }
 
@@ -847,19 +853,25 @@ if (btnCheckout) {
 
       if (data.error) {
         showToast(data.error, 'error');
+        checkoutInProgress = false;
+        btnCheckout.disabled = false;
+        btnCheckout.textContent = 'Proceed to Checkout →';
         return;
       }
 
-      // Redirect to Stripe Checkout
+      // Redirect to Stripe Checkout — do NOT re-enable button (page is navigating away)
       const result = await stripe.redirectToCheckout({ sessionId: data.sessionId });
       if (result.error) {
         showToast(result.error.message, 'error');
+        checkoutInProgress = false;
+        btnCheckout.disabled = false;
+        btnCheckout.textContent = 'Proceed to Checkout →';
       }
 
     } catch (err) {
       console.error('Checkout error:', err);
       showToast('Something went wrong. Please try again.', 'error');
-    } finally {
+      checkoutInProgress = false;
       btnCheckout.disabled = false;
       btnCheckout.textContent = 'Proceed to Checkout →';
     }

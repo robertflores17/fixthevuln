@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Free HashiCorp Vault Associate VA-002 practice quiz with 32 questions mapped to all exam domains. Test your knowledge with explanations and progress tracking.">
+    <title>Free HashiCorp Vault Associate Practice Quiz &mdash; VA-002 Questions - FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/vault-quiz.html">
+    <meta property="og:title" content="Free HashiCorp Vault Associate Practice Quiz &mdash; VA-002 Questions - FixTheVuln">
+    <meta property="og:description" content="Free HashiCorp Vault Associate VA-002 practice quiz with 32 questions. Test your knowledge with explanations and progress tracking.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fixthevuln.com/vault-quiz.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Free HashiCorp Vault Associate Practice Quiz &mdash; VA-002 Questions - FixTheVuln">
+    <meta name="twitter:description" content="Free HashiCorp Vault Associate VA-002 practice quiz with 32 questions. Test your knowledge with explanations and progress tracking.">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.min.css?v=2">
+    <style>
+        .quiz-container { background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+        .quiz-header { text-align: center; margin-bottom: 2rem; }
+        .quiz-header h2 { color: #333; margin-bottom: 0.5rem; }
+        .quiz-stats { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-top: 1rem; }
+        .stat-box { background: #f8f9fa; padding: 1rem 1.5rem; border-radius: 8px; text-align: center; }
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: #667eea; }
+        .stat-label { font-size: 0.85rem; color: #666; }
+        .progress-section { margin-bottom: 2rem; }
+        .progress-bar { background: #e0e0e0; height: 10px; border-radius: 5px; overflow: hidden; }
+        .progress-fill { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 100%; transition: width 0.3s ease; }
+        .progress-text { text-align: center; margin-top: 0.5rem; color: #666; font-size: 0.9rem; }
+        .category-select { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-bottom: 2rem; }
+        .category-btn { padding: 0.5rem 1rem; border: 2px solid #667eea; background: white; color: #667eea; border-radius: 20px; cursor: pointer; font-weight: 500; transition: all 0.2s; }
+        .category-btn:hover, .category-btn.active { background: #667eea; color: white; }
+        .question-card { background: #f8f9fa; border-radius: 12px; padding: 2rem; margin-bottom: 1.5rem; }
+        .question-number { display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem; }
+        .question-category { display: inline-block; background: #e7f3ff; color: #667eea; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; margin-left: 0.5rem; }
+        .question-text { font-size: 1.1rem; color: #333; margin-bottom: 1.5rem; line-height: 1.6; }
+        .options-list { display: flex; flex-direction: column; gap: 0.75rem; }
+        .option { padding: 1rem 1.25rem; background: white; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.75rem; }
+        .option:hover:not(.disabled) { border-color: #667eea; background: #f0f4ff; }
+        .option.selected { border-color: #667eea; background: #e7f3ff; }
+        .option.correct { border-color: #28a745; background: #d4edda; }
+        .option.incorrect { border-color: #dc3545; background: #f8d7da; }
+        .option.disabled { cursor: default; }
+        .option-letter { background: #e0e0e0; color: #666; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.9rem; flex-shrink: 0; }
+        .option.selected .option-letter { background: #667eea; color: white; }
+        .option.correct .option-letter { background: #28a745; color: white; }
+        .option.incorrect .option-letter { background: #dc3545; color: white; }
+        .explanation { background: #e7f3ff; border-left: 4px solid #667eea; padding: 1rem; margin-top: 1rem; border-radius: 0 8px 8px 0; display: none; }
+        .explanation.show { display: block; }
+        .explanation h4 { color: #667eea; margin-bottom: 0.5rem; }
+        .explanation p { color: #555; line-height: 1.6; }
+        .explanation a { color: #667eea; font-weight: 600; }
+        .quiz-actions { display: flex; justify-content: center; gap: 1rem; margin-top: 2rem; }
+        .btn { padding: 0.75rem 2rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
+        .btn-secondary { background: #f8f9fa; color: #667eea; border: 2px solid #667eea; }
+        .btn-secondary:hover { background: #667eea; color: white; }
+        .results-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; padding: 3rem 2rem; text-align: center; display: none; }
+        .results-card.show { display: block; }
+        .results-score { font-size: 4rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .results-grade { font-size: 1.5rem; margin-bottom: 1rem; opacity: 0.95; }
+        .results-breakdown { display: flex; justify-content: center; gap: 2rem; margin: 2rem 0; flex-wrap: wrap; }
+        .breakdown-item { background: rgba(255,255,255,0.2); padding: 1rem 1.5rem; border-radius: 8px; }
+        .breakdown-value { font-size: 1.5rem; font-weight: 700; }
+        .breakdown-label { font-size: 0.85rem; opacity: 0.9; }
+        .share-section { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.3); }
+        .share-buttons { display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
+        .share-btn { padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; }
+        .share-twitter { background: #1DA1F2; color: white; }
+        .share-linkedin { background: #0077B5; color: white; }
+        .start-screen { text-align: center; padding: 3rem; }
+        .start-screen h2 { margin-bottom: 1rem; }
+        .start-screen p { color: #666; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .difficulty-select { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+        .difficulty-btn { padding: 1rem 2rem; border: 2px solid #e0e0e0; background: white; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+        .difficulty-btn:hover, .difficulty-btn.active { border-color: #667eea; background: #f0f4ff; }
+        .difficulty-btn h4 { margin: 0 0 0.25rem 0; color: #333; }
+        .difficulty-btn p { margin: 0; font-size: 0.85rem; color: #666; }
+        .timer { font-size: 1.2rem; font-weight: 600; color: #667eea; }
+        .timer.warning { color: #dc3545; }
+        @media (max-width: 768px) { .quiz-stats { gap: 1rem; } .results-breakdown { gap: 1rem; } }
+    </style>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Quizzes", "item": "https://fixthevuln.com/practice-tests.html" },
+            { "@type": "ListItem", "position": 3, "name": "HashiCorp Vault Associate Quiz" }
+        ]
+    }
+    </script>
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="index.html" class="site-nav-logo">FixTheVuln</a>
+        <div class="site-nav-links">
+            <a href="guides.html">Guides</a>
+            <a href="tools.html">Tools</a>
+            <a href="compliance.html">Compliance</a>
+            <a href="resources.html">Resources</a>
+            <a href="practice-tests.html">Quizzes</a>
+            <a href="career-paths.html">Career Paths</a>
+            <a href="blog/">Blog</a>
+            <a href="/store/store.html" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: .35rem .75rem; border-radius: 6px; font-size: .85rem; font-weight: 600; text-decoration: none;">Store</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>FixTheVuln</h1></a>
+            <p class="tagline">HashiCorp Vault Associate VA-002 Practice Quiz &mdash; 32 Questions</p>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Last updated: February 28, 2026</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="practice-tests.html" class="back-link">&larr; All Practice Quizzes</a>
+
+        <section class="intro">
+            <h2>Test Your HashiCorp Vault Associate Knowledge</h2>
+            <p>32 practice questions mapped to all VA-002 exam domains. Weighted random selection matches real exam distribution. Filter by domain, choose your question count, and track your progress.</p>
+        </section>
+
+        <div class="quiz-container" id="quiz-container" data-product-id="hashicorp-vault" data-cert-name="HashiCorp Vault Associate">
+            <div id="start-screen" class="start-screen">
+                <h2>Choose Your Quiz</h2>
+                <p>Select a domain and question count. Weighted random selection matches the real VA-002 exam distribution when you choose "All Domains".</p>
+                <p id="question-pool-info" style="font-size:0.85rem;color:#667eea;font-weight:600;margin-bottom:1rem;">Loading question bank...</p>
+
+                <h4 style="color:#555;margin-bottom:0.5rem;font-size:0.9rem;">VA-002 Domain</h4>
+                <div class="category-select">
+                    <button class="category-btn active" data-domain="all">All Domains</button>
+                    <button class="category-btn" data-domain="1">1.0 Compare Authentication Methods (12%)</button>
+                    <button class="category-btn" data-domain="2">2.0 Create Vault Policies (12%)</button>
+                    <button class="category-btn" data-domain="3">3.0 Assess Vault Tokens (12%)</button>
+                    <button class="category-btn" data-domain="4">4.0 Manage Vault Leases (12%)</button>
+                    <button class="category-btn" data-domain="5">5.0 Compare and Configure Secret Engines (12%)</button>
+                    <button class="category-btn" data-domain="6">6.0 Utilize the Vault CLI (12%)</button>
+                    <button class="category-btn" data-domain="7">7.0 Utilize the Vault UI (12%)</button>
+                    <button class="category-btn" data-domain="8">8.0 Be Aware of Vault Enterprise Features (12%)</button>
+                </div>
+
+                <h4 style="color:#555;margin-bottom:0.5rem;font-size:0.9rem;">Difficulty</h4>
+                <div class="difficulty-select">
+                    <div class="difficulty-btn active" data-difficulty="mixed">
+                        <h4>Mixed</h4>
+                        <p>All levels</p>
+                    </div>
+                    <div class="difficulty-btn" data-difficulty="easy">
+                        <h4>Easy</h4>
+                        <p>Fundamentals</p>
+                    </div>
+                    <div class="difficulty-btn" data-difficulty="medium">
+                        <h4>Medium</h4>
+                        <p>Exam-level</p>
+                    </div>
+                    <div class="difficulty-btn" data-difficulty="hard">
+                        <h4>Hard</h4>
+                        <p>Advanced</p>
+                    </div>
+                </div>
+
+                <h4 style="color:#555;margin-bottom:0.5rem;font-size:0.9rem;">Questions</h4>
+                <div class="category-select" id="count-select">
+                    <button class="category-btn active" data-count="10">10</button>
+                    <button class="category-btn" data-count="25">25</button>
+                </div>
+
+                <button class="btn btn-primary" onclick="startQuiz()">Start Quiz</button>
+            </div>
+
+            <div id="quiz-screen" style="display: none;">
+                <div class="quiz-header">
+                    <div class="quiz-stats">
+                        <div class="stat-box">
+                            <div class="stat-value" id="current-question">1</div>
+                            <div class="stat-label">Question</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="score">0</div>
+                            <div class="stat-label">Score</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value timer" id="timer">--</div>
+                            <div class="stat-label">Time</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="progress-section">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill" style="width: 10%;"></div>
+                    </div>
+                    <p class="progress-text"><span id="answered">0</span> of <span id="total-questions">10</span> answered</p>
+                </div>
+                <div id="question-container"></div>
+                <div class="quiz-actions">
+                    <button class="btn btn-secondary" onclick="skipQuestion()" id="skip-btn">Skip</button>
+                    <button class="btn btn-primary" onclick="nextQuestion()" id="next-btn" style="display: none;">Next Question</button>
+                    <button class="btn btn-primary" onclick="showResults()" id="finish-btn" style="display: none;">See Results</button>
+                </div>
+            </div>
+
+            <div id="results-screen" class="results-card">
+                <div class="results-score" id="final-score">0%</div>
+                <div class="results-grade" id="grade">Keep Learning!</div>
+                <p id="grade-message">Review the explanations to strengthen your knowledge.</p>
+                <div class="results-breakdown">
+                    <div class="breakdown-item">
+                        <div class="breakdown-value" id="correct-count">0</div>
+                        <div class="breakdown-label">Correct</div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-value" id="incorrect-count">0</div>
+                        <div class="breakdown-label">Incorrect</div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-value" id="time-taken">0:00</div>
+                        <div class="breakdown-label">Time</div>
+                    </div>
+                </div>
+                <div class="share-section">
+                    <p>Share your score:</p>
+                    <div class="share-buttons">
+                        <a href="#" class="share-btn share-twitter" id="share-twitter" target="_blank">Twitter</a>
+                        <a href="#" class="share-btn share-linkedin" id="share-linkedin" target="_blank">LinkedIn</a>
+                    </div>
+                </div>
+                <div style="margin-top: 2rem;">
+                    <button class="btn btn-secondary" style="background: white; color: #667eea;" onclick="restartQuiz()">Try Again</button>
+                    <a href="start-here.html" class="btn btn-secondary" style="background: rgba(255,255,255,0.2); color: white; text-decoration: none; display: inline-block; margin-left: 1rem;">Study More</a>
+                </div>
+            </div>
+        </div>
+
+        <section class="vulnerability-card">
+            <h2>Track Your Progress</h2>
+            <p>Your quiz history is saved locally. Keep practicing to improve your scores!</p>
+            <div id="quiz-history" style="margin-top: 1rem;"></div>
+        </section>
+
+        <section class="cta">
+            <h2>Ready to Go Deeper?</h2>
+            <p>Explore study guides, practice labs, and exam preparation resources.</p>
+            <a href="career-paths.html" class="cta-button">View All Certifications &rarr;</a>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank" rel="noopener">FixTheVuln.com</a> | <a href="/store/store.html">FixTheVuln Store</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+            <p style="font-size: 0.8rem; color: #888; margin-top: 0.75rem;"><strong>Disclaimer:</strong> These practice questions are independently created for educational purposes only and are not official exam questions. HashiCorp&reg; trademarks belong to their respective owners. FixTheVuln is not affiliated with or endorsed by HashiCorp. Use this quiz as a supplemental study aid.</p>
+        </div>
+    </footer>
+
+    <script src="js/quiz-engine.js"></script>
+    <script>
+        function startQuiz() { QuizEngine.startQuiz(); }
+        function skipQuestion() { QuizEngine.skipQuestion(); }
+        function nextQuestion() { QuizEngine.nextQuestion(); }
+        function showResults() { QuizEngine.showResults(); }
+        function restartQuiz() { QuizEngine.restartQuiz(); }
+
+        QuizEngine.init({
+            jsonPath: 'data/vault-questions.json',
+            examCode: 'VA-002',
+            storageKey: 'fixthevuln_hashicorp_vault_quiz',
+            shareText: 'I scored {percentage}% on the FixTheVuln HashiCorp Vault Associate Quiz ({quizSize} questions)! Test your VA-002 knowledge:',
+            shareUrl: 'https://fixthevuln.com/vault-quiz.html',
+            domains: {
+                1: {name: 'Compare Authentication Methods', weight: 12},
+                2: {name: 'Create Vault Policies', weight: 12},
+                3: {name: 'Assess Vault Tokens', weight: 12},
+                4: {name: 'Manage Vault Leases', weight: 12},
+                5: {name: 'Compare and Configure Secret Engines', weight: 12},
+                6: {name: 'Utilize the Vault CLI', weight: 12},
+                7: {name: 'Utilize the Vault UI', weight: 12},
+                8: {name: 'Be Aware of Vault Enterprise Features', weight: 12}
+            },
+            fallbackQuestions: []
+        });
+    </script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
