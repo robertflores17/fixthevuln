@@ -6,7 +6,10 @@
 """
 
 import re
+import sys
 from pathlib import Path
+
+FORCE = '--force' in sys.argv
 
 REPO = Path(__file__).resolve().parent.parent
 
@@ -140,6 +143,24 @@ def replace_planner_cta(text, new_cta):
     return None
 
 
+def replace_store_cta(text, new_cta):
+    """Replace existing <!-- Store CTA --> section with updated CTA HTML."""
+    pattern = r'        <!-- Store CTA -->\n        <section style="background: linear-gradient\(135deg.*?</section>\n'
+    match = re.search(pattern, text, re.DOTALL)
+    if match:
+        return text[:match.start()] + new_cta + text[match.end():]
+    return None
+
+
+def replace_sprint_kit_cta(text, new_cta):
+    """Replace existing <!-- Sprint Kit CTA --> section with updated CTA HTML."""
+    pattern = r'        <!-- Sprint Kit CTA -->\n        <section style="background: linear-gradient\(135deg.*?</section>\n'
+    match = re.search(pattern, text, re.DOTALL)
+    if match:
+        return text[:match.start()] + new_cta + text[match.end():]
+    return None
+
+
 def process_comparisons():
     """Update comparison pages: Etsy CTA → store planner CTA."""
     comp_dir = REPO / 'comparisons'
@@ -150,10 +171,17 @@ def process_comparisons():
             print(f"  MISS {filename}")
             continue
         text = filepath.read_text(encoding='utf-8')
-        if '<!-- Store CTA -->' in text:
-            print(f"  SKIP {filename} — already updated")
-            continue
         new_cta = store_cta_html(certs, prefix='..')
+        if '<!-- Store CTA -->' in text:
+            if not FORCE:
+                print(f"  SKIP {filename} — already updated (use --force to re-inject)")
+                continue
+            result = replace_store_cta(text, new_cta)
+            if result:
+                filepath.write_text(result, encoding='utf-8')
+                print(f"  OK   comparisons/{filename} (force-replaced)")
+                updated += 1
+            continue
         result = replace_etsy_cta(text, new_cta)
         if result:
             filepath.write_text(result, encoding='utf-8')
@@ -173,10 +201,17 @@ def process_cve_pages():
     updated = 0
     for filepath in sorted(cve_dir.glob('CVE-*.html')):
         text = filepath.read_text(encoding='utf-8')
-        if '<!-- Sprint Kit CTA -->' in text:
-            print(f"  SKIP {filepath.name} — already updated")
-            continue
         new_cta = sprint_kit_cta_html(prefix='..')
+        if '<!-- Sprint Kit CTA -->' in text:
+            if not FORCE:
+                print(f"  SKIP {filepath.name} — already updated (use --force to re-inject)")
+                continue
+            result = replace_sprint_kit_cta(text, new_cta)
+            if result:
+                filepath.write_text(result, encoding='utf-8')
+                print(f"  OK   cve/{filepath.name} (force-replaced)")
+                updated += 1
+            continue
         result = replace_etsy_cta(text, new_cta)
         if result:
             filepath.write_text(result, encoding='utf-8')
@@ -198,9 +233,6 @@ def process_guides():
             print(f"  MISS {filename}")
             continue
         text = filepath.read_text(encoding='utf-8')
-        if '<!-- Store CTA -->' in text:
-            print(f"  SKIP {filename} — already updated")
-            continue
 
         new_cta = store_cta_html(certs, prefix='')
         # Also add Sprint Kit CTA for security-focused guides
@@ -208,6 +240,18 @@ def process_guides():
                           'quick-fixes.html', 'log-management.html', 'security-analyst-roadmap.html']
         if filename in security_guides:
             new_cta += sprint_kit_cta_html(prefix='')
+
+        if '<!-- Store CTA -->' in text:
+            if not FORCE:
+                print(f"  SKIP {filename} — already updated (use --force to re-inject)")
+                continue
+            # Replace store CTA, then also replace sprint kit CTA if present
+            result = replace_store_cta(text, new_cta)
+            if result:
+                filepath.write_text(result, encoding='utf-8')
+                print(f"  OK   {filename} (force-replaced)")
+                updated += 1
+            continue
 
         # Try replacing existing planner CTA first
         result = replace_planner_cta(text, new_cta)

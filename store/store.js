@@ -281,8 +281,18 @@ const PRODUCTS = [
 ];
 
 // ─── STATE ──────────────────────────────────
-let cart = JSON.parse(localStorage.getItem('ftv_cart') || '[]');
+let cart = [];
+try {
+  const stored = localStorage.getItem('ftv_cart');
+  if (stored) cart = JSON.parse(stored);
+  if (!Array.isArray(cart)) cart = [];
+} catch (e) {
+  console.error('Corrupted cart data — resetting', e);
+  localStorage.removeItem('ftv_cart');
+  cart = [];
+}
 let selectedVariant = localStorage.getItem('ftv_variant') || 'standard';
+if (!PRICING[selectedVariant]) selectedVariant = 'standard';
 let selectedVendor = 'all';
 
 // ─── DOM REFS (null-safe for hub page) ──────
@@ -371,24 +381,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ─── THEME TOGGLE ───────────────────────────
 function initTheme() {
+  const themeToggle = document.getElementById('themeToggle');
   const saved = localStorage.getItem('ftv_theme');
   if (saved === 'light') {
     document.documentElement.setAttribute('data-theme', 'light');
-    document.getElementById('themeToggle').textContent = '🌙';
+    if (themeToggle) themeToggle.textContent = '🌙';
   }
 
-  document.getElementById('themeToggle').addEventListener('click', () => {
-    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-    if (isLight) {
-      document.documentElement.removeAttribute('data-theme');
-      document.getElementById('themeToggle').textContent = '☀️';
-      localStorage.setItem('ftv_theme', 'dark');
-    } else {
-      document.documentElement.setAttribute('data-theme', 'light');
-      document.getElementById('themeToggle').textContent = '🌙';
-      localStorage.setItem('ftv_theme', 'light');
-    }
-  });
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      if (isLight) {
+        document.documentElement.removeAttribute('data-theme');
+        themeToggle.textContent = '☀️';
+        localStorage.setItem('ftv_theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        themeToggle.textContent = '🌙';
+        localStorage.setItem('ftv_theme', 'light');
+      }
+    });
+  }
 }
 
 // ─── FORMAT SELECTOR ────────────────────────
@@ -441,8 +454,8 @@ function renderProducts() {
     ? pool
     : pool.filter(p => p.vendor === selectedVendor);
 
-  const price = PRICING[selectedVariant];
-  const variantLabel = VARIANT_LABELS[selectedVariant];
+  const price = PRICING[selectedVariant] || PRICING.standard;
+  const variantLabel = VARIANT_LABELS[selectedVariant] || VARIANT_LABELS.standard;
 
   productGrid.innerHTML = filtered.map(product => {
     const cartKey = `${product.id}__${selectedVariant}`;
@@ -549,8 +562,10 @@ function addToCart(productId, productName, variant, price) {
   openCart();
 
   // Badge bounce animation
-  cartBadge.classList.add('bump');
-  setTimeout(() => cartBadge.classList.remove('bump'), 300);
+  if (cartBadge) {
+    cartBadge.classList.add('bump');
+    setTimeout(() => cartBadge.classList.remove('bump'), 300);
+  }
 }
 
 function removeFromCart(key) {
@@ -567,11 +582,14 @@ function saveCart() {
 
 function updateCartUI() {
   // Badge
-  cartBadge.textContent = cart.length;
-  cartBadge.setAttribute('data-count', cart.length);
-  cartBadge.setAttribute('aria-label', `${cart.length} item${cart.length !== 1 ? 's' : ''} in cart`);
+  if (cartBadge) {
+    cartBadge.textContent = cart.length;
+    cartBadge.setAttribute('data-count', cart.length);
+    cartBadge.setAttribute('aria-label', `${cart.length} item${cart.length !== 1 ? 's' : ''} in cart`);
+  }
 
   // Cart items
+  if (!cartItems || !cartEmpty || !cartFooter) return;
   if (cart.length === 0) {
     cartItems.innerHTML = '';
     cartEmpty.classList.add('active');
@@ -584,16 +602,16 @@ function updateCartUI() {
       <div class="cart-item">
         <div class="cart-item-info">
           <div class="cart-item-name">${esc(item.name)}</div>
-          <div class="cart-item-variant">${esc(item.variantLabel)}</div>
-          <div class="cart-item-price">$${Number(item.price).toFixed(2)}</div>
+          <div class="cart-item-variant">${esc(item.variantLabel || 'Standard')}</div>
+          <div class="cart-item-price">$${Number(item.price || 0).toFixed(2)}</div>
         </div>
         <button class="cart-item-remove" data-cart-key="${esc(item.key)}">Remove</button>
       </div>
     `).join('');
 
     // Total
-    const total = cart.reduce((sum, item) => sum + item.price, 0);
-    cartTotal.textContent = `$${total.toFixed(2)}`;
+    const total = cart.reduce((sum, item) => sum + Number(item.price || 0), 0);
+    if (cartTotal) cartTotal.textContent = `$${total.toFixed(2)}`;
   }
 }
 
@@ -720,8 +738,10 @@ async function addCareerPathToCart(pathId, pathName, certCount) {
   if (careerPathGrid) renderCareerPaths();
   openCart();
 
-  cartBadge.classList.add('bump');
-  setTimeout(() => cartBadge.classList.remove('bump'), 300);
+  if (cartBadge) {
+    cartBadge.classList.add('bump');
+    setTimeout(() => cartBadge.classList.remove('bump'), 300);
+  }
 }
 
 // ─── HUB: VENDOR SHOWCASE CARDS ─────────────
@@ -817,6 +837,11 @@ if (btnCheckout) {
           })),
         }),
       });
+
+      if (!response.ok) {
+        showToast('Checkout service error. Please try again.', 'error');
+        return;
+      }
 
       const data = await response.json();
 

@@ -244,6 +244,7 @@ def generate_page(product):
     <meta property="og:description" content="Complete {name} exam guide with domain breakdown, study tips, and practice quizzes.">
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://fixthevuln.com/certs/{pid}.html">
+    <link rel="canonical" href="https://fixthevuln.com/certs/{pid}.html">
     <meta property="og:image" content="https://fixthevuln.com/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{name} Study Guide | FixTheVuln">
