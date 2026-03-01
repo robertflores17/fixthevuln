@@ -53,6 +53,36 @@ GUIDE_MAP = {
 }
 
 
+# Map vendor ID → store category page path (relative to site root)
+VENDOR_STORE_PAGES = {
+    'comptia': '/store/comptia.html',
+    'isc2': '/store/security-governance.html',
+    'aws': '/store/aws.html',
+    'microsoft': '/store/microsoft.html',
+    'cisco': '/store/cisco.html',
+    'isaca': '/store/security-governance.html',
+    'giac': '/store/security-governance.html',
+    'google': '/store/google-cloud.html',
+    'ec-council': '/store/offensive-devops.html',
+    'offsec': '/store/offensive-devops.html',
+    'hashicorp': '/store/offensive-devops.html',
+    'k8s': '/store/offensive-devops.html',
+}
+
+# Reverse lookup: product ID prefix → vendor
+def _vendor_for_pid(pid):
+    """Determine vendor from product ID."""
+    vendor_prefixes = {
+        'comptia-': 'comptia', 'isc2-': 'isc2', 'aws-': 'aws', 'ms-': 'microsoft',
+        'cisco-': 'cisco', 'isaca-': 'isaca', 'giac-': 'giac', 'google-': 'google',
+        'ec-': 'ec-council', 'offsec-': 'offsec', 'hashicorp-': 'hashicorp', 'k8s-': 'k8s',
+    }
+    for prefix, vendor in vendor_prefixes.items():
+        if pid.startswith(prefix):
+            return vendor
+    return None
+
+
 def store_cta_html(certs, prefix=''):
     """Generate a FixTheVuln store CTA section for given certs."""
     if len(certs) == 1:
@@ -65,7 +95,9 @@ def store_cta_html(certs, prefix=''):
 
     cert_buttons = ''
     for pid, name in certs:
-        cert_buttons += f'            <a href="{prefix}/store/store.html" style="display:inline-block;background:#667eea;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">{name} Planner</a>\n'
+        vendor = _vendor_for_pid(pid)
+        store_url = VENDOR_STORE_PAGES.get(vendor, '/store/store.html')
+        cert_buttons += f'            <a href="{prefix}{store_url}" style="display:inline-block;background:#667eea;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">{name} Planner</a>\n'
 
     return f'''        <!-- Store CTA -->
         <section style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">

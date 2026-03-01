@@ -3,6 +3,40 @@
    Cart, Products, Stripe Checkout
    ============================================ */
 
+// ─── PAGE CONFIG (set by category pages before loading this script) ──
+const PAGE_CONFIG = Object.assign({
+  vendors: null,        // null = show all vendors (hub or legacy)
+  showVendorTabs: true, // show vendor filter tabs
+  showHubCards: false,   // render hub vendor showcase cards
+  showOpsKit: false,     // show ops kit section (hub only)
+}, window.PAGE_CONFIG || {});
+
+// ─── VENDOR META (hub cards, routing) ────────────────────
+const VENDOR_META = {
+  comptia:    { name: 'CompTIA',      icon: '🏆', color: '#e53e3e', url: 'comptia.html',             desc: 'A+, Security+, Network+, CySA+, PenTest+, CASP+ and more' },
+  aws:        { name: 'AWS',          icon: '☁️', color: '#ff9900', url: 'aws.html',                 desc: 'Cloud Practitioner, Solutions Architect, Security Specialty' },
+  microsoft:  { name: 'Microsoft',    icon: '🔷', color: '#0078d4', url: 'microsoft.html',           desc: 'Azure Fundamentals, Administrator, Security Engineer, AI' },
+  cisco:      { name: 'Cisco',        icon: '🌐', color: '#049fd9', url: 'cisco.html',               desc: 'CCNA, CCNP ENCOR, CyberOps, DevNet' },
+  google:     { name: 'Google Cloud', icon: '🔵', color: '#4285f4', url: 'google-cloud.html',        desc: 'Cloud Engineer, Architect, Data Engineer, Security' },
+  'security-governance': { name: 'Security & Governance', icon: '🛡️', color: '#805ad5', url: 'security-governance.html', desc: 'ISC2 CISSP/CCSP, ISACA CISA/CISM, GIAC GSEC/GCIH' },
+  'offensive-devops':    { name: 'Offensive & DevOps',    icon: '💻', color: '#d53f8c', url: 'offensive-devops.html',    desc: 'EC-Council CEH, OffSec OSCP, HashiCorp Terraform, Kubernetes CKA' },
+  lifestyle:  { name: 'Lifestyle & Productivity', icon: '📓', color: '#38a169', url: 'lifestyle.html',   desc: 'Budget Binder, Wellness Journal, Digital Planner, Business Templates' },
+  education:  { name: 'Education',    icon: '📚', color: '#d69e2e', url: 'education.html',           desc: 'Teacher Planner, Student Planner, ADHD Student Planner' },
+};
+
+// Mapping of hub group key → actual vendor IDs in PRODUCTS
+const VENDOR_GROUP_MAP = {
+  comptia: ['comptia'],
+  aws: ['aws'],
+  microsoft: ['microsoft'],
+  cisco: ['cisco'],
+  google: ['google'],
+  'security-governance': ['isc2', 'isaca', 'giac'],
+  'offensive-devops': ['ec-council', 'offsec', 'hashicorp', 'k8s'],
+  lifestyle: ['lifestyle', 'bundles'],
+  education: ['education'],
+};
+
 // ─── STRIPE CONFIG ──────────────────────────
 const STRIPE_PUBLISHABLE_KEY = 'pk_live_51T1bzYLBnrzacKtT0qGIOSxTYOp0ZUVdsAS5pYLKDYQpbIQs2PgypNZ7ARkcQeFNkyKLyl8qmBXBvOLf0Uaqqu0200xsCUOQk2';
 const CHECKOUT_API_URL = 'https://fixthevuln-checkout.robertflores17.workers.dev';
@@ -251,7 +285,7 @@ let cart = JSON.parse(localStorage.getItem('ftv_cart') || '[]');
 let selectedVariant = localStorage.getItem('ftv_variant') || 'standard';
 let selectedVendor = 'all';
 
-// ─── DOM REFS ───────────────────────────────
+// ─── DOM REFS (null-safe for hub page) ──────
 const productGrid     = document.getElementById('productGrid');
 const careerPathGrid  = document.getElementById('careerPathGrid');
 const cartBadge     = document.getElementById('cartBadge');
@@ -262,6 +296,9 @@ const cartEmpty     = document.getElementById('cartEmpty');
 const cartFooter    = document.getElementById('cartFooter');
 const cartTotal     = document.getElementById('cartTotal');
 const btnCheckout   = document.getElementById('btnCheckout');
+const hubGrid       = document.getElementById('hubGrid');
+const featuredGrid  = document.getElementById('featuredGrid');
+
 // ─── HTML SANITIZATION ─────────────────────
 function esc(str) {
   const d = document.createElement('div');
@@ -302,13 +339,33 @@ function showConfirm(message) {
   });
 }
 
+// ─── PAGE-SCOPED PRODUCT FILTER ─────────────
+function getPageProducts() {
+  if (!PAGE_CONFIG.vendors) return PRODUCTS;
+  return PRODUCTS.filter(p => PAGE_CONFIG.vendors.includes(p.vendor));
+}
+
+function getPageCareerPaths() {
+  if (!PAGE_CONFIG.vendors) return CAREER_PATHS;
+  return CAREER_PATHS.filter(p => p.vendors.some(v => PAGE_CONFIG.vendors.includes(v)));
+}
+
 // ─── INIT ───────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   initFormatSelector();
-  initVendorTabs();
-  renderProducts();
-  renderCareerPaths();
+
+  if (PAGE_CONFIG.showHubCards) {
+    // Hub page mode
+    renderHubCards();
+    renderFeaturedProducts();
+  } else {
+    // Category or legacy page mode
+    if (PAGE_CONFIG.showVendorTabs) initVendorTabs();
+    if (productGrid) renderProducts();
+    if (careerPathGrid) renderCareerPaths();
+  }
+
   updateCartUI();
 });
 
@@ -337,6 +394,8 @@ function initTheme() {
 // ─── FORMAT SELECTOR ────────────────────────
 function initFormatSelector() {
   const cards = document.querySelectorAll('.format-card');
+  if (!cards.length) return;
+
   // Set initial active state
   cards.forEach(c => {
     const isActive = c.dataset.variant === selectedVariant;
@@ -351,8 +410,9 @@ function initFormatSelector() {
       card.setAttribute('aria-checked', 'true');
       selectedVariant = card.dataset.variant;
       localStorage.setItem('ftv_variant', selectedVariant);
-      renderProducts();
-      renderCareerPaths();
+      if (productGrid) renderProducts();
+      if (careerPathGrid) renderCareerPaths();
+      if (featuredGrid) renderFeaturedProducts();
     });
   });
 }
@@ -365,17 +425,21 @@ function initVendorTabs() {
       tabs.forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       selectedVendor = tab.dataset.vendor;
-      renderProducts();
-      renderCareerPaths();
+      if (productGrid) renderProducts();
+      if (careerPathGrid) renderCareerPaths();
     });
   });
 }
 
 // ─── RENDER PRODUCTS ────────────────────────
 function renderProducts() {
+  if (!productGrid) return;
+
+  // Start with page-scoped products, then apply vendor tab filter
+  let pool = getPageProducts();
   const filtered = selectedVendor === 'all'
-    ? PRODUCTS
-    : PRODUCTS.filter(p => p.vendor === selectedVendor);
+    ? pool
+    : pool.filter(p => p.vendor === selectedVendor);
 
   const price = PRICING[selectedVariant];
   const variantLabel = VARIANT_LABELS[selectedVariant];
@@ -414,17 +478,21 @@ function renderProducts() {
 }
 
 // ─── EVENT DELEGATION ──────────────────────
-productGrid.addEventListener('click', (e) => {
-  const btn = e.target.closest('.btn-add');
-  if (!btn || btn.disabled) return;
-  addToCart(btn.dataset.productId, btn.dataset.productName, btn.dataset.variant, parseFloat(btn.dataset.price));
-});
+if (productGrid) {
+  productGrid.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-add');
+    if (!btn || btn.disabled) return;
+    addToCart(btn.dataset.productId, btn.dataset.productName, btn.dataset.variant, parseFloat(btn.dataset.price));
+  });
+}
 
-careerPathGrid.addEventListener('click', (e) => {
-  const btn = e.target.closest('.btn-add-career');
-  if (!btn || btn.disabled) return;
-  addCareerPathToCart(btn.dataset.pathId, btn.dataset.pathName, parseInt(btn.dataset.certCount, 10));
-});
+if (careerPathGrid) {
+  careerPathGrid.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-add-career');
+    if (!btn || btn.disabled) return;
+    addCareerPathToCart(btn.dataset.pathId, btn.dataset.pathName, parseInt(btn.dataset.certCount, 10));
+  });
+}
 
 function vendorDisplayName(vendor) {
   const map = {
@@ -477,7 +545,7 @@ function addToCart(productId, productName, variant, price) {
 
   saveCart();
   updateCartUI();
-  renderProducts();
+  if (productGrid) renderProducts();
   openCart();
 
   // Badge bounce animation
@@ -489,8 +557,8 @@ function removeFromCart(key) {
   cart = cart.filter(item => item.key !== key);
   saveCart();
   updateCartUI();
-  renderProducts();
-  renderCareerPaths();
+  if (productGrid) renderProducts();
+  if (careerPathGrid) renderCareerPaths();
 }
 
 function saveCart() {
@@ -559,12 +627,16 @@ document.addEventListener('keydown', (e) => {
 
 // ─── RENDER CAREER PATHS ───────────────────
 function renderCareerPaths() {
+  if (!careerPathGrid) return;
+
   const isBundle = selectedVariant === 'bundle';
   const variantLabel = VARIANT_LABELS[selectedVariant];
 
+  // Start with page-scoped paths, then apply vendor tab filter
+  let pool = getPageCareerPaths();
   const filtered = selectedVendor === 'all'
-    ? CAREER_PATHS
-    : CAREER_PATHS.filter(p => p.vendors.includes(selectedVendor));
+    ? pool
+    : pool.filter(p => p.vendors.includes(selectedVendor));
 
   // Show/hide career section if no paths match
   const careerSection = careerPathGrid.closest('.career-section');
@@ -644,57 +716,127 @@ async function addCareerPathToCart(pathId, pathName, certCount) {
 
   saveCart();
   updateCartUI();
-  renderProducts();
-  renderCareerPaths();
+  if (productGrid) renderProducts();
+  if (careerPathGrid) renderCareerPaths();
   openCart();
 
   cartBadge.classList.add('bump');
   setTimeout(() => cartBadge.classList.remove('bump'), 300);
 }
 
+// ─── HUB: VENDOR SHOWCASE CARDS ─────────────
+function renderHubCards() {
+  if (!hubGrid) return;
+
+  hubGrid.innerHTML = Object.entries(VENDOR_META).map(([key, meta]) => {
+    const vendorIds = VENDOR_GROUP_MAP[key] || [];
+    const count = PRODUCTS.filter(p => vendorIds.includes(p.vendor)).length;
+
+    return `
+      <a href="${esc(meta.url)}" class="hub-card" style="--hub-accent: ${meta.color}">
+        <div class="hub-card-icon">${meta.icon}</div>
+        <div class="hub-card-name">${esc(meta.name)}</div>
+        <div class="hub-card-desc">${esc(meta.desc)}</div>
+        <div class="hub-card-stats">${count} planner${count !== 1 ? 's' : ''}</div>
+        <span class="hub-card-browse">Browse &rarr;</span>
+      </a>
+    `;
+  }).join('');
+}
+
+// ─── HUB: FEATURED PRODUCTS ────────────────
+function renderFeaturedProducts() {
+  if (!featuredGrid) return;
+
+  const price = PRICING[selectedVariant];
+  const featured = PRODUCTS.filter(p => p.popular).slice(0, 6);
+
+  featuredGrid.innerHTML = featured.map(product => {
+    const cartKey = `${product.id}__${selectedVariant}`;
+    const inCart = cart.some(item => item.key === cartKey);
+
+    return `
+      <div class="product-card ${product.popular ? 'popular' : ''}" data-vendor="${esc(product.vendor)}">
+        <div class="product-popular">Popular</div>
+        <div class="product-vendor">${esc(vendorDisplayName(product.vendor))}</div>
+        <div class="product-name">${esc(product.name)}</div>
+        <div class="product-meta">${esc(product.meta)}</div>
+        <div class="product-features">
+          ${product.tags.map(t => `<span class="product-tag">${esc(t)}</span>`).join('')}
+        </div>
+        ${selectedVariant === 'bundle' ? '<div class="product-bundle-note">📦 Standard + ADHD + Dark + ADHD Dark</div>' : ''}
+        <div class="product-bottom">
+          <div class="product-price">
+            $${price.toFixed(2)}
+            ${selectedVariant === 'bundle' ? `<span class="original">$${(PRICING.standard + PRICING.adhd + PRICING.dark + PRICING.adhd_dark).toFixed(2)}</span>` : ''}
+          </div>
+          <button class="btn-add ${inCart ? 'added' : ''}"
+                  data-product-id="${esc(product.id)}"
+                  data-product-name="${esc(product.name)}"
+                  data-variant="${esc(selectedVariant)}"
+                  data-price="${price}"
+                  ${inCart ? 'disabled' : ''}>
+            ${inCart ? '✓ Added' : 'Add to Cart'}
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Event delegation for featured grid (hub page)
+if (featuredGrid) {
+  featuredGrid.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-add');
+    if (!btn || btn.disabled) return;
+    addToCart(btn.dataset.productId, btn.dataset.productName, btn.dataset.variant, parseFloat(btn.dataset.price));
+  });
+}
+
 // ─── STRIPE CHECKOUT ────────────────────────
-btnCheckout.addEventListener('click', async () => {
-  if (cart.length === 0) return;
+if (btnCheckout) {
+  btnCheckout.addEventListener('click', async () => {
+    if (cart.length === 0) return;
 
-  btnCheckout.disabled = true;
-  btnCheckout.textContent = 'Processing...';
+    btnCheckout.disabled = true;
+    btnCheckout.textContent = 'Processing...';
 
-  try {
-    const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+    try {
+      const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
 
-    const response = await fetch(CHECKOUT_API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        items: cart.map(item => ({
-          productId: item.productId,
-          name: item.name,
-          variant: item.variant,
-          variantLabel: item.variantLabel,
-          price: item.price,
-        })),
-      }),
-    });
+      const response = await fetch(CHECKOUT_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: cart.map(item => ({
+            productId: item.productId,
+            name: item.name,
+            variant: item.variant,
+            variantLabel: item.variantLabel,
+            price: item.price,
+          })),
+        }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (data.error) {
-      showToast(data.error, 'error');
-      return;
+      if (data.error) {
+        showToast(data.error, 'error');
+        return;
+      }
+
+      // Redirect to Stripe Checkout
+      const result = await stripe.redirectToCheckout({ sessionId: data.sessionId });
+      if (result.error) {
+        showToast(result.error.message, 'error');
+      }
+
+    } catch (err) {
+      console.error('Checkout error:', err);
+      showToast('Something went wrong. Please try again.', 'error');
+    } finally {
+      btnCheckout.disabled = false;
+      btnCheckout.textContent = 'Proceed to Checkout →';
     }
-
-    // Redirect to Stripe Checkout
-    const result = await stripe.redirectToCheckout({ sessionId: data.sessionId });
-    if (result.error) {
-      showToast(result.error.message, 'error');
-    }
-
-  } catch (err) {
-    console.error('Checkout error:', err);
-    showToast('Something went wrong. Please try again.', 'error');
-  } finally {
-    btnCheckout.disabled = false;
-    btnCheckout.textContent = 'Proceed to Checkout →';
-  }
-});
-
+  });
+}

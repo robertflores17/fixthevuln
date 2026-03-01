@@ -1480,12 +1480,143 @@ body {
 }
 
 /* ============================================
+   Hub: Vendor Showcase Cards
+   ============================================ */
+
+.hub-section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 32px 60px;
+}
+
+.hub-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.hub-card {
+  background: var(--gradient-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 28px 24px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.hub-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--hub-accent, var(--accent));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.hub-card:hover {
+  border-color: var(--hub-accent, var(--accent));
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(37, 99, 235, 0.15);
+}
+
+.hub-card:hover::before {
+  opacity: 1;
+}
+
+.hub-card-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.hub-card-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.hub-card-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 16px;
+  flex: 1;
+}
+
+.hub-card-stats {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--hub-accent, var(--accent));
+  margin-bottom: 8px;
+}
+
+.hub-card-browse {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--hub-accent, var(--accent));
+  transition: transform 0.2s;
+  display: inline-block;
+}
+
+.hub-card:hover .hub-card-browse {
+  transform: translateX(4px);
+}
+
+/* ============================================
+   Hub: Featured Products
+   ============================================ */
+
+.featured-section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 32px 60px;
+}
+
+/* ============================================
+   Category Page: Breadcrumb
+   ============================================ */
+
+.store-breadcrumb {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px 32px 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.store-breadcrumb a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.store-breadcrumb a:hover {
+  color: var(--accent);
+}
+
+.store-breadcrumb .breadcrumb-sep {
+  margin: 0 8px;
+  color: var(--text-muted);
+}
+
+/* ============================================
    Responsive
    ============================================ */
 
 @media (max-width: 960px) {
   .format-cards {
     grid-template-columns: repeat(3, 1fr);
+  }
+  .hub-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -1549,7 +1680,18 @@ body {
   .career-section,
   .ops-kits-section,
   .faq-section,
-  .trust-section {
+  .trust-section,
+  .hub-section,
+  .featured-section {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .hub-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .store-breadcrumb {
     padding-left: 16px;
     padding-right: 16px;
   }

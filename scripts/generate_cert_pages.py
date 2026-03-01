@@ -110,6 +110,22 @@ VENDOR_NAMES = {
     'k8s': 'Kubernetes',
 }
 
+# Map vendor ID → store category page URL
+VENDOR_STORE_PAGES = {
+    'comptia': '/store/comptia.html',
+    'isc2': '/store/security-governance.html',
+    'aws': '/store/aws.html',
+    'microsoft': '/store/microsoft.html',
+    'cisco': '/store/cisco.html',
+    'isaca': '/store/security-governance.html',
+    'giac': '/store/security-governance.html',
+    'google': '/store/google-cloud.html',
+    'ec-council': '/store/offensive-devops.html',
+    'offsec': '/store/offensive-devops.html',
+    'hashicorp': '/store/offensive-devops.html',
+    'k8s': '/store/offensive-devops.html',
+}
+
 
 def load_cert_config(config_path):
     """Load cert config JSON and extract domain data."""
@@ -214,6 +230,8 @@ def generate_page(product):
     # FAQ schema
     faq_schema = generate_faq_schema(product)
 
+    store_page = VENDOR_STORE_PAGES.get(product['vendor'], '/store/store.html')
+
     page = f'''<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -310,7 +328,7 @@ def generate_page(product):
             <div class="planner-cta-card">
                 <h3>Get the {name} Study Planner</h3>
                 <p>Fillable PDF with {study_weeks}-week schedule, domain trackers, flashcard templates, progress tracking, and quick reference sheets. Available in Standard, ADHD-Friendly, Dark Mode, and 4-Format Bundle.</p>
-                <a href="/store/store.html" class="btn-cta">Get the Study Planner &mdash; $5.99</a>
+                <a href="{store_page}" class="btn-cta">Get the Study Planner &mdash; $5.99</a>
                 <p style="font-size: 0.85rem; opacity: 0.7; margin-top: 0.75rem;">Also available as a 4-Format Bundle for $15.99</p>
             </div>
         </section>
