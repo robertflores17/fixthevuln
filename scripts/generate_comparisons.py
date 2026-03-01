@@ -97,7 +97,7 @@ def generate_comparison_page(comp, certs):
     <meta name="twitter:description" content="{escape_html(meta_desc)}">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="../style.min.css">
+    <link rel="stylesheet" href="../style.min.css?v=5">
     <style>
         .compare-table {{ width: 100%; border-collapse: collapse; margin: 1.5rem 0; }}
         .compare-table th {{ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.75rem; text-align: center; }}
@@ -315,7 +315,7 @@ def generate_index_page(comparisons, certs):
     <meta name="twitter:description" content="Compare IT security certifications side by side. {len(comparisons)} detailed comparisons.">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="../style.min.css">
+    <link rel="stylesheet" href="../style.min.css?v=5">
     <script type="application/ld+json">
     {{
         "@context": "https://schema.org",
