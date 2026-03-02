@@ -381,7 +381,7 @@ def generate_page(product):
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{name} Study Guide | FixTheVuln">
     <meta name="twitter:description" content="Complete {name} exam guide with domain breakdown, study tips, and practice quizzes.">
-    <link rel="stylesheet" href="/style.min.css">
+    <link rel="stylesheet" href="/style.min.css?v=6">
     {faq_schema}
     <style>
         .cert-hero {{ text-align: center; padding: 3rem 1.5rem 2rem; }}
@@ -431,6 +431,7 @@ def generate_page(product):
     <nav class="navbar">
         <div class="container nav-container">
             <a href="/" class="logo">FixTheVuln</a>
+            <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
             <div class="nav-links">
                 <a href="/guides.html">Guides</a>
                 <a href="/tools.html">Tools</a>

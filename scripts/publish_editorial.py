@@ -318,7 +318,7 @@ class BlogPublisher:
     <meta name="twitter:description" content="{self._esc_attr(description)}">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="../style.min.css?v=5">
+    <link rel="stylesheet" href="../style.min.css?v=6">
     <script type="application/ld+json">
     {{
         "@context": "https://schema.org",
@@ -345,6 +345,19 @@ class BlogPublisher:
 {faq_schema_block}
 </head>
 <body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="../index.html" class="site-nav-logo">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+        <div class="site-nav-links">
+            <a href="../guides.html">Guides</a>
+            <a href="../tools.html">Tools</a>
+            <a href="../compliance.html">Compliance</a>
+            <a href="../resources.html">Resources</a>
+            <a href="../blog/">Blog</a>
+        </div>
+    </div>
+</nav>
 <!-- Social Share Bar -->
 <div class="share-bar">
     <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
@@ -503,7 +516,7 @@ class BlogPublisher:
     <meta name="twitter:description" content="Expert cybersecurity insights, threat analysis, and IT certification study guides.">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="../style.min.css?v=5">
+    <link rel="stylesheet" href="../style.min.css?v=6">
     <script type="application/ld+json">
     {{
         "@context": "https://schema.org",
@@ -516,6 +529,19 @@ class BlogPublisher:
     </script>
 </head>
 <body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="../index.html" class="site-nav-logo">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+        <div class="site-nav-links">
+            <a href="../guides.html">Guides</a>
+            <a href="../tools.html">Tools</a>
+            <a href="../compliance.html">Compliance</a>
+            <a href="../resources.html">Resources</a>
+            <a href="../blog/">Blog</a>
+        </div>
+    </div>
+</nav>
 <!-- Social Share Bar -->
 <div class="share-bar">
     <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">

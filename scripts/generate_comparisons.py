@@ -97,8 +97,8 @@ def generate_comparison_page(comp, certs):
     <meta name="twitter:description" content="{escape_html(meta_desc)}">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="../style.min.css?v=5">
-    <link rel="stylesheet" href="../comparison.css?v=1">
+    <link rel="stylesheet" href="../style.min.css?v=6">
+    <link rel="stylesheet" href="../comparison.css?v=2">
     <script type="application/ld+json">
     {{
         "@context": "https://schema.org",
@@ -128,6 +128,7 @@ def generate_comparison_page(comp, certs):
 <nav class="site-nav">
     <div class="container">
         <a href="../index.html" class="site-nav-logo">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
         <div class="site-nav-links">
             <a href="../guides.html">Guides</a>
             <a href="../tools.html">Tools</a>
@@ -302,7 +303,7 @@ def generate_index_page(comparisons, certs):
     <meta name="twitter:description" content="Compare IT security certifications side by side. {len(comparisons)} detailed comparisons.">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="../style.min.css?v=5">
+    <link rel="stylesheet" href="../style.min.css?v=6">
     <script type="application/ld+json">
     {{
         "@context": "https://schema.org",
@@ -319,6 +320,7 @@ def generate_index_page(comparisons, certs):
 <nav class="site-nav">
     <div class="container">
         <a href="../index.html" class="site-nav-logo">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
         <div class="site-nav-links">
             <a href="../guides.html">Guides</a>
             <a href="../tools.html">Tools</a>

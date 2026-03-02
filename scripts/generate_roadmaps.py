@@ -279,7 +279,7 @@ def generate_roadmap_page(product, config):
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{name} Study Roadmap | FixTheVuln">
     <meta name="twitter:description" content="Free {num_weeks}-week study roadmap for {name}.">
-    <link rel="stylesheet" href="/style.min.css?v=5">
+    <link rel="stylesheet" href="/style.min.css?v=6">
     <script type="application/ld+json">
     {{
         "@context": "https://schema.org",
@@ -327,6 +327,7 @@ def generate_roadmap_page(product, config):
     <nav class="navbar">
         <div class="container nav-container">
             <a href="/" class="logo">FixTheVuln</a>
+            <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
             <div class="nav-links">
                 <a href="/guides.html">Guides</a>
                 <a href="/tools.html">Tools</a>
@@ -498,7 +499,7 @@ def generate_hub_page(generated_products):
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Certification Study Roadmaps | FixTheVuln">
     <meta name="twitter:description" content="Free study roadmaps for 65+ IT certifications.">
-    <link rel="stylesheet" href="/style.min.css?v=5">
+    <link rel="stylesheet" href="/style.min.css?v=6">
     <script type="application/ld+json">
     {{
         "@context": "https://schema.org",
@@ -514,6 +515,7 @@ def generate_hub_page(generated_products):
     <nav class="site-nav">
         <div class="container">
             <a href="/index.html" class="site-nav-logo">FixTheVuln</a>
+            <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
             <div class="site-nav-links">
                 <a href="/guides.html">Guides</a>
                 <a href="/tools.html">Tools</a>
