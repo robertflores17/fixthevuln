@@ -229,7 +229,76 @@ def _make_question(dom_num, dom_name, obj_text, concepts, cert_name, difficulty,
     return template['q'], template['options'], template['correct'], template['explanation']
 
 
-def generate_quiz_html(cfg, domains_js, total_questions):
+def pick_seo_questions(questions, domains_js, count=10):
+    """Pick a diverse sample of questions for the SEO block (one per domain, then fill)."""
+    by_domain = {}
+    for q in questions:
+        d = str(q.get('domain', 1))
+        if d not in by_domain:
+            by_domain[d] = []
+        by_domain[d].append(q)
+    selected = []
+    # One from each domain first
+    for dk in sorted(by_domain.keys(), key=int):
+        if by_domain[dk]:
+            selected.append(by_domain[dk][0])
+    # Fill remaining from all questions
+    picked_ids = {q['id'] for q in selected}
+    for q in questions:
+        if len(selected) >= count:
+            break
+        if q['id'] not in picked_ids:
+            selected.append(q)
+            picked_ids.add(q['id'])
+    return selected[:count]
+
+
+def build_seo_html(seo_qs, name, exam):
+    """Build the static HTML block with sample Q&As for crawlers."""
+    items = []
+    for q in seo_qs:
+        correct_idx = q.get('correct', 0)
+        options = q.get('options', [])
+        answer = options[correct_idx] if correct_idx < len(options) else 'See explanation'
+        explanation = q.get('explanation', '')
+        items.append(
+            f'            <details>\n'
+            f'                <summary>Q: {escape(q["question"])}</summary>\n'
+            f'                <p><strong>A: {escape(answer)}</strong> &mdash; {escape(explanation)}</p>\n'
+            f'            </details>'
+        )
+    return (
+        f'        <div class="seo-questions" id="seoQuestions">\n'
+        f'            <h3>Sample {name} {exam} Practice Questions</h3>\n'
+        + '\n'.join(items) + '\n'
+        f'        </div>'
+    )
+
+
+def build_faq_schema(seo_qs):
+    """Build FAQPage schema from the SEO questions."""
+    entities = []
+    for q in seo_qs:
+        correct_idx = q.get('correct', 0)
+        options = q.get('options', [])
+        answer = options[correct_idx] if correct_idx < len(options) else 'See explanation'
+        explanation = q.get('explanation', '')
+        entities.append({
+            "@type": "Question",
+            "name": q['question'],
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": f"{answer}. {explanation}"
+            }
+        })
+    return json.dumps({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": entities
+    }, indent=4, ensure_ascii=False)
+
+
+def generate_quiz_html(cfg, domains_js, total_questions, questions):
     """Generate the quiz HTML page."""
     name = cfg['name']
     exam = cfg['exam']
@@ -250,8 +319,32 @@ def generate_quiz_html(cfg, domains_js, total_questions):
         domains_obj_lines.append(f"                {dk}: {{name: '{dv['name']}', weight: {dv['weight']}}}")
     domains_obj = ',\n'.join(domains_obj_lines)
 
-    # Build Quiz schema assesses list
+    # Pick 10 diverse questions for SEO block
+    seo_qs = pick_seo_questions(questions, domains_js)
+    seo_html = build_seo_html(seo_qs, name, exam)
+    faq_schema_json = build_faq_schema(seo_qs)
+
+    # Build Quiz schema with hasPart
     assesses_list = [dv['name'] for _, dv in sorted(domains_js.items(), key=lambda x: int(x[0]))]
+    has_part = []
+    for q in seo_qs:
+        correct_idx = q.get('correct', 0)
+        options = q.get('options', [])
+        suggested = []
+        for i, opt in enumerate(options):
+            suggested.append({
+                "@type": "Answer",
+                "text": opt,
+                "encodingFormat": "text/plain",
+                "comment": {"@type": "Comment", "text": "Correct" if i == correct_idx else "Incorrect"}
+            })
+        has_part.append({
+            "@type": "Question",
+            "eduQuestionType": "Multiple choice",
+            "text": q['question'],
+            "suggestedAnswer": [s for s in suggested if s["comment"]["text"] == "Incorrect"],
+            "acceptedAnswer": suggested[correct_idx] if correct_idx < len(suggested) else suggested[0]
+        })
     quiz_schema_json = json.dumps({
         "@context": "https://schema.org",
         "@type": "Quiz",
@@ -260,6 +353,7 @@ def generate_quiz_html(cfg, domains_js, total_questions):
         "educationalLevel": "Professional",
         "numberOfQuestions": total_questions,
         "assesses": assesses_list,
+        "hasPart": has_part,
     }, indent=4, ensure_ascii=False)
 
     return f'''<!DOCTYPE html>
@@ -285,7 +379,7 @@ def generate_quiz_html(cfg, domains_js, total_questions):
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
     <link rel="stylesheet" href="style.min.css?v=6">
-    <link rel="stylesheet" href="quiz.css?v=2">
+    <link rel="stylesheet" href="quiz.css?v=3">
     <script type="application/ld+json">
     {{
         "@context": "https://schema.org",
@@ -299,6 +393,9 @@ def generate_quiz_html(cfg, domains_js, total_questions):
     </script>
     <script type="application/ld+json">
 {quiz_schema_json}
+</script>
+    <script type="application/ld+json">
+{faq_schema_json}
 </script>
 </head>
 <body>
@@ -413,6 +510,7 @@ def generate_quiz_html(cfg, domains_js, total_questions):
                     <p class="progress-text"><span id="answered">0</span> of <span id="total-questions">10</span> answered</p>
                 </div>
                 <div id="question-container"></div>
+{seo_html}
                 <div class="quiz-actions">
                     <button class="btn btn-secondary" onclick="skipQuestion()" id="skip-btn">Skip</button>
                     <button class="btn btn-primary" onclick="nextQuestion()" id="next-btn" style="display: none;">Next Question</button>
@@ -571,7 +669,7 @@ def main():
 
         # Write HTML
         html_path = REPO / cfg['quiz']
-        html_content = generate_quiz_html(cfg, domains_js, total_questions)
+        html_content = generate_quiz_html(cfg, domains_js, total_questions, questions)
         html_path.write_text(html_content, encoding='utf-8')
         generated_html += 1
 

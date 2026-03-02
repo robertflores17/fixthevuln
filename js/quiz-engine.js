@@ -270,6 +270,8 @@ const QuizEngine = (() => {
         loadQuestions();
         bindButtons();
         displayHistory();
+        const seoBlock = document.getElementById('seoQuestions');
+        if (seoBlock) seoBlock.style.display = 'none';
     }
 
     return {
