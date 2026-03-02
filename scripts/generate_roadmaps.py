@@ -270,6 +270,7 @@ def generate_roadmap_page(product, config):
     <title>{name} Study Roadmap — Free Week-by-Week Plan | FixTheVuln</title>
     <meta name="description" content="Free {name} study roadmap. {num_weeks}-week plan with domain weights, free resources, and progress tracking. Start your {name} journey today.">
     <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <meta property="og:title" content="{name} Study Roadmap | FixTheVuln">
     <meta property="og:description" content="Free {num_weeks}-week study roadmap for {name} with domain weights and free resources.">
     <meta property="og:type" content="article">
@@ -490,6 +491,7 @@ def generate_hub_page(generated_products):
     <title>Free Certification Study Roadmaps — 65+ IT Certs | FixTheVuln</title>
     <meta name="description" content="Free week-by-week study roadmaps for 65+ IT certifications. CompTIA, AWS, Azure, Cisco, CISSP, and more. Progress tracking included.">
     <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <meta property="og:title" content="Certification Study Roadmaps | FixTheVuln">
     <meta property="og:description" content="Free study roadmaps for 65+ IT certifications with week-by-week plans.">
     <meta property="og:type" content="website">

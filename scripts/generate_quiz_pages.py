@@ -378,6 +378,7 @@ def generate_quiz_html(cfg, domains_js, total_questions, questions):
     <meta name="twitter:description" content="Free {name} {exam} practice quiz with {total_questions} questions. Test your knowledge with explanations and progress tracking.">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="stylesheet" href="style.min.css?v=6">
     <link rel="stylesheet" href="quiz.css?v=3">
     <script type="application/ld+json">

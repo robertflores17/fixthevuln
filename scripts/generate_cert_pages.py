@@ -372,6 +372,7 @@ def generate_page(product):
     <title>{name} Study Guide & Exam Objectives | FixTheVuln</title>
     <meta name="description" content="{name} ({exam_code}) study guide with complete exam objectives, domain breakdown, study tips, and practice quizzes. Free resources + fillable PDF study planners.">
     <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <meta property="og:title" content="{name} Study Guide | FixTheVuln">
     <meta property="og:description" content="Complete {name} exam guide with domain breakdown, study tips, and practice quizzes.">
     <meta property="og:type" content="article">
