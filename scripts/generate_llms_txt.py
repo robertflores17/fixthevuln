@@ -142,6 +142,10 @@ GUIDE_PAGES = {
     "quick-fixes.html", "secrets-management.html", "security-headers.html",
     "ssl-tls.html", "version-alerting.html", "vuln-tracking.html",
     "windows-hardening.html", "wordpress-security.html",
+    "what-is-cybersecurity.html", "how-to-get-into-cybersecurity.html",
+    "red-teaming-guide.html", "cybersecurity-salary-guide.html",
+    "best-cybersecurity-certifications.html",
+    "cybersecurity-job-trends.html",
 }
 
 HUB_PAGES = {
