@@ -382,7 +382,7 @@ def generate_page(product):
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{name} Study Guide | FixTheVuln">
     <meta name="twitter:description" content="Complete {name} exam guide with domain breakdown, study tips, and practice quizzes.">
-    <link rel="stylesheet" href="/style.min.css?v=6">
+    <link rel="stylesheet" href="/style.min.css?v=7">
     {faq_schema}
     <style>
         .cert-hero {{ text-align: center; padding: 3rem 1.5rem 2rem; }}
