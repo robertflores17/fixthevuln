@@ -69,6 +69,9 @@ SKIP_LINK_PATTERNS = [
     re.compile(r'^tel:'),
     re.compile(r'portswigger\.net'),           # blocks Python requests (returns 404 to bots)
     re.compile(r'linkedin\.com/in/'),           # returns 999 to all bots
+    re.compile(r'securityheaders\.com'),        # blocks bots (403)
+    re.compile(r'abuseipdb\.com'),              # blocks bots (403)
+    re.compile(r'shodan\.io'),                  # blocks bots (403)
 ]
 
 # ── Staleness thresholds (days) ────────────────────────────
@@ -95,6 +98,30 @@ TOOL_PAGES = {
     'hash-generator.html', 'regex-tester.html', 'password-generator.html',
     'subnet-calculator.html', 'password-strength.html',
 }
+
+# Guides & pillar pages (static/evergreen, no timestamp expected)
+GUIDE_PAGES = {
+    'api-security.html', 'best-cybersecurity-certifications.html',
+    'cert-cost-calculator.html', 'cloud-security.html',
+    'container-security.html', 'cybersecurity-job-trends.html',
+    'cybersecurity-salary-guide.html', 'database-security.html',
+    'encryption-cheatsheet.html', 'exploit-tracker.html',
+    'how-to-get-into-cybersecurity.html', 'linux-hardening.html',
+    'log-management.html', 'osi-layer-attacks.html',
+    'password-policy.html', 'planner.html', 'port-security.html',
+    'red-teaming-guide.html', 'secrets-management.html',
+    'ssl-tls.html', 'study-tracker.html', 'what-is-cybersecurity.html',
+    'windows-hardening.html', 'wordpress-security.html',
+}
+
+# Static/evergreen pages where "Last updated" is intentionally omitted.
+# These should NOT be flagged for missing a timestamp.
+# (Quizzes are matched by suffix below; blog/certs/comparisons/roadmaps
+#  are auto-generated and DO keep timestamps.)
+TIMESTAMP_NOT_REQUIRED = (
+    HUB_PAGES | TOOL_PAGES | LOW_VOLATILITY_PAGES | HIGH_VOLATILITY_PAGES
+    | GUIDE_PAGES
+)
 
 # ── Version patterns that may become outdated ──────────────
 
@@ -346,7 +373,8 @@ def audit_page(filepath):
                 'age_days': age_days,
                 'threshold_days': threshold,
             }
-    elif filename not in HUB_PAGES:
+    elif (filename not in TIMESTAMP_NOT_REQUIRED
+          and not filename.endswith('-quiz.html')):
         stale_info = {
             'last_updated': None,
             'age_days': None,
