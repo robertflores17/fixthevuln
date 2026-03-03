@@ -151,6 +151,27 @@ def sprint_kit_cta_html(prefix=''):
 '''
 
 
+def cyberfolio_cta_html():
+    """Generate a CyberFolio cross-link CTA for comparison pages."""
+    return '''        <!-- CyberFolio CTA -->
+        <div style="border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.3rem;">CyberFolio</p>
+            <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Choosing your next cert? Track them all in one place.</p>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills &mdash; free.</p>
+            <a href="https://cyberfolio.io" style="display:inline-block;background:#06b6d4;color:white;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;" target="_blank" rel="noopener">Build Your Portfolio &rarr;</a>
+        </div>
+'''
+
+
+def replace_cyberfolio_cta(text, new_cta):
+    """Replace existing <!-- CyberFolio CTA --> section."""
+    pattern = r'        <!-- CyberFolio CTA -->\n        <div style="border: 1px solid.*?</div>\n'
+    match = re.search(pattern, text, re.DOTALL)
+    if match:
+        return text[:match.start()] + new_cta + text[match.end():]
+    return None
+
+
 def replace_etsy_cta(text, new_cta):
     """Replace the <!-- Etsy CTA --> section with new CTA HTML."""
     pattern = r'        <!-- Etsy CTA -->\n        <section style="background: linear-gradient\(135deg.*?</section>\n'
@@ -188,9 +209,10 @@ def replace_sprint_kit_cta(text, new_cta):
 
 
 def process_comparisons():
-    """Update comparison pages: Etsy CTA → store planner CTA."""
+    """Update comparison pages: Etsy CTA → store planner CTA + CyberFolio CTA."""
     comp_dir = REPO / 'comparisons'
     updated = 0
+    cf_cta = cyberfolio_cta_html()
     for filename, certs in COMPARISON_MAP.items():
         filepath = comp_dir / filename
         if not filepath.exists():
@@ -198,23 +220,45 @@ def process_comparisons():
             continue
         text = filepath.read_text(encoding='utf-8')
         new_cta = store_cta_html(certs, prefix='..')
+        changed = False
+        # Store CTA
         if '<!-- Store CTA -->' in text:
-            if not FORCE:
-                print(f"  SKIP {filename} — already updated (use --force to re-inject)")
-                continue
-            result = replace_store_cta(text, new_cta)
+            if FORCE:
+                result = replace_store_cta(text, new_cta)
+                if result:
+                    text = result
+                    changed = True
+        else:
+            result = replace_etsy_cta(text, new_cta)
             if result:
-                filepath.write_text(result, encoding='utf-8')
-                print(f"  OK   comparisons/{filename} (force-replaced)")
-                updated += 1
-            continue
-        result = replace_etsy_cta(text, new_cta)
-        if result:
-            filepath.write_text(result, encoding='utf-8')
+                text = result
+                changed = True
+            elif not changed:
+                print(f"  WARN {filename} — could not find Store/Etsy CTA section")
+        # CyberFolio CTA
+        if '<!-- CyberFolio CTA -->' in text:
+            if FORCE:
+                result = replace_cyberfolio_cta(text, cf_cta)
+                if result:
+                    text = result
+                    changed = True
+        else:
+            # Inject after Store CTA section (find end of store section)
+            store_marker = '<!-- Store CTA -->'
+            idx = text.find(store_marker)
+            if idx >= 0:
+                # Find end of the store section (closing </section> + newline)
+                section_end = text.find('</section>\n', idx)
+                if section_end >= 0:
+                    insert_at = section_end + len('</section>\n')
+                    text = text[:insert_at] + cf_cta + text[insert_at:]
+                    changed = True
+        if changed:
+            filepath.write_text(text, encoding='utf-8')
             print(f"  OK   comparisons/{filename}")
             updated += 1
-        else:
-            print(f"  WARN {filename} — could not find Etsy CTA section")
+        elif '<!-- Store CTA -->' in text and '<!-- CyberFolio CTA -->' in text and not FORCE:
+            print(f"  SKIP {filename} — already updated (use --force to re-inject)")
     return updated
 
 

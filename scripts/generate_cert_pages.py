@@ -409,6 +409,10 @@ def generate_page(product):
         .planner-cta-card h3 {{ color: white; margin-bottom: 0.5rem; font-size: 1.3rem; }}
         .planner-cta-card p {{ opacity: 0.9; margin-bottom: 1rem; }}
         .planner-cta-card .btn-cta {{ display: inline-block; background: #667eea; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; }}
+        .cyberfolio-cta {{ border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem; }}
+        .cyberfolio-cta p {{ color: var(--text-secondary); margin-bottom: 1rem; }}
+        .cyberfolio-cta .btn-cyberfolio {{ display: inline-block; background: #06b6d4; color: white; padding: 10px 22px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.95rem; }}
+        .cyberfolio-cta .btn-cyberfolio:hover {{ opacity: 0.9; }}
         .faq-item {{ background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 0.5rem; overflow: hidden; }}
         .faq-item summary {{ padding: 1rem 1.25rem; font-weight: 600; cursor: pointer; list-style: none; }}
         .faq-item summary::-webkit-details-marker {{ display: none; }}
@@ -483,6 +487,13 @@ def generate_page(product):
                 <p style="font-size: 0.85rem; opacity: 0.7; margin-top: 0.75rem;">Also available as a 4-Format Bundle for $15.99</p>
             </div>
         </section>
+
+        <div class="cyberfolio-cta">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.3rem;">CyberFolio</p>
+            <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Earned your certs? Show employers.</p>
+            <p>Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills &mdash; free.</p>
+            <a href="https://cyberfolio.io" class="btn-cyberfolio" target="_blank" rel="noopener">Build Your Portfolio &rarr;</a>
+        </div>
 
         <section class="cert-section">
             <h2>Frequently Asked Questions</h2>
