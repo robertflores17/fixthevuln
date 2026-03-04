@@ -1,22 +1,21 @@
-# Daily KEV Review — 2026-02-26
+# Daily KEV Review — 2026-03-04
 
-**New CVEs:** 3 | **Critical:** 1 | **High:** 2 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 2 | **Critical:** 0 | **High:** 2 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-20127 | Cisco | Catalyst SD-WAN Controller and Manager | 10.0 | Unknown | 2026-02-27 |
-| CVE-2026-25108 | Soliton Systems K.K | FileZen | 8.8 | Unknown | 2026-03-17 |
-| CVE-2022-20775 | Cisco | SD-WAN | 7.8 | Unknown | 2026-02-27 |
+| CVE-2026-22719 | Broadcom | VMware Aria Operations | 8.1 | Unknown | 2026-03-24 |
+| CVE-2026-21385 | Qualcomm | Multiple Chipsets | 7.8 | Unknown | 2026-03-24 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-02-27 (2 CVEs)
+- **Nearest due date:** 2026-03-24 (2 CVEs)
 - **Overdue:** None
 
 ## Vendor Summary
-- Cisco: 2 CVEs
-- Soliton Systems K.K: 1 CVE
+- Broadcom: 1 CVE
+- Qualcomm: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
