@@ -256,6 +256,18 @@ export default {
       return handleDownload(request, env, cors);
     }
 
+    // ─── ROUTE: POST /errors ──────────────────
+    // Client error reporting
+    if (request.method === 'POST' && url.pathname === '/errors') {
+      return handleClientError(request, env, cors);
+    }
+
+    // ─── ROUTE: GET /errors ──────────────────
+    // Admin error log (protected by secret header)
+    if (request.method === 'GET' && url.pathname === '/errors') {
+      return handleAdminErrors(request, env, cors);
+    }
+
     return new Response(JSON.stringify({ error: 'Not found' }), {
       status: 404,
       headers: { ...cors, 'Content-Type': 'application/json' },
@@ -848,5 +860,138 @@ async function sendSellerNotification(env, customerEmail, downloads, items, amou
       subject: `New Sale: ${certNames}`,
       html,
     }),
+  });
+}
+
+// ─── CLIENT ERROR REPORTING ────────────────────
+const ADMIN_EMAIL = 'robertflores17@hotmail.com';
+const ERROR_RATE_LIMIT = new Map(); // IP -> { count, resetAt }
+
+async function handleClientError(request, env, cors) {
+  // Rate limit: 10 errors/minute per IP
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+  const now = Date.now();
+  const limit = ERROR_RATE_LIMIT.get(ip);
+  if (limit) {
+    if (now < limit.resetAt) {
+      if (limit.count >= 10) {
+        return new Response('', { status: 429, headers: cors });
+      }
+      limit.count++;
+    } else {
+      ERROR_RATE_LIMIT.set(ip, { count: 1, resetAt: now + 60000 });
+    }
+  } else {
+    ERROR_RATE_LIMIT.set(ip, { count: 1, resetAt: now + 60000 });
+  }
+  // Evict stale entries
+  if (ERROR_RATE_LIMIT.size > 500) {
+    for (const [k, v] of ERROR_RATE_LIMIT) {
+      if (now > v.resetAt) ERROR_RATE_LIMIT.delete(k);
+    }
+  }
+
+  if (!env.DB) {
+    return new Response('', { status: 204, headers: cors });
+  }
+
+  try {
+    const text = await request.text();
+    const body = JSON.parse(text);
+    const message = String(body.message || '').slice(0, 1000);
+    const source = String(body.source || '').slice(0, 500);
+    const lineno = parseInt(body.lineno) || 0;
+    const colno = parseInt(body.colno) || 0;
+    const stack = String(body.stack || '').slice(0, 2000);
+    const page = String(body.page || '').slice(0, 200);
+    const ua = (request.headers.get('User-Agent') || '').slice(0, 300);
+
+    await env.DB.prepare(
+      `INSERT INTO error_log (message, source, lineno, colno, stack, page, user_agent, ip)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+    ).bind(message, source, lineno, colno, stack, page, ua, ip).run();
+
+    // Check if we should send an email alert (5+ identical errors in last hour)
+    const hourAgo = new Date(now - 3600000).toISOString();
+    const countResult = await env.DB.prepare(
+      `SELECT COUNT(*) as cnt FROM error_log WHERE message = ? AND created_at > ?`
+    ).bind(message, hourAgo).first();
+
+    if (countResult && countResult.cnt === 5) {
+      // Check if alert already sent for this error
+      const alertSent = await env.DB.prepare(
+        `SELECT id FROM error_alert_sent WHERE message_hash = ? AND sent_at > ?`
+      ).bind(message.slice(0, 200), hourAgo).first();
+
+      if (!alertSent) {
+        await env.DB.prepare(
+          `INSERT INTO error_alert_sent (message_hash) VALUES (?)`
+        ).bind(message.slice(0, 200)).run();
+
+        // Send email alert via Resend
+        try {
+          await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              from: 'FixTheVuln Alerts <hello@fixthevuln.com>',
+              to: [ADMIN_EMAIL],
+              subject: `[FixTheVuln] Error Alert: ${message.slice(0, 80)}`,
+              html: `<h3>Recurring Error Detected</h3>
+<p><strong>Message:</strong> ${escapeHtml(message)}</p>
+<p><strong>Page:</strong> ${escapeHtml(page)}</p>
+<p><strong>Source:</strong> ${escapeHtml(source)}:${lineno}:${colno}</p>
+<p><strong>Occurrences:</strong> 5+ in last hour</p>
+<p><strong>Stack:</strong></p>
+<pre style="background:#f1f5f9;padding:12px;border-radius:8px;font-size:12px;overflow-x:auto;">${escapeHtml(stack)}</pre>`,
+            }),
+          });
+        } catch { /* email failure shouldn't block error logging */ }
+      }
+    }
+
+    return new Response('', { status: 204, headers: cors });
+  } catch {
+    return new Response('', { status: 400, headers: cors });
+  }
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+async function handleAdminErrors(request, env, cors) {
+  const url = new URL(request.url);
+  const secret = url.searchParams.get('key');
+  if (!env.ADMIN_KEY || secret !== env.ADMIN_KEY) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+      headers: { ...cors, 'Content-Type': 'application/json' },
+    });
+  }
+
+  if (!env.DB) {
+    return new Response(JSON.stringify({ errors: [] }), {
+      status: 200,
+      headers: { ...cors, 'Content-Type': 'application/json' },
+    });
+  }
+
+  const page = parseInt(url.searchParams.get('page')) || 1;
+  const limit = Math.min(parseInt(url.searchParams.get('limit')) || 50, 100);
+  const offset = (page - 1) * limit;
+
+  const { results } = await env.DB.prepare(
+    `SELECT * FROM error_log ORDER BY created_at DESC LIMIT ? OFFSET ?`
+  ).bind(limit, offset).all();
+
+  const { cnt } = await env.DB.prepare(`SELECT COUNT(*) as cnt FROM error_log`).first();
+
+  return new Response(JSON.stringify({ errors: results, total: cnt, page, limit }), {
+    status: 200,
+    headers: { ...cors, 'Content-Type': 'application/json' },
   });
 }
