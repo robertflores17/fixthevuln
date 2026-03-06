@@ -163,9 +163,45 @@ def cyberfolio_cta_html():
 '''
 
 
+def cyberfolio_quiz_cta_html():
+    """Generate a CyberFolio CTA for quiz pages."""
+    return '''        <!-- CyberFolio CTA -->
+        <div style="border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.3rem;">CyberFolio</p>
+            <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Passing the exam? Show employers what you know.</p>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills &mdash; free.</p>
+            <a href="https://cyberfolio.io" style="display:inline-block;background:#06b6d4;color:white;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;" target="_blank" rel="noopener">Build Your Portfolio &rarr;</a>
+        </div>
+'''
+
+
+def cyberfolio_blog_cta_html():
+    """Generate a CyberFolio CTA for blog pages."""
+    return '''            <!-- CyberFolio CTA -->
+            <div style="border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem;">
+                <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.3rem;">CyberFolio</p>
+                <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Building cybersecurity skills? Track them in one place.</p>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills &mdash; free.</p>
+                <a href="https://cyberfolio.io" style="display:inline-block;background:#06b6d4;color:white;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;" target="_blank" rel="noopener">Build Your Portfolio &rarr;</a>
+            </div>
+'''
+
+
+def cyberfolio_cve_cta_html():
+    """Generate a CyberFolio CTA for CVE pages."""
+    return '''        <!-- CyberFolio CTA -->
+        <div style="border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.3rem;">CyberFolio</p>
+            <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Vulnerability management on your resume? Prove it.</p>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills &mdash; free.</p>
+            <a href="https://cyberfolio.io" style="display:inline-block;background:#06b6d4;color:white;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;" target="_blank" rel="noopener">Build Your Portfolio &rarr;</a>
+        </div>
+'''
+
+
 def replace_cyberfolio_cta(text, new_cta):
     """Replace existing <!-- CyberFolio CTA --> section."""
-    pattern = r'        <!-- CyberFolio CTA -->\n        <div style="border: 1px solid.*?</div>\n'
+    pattern = r' *<!-- CyberFolio CTA -->\n *<div style="border: 1px solid.*?</div>\n'
     match = re.search(pattern, text, re.DOTALL)
     if match:
         return text[:match.start()] + new_cta + text[match.end():]
@@ -352,14 +388,186 @@ def process_guides():
     return updated
 
 
+def process_quizzes():
+    """Inject CyberFolio CTA into quiz pages."""
+    updated = 0
+    cf_cta = cyberfolio_quiz_cta_html()
+    for filepath in sorted(REPO.glob('*-quiz.html')):
+        text = filepath.read_text(encoding='utf-8')
+        if '<!-- CyberFolio CTA -->' in text:
+            if not FORCE:
+                print(f"  SKIP {filepath.name}")
+                continue
+            result = replace_cyberfolio_cta(text, cf_cta)
+            if result:
+                filepath.write_text(result, encoding='utf-8')
+                print(f"  OK   {filepath.name} (force-replaced)")
+                updated += 1
+            continue
+        # Inject before </main>
+        main_idx = text.rfind('</main>')
+        if main_idx > 0:
+            line_start = text.rfind('\n', 0, main_idx) + 1
+            text = text[:line_start] + cf_cta + '\n' + text[line_start:]
+            filepath.write_text(text, encoding='utf-8')
+            print(f"  OK   {filepath.name}")
+            updated += 1
+        else:
+            print(f"  WARN {filepath.name} — no </main> found")
+    return updated
+
+
+def process_blogs():
+    """Inject CyberFolio CTA into blog pages."""
+    updated = 0
+    cf_cta = cyberfolio_blog_cta_html()
+    blog_dir = REPO / 'blog'
+    if not blog_dir.exists():
+        print("  Blog directory not found")
+        return 0
+    for filepath in sorted(blog_dir.glob('*.html')):
+        if filepath.name == 'index.html':
+            continue
+        text = filepath.read_text(encoding='utf-8')
+        if '<!-- CyberFolio CTA -->' in text:
+            if not FORCE:
+                print(f"  SKIP blog/{filepath.name}")
+                continue
+            result = replace_cyberfolio_cta(text, cf_cta)
+            if result:
+                filepath.write_text(result, encoding='utf-8')
+                print(f"  OK   blog/{filepath.name} (force-replaced)")
+                updated += 1
+            continue
+        # Inject after <!-- Store CTA --> section
+        idx = text.find('<!-- Store CTA -->')
+        if idx >= 0:
+            section_end = text.find('</section>\n', idx)
+            if section_end >= 0:
+                insert_at = section_end + len('</section>\n')
+                text = text[:insert_at] + cf_cta + text[insert_at:]
+                filepath.write_text(text, encoding='utf-8')
+                print(f"  OK   blog/{filepath.name}")
+                updated += 1
+                continue
+        # Fallback: before </main>
+        main_idx = text.rfind('</main>')
+        if main_idx > 0:
+            line_start = text.rfind('\n', 0, main_idx) + 1
+            text = text[:line_start] + cf_cta + '\n' + text[line_start:]
+            filepath.write_text(text, encoding='utf-8')
+            print(f"  OK   blog/{filepath.name} (before </main>)")
+            updated += 1
+        else:
+            print(f"  WARN blog/{filepath.name} — no injection point")
+    return updated
+
+
+def process_cve_cyberfolio():
+    """Inject CyberFolio CTA into CVE pages (after Store/Sprint Kit CTA)."""
+    cve_dir = REPO / 'cve'
+    if not cve_dir.exists():
+        print("  CVE directory not found")
+        return 0
+    updated = 0
+    cf_cta = cyberfolio_cve_cta_html()
+    for filepath in sorted(cve_dir.glob('CVE-*.html')):
+        text = filepath.read_text(encoding='utf-8')
+        if '<!-- CyberFolio CTA -->' in text:
+            if not FORCE:
+                print(f"  SKIP cve/{filepath.name}")
+                continue
+            result = replace_cyberfolio_cta(text, cf_cta)
+            if result:
+                filepath.write_text(result, encoding='utf-8')
+                print(f"  OK   cve/{filepath.name} (force-replaced)")
+                updated += 1
+            continue
+        # Find Store CTA or Sprint Kit CTA section end
+        injected = False
+        for marker in ('<!-- Sprint Kit CTA -->', '<!-- Store CTA -->'):
+            idx = text.find(marker)
+            if idx >= 0:
+                section_end = text.find('</section>\n', idx)
+                if section_end >= 0:
+                    insert_at = section_end + len('</section>\n')
+                    text = text[:insert_at] + cf_cta + text[insert_at:]
+                    filepath.write_text(text, encoding='utf-8')
+                    print(f"  OK   cve/{filepath.name}")
+                    updated += 1
+                    injected = True
+                    break
+        if not injected:
+            print(f"  WARN cve/{filepath.name} — no CTA section found")
+    return updated
+
+
+def process_guides_cyberfolio():
+    """Inject CyberFolio CTA into guide pages (after Store/Sprint Kit CTA)."""
+    updated = 0
+    cf_cta = cyberfolio_cta_html()
+    for filename, certs in GUIDE_MAP.items():
+        if not certs:
+            continue
+        filepath = REPO / filename
+        if not filepath.exists():
+            continue
+        text = filepath.read_text(encoding='utf-8')
+        if '<!-- CyberFolio CTA -->' in text:
+            if not FORCE:
+                print(f"  SKIP {filename}")
+                continue
+            result = replace_cyberfolio_cta(text, cf_cta)
+            if result:
+                filepath.write_text(result, encoding='utf-8')
+                print(f"  OK   {filename} (force-replaced)")
+                updated += 1
+            continue
+        # Find last CTA section end (Sprint Kit takes priority over Store)
+        injected = False
+        for marker in ('<!-- Sprint Kit CTA -->', '<!-- Store CTA -->'):
+            idx = text.find(marker)
+            if idx >= 0:
+                section_end = text.find('</section>\n', idx)
+                if section_end >= 0:
+                    insert_at = section_end + len('</section>\n')
+                    text = text[:insert_at] + cf_cta + text[insert_at:]
+                    filepath.write_text(text, encoding='utf-8')
+                    print(f"  OK   {filename}")
+                    updated += 1
+                    injected = True
+                    break
+        if not injected:
+            # Fallback: before </main>
+            main_idx = text.rfind('</main>')
+            if main_idx > 0:
+                line_start = text.rfind('\n', 0, main_idx) + 1
+                text = text[:line_start] + cf_cta + '\n' + text[line_start:]
+                filepath.write_text(text, encoding='utf-8')
+                print(f"  OK   {filename} (before </main>)")
+                updated += 1
+            else:
+                print(f"  WARN {filename} — no injection point")
+    return updated
+
+
 def main():
-    print("=== Updating Comparison Pages ===")
+    print("=== Updating Comparison Pages (Store + CyberFolio CTAs) ===")
     c1 = process_comparisons()
-    print(f"\n=== Updating CVE Pages ===")
+    print(f"\n=== Updating CVE Pages (Sprint Kit CTA) ===")
     c2 = process_cve_pages()
-    print(f"\n=== Updating Guide Pages ===")
+    print(f"\n=== Updating Guide Pages (Store CTA) ===")
     c3 = process_guides()
-    print(f"\nDone: {c1} comparisons, {c2} CVE pages, {c3} guides updated")
+    print(f"\n=== Injecting CyberFolio CTAs: Quizzes ===")
+    c4 = process_quizzes()
+    print(f"\n=== Injecting CyberFolio CTAs: Blog Posts ===")
+    c5 = process_blogs()
+    print(f"\n=== Injecting CyberFolio CTAs: CVE Pages ===")
+    c6 = process_cve_cyberfolio()
+    print(f"\n=== Injecting CyberFolio CTAs: Guides ===")
+    c7 = process_guides_cyberfolio()
+    print(f"\nDone: {c1} comparisons, {c2} CVE sprint-kit, {c3} guides (store)")
+    print(f"CyberFolio: {c4} quizzes, {c5} blogs, {c6} CVEs, {c7} guides")
 
 
 if __name__ == '__main__':
