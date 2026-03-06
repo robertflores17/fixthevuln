@@ -79,6 +79,17 @@ GUIDE_MAP = {
     'network-plus-quiz.html':    [],  # skip — quiz page, handled separately
     'wordpress-security.html':   [('comptia-security-plus', 'CompTIA Security+')],
     'security-analyst-roadmap.html': [('comptia-security-plus', 'CompTIA Security+'), ('isc2-cissp', 'ISC2 CISSP')],
+    'owasp-llm-top10.html':         [('comptia-security-plus', 'CompTIA Security+'), ('ec-ceh', 'EC-Council CEH')],
+    'prompt-injection.html':         [('comptia-pentest-plus', 'CompTIA PenTest+'), ('offsec-oswa', 'OffSec OSWA')],
+    'model-poisoning.html':          [('comptia-security-plus', 'CompTIA Security+')],
+    'mlsecops.html':                 [('comptia-cysa-plus', 'CompTIA CySA+'), ('aws-security-specialty', 'AWS Security Specialty')],
+    'ai-security-careers.html':      [('isc2-cissp', 'ISC2 CISSP'), ('comptia-security-plus', 'CompTIA Security+')],
+    'risk-register-guide.html':      [('isaca-crisc', 'ISACA CRISC'), ('isc2-cissp', 'ISC2 CISSP')],
+    'third-party-risk.html':         [('isaca-crisc', 'ISACA CRISC'), ('isc2-cissp', 'ISC2 CISSP')],
+    'grc-career-path.html':          [('isaca-cism', 'ISACA CISM'), ('isc2-cissp', 'ISC2 CISSP')],
+    'siem-rule-writing.html':        [('comptia-cysa-plus', 'CompTIA CySA+'), ('giac-gcih', 'GIAC GCIH')],
+    'threat-hunting.html':           [('comptia-cysa-plus', 'CompTIA CySA+'), ('giac-gcih', 'GIAC GCIH')],
+    'log-analysis-cheatsheet.html':  [('comptia-cysa-plus', 'CompTIA CySA+')],
 }
 
 
@@ -343,7 +354,10 @@ def process_guides():
         new_cta = store_cta_html(certs, prefix='')
         # Also add Sprint Kit CTA for security-focused guides
         security_guides = ['incident-response.html', 'owasp-top10.html', 'security-headers.html',
-                          'quick-fixes.html', 'log-management.html', 'security-analyst-roadmap.html']
+                          'quick-fixes.html', 'log-management.html', 'security-analyst-roadmap.html',
+                          'owasp-llm-top10.html', 'prompt-injection.html', 'model-poisoning.html',
+                          'mlsecops.html', 'siem-rule-writing.html', 'threat-hunting.html',
+                          'log-analysis-cheatsheet.html']
         if filename in security_guides:
             new_cta += sprint_kit_cta_html(prefix='')
 

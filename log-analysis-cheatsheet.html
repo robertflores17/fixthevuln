@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+        <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Log analysis cheat sheet with accurate Windows Event IDs, Linux log locations, bash analysis commands, correlation patterns, and a structured analysis workflow for security analysts.">
+    <meta name="keywords" content="log analysis, Windows Event IDs, Linux logs, security log analysis, SIEM, event correlation, forensic analysis, 4624, 4625, 4688">
+    <title>Log Analysis Cheat Sheet - FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/log-analysis-cheatsheet.html">
+    <meta property="og:title" content="Log Analysis Cheat Sheet - FixTheVuln">
+    <meta property="og:description" content="Log analysis cheat sheet with accurate Windows Event IDs, Linux log locations, bash analysis commands, correlation patterns, and a structured analysis workflow for security analysts.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fixthevuln.com/log-analysis-cheatsheet.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Log Analysis Cheat Sheet - FixTheVuln">
+    <meta name="twitter:description" content="Log analysis cheat sheet with accurate Windows Event IDs, Linux log locations, bash analysis commands, correlation patterns, and a structured analysis workflow for security analysts.">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.min.css?v=7">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Guides", "item": "https://fixthevuln.com/guides.html" },
+            { "@type": "ListItem", "position": 3, "name": "Log Analysis" }
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "Log Analysis Cheat Sheet",
+        "description": "Log analysis cheat sheet with accurate Windows Event IDs, Linux log locations, bash analysis commands, correlation patterns, and a structured analysis workflow for security analysts.",
+        "author": { "@type": "Organization", "name": "FixTheVuln" },
+        "publisher": { "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "What are the most important Windows Security Event IDs?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "The most critical Windows Security Event IDs are: 4624 (successful logon), 4625 (failed logon), 4648 (logon with explicit credentials), 4672 (special privileges assigned), 4688 (new process created), 4698 (scheduled task created), 4720 (user account created), 4732 (member added to security group), 1102 (audit log cleared), and 7045 (new service installed)."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Where are Linux security logs stored?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Key Linux log locations: /var/log/auth.log (Debian/Ubuntu) or /var/log/secure (RHEL/CentOS) for authentication events, /var/log/syslog for general system events, /var/log/audit/audit.log for auditd events, /var/log/kern.log for kernel messages, and journalctl for systemd journal entries. Apache logs are typically in /var/log/apache2/ or /var/log/httpd/."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "How do you correlate events across multiple log sources?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Event correlation links related events across different log sources using common fields like timestamps, IP addresses, usernames, and session IDs. For example, correlate a failed VPN login (authentication log) with a subsequent successful login from a different IP (same user), followed by unusual file access (file server log). SIEM tools automate this with correlation rules."
+                }
+            }
+        ]
+    }
+    </script>
+    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="blog/feed.xml">
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="index.html" class="site-nav-logo">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+        <div class="site-nav-links">
+            <a href="guides.html">Guides</a>
+            <a href="tools.html">Tools</a>
+            <a href="compliance.html">Compliance</a>
+            <a href="resources.html">Resources</a>
+            <a href="practice-tests.html">Quizzes</a>
+            <a href="career-paths.html">Career Paths</a>
+            <a href="blog/">Blog</a>
+            <a href="/store/store.html" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: .35rem .75rem; border-radius: 6px; font-size: .85rem; font-weight: 600; text-decoration: none;">Store</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>FixTheVuln</h1></a>
+            <p class="tagline">Log Analysis Cheat Sheet</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
+            <span>By <strong>FixTheVuln Team</strong></span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Peer-reviewed security content</span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Sources: CISA, NVD, OWASP</span>
+        </div>
+
+            <!-- Quiz Links -->
+            <section style="margin-top: 1.5rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
+                <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Test Your Knowledge</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+                <a href="cysa-plus-quiz.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">CySA+ Practice Quiz</a>
+                <a href="security-quiz.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Security+ Practice Quiz</a>
+                </div>
+            </section>
+
+        <a href="index.html" class="back-link">&larr; Back to Home</a>
+
+        <div class="key-takeaways">
+            <h2>Key Takeaways</h2>
+            <ul>
+                <li>Windows Event IDs 4624/4625 (logon success/failure) and 4688 (process creation) are the foundation of Windows security monitoring</li>
+                <li>Linux authentication logs live in /var/log/auth.log (Debian) or /var/log/secure (RHEL) — know your distro</li>
+                <li>Master grep, awk, sort, uniq, and jq for fast command-line log analysis</li>
+                <li>Correlation is key: link events across authentication, process, network, and file access logs by timestamp and user</li>
+                <li>Always establish a baseline of normal before looking for anomalies</li>
+            </ul>
+        </div>
+
+        <section class="intro">
+            <h2>Security Log Analysis Reference</h2>
+            <p>Log analysis is a fundamental skill for security analysts, incident responders, and threat hunters. Knowing which logs to check, what events to look for, and how to quickly extract meaningful patterns separates effective analysts from those overwhelmed by data. This cheat sheet provides quick-reference tables for Windows Event IDs, Linux log locations, command-line analysis techniques, and event correlation patterns you will use daily.</p>
+        </section>
+
+        <!-- Windows Event IDs -->
+        <section class="vulnerability-card">
+            <h2>Windows Security Event IDs</h2>
+            <p>These Event IDs from the Windows Security event log are the most commonly analyzed during security investigations. All IDs are from the Microsoft Windows Security Auditing provider.</p>
+            <div style="overflow-x: auto;">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Event ID</th>
+                            <th>Event</th>
+                            <th>Category</th>
+                            <th>Security Relevance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>4624</strong></td><td>Successful logon</td><td>Logon/Logoff</td><td>Track who logged in, when, from where, and logon type (2=interactive, 3=network, 10=RDP)</td></tr>
+                        <tr><td><strong>4625</strong></td><td>Failed logon</td><td>Logon/Logoff</td><td>Brute force detection, credential stuffing, account lockout investigation</td></tr>
+                        <tr><td><strong>4634</strong></td><td>Logoff</td><td>Logon/Logoff</td><td>Session duration analysis, correlate with 4624 for full session timeline</td></tr>
+                        <tr><td><strong>4648</strong></td><td>Logon with explicit credentials</td><td>Logon/Logoff</td><td>RunAs usage, lateral movement with alternate credentials</td></tr>
+                        <tr><td><strong>4672</strong></td><td>Special privileges assigned</td><td>Privilege Use</td><td>Admin logon detection, privilege escalation monitoring</td></tr>
+                        <tr><td><strong>4688</strong></td><td>New process created</td><td>Process Tracking</td><td>Command execution tracking (enable command-line logging for full value)</td></tr>
+                        <tr><td><strong>4689</strong></td><td>Process exited</td><td>Process Tracking</td><td>Process lifetime analysis, correlate with 4688</td></tr>
+                        <tr><td><strong>4698</strong></td><td>Scheduled task created</td><td>Object Access</td><td>Persistence mechanism detection — attackers frequently use scheduled tasks</td></tr>
+                        <tr><td><strong>4720</strong></td><td>User account created</td><td>Account Mgmt</td><td>Unauthorized account creation, backdoor account detection</td></tr>
+                        <tr><td><strong>4722</strong></td><td>User account enabled</td><td>Account Mgmt</td><td>Re-enabled dormant or disabled accounts</td></tr>
+                        <tr><td><strong>4724</strong></td><td>Password reset attempt</td><td>Account Mgmt</td><td>Unauthorized password changes, account takeover</td></tr>
+                        <tr><td><strong>4732</strong></td><td>Member added to security group</td><td>Account Mgmt</td><td>Privilege escalation — user added to Administrators, Domain Admins, etc.</td></tr>
+                        <tr><td><strong>4738</strong></td><td>User account changed</td><td>Account Mgmt</td><td>Account modification tracking, attribute changes</td></tr>
+                        <tr><td><strong>4776</strong></td><td>NTLM authentication attempt</td><td>Account Logon</td><td>NTLM relay attacks, legacy authentication monitoring</td></tr>
+                        <tr><td><strong>7045</strong></td><td>New service installed</td><td>System</td><td>Persistence and privilege escalation via service creation (System log, not Security)</td></tr>
+                        <tr><td><strong>1102</strong></td><td>Audit log cleared</td><td>System</td><td>Anti-forensics — attacker clearing their tracks (always investigate immediately)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted);">
+                <strong>Note:</strong> Windows logon types in Event 4624: Type 2 (Interactive/console), Type 3 (Network/SMB), Type 4 (Batch), Type 5 (Service), Type 7 (Unlock), Type 10 (RemoteInteractive/RDP), Type 11 (CachedInteractive).
+            </p>
+        </section>
+
+        <!-- Linux Log Locations -->
+        <section class="vulnerability-card">
+            <h2>Linux Log Locations</h2>
+            <div style="overflow-x: auto;">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Log File</th>
+                            <th>Distro</th>
+                            <th>Contents</th>
+                            <th>Security Use</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>/var/log/auth.log</strong></td><td>Debian/Ubuntu</td><td>Authentication events: SSH, sudo, PAM</td><td>Failed logins, brute force, privilege escalation</td></tr>
+                        <tr><td><strong>/var/log/secure</strong></td><td>RHEL/CentOS</td><td>Authentication events: SSH, sudo, PAM</td><td>Same as auth.log for RHEL-based systems</td></tr>
+                        <tr><td><strong>/var/log/syslog</strong></td><td>Debian/Ubuntu</td><td>General system messages</td><td>Service start/stop, cron execution, system errors</td></tr>
+                        <tr><td><strong>/var/log/messages</strong></td><td>RHEL/CentOS</td><td>General system messages</td><td>Same as syslog for RHEL-based systems</td></tr>
+                        <tr><td><strong>/var/log/audit/audit.log</strong></td><td>All (with auditd)</td><td>Kernel-level audit events</td><td>File access, syscalls, SELinux denials, user actions</td></tr>
+                        <tr><td><strong>/var/log/kern.log</strong></td><td>Debian/Ubuntu</td><td>Kernel messages</td><td>Hardware errors, kernel exploits, module loading</td></tr>
+                        <tr><td><strong>/var/log/cron</strong></td><td>RHEL/CentOS</td><td>Cron job execution</td><td>Scheduled task abuse, persistence mechanisms</td></tr>
+                        <tr><td><strong>/var/log/apache2/access.log</strong></td><td>Debian/Ubuntu</td><td>Web server access logs</td><td>Web attacks, SQLi attempts, directory traversal</td></tr>
+                        <tr><td><strong>/var/log/httpd/access_log</strong></td><td>RHEL/CentOS</td><td>Web server access logs</td><td>Same as above for RHEL-based systems</td></tr>
+                        <tr><td><strong>/var/log/faillog</strong></td><td>All</td><td>Failed login attempts</td><td>Brute force tracking (use <code>faillog</code> command to read)</td></tr>
+                        <tr><td><strong>/var/log/lastlog</strong></td><td>All</td><td>Last login per user</td><td>Detect dormant account usage (use <code>lastlog</code> command)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Bash Commands -->
+        <section class="vulnerability-card">
+            <h2>Bash Commands for Log Analysis</h2>
+            <div class="code-block">
+<pre><code># --- Authentication Analysis ---
+
+# Count failed SSH logins by source IP (Debian/Ubuntu)
+grep "Failed password" /var/log/auth.log \
+  | awk '{print $(NF-3)}' | sort | uniq -c | sort -rn | head -20
+
+# Count failed SSH logins by source IP (RHEL/CentOS)
+grep "Failed password" /var/log/secure \
+  | awk '{print $(NF-3)}' | sort | uniq -c | sort -rn | head -20
+
+# Show successful SSH logins with timestamps
+grep "Accepted" /var/log/auth.log \
+  | awk '{print $1, $2, $3, $9, $11}' | tail -50
+
+# Find sudo commands executed
+grep "COMMAND=" /var/log/auth.log \
+  | awk -F'COMMAND=' '{print $2}' | sort | uniq -c | sort -rn
+
+# --- Web Server Analysis ---
+
+# Top 20 requesting IPs
+awk '{print $1}' /var/log/apache2/access.log \
+  | sort | uniq -c | sort -rn | head -20
+
+# Find potential SQL injection attempts
+grep -iE "(union.*select|or.*1.*=.*1|drop.*table|insert.*into)" \
+  /var/log/apache2/access.log
+
+# Find directory traversal attempts
+grep -E "\.\./\.\." /var/log/apache2/access.log
+
+# HTTP status code distribution
+awk '{print $9}' /var/log/apache2/access.log \
+  | sort | uniq -c | sort -rn
+
+# --- Timeline Analysis ---
+
+# Extract events in a specific time window
+awk '$0 >= "Mar  6 14:00" && $0 <= "Mar  6 15:00"' /var/log/auth.log
+
+# Count events per minute (for spike detection)
+awk '{print $1, $2, $3}' /var/log/auth.log \
+  | cut -d: -f1,2 | sort | uniq -c | sort -rn | head -20
+
+# --- JSON Log Analysis with jq ---
+
+# Parse JSON logs (e.g., cloud audit trails)
+cat audit.json | jq -r '.events[] | [.timestamp, .user, .action, .resource] | @tsv'
+
+# Filter specific actions
+cat audit.json | jq '.events[] | select(.action == "DeleteBucket")'</code></pre>
+            </div>
+        </section>
+
+        <!-- Correlation Patterns -->
+        <section class="vulnerability-card">
+            <h2>Correlation Patterns</h2>
+            <p>Individual log events tell a limited story. The real power of log analysis comes from correlating events across multiple sources to reconstruct attack narratives.</p>
+            <div style="overflow-x: auto;">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Pattern</th>
+                            <th>Events to Correlate</th>
+                            <th>Indicates</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Brute Force &rarr; Success</strong></td>
+                            <td>Multiple 4625 (failed) from same IP followed by 4624 (success) for same account</td>
+                            <td>Successful password attack — immediate investigation needed</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Lateral Movement</strong></td>
+                            <td>4624 Type 3 (network logon) from internal IP + 4688 (process creation) on target host</td>
+                            <td>Attacker moving between systems using compromised credentials</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Privilege Escalation</strong></td>
+                            <td>4732 (added to admin group) or 4672 (special privileges) shortly after 4624</td>
+                            <td>Account gaining elevated access — verify authorization</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Persistence Installation</strong></td>
+                            <td>4698 (scheduled task) or 7045 (new service) created by non-admin or from unusual path</td>
+                            <td>Attacker establishing persistence mechanism</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Data Exfiltration</strong></td>
+                            <td>Large outbound transfers (proxy logs) + DNS TXT queries (DNS logs) from same host</td>
+                            <td>Data being exfiltrated via web or DNS channels</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Anti-Forensics</strong></td>
+                            <td>1102 (log cleared) + 4688 showing wevtutil or Clear-EventLog commands</td>
+                            <td>Attacker destroying evidence — treat as confirmed compromise</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Analysis Workflow -->
+        <section class="vulnerability-card">
+            <h2>Log Analysis Workflow</h2>
+            <div style="overflow-x: auto;">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Step</th>
+                            <th>Action</th>
+                            <th>Tools/Techniques</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1. Scope</strong></td>
+                            <td>Define the time window, systems, and users of interest</td>
+                            <td>Incident ticket, alert context, threat intelligence</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2. Collect</strong></td>
+                            <td>Gather relevant logs from all applicable sources</td>
+                            <td>SIEM queries, log forwarding, direct access</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3. Normalize</strong></td>
+                            <td>Ensure consistent timestamps (UTC), field names, and formats</td>
+                            <td>Log parsing, timestamp conversion, field mapping</td>
+                        </tr>
+                        <tr>
+                            <td><strong>4. Filter</strong></td>
+                            <td>Remove noise — known-good events, scheduled tasks, monitoring systems</td>
+                            <td>grep -v, allowlists, SIEM filters</td>
+                        </tr>
+                        <tr>
+                            <td><strong>5. Analyze</strong></td>
+                            <td>Look for anomalies, known-bad indicators, and suspicious patterns</td>
+                            <td>Pattern matching, statistical analysis, IOC searches</td>
+                        </tr>
+                        <tr>
+                            <td><strong>6. Correlate</strong></td>
+                            <td>Link events across sources to build a timeline and narrative</td>
+                            <td>Timeline tools, SIEM correlation, manual pivoting</td>
+                        </tr>
+                        <tr>
+                            <td><strong>7. Document</strong></td>
+                            <td>Record findings, IOCs, affected systems, and recommended actions</td>
+                            <td>Investigation notes, IOC lists, timeline artifacts</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="cta">
+            <h2>Explore More Blue Team Guides</h2>
+            <p>For comprehensive tutorials and security guides:</p>
+            <a href="https://fixthevuln.com" class="cta-button" target="_blank">Visit FixTheVuln.com &rarr;</a>
+        </section>
+
+        <!-- Related Content -->
+        <section style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid var(--border-color, #e0e0e0);">
+            <h2 style="margin-bottom: 1.5rem;">Related Resources</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                <a href="siem-rule-writing.html" style="background: var(--bg-tertiary, #f8f9fa); color: var(--text-primary, #333); padding: 1.25rem; border-radius: 8px; text-decoration: none; border: 2px solid var(--border-color, #e0e0e0);">
+                    <strong style="display: block; margin-bottom: 0.5rem; color: var(--accent-primary, #667eea);">📝 SIEM Rule Writing Guide</strong>
+                    <span style="font-size: 0.9rem; color: var(--text-muted, #666);">Build detection rules from log patterns</span>
+                </a>
+                <a href="threat-hunting.html" style="background: var(--bg-tertiary, #f8f9fa); color: var(--text-primary, #333); padding: 1.25rem; border-radius: 8px; text-decoration: none; border: 2px solid var(--border-color, #e0e0e0);">
+                    <strong style="display: block; margin-bottom: 0.5rem; color: var(--accent-primary, #667eea);">🎯 Threat Hunting for Beginners</strong>
+                    <span style="font-size: 0.9rem; color: var(--text-muted, #666);">Use logs proactively to find hidden threats</span>
+                </a>
+                <a href="incident-response.html" style="background: var(--bg-tertiary, #f8f9fa); color: var(--text-primary, #333); padding: 1.25rem; border-radius: 8px; text-decoration: none; border: 2px solid var(--border-color, #e0e0e0);">
+                    <strong style="display: block; margin-bottom: 0.5rem; color: var(--accent-primary, #667eea);">🚨 Incident Response Guide</strong>
+                    <span style="font-size: 0.9rem; color: var(--text-muted, #666);">Log analysis during incident investigations</span>
+                </a>
+            </div>
+        </section>
+
+
+        <!-- Store CTA -->
+        <section style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
+            <h3 style="color: white; margin-bottom: 0.5rem;">Get the CompTIA CySA+ Study Planner</h3>
+            <p style="opacity: 0.9; margin-bottom: 1rem;">Fillable PDF study planners with domain trackers, weekly schedules, and progress tracking. Available in Standard, ADHD-Friendly, Dark Mode, and 4-Format Bundle.</p>
+            <a href="/store/comptia.html" style="display:inline-block;background:#667eea;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">CompTIA CySA+ Planner</a>
+            <p style="font-size: 0.8rem; opacity: 0.85; margin-top: 0.75rem;">60+ certifications available &mdash; from $5.99</p>
+        </section>
+        <!-- Sprint Kit CTA -->
+        <section style="background: linear-gradient(135deg, #0a2e1a 0%, #1a3a2e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
+            <h3 style="color: white; margin-bottom: 0.5rem;">Patch Tuesday Sprint Kit</h3>
+            <p style="opacity: 0.9; margin-bottom: 1rem;">5 fillable templates for vulnerability triage, sprint planning, testing, SLA tracking, and executive reporting. Free blank templates or $4.99/mo for pre-filled intelligence with real CISA KEV data.</p>
+            <a href="/store/patch-tuesday-kit.html" style="display:inline-block;background:#10b981;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">Try Free Templates</a>
+            <a href="https://buy.stripe.com/fZudRa2L8dCz73c7Kc1oI00" style="display:inline-block;background:#667eea;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">Subscribe &mdash; $4.99/mo</a>
+        </section>
+        <!-- CyberFolio CTA -->
+        <div style="border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.3rem;">CyberFolio</p>
+            <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Choosing your next cert? Track them all in one place.</p>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills &mdash; free.</p>
+            <a href="https://cyberfolio.io" style="display:inline-block;background:#06b6d4;color:white;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;" target="_blank" rel="noopener">Build Your Portfolio &rarr;</a>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+  <script src="/js/error-reporter.js"></script>
+</body>
+</html>

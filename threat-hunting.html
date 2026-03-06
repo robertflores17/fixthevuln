@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+        <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Beginner guide to threat hunting covering hypothesis-driven methodology, the Hunting Maturity Model (HMM), data sources, TTP-based hunt examples, and the difference between hunting and detection.">
+    <meta name="keywords" content="threat hunting, hypothesis-driven hunting, hunting maturity model, TTP hunting, MITRE ATT&amp;CK hunting, proactive security, threat detection">
+    <title>Threat Hunting for Beginners - FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/threat-hunting.html">
+    <meta property="og:title" content="Threat Hunting for Beginners - FixTheVuln">
+    <meta property="og:description" content="Beginner guide to threat hunting covering hypothesis-driven methodology, the Hunting Maturity Model (HMM), data sources, TTP-based hunt examples, and the difference between hunting and detection.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fixthevuln.com/threat-hunting.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Threat Hunting for Beginners - FixTheVuln">
+    <meta name="twitter:description" content="Beginner guide to threat hunting covering hypothesis-driven methodology, the Hunting Maturity Model (HMM), data sources, TTP-based hunt examples, and the difference between hunting and detection.">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.min.css?v=7">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Guides", "item": "https://fixthevuln.com/guides.html" },
+            { "@type": "ListItem", "position": 3, "name": "Threat Hunting" }
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "Threat Hunting for Beginners",
+        "description": "Beginner guide to threat hunting covering hypothesis-driven methodology, the Hunting Maturity Model (HMM), data sources, TTP-based hunt examples, and the difference between hunting and detection.",
+        "author": { "@type": "Organization", "name": "FixTheVuln" },
+        "publisher": { "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "What is the difference between threat hunting and threat detection?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Threat detection is reactive and automated — SIEM rules and alerts fire when known patterns are matched. Threat hunting is proactive and human-driven — analysts form hypotheses about attacker behavior and actively search through data to find threats that automated tools missed. Hunting discovers novel attack patterns that become new detection rules."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What is hypothesis-driven threat hunting?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Hypothesis-driven hunting starts with a specific, testable theory about attacker behavior in your environment. For example: \"An attacker who compromised a user via phishing would use encoded PowerShell to download additional tools.\" The hunter then queries relevant data sources to validate or refute the hypothesis, documenting findings regardless of outcome."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What data sources are needed for threat hunting?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Essential data sources include: endpoint telemetry (process creation, network connections, file system activity), network flow data (NetFlow, DNS logs, proxy logs), authentication logs (Windows Event Logs, LDAP, cloud identity provider), email gateway logs, and cloud audit trails. The more data available, the more effective hunting becomes."
+                }
+            }
+        ]
+    }
+    </script>
+    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="blog/feed.xml">
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="index.html" class="site-nav-logo">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+        <div class="site-nav-links">
+            <a href="guides.html">Guides</a>
+            <a href="tools.html">Tools</a>
+            <a href="compliance.html">Compliance</a>
+            <a href="resources.html">Resources</a>
+            <a href="practice-tests.html">Quizzes</a>
+            <a href="career-paths.html">Career Paths</a>
+            <a href="blog/">Blog</a>
+            <a href="/store/store.html" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: .35rem .75rem; border-radius: 6px; font-size: .85rem; font-weight: 600; text-decoration: none;">Store</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>FixTheVuln</h1></a>
+            <p class="tagline">Threat Hunting for Beginners</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
+            <span>By <strong>FixTheVuln Team</strong></span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Peer-reviewed security content</span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Sources: CISA, NVD, OWASP</span>
+        </div>
+
+            <!-- Quiz Links -->
+            <section style="margin-top: 1.5rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
+                <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Test Your Knowledge</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+                <a href="cysa-plus-quiz.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">CySA+ Practice Quiz</a>
+                <a href="security-quiz.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Security+ Practice Quiz</a>
+                </div>
+            </section>
+
+        <a href="index.html" class="back-link">&larr; Back to Home</a>
+
+        <div class="key-takeaways">
+            <h2>Key Takeaways</h2>
+            <ul>
+                <li>Threat hunting is proactive and human-driven — it finds threats that automated detection misses</li>
+                <li>The hypothesis-driven methodology gives structure: form hypothesis, identify data, analyze, document, automate</li>
+                <li>The Hunting Maturity Model (HMM) has 5 levels from HM0 (no hunting) to HM4 (automated hunting)</li>
+                <li>Essential data sources: endpoint telemetry, authentication logs, network flows, DNS, and cloud audit trails</li>
+                <li>Every hunt should produce output — either confirmed threats for IR or new detection rules for the SIEM</li>
+            </ul>
+        </div>
+
+        <section class="intro">
+            <h2>Proactive Threat Detection</h2>
+            <p>Threat hunting is the practice of proactively searching through data to find threats that automated detection tools have missed. While SIEM rules and EDR alerts catch known-bad patterns, sophisticated adversaries use novel techniques, living-off-the-land binaries, and encrypted channels that evade signature-based detection. Threat hunters bridge this gap by applying human intelligence, creativity, and contextual knowledge to identify subtle indicators of compromise. This guide covers the methodology, maturity model, data requirements, and practical TTP-based hunt examples you need to start hunting.</p>
+        </section>
+
+        <!-- Hunting vs Detection -->
+        <section class="vulnerability-card">
+            <h2>Hunting vs. Detection</h2>
+            <div style="overflow-x: auto;">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Aspect</th>
+                            <th>Threat Detection</th>
+                            <th>Threat Hunting</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Approach</strong></td><td>Reactive — waits for alerts</td><td>Proactive — actively searches for threats</td></tr>
+                        <tr><td><strong>Driver</strong></td><td>Automated rules and signatures</td><td>Human hypotheses and intuition</td></tr>
+                        <tr><td><strong>Scope</strong></td><td>Known attack patterns</td><td>Unknown and novel techniques</td></tr>
+                        <tr><td><strong>Speed</strong></td><td>Real-time or near-real-time</td><td>Periodic (daily, weekly, or campaign-based)</td></tr>
+                        <tr><td><strong>Output</strong></td><td>Alerts and incidents</td><td>New detections, improved rules, threat intelligence</td></tr>
+                        <tr><td><strong>Skill Level</strong></td><td>SOC Tier 1-2</td><td>Senior analyst / dedicated hunter</td></tr>
+                        <tr><td><strong>Tools</strong></td><td>SIEM, EDR, IDS/IPS</td><td>SIEM (ad-hoc queries), EDR, notebooks, custom scripts</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Hypothesis-Driven Methodology -->
+        <section class="vulnerability-card">
+            <h2>Hypothesis-Driven Methodology</h2>
+            <div style="overflow-x: auto;">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Step</th>
+                            <th>Action</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1. Form Hypothesis</strong></td>
+                            <td>Create a specific, testable statement about attacker behavior</td>
+                            <td>"Attackers are using scheduled tasks for persistence after initial compromise via phishing"</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2. Identify Data Sources</strong></td>
+                            <td>Determine which logs and telemetry are needed to test the hypothesis</td>
+                            <td>Windows Event ID 4698 (task created), Sysmon Event ID 1 (process creation), email logs</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3. Build Queries</strong></td>
+                            <td>Craft SIEM or EDR queries to search for evidence</td>
+                            <td>Query for scheduled tasks created by non-admin users running executables from temp directories</td>
+                        </tr>
+                        <tr>
+                            <td><strong>4. Analyze Results</strong></td>
+                            <td>Review query results, investigate anomalies, correlate with other data</td>
+                            <td>Found 3 scheduled tasks running PowerShell from AppData — investigate further</td>
+                        </tr>
+                        <tr>
+                            <td><strong>5. Document Findings</strong></td>
+                            <td>Record hypothesis, methodology, results (positive or negative), and recommendations</td>
+                            <td>Hunt report with IOCs, affected systems, and recommended remediation</td>
+                        </tr>
+                        <tr>
+                            <td><strong>6. Automate</strong></td>
+                            <td>Convert successful hunt logic into SIEM rules or EDR policies</td>
+                            <td>Create Sigma rule for suspicious scheduled task creation patterns</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- HMM -->
+        <section class="vulnerability-card">
+            <h2>Hunting Maturity Model (HMM)</h2>
+            <p>The Hunting Maturity Model, originally developed by David Bianco, describes five levels of organizational hunting capability. Most organizations start at HM0 and should aim for at least HM2.</p>
+            <div style="overflow-x: auto;">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Level</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Capabilities</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="background: #ef4444; color: #fff; font-weight: 700;">HM0</td>
+                            <td>Initial</td>
+                            <td>Relying primarily on automated alerts; no proactive hunting</td>
+                            <td>SIEM deployed, basic alert monitoring</td>
+                        </tr>
+                        <tr>
+                            <td style="background: #fd7e14; color: #fff; font-weight: 700;">HM1</td>
+                            <td>Minimal</td>
+                            <td>Threat intel indicator searches; IOC-focused hunting</td>
+                            <td>Ability to search for known IOCs across data, basic threat intel feeds</td>
+                        </tr>
+                        <tr>
+                            <td style="background: #ffc107; font-weight: 700;">HM2</td>
+                            <td>Procedural</td>
+                            <td>Following documented hunting procedures and playbooks</td>
+                            <td>Hunting playbooks, structured data access, regular hunting cadence</td>
+                        </tr>
+                        <tr>
+                            <td style="background: #22c55e; color: #fff; font-weight: 700;">HM3</td>
+                            <td>Innovative</td>
+                            <td>Creating new hypotheses and hunting techniques; contributing to community</td>
+                            <td>Custom hypotheses, data science techniques, original research, detection-as-code</td>
+                        </tr>
+                        <tr>
+                            <td style="background: #3b82f6; color: #fff; font-weight: 700;">HM4</td>
+                            <td>Leading</td>
+                            <td>Automating successful hunts; hunting feeds detection engineering pipeline</td>
+                            <td>Hunt automation, ML-assisted anomaly detection, continuous hunt-to-detect pipeline</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Data Sources -->
+        <section class="vulnerability-card">
+            <h2>Essential Data Sources</h2>
+            <div style="overflow-x: auto;">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Data Source</th>
+                            <th>Key Events</th>
+                            <th>Hunting Use Cases</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Endpoint (Sysmon/EDR)</strong></td><td>Process creation, network connections, file creation, registry changes</td><td>Malware execution, lateral movement, persistence mechanisms</td></tr>
+                        <tr><td><strong>Windows Event Logs</strong></td><td>4624/4625 (logon), 4688 (process), 4698 (task), 4720 (account created)</td><td>Brute force, privilege escalation, account manipulation</td></tr>
+                        <tr><td><strong>Network Flow</strong></td><td>NetFlow, connection metadata, session duration, bytes transferred</td><td>C2 beaconing, data exfiltration, unusual port usage</td></tr>
+                        <tr><td><strong>DNS Logs</strong></td><td>Query records, NXDOMAIN responses, TXT record queries</td><td>DNS tunneling, DGA domain detection, C2 communication</td></tr>
+                        <tr><td><strong>Proxy/Web Logs</strong></td><td>URL requests, user agents, content types, response codes</td><td>Malicious downloads, C2 over HTTP/S, data exfiltration</td></tr>
+                        <tr><td><strong>Authentication</strong></td><td>Login events, MFA events, token issuance, failed authentication</td><td>Credential stuffing, lateral movement, impossible travel</td></tr>
+                        <tr><td><strong>Cloud Audit Trails</strong></td><td>API calls, resource changes, IAM events, data access</td><td>Cloud compromise, privilege escalation, data exposure</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- TTP Hunt Examples -->
+        <section class="vulnerability-card">
+            <h2>TTP Hunt Examples</h2>
+            <h3>Hunt 1: C2 Beaconing Detection</h3>
+            <p><strong>MITRE ATT&CK:</strong> T1071.001 — Application Layer Protocol: Web</p>
+            <p><strong>Hypothesis:</strong> "Compromised endpoints are communicating with C2 servers via HTTP/S at regular intervals."</p>
+            <div class="code-block">
+<pre><code># Splunk SPL — Detect beaconing patterns
+index=proxy sourcetype=web_proxy
+| bin _time span=1m
+| stats count by src_ip, dest_host, _time
+| streamstats count as beacon_count range(_time) as time_range by src_ip, dest_host
+| where beacon_count > 50
+| eval avg_interval = time_range / beacon_count
+| where avg_interval > 55 AND avg_interval < 65
+| stats count as total_beacons avg(avg_interval) as avg_int by src_ip, dest_host
+| where total_beacons > 100
+| sort -total_beacons</code></pre>
+            </div>
+            <p style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-muted);">
+                <strong>Logic:</strong> Look for hosts making HTTP requests to the same destination at regular ~60-second intervals — a classic C2 beaconing pattern. Legitimate traffic is irregular; malware callbacks are metronomic.
+            </p>
+
+            <h3 style="margin-top: 2rem;">Hunt 2: Living-off-the-Land Binaries (LOLBins)</h3>
+            <p><strong>MITRE ATT&CK:</strong> T1218 — System Binary Proxy Execution</p>
+            <p><strong>Hypothesis:</strong> "Attackers are using legitimate Windows binaries to download and execute malicious payloads."</p>
+            <div class="code-block">
+<pre><code># KQL — Detect suspicious LOLBin usage
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where FileName in~ (
+    "certutil.exe", "mshta.exe", "regsvr32.exe",
+    "rundll32.exe", "bitsadmin.exe", "msiexec.exe"
+)
+| where ProcessCommandLine has_any (
+    "http://", "https://", "ftp://",
+    "-urlcache", "-decode", "javascript:",
+    "/i:", "scrobj.dll"
+)
+| project Timestamp, DeviceName, AccountName,
+    InitiatingProcessFileName, FileName, ProcessCommandLine
+| sort by Timestamp desc</code></pre>
+            </div>
+        </section>
+
+        <section class="cta">
+            <h2>Explore More Blue Team Guides</h2>
+            <p>For comprehensive tutorials and security guides:</p>
+            <a href="https://fixthevuln.com" class="cta-button" target="_blank">Visit FixTheVuln.com &rarr;</a>
+        </section>
+
+        <!-- Related Content -->
+        <section style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid var(--border-color, #e0e0e0);">
+            <h2 style="margin-bottom: 1.5rem;">Related Resources</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                <a href="siem-rule-writing.html" style="background: var(--bg-tertiary, #f8f9fa); color: var(--text-primary, #333); padding: 1.25rem; border-radius: 8px; text-decoration: none; border: 2px solid var(--border-color, #e0e0e0);">
+                    <strong style="display: block; margin-bottom: 0.5rem; color: var(--accent-primary, #667eea);">📝 SIEM Rule Writing Guide</strong>
+                    <span style="font-size: 0.9rem; color: var(--text-muted, #666);">Turn hunting findings into automated detection rules</span>
+                </a>
+                <a href="log-analysis-cheatsheet.html" style="background: var(--bg-tertiary, #f8f9fa); color: var(--text-primary, #333); padding: 1.25rem; border-radius: 8px; text-decoration: none; border: 2px solid var(--border-color, #e0e0e0);">
+                    <strong style="display: block; margin-bottom: 0.5rem; color: var(--accent-primary, #667eea);">📋 Log Analysis Cheat Sheet</strong>
+                    <span style="font-size: 0.9rem; color: var(--text-muted, #666);">Essential reference for querying hunt data sources</span>
+                </a>
+                <a href="incident-response.html" style="background: var(--bg-tertiary, #f8f9fa); color: var(--text-primary, #333); padding: 1.25rem; border-radius: 8px; text-decoration: none; border: 2px solid var(--border-color, #e0e0e0);">
+                    <strong style="display: block; margin-bottom: 0.5rem; color: var(--accent-primary, #667eea);">🚨 Incident Response Guide</strong>
+                    <span style="font-size: 0.9rem; color: var(--text-muted, #666);">What to do when a hunt finds an active threat</span>
+                </a>
+            </div>
+        </section>
+
+
+        <!-- Store CTA -->
+        <section style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
+            <h3 style="color: white; margin-bottom: 0.5rem;">Study Planners Available for Both Certs</h3>
+            <p style="opacity: 0.9; margin-bottom: 1rem;">Fillable PDF study planners with domain trackers, weekly schedules, and progress tracking. Available in Standard, ADHD-Friendly, Dark Mode, and 4-Format Bundle.</p>
+            <a href="/store/comptia.html" style="display:inline-block;background:#667eea;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">CompTIA CySA+ Planner</a>
+            <a href="/store/security-governance.html" style="display:inline-block;background:#667eea;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">GIAC GCIH Planner</a>
+            <p style="font-size: 0.8rem; opacity: 0.85; margin-top: 0.75rem;">60+ certifications available &mdash; from $5.99</p>
+        </section>
+        <!-- Sprint Kit CTA -->
+        <section style="background: linear-gradient(135deg, #0a2e1a 0%, #1a3a2e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
+            <h3 style="color: white; margin-bottom: 0.5rem;">Patch Tuesday Sprint Kit</h3>
+            <p style="opacity: 0.9; margin-bottom: 1rem;">5 fillable templates for vulnerability triage, sprint planning, testing, SLA tracking, and executive reporting. Free blank templates or $4.99/mo for pre-filled intelligence with real CISA KEV data.</p>
+            <a href="/store/patch-tuesday-kit.html" style="display:inline-block;background:#10b981;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">Try Free Templates</a>
+            <a href="https://buy.stripe.com/fZudRa2L8dCz73c7Kc1oI00" style="display:inline-block;background:#667eea;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">Subscribe &mdash; $4.99/mo</a>
+        </section>
+        <!-- CyberFolio CTA -->
+        <div style="border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.3rem;">CyberFolio</p>
+            <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Choosing your next cert? Track them all in one place.</p>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills &mdash; free.</p>
+            <a href="https://cyberfolio.io" style="display:inline-block;background:#06b6d4;color:white;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;" target="_blank" rel="noopener">Build Your Portfolio &rarr;</a>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+  <script src="/js/error-reporter.js"></script>
+</body>
+</html>

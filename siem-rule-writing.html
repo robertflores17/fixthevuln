@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+        <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Practical guide to writing SIEM detection rules with Splunk SPL, KQL, and Sigma YAML examples. Covers detection logic types, MITRE ATT&amp;CK mapping, and tuning methodology.">
+    <meta name="keywords" content="SIEM rules, detection engineering, Splunk SPL, KQL, Sigma rules, MITRE ATT&amp;CK, alert tuning, security monitoring">
+    <title>SIEM Rule Writing Guide - FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/siem-rule-writing.html">
+    <meta property="og:title" content="SIEM Rule Writing Guide - FixTheVuln">
+    <meta property="og:description" content="Practical guide to writing SIEM detection rules with Splunk SPL, KQL, and Sigma YAML examples. Covers detection logic types, MITRE ATT&amp;CK mapping, and tuning methodology.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fixthevuln.com/siem-rule-writing.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SIEM Rule Writing Guide - FixTheVuln">
+    <meta name="twitter:description" content="Practical guide to writing SIEM detection rules with Splunk SPL, KQL, and Sigma YAML examples. Covers detection logic types, MITRE ATT&amp;CK mapping, and tuning methodology.">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.min.css?v=7">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Guides", "item": "https://fixthevuln.com/guides.html" },
+            { "@type": "ListItem", "position": 3, "name": "SIEM Rule Writing" }
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "SIEM Rule Writing Guide",
+        "description": "Practical guide to writing SIEM detection rules with Splunk SPL, KQL, and Sigma YAML examples. Covers detection logic types, MITRE ATT&CK mapping, and tuning methodology.",
+        "author": { "@type": "Organization", "name": "FixTheVuln" },
+        "publisher": { "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "What is a Sigma rule?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Sigma is a generic, open-source signature format for SIEM systems. Sigma rules are written in YAML and can be converted to queries for any SIEM platform (Splunk, Microsoft Sentinel, Elastic, QRadar) using the sigma-cli tool. This allows detection engineers to write vendor-agnostic detection logic that can be shared across the community."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "How do you reduce false positives in SIEM rules?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Reduce false positives by: (1) adding specific conditions rather than broad pattern matches, (2) using allowlists for known-good processes and users, (3) correlating multiple events rather than alerting on single events, (4) tuning thresholds based on baseline data, (5) adding contextual enrichment (asset criticality, user role), and (6) implementing a formal tuning process with regular review cycles."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "How should SIEM rules map to MITRE ATT&CK?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Each SIEM rule should map to one or more MITRE ATT&CK techniques using the technique ID (e.g., T1059.001 for PowerShell execution). This provides coverage visibility across the ATT&CK matrix, identifies detection gaps, and helps prioritize rule development based on the most relevant threat actor TTPs for your environment."
+                }
+            }
+        ]
+    }
+    </script>
+    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="blog/feed.xml">
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="index.html" class="site-nav-logo">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+        <div class="site-nav-links">
+            <a href="guides.html">Guides</a>
+            <a href="tools.html">Tools</a>
+            <a href="compliance.html">Compliance</a>
+            <a href="resources.html">Resources</a>
+            <a href="practice-tests.html">Quizzes</a>
+            <a href="career-paths.html">Career Paths</a>
+            <a href="blog/">Blog</a>
+            <a href="/store/store.html" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: .35rem .75rem; border-radius: 6px; font-size: .85rem; font-weight: 600; text-decoration: none;">Store</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>FixTheVuln</h1></a>
+            <p class="tagline">SIEM Rule Writing Guide</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
+            <span>By <strong>FixTheVuln Team</strong></span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Peer-reviewed security content</span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Sources: CISA, NVD, OWASP</span>
+        </div>
+
+            <!-- Quiz Links -->
+            <section style="margin-top: 1.5rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
+                <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Test Your Knowledge</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+                <a href="cysa-plus-quiz.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">CySA+ Practice Quiz</a>
+                <a href="security-quiz.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Security+ Practice Quiz</a>
+                </div>
+            </section>
+
+        <a href="index.html" class="back-link">&larr; Back to Home</a>
+
+        <div class="key-takeaways">
+            <h2>Key Takeaways</h2>
+            <ul>
+                <li>Good detection rules are specific, tuned, documented, and mapped to MITRE ATT&CK techniques</li>
+                <li>Sigma rules provide vendor-agnostic detection logic that works across Splunk, Sentinel, Elastic, and more</li>
+                <li>Three detection logic types: signature-based (known bad), anomaly-based (deviation from baseline), and behavioral (TTP patterns)</li>
+                <li>Every rule needs a tuning plan — expect to iterate based on your environment's baseline</li>
+                <li>Map all rules to MITRE ATT&CK for coverage analysis and gap identification</li>
+            </ul>
+        </div>
+
+        <section class="intro">
+            <h2>Detection Engineering Fundamentals</h2>
+            <p>Writing effective SIEM rules is the core skill of detection engineering. A well-crafted rule catches real threats while minimizing false positives that cause alert fatigue. This guide covers the three types of detection logic, provides working examples in Splunk SPL, KQL (Microsoft Sentinel), and Sigma (vendor-agnostic YAML), and walks through a structured tuning methodology. Every example maps to a specific MITRE ATT&CK technique for coverage tracking.</p>
+        </section>
+
+        <!-- Detection Logic Types -->
+        <section class="vulnerability-card">
+            <h2>Detection Logic Types</h2>
+            <div style="overflow-x: auto;">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>How It Works</th>
+                            <th>Strengths</th>
+                            <th>Weaknesses</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Signature</strong></td>
+                            <td>Match known-bad patterns (IOCs, specific commands, file hashes)</td>
+                            <td>Low false positives, fast to create</td>
+                            <td>Cannot detect novel attacks</td>
+                            <td>Alert on known malware hash in process creation</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Anomaly</strong></td>
+                            <td>Detect deviation from established baselines (volume, timing, patterns)</td>
+                            <td>Can detect unknown threats</td>
+                            <td>Higher false positive rate, requires baselining period</td>
+                            <td>Alert when login volume for a user exceeds 3x their 30-day average</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Behavioral / TTP</strong></td>
+                            <td>Detect attack techniques regardless of specific tools or IOCs used</td>
+                            <td>Resilient to tool changes, catches novel variants</td>
+                            <td>Complex to write, requires deep understanding of attack techniques</td>
+                            <td>Alert on process spawning from Office application executing encoded PowerShell</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Splunk SPL Example -->
+        <section class="vulnerability-card">
+            <h2>Splunk SPL Example: Brute Force Detection</h2>
+            <p><strong>MITRE ATT&CK:</strong> T1110.001 — Brute Force: Password Guessing</p>
+            <div class="code-block">
+<pre><code>index=windows sourcetype=WinEventLog:Security EventCode=4625
+| bin _time span=5m
+| stats count as failed_attempts dc(TargetUserName) as targeted_users
+    values(TargetUserName) as users by src_ip, _time
+| where failed_attempts > 10 AND targeted_users >= 3
+| eval severity=case(
+    failed_attempts > 50, "Critical",
+    failed_attempts > 25, "High",
+    failed_attempts > 10, "Medium",
+    1=1, "Low"
+)
+| table _time, src_ip, failed_attempts, targeted_users, users, severity
+| sort -failed_attempts</code></pre>
+            </div>
+            <p style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-muted);">
+                <strong>Logic:</strong> Windows Event ID 4625 (failed logon) events grouped into 5-minute windows. Alerts when a single source IP generates more than 10 failures against 3 or more distinct accounts — a strong indicator of password spraying or brute force.
+            </p>
+        </section>
+
+        <!-- KQL Example -->
+        <section class="vulnerability-card">
+            <h2>KQL Example (Microsoft Sentinel): Suspicious PowerShell</h2>
+            <p><strong>MITRE ATT&CK:</strong> T1059.001 — Command and Scripting Interpreter: PowerShell</p>
+            <div class="code-block">
+<pre><code>DeviceProcessEvents
+| where Timestamp > ago(24h)
+| where FileName =~ "powershell.exe" or FileName =~ "pwsh.exe"
+| where ProcessCommandLine has_any (
+    "-EncodedCommand", "-enc ", "FromBase64String",
+    "IEX", "Invoke-Expression", "DownloadString",
+    "Net.WebClient", "Invoke-WebRequest",
+    "Start-BitsTransfer", "hidden", "-w hidden"
+)
+| where InitiatingProcessFileName in~ (
+    "winword.exe", "excel.exe", "outlook.exe",
+    "powerpnt.exe", "mshta.exe", "wscript.exe"
+)
+| project Timestamp, DeviceName, AccountName,
+    InitiatingProcessFileName, FileName, ProcessCommandLine
+| sort by Timestamp desc</code></pre>
+            </div>
+            <p style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-muted);">
+                <strong>Logic:</strong> Detects PowerShell launched by Office applications or script hosts with suspicious command-line arguments (encoded commands, download cradles, hidden windows). This is a classic initial access / execution pattern.
+            </p>
+        </section>
+
+        <!-- Sigma Rule -->
+        <section class="vulnerability-card">
+            <h2>Sigma Rule: Credential Dumping via LSASS Access</h2>
+            <p><strong>MITRE ATT&CK:</strong> T1003.001 — OS Credential Dumping: LSASS Memory</p>
+            <div class="code-block">
+<pre><code>title: Suspicious LSASS Process Access
+id: 8f5b02a0-6d12-4b5a-9e3c-1a2b3c4d5e6f
+status: stable
+description: |
+    Detects processes accessing LSASS memory, which may indicate
+    credential dumping tools like Mimikatz, ProcDump, or comsvcs.dll.
+references:
+    - https://attack.mitre.org/techniques/T1003/001/
+author: FixTheVuln
+date: 2026/03/06
+tags:
+    - attack.credential_access
+    - attack.t1003.001
+logsource:
+    category: process_access
+    product: windows
+detection:
+    selection:
+        TargetImage|endswith: '\lsass.exe'
+        GrantedAccess|contains:
+            - '0x1010'
+            - '0x1038'
+            - '0x1fffff'
+            - '0x40'
+    filter_system:
+        SourceImage|startswith:
+            - 'C:\Windows\System32\'
+            - 'C:\Windows\SysWOW64\'
+        SourceImage|endswith:
+            - '\svchost.exe'
+            - '\csrss.exe'
+            - '\wininit.exe'
+            - '\MsMpEng.exe'
+    filter_av:
+        SourceImage|contains:
+            - '\Microsoft\Windows Defender\'
+            - '\CrowdStrike\'
+            - '\SentinelOne\'
+    condition: selection and not filter_system and not filter_av
+falsepositives:
+    - Legitimate security tools accessing LSASS
+    - System processes during updates
+level: high</code></pre>
+            </div>
+            <p style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-muted);">
+                <strong>Note:</strong> This Sigma rule can be converted to any SIEM platform using <code>sigma convert</code>. The filter sections exclude known-good system processes and common AV/EDR products to reduce false positives.
+            </p>
+        </section>
+
+        <!-- MITRE ATT&CK Mapping -->
+        <section class="vulnerability-card">
+            <h2>MITRE ATT&CK Mapping</h2>
+            <p>Every detection rule should map to at least one ATT&CK technique. This enables coverage analysis and gap identification across the kill chain.</p>
+            <div style="overflow-x: auto;">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Tactic</th>
+                            <th>Technique</th>
+                            <th>ID</th>
+                            <th>Detection Approach</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Initial Access</td><td>Phishing: Spearphishing Attachment</td><td>T1566.001</td><td>Email gateway + Office child process monitoring</td></tr>
+                        <tr><td>Execution</td><td>PowerShell</td><td>T1059.001</td><td>Script block logging + suspicious command-line args</td></tr>
+                        <tr><td>Persistence</td><td>Registry Run Keys</td><td>T1547.001</td><td>Registry modification events for Run/RunOnce keys</td></tr>
+                        <tr><td>Privilege Escalation</td><td>Token Manipulation</td><td>T1134</td><td>Process token change events + unusual privilege assignments</td></tr>
+                        <tr><td>Defense Evasion</td><td>Indicator Removal: Clear Event Logs</td><td>T1070.001</td><td>Windows Event ID 1102 (audit log cleared)</td></tr>
+                        <tr><td>Credential Access</td><td>LSASS Memory</td><td>T1003.001</td><td>Process access to lsass.exe with specific access masks</td></tr>
+                        <tr><td>Lateral Movement</td><td>Remote Services: SMB</td><td>T1021.002</td><td>Network logon events + new SMB connections to sensitive hosts</td></tr>
+                        <tr><td>Exfiltration</td><td>Exfiltration Over Web Service</td><td>T1567</td><td>Unusual outbound data volume to cloud storage domains</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Tuning Methodology -->
+        <section class="vulnerability-card">
+            <h2>Tuning Methodology</h2>
+            <p>Every rule requires tuning after deployment. Use this structured process to minimize false positives while maintaining detection efficacy.</p>
+            <div style="overflow-x: auto;">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Step</th>
+                            <th>Action</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1. Deploy in Alert-Only</strong></td>
+                            <td>Enable the rule but do not trigger automated response</td>
+                            <td>Run for 1-2 weeks to collect baseline alert data</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2. Analyze False Positives</strong></td>
+                            <td>Review every alert and categorize as true positive, false positive, or benign true positive</td>
+                            <td>Document the reason for each false positive (known tool, scheduled task, legitimate admin activity)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3. Build Allowlists</strong></td>
+                            <td>Add verified benign sources to filter conditions</td>
+                            <td>Use specific identifiers (process path + hash) not broad exclusions (entire user accounts)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>4. Adjust Thresholds</strong></td>
+                            <td>Modify count/time window thresholds based on observed baseline</td>
+                            <td>Set thresholds above the 99th percentile of normal behavior</td>
+                        </tr>
+                        <tr>
+                            <td><strong>5. Validate Detection</strong></td>
+                            <td>Run atomic tests or purple team exercises to confirm the rule still catches real attacks</td>
+                            <td>Test with both common tools and modified variants</td>
+                        </tr>
+                        <tr>
+                            <td><strong>6. Promote to Production</strong></td>
+                            <td>Enable automated response and escalation workflows</td>
+                            <td>Document final rule logic, tuning decisions, and remaining known FP rate</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="cta">
+            <h2>Explore More Blue Team Guides</h2>
+            <p>For comprehensive tutorials and security guides:</p>
+            <a href="https://fixthevuln.com" class="cta-button" target="_blank">Visit FixTheVuln.com &rarr;</a>
+        </section>
+
+        <!-- Related Content -->
+        <section style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid var(--border-color, #e0e0e0);">
+            <h2 style="margin-bottom: 1.5rem;">Related Resources</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                <a href="threat-hunting.html" style="background: var(--bg-tertiary, #f8f9fa); color: var(--text-primary, #333); padding: 1.25rem; border-radius: 8px; text-decoration: none; border: 2px solid var(--border-color, #e0e0e0);">
+                    <strong style="display: block; margin-bottom: 0.5rem; color: var(--accent-primary, #667eea);">🎯 Threat Hunting for Beginners</strong>
+                    <span style="font-size: 0.9rem; color: var(--text-muted, #666);">Turn SIEM alerts into proactive hunting hypotheses</span>
+                </a>
+                <a href="log-analysis-cheatsheet.html" style="background: var(--bg-tertiary, #f8f9fa); color: var(--text-primary, #333); padding: 1.25rem; border-radius: 8px; text-decoration: none; border: 2px solid var(--border-color, #e0e0e0);">
+                    <strong style="display: block; margin-bottom: 0.5rem; color: var(--accent-primary, #667eea);">📋 Log Analysis Cheat Sheet</strong>
+                    <span style="font-size: 0.9rem; color: var(--text-muted, #666);">Know which logs to query in your SIEM rules</span>
+                </a>
+                <a href="incident-response.html" style="background: var(--bg-tertiary, #f8f9fa); color: var(--text-primary, #333); padding: 1.25rem; border-radius: 8px; text-decoration: none; border: 2px solid var(--border-color, #e0e0e0);">
+                    <strong style="display: block; margin-bottom: 0.5rem; color: var(--accent-primary, #667eea);">🚨 Incident Response Guide</strong>
+                    <span style="font-size: 0.9rem; color: var(--text-muted, #666);">What happens after your SIEM rule fires</span>
+                </a>
+            </div>
+        </section>
+
+
+        <!-- Store CTA -->
+        <section style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
+            <h3 style="color: white; margin-bottom: 0.5rem;">Study Planners Available for Both Certs</h3>
+            <p style="opacity: 0.9; margin-bottom: 1rem;">Fillable PDF study planners with domain trackers, weekly schedules, and progress tracking. Available in Standard, ADHD-Friendly, Dark Mode, and 4-Format Bundle.</p>
+            <a href="/store/comptia.html" style="display:inline-block;background:#667eea;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">CompTIA CySA+ Planner</a>
+            <a href="/store/security-governance.html" style="display:inline-block;background:#667eea;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">GIAC GCIH Planner</a>
+            <p style="font-size: 0.8rem; opacity: 0.85; margin-top: 0.75rem;">60+ certifications available &mdash; from $5.99</p>
+        </section>
+        <!-- Sprint Kit CTA -->
+        <section style="background: linear-gradient(135deg, #0a2e1a 0%, #1a3a2e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
+            <h3 style="color: white; margin-bottom: 0.5rem;">Patch Tuesday Sprint Kit</h3>
+            <p style="opacity: 0.9; margin-bottom: 1rem;">5 fillable templates for vulnerability triage, sprint planning, testing, SLA tracking, and executive reporting. Free blank templates or $4.99/mo for pre-filled intelligence with real CISA KEV data.</p>
+            <a href="/store/patch-tuesday-kit.html" style="display:inline-block;background:#10b981;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">Try Free Templates</a>
+            <a href="https://buy.stripe.com/fZudRa2L8dCz73c7Kc1oI00" style="display:inline-block;background:#667eea;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">Subscribe &mdash; $4.99/mo</a>
+        </section>
+        <!-- CyberFolio CTA -->
+        <div style="border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.3rem;">CyberFolio</p>
+            <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Choosing your next cert? Track them all in one place.</p>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills &mdash; free.</p>
+            <a href="https://cyberfolio.io" style="display:inline-block;background:#06b6d4;color:white;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;" target="_blank" rel="noopener">Build Your Portfolio &rarr;</a>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+  <script src="/js/error-reporter.js"></script>
+</body>
+</html>

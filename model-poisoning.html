@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+        <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Guide to AI and ML model poisoning attacks covering data poisoning, backdoor attacks, detection methods, and Python integrity verification code examples.">
+    <meta name="keywords" content="model poisoning, AI security, data poisoning, backdoor attack, ML security, adversarial machine learning, training data integrity">
+    <title>AI/ML Model Poisoning - FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/model-poisoning.html">
+    <meta property="og:title" content="AI/ML Model Poisoning - FixTheVuln">
+    <meta property="og:description" content="Guide to AI and ML model poisoning attacks covering data poisoning, backdoor attacks, detection methods, and Python integrity verification code examples.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fixthevuln.com/model-poisoning.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AI/ML Model Poisoning - FixTheVuln">
+    <meta name="twitter:description" content="Guide to AI and ML model poisoning attacks covering data poisoning, backdoor attacks, detection methods, and Python integrity verification code examples.">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.min.css?v=7">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Guides", "item": "https://fixthevuln.com/guides.html" },
+            { "@type": "ListItem", "position": 3, "name": "Model Poisoning" }
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "AI/ML Model Poisoning",
+        "description": "Guide to AI and ML model poisoning attacks covering data poisoning, backdoor attacks, detection methods, and Python integrity verification code examples.",
+        "author": { "@type": "Organization", "name": "FixTheVuln" },
+        "publisher": { "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "What is AI model poisoning?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "AI model poisoning is an attack where adversaries manipulate the training data or training process of a machine learning model to introduce backdoors, biases, or vulnerabilities. The poisoned model behaves normally on most inputs but produces attacker-controlled outputs when specific trigger patterns are present."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What is the difference between data poisoning and model poisoning?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Data poisoning targets the training dataset by injecting, modifying, or removing samples to influence model behavior. Model poisoning is broader and includes direct manipulation of model weights, architecture, or the training pipeline itself. Data poisoning is the most common vector for model poisoning attacks."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "How can you detect a poisoned AI model?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Detection methods include statistical analysis of training data for outliers, neural cleanse techniques to identify potential backdoor triggers, monitoring model performance for unexpected behavior on specific input patterns, comparing model outputs against known-good baselines, and verifying model integrity through cryptographic checksums."
+                }
+            }
+        ]
+    }
+    </script>
+    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="blog/feed.xml">
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="index.html" class="site-nav-logo">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+        <div class="site-nav-links">
+            <a href="guides.html">Guides</a>
+            <a href="tools.html">Tools</a>
+            <a href="compliance.html">Compliance</a>
+            <a href="resources.html">Resources</a>
+            <a href="practice-tests.html">Quizzes</a>
+            <a href="career-paths.html">Career Paths</a>
+            <a href="blog/">Blog</a>
+            <a href="/store/store.html" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: .35rem .75rem; border-radius: 6px; font-size: .85rem; font-weight: 600; text-decoration: none;">Store</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>FixTheVuln</h1></a>
+            <p class="tagline">AI/ML Model Poisoning</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
+            <span>By <strong>FixTheVuln Team</strong></span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Peer-reviewed security content</span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Sources: CISA, NVD, OWASP</span>
+        </div>
+
+            <!-- Quiz Links -->
+            <section style="margin-top: 1.5rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
+                <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Test Your Knowledge</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+                <a href="security-quiz.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Security+ Practice Quiz</a>
+                </div>
+            </section>
+
+        <a href="index.html" class="back-link">&larr; Back to Home</a>
+
+        <div class="key-takeaways">
+            <h2>Key Takeaways</h2>
+            <ul>
+                <li>Model poisoning attacks can be introduced through training data, pre-trained model weights, or the training pipeline itself</li>
+                <li>Backdoor attacks are especially dangerous because the model performs normally except when a specific trigger is present</li>
+                <li>Detection requires a combination of data auditing, statistical analysis, and behavioral testing</li>
+                <li>Cryptographic integrity verification of models and datasets is a fundamental defense</li>
+                <li>Maintaining an AI Bill of Materials (AI-BOM) with provenance tracking is essential for supply chain security</li>
+            </ul>
+        </div>
+
+        <section class="intro">
+            <h2>Understanding Model Poisoning</h2>
+            <p>Model poisoning is a class of adversarial attack that targets the training phase of machine learning systems. Unlike inference-time attacks (like adversarial examples), poisoning corrupts the model itself — creating a compromised system that appears to function correctly but contains hidden behaviors controlled by the attacker. As organizations increasingly rely on third-party models, pre-trained weights, and crowd-sourced datasets, the attack surface for model poisoning continues to grow.</p>
+        </section>
+
+        <!-- Types of Poisoning -->
+        <section class="vulnerability-card">
+            <h2>Types of Model Poisoning</h2>
+            <div style="overflow-x: auto;">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Target</th>
+                            <th>Goal</th>
+                            <th>Difficulty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Data Poisoning</strong></td>
+                            <td>Training dataset</td>
+                            <td>Inject malicious samples to shift model behavior</td>
+                            <td>Moderate — requires access to data pipeline</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Backdoor Attack</strong></td>
+                            <td>Training data + labels</td>
+                            <td>Model behaves normally except when a specific trigger pattern is present</td>
+                            <td>Moderate — attacker controls a subset of training data</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Label Flipping</strong></td>
+                            <td>Training labels</td>
+                            <td>Change labels on a subset of samples to degrade model accuracy</td>
+                            <td>Low — only requires access to labeling process</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Gradient Manipulation</strong></td>
+                            <td>Training process</td>
+                            <td>Directly alter model weight updates during federated or distributed training</td>
+                            <td>High — requires access to training infrastructure</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Supply Chain Poisoning</strong></td>
+                            <td>Pre-trained models</td>
+                            <td>Distribute compromised model weights via public repositories</td>
+                            <td>Moderate — exploit trust in model-sharing platforms</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Attack Lifecycle -->
+        <section class="vulnerability-card">
+            <h2>Attack Lifecycle</h2>
+            <p>A model poisoning attack typically progresses through five phases. Understanding this lifecycle helps defenders identify the most effective intervention points.</p>
+            <div style="overflow-x: auto;">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Phase</th>
+                            <th>Attacker Action</th>
+                            <th>Detection Opportunity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1. Reconnaissance</strong></td>
+                            <td>Identify target model, training data sources, pipeline architecture</td>
+                            <td>Monitor for unusual data access patterns</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2. Payload Crafting</strong></td>
+                            <td>Create poisoned samples with triggers or manipulated labels</td>
+                            <td>Data quality checks and anomaly detection</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3. Injection</strong></td>
+                            <td>Insert poisoned data into training pipeline (direct contribution, compromised source, supply chain)</td>
+                            <td>Data provenance tracking and integrity verification</td>
+                        </tr>
+                        <tr>
+                            <td><strong>4. Training</strong></td>
+                            <td>Poisoned data is incorporated during model training or fine-tuning</td>
+                            <td>Training anomaly detection, loss monitoring</td>
+                        </tr>
+                        <tr>
+                            <td><strong>5. Activation</strong></td>
+                            <td>Attacker presents trigger inputs to activate the backdoor in production</td>
+                            <td>Behavioral monitoring, input/output analysis</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Detection Methods -->
+        <section class="vulnerability-card">
+            <h2>Detection Methods</h2>
+            <div style="overflow-x: auto;">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>Approach</th>
+                            <th>Effectiveness</th>
+                            <th>Limitations</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Data Auditing</strong></td>
+                            <td>Statistical analysis of training data for outliers and anomalies</td>
+                            <td>Good for obvious poisoning</td>
+                            <td>Misses subtle or low-rate poisoning</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Neural Cleanse</strong></td>
+                            <td>Reverse-engineer potential trigger patterns by analyzing model decision boundaries</td>
+                            <td>Effective for patch-based triggers</td>
+                            <td>Computationally expensive; misses complex triggers</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Activation Clustering</strong></td>
+                            <td>Cluster internal model activations to identify samples that produce anomalous patterns</td>
+                            <td>Effective for backdoor detection</td>
+                            <td>Requires access to model internals</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Spectral Signatures</strong></td>
+                            <td>Analyze the covariance spectrum of model representations to detect poisoned subpopulations</td>
+                            <td>Good for large-scale poisoning</td>
+                            <td>Less effective for targeted attacks</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Behavioral Testing</strong></td>
+                            <td>Systematically test model with known-clean inputs and compare to expected behavior</td>
+                            <td>High — catches functional anomalies</td>
+                            <td>Requires comprehensive test suites</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Python Integrity Check -->
+        <section class="vulnerability-card">
+            <h2>Python Model Integrity Verification</h2>
+            <p>Cryptographic integrity checking ensures that model files have not been tampered with between training and deployment. This is a fundamental control for any ML pipeline.</p>
+            <div class="code-block">
+<pre><code>import hashlib
+import json
+from pathlib import Path
+from datetime import datetime, timezone
+
+
+def compute_model_hash(model_path: str, algorithm: str = 'sha256') -> str:
+    # Compute cryptographic hash of a model file.
+    h = hashlib.new(algorithm)
+    with open(model_path, 'rb') as f:
+        while chunk := f.read(8192):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def create_model_manifest(model_dir: str, output_path: str) -> dict:
+    # Create a manifest of all model artifacts with their hashes.
+    # Store this manifest in a separate, access-controlled location.
+    manifest = {
+        'created': datetime.now(timezone.utc).isoformat(),
+        'algorithm': 'sha256',
+        'artifacts': {}
+    }
+    model_path = Path(model_dir)
+    for artifact in sorted(model_path.rglob('*')):
+        if artifact.is_file():
+            rel_path = str(artifact.relative_to(model_path))
+            manifest['artifacts'][rel_path] = {
+                'hash': compute_model_hash(str(artifact)),
+                'size': artifact.stat().st_size,
+            }
+
+    with open(output_path, 'w') as f:
+        json.dump(manifest, f, indent=2)
+
+    print(f"Manifest created: {len(manifest['artifacts'])} artifacts")
+    return manifest
+
+
+def verify_model_integrity(model_dir: str, manifest_path: str) -> bool:
+    # Verify model artifacts against a known-good manifest.
+    with open(manifest_path) as f:
+        manifest = json.load(f)
+
+    model_path = Path(model_dir)
+    all_valid = True
+
+    for rel_path, expected in manifest['artifacts'].items():
+        artifact = model_path / rel_path
+        if not artifact.exists():
+            print(f"[FAIL] Missing: {rel_path}")
+            all_valid = False
+            continue
+
+        actual_hash = compute_model_hash(str(artifact))
+        if actual_hash != expected['hash']:
+            print(f"[FAIL] Hash mismatch: {rel_path}")
+            print(f"  Expected: {expected['hash']}")
+            print(f"  Actual:   {actual_hash}")
+            all_valid = False
+        else:
+            print(f"[OK]   {rel_path}")
+
+    if all_valid:
+        print("\nIntegrity check PASSED - all artifacts verified")
+    else:
+        print("\nIntegrity check FAILED - model may be compromised")
+    return all_valid
+
+
+# Usage
+# After training:   create_model_manifest('./models/v2/', './manifests/v2.json')
+# Before deployment: verify_model_integrity('./models/v2/', './manifests/v2.json')</code></pre>
+            </div>
+        </section>
+
+        <!-- Defenses -->
+        <section class="vulnerability-card">
+            <h2>Defense Checklist</h2>
+            <div class="remediation">
+                <ul>
+                    <li><input type="checkbox"> <strong>Data provenance:</strong> Track the origin and chain of custody for all training data</li>
+                    <li><input type="checkbox"> <strong>Integrity verification:</strong> Hash all model artifacts and verify before deployment</li>
+                    <li><input type="checkbox"> <strong>Anomaly detection:</strong> Monitor training loss curves and model performance for unexpected changes</li>
+                    <li><input type="checkbox"> <strong>Data sanitization:</strong> Filter outliers and statistically anomalous samples from training data</li>
+                    <li><input type="checkbox"> <strong>Access control:</strong> Restrict who can modify training data, model weights, and pipeline configurations</li>
+                    <li><input type="checkbox"> <strong>Behavioral testing:</strong> Maintain comprehensive test suites and run them before every deployment</li>
+                    <li><input type="checkbox"> <strong>AI-BOM:</strong> Maintain a bill of materials listing all models, datasets, and pre-trained components with their sources</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="cta">
+            <h2>Explore More AI Security Guides</h2>
+            <p>For comprehensive tutorials and security guides:</p>
+            <a href="https://fixthevuln.com" class="cta-button" target="_blank">Visit FixTheVuln.com &rarr;</a>
+        </section>
+
+        <!-- Related Content -->
+        <section style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid var(--border-color, #e0e0e0);">
+            <h2 style="margin-bottom: 1.5rem;">Related Resources</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                <a href="owasp-llm-top10.html" style="background: var(--bg-tertiary, #f8f9fa); color: var(--text-primary, #333); padding: 1.25rem; border-radius: 8px; text-decoration: none; border: 2px solid var(--border-color, #e0e0e0);">
+                    <strong style="display: block; margin-bottom: 0.5rem; color: var(--accent-primary, #667eea);">🤖 OWASP LLM Top 10</strong>
+                    <span style="font-size: 0.9rem; color: var(--text-muted, #666);">Complete list of LLM application security risks</span>
+                </a>
+                <a href="prompt-injection.html" style="background: var(--bg-tertiary, #f8f9fa); color: var(--text-primary, #333); padding: 1.25rem; border-radius: 8px; text-decoration: none; border: 2px solid var(--border-color, #e0e0e0);">
+                    <strong style="display: block; margin-bottom: 0.5rem; color: var(--accent-primary, #667eea);">💉 Prompt Injection Attacks</strong>
+                    <span style="font-size: 0.9rem; color: var(--text-muted, #666);">How attackers manipulate LLM inputs</span>
+                </a>
+                <a href="mlsecops.html" style="background: var(--bg-tertiary, #f8f9fa); color: var(--text-primary, #333); padding: 1.25rem; border-radius: 8px; text-decoration: none; border: 2px solid var(--border-color, #e0e0e0);">
+                    <strong style="display: block; margin-bottom: 0.5rem; color: var(--accent-primary, #667eea);">🔧 MLSecOps Pipeline Security</strong>
+                    <span style="font-size: 0.9rem; color: var(--text-muted, #666);">Securing the entire ML development lifecycle</span>
+                </a>
+            </div>
+        </section>
+
+
+        <!-- Store CTA -->
+        <section style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
+            <h3 style="color: white; margin-bottom: 0.5rem;">Get the CompTIA Security+ Study Planner</h3>
+            <p style="opacity: 0.9; margin-bottom: 1rem;">Fillable PDF study planners with domain trackers, weekly schedules, and progress tracking. Available in Standard, ADHD-Friendly, Dark Mode, and 4-Format Bundle.</p>
+            <a href="/store/comptia.html" style="display:inline-block;background:#667eea;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">CompTIA Security+ Planner</a>
+            <p style="font-size: 0.8rem; opacity: 0.85; margin-top: 0.75rem;">60+ certifications available &mdash; from $5.99</p>
+        </section>
+        <!-- Sprint Kit CTA -->
+        <section style="background: linear-gradient(135deg, #0a2e1a 0%, #1a3a2e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
+            <h3 style="color: white; margin-bottom: 0.5rem;">Patch Tuesday Sprint Kit</h3>
+            <p style="opacity: 0.9; margin-bottom: 1rem;">5 fillable templates for vulnerability triage, sprint planning, testing, SLA tracking, and executive reporting. Free blank templates or $4.99/mo for pre-filled intelligence with real CISA KEV data.</p>
+            <a href="/store/patch-tuesday-kit.html" style="display:inline-block;background:#10b981;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">Try Free Templates</a>
+            <a href="https://buy.stripe.com/fZudRa2L8dCz73c7Kc1oI00" style="display:inline-block;background:#667eea;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">Subscribe &mdash; $4.99/mo</a>
+        </section>
+        <!-- CyberFolio CTA -->
+        <div style="border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.3rem;">CyberFolio</p>
+            <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Choosing your next cert? Track them all in one place.</p>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills &mdash; free.</p>
+            <a href="https://cyberfolio.io" style="display:inline-block;background:#06b6d4;color:white;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;" target="_blank" rel="noopener">Build Your Portfolio &rarr;</a>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+  <script src="/js/error-reporter.js"></script>
+</body>
+</html>

@@ -655,6 +655,69 @@ We sincerely apologize for any concern this may cause.
             </table>
         </section>
 
+        <!-- IR Playbook Templates -->
+        <section class="vulnerability-card">
+            <h2>IR Playbook Templates</h2>
+            <p>Pre-built response checklists for the most common incident types. Adapt these to your environment.</p>
+
+            <div style="background: var(--bg-tertiary, #f8f9fa); border: 2px solid #dc3545; border-radius: 10px; padding: 1.5rem; margin-top: 1.5rem;">
+                <h3 style="margin-top: 0; color: #dc3545;">Ransomware Playbook</h3>
+                <ol style="padding-left: 1.25rem;">
+                    <li><strong>Isolate immediately</strong> &mdash; disconnect affected systems from the network (do NOT power off)</li>
+                    <li><strong>Identify variant</strong> &mdash; check ransom note, file extensions, and ID Ransomware (id-ransomware.malwarehunterteam.com)</li>
+                    <li><strong>Preserve evidence</strong> &mdash; image affected drives before any remediation</li>
+                    <li><strong>Assess blast radius</strong> &mdash; check network shares, backup integrity, and domain controller status</li>
+                    <li><strong>Notify stakeholders</strong> &mdash; legal, executive team, law enforcement (FBI IC3), cyber insurance carrier</li>
+                    <li><strong>Do NOT pay ransom</strong> without legal counsel &mdash; payment doesn't guarantee decryption and may violate OFAC sanctions</li>
+                    <li><strong>Eradicate</strong> &mdash; rebuild from clean images, reset ALL credentials (assume full domain compromise)</li>
+                    <li><strong>Restore</strong> &mdash; recover from offline/immutable backups, verify data integrity</li>
+                    <li><strong>Harden</strong> &mdash; patch entry vector, enable MFA everywhere, segment network, review RDP exposure</li>
+                </ol>
+            </div>
+
+            <div style="background: var(--bg-tertiary, #f8f9fa); border: 2px solid #ffc107; border-radius: 10px; padding: 1.5rem; margin-top: 1.5rem;">
+                <h3 style="margin-top: 0; color: #e6a800;">Phishing Incident Playbook</h3>
+                <ol style="padding-left: 1.25rem;">
+                    <li><strong>Collect the email</strong> &mdash; preserve original headers (don't just forward), save .eml file</li>
+                    <li><strong>Identify recipients</strong> &mdash; query mail logs for all recipients of the same message ID</li>
+                    <li><strong>Check who clicked</strong> &mdash; review proxy/web logs for URL visits, check EDR for payload execution</li>
+                    <li><strong>Reset credentials</strong> &mdash; force password reset for anyone who entered credentials, revoke active sessions</li>
+                    <li><strong>Scan endpoints</strong> &mdash; run EDR scan on systems that accessed the phishing URL or opened attachments</li>
+                    <li><strong>Block IOCs</strong> &mdash; add sender domain, URL, and payload hash to blocklists</li>
+                    <li><strong>Notify users</strong> &mdash; send org-wide alert with screenshots of the phishing email</li>
+                    <li><strong>Report</strong> &mdash; submit to Anti-Phishing Working Group (reportphishing@apwg.org)</li>
+                </ol>
+            </div>
+
+            <div style="background: var(--bg-tertiary, #f8f9fa); border: 2px solid #fd7e14; border-radius: 10px; padding: 1.5rem; margin-top: 1.5rem;">
+                <h3 style="margin-top: 0; color: #fd7e14;">Compromised Credentials Playbook</h3>
+                <ol style="padding-left: 1.25rem;">
+                    <li><strong>Disable account</strong> &mdash; immediately disable the compromised account in IdP/AD</li>
+                    <li><strong>Revoke sessions</strong> &mdash; terminate all active sessions, OAuth tokens, and API keys</li>
+                    <li><strong>Audit access</strong> &mdash; review login history for unauthorized access (source IPs, timestamps, geolocations)</li>
+                    <li><strong>Check lateral movement</strong> &mdash; review if the account accessed other systems, elevated privileges, or created new accounts</li>
+                    <li><strong>Review data access</strong> &mdash; check file downloads, email forwarding rules, shared drive activity</li>
+                    <li><strong>Reset and harden</strong> &mdash; new password + enforce MFA, review and remove forwarding rules</li>
+                    <li><strong>Credential stuffing check</strong> &mdash; verify the same password isn't reused across other corporate accounts</li>
+                    <li><strong>Monitor</strong> &mdash; enhanced monitoring on the account for 30 days post-incident</li>
+                </ol>
+            </div>
+
+            <div style="background: var(--bg-tertiary, #f8f9fa); border: 2px solid #667eea; border-radius: 10px; padding: 1.5rem; margin-top: 1.5rem;">
+                <h3 style="margin-top: 0; color: #667eea;">Data Exfiltration Playbook</h3>
+                <ol style="padding-left: 1.25rem;">
+                    <li><strong>Identify the channel</strong> &mdash; DNS tunneling, HTTPS to cloud storage, USB, email attachment, or API exfiltration</li>
+                    <li><strong>Block the exfil path</strong> &mdash; firewall rule to block destination IP/domain, disable USB ports, revoke cloud storage access</li>
+                    <li><strong>Quantify the breach</strong> &mdash; determine what data was accessed, volume transferred, and time window</li>
+                    <li><strong>Classify data sensitivity</strong> &mdash; PII, PHI, financial, trade secrets, credentials &mdash; this drives notification requirements</li>
+                    <li><strong>Preserve evidence</strong> &mdash; network captures, DLP alerts, proxy logs, endpoint forensics</li>
+                    <li><strong>Legal notification</strong> &mdash; consult legal on breach notification obligations (GDPR 72 hours, state laws vary)</li>
+                    <li><strong>Contain the source</strong> &mdash; identify and remediate the initial access vector that enabled the exfiltration</li>
+                    <li><strong>Post-breach hardening</strong> &mdash; implement DLP controls, network segmentation, and enhanced monitoring</li>
+                </ol>
+            </div>
+        </section>
+
         <!-- Related Content -->
             <section style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
                 <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Related Resources</h3>
@@ -688,14 +751,6 @@ We sincerely apologize for any concern this may cause.
             <a href="/store/patch-tuesday-kit.html" style="display:inline-block;background:#10b981;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">Try Free Templates</a>
             <a href="https://buy.stripe.com/fZudRa2L8dCz73c7Kc1oI00" style="display:inline-block;background:#667eea;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">Subscribe &mdash; $4.99/mo</a>
         </section>
-        <!-- Sprint Kit CTA -->
-        <section style="background: linear-gradient(135deg, #0a2e1a 0%, #1a3a2e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
-            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
-            <h3 style="color: white; margin-bottom: 0.5rem;">Patch Tuesday Sprint Kit</h3>
-            <p style="opacity: 0.9; margin-bottom: 1rem;">5 fillable templates for vulnerability triage, sprint planning, testing, SLA tracking, and executive reporting. Free blank templates or $4.99/mo for pre-filled intelligence with real CISA KEV data.</p>
-            <a href="/store/patch-tuesday-kit.html" style="display:inline-block;background:#10b981;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">Try Free Templates</a>
-            <a href="https://buy.stripe.com/fZudRa2L8dCz73c7Kc1oI00" style="display:inline-block;background:#667eea;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">Subscribe &mdash; $4.99/mo</a>
-        </section>
         <!-- CyberFolio CTA -->
         <div style="border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem;">
             <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.3rem;">CyberFolio</p>
@@ -703,30 +758,6 @@ We sincerely apologize for any concern this may cause.
             <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills &mdash; free.</p>
             <a href="https://cyberfolio.io" style="display:inline-block;background:#06b6d4;color:white;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;" target="_blank" rel="noopener">Build Your Portfolio &rarr;</a>
         </div>
-        <!-- Sprint Kit CTA -->
-        <section style="background: linear-gradient(135deg, #0a2e1a 0%, #1a3a2e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
-            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
-            <h3 style="color: white; margin-bottom: 0.5rem;">Patch Tuesday Sprint Kit</h3>
-            <p style="opacity: 0.9; margin-bottom: 1rem;">5 fillable templates for vulnerability triage, sprint planning, testing, SLA tracking, and executive reporting. Free blank templates or $4.99/mo for pre-filled intelligence with real CISA KEV data.</p>
-            <a href="/store/patch-tuesday-kit.html" style="display:inline-block;background:#10b981;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">Try Free Templates</a>
-            <a href="https://buy.stripe.com/fZudRa2L8dCz73c7Kc1oI00" style="display:inline-block;background:#667eea;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">Subscribe &mdash; $4.99/mo</a>
-        </section>
-        <!-- Sprint Kit CTA -->
-        <section style="background: linear-gradient(135deg, #0a2e1a 0%, #1a3a2e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
-            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
-            <h3 style="color: white; margin-bottom: 0.5rem;">Patch Tuesday Sprint Kit</h3>
-            <p style="opacity: 0.9; margin-bottom: 1rem;">5 fillable templates for vulnerability triage, sprint planning, testing, SLA tracking, and executive reporting. Free blank templates or $4.99/mo for pre-filled intelligence with real CISA KEV data.</p>
-            <a href="/store/patch-tuesday-kit.html" style="display:inline-block;background:#10b981;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">Try Free Templates</a>
-            <a href="https://buy.stripe.com/fZudRa2L8dCz73c7Kc1oI00" style="display:inline-block;background:#667eea;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">Subscribe &mdash; $4.99/mo</a>
-        </section>
-        <!-- Sprint Kit CTA -->
-        <section style="background: linear-gradient(135deg, #0a2e1a 0%, #1a3a2e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
-            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
-            <h3 style="color: white; margin-bottom: 0.5rem;">Patch Tuesday Sprint Kit</h3>
-            <p style="opacity: 0.9; margin-bottom: 1rem;">5 fillable templates for vulnerability triage, sprint planning, testing, SLA tracking, and executive reporting. Free blank templates or $4.99/mo for pre-filled intelligence with real CISA KEV data.</p>
-            <a href="/store/patch-tuesday-kit.html" style="display:inline-block;background:#10b981;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">Try Free Templates</a>
-            <a href="https://buy.stripe.com/fZudRa2L8dCz73c7Kc1oI00" style="display:inline-block;background:#667eea;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">Subscribe &mdash; $4.99/mo</a>
-        </section>
     </main>
 
     <footer>

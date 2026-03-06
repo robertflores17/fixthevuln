@@ -132,6 +132,7 @@ TOOL_PAGES = {
 COMPLIANCE_PAGES = {
     "cis-controls.html", "gdpr-guide.html", "hipaa-guide.html",
     "nist-framework.html", "pci-dss.html", "soc2-basics.html",
+    "risk-register-guide.html", "third-party-risk.html",
 }
 
 GUIDE_PAGES = {
@@ -146,6 +147,9 @@ GUIDE_PAGES = {
     "red-teaming-guide.html", "cybersecurity-salary-guide.html",
     "best-cybersecurity-certifications.html",
     "cybersecurity-job-trends.html",
+    "owasp-llm-top10.html", "prompt-injection.html", "model-poisoning.html",
+    "mlsecops.html", "ai-security-careers.html", "grc-career-path.html",
+    "siem-rule-writing.html", "threat-hunting.html", "log-analysis-cheatsheet.html",
 }
 
 HUB_PAGES = {
