@@ -212,10 +212,23 @@ def save_pending(pending_dict):
     """Save pending_review.json from a dict keyed by CVE ID."""
     data = {
         "last_updated": datetime.now().isoformat(),
+        "last_checked": datetime.now().isoformat(),
         "total_pending": len(pending_dict),
         "instructions": "Review entries, then set include_on_site to true. Run: python scripts/generate_html.py",
         "vulnerabilities": list(pending_dict.values())
     }
+    with open(PENDING_FILE, 'w') as f:
+        json.dump(data, f, indent=2)
+
+
+def update_last_checked():
+    """Update last_checked timestamp without modifying pending entries."""
+    if PENDING_FILE.exists():
+        with open(PENDING_FILE, 'r') as f:
+            data = json.load(f)
+    else:
+        data = {"last_updated": None, "total_pending": 0, "instructions": "", "vulnerabilities": []}
+    data["last_checked"] = datetime.now().isoformat()
     with open(PENDING_FILE, 'w') as f:
         json.dump(data, f, indent=2)
 
@@ -729,6 +742,7 @@ def cmd_fetch():
                 f.write("has_new=true\n")
     else:
         print("\nNo new CVEs to review.")
+        update_last_checked()
         if os.environ.get('GITHUB_OUTPUT'):
             with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
                 f.write("new_count=0\n")
