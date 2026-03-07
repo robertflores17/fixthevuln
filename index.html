@@ -5,33 +5,94 @@
         <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
     <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Free vulnerability remediation cheat sheets, OSI security reference, and interactive network tools. The Security Professional's Quick Reference Toolkit for Security+, CEH, CISSP, and GIAC exam prep.">
-    <meta name="keywords" content="vulnerability remediation cheat sheet, OSI security reference, free security tools online, OWASP top 10, CVE lookup, subnet calculator, port scanner, Security+ study guide, CEH exam prep, CISSP reference, GIAC certification, network security tools, cybersecurity cheat sheets">
+    <meta name="description" content="Free cybersecurity guides, practice tests, and interactive tools for security professionals and cert students. 380+ resources — always free.">
+    <meta name="keywords" content="cybersecurity education, free security guides, practice tests, Security+ study guide, CISSP exam prep, vulnerability remediation, OWASP top 10, cert comparisons, career paths, compliance frameworks">
     <meta name="author" content="FixTheVuln">
     <meta name="msvalidate.01" content="9B754518F5CB5DB7AB7A072A0D84CA39">
     <meta name="robots" content="index, follow">
-    <meta property="og:title" content="FixTheVuln - The Security Professional's Quick Reference Toolkit">
-    <meta property="og:description" content="Free vulnerability remediation cheat sheets, interactive security tools, and OSI layer attack references. Perfect for Security+, CEH, CISSP, and GIAC exam prep.">
+    <meta property="og:title" content="FixTheVuln — Free Cybersecurity Education">
+    <meta property="og:description" content="Free cybersecurity guides, practice tests, and interactive tools for security professionals and cert students. 380+ resources — always free.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://fixthevuln.com/">
     <meta property="og:image" content="https://fixthevuln.com/og-image.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="FixTheVuln - Free Security Cheat Sheets & Vulnerability Remediation Tools">
-    <meta name="twitter:description" content="Free vulnerability remediation cheat sheets, OSI security reference, and interactive network tools. The Security Professional's Quick Reference Toolkit for Security+, CEH, CISSP, and GIAC exam prep.">
+    <meta name="twitter:title" content="FixTheVuln — Free Cybersecurity Education">
+    <meta name="twitter:description" content="Free cybersecurity guides, practice tests, and interactive tools for security professionals and cert students. 380+ resources — always free.">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
-    <title>FixTheVuln - Free Security Cheat Sheets & Vulnerability Remediation Tools</title>
+    <title>FixTheVuln — Free Cybersecurity Education for Security Professionals</title>
     <link rel="canonical" href="https://fixthevuln.com/">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="stylesheet" href="style.min.css?v=7">
     <style>
-        .category-grid {
+        /* Impact hero */
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        .hero-stat {
+            text-align: center;
+        }
+        .hero-stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            line-height: 1.2;
+            letter-spacing: -1px;
+        }
+        .hero-stat-number.hero-stat-primary {
+            font-size: 4.5rem;
+            line-height: 1.15;
+            background: linear-gradient(135deg, #fff 0%, #c7d2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-stat-label {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.75);
+            margin-top: 0.25rem;
+            font-weight: 500;
+        }
+        @media (max-width: 480px) {
+            .hero-stat-number.hero-stat-primary { font-size: 3.5rem; }
+            .hero-stat-number { font-size: 2rem; }
+            .hero-stats { gap: 1.5rem; }
+        }
+
+        /* Featured cards (top 2) */
+        .featured-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 1.5rem;
             margin-top: 2rem;
+        }
+        @media (max-width: 600px) {
+            .featured-grid { grid-template-columns: 1fr; }
+        }
+        .category-card.featured {
+            padding: 1.75rem;
+            border: 2px solid rgba(102, 126, 234, 0.25);
+            background: linear-gradient(145deg, var(--bg-secondary), rgba(102, 126, 234, 0.04));
+        }
+        .category-card.featured .category-icon { font-size: 2.5rem; }
+        .category-card.featured h3 { font-size: 1.25rem; }
+        [data-theme="dark"] .category-card.featured {
+            border-color: rgba(102, 126, 234, 0.4);
+            background: linear-gradient(145deg, var(--bg-secondary), rgba(102, 126, 234, 0.1));
+        }
+
+        /* Navigation grid cards */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1.25rem;
         }
         .category-card {
             background: var(--bg-secondary);
@@ -49,7 +110,7 @@
         }
         .category-card:hover {
             border-color: #667eea;
-            transform: translateY(-8px);
+            transform: translateY(-6px);
             box-shadow: 0 12px 24px rgba(102, 126, 234, 0.2);
         }
         .category-icon {
@@ -76,170 +137,28 @@
             font-weight: 600;
             margin-top: auto;
         }
-        .store-card {
-            border: 1px solid rgba(124, 58, 237, 0.3);
-            background: linear-gradient(145deg, rgba(37, 99, 235, 0.08), rgba(124, 58, 237, 0.06));
-        }
-        .store-card .category-count {
-            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
-        }
-        [data-theme="dark"] .store-card {
-            background: linear-gradient(145deg, rgba(37, 99, 235, 0.2), rgba(124, 58, 237, 0.15)), var(--bg-secondary);
-            border-color: rgba(124, 58, 237, 0.5);
-        }
-        [data-theme="dark"] .store-card p {
-            color: var(--text-primary);
-        }
-        .external-tools-brief {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
+
+        /* Secondary links row */
+        .secondary-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
             margin-top: 1.5rem;
+            flex-wrap: wrap;
         }
-        @media (max-width: 768px) {
-            .external-tools-brief {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        .external-tool-link {
-            background: var(--bg-secondary);
-            padding: 1rem;
-            border-radius: 8px;
+        .secondary-links a {
+            color: var(--text-secondary);
             text-decoration: none;
-            color: var(--text-primary);
-            text-align: center;
-            transition: all 0.2s;
-            border: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
         }
-        .external-tool-link:hover {
-            border-color: var(--accent-primary);
-            transform: translateY(-2px);
+        .secondary-links a:hover {
+            color: var(--accent-primary);
         }
-        .external-tool-link span {
-            display: block;
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-        .vuln-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 1.25rem;
-            margin-top: 1.5rem;
-        }
-        .vuln-card {
-            background: var(--bg-secondary);
-            border-radius: 10px;
-            padding: 1.25rem;
-            border-left: 4px solid #e74c3c;
-            box-shadow: var(--card-shadow);
-            text-align: left;
-        }
-        .vuln-card.critical { border-left-color: #9b59b6; }
-        .vuln-card.high { border-left-color: #e74c3c; }
-        .vuln-card.medium { border-left-color: #f39c12; }
-        .vuln-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.5rem;
-            gap: 0.5rem;
-        }
-        .vuln-card h4 {
-            color: var(--text-primary);
-            font-size: 1rem;
-            margin: 0;
-            font-weight: 600;
-        }
-        .severity-badge {
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            flex-shrink: 0;
-        }
-        .severity-badge.critical { background: #9b59b6; color: white; }
-        .severity-badge.high { background: #e74c3c; color: white; }
-        .severity-badge.medium { background: #f39c12; color: white; }
-        .vuln-card p {
-            color: var(--text-muted);
-            font-size: 0.875rem;
-            margin: 0 0 0.75rem 0;
-            line-height: 1.5;
-        }
-        .vuln-fix {
-            background: #d4edda;
-            border-radius: 6px;
-            padding: 0.6rem 0.75rem;
-            font-size: 0.8rem;
-            color: #155724;
-        }
-        .vuln-fix strong {
-            color: #155724;
-        }
-        .vuln-impact {
-            background: #fff3cd;
-            border-radius: 6px;
-            padding: 0.5rem 0.75rem;
-            font-size: 0.8rem;
-            color: #856404;
-            margin-bottom: 0.75rem;
-        }
-        .vuln-impact strong { color: #856404; }
-        .code-tabs {
-            display: flex;
-            gap: 0.25rem;
-            margin-bottom: 0;
-        }
-        .code-tab {
-            padding: 0.3rem 0.6rem;
-            font-size: 0.7rem;
-            background: #e9ecef;
-            border: none;
-            border-radius: 4px 4px 0 0;
-            cursor: pointer;
-            font-weight: 600;
-            color: #495057;
-        }
-        .code-tab.active {
-            background: #2c3e50;
-            color: #fff;
-        }
-        .code-block {
-            background: #2c3e50;
-            border-radius: 0 6px 6px 6px;
-            padding: 0.75rem;
-            position: relative;
-            margin-bottom: 0.75rem;
-        }
-        .code-block code {
-            color: #a8e6cf;
-            font-family: 'Monaco', 'Consolas', monospace;
-            font-size: 0.75rem;
-            display: block;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-        .copy-btn {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            padding: 0.25rem 0.5rem;
-            font-size: 0.65rem;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .copy-btn:hover { background: #764ba2; }
-        .copy-btn.copied { background: #28a745; }
+
+        /* KEV section */
         .kev-section {
-            background: var(--bg-secondary);
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            padding: 2rem;
             margin-top: 3rem;
         }
         .kev-section h2 {
@@ -268,19 +187,18 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
         .kev-card {
-            background: var(--bg-tertiary);
+            background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 1rem;
             border-left: 3px solid #dc3545;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        /* Dynamic CVSS color coding */
-        .kev-card.cvss-critical { border-left-color: #dc3545; } /* Red: 9-10 or Zero-Day */
-        .kev-card.cvss-high { border-left-color: #fd7e14; }     /* Orange: 7-8.9 */
-        .kev-card.cvss-medium { border-left-color: #ffc107; }   /* Yellow: 4-6.9 */
-        .kev-card.cvss-low { border-left-color: #17a2b8; }      /* Blue: 0.1-3.9 */
-        .kev-card.cvss-none { border-left-color: #6c757d; }     /* Gray: Unknown/N/A */
+        .kev-card.cvss-critical { border-left-color: #dc3545; }
+        .kev-card.cvss-high { border-left-color: #fd7e14; }
+        .kev-card.cvss-medium { border-left-color: #ffc107; }
+        .kev-card.cvss-low { border-left-color: #17a2b8; }
+        .kev-card.cvss-none { border-left-color: #6c757d; }
         .kev-card h4 {
             color: var(--text-primary);
             font-size: 0.9rem;
@@ -309,6 +227,7 @@
             background: rgba(40, 167, 69, 0.2);
             color: #a8e6cf;
         }
+
         /* Visually hidden class for accessibility */
         .visually-hidden {
             position: absolute;
@@ -322,42 +241,6 @@
             border: 0;
         }
     </style>
-
-    <!-- Schema.org HowTo Markup for SEO -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "HowTo",
-        "name": "How to Fix Common Security Vulnerabilities",
-        "description": "Quick remediation guides for SQL Injection, XSS, Broken Authentication, and other OWASP Top 10 vulnerabilities.",
-        "step": [
-            {
-                "@type": "HowToStep",
-                "name": "Fix SQL Injection",
-                "text": "Use parameterized queries or prepared statements. Never concatenate user input directly into SQL queries.",
-                "url": "https://fixthevuln.com/#sql-injection"
-            },
-            {
-                "@type": "HowToStep",
-                "name": "Fix Cross-Site Scripting (XSS)",
-                "text": "Encode all output, implement Content-Security-Policy headers, and sanitize HTML input using libraries like DOMPurify.",
-                "url": "https://fixthevuln.com/#xss"
-            },
-            {
-                "@type": "HowToStep",
-                "name": "Fix Broken Authentication",
-                "text": "Implement multi-factor authentication, use secure session tokens with httpOnly and secure flags, enforce strong password policies.",
-                "url": "https://fixthevuln.com/#broken-auth"
-            },
-            {
-                "@type": "HowToStep",
-                "name": "Fix Security Misconfiguration",
-                "text": "Remove default credentials, disable unnecessary services, configure proper error handling to hide stack traces.",
-                "url": "https://fixthevuln.com/#misconfig"
-            }
-        ]
-    }
-    </script>
 
     <!-- Organization Schema for E-E-A-T -->
     <script type="application/ld+json">
@@ -415,439 +298,118 @@
 
     <a href="#main-content" class="skip-link" style="position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden;">Skip to main content</a>
 
-    <header role="banner">
-        <div class="container">
-            <h1>FixTheVuln</h1>
-            <p class="tagline">Learn Security. Master Remediation.</p>
-            <p class="subtitle">The open knowledge base for vulnerability remediation education</p>
+    <!-- Section 1: Impact Hero -->
+    <header role="banner" style="padding: 3rem 0 3.5rem;">
+        <div class="container" style="text-align: center;">
+            <h1 style="margin-bottom: 0.5rem;">FixTheVuln</h1>
+            <p class="tagline" style="max-width: 600px; margin: 0 auto;">Free cybersecurity education for professionals and students</p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-stat-number hero-stat-primary">380+</div>
+                    <div class="hero-stat-label">Free Resources</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-number">66</div>
+                    <div class="hero-stat-label">Practice Quizzes</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-number">13</div>
+                    <div class="hero-stat-label">Vendors Covered</div>
+                </div>
+            </div>
+            <p class="subtitle" style="margin-top: 1.5rem;">Guides, practice tests, interactive tools, and career resources — no account required.</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1.25rem; justify-content: center;">
+                <a href="start-here.html" style="background: rgba(255,255,255,0.2); color: white; padding: 0.75rem 1.75rem; border-radius: 8px; font-size: 1rem; font-weight: 600; text-decoration: none; border: 2px solid rgba(255,255,255,0.4); transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">Start Learning Path</a>
+                <a href="#resources" style="background: transparent; color: rgba(255,255,255,0.9); padding: 0.75rem 1.75rem; border-radius: 8px; font-size: 1rem; font-weight: 500; text-decoration: none; border: 1px solid rgba(255,255,255,0.25); transition: all 0.2s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.5)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.25)'">Browse All Resources</a>
+            </div>
         </div>
     </header>
 
-    <div style="width: 100%; height: 260px; overflow: hidden; position: relative; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);" role="img" aria-label="Educational platform hero banner">
-        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; text-align: center; width: 90%; max-width: 800px;">
-            <h2 style="font-size: 1.75rem; font-weight: 700; line-height: 1.3; margin: 0;">Master Vulnerability Remediation</h2>
-            <p style="font-size: 1.05rem; margin-top: 12px; opacity: 0.95; line-height: 1.6;">Learn to prioritize, fix, and verify security vulnerabilities with expert-curated guides based on real-world threat intelligence</p>
-        </div>
-    </div>
-
     <main id="main-content" class="container" role="main">
-        <section class="intro" aria-labelledby="intro-heading">
-            <h2 id="intro-heading">Your Learning Path to Secure Code</h2>
-            <p style="font-size: 1.05rem; line-height: 1.7;">FixTheVuln teaches you to think like a security professional. Learn which vulnerabilities matter most based on <strong>CISA's Known Exploited Vulnerabilities</strong>, <strong>EPSS probability scores</strong>, and <strong>real breach data</strong> — not just CVSS severity numbers.</p>
 
-            <!-- Learning Outcomes -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.5rem; text-align: left;">
-                <div style="display: flex; align-items: flex-start; gap: 0.5rem;">
-                    <span style="color: #28a745; font-size: 1.25rem;" aria-hidden="true">✓</span>
-                    <span style="font-size: 0.95rem; color: var(--text-primary);">Understand vulnerability impact</span>
-                </div>
-                <div style="display: flex; align-items: flex-start; gap: 0.5rem;">
-                    <span style="color: #28a745; font-size: 1.25rem;" aria-hidden="true">✓</span>
-                    <span style="font-size: 0.95rem; color: var(--text-primary);">Apply secure coding patterns</span>
-                </div>
-                <div style="display: flex; align-items: flex-start; gap: 0.5rem;">
-                    <span style="color: #28a745; font-size: 1.25rem;" aria-hidden="true">✓</span>
-                    <span style="font-size: 0.95rem; color: var(--text-primary);">Prioritize by exploitability</span>
-                </div>
-                <div style="display: flex; align-items: flex-start; gap: 0.5rem;">
-                    <span style="color: #28a745; font-size: 1.25rem;" aria-hidden="true">✓</span>
-                    <span style="font-size: 0.95rem; color: var(--text-primary);">Verify your fixes work</span>
-                </div>
-            </div>
+        <!-- Section 2: Navigation Grid — Featured + Regular -->
+        <section id="resources" aria-labelledby="resources-heading">
+            <h2 id="resources-heading" class="visually-hidden">Resource Categories</h2>
 
-            <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1.5rem; justify-content: center;" role="navigation" aria-label="Quick actions">
-                <a href="start-here.html" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 0.75rem 1.5rem; border-radius: 8px; font-size: 1rem; font-weight: 600; text-decoration: none; box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);">Start Learning Path →</a>
-                <a href="owasp-top10.html" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.75rem 1.5rem; border-radius: 8px; font-size: 1rem; font-weight: 600; text-decoration: none; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);">Learn OWASP Top 10 →</a>
-                <a href="practice-tests.html" style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); color: white; padding: 0.75rem 1.5rem; border-radius: 8px; font-size: 1rem; font-weight: 600; text-decoration: none; box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);">Practice Tests →</a>
-            </div>
-            <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.25rem; justify-content: center;">
-                <span style="background: #d4edda; color: #155724; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.875rem; font-weight: 500;">Free & Open</span>
-                <span style="background: #fff3cd; color: #856404; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.875rem; font-weight: 500;">No Account Required</span>
-                <span style="background: #d1ecf1; color: #0c5460; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.875rem; font-weight: 500;">Sources: CISA, NVD, FIRST</span>
+            <!-- Top 2 featured cards -->
+            <nav class="featured-grid" aria-label="Featured resource categories">
+                <a href="guides.html" class="category-card featured">
+                    <span class="category-icon" aria-hidden="true">📚</span>
+                    <h3>Security Guides</h3>
+                    <p>OWASP, infrastructure hardening, encryption, incident response, and more</p>
+                    <span class="category-count">36 Guides</span>
+                </a>
+                <a href="practice-tests.html" class="category-card featured">
+                    <span class="category-icon" aria-hidden="true">🧠</span>
+                    <h3>Practice Tests</h3>
+                    <p>1,200+ free questions for Security+, CySA+, CISSP, AWS SAA, CCNA, and more</p>
+                    <span class="category-count">66 Quizzes</span>
+                </a>
+            </nav>
+
+            <!-- Remaining 4 cards -->
+            <nav class="category-grid" aria-label="More resource categories">
+                <a href="career-paths.html" class="category-card">
+                    <span class="category-icon" aria-hidden="true">🗺️</span>
+                    <h3>Career Paths</h3>
+                    <p>Pick your target role and see which certifications to pursue</p>
+                    <span class="category-count">9 Paths</span>
+                </a>
+                <a href="comparisons/" class="category-card">
+                    <span class="category-icon" aria-hidden="true">⚖️</span>
+                    <h3>Cert Comparisons</h3>
+                    <p>Side-by-side breakdowns — Security+ vs CySA+, CISSP vs CISM, and more</p>
+                    <span class="category-count">40 Comparisons</span>
+                </a>
+                <a href="tools.html" class="category-card">
+                    <span class="category-icon" aria-hidden="true">🛠️</span>
+                    <h3>Interactive Tools</h3>
+                    <p>Calculators, generators, decoders, and educational simulators</p>
+                    <span class="category-count">10 Tools</span>
+                </a>
+                <a href="compliance.html" class="category-card">
+                    <span class="category-icon" aria-hidden="true">📋</span>
+                    <h3>Compliance &amp; Frameworks</h3>
+                    <p>NIST, CIS Controls, PCI DSS, GDPR, SOC 2, and more</p>
+                    <span class="category-count">8 Frameworks</span>
+                </a>
+            </nav>
+
+            <!-- Secondary links -->
+            <div class="secondary-links">
+                <a href="blog/">Blog</a>
+                <a href="resources.html">Resources</a>
+                <a href="/store/store.html">Study Planners</a>
+                <a href="https://cyberfolio.io" target="_blank" rel="noopener">CyberFolio</a>
             </div>
         </section>
 
-        <!-- Latest Update Banner -->
-        <div id="latest-update" style="display: none; margin-top: 2rem; padding: 1rem 1.5rem; background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1)); border: 1px solid var(--border-color); border-left: 4px solid #667eea; border-radius: 8px;">
-            <p style="margin: 0; color: var(--text-primary); font-size: 0.95rem; line-height: 1.6;">
-                <strong id="update-date" style="color: #667eea;"></strong>
-                <span id="update-summary"></span>
-                <span id="update-signed" style="color: var(--text-muted); font-style: italic;"></span>
-            </p>
-        </div>
-
-        <!-- KEV Section - Known Exploited Vulnerabilities (JSON-driven) -->
+        <!-- Section 4: Latest Vulnerabilities (Compact KEV) -->
         <section class="kev-section" aria-labelledby="kev-heading">
-            <h2 id="kev-heading">Actively Exploited Vulnerabilities</h2>
-            <p>High-priority CVEs from CISA's Known Exploited Vulnerabilities catalog. Patch these immediately. <span id="kev-last-updated" style="display: inline-block; font-size: 0.85rem; color: var(--text-muted); font-style: italic;"></span></p>
+            <h2 id="kev-heading">Latest Actively Exploited Vulnerabilities</h2>
+            <p>High-priority CVEs from CISA's Known Exploited Vulnerabilities catalog. <span id="kev-last-updated" style="font-size: 0.85rem; color: var(--text-muted); font-style: italic;"></span></p>
 
-            <!-- CVSS Legend -->
-            <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-bottom: 1rem; font-size: 0.95rem; color: var(--text-secondary);">
-                <span><span style="display: inline-block; width: 12px; height: 12px; background: #dc3545; border-radius: 2px; margin-right: 4px;"></span>Critical (9-10)</span>
-                <span><span style="display: inline-block; width: 12px; height: 12px; background: #fd7e14; border-radius: 2px; margin-right: 4px;"></span>High (7-8.9)</span>
-                <span><span style="display: inline-block; width: 12px; height: 12px; background: #ffc107; border-radius: 2px; margin-right: 4px;"></span>Medium (4-6.9)</span>
-                <span><span style="display: inline-block; width: 12px; height: 12px; background: #17a2b8; border-radius: 2px; margin-right: 4px;"></span>Low (0.1-3.9)</span>
-            </div>
-
-            <!-- Dynamic KEV Grid - populated by JavaScript, static fallback for SEO -->
             <div class="kev-grid" id="kev-grid-home">
-                <!-- Static fallback: replaced by JS on load -->
-                <a href="https://nvd.nist.gov/vuln/detail/CVE-2025-40551" target="_blank" rel="noopener" class="kev-card-link" title="View CVE-2025-40551 on NVD">
-                    <div class="kev-card cvss-critical">
-                        <h4>SolarWinds Web Help Desk Deserialization of Untrusted Data Vulnerability</h4>
-                        <div class="cve-id" style="color: #dc3545;">CVE-2025-40551 | 9.8</div>
-                        <p>SolarWinds Web Help Desk contains a deserialization of untrusted data vulnerability that could lead to remote code...</p>
-                        <div class="kev-fix"><strong>Fix:</strong> Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.</div>
-                    </div>
-                </a>
-                <a href="https://nvd.nist.gov/vuln/detail/CVE-2019-19006" target="_blank" rel="noopener" class="kev-card-link" title="View CVE-2019-19006 on NVD">
-                    <div class="kev-card cvss-critical">
-                        <h4>Sangoma FreePBX Improper Authentication Vulnerability</h4>
-                        <div class="cve-id" style="color: #dc3545;">CVE-2019-19006 | 9.8</div>
-                        <p>Sangoma FreePBX contains an improper authentication vulnerability that potentially allows unauthorized users to...</p>
-                        <div class="kev-fix"><strong>Fix:</strong> Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.</div>
-                    </div>
-                </a>
-                <a href="https://nvd.nist.gov/vuln/detail/CVE-2025-64328" target="_blank" rel="noopener" class="kev-card-link" title="View CVE-2025-64328 on NVD">
-                    <div class="kev-card cvss-high">
-                        <h4>Sangoma FreePBX OS Command Injection Vulnerability</h4>
-                        <div class="cve-id" style="color: #fd7e14;">CVE-2025-64328 | 8.6</div>
-                        <p>Sangoma FreePBX Endpoint Manager contains an OS command injection vulnerability that could allow for a...</p>
-                        <div class="kev-fix"><strong>Fix:</strong> Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.</div>
-                    </div>
-                </a>
-                <a href="https://nvd.nist.gov/vuln/detail/CVE-2021-39935" target="_blank" rel="noopener" class="kev-card-link" title="View CVE-2021-39935 on NVD">
-                    <div class="kev-card cvss-medium">
-                        <h4>GitLab Community and Enterprise Editions Server-Side Request Forgery (SSRF) Vulnerability</h4>
-                        <div class="cve-id" style="color: #ffc107;">CVE-2021-39935 | 6.8</div>
-                        <p>GitLab Community and Enterprise Editions contain a server-side request forgery vulnerability which could allow...</p>
-                        <div class="kev-fix"><strong>Fix:</strong> Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.</div>
-                    </div>
-                </a>
-                <a href="https://nvd.nist.gov/vuln/detail/CVE-2024-37079" target="_blank" rel="noopener" class="kev-card-link" title="View CVE-2024-37079 on NVD">
-                    <div class="kev-card cvss-critical">
-                        <h4>Broadcom VMware vCenter Server Out-of-bounds Write Vulnerability</h4>
-                        <div class="cve-id" style="color: #dc3545;">CVE-2024-37079 | 9.8</div>
-                        <p>Broadcom VMware vCenter Server contains an out-of-bounds write vulnerability in the implementation of the DCERPC...</p>
-                        <div class="kev-fix"><strong>Fix:</strong> Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.</div>
-                    </div>
-                </a>
-                <a href="https://nvd.nist.gov/vuln/detail/CVE-2026-21509" target="_blank" rel="noopener" class="kev-card-link" title="View CVE-2026-21509 on NVD">
-                    <div class="kev-card cvss-high">
-                        <h4>Microsoft Office Security Feature Bypass Vulnerability</h4>
-                        <div class="cve-id" style="color: #fd7e14;">CVE-2026-21509 | 7.8</div>
-                        <p>Microsoft Office contains a security feature bypass vulnerability in which reliance on untrusted inputs in a...</p>
-                        <div class="kev-fix"><strong>Fix:</strong> Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.</div>
-                    </div>
-                </a>
-                <a href="https://nvd.nist.gov/vuln/detail/CVE-2026-24061" target="_blank" rel="noopener" class="kev-card-link" title="View CVE-2026-24061 on NVD">
-                    <div class="kev-card cvss-critical">
-                        <h4>GNU InetUtils Argument Injection Vulnerability</h4>
-                        <div class="cve-id" style="color: #dc3545;">CVE-2026-24061 | 9.8</div>
-                        <p>GNU InetUtils contains an argument injection vulnerability in telnetd that could allow for remote authentication...</p>
-                        <div class="kev-fix"><strong>Fix:</strong> Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.</div>
-                    </div>
-                </a>
-                <a href="https://nvd.nist.gov/vuln/detail/CVE-2025-52691" target="_blank" rel="noopener" class="kev-card-link" title="View CVE-2025-52691 on NVD">
-                    <div class="kev-card cvss-critical">
-                        <h4>SmarterTools SmarterMail Unrestricted Upload of File with Dangerous Type Vulnerability</h4>
-                        <div class="cve-id" style="color: #dc3545;">CVE-2025-52691 | 10.0</div>
-                        <p>SmarterTools SmarterMail contains an unrestricted upload of file with dangerous type vulnerability that could allow...</p>
-                        <div class="kev-fix"><strong>Fix:</strong> Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.</div>
-                    </div>
-                </a>
-                <a href="https://nvd.nist.gov/vuln/detail/CVE-2018-14634" target="_blank" rel="noopener" class="kev-card-link" title="View CVE-2018-14634 on NVD">
-                    <div class="kev-card cvss-high">
-                        <h4>Linux Kernel Integer Overflow Vulnerability</h4>
-                        <div class="cve-id" style="color: #fd7e14;">CVE-2018-14634 | 7.8</div>
-                        <p>Linux Kernel contains an integer overflow vulnerability in the create_elf_tables() function which could allow an...</p>
-                        <div class="kev-fix"><strong>Fix:</strong> Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.</div>
-                    </div>
-                </a>
                 <noscript>
                     <p style="text-align: center; margin-top: 1rem;"><a href="kev-archive.html">View all vulnerabilities in the archive</a></p>
                 </noscript>
             </div>
 
-            <div style="text-align: center; margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
-                <a href="kev-archive.html" id="archive-link" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">View Archive</a>
-                <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank" rel="noopener" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">View Full CISA KEV Catalog</a>
+            <div style="text-align: center; margin-top: 1.25rem;">
+                <a href="kev-archive.html" id="archive-link" style="color: var(--accent-primary); font-weight: 600; text-decoration: none; font-size: 0.95rem;">View All in Archive &rarr;</a>
             </div>
         </section>
 
-        <!-- Learning Process Section -->
-        <section style="margin-top: 3rem; background: var(--bg-secondary); padding: 2rem; border-radius: 12px; box-shadow: var(--card-shadow);" aria-labelledby="process-heading">
-            <h2 id="process-heading" style="text-align: center; margin-bottom: 1.5rem; color: var(--text-primary);">Your Learning Process</h2>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem;">
-                <div style="text-align: center;">
-                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;" aria-hidden="true">🎯</div>
-                    <h3 style="color: var(--text-primary); margin-bottom: 0.5rem; font-size: 1rem;">1. Identify the Threat</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5;">Learn to recognize vulnerabilities by category, CVE, or symptom</p>
-                </div>
-                <div style="text-align: center;">
-                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;" aria-hidden="true">📊</div>
-                    <h3 style="color: var(--text-primary); margin-bottom: 0.5rem; font-size: 1rem;">2. Assess the Risk</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5;">Understand real-world impact and exploitability context</p>
-                </div>
-                <div style="text-align: center;">
-                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;" aria-hidden="true">💻</div>
-                    <h3 style="color: var(--text-primary); margin-bottom: 0.5rem; font-size: 1rem;">3. Apply the Fix</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5;">Use our code examples for Python, Node.js, PHP, and more</p>
-                </div>
-                <div style="text-align: center;">
-                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;" aria-hidden="true">✅</div>
-                    <h3 style="color: var(--text-primary); margin-bottom: 0.5rem; font-size: 1rem;">4. Validate & Learn</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5;">Test your understanding with quizzes and practical exercises</p>
-                </div>
-            </div>
-            <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(102, 126, 234, 0.1); border-radius: 8px; border-left: 4px solid #667eea;">
-                <p style="margin: 0; color: var(--text-primary); font-size: 0.9rem; line-height: 1.6;"><strong>Educational Approach:</strong> We teach prioritization using <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank" rel="noopener" style="color: var(--accent-primary);">CISA KEV</a>, <a href="https://www.first.org/epss/" target="_blank" rel="noopener" style="color: var(--accent-primary);">FIRST EPSS</a>, and industry breach reports. Content is regularly updated to reflect current threat intelligence and evolving best practices.</p>
-            </div>
-        </section>
-
-        <!-- Who It's For Section -->
-        <section style="margin-top: 3rem;" aria-labelledby="trust-heading">
-            <h2 id="trust-heading" style="text-align: center; margin-bottom: 0.5rem; color: var(--text-primary);">Who It's For</h2>
-            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.95rem;">Built for security professionals who need faster, smarter remediation</p>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
-                <div style="background: var(--bg-secondary); padding: 1.25rem; border-radius: 10px; box-shadow: var(--card-shadow); border-top: 3px solid #667eea;">
-                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">&#x1f6e1;&#xfe0f;</div>
-                    <h3 style="color: var(--text-primary); font-size: 1rem; margin: 0 0 0.5rem 0;">For Security Teams</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; margin: 0;">Prioritize remediation with CISA KEV data, copy-paste code snippets, and step-by-step hardening guides.</p>
-                </div>
-                <div style="background: var(--bg-secondary); padding: 1.25rem; border-radius: 10px; box-shadow: var(--card-shadow); border-top: 3px solid #764ba2;">
-                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">&#x1f4bb;</div>
-                    <h3 style="color: var(--text-primary); font-size: 1rem; margin: 0 0 0.5rem 0;">For Developers</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; margin: 0;">Onboard on secure coding with environment-specific examples for Python, Node.js, and PHP.</p>
-                </div>
-                <div style="background: var(--bg-secondary); padding: 1.25rem; border-radius: 10px; box-shadow: var(--card-shadow); border-top: 3px solid #28a745;">
-                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">&#x1f4da;</div>
-                    <h3 style="color: var(--text-primary); font-size: 1rem; margin: 0 0 0.5rem 0;">For Cert Students</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; margin: 0;">Study for Security+, CySA+, and CISSP with OWASP guides, compliance checklists, and practice quizzes.</p>
-                </div>
-            </div>
-            <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; flex-wrap: wrap; align-items: center;">
-                <div style="text-align: center;">
-                    <div style="font-size: 1.75rem; font-weight: 700; color: var(--accent-primary);">60+</div>
-                    <div style="font-size: 1rem; color: var(--text-muted);">Security Resources</div>
-                </div>
-                <div style="text-align: center;">
-                    <div style="font-size: 1.75rem; font-weight: 700; color: var(--accent-primary);">10</div>
-                    <div style="font-size: 1rem; color: var(--text-muted);">Interactive Tools</div>
-                </div>
-                <div style="text-align: center;">
-                    <div style="font-size: 1.75rem; font-weight: 700; color: var(--accent-primary);">100%</div>
-                    <div style="font-size: 1rem; color: var(--text-muted);">Free Forever</div>
-                </div>
-            </div>
-        </section>
-
-        <section style="margin-top: 3rem;" aria-labelledby="resources-heading">
-            <h2 id="resources-heading" style="text-align: center; margin-bottom: 0.5rem; color: var(--text-primary);">Explore Our Resources</h2>
-            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 1rem; font-weight: 600; font-size: 1rem;">Choose a category to get started</p>
-
-            <a href="planner.html" style="display:block; text-align:center; background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius:12px; padding:1.5rem; text-decoration:none; color:white; margin-bottom:1.5rem; transition:transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 24px rgba(102,126,234,0.3)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-                <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; opacity:0.85; margin-bottom:0.35rem;">📅 New Free Tool</div>
-                <div style="font-size:1.3rem; font-weight:700; margin-bottom:0.3rem;">Certification Study Planner</div>
-                <div style="font-size:0.875rem; opacity:0.9;">Generate a personalized study plan for 30+ IT certs — CompTIA, ISC2, AWS, Microsoft, Cisco, and more</div>
-            </a>
-
-            <nav class="category-grid" aria-label="Main resource categories">
-                <a href="guides.html" class="category-card">
-                    <span class="category-icon">📚</span>
-                    <h3>Quick Reference Guides</h3>
-                    <p>Security cheat sheets covering OWASP, infrastructure hardening, encryption, and incident response</p>
-                    <span class="category-count">19 Guides</span>
-                </a>
-
-                <a href="tools.html" class="category-card">
-                    <span class="category-icon">🛠️</span>
-                    <h3>Interactive Tools</h3>
-                    <p>Hands-on calculators, generators, decoders, and educational simulators for practice</p>
-                    <span class="category-count">10 Tools</span>
-                </a>
-
-                <a href="compliance.html" class="category-card">
-                    <span class="category-icon">📋</span>
-                    <h3>Compliance & Frameworks</h3>
-                    <p>NIST, CIS Controls, PCI DSS, GDPR, and SOC 2 quick reference guides</p>
-                    <span class="category-count">5 Frameworks</span>
-                </a>
-
-                <a href="start-here.html" class="category-card">
-                    <span class="category-icon">🎯</span>
-                    <h3>Learning Path</h3>
-                    <p>Structured journey from security foundations to advanced topics with progress tracking</p>
-                    <span class="category-count">6 Tracks</span>
-                </a>
-
-                <a href="resources.html" class="category-card">
-                    <span class="category-icon">⭐</span>
-                    <h3>Recommended Resources</h3>
-                    <p>Curated VPNs, anti-malware, password managers, and learning platforms we trust</p>
-                    <span class="category-count">View All</span>
-                </a>
-
-                <a href="practice-tests.html" class="category-card">
-                    <span class="category-icon">🧠</span>
-                    <h3>Practice Tests</h3>
-                    <p>1,200+ free practice questions for Security+, Network+, CISSP, CySA+, AWS SAA, and CCNA</p>
-                    <span class="category-count">6 Quizzes</span>
-                </a>
-
-                <a href="career-paths.html" class="category-card">
-                    <span class="category-icon">🗺️</span>
-                    <h3>Career Paths</h3>
-                    <p>Pick your target role and see which certifications to pursue — 9 roadmaps from Help Desk to Security Architect</p>
-                    <span class="category-count">9 Paths</span>
-                </a>
-
-                <a href="comparisons/" class="category-card">
-                    <span class="category-icon">⚖️</span>
-                    <h3>Cert Comparisons</h3>
-                    <p>Side-by-side breakdowns — Security+ vs CySA+, CISSP vs CISM, CCNA vs Network+, and more</p>
-                    <span class="category-count">15 Comparisons</span>
-                </a>
-
-                <a href="blog/" class="category-card">
-                    <span class="category-icon">📰</span>
-                    <h3>Blog & Threat Intel</h3>
-                    <p>Weekly threat roundups, vulnerability analysis, and cybersecurity insights for IT professionals</p>
-                    <span class="category-count">Latest Posts</span>
-                </a>
-
-                <a href="https://cyberfolio.io" target="_blank" rel="noopener" class="category-card">
-                    <span class="category-icon">💼</span>
-                    <h3>Career Tools</h3>
-                    <p>Build your cybersecurity portfolio, analyze job descriptions, and generate recruiter-ready resumes</p>
-                    <span class="category-count">CyberFolio</span>
-                </a>
-
-                <a href="/store/store.html" class="category-card store-card">
-                    <span class="category-icon">🛒</span>
-                    <h3>Study Planner Store</h3>
-                    <p>Printable PDF study planners for 32 certifications — Standard, ADHD-Friendly, and Dark Mode formats</p>
-                    <span class="category-count">Shop Now</span>
-                </a>
-            </nav>
-        </section>
-
-        <section class="tools" style="margin-top: 3rem;" aria-labelledby="external-tools-heading">
-            <h2 id="external-tools-heading">Free External Security Tools</h2>
-            <p>Quick links to trusted third-party security services.</p>
-            <nav class="external-tools-brief" aria-label="External security tools">
-                <a href="https://www.virustotal.com/" target="_blank" rel="noopener" class="external-tool-link">
-                    <span aria-hidden="true">🦠</span>
-                    VirusTotal
-                </a>
-                <a href="https://www.ssllabs.com/ssltest/" target="_blank" rel="noopener" class="external-tool-link">
-                    <span aria-hidden="true">🔒</span>
-                    SSL Labs
-                </a>
-                <a href="https://securityheaders.com/" target="_blank" rel="noopener" class="external-tool-link">
-                    <span aria-hidden="true">📋</span>
-                    Security Headers
-                </a>
-                <a href="https://haveibeenpwned.com/" target="_blank" rel="noopener" class="external-tool-link">
-                    <span aria-hidden="true">🔓</span>
-                    Have I Been Pwned
-                </a>
-                <a href="https://www.shodan.io/" target="_blank" rel="noopener" class="external-tool-link">
-                    <span aria-hidden="true">🌐</span>
-                    Shodan
-                </a>
-                <a href="https://www.abuseipdb.com/" target="_blank" rel="noopener" class="external-tool-link">
-                    <span aria-hidden="true">🚫</span>
-                    AbuseIPDB
-                </a>
-                <a href="https://urlscan.io/" target="_blank" rel="noopener" class="external-tool-link">
-                    <span aria-hidden="true">🔍</span>
-                    URLScan.io
-                </a>
-                <a href="https://www.whois.com/whois/" target="_blank" rel="noopener" class="external-tool-link">
-                    <span aria-hidden="true">📝</span>
-                    WHOIS Lookup
-                </a>
-            </nav>
-        </section>
-
-        <!-- Newsletter Signup -->
+        <!-- Section 5: Newsletter -->
         <section style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); padding: 2rem; border-radius: 12px; color: white; margin-top: 3rem; text-align: center;" aria-labelledby="newsletter-heading">
             <h2 id="newsletter-heading" style="color: white; margin-bottom: 0.5rem;">Stay Updated</h2>
-            <p style="margin-bottom: 1.5rem; opacity: 0.95;">Get weekly security tips, new guides, and vulnerability alerts.</p>
+            <p style="margin-bottom: 1.5rem; opacity: 0.95;">Get weekly vulnerability alerts and new guides.</p>
             <form id="newsletter-form" style="display: flex; gap: 0.5rem; max-width: 500px; margin: 0 auto; flex-wrap: wrap; justify-content: center;" aria-label="Newsletter subscription">
                 <label for="newsletter-email" class="visually-hidden">Email address</label>
                 <input type="email" id="newsletter-email" name="email" placeholder="Enter your email" required style="flex: 1; min-width: 200px; padding: 0.75rem 1rem; border: none; border-radius: 6px; font-size: 1rem;">
                 <button type="submit" style="padding: 0.75rem 1.5rem; background: white; color: #28a745; border: none; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer;">Subscribe Free</button>
             </form>
-            <p style="font-size: 1rem; margin-top: 1rem; opacity: 0.8;">No spam. Unsubscribe anytime.</p>
-        </section>
-        <script>
-            document.getElementById('newsletter-form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const email = document.getElementById('newsletter-email').value;
-                const magicLink = 'https://magic.beehiiv.com/v1/c30396f1-32dc-4655-b79b-afc1beb7eaea?email=' + encodeURIComponent(email);
-                window.location.href = magicLink;
-            });
-        </script>
-
-        <!-- Certification Study Planners Promo -->
-        <section style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 2.5rem 2rem; border-radius: 12px; margin-top: 2rem; text-align: center; color: white; position: relative; overflow: hidden;">
-            <div style="position: absolute; top: -20px; right: -20px; width: 120px; height: 120px; background: rgba(102, 126, 234, 0.15); border-radius: 50%;"></div>
-            <div style="position: absolute; bottom: -30px; left: -30px; width: 150px; height: 150px; background: rgba(118, 75, 162, 0.1); border-radius: 50%;"></div>
-            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.75rem; opacity: 0.8; margin-bottom: 0.5rem;">From FixTheVuln</p>
-            <h2 style="color: white; margin-bottom: 0.75rem; font-size: 1.5rem;">Certification Study Planners</h2>
-            <p style="opacity: 0.9; margin-bottom: 1.25rem; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.6;">Structured study plans for 30+ IT certifications. Available in Standard ADHD-friendly formats, Light and Dark mode options.</p>
-            <div style="display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
-                <span style="background: rgba(255,255,255,0.15); padding: 0.35rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">CompTIA</span>
-                <span style="background: rgba(255,255,255,0.15); padding: 0.35rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">ISC2 CISSP</span>
-                <span style="background: rgba(255,255,255,0.15); padding: 0.35rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">AWS</span>
-                <span style="background: rgba(255,255,255,0.15); padding: 0.35rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">Azure</span>
-                <span style="background: rgba(255,255,255,0.15); padding: 0.35rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">Cisco</span>
-                <span style="background: rgba(255,255,255,0.15); padding: 0.35rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">ISACA</span>
-                <span style="background: rgba(255,255,255,0.15); padding: 0.35rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">GIAC</span>
-                <span style="background: rgba(255,255,255,0.15); padding: 0.35rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">Google Cloud</span>
-            </div>
-            <div style="display: flex; justify-content: center; gap: 0.6rem; flex-wrap: wrap;">
-                <a href="/store/comptia.html" style="background: rgba(255,255,255,0.12); color: white; padding: 0.55rem 1.1rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.25); transition: background 0.2s;">CompTIA</a>
-                <a href="/store/security-governance.html" style="background: rgba(255,255,255,0.12); color: white; padding: 0.55rem 1.1rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.25); transition: background 0.2s;">(ISC)2</a>
-                <a href="/store/aws.html" style="background: rgba(255,255,255,0.12); color: white; padding: 0.55rem 1.1rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.25); transition: background 0.2s;">AWS</a>
-                <a href="/store/microsoft.html" style="background: rgba(255,255,255,0.12); color: white; padding: 0.55rem 1.1rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.25); transition: background 0.2s;">Microsoft</a>
-                <a href="/store/cisco.html" style="background: rgba(255,255,255,0.12); color: white; padding: 0.55rem 1.1rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.25); transition: background 0.2s;">Cisco</a>
-                <a href="/store/security-governance.html" style="background: rgba(255,255,255,0.12); color: white; padding: 0.55rem 1.1rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.25); transition: background 0.2s;">ISACA</a>
-                <a href="/store/security-governance.html" style="background: rgba(255,255,255,0.12); color: white; padding: 0.55rem 1.1rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.25); transition: background 0.2s;">GIAC</a>
-                <a href="/store/google-cloud.html" style="background: rgba(255,255,255,0.12); color: white; padding: 0.55rem 1.1rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.25); transition: background 0.2s;">Google Cloud</a>
-            </div>
-            <div style="margin-top: 0.75rem;">
-                <a href="resources.html#certification-planners" style="color: rgba(255,255,255,0.8); padding: 0.5rem 1rem; text-decoration: none; font-weight: 500; font-size: 0.9rem;">View All Details →</a>
-            </div>
-        </section>
-
-        <!-- Recommended Tools (Brief) -->
-        <section style="background: var(--bg-tertiary); padding: 2rem; border-radius: 12px; margin-top: 2rem; text-align: center;">
-            <h2 style="color: var(--text-primary); margin-bottom: 0.5rem;">Tools We Recommend</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Curated security tools we've personally tested and trust.</p>
-            <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
-                <a href="resources.html" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.75rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 600;">View All Recommendations →</a>
-            </div>
-            <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; flex-wrap: wrap; color: var(--text-muted); font-size: 1rem;">
-                <span>🔒 VPNs</span>
-                <span>🛡️ Anti-Malware</span>
-                <span>🔐 Password Managers</span>
-                <span>📚 Learning Platforms</span>
-            </div>
-        </section>
-
-
-        <section style="background: var(--bg-tertiary); padding: 2.5rem; border-radius: 12px; margin-top: 3rem; text-align: center;" aria-labelledby="mission-heading">
-            <h2 id="mission-heading" style="color: var(--text-primary); margin-bottom: 1rem;">Our Mission — <a href="about.html" style="color: var(--accent-primary); font-size: 0.75em; font-weight: 500; text-decoration: none;">Learn more about us</a></h2>
-            <p style="color: var(--text-secondary); max-width: 800px; margin: 0 auto 1.5rem; line-height: 1.8; font-size: 1.1rem;">
-                FixTheVuln is a <strong>free educational platform</strong> designed to help security professionals, students, and enthusiasts learn cybersecurity concepts through interactive tools and quick reference guides. All tools on this site are <strong>simulators for educational purposes only</strong> and do not perform actual network scanning or vulnerability assessments.
-            </p>
-            <div style="border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 1.5rem;">
-                <p style="color: var(--text-muted); margin-bottom: 0.5rem;">Have suggestions, feedback, or want to contribute?</p>
-                <a href="mailto:hello@FixTheVuln.com" style="color: var(--accent-primary); font-weight: 600; font-size: 1.1rem; text-decoration: none;">hello@FixTheVuln.com</a>
-            </div>
+            <p style="font-size: 0.85rem; margin-top: 1rem; opacity: 0.8;">No spam. Unsubscribe anytime.</p>
         </section>
     </main>
 
@@ -890,73 +452,32 @@
             }
         })();
 
-        // Code tab switching
-        function showTab(btn, tabId) {
-            // Find parent vuln-card
-            const card = btn.closest('.vuln-card');
-
-            // Remove active from all tabs in this card
-            card.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
-            btn.classList.add('active');
-
-            // Hide all code blocks in this card, show selected
-            card.querySelectorAll('.code-block').forEach(block => {
-                block.style.display = 'none';
-            });
-            document.getElementById(tabId).style.display = 'block';
-        }
-
-        // Copy code to clipboard
-        function copyCode(btn) {
-            const codeBlock = btn.parentElement;
-            const code = codeBlock.querySelector('code').textContent;
-
-            navigator.clipboard.writeText(code).then(() => {
-                btn.textContent = 'Copied!';
-                btn.classList.add('copied');
-                setTimeout(() => {
-                    btn.textContent = 'Copy';
-                    btn.classList.remove('copied');
-                }, 2000);
-            }).catch(err => {
-                // Fallback for older browsers
-                const textarea = document.createElement('textarea');
-                textarea.value = code;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-                btn.textContent = 'Copied!';
-                btn.classList.add('copied');
-                setTimeout(() => {
-                    btn.textContent = 'Copy';
-                    btn.classList.remove('copied');
-                }, 2000);
-            });
-        }
+        // Newsletter form
+        document.getElementById('newsletter-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('newsletter-email').value;
+            const magicLink = 'https://magic.beehiiv.com/v1/c30396f1-32dc-4655-b79b-afc1beb7eaea?email=' + encodeURIComponent(email);
+            window.location.href = magicLink;
+        });
 
         // KEV Data Loading and Rendering System
-        // Loads vulnerabilities from data/kev-data.json
         const KEVSystem = {
-            // CVSS color mapping
             cvssColors: {
-                critical: '#dc3545',  // Red: 9-10 or Zero-Day
-                high: '#fd7e14',      // Orange: 7-8.9
-                medium: '#ffc107',    // Yellow: 4-6.9
-                low: '#17a2b8',       // Blue: 0.1-3.9
-                none: '#6c757d'       // Gray: Unknown/N/A
+                critical: '#dc3545',
+                high: '#fd7e14',
+                medium: '#ffc107',
+                low: '#17a2b8',
+                none: '#6c757d'
             },
 
-            // Get CVSS color class based on score and zero-day status
             getCvssClass: function(cvss, isZeroDay) {
-                if (isZeroDay || cvss >= 9) return 'cvss-critical';  // Red
-                if (cvss >= 7) return 'cvss-high';                   // Orange
-                if (cvss >= 4) return 'cvss-medium';                 // Yellow
-                if (cvss > 0) return 'cvss-low';                     // Blue
-                return 'cvss-none';                                   // Gray
+                if (isZeroDay || cvss >= 9) return 'cvss-critical';
+                if (cvss >= 7) return 'cvss-high';
+                if (cvss >= 4) return 'cvss-medium';
+                if (cvss > 0) return 'cvss-low';
+                return 'cvss-none';
             },
 
-            // Get actual color value for inline styling
             getCvssColor: function(cvss, isZeroDay) {
                 if (isZeroDay || cvss >= 9) return this.cvssColors.critical;
                 if (cvss >= 7) return this.cvssColors.high;
@@ -965,80 +486,69 @@
                 return this.cvssColors.none;
             },
 
-            // Format CVSS display text
             formatCvss: function(cvss, isZeroDay) {
                 if (isZeroDay) return 'Zero-Day';
                 if (cvss === null) return 'N/A';
                 return cvss.toString();
             },
 
-            // Create a KEV card HTML element (links to NVD)
             createCard: function(vuln) {
                 const cvssClass = this.getCvssClass(vuln.cvss || 0, vuln.isZeroDay);
                 const cvssColor = this.getCvssColor(vuln.cvss || 0, vuln.isZeroDay);
                 const cvssDisplay = this.formatCvss(vuln.cvss, vuln.isZeroDay);
-                const nvdUrl = `https://nvd.nist.gov/vuln/detail/${encodeURIComponent(vuln.id)}`;
+                const nvdUrl = 'https://nvd.nist.gov/vuln/detail/' + encodeURIComponent(vuln.id);
 
-                return `
-                    <a href="${nvdUrl}" target="_blank" rel="noopener" class="kev-card-link" title="View ${vuln.id} on NVD">
-                        <div class="kev-card ${cvssClass}">
-                            <h4>${vuln.title}</h4>
-                            <div class="cve-id" style="color: ${cvssColor};">${vuln.id} | ${cvssDisplay}</div>
-                            <p>${vuln.description}</p>
-                            <div class="kev-fix"><strong>Fix:</strong> ${vuln.fix}</div>
-                        </div>
-                    </a>
-                `;
+                return '<a href="' + nvdUrl + '" target="_blank" rel="noopener" class="kev-card-link" title="View ' + vuln.id + ' on NVD">' +
+                    '<div class="kev-card ' + cvssClass + '">' +
+                        '<h4>' + vuln.title + '</h4>' +
+                        '<div class="cve-id" style="color: ' + cvssColor + ';">' + vuln.id + ' | ' + cvssDisplay + '</div>' +
+                        '<p>' + vuln.description + '</p>' +
+                        '<div class="kev-fix"><strong>Fix:</strong> ' + vuln.fix + '</div>' +
+                    '</div>' +
+                '</a>';
             },
 
-            // Load and render KEV cards for homepage (always 9 tiles)
             loadHomeKEV: async function() {
-                const HOMEPAGE_TILES = 9;
+                const HOMEPAGE_TILES = 3;
                 try {
                     const response = await fetch('data/kev-data.json');
                     const data = await response.json();
 
-                    // Active (non-archived) first, then archived to fill remaining slots
                     const activeVulns = data.vulnerabilities
-                        .filter(v => !v.archived)
-                        .sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+                        .filter(function(v) { return !v.archived; })
+                        .sort(function(a, b) { return new Date(b.dateAdded) - new Date(a.dateAdded); });
 
                     const archivedVulns = data.vulnerabilities
-                        .filter(v => v.archived)
-                        .sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+                        .filter(function(v) { return v.archived; })
+                        .sort(function(a, b) { return new Date(b.dateAdded) - new Date(a.dateAdded); });
 
-                    // Always show exactly HOMEPAGE_TILES: active first, backfill from archived
-                    let displayVulns = activeVulns.slice(0, HOMEPAGE_TILES);
+                    var displayVulns = activeVulns.slice(0, HOMEPAGE_TILES);
                     if (displayVulns.length < HOMEPAGE_TILES) {
-                        const remaining = HOMEPAGE_TILES - displayVulns.length;
+                        var remaining = HOMEPAGE_TILES - displayVulns.length;
                         displayVulns = displayVulns.concat(archivedVulns.slice(0, remaining));
                     }
 
-                    // Count total archived (not shown on homepage)
-                    const totalCount = data.vulnerabilities.length;
-                    const shownCount = displayVulns.length;
-                    const archivedCount = totalCount - shownCount;
+                    var totalCount = data.vulnerabilities.length;
+                    var shownCount = displayVulns.length;
+                    var archivedCount = totalCount - shownCount;
 
-                    // Render cards
-                    const grid = document.getElementById('kev-grid-home');
+                    var grid = document.getElementById('kev-grid-home');
                     if (grid) {
-                        grid.innerHTML = displayVulns.map(v => this.createCard(v)).join('');
+                        grid.innerHTML = displayVulns.map(function(v) { return KEVSystem.createCard(v); }).join('');
                     }
 
-                    // Display last updated date
-                    const lastUpdatedEl = document.getElementById('kev-last-updated');
+                    var lastUpdatedEl = document.getElementById('kev-last-updated');
                     if (lastUpdatedEl && data.lastUpdated) {
-                        lastUpdatedEl.textContent = 'Last updated: ' + new Date(data.lastUpdated + 'T00:00:00').toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
+                        lastUpdatedEl.textContent = 'Updated ' + new Date(data.lastUpdated + 'T00:00:00').toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
                     }
 
-                    // Update archive button text
-                    const archiveLink = document.getElementById('archive-link');
+                    var archiveLink = document.getElementById('archive-link');
                     if (archiveLink && archivedCount > 0) {
-                        archiveLink.textContent = `View Archive (${archivedCount} more CVEs)`;
+                        archiveLink.textContent = 'View All in Archive (' + totalCount + ' CVEs) \u2192';
                     }
                 } catch (error) {
                     console.error('Failed to load KEV data:', error);
-                    const grid = document.getElementById('kev-grid-home');
+                    var grid = document.getElementById('kev-grid-home');
                     if (grid) {
                         grid.innerHTML = '<p style="text-align: center; color: var(--text-muted);">Failed to load vulnerabilities. Please refresh the page.</p>';
                     }
@@ -1046,25 +556,8 @@
             }
         };
 
-        // Load latest update banner
-        async function loadLatestUpdate() {
-            try {
-                const resp = await fetch('data/latest-update.json');
-                if (!resp.ok) return;
-                const data = await resp.json();
-                const d = new Date(data.date + 'T00:00:00');
-                const formatted = d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-                document.getElementById('update-date').textContent = formatted + ' — ';
-                document.getElementById('update-summary').textContent = data.summary + ' ';
-                document.getElementById('update-signed').textContent = '— ' + data.signedBy;
-                document.getElementById('latest-update').style.display = 'block';
-            } catch(e) {}
-        }
-
-        // Load KEV data when page loads
         document.addEventListener('DOMContentLoaded', function() {
             KEVSystem.loadHomeKEV();
-            loadLatestUpdate();
         });
     </script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
