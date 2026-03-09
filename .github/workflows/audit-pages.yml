@@ -47,16 +47,13 @@ jobs:
           # Capture exit code
           echo "exit_code=$?" >> $GITHUB_OUTPUT
 
-      - name: Read audit report
+      - name: Prepare audit report
         id: report
         if: always()
         run: |
           if [ -f "data/audit-report.md" ]; then
-            # Store report for issue body (GitHub has 65536 char limit)
-            REPORT=$(head -c 60000 data/audit-report.md)
-            echo "report<<EOF" >> $GITHUB_OUTPUT
-            echo "$REPORT" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
+            # Cap at 60000 chars to stay under GitHub's 65536 issue body limit
+            head -c 60000 data/audit-report.md > data/audit-body.md
             echo "has_report=true" >> $GITHUB_OUTPUT
           else
             echo "has_report=false" >> $GITHUB_OUTPUT
@@ -81,7 +78,7 @@ jobs:
           DATE=$(date +'%B %d, %Y')
           gh issue create \
             --title "Content Audit: Issues Found ($DATE)" \
-            --body "${{ steps.report.outputs.report }}" \
+            --body-file data/audit-body.md \
             --label "content-audit"
 
       - name: Create audit issue (all clear)
@@ -92,7 +89,7 @@ jobs:
           DATE=$(date +'%B %d, %Y')
           gh issue create \
             --title "Content Audit: All Clear ($DATE)" \
-            --body "${{ steps.report.outputs.report }}" \
+            --body-file data/audit-body.md \
             --label "content-audit"
 
       - name: Job summary
