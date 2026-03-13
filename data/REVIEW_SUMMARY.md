@@ -1,22 +1,37 @@
-# Daily KEV Review — 2026-02-26
+# Daily KEV Review — 2026-03-13
 
-**New CVEs:** 3 | **Critical:** 1 | **High:** 2 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 11 | **Critical:** 4 | **High:** 7 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-20127 | Cisco | Catalyst SD-WAN Controller and Manager | 10.0 | Unknown | 2026-02-27 |
-| CVE-2026-25108 | Soliton Systems K.K | FileZen | 8.8 | Unknown | 2026-03-17 |
-| CVE-2022-20775 | Cisco | SD-WAN | 7.8 | Unknown | 2026-02-27 |
+| CVE-2025-68613 | n8n | n8n | 9.9 | Unknown | 2026-03-25 |
+| CVE-2025-26399 | SolarWinds | Web Help Desk | 9.8 | Unknown | 2026-03-12 |
+| CVE-2017-7921 | Hikvision | Multiple Products | 9.8 | Unknown | 2026-03-26 |
+| CVE-2021-22681 | Rockwell | Multiple Products | 9.8 | Unknown | 2026-03-26 |
+| CVE-2023-43000 | Apple | Multiple Products | 8.8 | Unknown | 2026-03-26 |
+| CVE-2026-1603 | Ivanti |  Endpoint Manager (EPM) | 8.6 | Unknown | 2026-03-23 |
+| CVE-2026-22719 | Broadcom | VMware Aria Operations | 8.1 | Unknown | 2026-03-24 |
+| CVE-2021-30952 | Apple | Multiple Products | 7.8 | Unknown | 2026-03-26 |
+| CVE-2023-41974 | Apple | iOS and iPadOS | 7.8 | Unknown | 2026-03-26 |
+| CVE-2026-21385 | Qualcomm | Multiple Chipsets | 7.8 | Unknown | 2026-03-24 |
+| CVE-2021-22054 | Omnissa | Workspace One UEM | 7.5 | Unknown | 2026-03-23 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-02-27 (2 CVEs)
-- **Overdue:** None
+- **Nearest due date:** 2026-03-23 (2 CVEs)
+- **Overdue:** 1 CVE
 
 ## Vendor Summary
-- Cisco: 2 CVEs
-- Soliton Systems K.K: 1 CVE
+- Apple: 3 CVEs
+- n8n: 1 CVE
+- Omnissa: 1 CVE
+- SolarWinds: 1 CVE
+- Ivanti: 1 CVE
+- Hikvision: 1 CVE
+- Rockwell: 1 CVE
+- Broadcom: 1 CVE
+- Qualcomm: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
