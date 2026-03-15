@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+        <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Free client-side vulnerability classifier. Paste security text to extract CVEs, CWEs, IPs, and classify into security domains. No data sent to servers.">
+    <meta name="keywords" content="vulnerability classifier, security text analysis, CVE extractor, CWE extractor, security domain classification, cybersecurity tool">
+    <meta name="author" content="FixTheVuln">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Vulnerability Classifier - Interactive Security Text Analyzer - FixTheVuln">
+    <meta property="og:description" content="Free client-side vulnerability classifier. Paste security text to extract CVEs, CWEs, IPs, and classify into security domains. No data sent to servers.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fixthevuln.com/vuln-classifier.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Vulnerability Classifier - Interactive Security Text Analyzer - FixTheVuln">
+    <meta name="twitter:description" content="Free client-side vulnerability classifier. Paste security text to extract CVEs, CWEs, IPs, and classify into security domains. No data sent to servers.">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <title>Vulnerability Classifier - Interactive Security Text Analyzer - FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/vuln-classifier.html">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.min.css?v=7">
+    <style>
+        .classifier-container {
+            background: var(--bg-primary, white);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+        .classifier-textarea {
+            width: 100%;
+            min-height: 180px;
+            padding: 1rem;
+            border: 2px solid var(--border-color, #e0e0e0);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            transition: border-color 0.2s;
+            background: var(--bg-primary, white);
+            color: var(--text-primary, #333);
+            box-sizing: border-box;
+        }
+        .classifier-textarea:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        .classifier-textarea::placeholder {
+            color: var(--text-muted, #999);
+        }
+        .classify-btn {
+            padding: 0.75rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 1rem;
+        }
+        .classify-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .classify-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Results panel */
+        .results-panel {
+            display: none;
+            margin-top: 2rem;
+        }
+        .results-panel.visible {
+            display: block;
+        }
+        .results-section {
+            background: var(--bg-primary, white);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 1.5rem;
+        }
+        .results-section h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            color: var(--text-primary, #333);
+        }
+
+        /* Entity pills */
+        .entity-group {
+            margin-bottom: 1rem;
+        }
+        .entity-group-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted, #666);
+            margin-bottom: 0.4rem;
+        }
+        .entity-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+        .entity-pill {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            font-family: 'Courier New', monospace;
+            color: white;
+        }
+        .entity-pill--cve { background: #dc3545; }
+        .entity-pill--cwe { background: #fd7e14; }
+        .entity-pill--ip { background: #3b82f6; }
+        .entity-pill--url { background: #6366f1; }
+        .entity-pill--version { background: #10b981; }
+        .entity-pill--domain { background: #8b5cf6; }
+        .no-entities {
+            color: var(--text-muted, #999);
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        /* Bar charts */
+        .domain-chart {
+            margin-bottom: 1rem;
+        }
+        .domain-bar-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.6rem;
+            gap: 0.75rem;
+        }
+        .domain-bar-label {
+            min-width: 145px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-primary, #333);
+            text-align: right;
+        }
+        .domain-bar-track {
+            flex: 1;
+            height: 26px;
+            background: var(--bg-tertiary, #f0f0f0);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+        .domain-bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.6s ease;
+            min-width: 0;
+        }
+        .domain-bar-score {
+            min-width: 42px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary, #333);
+            text-align: left;
+        }
+        .bar-network { background: #3b82f6; }
+        .bar-webapp { background: #ef4444; }
+        .bar-cloud { background: #8b5cf6; }
+        .bar-identity { background: #f59e0b; }
+        .bar-malware { background: #10b981; }
+
+        .primary-badge {
+            display: inline-block;
+            padding: 0.3rem 0.75rem;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+            margin-top: 0.5rem;
+        }
+
+        /* Suggested resources */
+        .resource-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.75rem;
+        }
+        .resource-link {
+            padding: 0.75rem 1rem;
+            background: var(--bg-tertiary, #f8f9fa);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-primary, #333);
+            border: 2px solid var(--border-color, #e0e0e0);
+            transition: border-color 0.2s;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .resource-link:hover {
+            border-color: #667eea;
+        }
+
+        /* Feedback section */
+        .feedback-section {
+            margin-top: 0.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color, #e0e0e0);
+        }
+        .feedback-section p {
+            font-size: 0.9rem;
+            color: var(--text-muted, #666);
+            margin-bottom: 0.75rem;
+        }
+        .feedback-btns {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .feedback-btn {
+            padding: 0.4rem 1rem;
+            border: 2px solid var(--border-color, #e0e0e0);
+            border-radius: 6px;
+            background: var(--bg-primary, white);
+            color: var(--text-primary, #333);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .feedback-btn:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+        .feedback-btn.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        .feedback-correction {
+            display: none;
+            margin-top: 0.75rem;
+        }
+        .feedback-correction.visible {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .feedback-correction select {
+            padding: 0.4rem 0.75rem;
+            border: 2px solid var(--border-color, #e0e0e0);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            background: var(--bg-primary, white);
+            color: var(--text-primary, #333);
+        }
+        .feedback-correction select:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        .feedback-submit {
+            padding: 0.4rem 1rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .feedback-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .feedback-msg {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        /* Sample buttons */
+        .sample-btns {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.75rem;
+        }
+        .sample-btn {
+            padding: 0.35rem 0.7rem;
+            border: 1px solid #667eea;
+            background: var(--bg-primary, white);
+            color: #667eea;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .sample-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        @media (max-width: 600px) {
+            .domain-bar-label {
+                min-width: 100px;
+                font-size: 0.75rem;
+            }
+            .classifier-container,
+            .results-section {
+                padding: 1.25rem;
+            }
+        }
+    </style>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Vulnerability Classifier",
+        "description": "Free client-side vulnerability classifier. Paste security text to extract CVEs, CWEs, IPs, and classify into security domains. No data sent to servers.",
+        "url": "https://fixthevuln.com/vuln-classifier.html",
+        "applicationCategory": "SecurityApplication",
+        "applicationSubCategory": "Cybersecurity Tool",
+        "operatingSystem": "Any (Web Browser)",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": "CVE extraction, CWE extraction, IP extraction, domain classification, security text analysis",
+        "keywords": "vulnerability classifier, security text analysis, CVE extractor, CWE extractor",
+        "dateModified": "2026-03-15",
+        "author": {
+            "@type": "Organization",
+            "name": "FixTheVuln",
+            "url": "https://fixthevuln.com"
+        }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Tools", "item": "https://fixthevuln.com/tools.html" },
+            { "@type": "ListItem", "position": 3, "name": "Vulnerability Classifier" }
+        ]
+    }
+    </script>
+    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="blog/feed.xml">
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="index.html" class="site-nav-logo">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+        <div class="site-nav-links">
+            <a href="guides.html">Guides</a>
+            <a href="tools.html">Tools</a>
+            <a href="compliance.html">Compliance</a>
+            <a href="resources.html">Resources</a>
+            <a href="practice-tests.html">Quizzes</a>
+            <a href="career-paths.html">Career Paths</a>
+            <a href="blog/">Blog</a>
+            <a href="/store/store.html" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: .35rem .75rem; border-radius: 6px; font-size: .85rem; font-weight: 600; text-decoration: none;">Store</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header class="content-header">
+        <div class="container">
+            <h1>Vulnerability Classifier</h1>
+            <p>AI-Powered Security Text Analysis</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
+            <span>By <strong>FixTheVuln Team</strong></span>
+            <span aria-hidden="true">&middot;</span>
+            <span>100% client-side &mdash; no data sent to any server</span>
+        </div>
+
+        <a href="tools.html" class="back-link">&larr; Back to Tools</a>
+
+        <!-- Intro -->
+        <div class="info-box">
+            <strong>What is this?</strong> Paste any security-related text &mdash; vulnerability advisories, CVE descriptions, SIEM alerts, scan output, or incident reports &mdash; and this tool will extract structured entities (CVEs, CWEs, IPs, domains) and classify the text into one of five cybersecurity domains. Everything runs locally in your browser; no data leaves your machine.
+        </div>
+
+        <!-- Input -->
+        <div class="classifier-container">
+            <h2 style="margin-top: 0;">Analyze Security Text</h2>
+
+            <div class="sample-btns">
+                <span style="font-size: 0.8rem; color: var(--text-muted); align-self: center; margin-right: 0.25rem;">Try a sample:</span>
+                <button class="sample-btn" onclick="loadSample('webapp')">Web App</button>
+                <button class="sample-btn" onclick="loadSample('network')">Network</button>
+                <button class="sample-btn" onclick="loadSample('cloud')">Cloud</button>
+                <button class="sample-btn" onclick="loadSample('malware')">Malware</button>
+                <button class="sample-btn" onclick="loadSample('identity')">Identity</button>
+            </div>
+
+            <textarea id="classifier-input" class="classifier-textarea" placeholder="Paste a CVE description, security advisory, SIEM alert, scan output, or incident report here..."></textarea>
+
+            <button id="classify-btn" class="classify-btn" onclick="classify()">Classify</button>
+        </div>
+
+        <!-- Results -->
+        <div id="results-panel" class="results-panel">
+
+            <!-- Extracted Entities -->
+            <div class="results-section">
+                <h3>Extracted Entities</h3>
+                <div id="entities-container">
+                    <p class="no-entities">No entities found.</p>
+                </div>
+            </div>
+
+            <!-- Domain Classification -->
+            <div class="results-section">
+                <h3>Domain Classification</h3>
+                <div class="domain-chart" id="domain-chart">
+                    <div class="domain-bar-row">
+                        <span class="domain-bar-label">Network Security</span>
+                        <div class="domain-bar-track"><div class="domain-bar-fill bar-network" id="bar-network" style="width:0"></div></div>
+                        <span class="domain-bar-score" id="score-network">0</span>
+                    </div>
+                    <div class="domain-bar-row">
+                        <span class="domain-bar-label">Web Application</span>
+                        <div class="domain-bar-track"><div class="domain-bar-fill bar-webapp" id="bar-webapp" style="width:0"></div></div>
+                        <span class="domain-bar-score" id="score-webapp">0</span>
+                    </div>
+                    <div class="domain-bar-row">
+                        <span class="domain-bar-label">Cloud Security</span>
+                        <div class="domain-bar-track"><div class="domain-bar-fill bar-cloud" id="bar-cloud" style="width:0"></div></div>
+                        <span class="domain-bar-score" id="score-cloud">0</span>
+                    </div>
+                    <div class="domain-bar-row">
+                        <span class="domain-bar-label">Identity &amp; Access</span>
+                        <div class="domain-bar-track"><div class="domain-bar-fill bar-identity" id="bar-identity" style="width:0"></div></div>
+                        <span class="domain-bar-score" id="score-identity">0</span>
+                    </div>
+                    <div class="domain-bar-row">
+                        <span class="domain-bar-label">Malware &amp; Exploit</span>
+                        <div class="domain-bar-track"><div class="domain-bar-fill bar-malware" id="bar-malware" style="width:0"></div></div>
+                        <span class="domain-bar-score" id="score-malware">0</span>
+                    </div>
+                </div>
+                <div id="primary-classification"></div>
+            </div>
+
+            <!-- Suggested Resources -->
+            <div class="results-section">
+                <h3>Suggested Resources</h3>
+                <div id="resources-container" class="resource-links"></div>
+            </div>
+
+            <!-- Feedback -->
+            <div class="results-section">
+                <div class="feedback-section">
+                    <p>Was this classification correct?</p>
+                    <div class="feedback-btns">
+                        <button class="feedback-btn" id="fb-yes" onclick="submitFeedback(true)">Yes</button>
+                        <button class="feedback-btn" id="fb-no" onclick="submitFeedback(false)">No</button>
+                    </div>
+                    <div id="feedback-correction" class="feedback-correction">
+                        <label for="correction-select" style="font-size: 0.85rem; color: var(--text-muted);">Correct domain:</label>
+                        <select id="correction-select">
+                            <option value="">Select...</option>
+                            <option value="network">Network Security</option>
+                            <option value="webapp">Web Application Security</option>
+                            <option value="cloud">Cloud Security</option>
+                            <option value="identity">Identity &amp; Access</option>
+                            <option value="malware">Malware &amp; Exploit</option>
+                        </select>
+                        <button class="feedback-submit" id="feedback-submit-btn" onclick="sendFeedback()">Submit</button>
+                    </div>
+                    <p id="feedback-msg" class="feedback-msg"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Resources -->
+        <section style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid var(--border-color, #e0e0e0);">
+            <h2 style="margin-bottom: 1.5rem;">Related Resources</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                <a href="cvss-calculator.html" style="background: var(--bg-tertiary, #f8f9fa); color: var(--text-primary, #333); padding: 1.25rem; border-radius: 8px; text-decoration: none; border: 2px solid var(--border-color, #e0e0e0);">
+                    <strong style="display: block; margin-bottom: 0.5rem; color: var(--accent-primary, #667eea);">CVSS Calculator</strong>
+                    <span style="font-size: 0.9rem; color: var(--text-muted, #666);">Score vulnerability severity with CVSS v3.1</span>
+                </a>
+                <a href="owasp-top10.html" style="background: var(--bg-tertiary, #f8f9fa); color: var(--text-primary, #333); padding: 1.25rem; border-radius: 8px; text-decoration: none; border: 2px solid var(--border-color, #e0e0e0);">
+                    <strong style="display: block; margin-bottom: 0.5rem; color: var(--accent-primary, #667eea);">OWASP Top 10</strong>
+                    <span style="font-size: 0.9rem; color: var(--text-muted, #666);">Critical web application security risks</span>
+                </a>
+                <a href="exploit-tracker.html" style="background: var(--bg-tertiary, #f8f9fa); color: var(--text-primary, #333); padding: 1.25rem; border-radius: 8px; text-decoration: none; border: 2px solid var(--border-color, #e0e0e0);">
+                    <strong style="display: block; margin-bottom: 0.5rem; color: var(--accent-primary, #667eea);">Exploit Tracker</strong>
+                    <span style="font-size: 0.9rem; color: var(--text-muted, #666);">CISA KEV vulnerabilities by certification relevance</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Store CTA -->
+        <section style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
+            <h3 style="color: white; margin-bottom: 0.5rem;">Certification Study Planners</h3>
+            <p style="opacity: 0.9; margin-bottom: 1rem;">Fillable PDF planners for 60+ certifications. Domain trackers, weekly schedules, and progress tracking. Standard, ADHD-Friendly, Dark Mode, and 4-Format Bundle.</p>
+            <div style="display: flex; justify-content: center; gap: 0.4rem; flex-wrap: wrap;">
+                <a href="store/comptia.html" style="display:inline-block;background:#667eea;color:white;padding:0.5rem 1rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.85rem;">CompTIA</a>
+                <a href="store/aws.html" style="display:inline-block;background:#667eea;color:white;padding:0.5rem 1rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.85rem;">AWS</a>
+                <a href="store/microsoft.html" style="display:inline-block;background:#667eea;color:white;padding:0.5rem 1rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.85rem;">Microsoft</a>
+                <a href="store/cisco.html" style="display:inline-block;background:#667eea;color:white;padding:0.5rem 1rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.85rem;">Cisco</a>
+                <a href="store/store.html" style="display:inline-block;background:rgba(255,255,255,0.12);color:white;padding:0.5rem 1rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.85rem;border:1px solid rgba(255,255,255,0.25);">All 60+ &rarr;</a>
+            </div>
+            <p style="font-size: 0.8rem; opacity: 0.85; margin-top: 0.75rem;">From $5.99 per planner</p>
+        </section>
+
+        <section class="cta">
+            <h2>Need More Security Tools?</h2>
+            <p>Explore our full collection of interactive security tools:</p>
+            <a href="tools.html" class="cta-button">View All Tools &rarr;</a>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Educational resources for security professionals.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank" rel="noopener">FixTheVuln.com</a> | <a href="/store/store.html">FixTheVuln Store</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+            <p style="font-size: 0.8rem; color: #888; margin-top: 0.75rem;">
+                Classification patterns adapted from <a href="https://github.com/guerilla7/CyberMoE" target="_blank" rel="noopener" style="color: #667eea;">CyberMoE</a> by Ron F. del Rosario (MIT License).
+            </p>
+        </div>
+    </footer>
+
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode">
+        <span id="theme-icon">&#127769;</span>
+    </button>
+
+    <script>
+        // Dark mode toggle
+        function toggleTheme() {
+            var html = document.documentElement;
+            var currentTheme = html.getAttribute('data-theme');
+            var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('fixthevuln-theme', newTheme);
+            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19';
+        }
+        (function() {
+            var savedTheme = localStorage.getItem('fixthevuln-theme');
+            var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            var theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('theme-icon').textContent = '\u2600\uFE0F';
+            }
+        })();
+
+        // ===== Sample texts =====
+        var samples = {
+            webapp: 'CVE-2024-23897 - Jenkins arbitrary file read vulnerability. An unauthenticated attacker can exploit a path traversal flaw in the Jenkins CLI to read arbitrary files on the server. The vulnerability exists in the args4j library\'s handling of file arguments via HTTP endpoint /cli. Affected versions prior to Jenkins 2.442 and LTS 2.426.3. CWE-22 (Path Traversal). CVSS Base Score: 9.8. Exploitation has been observed targeting https://jenkins.example.com/cli on port 8080. Attackers can extract /etc/passwd and credentials via crafted HTTP requests. The XSS payload was injected through the search parameter causing cross-site scripting in the admin dashboard. SQL injection was also confirmed in the login form at https://app.example.com/auth.',
+            network: 'Firewall alert: Multiple TCP SYN flood detected from 203.0.113.45 targeting port 443 on 192.168.1.100. The router at 10.0.0.1 logged over 50,000 packets per second. SNMP community string exposed on network device at 172.16.0.5. VPN tunnel between 10.10.0.1 and 198.51.100.20 experienced IPsec negotiation failure. DNS amplification attack traffic observed from resolver at 8.8.8.8 with spoofed source. Lateral movement detected from compromised host 192.168.50.23 to internal server 192.168.50.100 via SMB. DDoS mitigation activated. Packet inspection reveals malformed UDP datagrams on port 53. CVE-2023-20198 affects Cisco IOS XE version 17.6.1 through 17.9.4 allowing unauthenticated access to the web UI.',
+            cloud: 'AWS Security Hub finding: S3 bucket s3://prod-data-backup.example.com has public read access enabled. IAM role arn:aws:iam::123456789012:role/LambdaExecRole has overly permissive policies including s3:* and ec2:*. CloudTrail detected unauthorized AssumeRole call from IP 45.33.32.156. Kubernetes cluster on GCP running version 1.24.8 has exposed kubelet API on port 10250 without authentication. Terraform state file found in public Azure blob storage at https://storageacct.blob.core.windows.net/tfstate. Docker container escape vulnerability CVE-2024-21626 (CWE-668) affects runc before version 1.1.12. EC2 instance i-0abc123def metadata service v1 (IMDSv1) enabled allowing SSRF to access access keys.',
+            malware: 'Malware analysis report: Ransomware variant identified as LockBit 3.0. The payload exploits a buffer overflow (CVE-2023-36884) in Microsoft Office via a crafted .docx file. Shellcode uses NtAllocateVirtualMemory for memory corruption and achieves arbitrary code execution. The backdoor establishes C2 communication to 185.220.101.34 on port 4443. Use-after-free vulnerability (CWE-416) in the heap allows privilege escalation. The rootkit hooks SSDT entries to hide processes. Trojan drops secondary payload from https://malware-c2.evil.net/stage2.bin. Static analysis reveals stack overflow in function parseInput() at offset 0x4012A0. Remote code execution confirmed on Windows Server 2019 version 10.0.17763.',
+            identity: 'Authentication bypass discovered in SSO portal at https://sso.corp.example.com. CWE-287 (Improper Authentication). Brute force attack detected: 15,000 failed login attempts from 91.234.56.78 against the LDAP authentication endpoint. Kerberos ticket-granting ticket (TGT) forged using golden ticket attack technique. SAML assertion manipulation allows privilege escalation from standard user to admin role. OAuth 2.0 authorization code intercepted via open redirect at https://auth.example.com/callback?redirect_uri=https://evil.com. MFA bypass achieved through session fixation (CWE-384). Account takeover of admin@example.com confirmed. RBAC misconfiguration grants all users access to /api/admin/users endpoint. Credential stuffing using leaked database from breach at 2024-01-15.'
+        };
+
+        function loadSample(key) {
+            document.getElementById('classifier-input').value = samples[key];
+        }
+
+        // ===== Entity extraction =====
+        var entityPatterns = {
+            cve:     { regex: /CVE-\d{4}-\d{4,7}/gi,  label: 'CVE IDs',   pillClass: 'entity-pill--cve' },
+            cwe:     { regex: /CWE-\d{1,4}/gi,         label: 'CWE IDs',   pillClass: 'entity-pill--cwe' },
+            ip:      { regex: /\b(?:\d{1,3}\.){3}\d{1,3}\b/g, label: 'IP Addresses', pillClass: 'entity-pill--ip' },
+            url:     { regex: /https?:\/\/\S+/gi,      label: 'URLs',       pillClass: 'entity-pill--url' },
+            version: { regex: /(?:version|v|before|prior to|through)\s*[\d]+(?:\.[\d]+)*/gi, label: 'Versions', pillClass: 'entity-pill--version' },
+            domain:  { regex: /\b(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+(?:com|org|net|io|gov|edu|co|uk|de|fr|jp|cn|ru|in|au|ca|br|it|es|nl|se|no|dk|fi|at|ch|be|pl|cz|pt|mx|ar|cl|za)\b/gi, label: 'Domains (FQDN)', pillClass: 'entity-pill--domain' }
+        };
+
+        function extractEntities(text) {
+            var result = {};
+            var hasAny = false;
+            for (var key in entityPatterns) {
+                var pat = entityPatterns[key];
+                var matches = text.match(pat.regex);
+                if (matches) {
+                    // Deduplicate (case-insensitive for CVE/CWE)
+                    var seen = {};
+                    var unique = [];
+                    for (var i = 0; i < matches.length; i++) {
+                        var normalized = matches[i];
+                        // Strip trailing punctuation from URLs and domains
+                        if (key === 'url' || key === 'domain') {
+                            normalized = normalized.replace(/[.,;:)\]}>'"]+$/, '');
+                        }
+                        var lc = normalized.toLowerCase();
+                        if (!seen[lc]) {
+                            seen[lc] = true;
+                            unique.push(normalized);
+                        }
+                    }
+                    result[key] = { matches: unique, label: pat.label, pillClass: pat.pillClass };
+                    hasAny = true;
+                }
+            }
+            result._hasAny = hasAny;
+            return result;
+        }
+
+        // ===== Domain keyword dictionaries =====
+        var domainKeywords = {
+            network: {
+                'firewall':3, 'tcp':2, 'udp':2, 'port':2, 'router':3, 'dns':2, 'packet':2,
+                'traffic':2, 'lateral movement':3, 'network':1, 'vpn':3, 'ipsec':3, 'snmp':2,
+                'routing':2, 'switching':2, 'denial of service':3, 'dos':3, 'ddos':3, 'flood':2
+            },
+            webapp: {
+                'xss':4, 'cross-site scripting':4, 'sql injection':4, 'sqli':4, 'csrf':3,
+                'ssrf':3, 'idor':3, 'cross-site request':3, 'deserialization':3, 'path traversal':3,
+                'directory traversal':3, 'open redirect':3, 'servlet':2, 'php':2, 'asp':2,
+                'http':1, 'html':1, 'javascript':1, 'cookie':2, 'session':2, 'api':1, 'injection':2, 'web':1
+            },
+            cloud: {
+                'aws':3, 'azure':3, 'gcp':3, 's3':3, 'ec2':2, 'iam':3, 'container':2,
+                'kubernetes':3, 'docker':3, 'lambda':2, 'serverless':2, 'cloud':2, 'bucket':3,
+                'blob':2, 'terraform':3, 'access key':3, 'saas':2, 'paas':2
+            },
+            identity: {
+                'authentication':3, 'authorization':3, 'privilege escalation':4, 'credential':3,
+                'password':2, 'mfa':3, 'sso':2, 'ldap':2, 'kerberos':3, 'saml':2, 'oauth':2,
+                'access control':3, 'identity':2, 'rbac':2, 'brute force':3, 'account takeover':4
+            },
+            malware: {
+                'malware':4, 'ransomware':4, 'buffer overflow':4, 'use-after-free':4, 'shellcode':4,
+                'payload':2, 'exploit':2, 'trojan':3, 'backdoor':3, 'rootkit':4, 'heap overflow':4,
+                'stack overflow':3, 'memory corruption':4, 'code execution':3, 'arbitrary code':4,
+                'remote code':4, 'worm':3
+            }
+        };
+
+        var domainMeta = {
+            network:  { label: 'Network Security',     barId: 'bar-network',  scoreId: 'score-network',  color: '#3b82f6' },
+            webapp:   { label: 'Web Application Security', barId: 'bar-webapp', scoreId: 'score-webapp', color: '#ef4444' },
+            cloud:    { label: 'Cloud Security',        barId: 'bar-cloud',    scoreId: 'score-cloud',    color: '#8b5cf6' },
+            identity: { label: 'Identity & Access',     barId: 'bar-identity', scoreId: 'score-identity', color: '#f59e0b' },
+            malware:  { label: 'Malware & Exploit',     barId: 'bar-malware',  scoreId: 'score-malware',  color: '#10b981' }
+        };
+
+        // ===== Resource links per domain =====
+        var domainResources = {
+            network: [
+                { title: 'Port Security Guide', url: 'port-security.html' },
+                { title: 'Linux Hardening', url: 'linux-hardening.html' },
+                { title: 'Network+ Quiz', url: 'network-plus-quiz.html' }
+            ],
+            webapp: [
+                { title: 'OWASP Top 10', url: 'owasp-top10.html' },
+                { title: 'API Security', url: 'api-security.html' },
+                { title: 'Security+ Quiz', url: 'security-quiz.html' },
+                { title: 'XSS Playground', url: 'xss-playground.html' }
+            ],
+            cloud: [
+                { title: 'Cloud Security', url: 'cloud-security.html' },
+                { title: 'Container Security', url: 'container-security.html' },
+                { title: 'AWS CLF Quiz', url: 'aws-clf-quiz.html' }
+            ],
+            identity: [
+                { title: 'Password Policy', url: 'password-policy.html' },
+                { title: 'Encryption Cheatsheet', url: 'encryption-cheatsheet.html' },
+                { title: 'CISSP Quiz', url: 'cissp-quiz.html' }
+            ],
+            malware: [
+                { title: 'Incident Response', url: 'incident-response.html' },
+                { title: 'Log Management', url: 'log-management.html' },
+                { title: 'CEH Quiz', url: 'ceh-quiz.html' }
+            ]
+        };
+
+        // ===== Scoring =====
+        function scoreText(text) {
+            var lower = text.toLowerCase();
+            var rawScores = {};
+            var maxRaw = 0;
+
+            for (var domain in domainKeywords) {
+                var keywords = domainKeywords[domain];
+                var score = 0;
+                for (var kw in keywords) {
+                    var weight = keywords[kw];
+                    // Count occurrences using word-boundary-safe search
+                    var escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    var re = new RegExp('\\b' + escaped + '\\b', 'gi');
+                    var m = lower.match(re);
+                    if (m) {
+                        score += m.length * weight;
+                    }
+                }
+                rawScores[domain] = score;
+                if (score > maxRaw) maxRaw = score;
+            }
+
+            // Normalize: highest becomes 100
+            var normalized = {};
+            for (var d in rawScores) {
+                normalized[d] = maxRaw > 0 ? Math.round((rawScores[d] / maxRaw) * 100) : 0;
+            }
+            return normalized;
+        }
+
+        // ===== Escaping helper =====
+        function esc(str) {
+            var div = document.createElement('div');
+            div.appendChild(document.createTextNode(str));
+            return div.innerHTML;
+        }
+
+        // ===== State for feedback =====
+        var classificationState = {
+            inputText: '',
+            primaryDomain: '',
+            scores: {}
+        };
+
+        // ===== Main classify function =====
+        function classify() {
+            var text = document.getElementById('classifier-input').value.trim();
+            if (!text) {
+                alert('Please paste some security text to analyze.');
+                return;
+            }
+
+            // Extract entities
+            var entities = extractEntities(text);
+
+            // Render entities
+            var container = document.getElementById('entities-container');
+            if (!entities._hasAny) {
+                container.innerHTML = '<p class="no-entities">No entities found in the input text.</p>';
+            } else {
+                var html = '';
+                for (var key in entityPatterns) {
+                    if (entities[key]) {
+                        var ent = entities[key];
+                        html += '<div class="entity-group"><div class="entity-group-label">' + esc(ent.label) + '</div><div class="entity-pills">';
+                        for (var i = 0; i < ent.matches.length; i++) {
+                            html += '<span class="entity-pill ' + ent.pillClass + '">' + esc(ent.matches[i]) + '</span>';
+                        }
+                        html += '</div></div>';
+                    }
+                }
+                container.innerHTML = html;
+            }
+
+            // Score domains
+            var scores = scoreText(text);
+
+            // Find primary
+            var primary = 'network';
+            var maxScore = 0;
+            for (var d in scores) {
+                if (scores[d] > maxScore) {
+                    maxScore = scores[d];
+                    primary = d;
+                }
+            }
+
+            // Update bar charts
+            for (var dom in domainMeta) {
+                var meta = domainMeta[dom];
+                var pct = scores[dom] || 0;
+                document.getElementById(meta.barId).style.width = pct + '%';
+                document.getElementById(meta.scoreId).textContent = pct;
+            }
+
+            // Primary badge
+            var badgeEl = document.getElementById('primary-classification');
+            if (maxScore > 0) {
+                badgeEl.innerHTML = '<span class="primary-badge" style="background:' + domainMeta[primary].color + ';">Primary: ' + esc(domainMeta[primary].label) + '</span>';
+            } else {
+                badgeEl.innerHTML = '<p style="color:var(--text-muted);font-style:italic;font-size:0.9rem;">No security domain keywords detected. Try pasting a vulnerability advisory or security alert.</p>';
+            }
+
+            // Suggested resources
+            var resContainer = document.getElementById('resources-container');
+            var resources = domainResources[primary] || [];
+            var resHtml = '';
+            for (var r = 0; r < resources.length; r++) {
+                resHtml += '<a href="' + esc(resources[r].url) + '" class="resource-link">' + esc(resources[r].title) + '</a>';
+            }
+            resContainer.innerHTML = resHtml;
+
+            // Store state for feedback
+            classificationState.inputText = text;
+            classificationState.primaryDomain = primary;
+            classificationState.scores = scores;
+
+            // Reset feedback UI
+            document.getElementById('fb-yes').classList.remove('selected');
+            document.getElementById('fb-no').classList.remove('selected');
+            document.getElementById('feedback-correction').classList.remove('visible');
+            document.getElementById('feedback-msg').style.display = 'none';
+            document.getElementById('correction-select').value = '';
+
+            // Show results
+            document.getElementById('results-panel').classList.add('visible');
+            document.getElementById('results-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // ===== Feedback =====
+        function submitFeedback(correct) {
+            document.getElementById('fb-yes').classList.toggle('selected', correct);
+            document.getElementById('fb-no').classList.toggle('selected', !correct);
+
+            if (correct) {
+                // Send positive feedback
+                document.getElementById('feedback-correction').classList.remove('visible');
+                sendFeedbackData(classificationState.primaryDomain, true, null);
+            } else {
+                // Show correction dropdown
+                document.getElementById('feedback-correction').classList.add('visible');
+            }
+        }
+
+        function sendFeedback() {
+            var correction = document.getElementById('correction-select').value;
+            if (!correction) {
+                alert('Please select the correct domain.');
+                return;
+            }
+            sendFeedbackData(classificationState.primaryDomain, false, correction);
+        }
+
+        function sendFeedbackData(predicted, correct, correctedDomain) {
+            var msgEl = document.getElementById('feedback-msg');
+
+            // Truncate input text for the payload (max 500 chars)
+            var snippet = classificationState.inputText.substring(0, 500);
+
+            var payload = {
+                predicted: predicted,
+                correct: correct,
+                corrected_domain: correctedDomain,
+                scores: classificationState.scores,
+                text_snippet: snippet,
+                timestamp: new Date().toISOString()
+            };
+
+            var btn = document.getElementById('feedback-submit-btn');
+            if (btn) btn.disabled = true;
+
+            fetch('https://fixthevuln-checkout.robertflores17.workers.dev/classifier-feedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(function() {
+                msgEl.textContent = 'Thank you for your feedback!';
+                msgEl.style.color = '#28a745';
+                msgEl.style.display = 'block';
+            }).catch(function() {
+                msgEl.textContent = 'Feedback saved locally. Thank you!';
+                msgEl.style.color = '#f59e0b';
+                msgEl.style.display = 'block';
+            }).finally(function() {
+                if (btn) btn.disabled = false;
+            });
+        }
+
+        // Allow Ctrl+Enter / Cmd+Enter to classify
+        document.getElementById('classifier-input').addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                classify();
+            }
+        });
+    </script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+  <script src="/js/error-reporter.js"></script>
+</body>
+</html>

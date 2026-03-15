@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+        <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Track your cybersecurity knowledge gaps across certification domains. Personalized study recommendations based on quiz performance.">
+    <meta name="keywords" content="knowledge gaps, cybersecurity quiz results, certification study recommendations, personalized learning, domain scores, Security+, CISSP, AWS, CCNA">
+    <meta name="author" content="FixTheVuln">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Knowledge Gap Dashboard - Personalized Learning - FixTheVuln">
+    <meta property="og:description" content="Track your cybersecurity knowledge gaps across certification domains. Personalized study recommendations based on quiz performance.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fixthevuln.com/knowledge-gaps.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Knowledge Gap Dashboard - Personalized Learning - FixTheVuln">
+    <meta name="twitter:description" content="Track your cybersecurity knowledge gaps across certification domains. Personalized study recommendations based on quiz performance.">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <title>Knowledge Gap Dashboard - Personalized Learning - FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/knowledge-gaps.html">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.min.css?v=7">
+    <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.25rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid #e0e0e0;
+        }
+        .stat-card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+        .stat-card-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+        .quiz-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid #e0e0e0;
+        }
+        .quiz-section h3 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.15rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+        .domain-bar-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            gap: 0.75rem;
+        }
+        .domain-bar-label {
+            flex: 0 0 220px;
+            font-size: 0.85rem;
+            color: #444;
+            text-align: right;
+            line-height: 1.3;
+        }
+        .domain-bar-track {
+            flex: 1;
+            background: #f0f0f0;
+            border-radius: 6px;
+            height: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .domain-bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.6s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            min-width: 40px;
+        }
+        .domain-bar-pct {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+        }
+        .domain-bar-score {
+            flex: 0 0 70px;
+            font-size: 0.8rem;
+            color: #888;
+            text-align: left;
+        }
+        .bar-green { background: #22c55e; }
+        .bar-yellow { background: #eab308; }
+        .bar-red { background: #ef4444; }
+        .weak-domain-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: #fff5f5;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid #ef4444;
+        }
+        .weak-domain-item .weak-quiz {
+            font-size: 0.75rem;
+            color: #888;
+            margin-left: auto;
+        }
+        .weak-domain-item .weak-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+        .weak-domain-item .weak-pct {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #ef4444;
+            margin-right: 1rem;
+            min-width: 45px;
+        }
+        .recommendation-card {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid #d0d8ff;
+        }
+        .recommendation-card h4 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+        .recommendation-card p {
+            color: #555;
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+        }
+        .recommendation-card a {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 0.4rem 0.9rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+        .recommendation-card a:hover {
+            background: #5a6fd6;
+        }
+        .recommendation-card a.secondary {
+            background: transparent;
+            color: #667eea;
+            border: 1px solid #667eea;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        .empty-state h2 {
+            color: #333;
+            margin-bottom: 0.75rem;
+        }
+        .empty-state p {
+            color: #666;
+            max-width: 500px;
+            margin: 0 auto 1.5rem;
+            line-height: 1.6;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        .btn-clear {
+            display: inline-block;
+            background: white;
+            color: #ef4444;
+            padding: 0.65rem 1.25rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: 2px solid #ef4444;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-clear:hover {
+            background: #ef4444;
+            color: white;
+        }
+        .confirm-dialog {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .confirm-dialog.active {
+            display: flex;
+        }
+        .confirm-dialog-box {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+        .confirm-dialog-box h3 {
+            color: #333;
+            margin-bottom: 0.75rem;
+        }
+        .confirm-dialog-box p {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        .confirm-dialog-box .btn-row {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+        .confirm-dialog-box button {
+            padding: 0.6rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+        }
+        .confirm-dialog-box .btn-cancel {
+            background: #f0f0f0;
+            color: #333;
+        }
+        .confirm-dialog-box .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .domain-bar-label {
+                flex: 0 0 140px;
+                font-size: 0.8rem;
+            }
+            .domain-bar-score {
+                flex: 0 0 55px;
+                font-size: 0.75rem;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 480px) {
+            .domain-bar-row {
+                flex-wrap: wrap;
+            }
+            .domain-bar-label {
+                flex: 1 1 100%;
+                text-align: left;
+                margin-bottom: 0.25rem;
+            }
+            .domain-bar-track {
+                flex: 1;
+            }
+        }
+
+        /* Dark mode overrides */
+        [data-theme="dark"] .stat-card {
+            background: #1e1e2e;
+            border-color: #333;
+        }
+        [data-theme="dark"] .stat-card-label {
+            color: #aaa;
+        }
+        [data-theme="dark"] .quiz-section {
+            background: #1e1e2e;
+            border-color: #333;
+        }
+        [data-theme="dark"] .quiz-section h3 {
+            color: #e0e0e0;
+        }
+        [data-theme="dark"] .domain-bar-label {
+            color: #ccc;
+        }
+        [data-theme="dark"] .domain-bar-track {
+            background: #2a2a3a;
+        }
+        [data-theme="dark"] .domain-bar-score {
+            color: #aaa;
+        }
+        [data-theme="dark"] .weak-domain-item {
+            background: #2a1a1a;
+            border-left-color: #ef4444;
+        }
+        [data-theme="dark"] .weak-domain-item .weak-name {
+            color: #e0e0e0;
+        }
+        [data-theme="dark"] .recommendation-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #1e2040 100%);
+            border-color: #333;
+        }
+        [data-theme="dark"] .recommendation-card h4 {
+            color: #e0e0e0;
+        }
+        [data-theme="dark"] .recommendation-card p {
+            color: #bbb;
+        }
+        [data-theme="dark"] .empty-state h2 {
+            color: #e0e0e0;
+        }
+        [data-theme="dark"] .empty-state p {
+            color: #aaa;
+        }
+        [data-theme="dark"] .btn-clear {
+            background: #1e1e2e;
+        }
+        [data-theme="dark"] .confirm-dialog-box {
+            background: #1e1e2e;
+        }
+        [data-theme="dark"] .confirm-dialog-box h3 {
+            color: #e0e0e0;
+        }
+        [data-theme="dark"] .confirm-dialog-box p {
+            color: #aaa;
+        }
+        [data-theme="dark"] .confirm-dialog-box .btn-cancel {
+            background: #333;
+            color: #ccc;
+        }
+    </style>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Tools", "item": "https://fixthevuln.com/tools.html" },
+            { "@type": "ListItem", "position": 3, "name": "Knowledge Gap Dashboard" }
+        ]
+    }
+    </script>
+    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="blog/feed.xml">
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="index.html" class="site-nav-logo">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+        <div class="site-nav-links">
+            <a href="guides.html">Guides</a>
+            <a href="tools.html">Tools</a>
+            <a href="compliance.html">Compliance</a>
+            <a href="resources.html">Resources</a>
+            <a href="practice-tests.html">Quizzes</a>
+            <a href="career-paths.html">Career Paths</a>
+            <a href="blog/">Blog</a>
+            <a href="/store/store.html" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: .35rem .75rem; border-radius: 6px; font-size: .85rem; font-weight: 600; text-decoration: none;">Store</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <a href="#main-content" class="skip-link" style="position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden;">Skip to main content</a>
+
+    <header role="banner">
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>FixTheVuln</h1></a>
+            <p class="tagline">Knowledge Gap Dashboard</p>
+            <p class="subtitle">Personalized Learning Recommendations</p>
+        </div>
+    </header>
+
+    <main id="main-content" class="container" role="main">
+        <a href="tools.html" class="back-link">&larr; Back to Tools</a>
+
+        <div id="dashboard-content"></div>
+    </main>
+
+    <!-- Confirm Clear Dialog -->
+    <div class="confirm-dialog" id="confirm-clear">
+        <div class="confirm-dialog-box">
+            <h3>Clear All Quiz Data?</h3>
+            <p>This will permanently delete all your quiz scores and progress across every certification. This action cannot be undone.</p>
+            <div class="btn-row">
+                <button class="btn-cancel" onclick="document.getElementById('confirm-clear').classList.remove('active')">Cancel</button>
+                <button class="btn-danger" onclick="clearAllData()">Clear Everything</button>
+            </div>
+        </div>
+    </div>
+
+    <footer role="contentinfo">
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Educational resources for security professionals.</p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank" rel="noopener">FixTheVuln.com</a> | <a href="/store/store.html">FixTheVuln Store</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+            <p style="font-size: 0.8rem; color: #888; margin-top: 0.75rem;">
+                Knowledge gap analysis inspired by <a href="https://github.com/guerilla7/CyberMoE" target="_blank" rel="noopener" style="color: #667eea;">CyberMoE</a> by Ron F. del Rosario (MIT License).
+            </p>
+        </div>
+    </footer>
+
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode">
+        <span id="theme-icon">🌙</span>
+    </button>
+
+    <script>
+        // Dark mode toggle
+        function toggleTheme() {
+            var html = document.documentElement;
+            var currentTheme = html.getAttribute('data-theme');
+            var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('fixthevuln-theme', newTheme);
+
+            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19';
+        }
+
+        // Load saved theme
+        (function() {
+            var savedTheme = localStorage.getItem('fixthevuln-theme');
+            var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            var theme = savedTheme || (prefersDark ? 'dark' : 'light');
+
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('theme-icon').textContent = '\u2600\uFE0F';
+            }
+        })();
+
+        // Quiz metadata: slug -> { name, quizUrl, guideUrl }
+        var QUIZ_META = {
+            'comptia-security-plus': { name: 'CompTIA Security+ SY0-701', quizUrl: 'security-quiz.html', guideUrl: 'guides.html' },
+            'comptia-network-plus': { name: 'CompTIA Network+ N10-009', quizUrl: 'network-plus-quiz.html', guideUrl: 'guides.html' },
+            'isc2-cissp': { name: '(ISC)2 CISSP', quizUrl: 'cissp-quiz.html', guideUrl: 'guides.html' },
+            'comptia-cysa-plus': { name: 'CompTIA CySA+ CS0-003', quizUrl: 'cysa-plus-quiz.html', guideUrl: 'guides.html' },
+            'aws-solutions-architect': { name: 'AWS Solutions Architect SAA-C03', quizUrl: 'aws-saa-quiz.html', guideUrl: 'cloud-security.html' },
+            'cisco-ccna': { name: 'Cisco CCNA 200-301', quizUrl: 'ccna-quiz.html', guideUrl: 'guides.html' },
+            'comptia-aplus': { name: 'CompTIA A+ 220-1101/1102', quizUrl: 'aplus-quiz.html', guideUrl: 'guides.html' },
+            'comptia-pentest-plus': { name: 'CompTIA PenTest+ PT0-002', quizUrl: 'pentest-plus-quiz.html', guideUrl: 'guides.html' },
+            'comptia-casp-plus': { name: 'CompTIA CASP+ CAS-004', quizUrl: 'casp-plus-quiz.html', guideUrl: 'guides.html' },
+            'comptia-linux-plus': { name: 'CompTIA Linux+ XK0-005', quizUrl: 'linux-plus-quiz.html', guideUrl: 'linux-hardening.html' },
+            'ec-council-ceh': { name: 'EC-Council CEH v12', quizUrl: 'ceh-quiz.html', guideUrl: 'guides.html' },
+            'aws-security-specialty': { name: 'AWS Security Specialty SCS-C02', quizUrl: 'aws-security-quiz.html', guideUrl: 'cloud-security.html' },
+            'microsoft-az900': { name: 'Microsoft Azure Fundamentals AZ-900', quizUrl: 'az900-quiz.html', guideUrl: 'cloud-security.html' },
+            'microsoft-sc900': { name: 'Microsoft Security Fundamentals SC-900', quizUrl: 'sc900-quiz.html', guideUrl: 'guides.html' },
+            'aws-cloud-practitioner': { name: 'AWS Cloud Practitioner CLF-C02', quizUrl: 'aws-clf-quiz.html', guideUrl: 'cloud-security.html' },
+            'cisco-ccnp': { name: 'Cisco CCNP Enterprise 350-401 ENCOR', quizUrl: 'ccnp-quiz.html', guideUrl: 'guides.html' },
+            'isaca-cism': { name: 'ISACA CISM', quizUrl: 'cism-quiz.html', guideUrl: 'guides.html' },
+            'offsec-oscp': { name: 'OffSec OSCP PEN-200', quizUrl: 'oscp-quiz.html', guideUrl: 'guides.html' },
+            'htb-cpts': { name: 'Hack The Box CPTS', quizUrl: 'cpts-quiz.html', guideUrl: 'guides.html' }
+        };
+
+        function esc(s) {
+            var d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
+        }
+
+        function getBarClass(pct) {
+            if (pct >= 80) return 'bar-green';
+            if (pct >= 60) return 'bar-yellow';
+            return 'bar-red';
+        }
+
+        function getStrengthLabel(pct) {
+            if (pct >= 80) return 'Strong';
+            if (pct >= 60) return 'Developing';
+            return 'Weak';
+        }
+
+        function renderDashboard() {
+            var container = document.getElementById('dashboard-content');
+            var raw = localStorage.getItem('fixthevuln_domain_scores');
+            var scores;
+
+            try {
+                scores = raw ? JSON.parse(raw) : null;
+            } catch (e) {
+                scores = null;
+            }
+
+            if (!scores || Object.keys(scores).length === 0) {
+                container.innerHTML =
+                    '<div class="empty-state">' +
+                        '<div class="empty-state-icon">📊</div>' +
+                        '<h2>No Quiz Data Yet</h2>' +
+                        '<p>Take some practice quizzes to see your personalized knowledge gap analysis and study recommendations here.</p>' +
+                        '<a href="practice-tests.html" class="cta-button">Browse Practice Tests &rarr;</a>' +
+                    '</div>';
+                return;
+            }
+
+            var html = '';
+            var totalCorrect = 0;
+            var totalQuestions = 0;
+            var quizCount = 0;
+            var allDomains = [];
+
+            // First pass: compute totals and collect all domain data
+            var quizKeys = Object.keys(scores);
+            for (var q = 0; q < quizKeys.length; q++) {
+                var quizSlug = quizKeys[q];
+                var quizData = scores[quizSlug];
+                var domainKeys = Object.keys(quizData);
+                if (domainKeys.length === 0) continue;
+                quizCount++;
+
+                for (var d = 0; d < domainKeys.length; d++) {
+                    var domain = quizData[domainKeys[d]];
+                    totalCorrect += domain.correct;
+                    totalQuestions += domain.total;
+
+                    var pct = domain.total > 0 ? Math.round((domain.correct / domain.total) * 100) : 0;
+                    var meta = QUIZ_META[quizSlug] || { name: quizSlug, quizUrl: 'practice-tests.html', guideUrl: 'guides.html' };
+                    allDomains.push({
+                        name: domain.name || ('Domain ' + domainKeys[d]),
+                        correct: domain.correct,
+                        total: domain.total,
+                        pct: pct,
+                        quizSlug: quizSlug,
+                        quizName: meta.name,
+                        quizUrl: meta.quizUrl
+                    });
+                }
+            }
+
+            var overallPct = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+
+            // Overall stats
+            html += '<div class="stats-grid">' +
+                '<div class="stat-card"><div class="stat-card-value">' + quizCount + '</div><div class="stat-card-label">Quizzes Taken</div></div>' +
+                '<div class="stat-card"><div class="stat-card-value">' + totalQuestions + '</div><div class="stat-card-label">Questions Answered</div></div>' +
+                '<div class="stat-card"><div class="stat-card-value">' + overallPct + '%</div><div class="stat-card-label">Overall Correct</div></div>' +
+                '<div class="stat-card"><div class="stat-card-value">' + totalCorrect + '</div><div class="stat-card-label">Correct Answers</div></div>' +
+            '</div>';
+
+            // Per-quiz domain breakdown
+            html += '<h2 style="margin-top: 2rem; margin-bottom: 1rem;">Domain Breakdown by Quiz</h2>';
+
+            for (var q = 0; q < quizKeys.length; q++) {
+                var quizSlug = quizKeys[q];
+                var quizData = scores[quizSlug];
+                var domainKeys = Object.keys(quizData);
+                if (domainKeys.length === 0) continue;
+
+                var meta = QUIZ_META[quizSlug] || { name: quizSlug, quizUrl: 'practice-tests.html', guideUrl: 'guides.html' };
+
+                // Sort domains weakest-first
+                var domainEntries = [];
+                for (var d = 0; d < domainKeys.length; d++) {
+                    var domain = quizData[domainKeys[d]];
+                    var pct = domain.total > 0 ? Math.round((domain.correct / domain.total) * 100) : 0;
+                    domainEntries.push({
+                        name: domain.name || ('Domain ' + domainKeys[d]),
+                        correct: domain.correct,
+                        total: domain.total,
+                        pct: pct
+                    });
+                }
+                domainEntries.sort(function(a, b) { return a.pct - b.pct; });
+
+                html += '<div class="quiz-section">' +
+                    '<h3>' + esc(meta.name) + '</h3>';
+
+                for (var i = 0; i < domainEntries.length; i++) {
+                    var de = domainEntries[i];
+                    html += '<div class="domain-bar-row">' +
+                        '<div class="domain-bar-label">' + esc(de.name) + '</div>' +
+                        '<div class="domain-bar-track">' +
+                            '<div class="domain-bar-fill ' + getBarClass(de.pct) + '" style="width: ' + Math.max(de.pct, 8) + '%;">' +
+                                '<span class="domain-bar-pct">' + de.pct + '%</span>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="domain-bar-score">' + de.correct + '/' + de.total + '</div>' +
+                    '</div>';
+                }
+
+                html += '<div style="margin-top: 0.75rem; text-align: right;">' +
+                    '<a href="' + esc(meta.quizUrl) + '" style="font-size: 0.85rem; color: #667eea; text-decoration: none; font-weight: 600;">Retake Quiz &rarr;</a>' +
+                '</div></div>';
+            }
+
+            // Weakest domains (top 5)
+            allDomains.sort(function(a, b) { return a.pct - b.pct; });
+            var weakest = allDomains.slice(0, 5);
+
+            if (weakest.length > 0) {
+                html += '<h2 style="margin-top: 2rem; margin-bottom: 1rem;">5 Weakest Domains</h2>' +
+                    '<div class="quiz-section">';
+
+                for (var i = 0; i < weakest.length; i++) {
+                    var w = weakest[i];
+                    html += '<div class="weak-domain-item">' +
+                        '<span class="weak-pct">' + w.pct + '%</span>' +
+                        '<span class="weak-name">' + esc(w.name) + '</span>' +
+                        '<span class="weak-quiz">' + esc(w.quizName) + '</span>' +
+                    '</div>';
+                }
+                html += '</div>';
+            }
+
+            // Personalized recommendations
+            html += '<h2 style="margin-top: 2rem; margin-bottom: 1rem;">Personalized Recommendations</h2>';
+
+            // Generate recommendations from weakest domains
+            var recommended = {};
+            for (var i = 0; i < Math.min(allDomains.length, 5); i++) {
+                var d = allDomains[i];
+                if (d.pct >= 80) continue;
+                if (recommended[d.quizSlug]) continue;
+                recommended[d.quizSlug] = true;
+
+                var meta = QUIZ_META[d.quizSlug] || { name: d.quizSlug, quizUrl: 'practice-tests.html', guideUrl: 'guides.html' };
+                var urgency = d.pct < 60 ? 'Priority: High' : 'Priority: Medium';
+                var urgencyColor = d.pct < 60 ? '#ef4444' : '#eab308';
+
+                html += '<div class="recommendation-card">' +
+                    '<h4>' + esc(d.name) + ' <span style="font-size: 0.75rem; color: ' + urgencyColor + '; font-weight: 600;">(' + urgency + ')</span></h4>' +
+                    '<p>You scored ' + d.pct + '% (' + d.correct + '/' + d.total + ') in this domain from the ' + esc(meta.name) + ' quiz. Focus your study here for the biggest improvement.</p>' +
+                    '<a href="' + esc(meta.quizUrl) + '">Retake Quiz</a>' +
+                    '<a href="' + esc(meta.guideUrl) + '" class="secondary">Study Guide</a>' +
+                '</div>';
+            }
+
+            if (Object.keys(recommended).length === 0) {
+                html += '<div class="recommendation-card">' +
+                    '<h4>Great job!</h4>' +
+                    '<p>All your domains are at 80% or above. Keep practicing to maintain your edge, or try a new certification quiz.</p>' +
+                    '<a href="practice-tests.html">Explore More Quizzes</a>' +
+                '</div>';
+            }
+
+            // CyberFolio CTA
+            html += '<div style="border:1px solid var(--border-color);padding:1.5rem;border-radius:12px;text-align:center;margin-top:2rem;">' +
+                '<p style="text-transform:uppercase;letter-spacing:2px;font-size:0.65rem;opacity:0.5;margin-bottom:0.3rem;">CyberFolio</p>' +
+                '<p style="font-size:1.1rem;font-weight:600;color:var(--text-primary);margin-bottom:0.5rem;">Turn your quiz scores into a portfolio</p>' +
+                '<p style="color:var(--text-secondary);margin-bottom:1rem;">CyberFolio is a free cybersecurity portfolio builder. Create a profile to showcase your certifications, skills, and domain knowledge to employers.</p>' +
+                '<a href="https://cyberfolio.io" target="_blank" rel="noopener" style="display:inline-block;background:#06b6d4;color:white;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;">Create Your Portfolio &rarr;</a>' +
+                '<p style="color:var(--text-secondary);margin-top:0.75rem;font-size:0.8rem;">Quiz score import coming soon &mdash; your domain strengths will auto-populate your CyberFolio skill profile.</p>' +
+            '</div>';
+
+            // Action buttons
+            html += '<div class="action-buttons">' +
+                '<button class="btn-clear" onclick="document.getElementById(\'confirm-clear\').classList.add(\'active\')">Clear All Data</button>' +
+            '</div>';
+
+            container.innerHTML = html;
+        }
+
+        // Export to CyberFolio — deferred until CyberFolio builds /import endpoint
+        // When ready: serialize fixthevuln_domain_scores to URL params and open cyberfolio.io/import
+
+        function clearAllData() {
+            // Remove domain scores
+            localStorage.removeItem('fixthevuln_domain_scores');
+
+            // Remove individual quiz histories (common key patterns)
+            var keysToRemove = [];
+            for (var i = 0; i < localStorage.length; i++) {
+                var key = localStorage.key(i);
+                if (key && key.indexOf('fixthevuln_') === 0 && key.indexOf('_quiz') !== -1) {
+                    keysToRemove.push(key);
+                }
+            }
+            for (var j = 0; j < keysToRemove.length; j++) {
+                localStorage.removeItem(keysToRemove[j]);
+            }
+
+            document.getElementById('confirm-clear').classList.remove('active');
+            renderDashboard();
+        }
+
+        // Initial render
+        renderDashboard();
+    </script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+  <script src="/js/error-reporter.js"></script>
+</body>
+</html>
