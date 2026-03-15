@@ -5,22 +5,22 @@
         <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
     <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Archive of Known Exploited Vulnerabilities (KEV) with remediation guidance. Historical CVE database for security professionals.">
-    <meta name="keywords" content="CVE archive, KEV catalog, vulnerability history, CISA KEV, security patches, vulnerability remediation">
+    <meta name="description" content="Complete catalog of Known Exploited Vulnerabilities (KEV) with remediation guidance. CVE database for security professionals.">
+    <meta name="keywords" content="CVE catalog, KEV catalog, vulnerability database, CISA KEV, security patches, vulnerability remediation">
     <meta name="author" content="FixTheVuln">
     <meta name="robots" content="index, follow">
-    <meta property="og:title" content="KEV Archive - Known Exploited Vulnerabilities - FixTheVuln">
-    <meta property="og:description" content="Historical archive of actively exploited vulnerabilities with remediation guidance.">
+    <meta property="og:title" content="Vulnerability Catalog - Known Exploited Vulnerabilities - FixTheVuln">
+    <meta property="og:description" content="Complete catalog of actively exploited vulnerabilities with remediation guidance.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://fixthevuln.com/kev-archive.html">
     <meta property="og:image" content="https://fixthevuln.com/og-image.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="KEV Archive - Known Exploited Vulnerabilities - FixTheVuln">
-    <meta name="twitter:description" content="Archive of Known Exploited Vulnerabilities (KEV) with remediation guidance. Historical CVE database for security professionals.">
+    <meta name="twitter:title" content="Vulnerability Catalog - Known Exploited Vulnerabilities - FixTheVuln">
+    <meta name="twitter:description" content="Complete catalog of Known Exploited Vulnerabilities (KEV) with remediation guidance. CVE database for security professionals.">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
-    <title>KEV Archive - Known Exploited Vulnerabilities - FixTheVuln</title>
+    <title>Vulnerability Catalog - Known Exploited Vulnerabilities - FixTheVuln</title>
     <link rel="canonical" href="https://fixthevuln.com/kev-archive.html">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
     <link rel="stylesheet" href="style.min.css?v=7">
@@ -136,7 +136,7 @@
         "@type": "BreadcrumbList",
         "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
-            { "@type": "ListItem", "position": 2, "name": "KEV Archive" }
+            { "@type": "ListItem", "position": 2, "name": "Vulnerability Catalog" }
         ]
     }
     </script>
@@ -180,8 +180,8 @@
     <header role="banner">
         <div class="container">
             <a href="index.html" style="text-decoration: none; color: inherit;"><h1>FixTheVuln</h1></a>
-            <p class="tagline">KEV Archive</p>
-            <p class="subtitle">Historical Known Exploited Vulnerabilities</p>
+            <p class="tagline">Vulnerability Catalog</p>
+            <p class="subtitle">All Known Exploited Vulnerabilities</p>
         </div>
     </header>
 
@@ -189,8 +189,8 @@
         <a href="index.html" class="back-link">&larr; Back to Home</a>
 
         <div class="archive-header">
-            <h2>Vulnerability Archive</h2>
-            <p>Historical record of actively exploited vulnerabilities from CISA's KEV catalog. Use this archive for research, audit trails, and understanding threat evolution.</p>
+            <h2>All Vulnerabilities</h2>
+            <p>Complete catalog of actively exploited vulnerabilities from CISA's KEV catalog. Use this page for research, audit trails, and understanding threat evolution.</p>
         </div>
 
         <!-- CVSS Legend -->
@@ -341,18 +341,18 @@
                 return new Date(vuln.dateAdded).getFullYear().toString();
             },
 
-            // Load and render archived vulnerabilities grouped by year
+            // Load and render all vulnerabilities grouped by year
             loadArchive: async function() {
                 try {
                     const response = await fetch('data/kev-data.json');
                     const data = await response.json();
 
-                    // Filter archived vulnerabilities
-                    const archivedVulns = data.vulnerabilities.filter(v => v.archived);
+                    // Show ALL vulnerabilities
+                    const allVulns = data.vulnerabilities;
 
-                    // Group by year
+                    // Group by year (using dateAdded)
                     const byYear = {};
-                    archivedVulns.forEach(vuln => {
+                    allVulns.forEach(vuln => {
                         const year = this.getYear(vuln);
                         if (!byYear[year]) byYear[year] = [];
                         byYear[year].push(vuln);
@@ -369,11 +369,16 @@
                     let html = '';
                     years.forEach(year => {
                         const yearLabel = parseInt(year) < 2020 ? `Legacy Vulnerabilities (${year})` : `${year} Vulnerabilities`;
-                        const vulns = byYear[year].sort((a, b) => (b.cvss || 0) - (a.cvss || 0)); // Sort by CVSS within year
+                        // Sort by dateAdded descending, then CVSS descending as tiebreaker
+                        const vulns = byYear[year].sort((a, b) => {
+                            const dateCompare = new Date(b.dateAdded) - new Date(a.dateAdded);
+                            if (dateCompare !== 0) return dateCompare;
+                            return (b.cvss || 0) - (a.cvss || 0);
+                        });
 
                         html += `
                             <section class="year-section">
-                                <h3>${yearLabel}</h3>
+                                <h3>${yearLabel} (${vulns.length})</h3>
                                 <div class="kev-grid">
                                     ${vulns.map(v => this.createCard(v)).join('')}
                                 </div>
@@ -384,7 +389,7 @@
                     // Render
                     const container = document.getElementById('archive-content');
                     if (container) {
-                        container.innerHTML = html || '<p style="text-align: center;">No archived vulnerabilities found.</p>';
+                        container.innerHTML = html || '<p style="text-align: center;">No vulnerabilities found.</p>';
                     }
                 } catch (error) {
                     console.error('Failed to load KEV archive:', error);

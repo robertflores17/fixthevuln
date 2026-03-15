@@ -410,12 +410,12 @@
 
             <div class="kev-grid" id="kev-grid-home">
                 <noscript>
-                    <p style="text-align: center; margin-top: 1rem;"><a href="kev-archive.html">View all vulnerabilities in the archive</a></p>
+                    <p style="text-align: center; margin-top: 1rem;"><a href="kev-archive.html">View All Vulnerabilities</a></p>
                 </noscript>
             </div>
 
             <div style="text-align: center; margin-top: 1.25rem;">
-                <a href="kev-archive.html" id="archive-link" style="color: var(--accent-primary); font-weight: 600; text-decoration: none; font-size: 0.95rem;">View All in Archive &rarr;</a>
+                <a href="kev-archive.html" id="archive-link" style="color: var(--accent-primary); font-weight: 600; text-decoration: none; font-size: 0.95rem;">View All Vulnerabilities &rarr;</a>
             </div>
         </section>
 
@@ -557,13 +557,20 @@
                     }
 
                     var lastUpdatedEl = document.getElementById('kev-last-updated');
-                    if (lastUpdatedEl && data.lastUpdated) {
-                        lastUpdatedEl.textContent = 'Updated ' + new Date(data.lastUpdated + 'T00:00:00').toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
+                    if (lastUpdatedEl) {
+                        var parts = [];
+                        if (data.lastUpdated) {
+                            parts.push('Updated ' + new Date(data.lastUpdated + 'T00:00:00').toLocaleDateString('en-US', {month: 'short', day: 'numeric'}));
+                        }
+                        if (data.lastChecked) {
+                            parts.push('Checked ' + new Date(data.lastChecked + 'T00:00:00').toLocaleDateString('en-US', {month: 'short', day: 'numeric'}));
+                        }
+                        lastUpdatedEl.textContent = parts.join(' \u00b7 ');
                     }
 
                     var archiveLink = document.getElementById('archive-link');
-                    if (archiveLink && archivedCount > 0) {
-                        archiveLink.textContent = 'View All in Archive (' + totalCount + ' CVEs) \u2192';
+                    if (archiveLink) {
+                        archiveLink.textContent = 'View All Vulnerabilities (' + totalCount + ' CVEs) \u2192';
                     }
                 } catch (error) {
                     console.error('Failed to load KEV data:', error);

@@ -31,25 +31,36 @@ jobs:
         run: |
           python scripts/fetch_kev.py
 
-      - name: Check for changes
+      - name: Push last checked timestamp to main
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          if ! git diff --quiet data/kev-data.json; then
+            git add data/kev-data.json
+            git commit -m "Update KEV last checked timestamp [skip ci]"
+            git push origin main
+          fi
+
+      - name: Run entity extraction
+        if: steps.fetch.outputs.has_new == 'true'
+        run: |
+          python scripts/entity_extractor.py data/kev-data.json --output data/cve-entities.json || echo "Entity extraction skipped (no kev-data.json or script error)"
+
+      - name: Check for new vulnerabilities
         id: changes
         run: |
           git add -A
           if git diff --staged --quiet; then
             echo "has_changes=false" >> $GITHUB_OUTPUT
-            echo "No changes detected"
+            echo "No new vulnerability data"
           else
             echo "has_changes=true" >> $GITHUB_OUTPUT
-            echo "Changes detected"
+            echo "New vulnerability data detected"
           fi
 
       - name: Create or update PR branch
         if: steps.changes.outputs.has_changes == 'true'
         run: |
-          # Configure git
-          git config user.name "GitHub Action"
-          git config user.email "action@github.com"
-
           # Create branch name
           BRANCH_NAME="auto/kev-update-$(date +'%Y-%m-%d')"
 

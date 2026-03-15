@@ -71,11 +71,14 @@ def _validate_nvd_key():
 
 
 def fetch_cvss_from_nvd(cve_id):
-    """Fetch CVSS score from NVD API v2.0. Returns score as string or empty."""
+    """Fetch CVSS score and CWE/product data from NVD API v2.0.
+    Returns dict with 'score' (str), 'cwes' (list), 'cpe_vendor' (str), 'cpe_product' (str)."""
     url = f"{NVD_API_URL}?cveId={cve_id}"
     headers = {'User-Agent': 'FixTheVuln-KEV-Fetcher/1.0'}
     if NVD_API_KEY and _validate_nvd_key():
         headers['apiKey'] = NVD_API_KEY
+
+    result = {'score': '', 'cwes': [], 'cpe_vendor': '', 'cpe_product': ''}
 
     try:
         req = urllib.request.Request(url, headers=headers)
@@ -84,7 +87,7 @@ def fetch_cvss_from_nvd(cve_id):
 
         vulns = data.get('vulnerabilities', [])
         if not vulns:
-            return ""
+            return result
 
         cve_data = vulns[0].get('cve', {})
         metrics = cve_data.get('metrics', {})
@@ -95,30 +98,57 @@ def fetch_cvss_from_nvd(cve_id):
             if metric_list:
                 score = metric_list[0].get('cvssData', {}).get('baseScore')
                 if score is not None:
-                    return str(score)
+                    result['score'] = str(score)
+                    break
 
         # Fallback to v2
-        v2_list = metrics.get('cvssMetricV2', [])
-        if v2_list:
-            score = v2_list[0].get('cvssData', {}).get('baseScore')
-            if score is not None:
-                return str(score)
+        if not result['score']:
+            v2_list = metrics.get('cvssMetricV2', [])
+            if v2_list:
+                score = v2_list[0].get('cvssData', {}).get('baseScore')
+                if score is not None:
+                    result['score'] = str(score)
 
         # Fallback to CVSS v4.0 if v3 and v2 are unavailable
-        v4_list = metrics.get('cvssMetricV40', [])
-        if v4_list:
-            score = v4_list[0].get('cvssData', {}).get('baseScore')
-            if score is not None:
-                return str(score)
+        if not result['score']:
+            v4_list = metrics.get('cvssMetricV40', [])
+            if v4_list:
+                score = v4_list[0].get('cvssData', {}).get('baseScore')
+                if score is not None:
+                    result['score'] = str(score)
 
-        return ""
+        # Extract CWE IDs from weaknesses
+        weaknesses = cve_data.get('weaknesses', [])
+        for w in weaknesses:
+            for desc in w.get('description', []):
+                val = desc.get('value', '')
+                if val.startswith('CWE-') and val != 'CWE-noinfo':
+                    result['cwes'].append(val)
+
+        # Extract vendor/product from CPE configurations
+        configurations = cve_data.get('configurations', [])
+        for config in configurations:
+            for node in config.get('nodes', []):
+                for match in node.get('cpeMatch', []):
+                    criteria = match.get('criteria', '')
+                    # CPE format: cpe:2.3:a:vendor:product:version:...
+                    parts = criteria.split(':')
+                    if len(parts) >= 5:
+                        vendor = parts[3]
+                        product = parts[4]
+                        if vendor and vendor != '*' and not result['cpe_vendor']:
+                            result['cpe_vendor'] = vendor.replace('_', ' ').title()
+                            result['cpe_product'] = product.replace('_', ' ').title() if product != '*' else ''
+
+        return result
     except Exception as e:
         print(f"    Warning: NVD lookup failed for {cve_id}: {e}")
-        return ""
+        return result
 
 
 def fetch_cvss_batch(cve_ids):
-    """Fetch CVSS scores for a list of CVE IDs with rate limiting."""
+    """Fetch CVSS scores + CWE/CPE data for a list of CVE IDs with rate limiting.
+    Returns dict of cve_id -> {score, cwes, cpe_vendor, cpe_product}."""
     results = {}
     total = len(cve_ids)
     api_status = "with API key" if NVD_API_KEY else "without API key (slower)"
@@ -126,9 +156,12 @@ def fetch_cvss_batch(cve_ids):
 
     for i, cve_id in enumerate(cve_ids, 1):
         print(f"  [{i}/{total}] {cve_id}...", end=" ", flush=True)
-        score = fetch_cvss_from_nvd(cve_id)
-        results[cve_id] = score
-        print(f"CVSS {score}" if score else "no score found")
+        nvd_data = fetch_cvss_from_nvd(cve_id)
+        results[cve_id] = nvd_data
+        score = nvd_data['score']
+        cwes = nvd_data['cwes']
+        extra = f" CWEs:{','.join(cwes)}" if cwes else ""
+        print(f"CVSS {score}{extra}" if score else "no score found")
 
         if i < total:
             time.sleep(NVD_DELAY)
@@ -233,6 +266,18 @@ def update_last_checked():
         json.dump(data, f, indent=2)
 
 
+def update_kev_last_checked():
+    """Update lastChecked in kev-data.json so frontend knows when feed was last monitored."""
+    kev_file = DATA_DIR / 'kev-data.json'
+    if not kev_file.exists():
+        return
+    with open(kev_file, 'r') as f:
+        data = json.load(f)
+    data['lastChecked'] = datetime.now().strftime('%Y-%m-%d')
+    with open(kev_file, 'w') as f:
+        json.dump(data, f, indent=2)
+
+
 # ---------------------------------------------------------------------------
 # Formatting
 # ---------------------------------------------------------------------------
@@ -262,8 +307,12 @@ def filter_recent(vulnerabilities, days=LOOKBACK_DAYS):
     return recent
 
 
-def format_for_review(vuln, cvss_score=""):
-    """Format a vulnerability for review with auto-filled fields."""
+def format_for_review(vuln, nvd_data=None):
+    """Format a vulnerability for review with auto-filled fields.
+    nvd_data is a dict with keys: score, cwes, cpe_vendor, cpe_product."""
+    if nvd_data is None:
+        nvd_data = {'score': '', 'cwes': [], 'cpe_vendor': '', 'cpe_product': ''}
+
     cve_id = vuln.get('cveID', 'Unknown')
     vendor = vuln.get('vendorProject', 'Unknown')
     product = vuln.get('product', '')
@@ -271,7 +320,7 @@ def format_for_review(vuln, cvss_score=""):
     description = vuln.get('shortDescription', '')
     required_action = vuln.get('requiredAction', '')
 
-    return {
+    entry = {
         "cveID": cve_id,
         "title": title,
         "vendor": vendor,
@@ -294,12 +343,25 @@ def format_for_review(vuln, cvss_score=""):
         },
 
         # Auto-filled fields (review and edit if needed)
-        "cvss": cvss_score,
+        "cvss": nvd_data.get('score', ''),
         "short_description": truncate(description),
         "fix": required_action,
         "include_on_site": False,
         "priority": "high" if vuln.get('knownRansomwareCampaignUse') == 'Known' else ""
     }
+
+    # Phase 2: CWE and CPE enrichment from NVD
+    cwes = nvd_data.get('cwes', [])
+    if cwes:
+        entry['cwes'] = cwes
+    cpe_vendor = nvd_data.get('cpe_vendor', '')
+    cpe_product = nvd_data.get('cpe_product', '')
+    if cpe_vendor:
+        entry['cpe_vendor'] = cpe_vendor
+    if cpe_product:
+        entry['cpe_product'] = cpe_product
+
+    return entry
 
 
 def generate_html_card(vuln):
@@ -624,10 +686,17 @@ def cmd_backfill():
 
     # Fetch CVSS scores for entries that need them
     if needs_cvss:
-        cvss_scores = fetch_cvss_batch(needs_cvss)
-        for cve_id, score in cvss_scores.items():
-            if score:
-                pending[cve_id]['cvss'] = score
+        cvss_results = fetch_cvss_batch(needs_cvss)
+        for cve_id, nvd_data in cvss_results.items():
+            if nvd_data.get('score'):
+                pending[cve_id]['cvss'] = nvd_data['score']
+            # Also backfill CWE/CPE data if missing
+            if nvd_data.get('cwes') and not pending[cve_id].get('cwes'):
+                pending[cve_id]['cwes'] = nvd_data['cwes']
+            if nvd_data.get('cpe_vendor') and not pending[cve_id].get('cpe_vendor'):
+                pending[cve_id]['cpe_vendor'] = nvd_data['cpe_vendor']
+            if nvd_data.get('cpe_product') and not pending[cve_id].get('cpe_product'):
+                pending[cve_id]['cpe_product'] = nvd_data['cpe_product']
 
     # Fill short_description from existing description field
     for cve_id in needs_desc:
@@ -696,12 +765,12 @@ def cmd_fetch():
         cve_ids = [v.get('cveID') for v in new_raw]
         cvss_scores = fetch_cvss_batch(cve_ids)
 
-        # Format with auto-filled fields
+        # Format with auto-filled fields (now includes CWE + CPE data)
         new_vulns = []
         for vuln in new_raw:
             cve_id = vuln.get('cveID', '')
-            score = cvss_scores.get(cve_id, '')
-            new_vulns.append(format_for_review(vuln, cvss_score=score))
+            nvd_data = cvss_scores.get(cve_id, {})
+            new_vulns.append(format_for_review(vuln, nvd_data=nvd_data))
 
         # Load existing pending reviews to preserve in-progress work
         existing_pending = load_pending_reviews()
@@ -787,7 +856,9 @@ def main():
     elif args.clean:
         return cmd_clean()
     else:
-        return cmd_fetch()
+        result = cmd_fetch()
+        update_kev_last_checked()
+        return result
 
 
 if __name__ == "__main__":
