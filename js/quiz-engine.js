@@ -17,6 +17,8 @@ const QuizEngine = (() => {
     let startTime = null;
     let timerInterval = null;
     let config = {};
+    let questionStartTime = null;
+    let questionEvents = [];
 
     function shuffleArray(array) {
         const arr = [...array];
@@ -97,7 +99,7 @@ const QuizEngine = (() => {
         quizSize = Math.min(selectedCount, filtered.length);
         if (quizSize === 0) { quizSize = Math.min(selectedCount, questions.length); filtered = questions; }
         currentQuiz = weightedRandomSelect(filtered, quizSize);
-        currentQuestion = 0; score = 0; answered = 0; startTime = Date.now();
+        currentQuestion = 0; score = 0; answered = 0; startTime = Date.now(); questionEvents = [];
         document.getElementById('total-questions').textContent = quizSize;
         document.getElementById('start-screen').style.display = 'none';
         document.getElementById('quiz-screen').style.display = 'block';
@@ -149,6 +151,7 @@ const QuizEngine = (() => {
         document.getElementById('skip-btn').style.display = 'inline-block';
         document.getElementById('next-btn').style.display = 'none';
         document.getElementById('finish-btn').style.display = 'none';
+        questionStartTime = Date.now();
     }
 
     function selectOption(index) {
@@ -164,6 +167,15 @@ const QuizEngine = (() => {
         });
         if (index === correct) score++;
         answered++;
+        questionEvents.push({
+            question_id: currentQuestion,
+            domain: q.domain || null,
+            difficulty: q.difficulty || null,
+            selected_option: index,
+            correct_option: correct,
+            is_correct: index === correct ? 1 : 0,
+            time_ms: Date.now() - (questionStartTime || Date.now())
+        });
         document.getElementById('score').textContent = score;
         document.getElementById('answered').textContent = answered;
         document.getElementById('explanation').classList.add('show');
@@ -173,7 +185,17 @@ const QuizEngine = (() => {
     }
 
     function skipQuestion() {
+        const q = currentQuiz[currentQuestion];
         answered++;
+        questionEvents.push({
+            question_id: currentQuestion,
+            domain: q.domain || null,
+            difficulty: q.difficulty || null,
+            selected_option: -1,
+            correct_option: q.correct,
+            is_correct: 0,
+            time_ms: Date.now() - (questionStartTime || Date.now())
+        });
         document.getElementById('answered').textContent = answered;
         nextQuestion();
     }
@@ -208,6 +230,7 @@ const QuizEngine = (() => {
         document.getElementById('results-screen').classList.add('show');
         injectPlannerCTA(percentage);
         saveQuizResult(percentage, elapsed);
+        submitAnalytics(percentage, elapsed);
         displayHistory();
     }
 
@@ -221,6 +244,29 @@ const QuizEngine = (() => {
         const history = JSON.parse(localStorage.getItem(key) || '[]');
         history.unshift({ score: sc, time, domain: selectedDomain, difficulty: selectedDifficulty, count: quizSize, date: new Date().toISOString() });
         localStorage.setItem(key, JSON.stringify(history.slice(0, 10)));
+    }
+
+    function submitAnalytics(scorePct, timeSeconds) {
+        try {
+            var sessionId = typeof crypto !== 'undefined' && crypto.randomUUID
+                ? crypto.randomUUID()
+                : Date.now().toString(36) + Math.random().toString(36).slice(2);
+            var payload = JSON.stringify({
+                session_id: sessionId,
+                quiz_id: config.examCode || config.storageKey || 'unknown',
+                total_questions: quizSize,
+                correct_count: score,
+                score_pct: scorePct,
+                time_seconds: timeSeconds,
+                domain_filter: selectedDomain,
+                difficulty_filter: selectedDifficulty,
+                events: questionEvents
+            });
+            var endpoint = 'https://fixthevuln-checkout.robertflores17.workers.dev/quiz/submit';
+            if (navigator.sendBeacon) {
+                navigator.sendBeacon(endpoint, new Blob([payload], { type: 'text/plain' }));
+            }
+        } catch (e) { /* silent — analytics should never break the quiz */ }
     }
 
     function displayHistory() {

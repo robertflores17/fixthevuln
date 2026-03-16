@@ -268,6 +268,12 @@ export default {
       return handleAdminErrors(request, env, cors);
     }
 
+    // ─── ROUTE: POST /quiz/submit ──────────────
+    // Quiz analytics: session + per-question events
+    if (request.method === 'POST' && url.pathname === '/quiz/submit') {
+      return handleQuizSubmit(request, env, cors);
+    }
+
     return new Response(JSON.stringify({ error: 'Not found' }), {
       status: 404,
       headers: { ...cors, 'Content-Type': 'application/json' },
@@ -994,4 +1000,101 @@ async function handleAdminErrors(request, env, cors) {
     status: 200,
     headers: { ...cors, 'Content-Type': 'application/json' },
   });
+}
+
+// ─── QUIZ ANALYTICS ────────────────────────────
+const QUIZ_RATE_LIMIT = new Map(); // IP -> { count, resetAt }
+
+async function handleQuizSubmit(request, env, cors) {
+  // Rate limit: 20 submissions/minute per IP
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+  const now = Date.now();
+  const limit = QUIZ_RATE_LIMIT.get(ip);
+  if (limit) {
+    if (now < limit.resetAt) {
+      if (limit.count >= 20) {
+        return new Response('', { status: 429, headers: cors });
+      }
+      limit.count++;
+    } else {
+      QUIZ_RATE_LIMIT.set(ip, { count: 1, resetAt: now + 60000 });
+    }
+  } else {
+    QUIZ_RATE_LIMIT.set(ip, { count: 1, resetAt: now + 60000 });
+  }
+  if (QUIZ_RATE_LIMIT.size > 500) {
+    for (const [k, v] of QUIZ_RATE_LIMIT) {
+      if (now > v.resetAt) QUIZ_RATE_LIMIT.delete(k);
+    }
+  }
+
+  if (!env.DB) {
+    return new Response('', { status: 204, headers: cors });
+  }
+
+  try {
+    const text = await request.text();
+    const body = JSON.parse(text);
+
+    // Validate session fields
+    const sessionId = String(body.session_id || '').slice(0, 64);
+    const quizId = String(body.quiz_id || '').slice(0, 50);
+    const totalQuestions = parseInt(body.total_questions) || 0;
+    const correctCount = parseInt(body.correct_count) || 0;
+    const scorePct = Math.min(Math.max(parseInt(body.score_pct) || 0, 0), 100);
+    const timeSeconds = Math.min(parseInt(body.time_seconds) || 0, 36000);
+    const domainFilter = String(body.domain_filter || 'all').slice(0, 20);
+    const difficultyFilter = String(body.difficulty_filter || 'mixed').slice(0, 20);
+
+    if (!sessionId || !quizId || totalQuestions < 1) {
+      return new Response(JSON.stringify({ error: 'Invalid session data' }), {
+        status: 400,
+        headers: { ...cors, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Insert session
+    await env.DB.prepare(
+      `INSERT INTO quiz_sessions (id, quiz_id, total_questions, correct_count, score_pct, time_seconds, domain_filter, difficulty_filter)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+    ).bind(sessionId, quizId, totalQuestions, correctCount, scorePct, timeSeconds, domainFilter, difficultyFilter).run();
+
+    // Insert events (batch)
+    const events = Array.isArray(body.events) ? body.events.slice(0, 200) : [];
+    if (events.length > 0) {
+      const stmt = env.DB.prepare(
+        `INSERT INTO quiz_events (session_id, quiz_id, question_id, domain, difficulty, selected_option, correct_option, is_correct, time_ms)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      );
+      const batch = events.map(e => stmt.bind(
+        sessionId,
+        quizId,
+        parseInt(e.question_id) || 0,
+        e.domain != null ? parseInt(e.domain) : null,
+        e.difficulty ? String(e.difficulty).slice(0, 20) : null,
+        parseInt(e.selected_option) || 0,
+        parseInt(e.correct_option) || 0,
+        e.is_correct ? 1 : 0,
+        Math.min(parseInt(e.time_ms) || 0, 600000)
+      ));
+      await env.DB.batch(batch);
+    }
+
+    return new Response(JSON.stringify({ success: true, session_id: sessionId, events_inserted: events.length }), {
+      status: 201,
+      headers: { ...cors, 'Content-Type': 'application/json' },
+    });
+  } catch (err) {
+    // Duplicate session ID = quiz already submitted (idempotent)
+    if (err.message && err.message.includes('UNIQUE constraint')) {
+      return new Response(JSON.stringify({ success: true, duplicate: true }), {
+        status: 200,
+        headers: { ...cors, 'Content-Type': 'application/json' },
+      });
+    }
+    return new Response(JSON.stringify({ error: 'Bad request' }), {
+      status: 400,
+      headers: { ...cors, 'Content-Type': 'application/json' },
+    });
+  }
 }
