@@ -216,6 +216,8 @@ LLM: "John Smith, SSN 123-45-6789, DOB 03/15/1985"</code></pre>
             <h2>LLM03: Supply Chain Vulnerabilities</h2>
             <p><strong>Risk Level:</strong> <span style="color: #fd7e14; font-weight: 700;">High</span></p>
             <p>The LLM application supply chain includes pre-trained models, third-party datasets, plugins, fine-tuning data, and deployment platforms. Compromised components can introduce backdoors, data leaks, or malicious functionality that is difficult to detect through traditional code review. This includes poisoned models on public repositories, compromised training datasets, and vulnerable third-party integrations.</p>
+            <h3>Real-World Example (March 2026)</h3>
+            <p>Researchers disclosed <strong>37 vulnerabilities across 15+ AI IDE vendors</strong>, including a zero-click MCP (Model Context Protocol) autoload attack. Malicious MCP tools — the AI IDE equivalent of browser extensions — auto-loaded without trust prompts and spawned reverse shells with developer permissions. This is supply chain compromise through AI tooling: the "plugin" is the attack vector. <a href="blog/ai-ide-security-vulnerabilities-2026.html">Full breakdown &rarr;</a></p>
             <h3>Mitigations</h3>
             <div class="remediation">
                 <ul>
@@ -280,6 +282,9 @@ query = f"SELECT * FROM users WHERE name = '{llm_response}'"
             <h2>LLM06: Excessive Agency</h2>
             <p><strong>Risk Level:</strong> <span style="color: #ef4444; font-weight: 700;">Critical</span></p>
             <p>LLM systems are granted too much autonomy — excessive permissions, too many functions, or the ability to take high-impact actions without human oversight. When combined with prompt injection or hallucination, the model may execute harmful actions like deleting data, sending emails, or modifying production configurations.</p>
+            <h3>Real-World Examples (2026)</h3>
+            <p><strong>AI IDE Code Execution:</strong> AI coding assistants (Copilot, Cursor, Claude Code) have terminal access, file system access, and can execute arbitrary code. A prompt injection via a malicious MCP tool description caused AI IDEs to spawn reverse shells — the AI's "excessive agency" (unrestricted terminal access) turned a text injection into full RCE. <a href="blog/ai-ide-security-vulnerabilities-2026.html">Full breakdown &rarr;</a></p>
+            <p><strong>AI Notetaker Spread:</strong> Otter.ai spread to 80,000 corporate endpoints without IT approval. The AI agent had excessive permissions — it could auto-join meetings via calendar integration, record audio, transcribe content, and share notes. No human gate existed between "user installs app" and "app joins every meeting in the organization." <a href="blog/ai-notetaker-security-risk.html">Full breakdown &rarr;</a></p>
             <h3>Mitigations</h3>
             <div class="remediation">
                 <ul>

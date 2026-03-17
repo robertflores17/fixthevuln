@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Researchers found 37 vulnerabilities across 15+ AI IDE vendors including remote code execution via MCP autoload attacks. Here's what developers and security teams need to know.">
+    <meta name="keywords" content="AI IDE vulnerabilities, MCP security, Claude Code vulnerability, AI coding tools security, zero-click RCE, Model Context Protocol attack">
+    <title>37 Vulnerabilities in AI Coding Tools — Zero-Click RCE in Your IDE - FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/blog/ai-ide-security-vulnerabilities-2026.html">
+    <meta property="og:title" content="37 Vulnerabilities in AI Coding Tools — Zero-Click RCE in Your IDE - FixTheVuln">
+    <meta property="og:description" content="Researchers found 37 vulnerabilities across 15+ AI IDE vendors including remote code execution via MCP autoload attacks. Here's what developers and security teams need to know.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://fixthevuln.com/blog/ai-ide-security-vulnerabilities-2026.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="37 Vulnerabilities in AI Coding Tools — Zero-Click RCE in Your IDE - FixTheVuln">
+    <meta name="twitter:description" content="Researchers found 37 vulnerabilities across 15+ AI IDE vendors including remote code execution via MCP autoload attacks. Here's what developers and security teams need to know.">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="../style.min.css?v=7">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "37 Vulnerabilities in AI Coding Tools — Zero-Click RCE in Your IDE",
+        "description": "Researchers found 37 vulnerabilities across 15+ AI IDE vendors including remote code execution via MCP autoload attacks. Here's what developers and security teams need to know.",
+        "datePublished": "2026-03-16",
+        "dateModified": "2026-03-16",
+        "author": { "@type": "Organization", "name": "FixTheVuln Team", "url": "https://fixthevuln.com" },
+        "publisher": { "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://fixthevuln.com/blog/" },
+            { "@type": "ListItem", "position": 3, "name": "37 Vulnerabilities in AI Coding Tools — Zero-Click RCE in Your IDE" }
+        ]
+    }
+    </script>
+    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="feed.xml">
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="../index.html" class="site-nav-logo">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+        <div class="site-nav-links">
+            <a href="../guides.html">Guides</a>
+            <a href="../tools.html">Tools</a>
+            <a href="../compliance.html">Compliance</a>
+            <a href="../resources.html">Resources</a>
+            <a href="../career-paths.html">Career Paths</a>
+            <a href="../blog/">Blog</a>
+            <a href="/store/store.html" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: .35rem .75rem; border-radius: 6px; font-size: .85rem; font-weight: 600; text-decoration: none;">Store</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header class="content-header">
+        <div class="container">
+            <h1>37 Vulnerabilities in AI Coding Tools — Zero-Click RCE in Your IDE</h1>
+            <p>Security research into AI-powered development environments reveals critical attack surface</p>
+            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">Published: March 16, 2026</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
+            <span>By <strong>FixTheVuln Team</strong></span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Peer-reviewed security content</span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Sources: [un]prompted 2026, AI IDE vendor security research</span>
+        </div>
+        <div class="content-wrapper">
+<h2 id="37-vulnerabilities-15-vendors">37 Vulnerabilities, 15+ Vendors</h2>
+
+<p>Security researchers have uncovered 37 distinct vulnerabilities across more than 15 AI-powered IDE vendors, including GitHub Copilot, Cursor, Claude Code, Windsurf, Continue, and several others. The findings span the full severity spectrum, but the most alarming class involves zero-click remote code execution through a mechanism most developers have never audited: the Model Context Protocol (MCP) tool autoload system.</p>
+
+<p>This is not a theoretical exercise. The research, published in early 2026 as part of the [un]prompted security initiative, includes working proof-of-concept exploits that demonstrate full developer machine compromise without any user interaction beyond opening a project directory. No clicking "approve." No running a suspicious command. Just opening a folder in your AI-enabled IDE.</p>
+
+<p>The affected tools include both commercial products and open-source projects. Some vendors patched within days of disclosure. Others took weeks. A handful of the vulnerabilities remain unpatched at the time of writing, which is why this article focuses on the attack patterns and defenses rather than specific exploit chains.</p>
+
+<p>What makes this research significant is not just the vulnerability count. It is the realization that an entirely new attack surface has emerged in developer tooling, and most organizations have zero visibility into it.</p>
+
+<h2 id="the-mcp-attack-surface">The MCP Attack Surface</h2>
+
+<p>To understand why these vulnerabilities are so dangerous, you need to understand what the Model Context Protocol is and how AI IDEs use it.</p>
+
+<p>MCP is an open protocol that allows AI coding assistants to connect to external tools and data sources. Think of it as a plugin system for AI agents. An MCP server exposes capabilities — reading databases, querying APIs, running shell commands, accessing file systems — and the AI agent calls those capabilities as needed to complete tasks.</p>
+
+<p>The protocol itself is straightforward: JSON-RPC over stdio or HTTP. The problem is not the protocol. The problem is how AI IDEs discover and load MCP servers.</p>
+
+<h3 id="autoload-the-silent-killer">Autoload: The Silent Killer</h3>
+
+<p>Many AI IDEs support MCP configuration files that live inside a project directory. When you open a project, the IDE reads these configuration files and automatically connects to the MCP servers they define. In some implementations, this happens before the user sees any prompt or approval dialog. The tools become available to the AI agent immediately.</p>
+
+<p>Here is where it gets dangerous. An attacker who can place or modify an MCP configuration file in a project repository gains the ability to:</p>
+
+<ul>
+    <li><strong>Register a malicious MCP server</strong> that the IDE connects to automatically on project open</li>
+    <li><strong>Expose tools to the AI agent</strong> that execute arbitrary commands on the developer's machine</li>
+    <li><strong>Inject instructions</strong> through tool descriptions that manipulate the AI agent's behavior</li>
+    <li><strong>Exfiltrate data</strong> by having the AI agent read files, environment variables, or credentials and send them to an attacker-controlled endpoint</li>
+</ul>
+
+<p>The zero-click RCE variant works like this: a malicious <code>.mcp.json</code> or equivalent configuration file is committed to a repository. A developer clones the repo and opens it in their AI IDE. The IDE autoloads the MCP configuration, connects to the attacker's server (or a local server spawned from the config), and the AI agent now has access to tools that execute shell commands. If the tool descriptions contain crafted instructions — a form of <a href="../prompt-injection.html">prompt injection</a> — the agent may execute those commands without any user-visible confirmation.</p>
+
+<p>The result: a reverse shell on the developer's machine, triggered by nothing more than opening a project.</p>
+
+<h3 id="tool-description-injection">Tool Description Injection</h3>
+
+<p>A subtler variant exploits how AI agents interpret tool descriptions. MCP tool definitions include a human-readable description field that tells the AI agent what the tool does and when to use it. Attackers can embed hidden instructions in these descriptions — telling the agent to always call the tool first, to pass specific arguments, or to ignore user instructions.</p>
+
+<p>This is prompt injection applied to the tool layer. The AI agent trusts the tool descriptions it receives over MCP because they are treated as system-level context, not user input. That trust boundary violation is the root cause of multiple vulnerabilities in the research.</p>
+
+<h2 id="why-this-matters-more-than-typical-software-vulns">Why This Matters More Than Typical Software Vulns</h2>
+
+<p>A vulnerability in a text editor is concerning. A vulnerability in an AI-powered IDE is catastrophic. The difference comes down to what these tools can access and do.</p>
+
+<p>Traditional IDEs display code. AI-powered IDEs <em>execute</em> it. They read and write files across your entire project (and sometimes beyond). They run terminal commands. They access environment variables, which often contain API keys, database credentials, and cloud provider tokens. They interact with version control systems. Some can make HTTP requests, query databases, and interact with cloud services directly.</p>
+
+<p>A compromised AI IDE gives an attacker the same access as the developer sitting at the keyboard. That typically includes:</p>
+
+<ul>
+    <li><strong>Source code</strong> for every project on the machine</li>
+    <li><strong>Git credentials</strong> (SSH keys, personal access tokens) that provide write access to repositories</li>
+    <li><strong>Cloud credentials</strong> (AWS keys, GCP service accounts, Azure tokens) stored in environment variables or config files</li>
+    <li><strong>Database connection strings</strong> with production credentials</li>
+    <li><strong>Internal network access</strong> if the developer is on a VPN</li>
+    <li><strong>Package signing keys</strong> used to publish libraries</li>
+    <li><strong>CI/CD tokens</strong> that can trigger deployments</li>
+</ul>
+
+<p>This is not hypothetical escalation. Developers routinely have the keys to the kingdom. Compromising a single developer machine through their AI coding assistant can provide initial access to an organization's entire software supply chain.</p>
+
+<p>Compare this to a typical web application vulnerability. An XSS bug might steal a session cookie. An SSRF might read cloud metadata. Those are serious. But a zero-click RCE in a developer's IDE can compromise every system that developer has access to — which in many organizations includes production infrastructure, customer data, and proprietary source code.</p>
+
+<h2 id="the-supply-chain-angle">The Supply Chain Angle</h2>
+
+<p>The MCP autoload attack vector is fundamentally a supply chain problem, and it follows patterns that security teams should recognize from previous supply chain incidents.</p>
+
+<h3 id="malicious-mcp-servers">Malicious MCP Servers</h3>
+
+<p>MCP servers can be distributed as npm packages, Python packages, or standalone binaries. The same supply chain risks that apply to any dependency apply here — typosquatting, account takeover of popular packages, and compromised maintainers. The difference is that an MCP server has explicit permission to execute commands and access the file system. A malicious npm package has to find a way to run code during installation. A malicious MCP server is <em>invited</em> to run code by the AI agent.</p>
+
+<h3 id="poisoned-project-configurations">Poisoned Project Configurations</h3>
+
+<p>MCP configuration files in project repositories create a new vector for repository poisoning. A compromised contributor, a malicious pull request, or even a poorly reviewed merge can introduce an MCP configuration that targets every developer who clones the repository. Unlike a malicious build script that might be caught by CI/CD security scanning, MCP configuration files are JSON — they look benign to most static analysis tools.</p>
+
+<h3 id="compromised-extensions-and-plugins">Compromised Extensions and Plugins</h3>
+
+<p>AI IDE extensions that add MCP integrations represent another supply chain surface. Extension marketplaces for VS Code, JetBrains, and other platforms have their own trust models, but those models were not designed for extensions that grant AI agents the ability to execute arbitrary code. An extension that adds a "helpful" MCP integration could silently register additional tools that exfiltrate data or establish persistence.</p>
+
+<p>The pattern here mirrors what we saw with the <a href="../owasp-llm-top10.html">OWASP LLM Top 10</a>: traditional security controls were not designed for the trust relationships that AI systems create. When your IDE's AI agent trusts a tool definition it loaded from a config file in a git repository, you have an implicit trust chain from "random code on the internet" to "execute commands on my machine." That trust chain needs to be broken.</p>
+
+<h2 id="how-to-protect-yourself">How to Protect Yourself</h2>
+
+<p>Whether you are an individual developer or part of a team, there are concrete steps you can take right now to reduce your exposure to MCP-based attacks.</p>
+
+<h3 id="audit-mcp-configurations">1. Audit Your MCP Configurations</h3>
+
+<p>Check every project you work on for MCP configuration files. Common filenames include <code>.mcp.json</code>, <code>mcp.config.json</code>, <code>.cursor/mcp.json</code>, and <code>.claude/mcp_servers.json</code>. Know what MCP servers are configured, where they connect to, and what capabilities they expose. If you did not add a configuration file, treat it as suspicious.</p>
+
+<h3 id="disable-autoload">2. Disable MCP Autoload</h3>
+
+<p>If your AI IDE supports it, disable automatic loading of project-level MCP configurations. Require explicit approval before any MCP server is connected. Some tools now default to requiring user confirmation — make sure you are on a version that does.</p>
+
+<h3 id="review-tool-permissions">3. Review Tool Permissions</h3>
+
+<p>When you do approve an MCP server, review the tools it exposes. Be especially cautious of tools that can execute shell commands, read arbitrary files, make network requests, or access environment variables. A legitimate code formatting tool should not need shell access.</p>
+
+<h3 id="use-sandboxed-environments">4. Use Sandboxed Environments</h3>
+
+<p>Run your AI IDE in a sandboxed environment when working with untrusted code. Containers, virtual machines, or tools like macOS Sandbox and Linux namespaces can limit what a compromised AI agent can access. At minimum, avoid having production credentials in environment variables on machines where you open untrusted repositories.</p>
+
+<h3 id="keep-tools-updated">5. Keep Your Tools Updated</h3>
+
+<p>Most vendors patched their MCP autoload vulnerabilities quickly after disclosure. If you are running an older version of your AI coding assistant, you may still be vulnerable. Update aggressively.</p>
+
+<h3 id="treat-mcp-configs-like-code">6. Treat MCP Configs Like Executable Code</h3>
+
+<p>Add MCP configuration files to your code review checklist. Any PR that adds or modifies an MCP configuration should receive the same scrutiny as a change to a CI/CD pipeline or a Dockerfile. These files control what code runs on developer machines — they deserve that level of attention.</p>
+
+<h3 id="developer-checklist">Developer Security Checklist</h3>
+
+<ul>
+    <li>Audit all MCP configuration files in your projects today</li>
+    <li>Update your AI IDE to the latest version</li>
+    <li>Disable autoload for project-level MCP servers</li>
+    <li>Remove production credentials from your development environment variables</li>
+    <li>Use a dedicated machine or VM for working with untrusted repositories</li>
+    <li>Add <code>.mcp.json</code> and equivalent files to your <code>.gitignore</code> for projects that do not need them</li>
+    <li>Review MCP tool descriptions for suspicious instructions before approving</li>
+</ul>
+
+<h2 id="what-security-teams-should-do">What Security Teams Should Do</h2>
+
+<p>If your organization allows developers to use AI coding tools — and most do, whether officially or not — this research demands a policy response. Here is a practical framework.</p>
+
+<h3 id="asset-inventory">1. Build an AI Tool Inventory</h3>
+
+<p>You cannot secure what you cannot see. Survey your development teams to understand which AI coding tools are in use. Include IDE extensions, CLI tools, and any MCP server configurations. Many organizations will be surprised by the breadth of AI tool adoption — developers adopt these tools faster than security teams can evaluate them.</p>
+
+<h3 id="approved-tool-list">2. Establish an Approved Tool List</h3>
+
+<p>Publish a list of AI coding tools that your security team has evaluated and approved. Include specific version requirements and configuration guidance. For each approved tool, document which MCP capabilities are permitted and which are restricted. This gives developers a clear path to using AI tools safely rather than forcing them to use unapproved tools in the shadows.</p>
+
+<h3 id="monitor-mcp-connections">3. Monitor for Unauthorized MCP Connections</h3>
+
+<p>MCP servers communicate over stdio or HTTP. Endpoint detection and response (EDR) tools can be configured to alert on unexpected outbound connections from IDE processes, or on IDE processes spawning unexpected child processes. Network monitoring can detect connections to unknown MCP server endpoints.</p>
+
+<h3 id="repository-scanning">4. Scan Repositories for MCP Configurations</h3>
+
+<p>Add scanning rules to your CI/CD pipeline that flag MCP configuration files in pull requests. Treat any new MCP configuration as a security-relevant change that requires approval from the security team or a designated reviewer. This is similar to how many organizations already gate changes to <code>.github/workflows/</code> or <code>Dockerfile</code> files.</p>
+
+<h3 id="developer-training">5. Train Developers on MCP Risks</h3>
+
+<p>Most developers do not know what MCP is, let alone that it can be exploited for remote code execution. Include MCP security in your security awareness training. Focus on practical scenarios: what happens when you clone a repo with a malicious MCP config, how to recognize suspicious tool descriptions, and how to report potential MCP-based attacks.</p>
+
+<h3 id="incident-response-updates">6. Update Your Incident Response Plan</h3>
+
+<p>Your IR playbooks should account for developer machine compromise via AI tooling. Key questions to answer: How do you detect if an MCP-based attack has occurred? What is the blast radius of a compromised developer workstation? How do you rotate credentials that may have been exposed through environment variables? If you have an existing <a href="../practice-tests.html">incident response framework</a>, extend it to cover this attack surface.</p>
+
+<h3 id="security-team-checklist">Security Team Policy Checklist</h3>
+
+<ul>
+    <li>Complete AI coding tool inventory across all development teams</li>
+    <li>Publish approved tool list with version and configuration requirements</li>
+    <li>Add MCP configuration file scanning to CI/CD pipelines</li>
+    <li>Configure EDR alerts for unexpected IDE child processes and outbound connections</li>
+    <li>Include MCP security in developer security awareness training</li>
+    <li>Update incident response playbooks for AI tool compromise scenarios</li>
+    <li>Establish a review and approval process for new MCP server integrations</li>
+    <li>Conduct quarterly audits of MCP configurations across all repositories</li>
+</ul>
+
+<h2 id="the-bigger-picture">The Bigger Picture</h2>
+
+<p>The 37 vulnerabilities disclosed in this research are early findings in what will be an ongoing area of security research. AI coding tools are evolving rapidly. New capabilities are being added monthly — deeper file system access, cloud service integrations, autonomous code review, automated deployment. Each new capability expands the attack surface.</p>
+
+<p>The security community is catching up. Vendors are adding permission models, sandboxing, and explicit consent requirements. But the fundamental tension remains: AI coding tools are powerful precisely because they have broad access to developer environments. Restricting that access reduces their utility. Finding the right balance between capability and security will define this tool category for years to come.</p>
+
+<p>For now, the actionable takeaway is simple. Treat your AI coding tools as privileged software that has access to your most sensitive assets. Audit their configurations. Restrict their permissions. Monitor their behavior. And update them relentlessly.</p>
+
+<p>The developers who do this will be fine. The ones who ignore it are running a reverse shell they do not know about.</p>
+
+<p>For more on how AI systems can be manipulated, read our guide on <a href="../prompt-injection.html">prompt injection attacks</a> and the <a href="../owasp-llm-top10.html">OWASP LLM Top 10</a>.</p>
+        </div>
+
+
+            <!-- Related Tools -->
+            <section style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
+                <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Explore More</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+                    <a href="../tools.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Free Security Tools</a>
+                    <a href="../practice-tests.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Practice Quizzes</a>
+                    <a href="../comparisons/" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Cert Comparisons</a>
+                </div>
+            </section>
+
+
+            <!-- Store CTA -->
+            <section style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
+                <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
+                <h3 style="color: white; margin-bottom: 0.5rem;">Level Up Your Security Skills</h3>
+                <p style="opacity: 0.9; margin-bottom: 1rem;">Structured study planners for CompTIA certifications. Domain trackers, time blocking, and exam strategies.</p>
+                <a href="/store/comptia.html" style="display: inline-block; background: #667eea; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 600;">Shop Study Planners</a>
+                <p style="font-size: 0.8rem; opacity: 0.85; margin-top: 0.75rem;">Available for Security+, CySA+, PenTest+, and more</p>
+            </section>
+            <!-- CyberFolio CTA -->
+            <div style="border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem;">
+                <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.3rem;">CyberFolio</p>
+                <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Building cybersecurity skills? Track them in one place.</p>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills &mdash; free.</p>
+                <a href="https://cyberfolio.io" style="display:inline-block;background:#06b6d4;color:white;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;" target="_blank" rel="noopener">Build Your Portfolio &rarr;</a>
+            </div>
+
+            <a href="../index.html" class="back-link">&larr; Back to Home</a>
+            <a href="index.html" class="back-link" style="margin-left: 1rem;">&larr; All Blog Posts</a>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
+            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a> | Shop planners: <a href="/store/store.html">FixTheVuln Store</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+        </div>
+    </footer>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+  <script src="/js/error-reporter.js"></script>
+</body>
+</html>

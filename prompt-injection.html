@@ -372,6 +372,43 @@ response = llm_client.chat(messages=messages)</code></pre>
         </section>
 
 
+        <!-- 2026 Update: AI IDE & MCP Attack Surface -->
+        <section style="background: var(--bg-secondary); padding: 1.5rem; border-radius: 10px; margin-top: 2rem; border: 1px solid var(--border-color);">
+            <h2 id="ai-ide-mcp-attacks" style="margin-top: 0;">2026 Update: AI IDE &amp; MCP Attack Surface</h2>
+            <p>In March 2026, researchers disclosed <strong>37 vulnerabilities across 15+ AI IDE vendors</strong>, revealing a new prompt injection attack surface that goes beyond traditional LLM applications.</p>
+
+            <h3>The MCP Autoload Attack</h3>
+            <p>The <strong>Model Context Protocol (MCP)</strong> allows AI coding assistants to auto-load tool integrations — file system access, terminal execution, API calls. The most critical finding: a <strong>zero-click reverse shell</strong> via malicious MCP tool configurations that execute without trust prompts.</p>
+            <p>The attack chain:</p>
+            <ol>
+                <li>Attacker creates a malicious MCP server (e.g., published as a "helpful coding tool")</li>
+                <li>Victim adds the MCP tool to their AI IDE</li>
+                <li>Tool auto-loads on next session — no confirmation dialog</li>
+                <li>Malicious tool description contains prompt injection that instructs the AI to execute a reverse shell</li>
+                <li>AI IDE has terminal access — shell spawns with the developer's full permissions</li>
+            </ol>
+
+            <h3>Why This Is Different</h3>
+            <p>Traditional prompt injection targets a chatbot. AI IDE prompt injection targets a <strong>code execution environment</strong>. The AI has access to:</p>
+            <ul>
+                <li>Full file system (source code, .env files, SSH keys, credentials)</li>
+                <li>Terminal execution (arbitrary commands as the developer user)</li>
+                <li>Environment variables (API keys, database credentials)</li>
+                <li>Git repositories (commit history, secrets in old commits)</li>
+            </ul>
+            <p>A compromised AI IDE is equivalent to <strong>full developer workstation compromise</strong> — the same impact as a sophisticated RAT, delivered through a trusted tool.</p>
+
+            <h3>Defensive Measures</h3>
+            <ul>
+                <li><strong>Audit MCP tools</strong> — review every tool's description and permissions before enabling</li>
+                <li><strong>Disable auto-load</strong> — require explicit approval for each MCP tool per session</li>
+                <li><strong>Use sandboxed environments</strong> — run AI IDEs in containers or VMs, not on your primary dev machine</li>
+                <li><strong>Monitor for unauthorized connections</strong> — MCP tools connect to external servers; log and alert on unexpected outbound traffic</li>
+                <li><strong>Keep AI IDEs updated</strong> — vendors are patching these issues as they're disclosed</li>
+            </ul>
+            <p style="margin-top: 1rem;"><a href="blog/ai-ide-security-vulnerabilities-2026.html" style="color: var(--accent-primary); font-weight: 600;">Read the full breakdown: 37 Vulnerabilities in AI Coding Tools &rarr;</a></p>
+        </section>
+
         <!-- Store CTA -->
         <section style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
             <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
