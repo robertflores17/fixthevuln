@@ -632,6 +632,37 @@
             <p style="font-size: 0.8rem; color: #888; margin-top: 0.75rem;"><strong>Disclaimer:</strong> These practice questions are independently created for educational purposes only and are not official exam questions. CompTIA&reg;, Security+&reg;, Network+&reg;, CySA+&reg;, PenTest+&reg;, CASP+&reg;, A+&reg;, Linux+&reg;, CISSP&reg;, (ISC)&sup2;&reg;, Cisco&reg;, CCNA&reg;, CCNP&reg;, AWS&reg;, Microsoft&reg;, Azure&reg;, CEH&reg;, EC-Council&reg;, CISM&reg;, ISACA&reg;, OSCP&reg;, OffSec&reg;, Hack The Box&reg;, CPTS&trade;, and all related trademarks are the property of their respective owners. FixTheVuln is not affiliated with, endorsed by, or sponsored by CompTIA, (ISC)&sup2;, Cisco Systems, Amazon Web Services, Microsoft, EC-Council, ISACA, Offensive Security, or Hack The Box. Use these quizzes as a supplemental study aid&mdash;not as a substitute for official study materials.</p>
         </div>
     </footer>
+
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode">
+        <span id="theme-icon">🌙</span>
+    </button>
+
+    <script>
+        // Dark mode toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('fixthevuln-theme', newTheme);
+
+            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+
+        // Load saved theme
+        (function() {
+            const savedTheme = localStorage.getItem('fixthevuln-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('theme-icon').textContent = '☀️';
+            }
+        })();
+    </script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
   <script src="/js/error-reporter.js"></script>
 </body>

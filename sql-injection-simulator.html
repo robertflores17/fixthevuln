@@ -672,6 +672,37 @@ db.query(query, [username, password]);</code></pre>
         // Initialize
         updateQuery();
     </script>
+
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode">
+        <span id="theme-icon">🌙</span>
+    </button>
+
+    <script>
+        // Dark mode toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('fixthevuln-theme', newTheme);
+
+            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+
+        // Load saved theme
+        (function() {
+            const savedTheme = localStorage.getItem('fixthevuln-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('theme-icon').textContent = '☀️';
+            }
+        })();
+    </script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
   <script src="/js/error-reporter.js"></script>
 </body>
