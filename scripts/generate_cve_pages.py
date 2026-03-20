@@ -11,14 +11,20 @@ Usage:
 import json
 import os
 import re
+import sys
 from datetime import date
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+SCRIPTS_DIR = Path(__file__).resolve().parent
 KEV_PATH = REPO_ROOT / 'data' / 'kev-data.json'
 CVE_DIR = REPO_ROOT / 'cve'
 SITEMAP_PATH = REPO_ROOT / 'sitemap.xml'
 TODAY = date.today().isoformat()
+
+# Import entity extractor for OWASP enrichment
+sys.path.insert(0, str(SCRIPTS_DIR))
+from entity_extractor import enrich_cve, OWASP_COLORS, OWASP_LABELS
 
 
 def severity_label(cvss):
@@ -70,6 +76,24 @@ def escape_html(text):
             .replace("'", '&#39;'))
 
 
+def generate_owasp_badges(vuln):
+    """Generate OWASP Top 10 badge HTML from enriched vuln data."""
+    owasp = vuln.get('owasp', [])
+    if not owasp:
+        return ''
+    badges = []
+    for entry in owasp:
+        oid = entry['id']
+        label = entry['label']
+        color = OWASP_COLORS.get(oid, '#6c757d')
+        badges.append(
+            f'<a href="../owasp-top10.html" style="display:inline-block;background:{color};color:white;'
+            f'padding:0.2rem 0.6rem;border-radius:4px;font-size:0.8rem;font-weight:600;'
+            f'text-decoration:none;" title="{escape_html(label)}">{escape_html(oid)}</a>'
+        )
+    return ' '.join(badges)
+
+
 def generate_cve_page(vuln):
     """Generate an individual CVE page."""
     cve_id = vuln['id']
@@ -89,6 +113,9 @@ def generate_cve_page(vuln):
     meta_desc = f'{cve_id} — CVSS {cvss_display} ({sev}). {desc[:150]}'
     zero_day_badge = '<span style="display:inline-block;background:#dc3545;color:white;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.8rem;font-weight:600;margin-left:0.5rem;">ZERO-DAY</span>' if is_zero_day else ''
     archived_badge = '<span style="display:inline-block;background:#6c757d;color:white;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.8rem;font-weight:600;margin-left:0.5rem;">ARCHIVED</span>' if archived else '<span style="display:inline-block;background:#28a745;color:white;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.8rem;font-weight:600;margin-left:0.5rem;">ACTIVE</span>'
+    owasp_badges = generate_owasp_badges(vuln)
+    cwes = vuln.get('cwes', [])
+    cwe_text = ', '.join(cwes) if cwes else ''
 
     return f'''<!DOCTYPE html>
 <html lang="en">
@@ -193,6 +220,12 @@ def generate_cve_page(vuln):
                 {archived_badge}
             </div>
 
+            <!-- OWASP & CWE Classification -->
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center;margin-bottom:1.5rem;">
+                {f'<span style="font-size:0.8rem;color:var(--text-muted);font-weight:600;">OWASP:</span> {owasp_badges}' if owasp_badges else ''}
+                {f'<span style="font-size:0.8rem;color:var(--text-muted);margin-left:0.5rem;">{escape_html(cwe_text)}</span>' if cwe_text else ''}
+            </div>
+
             <h2>Description</h2>
             <p>{desc}</p>
 
@@ -270,10 +303,24 @@ def generate_index_page(vulns):
         title = escape_html(v['title'].strip())
         date_added = v.get('dateAdded', '')
         zero_day = ' <span style="background:#dc3545;color:white;padding:0.1rem 0.4rem;border-radius:3px;font-size:0.7rem;font-weight:600;">0-DAY</span>' if v.get('isZeroDay') else ''
+        owasp = v.get('owasp', [])
+        owasp_cell = ''
+        if owasp:
+            owasp_parts = []
+            for entry in owasp:
+                oid = entry['id']
+                color = OWASP_COLORS.get(oid, '#6c757d')
+                owasp_parts.append(
+                    f'<span style="display:inline-block;background:{color};color:white;'
+                    f'padding:0.1rem 0.4rem;border-radius:3px;font-size:0.7rem;font-weight:600;"'
+                    f' title="{escape_html(entry["label"])}">{oid}</span>'
+                )
+            owasp_cell = ' '.join(owasp_parts)
         return f'''                <tr>
                     <td><a href="{cve_id}.html" style="color:#667eea;font-weight:600;">{cve_id}</a></td>
                     <td>{title}{zero_day}</td>
                     <td><span style="display:inline-block;background:{sev_color};color:white;padding:0.15rem 0.5rem;border-radius:4px;font-size:0.8rem;font-weight:600;">{cvss_display} {sev}</span></td>
+                    <td class="owasp-col">{owasp_cell}</td>
                     <td>{date_added}</td>
                 </tr>'''
 
@@ -318,7 +365,8 @@ def generate_index_page(vulns):
         .search-box {{ width: 100%; padding: 0.75rem 1rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem; margin-bottom: 1.5rem; background: var(--bg-primary); color: var(--text-primary); }}
         .search-box:focus {{ border-color: #667eea; outline: none; }}
         @media (max-width: 768px) {{
-            .cve-table th:nth-child(4), .cve-table td:nth-child(4) {{ display: none; }}
+            .cve-table .owasp-col, .cve-table th:nth-child(4) {{ display: none; }}
+            .cve-table th:nth-child(5), .cve-table td:nth-child(5) {{ display: none; }}
         }}
     </style>
     <script type="application/ld+json">
@@ -382,7 +430,7 @@ def generate_index_page(vulns):
         <div id="tab-active" class="tab-content active">
             <table class="cve-table" id="active-table">
                 <thead>
-                    <tr><th>CVE ID</th><th>Title</th><th>CVSS</th><th>Date Added</th></tr>
+                    <tr><th>CVE ID</th><th>Title</th><th>CVSS</th><th class="owasp-col">OWASP</th><th>Date Added</th></tr>
                 </thead>
                 <tbody>
 {active_rows}
@@ -393,7 +441,7 @@ def generate_index_page(vulns):
         <div id="tab-archived" class="tab-content">
             <table class="cve-table" id="archived-table">
                 <thead>
-                    <tr><th>CVE ID</th><th>Title</th><th>CVSS</th><th>Date Added</th></tr>
+                    <tr><th>CVE ID</th><th>Title</th><th>CVSS</th><th class="owasp-col">OWASP</th><th>Date Added</th></tr>
                 </thead>
                 <tbody>
 {archived_rows}
@@ -486,21 +534,27 @@ def main():
 
     CVE_DIR.mkdir(exist_ok=True)
 
+    # Enrich CVEs with CWE + OWASP classification
+    enriched_vulns = [enrich_cve(v) for v in vulns]
+    owasp_count = sum(1 for v in enriched_vulns if v.get('owasp'))
+    cwe_count = sum(1 for v in enriched_vulns if v.get('cwes'))
+    print(f'  ENRICHED {len(enriched_vulns)} CVEs ({cwe_count} with CWEs, {owasp_count} with OWASP)')
+
     # Generate individual CVE pages
-    for v in vulns:
+    for v in enriched_vulns:
         html = generate_cve_page(v)
         out_path = CVE_DIR / f"{v['id']}.html"
         out_path.write_text(html, encoding='utf-8')
 
-    print(f'  GENERATED {len(vulns)} individual CVE pages.')
+    print(f'  GENERATED {len(enriched_vulns)} individual CVE pages.')
 
     # Generate index page
-    index_html = generate_index_page(vulns)
+    index_html = generate_index_page(enriched_vulns)
     (CVE_DIR / 'index.html').write_text(index_html, encoding='utf-8')
     print('  GENERATED cve/index.html')
 
     # Update sitemap
-    update_sitemap(vulns)
+    update_sitemap(enriched_vulns)
 
     print(f'\n  Done. {len(vulns) + 1} files in cve/.')
 
