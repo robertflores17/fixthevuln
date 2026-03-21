@@ -30,6 +30,66 @@ def escape_html(text):
             .replace("'", '&#39;'))
 
 
+def truncate_sentence(text, max_len):
+    """Truncate text at a word boundary, ending at a sentence if possible."""
+    if len(text) <= max_len:
+        return text
+    truncated = text[:max_len]
+    # Try to end at last sentence boundary
+    for sep in ['. ', '! ', '? ']:
+        idx = truncated.rfind(sep)
+        if idx > max_len // 2:
+            return truncated[:idx + 1]
+    # Fall back to last word boundary
+    idx = truncated.rfind(' ')
+    if idx > 0:
+        return truncated[:idx]
+    return truncated
+
+
+def build_faq_schema(c1, c2, comp):
+    """Build FAQPage JSON-LD schema for a comparison page."""
+    name1 = c1['name']
+    name2 = c2['name']
+
+    faqs = [
+        {
+            "question": f"What is the difference between {name1} and {name2}?",
+            "answer": comp['description']
+        },
+        {
+            "question": f"Should I get {name1} or {name2} first?",
+            "answer": comp['recommended_order']
+        },
+        {
+            "question": f"Who should get {name1}?",
+            "answer": comp['who_should_get']['cert1']
+        },
+        {
+            "question": f"Who should get {name2}?",
+            "answer": comp['who_should_get']['cert2']
+        }
+    ]
+
+    schema = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": f["question"],
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": f["answer"]
+                }
+            }
+            for f in faqs
+        ]
+    }
+
+    return faqs, json.dumps(schema, indent=8, ensure_ascii=False)
+
+
 def generate_comparison_page(comp, certs):
     """Generate a single comparison page."""
     c1 = certs[comp['cert1']]
@@ -42,7 +102,7 @@ def generate_comparison_page(comp, certs):
     order = comp['recommended_order']
     tips = comp['study_tips']
     page_title = f'{title}: Which Certification Should You Get? - FixTheVuln'
-    meta_desc = f'{title} comparison. {desc[:150]}'
+    meta_desc = truncate_sentence(f'{title} comparison. {desc}', 160)
 
     # Vendor → store category page mapping
     VENDOR_STORE = {
@@ -55,6 +115,53 @@ def generate_comparison_page(comp, certs):
         'GIAC': '/store/security-governance.html',
     }
     store_url = VENDOR_STORE.get(c1.get('vendor', ''), '/store/store.html')
+
+    # Comparison cert-key → cert page filename mapping
+    CERT_PAGE_MAP = {
+        'security-plus': 'comptia-security-plus', 'cysa-plus': 'comptia-cysa-plus',
+        'pentest-plus': 'comptia-pentest-plus', 'network-plus': 'comptia-network-plus',
+        'a-plus': 'comptia-a-plus-1201', 'sscp': 'isc2-sscp', 'cissp': 'isc2-cissp',
+        'ccsp': 'isc2-ccsp', 'cc': 'isc2-cc', 'cism': 'isaca-cism',
+        'cisa': 'isaca-cisa', 'crisc': 'isaca-crisc',
+        'aws-saa': 'aws-solutions-architect', 'aws-sap': 'aws-solutions-architect',
+        'aws-security-specialty': 'aws-security-specialty', 'aws-ccp': 'aws-cloud-practitioner',
+        'azure-az-104': 'ms-az-104', 'azure-az-500': 'ms-az-500',
+        'azure-az-900': 'ms-az-900', 'ccna': 'cisco-ccna',
+        'ccnp-encor': 'cisco-ccnp-encor', 'ccnp-security': 'cisco-ccnp-security',
+        'cyberops': 'cisco-cyberops', 'ceh': 'ec-ceh', 'oscp': 'offsec-oscp',
+        'gsec': 'giac-gsec', 'gcih': 'giac-gcih', 'gpen': 'giac-gpen',
+        'casp-plus': 'comptia-casp-plus', 'cloud-plus': 'comptia-cloud-plus',
+        'linux-plus': 'comptia-linux-plus', 'server-plus': 'comptia-server-plus',
+        'data-plus': 'comptia-data-plus',
+    }
+    cert1_page = CERT_PAGE_MAP.get(comp['cert1'], '')
+    cert2_page = CERT_PAGE_MAP.get(comp['cert2'], '')
+
+    # Build "Deep Dive" internal links (deduplicate if both certs map to same page)
+    deep_dive_links = []
+    seen_pages = set()
+    for cert_key, cert_data, cert_page in [(comp['cert1'], c1, cert1_page), (comp['cert2'], c2, cert2_page)]:
+        if cert_page and cert_page not in seen_pages:
+            seen_pages.add(cert_page)
+            deep_dive_links.append(
+                f'<a href="../certs/{cert_page}.html" style="padding:0.75rem;background:var(--bg-tertiary);border-radius:6px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);transition:border-color 0.2s;">{escape_html(cert_data["name"])} Study Guide</a>'
+            )
+    # Always add practice tests link
+    deep_dive_links.append(
+        '<a href="../practice-tests.html" style="padding:0.75rem;background:var(--bg-tertiary);border-radius:6px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);transition:border-color 0.2s;">All Practice Tests</a>'
+    )
+    deep_dive_html = '\n                '.join(deep_dive_links)
+
+    # Build FAQ schema and visible content
+    faqs, faq_schema_json = build_faq_schema(c1, c2, comp)
+
+    faq_details = '\n'.join(
+        f'''            <details class="faq-item">
+                <summary>{escape_html(f["question"])}</summary>
+                <p>{escape_html(f["answer"])}</p>
+            </details>'''
+        for f in faqs
+    )
 
     def spec_row(label, key):
         v1 = escape_html(c1.get(key, 'N/A'))
@@ -98,8 +205,8 @@ def generate_comparison_page(comp, certs):
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <link rel="stylesheet" href="../style.min.css?v=7">
-    <link rel="stylesheet" href="../comparison.css?v=2">
+    <link rel="stylesheet" href="../style.min.css?v=8">
+    <link rel="stylesheet" href="../comparison.css?v=3">
     <script type="application/ld+json">
     {{
         "@context": "https://schema.org",
@@ -122,6 +229,9 @@ def generate_comparison_page(comp, certs):
             {{ "@type": "ListItem", "position": 3, "name": "{escape_html(title)}" }}
         ]
     }}
+    </script>
+    <script type="application/ld+json">
+{faq_schema_json}
     </script>
     <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="../blog/feed.xml">
 </head>
@@ -219,6 +329,9 @@ def generate_comparison_page(comp, certs):
             <h2>Study Tips</h2>
             <p>{escape_html(tips)}</p>
 
+            <h2>Frequently Asked Questions</h2>
+{faq_details}
+
             <h2>Test Your Knowledge</h2>
             <p>Already studying? Try our free tools:</p>
             <ul>
@@ -228,13 +341,11 @@ def generate_comparison_page(comp, certs):
 
         </div>
 
-        <!-- Related Tools -->
+        <!-- Deep Dive Guides -->
         <section style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
-            <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Free Security Tools</h3>
+            <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Deep Dive Guides</h3>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
-                <a href="../cvss-calculator.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">CVSS Calculator</a>
-                <a href="../security-quiz.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Security+ Practice Quiz</a>
-                <a href="../password-strength.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Password Strength Checker</a>
+                {deep_dive_html}
             </div>
         </section>
 
@@ -305,7 +416,7 @@ def generate_index_page(comparisons, certs):
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <link rel="stylesheet" href="../style.min.css?v=7">
+    <link rel="stylesheet" href="../style.min.css?v=8">
     <script type="application/ld+json">
     {{
         "@context": "https://schema.org",

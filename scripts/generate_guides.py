@@ -157,7 +157,7 @@ def generate_page(cfg):
     <meta name="twitter:description" content="{_esc(desc)}">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="{FAVICON}">
-    <link rel="stylesheet" href="style.min.css?v=7">{css_block}
+    <link rel="stylesheet" href="style.min.css?v=8">{css_block}
     <script type="application/ld+json">
     {{
         "@context": "https://schema.org",

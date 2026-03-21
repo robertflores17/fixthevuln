@@ -244,15 +244,19 @@ def generate_faq_schema(product):
     faqs = [
         {
             'q': f'What is the {name} certification?',
-            'a': f'The {name} ({exam_code}) is a professional IT certification that validates your knowledge and skills in the exam domains covered. It is recognized globally by employers and is a valuable credential for career advancement.'
+            'a': f'The {name} ({exam_code}) is a professional IT certification that validates your knowledge and skills in the exam domains covered. It is recognized globally by employers and is a valuable credential for career advancement in cybersecurity and IT.'
+        },
+        {
+            'q': f'What does the {name} certification syllabus cover?',
+            'a': f'The {name} exam syllabus covers multiple weighted domains. Each domain is weighted differently, so focus your training on higher-weighted domains first. Review the complete domain breakdown for objectives and key concepts.'
         },
         {
             'q': f'How should I study for {name}?',
-            'a': f'Create a structured study plan covering all exam domains, use practice tests to identify weak areas, and review key concepts regularly. A fillable study planner can help you organize your preparation with weekly schedules and progress tracking.'
+            'a': f'Create a structured study plan covering all exam domains, use practice tests to identify weak areas, and review key concepts regularly. A fillable study planner can help you organize your training with weekly schedules and progress tracking.'
         },
         {
             'q': f'How long does it take to prepare for {name}?',
-            'a': f'Preparation time varies by experience level. Most candidates spend 8-12 weeks of dedicated study. Using a structured study planner with domain-by-domain breakdown helps ensure you cover all objectives efficiently.'
+            'a': f'Preparation time varies by experience level. Most candidates spend 8-12 weeks of dedicated training. Using a structured study planner with domain-by-domain breakdown helps ensure you cover all certification objectives efficiently.'
         },
     ]
     items = []
@@ -332,6 +336,48 @@ def generate_page(product):
 
     store_page = VENDOR_STORE_PAGES.get(product['vendor'], '/store/store.html')
 
+    # Related comparisons
+    comparisons_html = ''
+    comp_data_path = REPO / 'data' / 'cert-comparisons.json'
+    if comp_data_path.exists():
+        import json as _json
+        comp_data = _json.loads(comp_data_path.read_text(encoding='utf-8'))
+        # Map cert page IDs to comparison cert keys
+        PAGE_TO_COMP_KEYS = {
+            'comptia-security-plus': ['security-plus'], 'comptia-cysa-plus': ['cysa-plus'],
+            'comptia-pentest-plus': ['pentest-plus'], 'comptia-network-plus': ['network-plus'],
+            'comptia-a-plus-1201': ['a-plus'], 'comptia-a-plus-1202': ['a-plus'],
+            'isc2-sscp': ['sscp'], 'isc2-cissp': ['cissp'], 'isc2-ccsp': ['ccsp'], 'isc2-cc': ['cc'],
+            'isaca-cism': ['cism'], 'isaca-cisa': ['cisa'], 'isaca-crisc': ['crisc'],
+            'aws-solutions-architect': ['aws-saa', 'aws-sap'], 'aws-security-specialty': ['aws-security-specialty'],
+            'aws-cloud-practitioner': ['aws-ccp'],
+            'ms-az-104': ['azure-az-104'], 'ms-az-500': ['azure-az-500'], 'ms-az-900': ['azure-az-900'],
+            'cisco-ccna': ['ccna'], 'cisco-ccnp-encor': ['ccnp-encor'],
+            'ec-ceh': ['ceh'], 'offsec-oscp': ['oscp'],
+            'giac-gsec': ['gsec'], 'giac-gcih': ['gcih'], 'giac-gpen': ['gpen'],
+            'comptia-casp-plus': ['casp-plus'], 'comptia-cloud-plus': ['cloud-plus'],
+            'comptia-linux-plus': ['linux-plus'],
+        }
+        comp_keys = PAGE_TO_COMP_KEYS.get(pid, [])
+        if comp_keys:
+            related = []
+            for c in comp_data.get('comparisons', []):
+                if c['cert1'] in comp_keys or c['cert2'] in comp_keys:
+                    related.append(c)
+            if related:
+                links = '\n                '.join(
+                    f'<a href="/comparisons/{c["slug"]}.html" style="display:inline-block;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:6px;padding:0.5rem 1rem;text-decoration:none;color:var(--text-primary);font-size:0.9rem;">{escape(c["title"])}</a>'
+                    for c in related
+                )
+                comparisons_html = f'''
+        <section class="cert-section">
+            <h2>Related Comparisons</h2>
+            <p>Not sure if {name} is the right choice? Compare it with similar certifications:</p>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.75rem;">
+                {links}
+            </div>
+        </section>'''
+
     # Cross-link sections
     roadmap_link = f'/roadmaps/{pid}.html'
     cross_links_html = f'''
@@ -369,21 +415,22 @@ def generate_page(product):
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{name} Study Guide & Exam Objectives | FixTheVuln</title>
-    <meta name="description" content="{name} ({exam_code}) study guide with complete exam objectives, domain breakdown, study tips, and practice quizzes. Free resources + fillable PDF study planners.">
+    <title>{name} Certification Study Guide & Exam Syllabus | FixTheVuln</title>
+    <meta name="description" content="{name} ({exam_code}) certification study guide with complete exam syllabus, domain breakdown, training resources, and free practice quizzes. Study tips + fillable PDF planners.">
+    <meta name="keywords" content="{name}, {exam_code}, {exam_code.replace('-', '').replace(' ', '')}, {name} certification, {name} exam, {name} syllabus, {name} domains, {name} training, cybersecurity certification">
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <meta property="og:title" content="{name} Study Guide | FixTheVuln">
-    <meta property="og:description" content="Complete {name} exam guide with domain breakdown, study tips, and practice quizzes.">
+    <meta property="og:title" content="{name} Certification Study Guide | FixTheVuln">
+    <meta property="og:description" content="Complete {name} certification exam syllabus with domain breakdown, training tips, and practice quizzes.">
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://fixthevuln.com/certs/{pid}.html">
     <link rel="canonical" href="https://fixthevuln.com/certs/{pid}.html">
     <meta property="og:image" content="https://fixthevuln.com/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{name} Study Guide | FixTheVuln">
-    <meta name="twitter:description" content="Complete {name} exam guide with domain breakdown, study tips, and practice quizzes.">
+    <meta name="twitter:title" content="{name} Certification Study Guide | FixTheVuln">
+    <meta name="twitter:description" content="Complete {name} certification exam syllabus with domain breakdown, training tips, and practice quizzes.">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
-    <link rel="stylesheet" href="/style.min.css?v=7">
+    <link rel="stylesheet" href="/style.min.css?v=8">
     {faq_schema}
     <style>
         .cert-hero {{ text-align: center; padding: 3rem 1.5rem 2rem; }}
@@ -455,14 +502,14 @@ def generate_page(product):
 
         <section class="cert-hero">
             <span class="cert-badge">{vendor}</span>
-            <h1>{name}</h1>
+            <h1>{name} Certification</h1>
             <p class="cert-meta">{exam_code} &middot; {domain_info}</p>
             <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">Last updated: {datetime.now().strftime('%B %-d, %Y')}</p>
         </section>
 
         <section class="cert-section">
-            <h2>Exam Domains</h2>
-            <p>The {name} exam covers the following domains. Focus your study time proportionally to each domain's weight.</p>
+            <h2>Exam Syllabus & Domains</h2>
+            <p>The {name} certification exam covers the following domains. Focus your training time proportionally to each domain's weight.</p>
             {domains_html if domains_html else f'<p>Domain details for {name} are available in the official exam guide.</p>'}
             {heatmap_html}
         </section>
@@ -480,6 +527,7 @@ def generate_page(product):
         </section>
 {cross_links_html}
 {quiz_section}
+{comparisons_html}
         <section class="cert-section">
             <div class="planner-cta-card">
                 <h3>Get the {name} Study Planner</h3>
@@ -497,18 +545,33 @@ def generate_page(product):
         </div>
 
         <section class="cert-section">
+            <h2>Free Training Resources</h2>
+            <p>Use these free tools to support your {name} certification training:</p>
+            <ul class="study-tips">
+                <li><a href="/practice-tests.html">Cybersecurity Practice Tests</a> &mdash; 3,150+ free questions across 66 certifications</li>
+                <li><a href="/roadmaps/{pid}.html">Study Roadmap</a> &mdash; Structured learning path for {name}</li>
+                <li><a href="/study-tracker.html">Study Progress Tracker</a> &mdash; Track hours and domain coverage</li>
+                <li><a href="/cvss-calculator.html">CVSS Calculator</a> &mdash; Practice scoring vulnerabilities</li>
+            </ul>
+        </section>
+
+        <section class="cert-section">
             <h2>Frequently Asked Questions</h2>
             <details class="faq-item">
                 <summary>What is the {name} certification?</summary>
-                <p>The {name} ({exam_code}) is a professional IT certification that validates your knowledge and skills in the exam domains covered. It is recognized globally by employers and is a valuable credential for career advancement.</p>
+                <p>The {name} ({exam_code}) is a professional IT certification that validates your knowledge and skills in the exam domains covered. It is recognized globally by employers and is a valuable credential for career advancement in cybersecurity and IT.</p>
+            </details>
+            <details class="faq-item">
+                <summary>What does the {name} certification syllabus cover?</summary>
+                <p>The {name} exam syllabus covers {domain_info}. Each domain is weighted differently, so focus your training on higher-weighted domains first. Review the complete domain breakdown above for objectives and key concepts.</p>
             </details>
             <details class="faq-item">
                 <summary>How should I study for {name}?</summary>
-                <p>Create a structured study plan covering all exam domains, use practice tests to identify weak areas, and review key concepts regularly. A fillable study planner can help you organize your preparation with weekly schedules and progress tracking.</p>
+                <p>Create a structured study plan covering all exam domains, use practice tests to identify weak areas, and review key concepts regularly. A fillable study planner can help you organize your training with weekly schedules and progress tracking.</p>
             </details>
             <details class="faq-item">
                 <summary>How long does it take to prepare for {name}?</summary>
-                <p>Preparation time varies by experience level. Most candidates spend 8-12 weeks of dedicated study. Using a structured study planner with domain-by-domain breakdown helps ensure you cover all objectives efficiently.</p>
+                <p>Preparation time varies by experience level. Most candidates spend 8-12 weeks of dedicated training. Using a structured study planner with domain-by-domain breakdown helps ensure you cover all certification objectives efficiently.</p>
             </details>
         </section>
     </main>
