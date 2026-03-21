@@ -264,7 +264,22 @@ class BlogPublisher:
         etsy_cta = self._build_etsy_cta(fm.get('cta_section', 'comptia'))
         related_tools = self._build_related_tools()
 
-        # FAQPage schema for study guide posts only
+        # Cert guide link for study guide posts
+        cert_guide_link = ''
+        if slug.endswith('-study-guide'):
+            cert_id = slug.replace('-study-guide', '')
+            cert_path = Path(f'certs/{cert_id}.html')
+            if cert_path.exists() or (self.repo_root / 'certs' / f'{cert_id}.html').exists():
+                cert_guide_link = f'''
+        <!-- Cert Guide Link -->
+        <div style="border:1px solid var(--border-color);padding:1.25rem;border-radius:10px;margin:1.5rem 0;background:var(--bg-secondary);">
+            <h3 style="margin-bottom:0.5rem;font-size:1rem;">Exam Syllabus & Domain Breakdown</h3>
+            <p style="font-size:0.9rem;color:var(--text-secondary);margin-bottom:0.75rem;">Review the complete certification syllabus, domain weights, and free training resources.</p>
+            <a href="/certs/{cert_id}.html" style="display:inline-block;background:#667eea;color:white;padding:0.5rem 1.25rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.9rem;">View Full Certification Guide &rarr;</a>
+        </div>
+'''
+
+        # FAQPage schema for all blog posts
         faq_schema_block = ''
         if slug.endswith('-study-guide'):
             cert_name = re.sub(r'\s+Study Guide.*$', '', title).strip()
@@ -290,8 +305,24 @@ class BlogPublisher:
                      "acceptedAnswer": {"@type": "Answer", "text": faq_a3}},
                 ]
             }
-            faq_json = json.dumps(faq_obj, indent=4, ensure_ascii=False)
-            faq_schema_block = f'''    <script type="application/ld+json">
+        else:
+            # Editorial / roundup posts
+            clean_title = re.sub(r'\s*[-|]\s*FixTheVuln$', '', title).strip()
+            topic = clean_title.split(':')[0].strip()
+            faq_obj = {
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                "mainEntity": [
+                    {"@type": "Question", "name": "What is this article about?",
+                     "acceptedAnswer": {"@type": "Answer", "text": description}},
+                    {"@type": "Question", "name": f"Why is {topic} important for cybersecurity?",
+                     "acceptedAnswer": {"@type": "Answer", "text": f"Understanding {topic.lower()} is critical for cybersecurity professionals to stay ahead of emerging threats and protect their organizations. This article provides actionable insights and analysis."}},
+                    {"@type": "Question", "name": "How can I stay updated on cybersecurity threats?",
+                     "acceptedAnswer": {"@type": "Answer", "text": "Follow FixTheVuln for weekly threat roundups, vulnerability breakdowns, and security certification guides. Subscribe to CISA alerts and monitor the Known Exploited Vulnerabilities (KEV) catalog for the latest actively exploited vulnerabilities."}},
+                ]
+            }
+        faq_json = json.dumps(faq_obj, indent=4, ensure_ascii=False)
+        faq_schema_block = f'''    <script type="application/ld+json">
 {faq_json}
 </script>'''
 
@@ -319,7 +350,7 @@ class BlogPublisher:
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <link rel="stylesheet" href="../style.min.css?v=7">
+    <link rel="stylesheet" href="../style.min.css?v=8">
     <script type="application/ld+json">
     {{
         "@context": "https://schema.org",
@@ -396,7 +427,7 @@ class BlogPublisher:
         </div>
 
 {related_tools}
-
+{cert_guide_link}
 {etsy_cta}
 
             <!-- CyberFolio CTA -->
@@ -526,7 +557,7 @@ class BlogPublisher:
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <link rel="stylesheet" href="../style.min.css?v=7">
+    <link rel="stylesheet" href="../style.min.css?v=8">
     <script type="application/ld+json">
     {{
         "@context": "https://schema.org",

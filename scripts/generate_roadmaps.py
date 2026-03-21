@@ -280,7 +280,7 @@ def generate_roadmap_page(product, config):
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{name} Study Roadmap | FixTheVuln">
     <meta name="twitter:description" content="Free {num_weeks}-week study roadmap for {name}.">
-    <link rel="stylesheet" href="/style.min.css?v=7">
+    <link rel="stylesheet" href="/style.min.css?v=8">
     <script type="application/ld+json">
     {{
         "@context": "https://schema.org",
@@ -501,7 +501,7 @@ def generate_hub_page(generated_products):
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Certification Study Roadmaps | FixTheVuln">
     <meta name="twitter:description" content="Free study roadmaps for 65+ IT certifications.">
-    <link rel="stylesheet" href="/style.min.css?v=7">
+    <link rel="stylesheet" href="/style.min.css?v=8">
     <script type="application/ld+json">
     {{
         "@context": "https://schema.org",

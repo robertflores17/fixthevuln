@@ -76,6 +76,66 @@ def escape_html(text):
             .replace("'", '&#39;'))
 
 
+def truncate_sentence(text, max_len):
+    """Truncate text at a word boundary, ending at a sentence if possible."""
+    if len(text) <= max_len:
+        return text
+    truncated = text[:max_len]
+    for sep in ['. ', '! ', '? ']:
+        idx = truncated.rfind(sep)
+        if idx > max_len // 2:
+            return truncated[:idx + 1]
+    idx = truncated.rfind(' ')
+    if idx > 0:
+        return truncated[:idx]
+    return truncated
+
+
+def build_cve_faq_schema(vuln):
+    """Build FAQPage JSON-LD schema for a CVE page."""
+    cve_id = vuln['id']
+    title = vuln['title'].strip()
+    desc = vuln.get('description', '')
+    fix = vuln.get('fix', '')
+    cvss = vuln.get('cvss')
+    sev = severity_label(cvss)
+    cvss_display = str(cvss) if cvss is not None else 'N/A'
+    is_zero_day = vuln.get('isZeroDay', False)
+
+    faqs = [
+        {
+            "question": f"What is {cve_id}?",
+            "answer": f"{cve_id} ({title}) is a vulnerability with a CVSS score of {cvss_display} ({sev}).{' This is an actively exploited zero-day vulnerability.' if is_zero_day else ''} {desc}"
+        },
+        {
+            "question": f"How do I fix {cve_id}?",
+            "answer": fix if fix else f"Refer to the vendor advisory for {cve_id} for specific remediation steps."
+        },
+        {
+            "question": f"How severe is {cve_id}?",
+            "answer": f"{cve_id} has a CVSS score of {cvss_display}, classified as {sev}. {'This vulnerability is in the CISA Known Exploited Vulnerabilities (KEV) catalog, meaning it has been actively exploited in the wild.' if not vuln.get('archived', False) else 'This vulnerability was previously in the CISA KEV catalog.'}"
+        }
+    ]
+
+    schema = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": f["question"],
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": f["answer"]
+                }
+            }
+            for f in faqs
+        ]
+    }
+
+    return faqs, json.dumps(schema, indent=8, ensure_ascii=False)
+
+
 def generate_owasp_badges(vuln):
     """Generate OWASP Top 10 badge HTML from enriched vuln data."""
     owasp = vuln.get('owasp', [])
@@ -110,12 +170,22 @@ def generate_cve_page(vuln):
     archived = vuln.get('archived', False)
     nvd_url = f'https://nvd.nist.gov/vuln/detail/{cve_id}'
     page_title = f'{cve_id}: {title} - FixTheVuln'
-    meta_desc = f'{cve_id} — CVSS {cvss_display} ({sev}). {desc[:150]}'
+    meta_desc = truncate_sentence(f'{cve_id} — CVSS {cvss_display} ({sev}). {vuln.get("description", "")}', 160)
     zero_day_badge = '<span style="display:inline-block;background:#dc3545;color:white;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.8rem;font-weight:600;margin-left:0.5rem;">ZERO-DAY</span>' if is_zero_day else ''
     archived_badge = '<span style="display:inline-block;background:#6c757d;color:white;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.8rem;font-weight:600;margin-left:0.5rem;">ARCHIVED</span>' if archived else '<span style="display:inline-block;background:#28a745;color:white;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.8rem;font-weight:600;margin-left:0.5rem;">ACTIVE</span>'
     owasp_badges = generate_owasp_badges(vuln)
     cwes = vuln.get('cwes', [])
     cwe_text = ', '.join(cwes) if cwes else ''
+
+    # Build FAQ schema and visible content
+    faqs, faq_schema_json = build_cve_faq_schema(vuln)
+    faq_details = '\n'.join(
+        f'            <details class="faq-item">\n'
+        f'                <summary>{escape_html(f["question"])}</summary>\n'
+        f'                <p>{escape_html(f["answer"])}</p>\n'
+        f'            </details>'
+        for f in faqs
+    )
 
     return f'''<!DOCTYPE html>
 <html lang="en">
@@ -141,7 +211,7 @@ def generate_cve_page(vuln):
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <link rel="stylesheet" href="../style.min.css?v=7">
+    <link rel="stylesheet" href="../style.min.css?v=8">
     <script type="application/ld+json">
     {{
         "@context": "https://schema.org",
@@ -164,6 +234,9 @@ def generate_cve_page(vuln):
             {{ "@type": "ListItem", "position": 3, "name": "{cve_id}" }}
         ]
     }}
+    </script>
+    <script type="application/ld+json">
+{faq_schema_json}
     </script>
     <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="../blog/feed.xml">
 </head>
@@ -242,6 +315,9 @@ def generate_cve_page(vuln):
 
             <h2>Assess Your Risk</h2>
             <p>Use the <a href="../cvss-calculator.html">CVSS Calculator</a> to evaluate how this vulnerability affects your specific environment. Consider your network exposure, existing mitigations, and asset criticality.</p>
+
+            <h2>Frequently Asked Questions</h2>
+{faq_details}
 
         </div>
 
@@ -351,7 +427,7 @@ def generate_index_page(vulns):
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <link rel="stylesheet" href="../style.min.css?v=7">
+    <link rel="stylesheet" href="../style.min.css?v=8">
     <style>
         .tab-buttons {{ display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }}
         .tab-btn {{ padding: 0.5rem 1.25rem; border: 2px solid #667eea; background: white; color: #667eea; border-radius: 20px; cursor: pointer; font-weight: 600; transition: all 0.2s; }}
