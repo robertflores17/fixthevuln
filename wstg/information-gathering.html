@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="OWASP WSTG Information Gathering: 10 security test cases. Information Gathering is the first phase of any security assessment, focused on collecting as much ...">
+    <meta name="keywords" content="WSTG-INFO, OWASP WSTG, Information Gathering, web security testing, penetration testing, Security+, CEH, OSCP, GPEN">
+    <title>WSTG-INFO: Information Gathering — OWASP Testing Guide | FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/wstg/information-gathering.html">
+    <meta property="og:title" content="WSTG-INFO: Information Gathering — OWASP Testing Guide | FixTheVuln">
+    <meta property="og:description" content="OWASP WSTG Information Gathering: 10 security test cases. Information Gathering is the first phase of any security assessment, focused on collecting as much ...">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://fixthevuln.com/wstg/information-gathering.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="WSTG-INFO: Information Gathering — OWASP Testing Guide | FixTheVuln">
+    <meta name="twitter:description" content="OWASP WSTG Information Gathering: 10 security test cases. Information Gathering is the first phase of any security assessment, focused on collecting as much ...">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="stylesheet" href="../style.min.css?v=8">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "WSTG-INFO: Information Gathering — OWASP Web Security Testing Guide",
+        "description": "OWASP WSTG Information Gathering: 10 security test cases. Information Gathering is the first phase of any security assessment, focused on collecting as much ...",
+        "datePublished": "2026-03-21",
+        "dateModified": "2026-03-21",
+        "author": { "@type": "Organization", "name": "FixTheVuln Team", "url": "https://fixthevuln.com" },
+        "publisher": { "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Guides", "item": "https://fixthevuln.com/guides.html" },
+            { "@type": "ListItem", "position": 3, "name": "OWASP WSTG", "item": "https://fixthevuln.com/wstg/" },
+            { "@type": "ListItem", "position": 4, "name": "Information Gathering" }
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+{
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+                {
+                        "@type": "Question",
+                        "name": "What is WSTG-INFO and why is information gathering important in security testing?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "WSTG-INFO is the Information Gathering category of the OWASP Web Security Testing Guide. It covers techniques for collecting data about a target application before active testing begins. This phase is critical because it maps the attack surface, identifies technologies in use, and often reveals misconfigurations or exposed data that can be exploited in later phases."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "What is the difference between passive and active information gathering?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Passive information gathering collects data without directly interacting with the target, using sources like search engines, DNS records, and public archives. Active information gathering involves direct interaction such as port scanning, fingerprinting, and crawling the application. Passive techniques are stealthier but provide less detail, while active techniques give more accurate results but may be detected."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "What tools are commonly used for web application information gathering?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Common tools include Google Dorking for search engine reconnaissance, Nmap for network scanning, Wappalyzer and WhatWeb for technology fingerprinting, Shodan for internet-connected device discovery, and Burp Suite for mapping application structure. Many testers also use WHOIS lookups, DNS enumeration tools like dig and dnsenum, and web crawlers to build a complete picture of the target."
+                        }
+                }
+        ]
+}
+    </script>
+    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="../blog/feed.xml">
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="../index.html" class="site-nav-logo">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+        <div class="site-nav-links">
+            <a href="../guides.html">Guides</a>
+            <a href="../tools.html">Tools</a>
+            <a href="../compliance.html">Compliance</a>
+            <a href="../resources.html">Resources</a>
+            <a href="../blog/">Blog</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header class="content-header">
+        <div class="container">
+            <h1>🔍 WSTG-INFO: Information Gathering</h1>
+            <p>OWASP Web Security Testing Guide v4.2</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
+            <span>By <strong>FixTheVuln Team</strong></span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Sources: OWASP WSTG v4.2</span>
+        </div>
+        <div class="content-wrapper">
+
+            <a href="index.html" class="back-link">&larr; OWASP WSTG Guide</a>
+
+            <p>Information Gathering forms the foundation of web security testing. Before attempting to find vulnerabilities, testers must understand the target&#39;s technology stack, infrastructure, and exposed assets. This category covers techniques ranging from passive search engine reconnaissance to active fingerprinting of web servers and applications. Effective information gathering reduces wasted effort during later testing phases and often reveals low-hanging fruit like exposed admin panels, leaked credentials in source code, or misconfigured servers. For cert candidates, mastering this phase is essential because every penetration testing methodology starts here.</p>
+
+            <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;margin:1rem 0;">
+                <span style="font-weight:600;color:var(--text-muted);font-size:0.85rem;">Difficulty:</span> <span style="display:inline-block;background:#28a745;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Beginner</span>
+                <span style="font-weight:600;color:var(--text-muted);font-size:0.85rem;margin-left:0.5rem;">10 test cases</span>
+            </div>
+
+            <h2>OWASP Top 10 Mapping</h2>
+            <p>This testing category relates to the following OWASP Top 10 2021 categories:</p>
+            <div style="display:flex;flex-wrap:wrap;gap:0.25rem;margin:1rem 0;"><a href="../owasp-top10.html" style="display:inline-block;background:#f39c12;color:white;padding:0.25rem 0.75rem;border-radius:4px;font-size:0.8rem;font-weight:600;text-decoration:none;margin:0.15rem;" title="A05:2021 Security Misconfiguration">A05</a></div>
+
+            <h2>Quick Reference</h2>
+            <div style="overflow-x: auto;">
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th>Test ID</th>
+                        <th>Name</th>
+                        <th>CWEs</th>
+                        <th>Difficulty</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INFO-01</td><td><a href="#wstg-info-01" style="color:var(--accent-color);text-decoration:none;">Search Engine Discovery</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-538</td><td><span style="display:inline-block;background:#28a745;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Beginner</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INFO-02</td><td><a href="#wstg-info-02" style="color:var(--accent-color);text-decoration:none;">Web Server Fingerprinting</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-200</td><td><span style="display:inline-block;background:#28a745;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Beginner</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INFO-03</td><td><a href="#wstg-info-03" style="color:var(--accent-color);text-decoration:none;">Webserver Metafiles Review</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-538, CWE-200</td><td><span style="display:inline-block;background:#28a745;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Beginner</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INFO-04</td><td><a href="#wstg-info-04" style="color:var(--accent-color);text-decoration:none;">Application Enumeration</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-200</td><td><span style="display:inline-block;background:#28a745;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Beginner</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INFO-05</td><td><a href="#wstg-info-05" style="color:var(--accent-color);text-decoration:none;">Webpage Content Review</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-200, CWE-615</td><td><span style="display:inline-block;background:#28a745;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Beginner</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INFO-06</td><td><a href="#wstg-info-06" style="color:var(--accent-color);text-decoration:none;">Application Entry Points</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-200</td><td><span style="display:inline-block;background:#28a745;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Beginner</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INFO-07</td><td><a href="#wstg-info-07" style="color:var(--accent-color);text-decoration:none;">Execution Path Mapping</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-200</td><td><span style="display:inline-block;background:#28a745;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Beginner</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INFO-08</td><td><a href="#wstg-info-08" style="color:var(--accent-color);text-decoration:none;">Framework Fingerprinting</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-200</td><td><span style="display:inline-block;background:#28a745;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Beginner</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INFO-09</td><td><a href="#wstg-info-09" style="color:var(--accent-color);text-decoration:none;">Web Application Fingerprinting</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-200</td><td><span style="display:inline-block;background:#28a745;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Beginner</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INFO-10</td><td><a href="#wstg-info-10" style="color:var(--accent-color);text-decoration:none;">Architecture Mapping</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-200</td><td><span style="display:inline-block;background:#28a745;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Beginner</span></td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <h2>Detailed Test Cases</h2>
+
+            <div id="wstg-info-01" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INFO-01: Search Engine Discovery</h3>
+                    <span style="display:inline-block;background:#28a745;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Beginner</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test uses search engines to discover publicly indexed information about a target, including sensitive files, exposed directories, and cached content. Search engine operators (Google Dorks) can reveal login pages, error messages, and documents that were never intended to be public.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Organizations often unknowingly expose sensitive information that gets indexed by search engines. Attackers routinely use search engine dorking as a zero-cost, zero-risk first step to find exploitable data.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Search for indexed admin panels and login pages using site: and inurl: operators</li>
+                    <li>Look for exposed sensitive file types (PDFs, spreadsheets, configuration files) with filetype: operator</li>
+                    <li>Check for cached versions of pages that may have been removed</li>
+                    <li>Search for error messages or debug output that reveals technology stack details</li>
+                    <li>Review robots.txt entries that might point to hidden directories</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Google Dorking</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Bing Search</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Shodan</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">DuckDuckGo</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Wayback Machine</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-538</span></div>
+            </div>
+
+            <div id="wstg-info-02" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INFO-02: Web Server Fingerprinting</h3>
+                    <span style="display:inline-block;background:#28a745;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Beginner</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">Web server fingerprinting identifies the type and version of the web server software handling requests. This is done by analyzing HTTP response headers, default error pages, and server behavioral differences between implementations like Apache, Nginx, and IIS.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Knowing the exact web server version helps testers search for known vulnerabilities and misconfigurations specific to that software. It also reveals whether the server is running outdated or end-of-life software.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Examine the Server header in HTTP responses for version information</li>
+                    <li>Analyze default error pages (404, 500) for server-specific formatting</li>
+                    <li>Check HTTP response header ordering which differs between server implementations</li>
+                    <li>Test how the server responds to malformed requests or unusual HTTP methods</li>
+                    <li>Look for server-specific default files and directories</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Nmap</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Netcraft</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">WhatWeb</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">curl</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">httprint</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-200</span></div>
+            </div>
+
+            <div id="wstg-info-03" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INFO-03: Webserver Metafiles Review</h3>
+                    <span style="display:inline-block;background:#28a745;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Beginner</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">Webserver metafiles like robots.txt, sitemap.xml, and security.txt can leak information about the application structure. These files often reveal hidden directories, admin paths, and internal endpoints that are not intended for public access.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Metafiles are publicly accessible by design but frequently contain references to sensitive areas of the application. Attackers use these files to quickly map out restricted areas and prioritize their testing efforts.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Review robots.txt for Disallow entries that point to sensitive directories</li>
+                    <li>Check sitemap.xml for URLs not linked from the main application</li>
+                    <li>Look for security.txt in the .well-known directory for contact and policy information</li>
+                    <li>Search for humans.txt, crossdomain.xml, and clientaccesspolicy.xml</li>
+                    <li>Check for exposed .git, .svn, or .env files in the web root</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">curl</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">wget</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Browser Developer Tools</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-538</span> <span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-200</span></div>
+            </div>
+
+            <div id="wstg-info-04" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INFO-04: Application Enumeration</h3>
+                    <span style="display:inline-block;background:#28a745;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Beginner</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test identifies all applications hosted on a web server, including those on non-standard ports, virtual hosts, and subdomains. A single server often hosts multiple applications, some of which may be forgotten, unmaintained, or running vulnerable software.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Forgotten or shadow applications are a common attack vector because they often lack patching and monitoring. Finding all applications on a server reveals the complete attack surface that needs to be tested.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Scan for applications running on non-standard ports</li>
+                    <li>Enumerate virtual hosts using DNS records and brute-force techniques</li>
+                    <li>Check for applications in common subdirectories (/admin, /portal, /api, /test)</li>
+                    <li>Look for different applications served based on the Host header</li>
+                    <li>Identify staging or development instances accessible from the internet</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Nmap</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Gobuster</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">ffuf</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Sublist3r</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Amass</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-200</span></div>
+            </div>
+
+            <div id="wstg-info-05" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INFO-05: Webpage Content Review</h3>
+                    <span style="display:inline-block;background:#28a745;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Beginner</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">Reviewing webpage source code and content can reveal developer comments, internal IP addresses, API keys, debug information, and hidden form fields. This information is often left behind from development and provides valuable intelligence for attackers.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Developers frequently leave sensitive information in HTML comments, JavaScript files, and metadata that is invisible to regular users but easily found by anyone who views the source code. This leakage can expose internal infrastructure details or even credentials.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Search HTML source for developer comments containing sensitive information</li>
+                    <li>Look for hardcoded API keys, tokens, or credentials in JavaScript files</li>
+                    <li>Check for internal IP addresses or hostnames in page source</li>
+                    <li>Review hidden form fields for parameters that control server-side logic</li>
+                    <li>Examine metadata in documents and images for author names and software versions</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Browser Developer Tools</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">grep</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">LinkFinder</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-200</span> <span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-615</span></div>
+            </div>
+
+            <div id="wstg-info-06" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INFO-06: Application Entry Points</h3>
+                    <span style="display:inline-block;background:#28a745;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Beginner</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">Identifying entry points means mapping every way data can enter the application, including URL parameters, form fields, HTTP headers, cookies, and API endpoints. Each entry point is a potential injection vector that needs to be tested in later phases.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Entry points define where user input interacts with application logic. Missing an entry point during testing means potentially missing a vulnerability. Thorough mapping ensures complete test coverage across the application.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Map all URL parameters across GET and POST requests</li>
+                    <li>Identify form fields including hidden inputs</li>
+                    <li>Document HTTP headers that influence application behavior (Host, Referer, User-Agent)</li>
+                    <li>List all cookie values and their purposes</li>
+                    <li>Catalog API endpoints and their accepted input formats (JSON, XML, multipart)</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">OWASP ZAP</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Browser Developer Tools</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Postman</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-200</span></div>
+            </div>
+
+            <div id="wstg-info-07" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INFO-07: Execution Path Mapping</h3>
+                    <span style="display:inline-block;background:#28a745;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Beginner</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">Mapping execution paths traces how data flows through the application from input to output, including all processing steps, database queries, and external service calls. This helps identify where input validation occurs and where it might be bypassed.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Understanding data flow reveals where trust boundaries exist and where input might bypass validation. Complex execution paths with multiple processing stages often contain logic errors that can be exploited.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Trace how user input flows from entry point through processing to response</li>
+                    <li>Identify trust boundaries where data crosses between components</li>
+                    <li>Map multi-step processes like registration, checkout, or file upload workflows</li>
+                    <li>Document conditional logic paths (error handling, edge cases, fallback behaviors)</li>
+                    <li>Look for places where processed data is used in secondary operations</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">OWASP ZAP</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Browser Developer Tools</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Application source code review</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-200</span></div>
+            </div>
+
+            <div id="wstg-info-08" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INFO-08: Framework Fingerprinting</h3>
+                    <span style="display:inline-block;background:#28a745;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Beginner</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">Framework fingerprinting identifies the web application framework (e.g., Django, Rails, Spring, Laravel) powering the target. This is accomplished by analyzing HTTP headers, cookie names, URL patterns, HTML structure, and error pages unique to each framework.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Each framework has known default configurations, common vulnerabilities, and specific attack patterns. Identifying the framework allows testers to focus on framework-specific issues and known CVEs rather than testing blindly.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Analyze cookie names for framework-specific patterns (JSESSIONID for Java, PHPSESSID for PHP)</li>
+                    <li>Check HTTP response headers for framework-specific identifiers (X-Powered-By, X-AspNet-Version)</li>
+                    <li>Examine URL structures and routing patterns characteristic of specific frameworks</li>
+                    <li>Look for default error pages, login screens, or admin panels with framework branding</li>
+                    <li>Check for framework-specific files in predictable locations</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Wappalyzer</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">WhatWeb</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">BuiltWith</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">curl</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-200</span></div>
+            </div>
+
+            <div id="wstg-info-09" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INFO-09: Web Application Fingerprinting</h3>
+                    <span style="display:inline-block;background:#28a745;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Beginner</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test identifies the specific web application or CMS in use, such as WordPress, Drupal, or a custom application. It goes beyond framework identification to determine the exact software product and version, including plugins and extensions.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Known applications have documented vulnerability databases, default credentials, and established exploitation techniques. Identifying the exact version allows testers to check for unpatched CVEs and known attack paths.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Check for CMS-specific files (wp-login.php for WordPress, /administrator for Joomla)</li>
+                    <li>Review HTML source for generator meta tags and version comments</li>
+                    <li>Fingerprint installed plugins and extensions through their public-facing resources</li>
+                    <li>Analyze JavaScript and CSS file paths for application-specific naming conventions</li>
+                    <li>Compare page structure and behavior against known application signatures</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">WPScan</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">CMSMap</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Wappalyzer</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Nikto</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Nmap NSE scripts</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-200</span></div>
+            </div>
+
+            <div id="wstg-info-10" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INFO-10: Architecture Mapping</h3>
+                    <span style="display:inline-block;background:#28a745;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Beginner</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">Architecture mapping builds a complete picture of the target&#39;s infrastructure including web servers, application servers, databases, load balancers, CDNs, WAFs, and third-party services. Understanding the full architecture reveals how components interact and where security boundaries exist.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Modern applications rely on complex architectures with multiple components. Knowing the full architecture helps testers identify weak links, bypass security controls at component boundaries, and understand the impact of potential vulnerabilities.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Identify reverse proxies, load balancers, and CDN providers from response headers</li>
+                    <li>Detect Web Application Firewalls (WAFs) that may filter attack payloads</li>
+                    <li>Map backend databases and storage services from error messages and behavior</li>
+                    <li>Document third-party integrations and API dependencies</li>
+                    <li>Identify different environments (production, staging, development) accessible from the internet</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Nmap</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">wafw00f</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">traceroute</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Shodan</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-200</span></div>
+            </div>
+
+            <h2>Relevant Certifications</h2>
+            <p>The following certifications cover information gathering concepts:</p>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin:0.75rem 0;"><a href="../certs/comptia-security-plus.html" style="display:inline-block;background:var(--bg-secondary);color:var(--text-primary);padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;border:1px solid var(--border-color);">Security+</a><a href="../certs/ec-ceh.html" style="display:inline-block;background:var(--bg-secondary);color:var(--text-primary);padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;border:1px solid var(--border-color);">CEH</a><a href="../certs/offsec-oscp.html" style="display:inline-block;background:var(--bg-secondary);color:var(--text-primary);padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;border:1px solid var(--border-color);">OSCP</a><a href="../certs/giac-gpen.html" style="display:inline-block;background:var(--bg-secondary);color:var(--text-primary);padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;border:1px solid var(--border-color);">GPEN</a></div>
+
+            <h2>Frequently Asked Questions</h2>
+            <details class="faq-item">
+                <summary>What is WSTG-INFO and why is information gathering important in security testing?</summary>
+                <p>WSTG-INFO is the Information Gathering category of the OWASP Web Security Testing Guide. It covers techniques for collecting data about a target application before active testing begins. This phase is critical because it maps the attack surface, identifies technologies in use, and often reveals misconfigurations or exposed data that can be exploited in later phases.</p>
+            </details>
+            <details class="faq-item">
+                <summary>What is the difference between passive and active information gathering?</summary>
+                <p>Passive information gathering collects data without directly interacting with the target, using sources like search engines, DNS records, and public archives. Active information gathering involves direct interaction such as port scanning, fingerprinting, and crawling the application. Passive techniques are stealthier but provide less detail, while active techniques give more accurate results but may be detected.</p>
+            </details>
+            <details class="faq-item">
+                <summary>What tools are commonly used for web application information gathering?</summary>
+                <p>Common tools include Google Dorking for search engine reconnaissance, Nmap for network scanning, Wappalyzer and WhatWeb for technology fingerprinting, Shodan for internet-connected device discovery, and Burp Suite for mapping application structure. Many testers also use WHOIS lookups, DNS enumeration tools like dig and dnsenum, and web crawlers to build a complete picture of the target.</p>
+            </details>
+
+        </div>
+
+        <!-- CyberFolio CTA -->
+        <div style="border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.3rem;">CyberFolio</p>
+            <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Mastering web security testing? Showcase your skills.</p>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills &mdash; free.</p>
+            <a href="https://cyberfolio.io" style="display:inline-block;background:#06b6d4;color:white;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;" target="_blank" rel="noopener">Build Your Portfolio &rarr;</a>
+        </div>
+
+        <!-- Related Categories -->
+        <section style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
+            <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Related WSTG Categories</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+                <a href="configuration-deployment.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-CONF</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Configuration and Deployment Management</span></a>
+                <a href="identity-management.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-IDNT</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Identity Management</span></a>
+                <a href="authentication-testing.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-ATHN</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Authentication Testing</span></a>
+                <a href="authorization-testing.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-ATHZ</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Authorization Testing</span></a>
+            </div>
+        </section>
+
+        <a href="../index.html" class="back-link">&larr; Back to Home</a>
+        <a href="index.html" class="back-link" style="margin-left: 1rem;">&larr; All WSTG Categories</a>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
+            <p>Study Planners: <a href="/store/store.html">FixTheVuln Store</a> | Career Tools: <a href="https://cyberfolio.io" target="_blank" rel="noopener">CyberFolio</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+        </div>
+    </footer>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

@@ -69,6 +69,7 @@ ABBREVIATIONS = {
     "terraform": "Terraform",
     "vault": "Vault",
     "owasp": "OWASP",
+    "wstg": "WSTG",
     "nist": "NIST",
     "hipaa": "HIPAA",
     "gdpr": "GDPR",
@@ -120,6 +121,7 @@ CATEGORIES = [
     ("Interactive Security Tools", lambda p: _is_tool(p), "/tools.html", None),
     ("Compliance & Framework Guides", lambda p: _is_compliance(p), "/compliance.html", None),
     ("Security Guides", lambda p: _is_guide(p), "/guides.html", None),
+    ("OWASP WSTG Testing Guide", lambda p: p.startswith("wstg/"), "/wstg/", None),
 ]
 
 TOOL_PAGES = {
@@ -327,6 +329,7 @@ def generate_llms_txt(categories, hub_urls):
         "Certification Comparisons",
         "Blog & Study Guides",
         "CVE & Vulnerability Pages",
+        "OWASP WSTG Testing Guide",
         "Store",
     ]
 
@@ -384,6 +387,7 @@ def generate_llms_full_txt(categories, hub_urls):
         "Certification Comparisons",
         "Blog & Study Guides",
         "CVE & Vulnerability Pages",
+        "OWASP WSTG Testing Guide",
         "Store",
     ]
 

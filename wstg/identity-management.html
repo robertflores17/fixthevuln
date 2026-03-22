@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="OWASP WSTG Identity Management: 5 security test cases. Identity Management testing evaluates how the application creates, manages, and controls user identiti...">
+    <meta name="keywords" content="WSTG-IDNT, OWASP WSTG, Identity Management, web security testing, penetration testing, Security+, CISSP, CEH">
+    <title>WSTG-IDNT: Identity Management — OWASP Testing Guide | FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/wstg/identity-management.html">
+    <meta property="og:title" content="WSTG-IDNT: Identity Management — OWASP Testing Guide | FixTheVuln">
+    <meta property="og:description" content="OWASP WSTG Identity Management: 5 security test cases. Identity Management testing evaluates how the application creates, manages, and controls user identiti...">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://fixthevuln.com/wstg/identity-management.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="WSTG-IDNT: Identity Management — OWASP Testing Guide | FixTheVuln">
+    <meta name="twitter:description" content="OWASP WSTG Identity Management: 5 security test cases. Identity Management testing evaluates how the application creates, manages, and controls user identiti...">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="stylesheet" href="../style.min.css?v=8">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "WSTG-IDNT: Identity Management — OWASP Web Security Testing Guide",
+        "description": "OWASP WSTG Identity Management: 5 security test cases. Identity Management testing evaluates how the application creates, manages, and controls user identiti...",
+        "datePublished": "2026-03-21",
+        "dateModified": "2026-03-21",
+        "author": { "@type": "Organization", "name": "FixTheVuln Team", "url": "https://fixthevuln.com" },
+        "publisher": { "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Guides", "item": "https://fixthevuln.com/guides.html" },
+            { "@type": "ListItem", "position": 3, "name": "OWASP WSTG", "item": "https://fixthevuln.com/wstg/" },
+            { "@type": "ListItem", "position": 4, "name": "Identity Management" }
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+{
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+                {
+                        "@type": "Question",
+                        "name": "What is identity management in web application security?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Identity management in web security refers to how applications handle user accounts throughout their lifecycle: registration, provisioning, role assignment, and deactivation. Poor identity management can allow attackers to create fake accounts, enumerate valid users, or gain elevated privileges through flawed role assignment processes."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "What is account enumeration and why is it a security risk?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Account enumeration occurs when an application reveals whether a specific username or email exists in the system, typically through different error messages on login, registration, or password reset pages. This is risky because attackers can compile a list of valid accounts to target with brute-force attacks, credential stuffing, or social engineering campaigns."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "How do identity management vulnerabilities differ from authentication vulnerabilities?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Identity management focuses on how accounts and roles are created and maintained, while authentication focuses on how users prove their identity. For example, a weak registration process that allows duplicate accounts is an identity management issue, while a weak password policy is an authentication issue. Both are critical, but they target different parts of the access control chain."
+                        }
+                }
+        ]
+}
+    </script>
+    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="../blog/feed.xml">
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="../index.html" class="site-nav-logo">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+        <div class="site-nav-links">
+            <a href="../guides.html">Guides</a>
+            <a href="../tools.html">Tools</a>
+            <a href="../compliance.html">Compliance</a>
+            <a href="../resources.html">Resources</a>
+            <a href="../blog/">Blog</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header class="content-header">
+        <div class="container">
+            <h1>👤 WSTG-IDNT: Identity Management</h1>
+            <p>OWASP Web Security Testing Guide v4.2</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
+            <span>By <strong>FixTheVuln Team</strong></span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Sources: OWASP WSTG v4.2</span>
+        </div>
+        <div class="content-wrapper">
+
+            <a href="index.html" class="back-link">&larr; OWASP WSTG Guide</a>
+
+            <p>Identity Management is the foundation upon which authentication and authorization are built. This category examines the processes by which user accounts are created, roles are assigned, and identities are managed throughout their lifecycle. Testing in this area reveals whether an attacker can create unauthorized accounts, enumerate valid usernames, escalate privileges through role manipulation, or exploit weak identity policies. Understanding identity management vulnerabilities is critical for both offensive security testing and secure application design. These tests are highly relevant for certifications like CISSP, which emphasizes Identity and Access Management as a core security domain.</p>
+
+            <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;margin:1rem 0;">
+                <span style="font-weight:600;color:var(--text-muted);font-size:0.85rem;">Difficulty:</span> <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                <span style="font-weight:600;color:var(--text-muted);font-size:0.85rem;margin-left:0.5rem;">5 test cases</span>
+            </div>
+
+            <h2>OWASP Top 10 Mapping</h2>
+            <p>This testing category relates to the following OWASP Top 10 2021 categories:</p>
+            <div style="display:flex;flex-wrap:wrap;gap:0.25rem;margin:1rem 0;"><a href="../owasp-top10.html" style="display:inline-block;background:#e74c3c;color:white;padding:0.25rem 0.75rem;border-radius:4px;font-size:0.8rem;font-weight:600;text-decoration:none;margin:0.15rem;" title="A01:2021 Broken Access Control">A01</a><a href="../owasp-top10.html" style="display:inline-block;background:#2980b9;color:white;padding:0.25rem 0.75rem;border-radius:4px;font-size:0.8rem;font-weight:600;text-decoration:none;margin:0.15rem;" title="A07:2021 Auth Failures">A07</a></div>
+
+            <h2>Quick Reference</h2>
+            <div style="overflow-x: auto;">
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th>Test ID</th>
+                        <th>Name</th>
+                        <th>CWEs</th>
+                        <th>Difficulty</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-IDNT-01</td><td><a href="#wstg-idnt-01" style="color:var(--accent-color);text-decoration:none;">Role Definitions Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-284, CWE-269</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-IDNT-02</td><td><a href="#wstg-idnt-02" style="color:var(--accent-color);text-decoration:none;">User Registration Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-284</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-IDNT-03</td><td><a href="#wstg-idnt-03" style="color:var(--accent-color);text-decoration:none;">Account Provisioning Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-284, CWE-269</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-IDNT-04</td><td><a href="#wstg-idnt-04" style="color:var(--accent-color);text-decoration:none;">Account Enumeration</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-200, CWE-204</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-IDNT-05</td><td><a href="#wstg-idnt-05" style="color:var(--accent-color);text-decoration:none;">Username Policy Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-284</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <h2>Detailed Test Cases</h2>
+
+            <div id="wstg-idnt-01" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-IDNT-01: Role Definitions Testing</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test evaluates how the application defines and enforces user roles. It examines whether roles follow the principle of least privilege, whether role definitions are clear, and whether there are ways to manipulate role assignments to gain elevated access.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Poorly defined roles or overly permissive default role assignments can give users more access than intended. This is a common root cause of privilege escalation vulnerabilities and data breaches involving insider threats.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Identify all user roles and their associated permissions</li>
+                    <li>Verify that roles follow the principle of least privilege</li>
+                    <li>Test whether role assignments can be manipulated through client-side parameters</li>
+                    <li>Check for overlapping permissions between roles that could create confusion</li>
+                    <li>Confirm that administrative roles are properly separated from regular user roles</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Manual testing with multiple accounts</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Application documentation review</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-284</span> <span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-269</span></div>
+            </div>
+
+            <div id="wstg-idnt-02" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-IDNT-02: User Registration Testing</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test examines the user registration process for weaknesses including lack of CAPTCHA, acceptance of disposable email addresses, weak identity verification, and the ability to register with duplicate or spoofed identities.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> A weak registration process enables attackers to create fraudulent accounts at scale for spam, abuse, or as stepping stones for further attacks. It also affects data integrity if duplicate or fake identities can pollute the user base.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test if registration can be automated without CAPTCHA or rate limiting</li>
+                    <li>Check if disposable email addresses are accepted for registration</li>
+                    <li>Verify that duplicate accounts with the same email or username are rejected</li>
+                    <li>Test whether registration parameters can be manipulated to set elevated roles</li>
+                    <li>Confirm email verification is required before account activation</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom scripts</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Temporary email services</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">OWASP ZAP</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-284</span></div>
+            </div>
+
+            <div id="wstg-idnt-03" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-IDNT-03: Account Provisioning Testing</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test reviews how accounts are provisioned, modified, and deprovisioned within the application. It checks whether administrative account management follows secure processes and whether former users retain access after deprovisioning.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Improper account provisioning can leave orphaned accounts with active credentials, allow unauthorized privilege changes, or fail to revoke access when employees leave. This is a major concern for compliance frameworks like SOC 2 and ISO 27001.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Verify that account creation follows an approval workflow for privileged roles</li>
+                    <li>Test whether deprovisioned accounts are fully disabled and cannot authenticate</li>
+                    <li>Check if account modification actions are logged and auditable</li>
+                    <li>Confirm that temporary or test accounts have expiration dates</li>
+                    <li>Test whether bulk account provisioning properly validates each account</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Manual process testing</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Account management API testing</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-284</span> <span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-269</span></div>
+            </div>
+
+            <div id="wstg-idnt-04" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-IDNT-04: Account Enumeration</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test determines whether an attacker can enumerate valid usernames or email addresses through the application&#39;s login, registration, or password recovery functions. Different error messages, response times, or HTTP status codes for valid versus invalid accounts reveal this information.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Account enumeration gives attackers a list of valid targets for credential stuffing, brute-force, and social engineering attacks. Even subtle differences in responses can be used to distinguish valid from invalid accounts at scale.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Compare error messages for valid versus invalid usernames on the login page</li>
+                    <li>Check registration forms for different responses when an existing email is used</li>
+                    <li>Test password reset functionality for account enumeration through error messages</li>
+                    <li>Measure response time differences between valid and invalid username attempts</li>
+                    <li>Look for differences in HTTP response codes or headers between valid and invalid attempts</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite Intruder</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom scripts</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Hydra</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">ffuf</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-200</span> <span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-204</span></div>
+            </div>
+
+            <div id="wstg-idnt-05" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-IDNT-05: Username Policy Testing</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test evaluates whether the application enforces a strong username policy, including minimum length, allowed characters, and uniqueness requirements. Weak username policies can make accounts easier to guess and harder to manage securely.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Weak username policies allow predictable account names (admin, test, user1) that attackers can easily guess. Combined with weak passwords, predictable usernames make credential attacks trivially easy.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test if the application allows very short or single-character usernames</li>
+                    <li>Check whether common reserved names (admin, root, test) can be registered by regular users</li>
+                    <li>Verify that username format requirements are enforced consistently</li>
+                    <li>Test for case sensitivity in username handling (Admin vs admin)</li>
+                    <li>Check if usernames can contain special characters that might cause injection issues</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Manual testing</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom registration scripts</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-284</span></div>
+            </div>
+
+            <h2>Relevant Certifications</h2>
+            <p>The following certifications cover identity management concepts:</p>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin:0.75rem 0;"><a href="../certs/comptia-security-plus.html" style="display:inline-block;background:var(--bg-secondary);color:var(--text-primary);padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;border:1px solid var(--border-color);">Security+</a><a href="../certs/isc2-cissp.html" style="display:inline-block;background:var(--bg-secondary);color:var(--text-primary);padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;border:1px solid var(--border-color);">CISSP</a><a href="../certs/ec-ceh.html" style="display:inline-block;background:var(--bg-secondary);color:var(--text-primary);padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;border:1px solid var(--border-color);">CEH</a></div>
+
+            <h2>Frequently Asked Questions</h2>
+            <details class="faq-item">
+                <summary>What is identity management in web application security?</summary>
+                <p>Identity management in web security refers to how applications handle user accounts throughout their lifecycle: registration, provisioning, role assignment, and deactivation. Poor identity management can allow attackers to create fake accounts, enumerate valid users, or gain elevated privileges through flawed role assignment processes.</p>
+            </details>
+            <details class="faq-item">
+                <summary>What is account enumeration and why is it a security risk?</summary>
+                <p>Account enumeration occurs when an application reveals whether a specific username or email exists in the system, typically through different error messages on login, registration, or password reset pages. This is risky because attackers can compile a list of valid accounts to target with brute-force attacks, credential stuffing, or social engineering campaigns.</p>
+            </details>
+            <details class="faq-item">
+                <summary>How do identity management vulnerabilities differ from authentication vulnerabilities?</summary>
+                <p>Identity management focuses on how accounts and roles are created and maintained, while authentication focuses on how users prove their identity. For example, a weak registration process that allows duplicate accounts is an identity management issue, while a weak password policy is an authentication issue. Both are critical, but they target different parts of the access control chain.</p>
+            </details>
+
+        </div>
+
+        <!-- CyberFolio CTA -->
+        <div style="border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.3rem;">CyberFolio</p>
+            <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Mastering web security testing? Showcase your skills.</p>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills &mdash; free.</p>
+            <a href="https://cyberfolio.io" style="display:inline-block;background:#06b6d4;color:white;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;" target="_blank" rel="noopener">Build Your Portfolio &rarr;</a>
+        </div>
+
+        <!-- Related Categories -->
+        <section style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
+            <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Related WSTG Categories</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+                <a href="information-gathering.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-INFO</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Information Gathering</span></a>
+                <a href="configuration-deployment.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-CONF</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Configuration and Deployment Management</span></a>
+                <a href="authentication-testing.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-ATHN</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Authentication Testing</span></a>
+                <a href="authorization-testing.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-ATHZ</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Authorization Testing</span></a>
+            </div>
+        </section>
+
+        <a href="../index.html" class="back-link">&larr; Back to Home</a>
+        <a href="index.html" class="back-link" style="margin-left: 1rem;">&larr; All WSTG Categories</a>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
+            <p>Study Planners: <a href="/store/store.html">FixTheVuln Store</a> | Career Tools: <a href="https://cyberfolio.io" target="_blank" rel="noopener">CyberFolio</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+        </div>
+    </footer>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

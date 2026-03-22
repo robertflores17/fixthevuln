@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="OWASP WSTG Authentication Testing: 10 security test cases. Authentication Testing verifies how securely the application confirms user identities. Weak authen...">
+    <meta name="keywords" content="WSTG-ATHN, OWASP WSTG, Authentication Testing, web security testing, penetration testing, Security+, CEH, CISSP, OSCP">
+    <title>WSTG-ATHN: Authentication Testing — OWASP Testing Guide | FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/wstg/authentication-testing.html">
+    <meta property="og:title" content="WSTG-ATHN: Authentication Testing — OWASP Testing Guide | FixTheVuln">
+    <meta property="og:description" content="OWASP WSTG Authentication Testing: 10 security test cases. Authentication Testing verifies how securely the application confirms user identities. Weak authen...">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://fixthevuln.com/wstg/authentication-testing.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="WSTG-ATHN: Authentication Testing — OWASP Testing Guide | FixTheVuln">
+    <meta name="twitter:description" content="OWASP WSTG Authentication Testing: 10 security test cases. Authentication Testing verifies how securely the application confirms user identities. Weak authen...">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="stylesheet" href="../style.min.css?v=8">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "WSTG-ATHN: Authentication Testing — OWASP Web Security Testing Guide",
+        "description": "OWASP WSTG Authentication Testing: 10 security test cases. Authentication Testing verifies how securely the application confirms user identities. Weak authen...",
+        "datePublished": "2026-03-21",
+        "dateModified": "2026-03-21",
+        "author": { "@type": "Organization", "name": "FixTheVuln Team", "url": "https://fixthevuln.com" },
+        "publisher": { "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Guides", "item": "https://fixthevuln.com/guides.html" },
+            { "@type": "ListItem", "position": 3, "name": "OWASP WSTG", "item": "https://fixthevuln.com/wstg/" },
+            { "@type": "ListItem", "position": 4, "name": "Authentication Testing" }
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+{
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+                {
+                        "@type": "Question",
+                        "name": "What are the most critical authentication vulnerabilities in web applications?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "The most critical authentication vulnerabilities include default credentials, weak password policies, missing brute-force protections, insecure password reset mechanisms, and authentication bypass through parameter manipulation. These are commonly exploited because they provide direct access to user accounts and often require minimal technical skill to exploit."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "How does WSTG-ATHN differ from WSTG-IDNT and WSTG-SESS?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "WSTG-IDNT tests how accounts are created and managed, WSTG-ATHN tests how users prove their identity when logging in, and WSTG-SESS tests how that authenticated state is maintained after login. Together, they cover the full lifecycle of user access: creation, verification, and session persistence."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "What is credential stuffing and how does it relate to authentication testing?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Credential stuffing uses username/password pairs leaked from data breaches on other sites to attempt logins on the target application. It exploits password reuse across services. Authentication testing evaluates whether the application has defenses against this attack, including rate limiting, account lockout policies, CAPTCHA challenges, and multi-factor authentication."
+                        }
+                }
+        ]
+}
+    </script>
+    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="../blog/feed.xml">
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="../index.html" class="site-nav-logo">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+        <div class="site-nav-links">
+            <a href="../guides.html">Guides</a>
+            <a href="../tools.html">Tools</a>
+            <a href="../compliance.html">Compliance</a>
+            <a href="../resources.html">Resources</a>
+            <a href="../blog/">Blog</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header class="content-header">
+        <div class="container">
+            <h1>🔐 WSTG-ATHN: Authentication Testing</h1>
+            <p>OWASP Web Security Testing Guide v4.2</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
+            <span>By <strong>FixTheVuln Team</strong></span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Sources: OWASP WSTG v4.2</span>
+        </div>
+        <div class="content-wrapper">
+
+            <a href="index.html" class="back-link">&larr; OWASP WSTG Guide</a>
+
+            <p>Authentication is the gatekeeper of application security. This category tests every aspect of how users prove their identity, from password policies and credential storage to multi-factor authentication and session management during login. Weak authentication is consistently ranked among the top web application risks because it provides direct access to user accounts and sensitive data. Tests in this category cover credential transport security, brute-force protections, password reset flows, and authentication bypass techniques. For security professionals and cert candidates, deep understanding of authentication weaknesses is essential because these vulnerabilities have the most direct business impact.</p>
+
+            <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;margin:1rem 0;">
+                <span style="font-weight:600;color:var(--text-muted);font-size:0.85rem;">Difficulty:</span> <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                <span style="font-weight:600;color:var(--text-muted);font-size:0.85rem;margin-left:0.5rem;">10 test cases</span>
+            </div>
+
+            <h2>OWASP Top 10 Mapping</h2>
+            <p>This testing category relates to the following OWASP Top 10 2021 categories:</p>
+            <div style="display:flex;flex-wrap:wrap;gap:0.25rem;margin:1rem 0;"><a href="../owasp-top10.html" style="display:inline-block;background:#2980b9;color:white;padding:0.25rem 0.75rem;border-radius:4px;font-size:0.8rem;font-weight:600;text-decoration:none;margin:0.15rem;" title="A07:2021 Auth Failures">A07</a></div>
+
+            <h2>Quick Reference</h2>
+            <div style="overflow-x: auto;">
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th>Test ID</th>
+                        <th>Name</th>
+                        <th>CWEs</th>
+                        <th>Difficulty</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-ATHN-01</td><td><a href="#wstg-athn-01" style="color:var(--accent-color);text-decoration:none;">Credential Transport Security</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-319, CWE-523</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-ATHN-02</td><td><a href="#wstg-athn-02" style="color:var(--accent-color);text-decoration:none;">Default Credentials Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-521, CWE-287</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-ATHN-03</td><td><a href="#wstg-athn-03" style="color:var(--accent-color);text-decoration:none;">Account Lockout Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-307</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-ATHN-04</td><td><a href="#wstg-athn-04" style="color:var(--accent-color);text-decoration:none;">Authentication Bypass</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-287, CWE-288</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-ATHN-05</td><td><a href="#wstg-athn-05" style="color:var(--accent-color);text-decoration:none;">Remember Password Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-287, CWE-522</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-ATHN-06</td><td><a href="#wstg-athn-06" style="color:var(--accent-color);text-decoration:none;">Browser Cache Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-525</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-ATHN-07</td><td><a href="#wstg-athn-07" style="color:var(--accent-color);text-decoration:none;">Password Policy Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-521</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-ATHN-08</td><td><a href="#wstg-athn-08" style="color:var(--accent-color);text-decoration:none;">Security Question Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-640</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-ATHN-09</td><td><a href="#wstg-athn-09" style="color:var(--accent-color);text-decoration:none;">Password Reset Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-640, CWE-620</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-ATHN-10</td><td><a href="#wstg-athn-10" style="color:var(--accent-color);text-decoration:none;">Alternative Channel Auth Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-287, CWE-306</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <h2>Detailed Test Cases</h2>
+
+            <div id="wstg-athn-01" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-ATHN-01: Credential Transport Security</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test verifies that user credentials (usernames and passwords) are always transmitted over encrypted channels (HTTPS/TLS). Credentials sent over unencrypted HTTP can be intercepted by anyone on the network path between the user and the server.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Transmitting credentials over unencrypted connections exposes them to network-level interception through packet sniffing, man-in-the-middle attacks, or compromised network infrastructure. This is especially dangerous on public Wi-Fi networks.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Verify the login form is served over HTTPS and submits to an HTTPS endpoint</li>
+                    <li>Check that HTTP-to-HTTPS redirects happen before credentials are submitted</li>
+                    <li>Test whether login forms can be loaded over HTTP by directly entering the URL</li>
+                    <li>Confirm that API authentication endpoints require HTTPS</li>
+                    <li>Verify that HSTS is configured to prevent protocol downgrade attacks</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Wireshark</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">curl</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">testssl.sh</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Browser Developer Tools</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-319</span> <span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-523</span></div>
+            </div>
+
+            <div id="wstg-athn-02" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-ATHN-02: Default Credentials Testing</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test checks whether the application, its infrastructure, or any administrative interfaces still use default credentials that were set during installation. Default credentials are publicly known and are one of the first things attackers try.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Default credentials are published in vendor documentation, security databases, and hacking tools. They represent zero-effort access for attackers and are frequently found in network devices, databases, CMS platforms, and administrative panels.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test common default username/password combinations for the identified platform</li>
+                    <li>Check for admin accounts with well-known defaults (admin/admin, admin/password)</li>
+                    <li>Review vendor documentation for default credentials specific to the software version</li>
+                    <li>Test database management interfaces for default database credentials</li>
+                    <li>Check for service accounts with default or blank passwords</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Hydra</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Default Credential databases</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Nmap scripts</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Metasploit</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-521</span> <span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-287</span></div>
+            </div>
+
+            <div id="wstg-athn-03" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-ATHN-03: Account Lockout Testing</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test evaluates whether the application has adequate brute-force protection through account lockout mechanisms, rate limiting, or progressive delays. It also checks whether the lockout mechanism itself can be abused to deny legitimate users access.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Without lockout mechanisms, attackers can attempt unlimited password guesses until they find the correct one. However, poorly implemented lockouts can be exploited to lock out legitimate users (denial of service) or bypassed through techniques like IP rotation or credential stuffing.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Determine how many failed attempts trigger an account lockout</li>
+                    <li>Test whether lockout can be bypassed by changing IP addresses</li>
+                    <li>Check if lockout applies to all authentication methods (web, API, mobile)</li>
+                    <li>Verify that lockout notifications are sent to the account owner</li>
+                    <li>Test whether an attacker can intentionally lock out other users&#39; accounts</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite Intruder</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Hydra</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom scripts</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">OWASP ZAP</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-307</span></div>
+            </div>
+
+            <div id="wstg-athn-04" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-ATHN-04: Authentication Bypass</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test attempts to bypass the authentication mechanism entirely through techniques like forced browsing, parameter manipulation, SQL injection in login forms, session token prediction, or exploiting flaws in the authentication logic itself.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Authentication bypass is one of the most severe vulnerabilities because it grants full unauthorized access without needing valid credentials. These flaws often stem from client-side validation, predictable session tokens, or logic errors in the authentication flow.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test forced browsing to authenticated pages without logging in first</li>
+                    <li>Manipulate authentication parameters (user role, isAdmin, authentication tokens)</li>
+                    <li>Test SQL injection in username and password fields</li>
+                    <li>Check for authentication bypass through HTTP header manipulation</li>
+                    <li>Test if modifying the response from the server can trick the client into granting access</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">OWASP ZAP</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">sqlmap</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom scripts</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-287</span> <span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-288</span></div>
+            </div>
+
+            <div id="wstg-athn-05" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-ATHN-05: Remember Password Testing</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test examines how the application implements &#39;remember me&#39; or &#39;stay logged in&#39; functionality. Insecure implementations may store credentials in cookies, use predictable tokens, or fail to provide adequate expiration and revocation mechanisms.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Insecure &#39;remember me&#39; implementations can store credentials in plaintext cookies, use predictable token values that attackers can guess, or create long-lived sessions that remain valid even after password changes. These persist the risk of account compromise beyond a single session.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Examine remember-me cookies for plaintext or reversible credential storage</li>
+                    <li>Test whether remember-me tokens are cryptographically random and unpredictable</li>
+                    <li>Verify that remember-me tokens are invalidated on password change</li>
+                    <li>Check if remember-me functionality has a reasonable expiration time</li>
+                    <li>Test whether remember-me tokens are bound to the original client or can be replayed</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Browser Developer Tools</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Cookie editor extensions</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-287</span> <span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-522</span></div>
+            </div>
+
+            <div id="wstg-athn-06" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-ATHN-06: Browser Cache Testing</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test checks whether sensitive data from authenticated pages is stored in the browser cache, history, or back/forward cache. Cached sensitive content can be accessed by subsequent users of a shared computer or recovered through forensic analysis.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> On shared or public computers, browser cache can expose sensitive data to the next user. Even on personal devices, cached credentials and sensitive pages can be extracted through malware or physical access to the device.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Check for Cache-Control and Pragma headers preventing caching of sensitive pages</li>
+                    <li>Verify that the back button does not display authenticated content after logout</li>
+                    <li>Test whether autocomplete is disabled on sensitive form fields (credentials, SSN, credit card)</li>
+                    <li>Check browser history for sensitive URL parameters</li>
+                    <li>Verify that no-store directive prevents disk caching of sensitive responses</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Browser Developer Tools</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">curl</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-525</span></div>
+            </div>
+
+            <div id="wstg-athn-07" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-ATHN-07: Password Policy Testing</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test evaluates the application&#39;s password policy for minimum complexity requirements, length restrictions, and whether it prevents commonly used passwords. A weak password policy makes brute-force and dictionary attacks much more likely to succeed.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Weak passwords are the most common cause of account compromise. Applications that allow short, simple, or commonly used passwords make it easy for attackers to guess credentials through automated attacks, especially when combined with account enumeration.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test minimum and maximum password length requirements</li>
+                    <li>Check if the application enforces complexity rules (uppercase, lowercase, numbers, special characters)</li>
+                    <li>Verify that commonly used passwords (password123, qwerty, letmein) are rejected</li>
+                    <li>Test if the application checks passwords against known breach databases</li>
+                    <li>Confirm that password history prevents reuse of recent passwords</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Manual testing</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Password policy analyzers</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-521</span></div>
+            </div>
+
+            <div id="wstg-athn-08" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-ATHN-08: Security Question Testing</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test evaluates the strength of security questions used for account recovery or additional authentication. Weak security questions have answers that are easily guessed, publicly available, or the same for many users.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Security questions are often the weakest link in account recovery. Answers to common questions like &#39;mother&#39;s maiden name&#39; or &#39;first pet&#39; can be found through social media research, public records, or simple guessing, allowing attackers to bypass authentication entirely.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Evaluate whether security questions have easily guessable or researchable answers</li>
+                    <li>Test if the application allows users to set their own questions with trivial answers</li>
+                    <li>Check if security question answers are case-sensitive</li>
+                    <li>Verify that brute-force protection applies to security question attempts</li>
+                    <li>Test whether security questions can be bypassed through other recovery methods</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Manual analysis</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Social engineering research</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-640</span></div>
+            </div>
+
+            <div id="wstg-athn-09" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-ATHN-09: Password Reset Testing</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test examines the password change and reset mechanisms for weaknesses including insecure reset tokens, lack of current password verification during changes, and exploitable password recovery flows that could enable account takeover.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Password reset mechanisms are a prime target for account takeover attacks. Predictable reset tokens, tokens sent via insecure channels, or reset flows that do not properly verify identity can give attackers full control of any user account.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test whether password change requires the current password for verification</li>
+                    <li>Analyze password reset tokens for randomness and predictability</li>
+                    <li>Verify that reset tokens expire within a reasonable timeframe</li>
+                    <li>Check if reset tokens are single-use and invalidated after password change</li>
+                    <li>Test for host header injection in password reset emails</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom scripts</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Email header analysis tools</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-640</span> <span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-620</span></div>
+            </div>
+
+            <div id="wstg-athn-10" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-ATHN-10: Alternative Channel Auth Testing</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test checks whether alternative authentication channels (mobile app, API, legacy interfaces, partner portals) have weaker security controls than the primary web application. Attackers often target the weakest authentication path available.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Organizations often invest heavily in securing their primary web login but overlook alternative channels that access the same backend. A mobile API with no rate limiting or a legacy portal without MFA can undermine the security of the entire system.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Identify all authentication channels (web, mobile API, legacy systems, partner portals)</li>
+                    <li>Compare authentication strength across channels (password policy, MFA, lockout)</li>
+                    <li>Test if credentials are shared across channels with different security levels</li>
+                    <li>Check if alternative channels bypass security controls enforced on the primary channel</li>
+                    <li>Verify that all channels enforce the same session management policies</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Mobile proxy tools</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">API testing tools</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Postman</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-287</span> <span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-306</span></div>
+            </div>
+
+            <h2>Relevant Certifications</h2>
+            <p>The following certifications cover authentication testing concepts:</p>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin:0.75rem 0;"><a href="../certs/comptia-security-plus.html" style="display:inline-block;background:var(--bg-secondary);color:var(--text-primary);padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;border:1px solid var(--border-color);">Security+</a><a href="../certs/ec-ceh.html" style="display:inline-block;background:var(--bg-secondary);color:var(--text-primary);padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;border:1px solid var(--border-color);">CEH</a><a href="../certs/isc2-cissp.html" style="display:inline-block;background:var(--bg-secondary);color:var(--text-primary);padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;border:1px solid var(--border-color);">CISSP</a><a href="../certs/offsec-oscp.html" style="display:inline-block;background:var(--bg-secondary);color:var(--text-primary);padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;border:1px solid var(--border-color);">OSCP</a></div>
+
+            <h2>Frequently Asked Questions</h2>
+            <details class="faq-item">
+                <summary>What are the most critical authentication vulnerabilities in web applications?</summary>
+                <p>The most critical authentication vulnerabilities include default credentials, weak password policies, missing brute-force protections, insecure password reset mechanisms, and authentication bypass through parameter manipulation. These are commonly exploited because they provide direct access to user accounts and often require minimal technical skill to exploit.</p>
+            </details>
+            <details class="faq-item">
+                <summary>How does WSTG-ATHN differ from WSTG-IDNT and WSTG-SESS?</summary>
+                <p>WSTG-IDNT tests how accounts are created and managed, WSTG-ATHN tests how users prove their identity when logging in, and WSTG-SESS tests how that authenticated state is maintained after login. Together, they cover the full lifecycle of user access: creation, verification, and session persistence.</p>
+            </details>
+            <details class="faq-item">
+                <summary>What is credential stuffing and how does it relate to authentication testing?</summary>
+                <p>Credential stuffing uses username/password pairs leaked from data breaches on other sites to attempt logins on the target application. It exploits password reuse across services. Authentication testing evaluates whether the application has defenses against this attack, including rate limiting, account lockout policies, CAPTCHA challenges, and multi-factor authentication.</p>
+            </details>
+
+        </div>
+
+        <!-- CyberFolio CTA -->
+        <div style="border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.3rem;">CyberFolio</p>
+            <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Mastering web security testing? Showcase your skills.</p>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills &mdash; free.</p>
+            <a href="https://cyberfolio.io" style="display:inline-block;background:#06b6d4;color:white;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;" target="_blank" rel="noopener">Build Your Portfolio &rarr;</a>
+        </div>
+
+        <!-- Related Categories -->
+        <section style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
+            <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Related WSTG Categories</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+                <a href="information-gathering.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-INFO</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Information Gathering</span></a>
+                <a href="configuration-deployment.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-CONF</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Configuration and Deployment Management</span></a>
+                <a href="identity-management.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-IDNT</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Identity Management</span></a>
+                <a href="authorization-testing.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-ATHZ</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Authorization Testing</span></a>
+            </div>
+        </section>
+
+        <a href="../index.html" class="back-link">&larr; Back to Home</a>
+        <a href="index.html" class="back-link" style="margin-left: 1rem;">&larr; All WSTG Categories</a>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
+            <p>Study Planners: <a href="/store/store.html">FixTheVuln Store</a> | Career Tools: <a href="https://cyberfolio.io" target="_blank" rel="noopener">CyberFolio</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+        </div>
+    </footer>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

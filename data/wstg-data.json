@@ -1,0 +1,2063 @@
+{
+  "meta": {
+    "version": "4.2",
+    "source": "https://owasp.org/www-project-web-security-testing-guide/",
+    "total_tests": 101,
+    "total_categories": 12
+  },
+  "categories": [
+    {
+      "code": "WSTG-INFO",
+      "slug": "information-gathering",
+      "name": "Information Gathering",
+      "icon": "\ud83d\udd0d",
+      "summary": "Information Gathering is the first phase of any security assessment, focused on collecting as much data about a target as possible before testing begins. This phase uses passive and active reconnaissance techniques to map the attack surface and identify potential weaknesses.",
+      "intro": "Information Gathering forms the foundation of web security testing. Before attempting to find vulnerabilities, testers must understand the target's technology stack, infrastructure, and exposed assets. This category covers techniques ranging from passive search engine reconnaissance to active fingerprinting of web servers and applications. Effective information gathering reduces wasted effort during later testing phases and often reveals low-hanging fruit like exposed admin panels, leaked credentials in source code, or misconfigured servers. For cert candidates, mastering this phase is essential because every penetration testing methodology starts here.",
+      "owasp_top10_refs": ["A05"],
+      "related_cwes": ["CWE-200", "CWE-538", "CWE-548"],
+      "relevant_certs": ["Security+", "CEH", "OSCP", "GPEN"],
+      "difficulty": "Beginner",
+      "faq_items": [
+        {
+          "q": "What is WSTG-INFO and why is information gathering important in security testing?",
+          "a": "WSTG-INFO is the Information Gathering category of the OWASP Web Security Testing Guide. It covers techniques for collecting data about a target application before active testing begins. This phase is critical because it maps the attack surface, identifies technologies in use, and often reveals misconfigurations or exposed data that can be exploited in later phases."
+        },
+        {
+          "q": "What is the difference between passive and active information gathering?",
+          "a": "Passive information gathering collects data without directly interacting with the target, using sources like search engines, DNS records, and public archives. Active information gathering involves direct interaction such as port scanning, fingerprinting, and crawling the application. Passive techniques are stealthier but provide less detail, while active techniques give more accurate results but may be detected."
+        },
+        {
+          "q": "What tools are commonly used for web application information gathering?",
+          "a": "Common tools include Google Dorking for search engine reconnaissance, Nmap for network scanning, Wappalyzer and WhatWeb for technology fingerprinting, Shodan for internet-connected device discovery, and Burp Suite for mapping application structure. Many testers also use WHOIS lookups, DNS enumeration tools like dig and dnsenum, and web crawlers to build a complete picture of the target."
+        }
+      ],
+      "tests": [
+        {
+          "id": "WSTG-INFO-01",
+          "name": "Conduct Search Engine Discovery Reconnaissance",
+          "short_name": "Search Engine Discovery",
+          "description": "This test uses search engines to discover publicly indexed information about a target, including sensitive files, exposed directories, and cached content. Search engine operators (Google Dorks) can reveal login pages, error messages, and documents that were never intended to be public.",
+          "why_it_matters": "Organizations often unknowingly expose sensitive information that gets indexed by search engines. Attackers routinely use search engine dorking as a zero-cost, zero-risk first step to find exploitable data.",
+          "what_to_check": [
+            "Search for indexed admin panels and login pages using site: and inurl: operators",
+            "Look for exposed sensitive file types (PDFs, spreadsheets, configuration files) with filetype: operator",
+            "Check for cached versions of pages that may have been removed",
+            "Search for error messages or debug output that reveals technology stack details",
+            "Review robots.txt entries that might point to hidden directories"
+          ],
+          "common_tools": ["Google Dorking", "Bing Search", "Shodan", "DuckDuckGo", "Wayback Machine"],
+          "related_cwes": ["CWE-538"],
+          "difficulty": "Beginner"
+        },
+        {
+          "id": "WSTG-INFO-02",
+          "name": "Fingerprint Web Server",
+          "short_name": "Web Server Fingerprinting",
+          "description": "Web server fingerprinting identifies the type and version of the web server software handling requests. This is done by analyzing HTTP response headers, default error pages, and server behavioral differences between implementations like Apache, Nginx, and IIS.",
+          "why_it_matters": "Knowing the exact web server version helps testers search for known vulnerabilities and misconfigurations specific to that software. It also reveals whether the server is running outdated or end-of-life software.",
+          "what_to_check": [
+            "Examine the Server header in HTTP responses for version information",
+            "Analyze default error pages (404, 500) for server-specific formatting",
+            "Check HTTP response header ordering which differs between server implementations",
+            "Test how the server responds to malformed requests or unusual HTTP methods",
+            "Look for server-specific default files and directories"
+          ],
+          "common_tools": ["Nmap", "Netcraft", "WhatWeb", "curl", "httprint"],
+          "related_cwes": ["CWE-200"],
+          "difficulty": "Beginner"
+        },
+        {
+          "id": "WSTG-INFO-03",
+          "name": "Review Webserver Metafiles for Information Leakage",
+          "short_name": "Webserver Metafiles Review",
+          "description": "Webserver metafiles like robots.txt, sitemap.xml, and security.txt can leak information about the application structure. These files often reveal hidden directories, admin paths, and internal endpoints that are not intended for public access.",
+          "why_it_matters": "Metafiles are publicly accessible by design but frequently contain references to sensitive areas of the application. Attackers use these files to quickly map out restricted areas and prioritize their testing efforts.",
+          "what_to_check": [
+            "Review robots.txt for Disallow entries that point to sensitive directories",
+            "Check sitemap.xml for URLs not linked from the main application",
+            "Look for security.txt in the .well-known directory for contact and policy information",
+            "Search for humans.txt, crossdomain.xml, and clientaccesspolicy.xml",
+            "Check for exposed .git, .svn, or .env files in the web root"
+          ],
+          "common_tools": ["curl", "Burp Suite", "wget", "Browser Developer Tools"],
+          "related_cwes": ["CWE-538", "CWE-200"],
+          "difficulty": "Beginner"
+        },
+        {
+          "id": "WSTG-INFO-04",
+          "name": "Enumerate Applications on Webserver",
+          "short_name": "Application Enumeration",
+          "description": "This test identifies all applications hosted on a web server, including those on non-standard ports, virtual hosts, and subdomains. A single server often hosts multiple applications, some of which may be forgotten, unmaintained, or running vulnerable software.",
+          "why_it_matters": "Forgotten or shadow applications are a common attack vector because they often lack patching and monitoring. Finding all applications on a server reveals the complete attack surface that needs to be tested.",
+          "what_to_check": [
+            "Scan for applications running on non-standard ports",
+            "Enumerate virtual hosts using DNS records and brute-force techniques",
+            "Check for applications in common subdirectories (/admin, /portal, /api, /test)",
+            "Look for different applications served based on the Host header",
+            "Identify staging or development instances accessible from the internet"
+          ],
+          "common_tools": ["Nmap", "Gobuster", "ffuf", "Sublist3r", "Amass"],
+          "related_cwes": ["CWE-200"],
+          "difficulty": "Beginner"
+        },
+        {
+          "id": "WSTG-INFO-05",
+          "name": "Review Webpage Content for Information Leakage",
+          "short_name": "Webpage Content Review",
+          "description": "Reviewing webpage source code and content can reveal developer comments, internal IP addresses, API keys, debug information, and hidden form fields. This information is often left behind from development and provides valuable intelligence for attackers.",
+          "why_it_matters": "Developers frequently leave sensitive information in HTML comments, JavaScript files, and metadata that is invisible to regular users but easily found by anyone who views the source code. This leakage can expose internal infrastructure details or even credentials.",
+          "what_to_check": [
+            "Search HTML source for developer comments containing sensitive information",
+            "Look for hardcoded API keys, tokens, or credentials in JavaScript files",
+            "Check for internal IP addresses or hostnames in page source",
+            "Review hidden form fields for parameters that control server-side logic",
+            "Examine metadata in documents and images for author names and software versions"
+          ],
+          "common_tools": ["Burp Suite", "Browser Developer Tools", "grep", "LinkFinder"],
+          "related_cwes": ["CWE-200", "CWE-615"],
+          "difficulty": "Beginner"
+        },
+        {
+          "id": "WSTG-INFO-06",
+          "name": "Identify Application Entry Points",
+          "short_name": "Application Entry Points",
+          "description": "Identifying entry points means mapping every way data can enter the application, including URL parameters, form fields, HTTP headers, cookies, and API endpoints. Each entry point is a potential injection vector that needs to be tested in later phases.",
+          "why_it_matters": "Entry points define where user input interacts with application logic. Missing an entry point during testing means potentially missing a vulnerability. Thorough mapping ensures complete test coverage across the application.",
+          "what_to_check": [
+            "Map all URL parameters across GET and POST requests",
+            "Identify form fields including hidden inputs",
+            "Document HTTP headers that influence application behavior (Host, Referer, User-Agent)",
+            "List all cookie values and their purposes",
+            "Catalog API endpoints and their accepted input formats (JSON, XML, multipart)"
+          ],
+          "common_tools": ["Burp Suite", "OWASP ZAP", "Browser Developer Tools", "Postman"],
+          "related_cwes": ["CWE-200"],
+          "difficulty": "Beginner"
+        },
+        {
+          "id": "WSTG-INFO-07",
+          "name": "Map Execution Paths Through Application",
+          "short_name": "Execution Path Mapping",
+          "description": "Mapping execution paths traces how data flows through the application from input to output, including all processing steps, database queries, and external service calls. This helps identify where input validation occurs and where it might be bypassed.",
+          "why_it_matters": "Understanding data flow reveals where trust boundaries exist and where input might bypass validation. Complex execution paths with multiple processing stages often contain logic errors that can be exploited.",
+          "what_to_check": [
+            "Trace how user input flows from entry point through processing to response",
+            "Identify trust boundaries where data crosses between components",
+            "Map multi-step processes like registration, checkout, or file upload workflows",
+            "Document conditional logic paths (error handling, edge cases, fallback behaviors)",
+            "Look for places where processed data is used in secondary operations"
+          ],
+          "common_tools": ["Burp Suite", "OWASP ZAP", "Browser Developer Tools", "Application source code review"],
+          "related_cwes": ["CWE-200"],
+          "difficulty": "Beginner"
+        },
+        {
+          "id": "WSTG-INFO-08",
+          "name": "Fingerprint Web Application Framework",
+          "short_name": "Framework Fingerprinting",
+          "description": "Framework fingerprinting identifies the web application framework (e.g., Django, Rails, Spring, Laravel) powering the target. This is accomplished by analyzing HTTP headers, cookie names, URL patterns, HTML structure, and error pages unique to each framework.",
+          "why_it_matters": "Each framework has known default configurations, common vulnerabilities, and specific attack patterns. Identifying the framework allows testers to focus on framework-specific issues and known CVEs rather than testing blindly.",
+          "what_to_check": [
+            "Analyze cookie names for framework-specific patterns (JSESSIONID for Java, PHPSESSID for PHP)",
+            "Check HTTP response headers for framework-specific identifiers (X-Powered-By, X-AspNet-Version)",
+            "Examine URL structures and routing patterns characteristic of specific frameworks",
+            "Look for default error pages, login screens, or admin panels with framework branding",
+            "Check for framework-specific files in predictable locations"
+          ],
+          "common_tools": ["Wappalyzer", "WhatWeb", "BuiltWith", "Burp Suite", "curl"],
+          "related_cwes": ["CWE-200"],
+          "difficulty": "Beginner"
+        },
+        {
+          "id": "WSTG-INFO-09",
+          "name": "Fingerprint Web Application",
+          "short_name": "Web Application Fingerprinting",
+          "description": "This test identifies the specific web application or CMS in use, such as WordPress, Drupal, or a custom application. It goes beyond framework identification to determine the exact software product and version, including plugins and extensions.",
+          "why_it_matters": "Known applications have documented vulnerability databases, default credentials, and established exploitation techniques. Identifying the exact version allows testers to check for unpatched CVEs and known attack paths.",
+          "what_to_check": [
+            "Check for CMS-specific files (wp-login.php for WordPress, /administrator for Joomla)",
+            "Review HTML source for generator meta tags and version comments",
+            "Fingerprint installed plugins and extensions through their public-facing resources",
+            "Analyze JavaScript and CSS file paths for application-specific naming conventions",
+            "Compare page structure and behavior against known application signatures"
+          ],
+          "common_tools": ["WPScan", "CMSMap", "Wappalyzer", "Nikto", "Nmap NSE scripts"],
+          "related_cwes": ["CWE-200"],
+          "difficulty": "Beginner"
+        },
+        {
+          "id": "WSTG-INFO-10",
+          "name": "Map Application Architecture",
+          "short_name": "Architecture Mapping",
+          "description": "Architecture mapping builds a complete picture of the target's infrastructure including web servers, application servers, databases, load balancers, CDNs, WAFs, and third-party services. Understanding the full architecture reveals how components interact and where security boundaries exist.",
+          "why_it_matters": "Modern applications rely on complex architectures with multiple components. Knowing the full architecture helps testers identify weak links, bypass security controls at component boundaries, and understand the impact of potential vulnerabilities.",
+          "what_to_check": [
+            "Identify reverse proxies, load balancers, and CDN providers from response headers",
+            "Detect Web Application Firewalls (WAFs) that may filter attack payloads",
+            "Map backend databases and storage services from error messages and behavior",
+            "Document third-party integrations and API dependencies",
+            "Identify different environments (production, staging, development) accessible from the internet"
+          ],
+          "common_tools": ["Nmap", "Burp Suite", "wafw00f", "traceroute", "Shodan"],
+          "related_cwes": ["CWE-200"],
+          "difficulty": "Beginner"
+        }
+      ]
+    },
+    {
+      "code": "WSTG-CONF",
+      "slug": "configuration-deployment",
+      "name": "Configuration and Deployment Management",
+      "icon": "\u2699\ufe0f",
+      "summary": "Configuration and Deployment Management testing examines how securely the application infrastructure is configured and maintained. Misconfigurations are among the most common vulnerabilities and often provide the easiest path for attackers to gain unauthorized access.",
+      "intro": "Secure configuration is a cornerstone of application security, yet it is frequently overlooked. This category tests whether web servers, application platforms, and cloud services are deployed with hardened settings rather than insecure defaults. Misconfiguration issues range from exposed admin interfaces and verbose error messages to missing security headers and overly permissive file permissions. These issues are particularly dangerous because they often require no authentication to exploit and can be found through automated scanning. For security professionals, understanding configuration hardening is essential for both offensive testing and defensive architecture reviews.",
+      "owasp_top10_refs": ["A05"],
+      "related_cwes": ["CWE-16", "CWE-2", "CWE-327"],
+      "relevant_certs": ["Security+", "CEH", "OSCP"],
+      "difficulty": "Intermediate",
+      "faq_items": [
+        {
+          "q": "What are the most common web server misconfigurations that lead to security vulnerabilities?",
+          "a": "The most common misconfigurations include default credentials on admin interfaces, directory listing enabled, verbose error messages exposing stack traces, missing security headers (HSTS, CSP, X-Frame-Options), unnecessary HTTP methods enabled (PUT, DELETE, TRACE), and outdated TLS configurations. These issues are easy to find and easy to fix, which is why they appear so frequently in security assessments."
+        },
+        {
+          "q": "How does WSTG-CONF relate to the OWASP Top 10?",
+          "a": "WSTG-CONF maps directly to OWASP Top 10 A05: Security Misconfiguration, which covers missing security hardening, unnecessary features enabled, default accounts, overly informative error messages, and misconfigured security headers. It is consistently one of the most prevalent vulnerability categories found in real-world applications."
+        },
+        {
+          "q": "What is subdomain takeover and why is it a configuration issue?",
+          "a": "Subdomain takeover occurs when a DNS record points to a service (like a cloud hosting platform) that the organization no longer controls. An attacker can claim the orphaned service and serve malicious content under the organization's domain. This is a configuration management issue because it results from failing to clean up DNS records when decommissioning services."
+        }
+      ],
+      "tests": [
+        {
+          "id": "WSTG-CONF-01",
+          "name": "Test Network Infrastructure Configuration",
+          "short_name": "Network Infrastructure Config",
+          "description": "This test evaluates the security configuration of network infrastructure components including firewalls, routers, load balancers, and DNS servers. It checks for unnecessary open ports, weak access controls, and insecure protocols that could provide an entry point into the environment.",
+          "why_it_matters": "Network infrastructure misconfigurations can bypass application-level security controls entirely. An attacker who finds an open management port or insecure protocol can often gain deeper access than through the web application itself.",
+          "what_to_check": [
+            "Scan for unnecessary open ports and services on the server",
+            "Verify that administrative interfaces are not publicly accessible",
+            "Check for insecure protocols (Telnet, FTP, unencrypted SNMP)",
+            "Test DNS configuration for zone transfer vulnerabilities",
+            "Review firewall rules for overly permissive configurations"
+          ],
+          "common_tools": ["Nmap", "Masscan", "dig", "Shodan", "Nessus"],
+          "related_cwes": ["CWE-16"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-CONF-02",
+          "name": "Test Application Platform Configuration",
+          "short_name": "Application Platform Config",
+          "description": "This test reviews the configuration of application platforms such as web servers, application servers, and database servers. It checks for insecure default settings, unnecessary features, debug modes left enabled, and missing security hardening measures.",
+          "why_it_matters": "Application platforms are often deployed with default configurations optimized for development convenience rather than security. Debug modes, sample applications, and default accounts left in production create easy targets for attackers.",
+          "what_to_check": [
+            "Check for debug mode or verbose error configuration in production",
+            "Verify that default or sample applications have been removed",
+            "Review logging configuration for sensitive data exposure",
+            "Test that directory listing is disabled on the web server",
+            "Confirm unnecessary modules and features are disabled"
+          ],
+          "common_tools": ["Nikto", "Nmap NSE scripts", "curl", "Browser Developer Tools", "testssl.sh"],
+          "related_cwes": ["CWE-16", "CWE-2"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-CONF-03",
+          "name": "Test File Extensions Handling for Sensitive Information",
+          "short_name": "File Extensions Handling",
+          "description": "This test examines how the web server handles different file extensions, particularly whether it exposes source code or sensitive files when requested with specific extensions. Mishandled extensions can cause the server to serve raw source code instead of executing it.",
+          "why_it_matters": "If a web server serves source code files instead of executing them, attackers can read application logic, database credentials, API keys, and internal comments. This often happens with backup files (.bak, .old) or alternative extensions (.php~, .asp.old).",
+          "what_to_check": [
+            "Request files with backup extensions (.bak, .old, .orig, .copy, .tmp)",
+            "Test for source code disclosure using tilde (~) or editor-generated extensions",
+            "Check if the server handles file extension case sensitivity correctly",
+            "Look for configuration files accessible through extension manipulation",
+            "Verify that server-side script extensions are always processed, never served raw"
+          ],
+          "common_tools": ["Burp Suite", "ffuf", "Gobuster", "curl", "Nikto"],
+          "related_cwes": ["CWE-538", "CWE-200"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-CONF-04",
+          "name": "Review Old Backup and Unreferenced Files",
+          "short_name": "Backup and Unreferenced Files",
+          "description": "This test searches for old backup files, unreferenced pages, and leftover development artifacts on the web server. These files often contain sensitive information, source code, or older versions of the application with known vulnerabilities.",
+          "why_it_matters": "Backup files and unreferenced content frequently contain credentials, configuration details, or outdated code with known security issues. Because these files are not linked from the main application, they often escape security reviews and remain accessible indefinitely.",
+          "what_to_check": [
+            "Brute-force common backup file patterns (.zip, .tar.gz, .sql, .bak for each known file)",
+            "Search for version control artifacts (.git, .svn, .hg directories)",
+            "Look for database dumps and SQL backup files",
+            "Check for IDE and editor temporary files (.swp, .swo, ~files)",
+            "Scan for unreferenced administrative or test pages"
+          ],
+          "common_tools": ["Gobuster", "ffuf", "Dirsearch", "Burp Suite Content Discovery", "GitTools"],
+          "related_cwes": ["CWE-538", "CWE-530"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-CONF-05",
+          "name": "Enumerate Infrastructure and Application Admin Interfaces",
+          "short_name": "Admin Interface Enumeration",
+          "description": "This test identifies administrative interfaces for both infrastructure components and the application itself. Admin panels often provide elevated access and may be protected only by obscurity rather than proper authentication and access controls.",
+          "why_it_matters": "Administrative interfaces are high-value targets because they typically provide full control over the application or infrastructure. When these are exposed with default credentials or weak authentication, they represent a critical risk to the entire system.",
+          "what_to_check": [
+            "Scan for common admin panel paths (/admin, /administrator, /manage, /console)",
+            "Check for infrastructure management interfaces (phpMyAdmin, Tomcat Manager, cPanel)",
+            "Look for admin interfaces on non-standard ports",
+            "Test discovered admin panels for default credentials",
+            "Verify that admin interfaces enforce strong authentication and IP restrictions"
+          ],
+          "common_tools": ["Gobuster", "ffuf", "Nikto", "Nmap", "Burp Suite"],
+          "related_cwes": ["CWE-16", "CWE-200"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-CONF-06",
+          "name": "Test HTTP Methods",
+          "short_name": "HTTP Methods Testing",
+          "description": "This test checks which HTTP methods the web server accepts and whether dangerous methods like PUT, DELETE, or TRACE are enabled. Unnecessary HTTP methods can allow attackers to upload malicious files, delete content, or perform cross-site tracing attacks.",
+          "why_it_matters": "Enabling unnecessary HTTP methods expands the attack surface without providing value. The TRACE method can be used for cross-site tracing attacks, while PUT and DELETE can allow unauthorized file manipulation if access controls are not properly configured.",
+          "what_to_check": [
+            "Send an OPTIONS request to enumerate allowed HTTP methods",
+            "Test if PUT method allows arbitrary file uploads",
+            "Check if DELETE method can remove files from the server",
+            "Verify TRACE method is disabled to prevent cross-site tracing (XST)",
+            "Test for HTTP method override headers (X-HTTP-Method-Override, X-Method-Override)"
+          ],
+          "common_tools": ["curl", "Burp Suite", "Nmap http-methods script", "OWASP ZAP"],
+          "related_cwes": ["CWE-16"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-CONF-07",
+          "name": "Test HTTP Strict Transport Security",
+          "short_name": "HSTS Testing",
+          "description": "This test verifies that HTTP Strict Transport Security (HSTS) is properly implemented to force browsers to only connect via HTTPS. Without HSTS, users may be vulnerable to SSL stripping attacks where an attacker downgrades the connection from HTTPS to HTTP.",
+          "why_it_matters": "HSTS prevents SSL stripping and protocol downgrade attacks by instructing browsers to always use HTTPS. Without it, an attacker on the same network can intercept the initial HTTP request before the redirect to HTTPS and hijack the session.",
+          "what_to_check": [
+            "Verify the Strict-Transport-Security header is present in HTTPS responses",
+            "Check that the max-age value is sufficiently long (at least 31536000 seconds / 1 year)",
+            "Confirm includeSubDomains directive is set if subdomains should also use HTTPS",
+            "Check if the domain is in the HSTS preload list for maximum protection",
+            "Test that HTTP requests properly redirect to HTTPS before serving content"
+          ],
+          "common_tools": ["curl", "testssl.sh", "SecurityHeaders.com", "Browser Developer Tools", "SSL Labs"],
+          "related_cwes": ["CWE-319", "CWE-16"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-CONF-08",
+          "name": "Test RIA Cross Domain Policy",
+          "short_name": "RIA Cross Domain Policy",
+          "description": "This test examines cross-domain policy files (crossdomain.xml for Flash and clientaccesspolicy.xml for Silverlight) that control which external domains can interact with the application. Overly permissive policies can allow any domain to make cross-origin requests.",
+          "why_it_matters": "While Flash and Silverlight are largely deprecated, cross-domain policy files may still be present on servers and could be exploited if overly permissive. A wildcard policy allowing all domains effectively disables the same-origin policy for the application.",
+          "what_to_check": [
+            "Check for the existence of crossdomain.xml in the web root",
+            "Check for clientaccesspolicy.xml in the web root",
+            "Verify that policies do not use wildcard (*) domain permissions",
+            "Ensure policies restrict allowed domains to trusted partners only",
+            "Confirm that policies specify secure=true for HTTPS-only access"
+          ],
+          "common_tools": ["curl", "Browser", "Burp Suite"],
+          "related_cwes": ["CWE-16", "CWE-346"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-CONF-09",
+          "name": "Test File Permission",
+          "short_name": "File Permissions Testing",
+          "description": "This test reviews file and directory permissions on the web server to ensure sensitive files are not world-readable and that upload directories do not allow script execution. Incorrect permissions can expose configuration files, logs, and credentials.",
+          "why_it_matters": "Improperly configured file permissions can allow unauthorized users to read sensitive configuration files, write malicious content, or execute uploaded scripts. This is especially critical in shared hosting environments where multiple applications run on the same server.",
+          "what_to_check": [
+            "Verify configuration files are not readable by the web server user",
+            "Check that log files are not accessible through the web server",
+            "Ensure upload directories do not have execute permissions",
+            "Review file ownership to confirm principle of least privilege",
+            "Test for directory traversal paths that might access restricted files"
+          ],
+          "common_tools": ["ls -la", "Burp Suite", "Nikto", "Custom scripts"],
+          "related_cwes": ["CWE-732", "CWE-276"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-CONF-10",
+          "name": "Test for Subdomain Takeover",
+          "short_name": "Subdomain Takeover",
+          "description": "Subdomain takeover occurs when a DNS record (usually a CNAME) points to an external service that the organization no longer controls. An attacker can register the abandoned service and serve content under the organization's trusted domain.",
+          "why_it_matters": "Subdomain takeover allows attackers to host malicious content on a trusted domain, which can be used for phishing, cookie theft, or bypassing content security policies. It exploits the trust users and browsers place in the organization's domain.",
+          "what_to_check": [
+            "Enumerate all subdomains and their DNS records (A, CNAME, MX)",
+            "Identify CNAME records pointing to external services (AWS, Azure, GitHub Pages, Heroku)",
+            "Check if the target services return error pages indicating unclaimed resources",
+            "Verify that decommissioned services have had their DNS records removed",
+            "Test if you can register the orphaned service endpoint"
+          ],
+          "common_tools": ["Sublist3r", "Amass", "dig", "can-i-take-over-xyz", "Subjack"],
+          "related_cwes": ["CWE-16"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-CONF-11",
+          "name": "Test Cloud Storage",
+          "short_name": "Cloud Storage Testing",
+          "description": "This test checks whether cloud storage services (S3 buckets, Azure Blobs, Google Cloud Storage) associated with the application are securely configured. Misconfigured cloud storage is one of the most common causes of large-scale data breaches.",
+          "why_it_matters": "Cloud storage misconfigurations have caused some of the largest data breaches in history. Publicly readable or writable buckets can expose millions of records, and these misconfigurations can be found through simple enumeration and guessing of bucket names.",
+          "what_to_check": [
+            "Enumerate cloud storage endpoints from application source code and DNS records",
+            "Test S3 buckets for public read access (ListBucket, GetObject)",
+            "Check for public write permissions that could allow data modification",
+            "Verify that bucket policies and ACLs follow the principle of least privilege",
+            "Look for cloud storage URLs in JavaScript files, error messages, and metadata"
+          ],
+          "common_tools": ["AWS CLI", "S3Scanner", "GCPBucketBrute", "AzureHound", "Burp Suite"],
+          "related_cwes": ["CWE-16", "CWE-284"],
+          "difficulty": "Intermediate"
+        }
+      ]
+    },
+    {
+      "code": "WSTG-IDNT",
+      "slug": "identity-management",
+      "name": "Identity Management",
+      "icon": "\ud83d\udc64",
+      "summary": "Identity Management testing evaluates how the application creates, manages, and controls user identities. Weaknesses in identity management can lead to unauthorized account creation, privilege escalation, and account takeover attacks.",
+      "intro": "Identity Management is the foundation upon which authentication and authorization are built. This category examines the processes by which user accounts are created, roles are assigned, and identities are managed throughout their lifecycle. Testing in this area reveals whether an attacker can create unauthorized accounts, enumerate valid usernames, escalate privileges through role manipulation, or exploit weak identity policies. Understanding identity management vulnerabilities is critical for both offensive security testing and secure application design. These tests are highly relevant for certifications like CISSP, which emphasizes Identity and Access Management as a core security domain.",
+      "owasp_top10_refs": ["A01", "A07"],
+      "related_cwes": ["CWE-284", "CWE-269"],
+      "relevant_certs": ["Security+", "CISSP", "CEH"],
+      "difficulty": "Intermediate",
+      "faq_items": [
+        {
+          "q": "What is identity management in web application security?",
+          "a": "Identity management in web security refers to how applications handle user accounts throughout their lifecycle: registration, provisioning, role assignment, and deactivation. Poor identity management can allow attackers to create fake accounts, enumerate valid users, or gain elevated privileges through flawed role assignment processes."
+        },
+        {
+          "q": "What is account enumeration and why is it a security risk?",
+          "a": "Account enumeration occurs when an application reveals whether a specific username or email exists in the system, typically through different error messages on login, registration, or password reset pages. This is risky because attackers can compile a list of valid accounts to target with brute-force attacks, credential stuffing, or social engineering campaigns."
+        },
+        {
+          "q": "How do identity management vulnerabilities differ from authentication vulnerabilities?",
+          "a": "Identity management focuses on how accounts and roles are created and maintained, while authentication focuses on how users prove their identity. For example, a weak registration process that allows duplicate accounts is an identity management issue, while a weak password policy is an authentication issue. Both are critical, but they target different parts of the access control chain."
+        }
+      ],
+      "tests": [
+        {
+          "id": "WSTG-IDNT-01",
+          "name": "Test Role Definitions",
+          "short_name": "Role Definitions Testing",
+          "description": "This test evaluates how the application defines and enforces user roles. It examines whether roles follow the principle of least privilege, whether role definitions are clear, and whether there are ways to manipulate role assignments to gain elevated access.",
+          "why_it_matters": "Poorly defined roles or overly permissive default role assignments can give users more access than intended. This is a common root cause of privilege escalation vulnerabilities and data breaches involving insider threats.",
+          "what_to_check": [
+            "Identify all user roles and their associated permissions",
+            "Verify that roles follow the principle of least privilege",
+            "Test whether role assignments can be manipulated through client-side parameters",
+            "Check for overlapping permissions between roles that could create confusion",
+            "Confirm that administrative roles are properly separated from regular user roles"
+          ],
+          "common_tools": ["Burp Suite", "Manual testing with multiple accounts", "Application documentation review"],
+          "related_cwes": ["CWE-284", "CWE-269"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-IDNT-02",
+          "name": "Test User Registration Process",
+          "short_name": "User Registration Testing",
+          "description": "This test examines the user registration process for weaknesses including lack of CAPTCHA, acceptance of disposable email addresses, weak identity verification, and the ability to register with duplicate or spoofed identities.",
+          "why_it_matters": "A weak registration process enables attackers to create fraudulent accounts at scale for spam, abuse, or as stepping stones for further attacks. It also affects data integrity if duplicate or fake identities can pollute the user base.",
+          "what_to_check": [
+            "Test if registration can be automated without CAPTCHA or rate limiting",
+            "Check if disposable email addresses are accepted for registration",
+            "Verify that duplicate accounts with the same email or username are rejected",
+            "Test whether registration parameters can be manipulated to set elevated roles",
+            "Confirm email verification is required before account activation"
+          ],
+          "common_tools": ["Burp Suite", "Custom scripts", "Temporary email services", "OWASP ZAP"],
+          "related_cwes": ["CWE-284"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-IDNT-03",
+          "name": "Test Account Provisioning Process",
+          "short_name": "Account Provisioning Testing",
+          "description": "This test reviews how accounts are provisioned, modified, and deprovisioned within the application. It checks whether administrative account management follows secure processes and whether former users retain access after deprovisioning.",
+          "why_it_matters": "Improper account provisioning can leave orphaned accounts with active credentials, allow unauthorized privilege changes, or fail to revoke access when employees leave. This is a major concern for compliance frameworks like SOC 2 and ISO 27001.",
+          "what_to_check": [
+            "Verify that account creation follows an approval workflow for privileged roles",
+            "Test whether deprovisioned accounts are fully disabled and cannot authenticate",
+            "Check if account modification actions are logged and auditable",
+            "Confirm that temporary or test accounts have expiration dates",
+            "Test whether bulk account provisioning properly validates each account"
+          ],
+          "common_tools": ["Burp Suite", "Manual process testing", "Account management API testing"],
+          "related_cwes": ["CWE-284", "CWE-269"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-IDNT-04",
+          "name": "Testing for Account Enumeration and Guessable User Account",
+          "short_name": "Account Enumeration",
+          "description": "This test determines whether an attacker can enumerate valid usernames or email addresses through the application's login, registration, or password recovery functions. Different error messages, response times, or HTTP status codes for valid versus invalid accounts reveal this information.",
+          "why_it_matters": "Account enumeration gives attackers a list of valid targets for credential stuffing, brute-force, and social engineering attacks. Even subtle differences in responses can be used to distinguish valid from invalid accounts at scale.",
+          "what_to_check": [
+            "Compare error messages for valid versus invalid usernames on the login page",
+            "Check registration forms for different responses when an existing email is used",
+            "Test password reset functionality for account enumeration through error messages",
+            "Measure response time differences between valid and invalid username attempts",
+            "Look for differences in HTTP response codes or headers between valid and invalid attempts"
+          ],
+          "common_tools": ["Burp Suite Intruder", "Custom scripts", "Hydra", "ffuf"],
+          "related_cwes": ["CWE-200", "CWE-204"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-IDNT-05",
+          "name": "Testing for Weak or Unenforced Username Policy",
+          "short_name": "Username Policy Testing",
+          "description": "This test evaluates whether the application enforces a strong username policy, including minimum length, allowed characters, and uniqueness requirements. Weak username policies can make accounts easier to guess and harder to manage securely.",
+          "why_it_matters": "Weak username policies allow predictable account names (admin, test, user1) that attackers can easily guess. Combined with weak passwords, predictable usernames make credential attacks trivially easy.",
+          "what_to_check": [
+            "Test if the application allows very short or single-character usernames",
+            "Check whether common reserved names (admin, root, test) can be registered by regular users",
+            "Verify that username format requirements are enforced consistently",
+            "Test for case sensitivity in username handling (Admin vs admin)",
+            "Check if usernames can contain special characters that might cause injection issues"
+          ],
+          "common_tools": ["Burp Suite", "Manual testing", "Custom registration scripts"],
+          "related_cwes": ["CWE-284"],
+          "difficulty": "Intermediate"
+        }
+      ]
+    },
+    {
+      "code": "WSTG-ATHN",
+      "slug": "authentication-testing",
+      "name": "Authentication Testing",
+      "icon": "\ud83d\udd10",
+      "summary": "Authentication Testing verifies how securely the application confirms user identities. Weak authentication mechanisms are among the most exploited vulnerabilities, enabling account takeover, credential theft, and unauthorized access to sensitive data.",
+      "intro": "Authentication is the gatekeeper of application security. This category tests every aspect of how users prove their identity, from password policies and credential storage to multi-factor authentication and session management during login. Weak authentication is consistently ranked among the top web application risks because it provides direct access to user accounts and sensitive data. Tests in this category cover credential transport security, brute-force protections, password reset flows, and authentication bypass techniques. For security professionals and cert candidates, deep understanding of authentication weaknesses is essential because these vulnerabilities have the most direct business impact.",
+      "owasp_top10_refs": ["A07"],
+      "related_cwes": ["CWE-287", "CWE-307", "CWE-640", "CWE-521"],
+      "relevant_certs": ["Security+", "CEH", "CISSP", "OSCP"],
+      "difficulty": "Intermediate",
+      "faq_items": [
+        {
+          "q": "What are the most critical authentication vulnerabilities in web applications?",
+          "a": "The most critical authentication vulnerabilities include default credentials, weak password policies, missing brute-force protections, insecure password reset mechanisms, and authentication bypass through parameter manipulation. These are commonly exploited because they provide direct access to user accounts and often require minimal technical skill to exploit."
+        },
+        {
+          "q": "How does WSTG-ATHN differ from WSTG-IDNT and WSTG-SESS?",
+          "a": "WSTG-IDNT tests how accounts are created and managed, WSTG-ATHN tests how users prove their identity when logging in, and WSTG-SESS tests how that authenticated state is maintained after login. Together, they cover the full lifecycle of user access: creation, verification, and session persistence."
+        },
+        {
+          "q": "What is credential stuffing and how does it relate to authentication testing?",
+          "a": "Credential stuffing uses username/password pairs leaked from data breaches on other sites to attempt logins on the target application. It exploits password reuse across services. Authentication testing evaluates whether the application has defenses against this attack, including rate limiting, account lockout policies, CAPTCHA challenges, and multi-factor authentication."
+        }
+      ],
+      "tests": [
+        {
+          "id": "WSTG-ATHN-01",
+          "name": "Testing for Credentials Transported over an Encrypted Channel",
+          "short_name": "Credential Transport Security",
+          "description": "This test verifies that user credentials (usernames and passwords) are always transmitted over encrypted channels (HTTPS/TLS). Credentials sent over unencrypted HTTP can be intercepted by anyone on the network path between the user and the server.",
+          "why_it_matters": "Transmitting credentials over unencrypted connections exposes them to network-level interception through packet sniffing, man-in-the-middle attacks, or compromised network infrastructure. This is especially dangerous on public Wi-Fi networks.",
+          "what_to_check": [
+            "Verify the login form is served over HTTPS and submits to an HTTPS endpoint",
+            "Check that HTTP-to-HTTPS redirects happen before credentials are submitted",
+            "Test whether login forms can be loaded over HTTP by directly entering the URL",
+            "Confirm that API authentication endpoints require HTTPS",
+            "Verify that HSTS is configured to prevent protocol downgrade attacks"
+          ],
+          "common_tools": ["Burp Suite", "Wireshark", "curl", "testssl.sh", "Browser Developer Tools"],
+          "related_cwes": ["CWE-319", "CWE-523"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-ATHN-02",
+          "name": "Testing for Default Credentials",
+          "short_name": "Default Credentials Testing",
+          "description": "This test checks whether the application, its infrastructure, or any administrative interfaces still use default credentials that were set during installation. Default credentials are publicly known and are one of the first things attackers try.",
+          "why_it_matters": "Default credentials are published in vendor documentation, security databases, and hacking tools. They represent zero-effort access for attackers and are frequently found in network devices, databases, CMS platforms, and administrative panels.",
+          "what_to_check": [
+            "Test common default username/password combinations for the identified platform",
+            "Check for admin accounts with well-known defaults (admin/admin, admin/password)",
+            "Review vendor documentation for default credentials specific to the software version",
+            "Test database management interfaces for default database credentials",
+            "Check for service accounts with default or blank passwords"
+          ],
+          "common_tools": ["Burp Suite", "Hydra", "Default Credential databases", "Nmap scripts", "Metasploit"],
+          "related_cwes": ["CWE-521", "CWE-287"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-ATHN-03",
+          "name": "Testing for Weak Lock Out Mechanism",
+          "short_name": "Account Lockout Testing",
+          "description": "This test evaluates whether the application has adequate brute-force protection through account lockout mechanisms, rate limiting, or progressive delays. It also checks whether the lockout mechanism itself can be abused to deny legitimate users access.",
+          "why_it_matters": "Without lockout mechanisms, attackers can attempt unlimited password guesses until they find the correct one. However, poorly implemented lockouts can be exploited to lock out legitimate users (denial of service) or bypassed through techniques like IP rotation or credential stuffing.",
+          "what_to_check": [
+            "Determine how many failed attempts trigger an account lockout",
+            "Test whether lockout can be bypassed by changing IP addresses",
+            "Check if lockout applies to all authentication methods (web, API, mobile)",
+            "Verify that lockout notifications are sent to the account owner",
+            "Test whether an attacker can intentionally lock out other users' accounts"
+          ],
+          "common_tools": ["Burp Suite Intruder", "Hydra", "Custom scripts", "OWASP ZAP"],
+          "related_cwes": ["CWE-307"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-ATHN-04",
+          "name": "Testing for Bypassing Authentication Schema",
+          "short_name": "Authentication Bypass",
+          "description": "This test attempts to bypass the authentication mechanism entirely through techniques like forced browsing, parameter manipulation, SQL injection in login forms, session token prediction, or exploiting flaws in the authentication logic itself.",
+          "why_it_matters": "Authentication bypass is one of the most severe vulnerabilities because it grants full unauthorized access without needing valid credentials. These flaws often stem from client-side validation, predictable session tokens, or logic errors in the authentication flow.",
+          "what_to_check": [
+            "Test forced browsing to authenticated pages without logging in first",
+            "Manipulate authentication parameters (user role, isAdmin, authentication tokens)",
+            "Test SQL injection in username and password fields",
+            "Check for authentication bypass through HTTP header manipulation",
+            "Test if modifying the response from the server can trick the client into granting access"
+          ],
+          "common_tools": ["Burp Suite", "OWASP ZAP", "sqlmap", "Custom scripts"],
+          "related_cwes": ["CWE-287", "CWE-288"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-ATHN-05",
+          "name": "Testing for Vulnerable Remember Password",
+          "short_name": "Remember Password Testing",
+          "description": "This test examines how the application implements 'remember me' or 'stay logged in' functionality. Insecure implementations may store credentials in cookies, use predictable tokens, or fail to provide adequate expiration and revocation mechanisms.",
+          "why_it_matters": "Insecure 'remember me' implementations can store credentials in plaintext cookies, use predictable token values that attackers can guess, or create long-lived sessions that remain valid even after password changes. These persist the risk of account compromise beyond a single session.",
+          "what_to_check": [
+            "Examine remember-me cookies for plaintext or reversible credential storage",
+            "Test whether remember-me tokens are cryptographically random and unpredictable",
+            "Verify that remember-me tokens are invalidated on password change",
+            "Check if remember-me functionality has a reasonable expiration time",
+            "Test whether remember-me tokens are bound to the original client or can be replayed"
+          ],
+          "common_tools": ["Burp Suite", "Browser Developer Tools", "Cookie editor extensions"],
+          "related_cwes": ["CWE-287", "CWE-522"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-ATHN-06",
+          "name": "Testing for Browser Cache Weaknesses",
+          "short_name": "Browser Cache Testing",
+          "description": "This test checks whether sensitive data from authenticated pages is stored in the browser cache, history, or back/forward cache. Cached sensitive content can be accessed by subsequent users of a shared computer or recovered through forensic analysis.",
+          "why_it_matters": "On shared or public computers, browser cache can expose sensitive data to the next user. Even on personal devices, cached credentials and sensitive pages can be extracted through malware or physical access to the device.",
+          "what_to_check": [
+            "Check for Cache-Control and Pragma headers preventing caching of sensitive pages",
+            "Verify that the back button does not display authenticated content after logout",
+            "Test whether autocomplete is disabled on sensitive form fields (credentials, SSN, credit card)",
+            "Check browser history for sensitive URL parameters",
+            "Verify that no-store directive prevents disk caching of sensitive responses"
+          ],
+          "common_tools": ["Browser Developer Tools", "Burp Suite", "curl"],
+          "related_cwes": ["CWE-525"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-ATHN-07",
+          "name": "Testing for Weak Password Policy",
+          "short_name": "Password Policy Testing",
+          "description": "This test evaluates the application's password policy for minimum complexity requirements, length restrictions, and whether it prevents commonly used passwords. A weak password policy makes brute-force and dictionary attacks much more likely to succeed.",
+          "why_it_matters": "Weak passwords are the most common cause of account compromise. Applications that allow short, simple, or commonly used passwords make it easy for attackers to guess credentials through automated attacks, especially when combined with account enumeration.",
+          "what_to_check": [
+            "Test minimum and maximum password length requirements",
+            "Check if the application enforces complexity rules (uppercase, lowercase, numbers, special characters)",
+            "Verify that commonly used passwords (password123, qwerty, letmein) are rejected",
+            "Test if the application checks passwords against known breach databases",
+            "Confirm that password history prevents reuse of recent passwords"
+          ],
+          "common_tools": ["Burp Suite", "Manual testing", "Password policy analyzers"],
+          "related_cwes": ["CWE-521"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-ATHN-08",
+          "name": "Testing for Weak Security Question Answer",
+          "short_name": "Security Question Testing",
+          "description": "This test evaluates the strength of security questions used for account recovery or additional authentication. Weak security questions have answers that are easily guessed, publicly available, or the same for many users.",
+          "why_it_matters": "Security questions are often the weakest link in account recovery. Answers to common questions like 'mother's maiden name' or 'first pet' can be found through social media research, public records, or simple guessing, allowing attackers to bypass authentication entirely.",
+          "what_to_check": [
+            "Evaluate whether security questions have easily guessable or researchable answers",
+            "Test if the application allows users to set their own questions with trivial answers",
+            "Check if security question answers are case-sensitive",
+            "Verify that brute-force protection applies to security question attempts",
+            "Test whether security questions can be bypassed through other recovery methods"
+          ],
+          "common_tools": ["Burp Suite", "Manual analysis", "Social engineering research"],
+          "related_cwes": ["CWE-640"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-ATHN-09",
+          "name": "Testing for Weak Password Change or Reset Functionalities",
+          "short_name": "Password Reset Testing",
+          "description": "This test examines the password change and reset mechanisms for weaknesses including insecure reset tokens, lack of current password verification during changes, and exploitable password recovery flows that could enable account takeover.",
+          "why_it_matters": "Password reset mechanisms are a prime target for account takeover attacks. Predictable reset tokens, tokens sent via insecure channels, or reset flows that do not properly verify identity can give attackers full control of any user account.",
+          "what_to_check": [
+            "Test whether password change requires the current password for verification",
+            "Analyze password reset tokens for randomness and predictability",
+            "Verify that reset tokens expire within a reasonable timeframe",
+            "Check if reset tokens are single-use and invalidated after password change",
+            "Test for host header injection in password reset emails"
+          ],
+          "common_tools": ["Burp Suite", "Custom scripts", "Email header analysis tools"],
+          "related_cwes": ["CWE-640", "CWE-620"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-ATHN-10",
+          "name": "Testing for Weaker Authentication in Alternative Channel",
+          "short_name": "Alternative Channel Auth Testing",
+          "description": "This test checks whether alternative authentication channels (mobile app, API, legacy interfaces, partner portals) have weaker security controls than the primary web application. Attackers often target the weakest authentication path available.",
+          "why_it_matters": "Organizations often invest heavily in securing their primary web login but overlook alternative channels that access the same backend. A mobile API with no rate limiting or a legacy portal without MFA can undermine the security of the entire system.",
+          "what_to_check": [
+            "Identify all authentication channels (web, mobile API, legacy systems, partner portals)",
+            "Compare authentication strength across channels (password policy, MFA, lockout)",
+            "Test if credentials are shared across channels with different security levels",
+            "Check if alternative channels bypass security controls enforced on the primary channel",
+            "Verify that all channels enforce the same session management policies"
+          ],
+          "common_tools": ["Burp Suite", "Mobile proxy tools", "API testing tools", "Postman"],
+          "related_cwes": ["CWE-287", "CWE-306"],
+          "difficulty": "Intermediate"
+        }
+      ]
+    },
+    {
+      "code": "WSTG-ATHZ",
+      "slug": "authorization-testing",
+      "name": "Authorization Testing",
+      "icon": "\ud83d\udee1\ufe0f",
+      "summary": "Authorization Testing evaluates whether the application properly enforces access controls after a user has been authenticated. These tests check if users can access resources, perform actions, or view data that should be restricted to other roles or users.",
+      "intro": "Authorization determines what an authenticated user is allowed to do within an application. Unlike authentication (verifying who you are), authorization controls what you can access. This category tests for broken access controls including directory traversal, privilege escalation, insecure direct object references, and authorization bypass. Authorization vulnerabilities are the number one risk in the OWASP Top 10 (A01:2021) because they are widespread, often application-specific, and difficult to detect with automated tools. They require understanding the application's business logic and testing with multiple user roles. For penetration testers and bug bounty hunters, authorization testing is one of the most rewarding areas because these findings often have high severity and direct business impact.",
+      "owasp_top10_refs": ["A01"],
+      "related_cwes": ["CWE-22", "CWE-639", "CWE-862", "CWE-863"],
+      "relevant_certs": ["CEH", "OSCP", "GPEN", "Security+"],
+      "difficulty": "Intermediate",
+      "faq_items": [
+        {
+          "q": "What is the difference between authentication and authorization in web security?",
+          "a": "Authentication verifies a user's identity (who are you?), while authorization determines what that user is allowed to do (what can you access?). A user can be properly authenticated but still access resources they should not be authorized to view. Authorization vulnerabilities are ranked as the number one web application security risk by OWASP."
+        },
+        {
+          "q": "What are Insecure Direct Object References (IDOR) and why are they so common?",
+          "a": "IDOR vulnerabilities occur when an application uses user-supplied input to directly access objects (like database records or files) without verifying that the user is authorized to access that specific object. They are common because developers often implement authentication but forget to add object-level authorization checks, assuming that if a user is logged in, they should have access to any resource they can reference."
+        },
+        {
+          "q": "How do you test for privilege escalation in web applications?",
+          "a": "Privilege escalation testing involves attempting to access higher-privilege functionality while logged in as a lower-privilege user. Horizontal escalation means accessing another user's data at the same privilege level, while vertical escalation means gaining admin-level access from a regular user account. Testers use techniques like changing user IDs in requests, modifying role parameters, and accessing admin endpoints with regular user tokens."
+        }
+      ],
+      "tests": [
+        {
+          "id": "WSTG-ATHZ-01",
+          "name": "Testing Directory Traversal File Include",
+          "short_name": "Directory Traversal",
+          "description": "Directory traversal (path traversal) testing attempts to access files outside the intended directory by manipulating file path parameters with sequences like ../ or URL-encoded equivalents. Successful exploitation can read sensitive system files, configuration files, or application source code.",
+          "why_it_matters": "Directory traversal can expose any file the web server process has permission to read, including /etc/passwd, application configuration files with database credentials, and source code. Combined with file inclusion vulnerabilities, it can lead to remote code execution.",
+          "what_to_check": [
+            "Test parameters that reference files with ../ sequences to escape the intended directory",
+            "Try URL-encoded and double-encoded traversal sequences (%2e%2e%2f, %252e%252e%252f)",
+            "Attempt to read known system files (/etc/passwd on Linux, C:\\boot.ini on Windows)",
+            "Test for null byte injection to bypass file extension restrictions",
+            "Check for Local File Inclusion (LFI) and Remote File Inclusion (RFI) in include parameters"
+          ],
+          "common_tools": ["Burp Suite", "OWASP ZAP", "dotdotpwn", "curl"],
+          "related_cwes": ["CWE-22", "CWE-98"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-ATHZ-02",
+          "name": "Testing for Bypassing Authorization Schema",
+          "short_name": "Authorization Schema Bypass",
+          "description": "This test attempts to bypass the application's authorization controls to access pages, functions, or data that should be restricted. It tests whether authorization is enforced consistently on both the client and server side.",
+          "why_it_matters": "Authorization bypass is the most common and impactful access control vulnerability. If authorization is only enforced in the UI (hiding buttons or menu items) but not on the server, attackers can directly request restricted resources and gain unauthorized access.",
+          "what_to_check": [
+            "Access administrative URLs directly while logged in as a regular user",
+            "Replay requests captured from a privileged session using a lower-privilege session token",
+            "Test whether authorization checks apply to both GET and POST requests for the same resource",
+            "Modify request parameters that indicate user role or permission level",
+            "Check if removing authorization headers or cookies allows access to restricted endpoints"
+          ],
+          "common_tools": ["Burp Suite Autorize extension", "OWASP ZAP Access Control Testing", "Custom scripts"],
+          "related_cwes": ["CWE-862", "CWE-863"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-ATHZ-03",
+          "name": "Testing for Privilege Escalation",
+          "short_name": "Privilege Escalation",
+          "description": "Privilege escalation testing checks whether a user can elevate their access level within the application. Vertical escalation gains higher-privilege access (user to admin), while horizontal escalation accesses another user's data at the same level.",
+          "why_it_matters": "Privilege escalation undermines the entire access control model. Vertical escalation gives attackers administrative control, while horizontal escalation exposes other users' personal data. Both represent critical security failures with direct compliance and liability implications.",
+          "what_to_check": [
+            "Test vertical escalation by accessing admin functions with a regular user session",
+            "Test horizontal escalation by changing user identifiers in requests to access other users' data",
+            "Modify role or group parameters in POST requests during account updates",
+            "Check if API endpoints enforce the same authorization as the web interface",
+            "Test whether modifying JWT claims or session attributes can elevate privileges"
+          ],
+          "common_tools": ["Burp Suite", "Autorize extension", "OWASP ZAP", "Postman"],
+          "related_cwes": ["CWE-269", "CWE-862"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-ATHZ-04",
+          "name": "Testing for Insecure Direct Object References",
+          "short_name": "IDOR Testing",
+          "description": "IDOR testing checks whether changing a reference to an object (like an ID, filename, or key in a URL or request body) allows access to another user's data without authorization checks. This is one of the most commonly found and easily exploited web vulnerabilities.",
+          "why_it_matters": "IDOR vulnerabilities provide direct access to other users' private data, accounts, or resources. They are extremely common because developers often check if a user is authenticated but fail to verify they are authorized to access the specific object being requested.",
+          "what_to_check": [
+            "Modify numeric IDs in URLs and request parameters to access other users' records",
+            "Test file download endpoints by changing filenames or document IDs",
+            "Check API responses for references to objects belonging to other users",
+            "Test sequential and predictable identifiers versus random UUIDs",
+            "Verify authorization on all CRUD operations (Create, Read, Update, Delete) for each object"
+          ],
+          "common_tools": ["Burp Suite", "Autorize extension", "OWASP ZAP", "Custom scripts"],
+          "related_cwes": ["CWE-639"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-ATHZ-05",
+          "name": "Testing for OAuth Weaknesses",
+          "short_name": "OAuth Testing",
+          "description": "This test evaluates OAuth implementations for common security weaknesses including open redirectors in the redirect_uri, authorization code reuse, missing state parameter validation, and insecure token storage. OAuth complexity creates many opportunities for implementation errors.",
+          "why_it_matters": "OAuth is widely used for third-party authentication and authorization, but its complexity leads to frequent implementation flaws. Vulnerabilities in OAuth flows can result in account takeover, unauthorized data access, and token theft, affecting both the application and its users.",
+          "what_to_check": [
+            "Test for open redirect vulnerabilities in the redirect_uri parameter",
+            "Verify the state parameter is used and validated to prevent CSRF attacks",
+            "Check if authorization codes can be reused or are properly single-use",
+            "Test whether access tokens are transmitted and stored securely",
+            "Verify that scope escalation is not possible through parameter manipulation"
+          ],
+          "common_tools": ["Burp Suite", "OWASP ZAP", "Postman", "Custom OAuth testing scripts"],
+          "related_cwes": ["CWE-601", "CWE-862"],
+          "difficulty": "Intermediate"
+        }
+      ]
+    },
+    {
+      "code": "WSTG-SESS",
+      "slug": "session-management",
+      "name": "Session Management Testing",
+      "icon": "\ud83c\udfab",
+      "summary": "Session Management Testing examines how the application creates, maintains, and destroys user sessions. Weak session management can lead to session hijacking, session fixation, and cross-site request forgery, allowing attackers to impersonate legitimate users.",
+      "intro": "Session management bridges the gap between authentication and the ongoing user experience. After a user logs in, the application must maintain their authenticated state across multiple requests using session tokens, cookies, or other mechanisms. This category tests whether session identifiers are generated securely, transmitted safely, protected against fixation and hijacking, and properly invalidated on logout. Session management vulnerabilities are particularly dangerous because they allow attackers to take over authenticated sessions without needing the user's credentials. For security professionals, understanding session management is crucial because flaws in this area directly undermine authentication controls, regardless of how strong those controls might be.",
+      "owasp_top10_refs": ["A01", "A07"],
+      "related_cwes": ["CWE-384", "CWE-352", "CWE-613", "CWE-614"],
+      "relevant_certs": ["Security+", "CEH", "OSCP", "CISSP"],
+      "difficulty": "Intermediate",
+      "faq_items": [
+        {
+          "q": "What is session hijacking and how does it work?",
+          "a": "Session hijacking occurs when an attacker obtains a valid session token belonging to another user and uses it to impersonate that user. This can happen through network sniffing (if cookies lack the Secure flag), cross-site scripting (if cookies lack HttpOnly), session fixation, or physical access to the user's browser. Once the attacker has the session token, the server cannot distinguish them from the legitimate user."
+        },
+        {
+          "q": "What is session fixation and how is it different from session hijacking?",
+          "a": "Session fixation is an attack where the attacker sets (fixes) the session ID before the victim logs in, rather than stealing it after. The attacker provides a known session ID to the victim (through a crafted URL or cookie injection), waits for the victim to authenticate, and then uses that same session ID to access the authenticated session. Prevention requires regenerating the session ID after successful login."
+        },
+        {
+          "q": "What cookie security attributes should be set on session cookies?",
+          "a": "Session cookies should have the Secure flag (transmitted only over HTTPS), HttpOnly flag (inaccessible to JavaScript, preventing XSS-based theft), SameSite attribute (Strict or Lax, preventing CSRF), appropriate Path and Domain restrictions, and a reasonable expiration. Missing any of these attributes weakens session security."
+        }
+      ],
+      "tests": [
+        {
+          "id": "WSTG-SESS-01",
+          "name": "Testing for Session Management Schema",
+          "short_name": "Session Management Schema",
+          "description": "This test evaluates the overall session management implementation including how session tokens are generated, their randomness, length, and whether they contain embedded sensitive information. It also checks the session lifecycle from creation through destruction.",
+          "why_it_matters": "The session management schema is the foundation of maintaining authenticated state. If session tokens are predictable, too short, or contain embedded user information, attackers can forge, guess, or extract session tokens to impersonate users.",
+          "what_to_check": [
+            "Analyze session token length, character set, and entropy",
+            "Test for predictable patterns by collecting and comparing multiple session tokens",
+            "Check if session tokens contain encoded user data (Base64 decode to inspect)",
+            "Verify that new session tokens are generated after authentication events",
+            "Confirm the session management mechanism is resistant to token prediction attacks"
+          ],
+          "common_tools": ["Burp Suite Sequencer", "OWASP ZAP", "Custom entropy analysis scripts"],
+          "related_cwes": ["CWE-330", "CWE-384"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-SESS-02",
+          "name": "Testing for Cookies Attributes",
+          "short_name": "Cookie Attributes Testing",
+          "description": "This test examines the security attributes set on session cookies, including Secure, HttpOnly, SameSite, Domain, Path, and Expires/Max-Age flags. Missing or misconfigured cookie attributes can expose session tokens to theft through various attack vectors.",
+          "why_it_matters": "Cookie attributes are the primary defense against session token theft. Without the Secure flag, tokens leak over HTTP connections. Without HttpOnly, XSS can steal them. Without SameSite, CSRF attacks can misuse them. Each missing attribute opens a different attack path.",
+          "what_to_check": [
+            "Verify the Secure flag is set to prevent transmission over HTTP",
+            "Confirm HttpOnly flag is set to prevent JavaScript access",
+            "Check SameSite attribute is set to Strict or Lax to prevent CSRF",
+            "Review Domain and Path attributes for overly broad scope",
+            "Verify appropriate Expires or Max-Age values are set"
+          ],
+          "common_tools": ["Browser Developer Tools", "Burp Suite", "curl", "OWASP ZAP"],
+          "related_cwes": ["CWE-614", "CWE-1004"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-SESS-03",
+          "name": "Testing for Session Fixation",
+          "short_name": "Session Fixation Testing",
+          "description": "Session fixation testing checks whether the application regenerates the session identifier after successful authentication. Without regeneration, an attacker can set a known session ID before the victim logs in and then use it to access the authenticated session.",
+          "why_it_matters": "Session fixation allows attackers to hijack sessions without needing to steal tokens. By setting the session ID before authentication, the attacker guarantees they know the token that will be associated with the victim's authenticated session.",
+          "what_to_check": [
+            "Record the session ID before login, then check if it changes after successful authentication",
+            "Test whether session IDs provided in URL parameters are accepted by the server",
+            "Check if session IDs can be set through cookie injection techniques",
+            "Verify that the old session ID is invalidated after a new one is generated",
+            "Test if session fixation is possible through cross-subdomain cookie injection"
+          ],
+          "common_tools": ["Burp Suite", "Browser Developer Tools", "Cookie editor extensions"],
+          "related_cwes": ["CWE-384"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-SESS-04",
+          "name": "Testing for Exposed Session Variables",
+          "short_name": "Exposed Session Variables",
+          "description": "This test checks whether session tokens or session-related data are exposed through insecure channels such as URLs (Referer header leakage), error messages, logs, or cached pages. Exposed session variables can be captured by third parties or found in server logs.",
+          "why_it_matters": "Session tokens exposed in URLs are particularly dangerous because they appear in browser history, server logs, proxy logs, and Referer headers sent to third-party sites. Any of these exposure points can lead to session hijacking.",
+          "what_to_check": [
+            "Check if session tokens appear in URLs as query parameters",
+            "Verify that session data is not leaked through Referer headers to third-party sites",
+            "Test whether error pages or debug output expose session-related information",
+            "Check server logs for session token recording",
+            "Verify that session data is not exposed through browser history or cached pages"
+          ],
+          "common_tools": ["Burp Suite", "Browser Developer Tools", "curl", "Web server log analysis"],
+          "related_cwes": ["CWE-200", "CWE-598"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-SESS-05",
+          "name": "Testing for Cross Site Request Forgery",
+          "short_name": "CSRF Testing",
+          "description": "Cross-Site Request Forgery (CSRF) testing checks whether the application protects state-changing operations from being triggered by malicious sites that the user visits while authenticated. CSRF exploits the trust that the server places in the user's browser.",
+          "why_it_matters": "CSRF attacks can force authenticated users to perform unintended actions like changing their password, transferring funds, or modifying account settings without their knowledge. The attack works because the browser automatically includes session cookies with every request to the target domain.",
+          "what_to_check": [
+            "Check for anti-CSRF tokens in forms that perform state-changing operations",
+            "Verify that anti-CSRF tokens are validated server-side and are unique per session",
+            "Test if removing or modifying the CSRF token still allows the request to succeed",
+            "Check SameSite cookie attribute which provides CSRF protection at the browser level",
+            "Test if sensitive actions can be performed via GET requests (which bypass some CSRF protections)"
+          ],
+          "common_tools": ["Burp Suite CSRF PoC Generator", "OWASP ZAP", "Custom HTML forms"],
+          "related_cwes": ["CWE-352"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-SESS-06",
+          "name": "Testing for Logout Functionality",
+          "short_name": "Logout Testing",
+          "description": "This test verifies that the logout function properly destroys the session on the server side, clears session cookies on the client side, and that the session token cannot be reused after logout. Incomplete logout leaves sessions vulnerable to reuse.",
+          "why_it_matters": "If logout does not properly invalidate the session server-side, an attacker who obtained a session token can continue using it even after the legitimate user logs out. This is especially critical on shared computers and in environments where session tokens may have been compromised.",
+          "what_to_check": [
+            "Verify that clicking logout destroys the session on the server (not just client-side)",
+            "Test whether the session token can be reused after logout by replaying it",
+            "Check that session cookies are properly cleared with appropriate expiration values",
+            "Verify that the back button does not display authenticated content after logout",
+            "Test if logout invalidates all sessions for the user or only the current one"
+          ],
+          "common_tools": ["Burp Suite", "Browser Developer Tools", "curl"],
+          "related_cwes": ["CWE-613"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-SESS-07",
+          "name": "Testing Session Timeout",
+          "short_name": "Session Timeout Testing",
+          "description": "This test verifies that sessions expire after an appropriate period of inactivity (idle timeout) and after a maximum absolute lifetime. Sessions that persist indefinitely increase the window of opportunity for session hijacking.",
+          "why_it_matters": "Long-lived or non-expiring sessions dramatically increase the risk of session hijacking because they give attackers more time to discover and use stolen session tokens. Appropriate timeouts limit the damage window and force re-authentication.",
+          "what_to_check": [
+            "Test the idle timeout by waiting without activity and then attempting to use the session",
+            "Verify that a maximum session lifetime exists regardless of activity",
+            "Check if the session timeout is enforced server-side, not just via client-side JavaScript",
+            "Test whether session timeout values are appropriate for the sensitivity of the application",
+            "Verify that expired sessions cannot be revived by sending requests with the old token"
+          ],
+          "common_tools": ["Burp Suite", "Custom timing scripts", "Browser Developer Tools"],
+          "related_cwes": ["CWE-613"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-SESS-08",
+          "name": "Testing for Session Puzzling",
+          "short_name": "Session Puzzling",
+          "description": "Session puzzling (session variable overloading) occurs when the application uses the same session variable for different purposes across different parts of the application. An attacker can set a session variable in one context and exploit it in another context to bypass security controls.",
+          "why_it_matters": "Session puzzling exploits the shared nature of server-side session storage. When different application functions read and write the same session variables, an attacker can manipulate values through one function to influence the behavior of another, potentially bypassing authentication or authorization.",
+          "what_to_check": [
+            "Map all session variables used across different application functions",
+            "Identify session variables that are set in one context and read in another",
+            "Test whether manipulating session variables through one function affects others",
+            "Check if unauthenticated functions set session variables used by authenticated functions",
+            "Verify that session variables have well-defined scopes and purposes"
+          ],
+          "common_tools": ["Burp Suite", "Manual code review", "Application-specific testing"],
+          "related_cwes": ["CWE-384"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-SESS-09",
+          "name": "Testing for Session Hijacking",
+          "short_name": "Session Hijacking",
+          "description": "Session hijacking testing evaluates the overall resilience of the session management implementation against various token theft and replay techniques. This includes testing network-level interception, XSS-based theft, and whether additional controls like IP binding or device fingerprinting are in place.",
+          "why_it_matters": "Session hijacking is the culmination of session management weaknesses. If an attacker can obtain and replay a session token, they gain full access to the victim's account. Comprehensive testing ensures that multiple layers of defense protect against this attack.",
+          "what_to_check": [
+            "Test whether sessions are bound to additional client attributes (IP, User-Agent)",
+            "Verify that concurrent session limits or alerts exist for the same account",
+            "Check if the application detects and responds to session token replay from different locations",
+            "Test whether Man-in-the-Middle attacks can capture session tokens on the network",
+            "Verify that all session management protections work together as defense in depth"
+          ],
+          "common_tools": ["Burp Suite", "Wireshark", "Bettercap", "Custom scripts"],
+          "related_cwes": ["CWE-384", "CWE-614"],
+          "difficulty": "Intermediate"
+        }
+      ]
+    },
+    {
+      "code": "WSTG-INPV",
+      "slug": "input-validation",
+      "name": "Input Validation Testing",
+      "icon": "\ud83d\udcdd",
+      "summary": "Input Validation Testing covers the broadest and most technically deep category of web security tests, examining how the application handles untrusted input across all attack vectors. From XSS and SQL injection to SSRF and template injection, these vulnerabilities arise when user input is processed without proper validation and sanitization.",
+      "intro": "Input validation is the most critical defense in web application security. This category contains 19 tests covering every major injection attack class, from cross-site scripting and SQL injection to server-side request forgery and template injection. Each test examines a different way that untrusted user input can be weaponized to compromise the application, its users, or its underlying infrastructure. Input validation vulnerabilities consistently dominate real-world breach reports because they can lead to data theft, code execution, and complete system compromise. For penetration testers and bug bounty hunters, mastering these techniques is essential since injection vulnerabilities typically command the highest severity ratings and payouts. Cert candidates will encounter these concepts heavily in CEH, OSCP, and GWAPT examinations.",
+      "owasp_top10_refs": ["A03", "A10"],
+      "related_cwes": ["CWE-79", "CWE-89", "CWE-78", "CWE-918", "CWE-94", "CWE-90"],
+      "relevant_certs": ["CEH", "OSCP", "GPEN", "Security+", "GWAPT"],
+      "difficulty": "Advanced",
+      "faq_items": [
+        {
+          "q": "What is the difference between input validation and output encoding?",
+          "a": "Input validation checks that incoming data conforms to expected formats and rejects anything that does not match. Output encoding transforms data so it is safe for the specific context where it is rendered (HTML, SQL, JavaScript, etc.). Both are necessary: input validation reduces the attack surface, while output encoding prevents exploitation even if validation is bypassed. A defense-in-depth approach uses both."
+        },
+        {
+          "q": "Why is SQL injection still one of the most common web vulnerabilities?",
+          "a": "SQL injection persists because many applications still construct SQL queries by concatenating user input rather than using parameterized queries. Legacy applications, custom ORM layers, and stored procedures with dynamic SQL all create opportunities for injection. Additionally, complex query logic and developer shortcuts under time pressure continue to introduce new injection points even in modern applications."
+        },
+        {
+          "q": "What is Server-Side Request Forgery (SSRF) and why has it become more important?",
+          "a": "SSRF occurs when an attacker can make the server send requests to unintended destinations, typically internal services or cloud metadata endpoints. It has become more important with cloud adoption because SSRF can access cloud metadata services (like AWS IMDSv1 at 169.254.169.254) to steal credentials and pivot to other cloud resources. SSRF was added to the OWASP Top 10 in 2021 as A10."
+        }
+      ],
+      "tests": [
+        {
+          "id": "WSTG-INPV-01",
+          "name": "Testing for Reflected Cross Site Scripting",
+          "short_name": "Reflected XSS",
+          "description": "Reflected XSS testing checks if user input is immediately returned in the server's response without proper encoding. An attacker crafts a malicious URL containing JavaScript that executes in the victim's browser when they click the link, potentially stealing session tokens or performing actions on their behalf.",
+          "why_it_matters": "Reflected XSS is one of the most common web vulnerabilities and enables session hijacking, credential theft, and phishing attacks. Because the payload is delivered via a URL, it can be spread through phishing emails, social media, or watering hole attacks.",
+          "what_to_check": [
+            "Test all URL parameters with basic XSS payloads (<script>alert(1)</script>)",
+            "Check search fields, error messages, and any reflected input for encoding",
+            "Test for XSS in different HTML contexts (attribute, JavaScript, CSS, URL)",
+            "Try encoding bypass techniques (HTML entities, URL encoding, Unicode)",
+            "Verify that Content-Type headers and Content-Security-Policy prevent execution"
+          ],
+          "common_tools": ["Burp Suite", "OWASP ZAP", "XSStrike", "Dalfox"],
+          "related_cwes": ["CWE-79"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-INPV-02",
+          "name": "Testing for Stored Cross Site Scripting",
+          "short_name": "Stored XSS",
+          "description": "Stored XSS testing checks if user input is saved by the application (in a database, file, or cache) and later displayed to other users without proper encoding. Unlike reflected XSS, stored XSS does not require victim interaction with a malicious link since the payload is served from the application itself.",
+          "why_it_matters": "Stored XSS is more dangerous than reflected XSS because the malicious payload persists in the application and automatically executes for every user who views the affected page. A single stored XSS vulnerability in a popular feature can compromise thousands of users.",
+          "what_to_check": [
+            "Test all user-input fields that store and display data (comments, profiles, messages)",
+            "Check file upload names and metadata for XSS in filenames displayed on the page",
+            "Test rich text editors for XSS through HTML/Markdown input",
+            "Verify that stored data is encoded when displayed in all contexts",
+            "Check administrative panels that display user-submitted data"
+          ],
+          "common_tools": ["Burp Suite", "OWASP ZAP", "XSStrike", "BeEF"],
+          "related_cwes": ["CWE-79"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-INPV-03",
+          "name": "Testing for HTTP Verb Tampering",
+          "short_name": "HTTP Verb Tampering",
+          "description": "HTTP verb tampering tests whether changing the HTTP method (GET, POST, PUT, HEAD, etc.) on a request can bypass security controls. Some applications and middleware only enforce authentication or authorization on specific HTTP methods, leaving others unprotected.",
+          "why_it_matters": "Security controls that only apply to specific HTTP methods can be trivially bypassed. For example, a web application firewall might only inspect POST requests for SQL injection, allowing the same attack through a PUT request. This is a common misconfiguration in access control implementations.",
+          "what_to_check": [
+            "Replay protected requests using different HTTP methods (GET, POST, PUT, PATCH, DELETE)",
+            "Test if changing the method bypasses authentication or authorization checks",
+            "Check if the application responds differently to unexpected HTTP methods",
+            "Test for method override using X-HTTP-Method-Override header",
+            "Verify that security controls apply uniformly across all HTTP methods"
+          ],
+          "common_tools": ["Burp Suite", "curl", "OWASP ZAP"],
+          "related_cwes": ["CWE-288"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-INPV-04",
+          "name": "Testing for HTTP Parameter Pollution",
+          "short_name": "HTTP Parameter Pollution",
+          "description": "HTTP Parameter Pollution (HPP) testing checks how the application handles duplicate parameters in the same request. Different web servers and frameworks handle duplicate parameters differently (first value, last value, concatenated, or array), which can be exploited to bypass validation or manipulate application logic.",
+          "why_it_matters": "HPP can bypass web application firewalls and input validation by splitting malicious input across duplicate parameters that get reassembled on the server. It can also manipulate application logic when different components parse duplicate parameters differently.",
+          "what_to_check": [
+            "Submit duplicate parameters with the same name but different values",
+            "Test how the application and server handle duplicate parameters (first wins, last wins, concat)",
+            "Try splitting injection payloads across duplicate parameters",
+            "Test HPP in query strings, POST body, and cookies simultaneously",
+            "Check if WAF rules can be bypassed through parameter pollution"
+          ],
+          "common_tools": ["Burp Suite", "OWASP ZAP", "Custom scripts"],
+          "related_cwes": ["CWE-235"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-INPV-05",
+          "name": "Testing for SQL Injection",
+          "short_name": "SQL Injection",
+          "description": "SQL injection testing checks whether user input is incorporated into SQL queries without proper parameterization or sanitization. Successful SQL injection can read, modify, or delete database contents, bypass authentication, and in some cases execute operating system commands.",
+          "why_it_matters": "SQL injection has been responsible for some of the largest data breaches in history, exposing millions of records. It can lead to complete database compromise, authentication bypass, data exfiltration, and in some configurations, remote code execution on the database server.",
+          "what_to_check": [
+            "Test all input parameters with SQL metacharacters (single quote, double quote, semicolon)",
+            "Check for error-based, union-based, blind, and time-based SQL injection techniques",
+            "Test numeric, string, and wildcard parameter types",
+            "Look for second-order SQL injection where stored input is used in later queries",
+            "Test for SQL injection in HTTP headers, cookies, and JSON/XML request bodies"
+          ],
+          "common_tools": ["sqlmap", "Burp Suite", "OWASP ZAP", "Havij"],
+          "related_cwes": ["CWE-89"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-INPV-06",
+          "name": "Testing for LDAP Injection",
+          "short_name": "LDAP Injection",
+          "description": "LDAP injection testing checks whether user input is used in LDAP queries without proper sanitization. LDAP (Lightweight Directory Access Protocol) is commonly used for authentication and directory lookups in enterprise environments, and injection can bypass authentication or extract directory data.",
+          "why_it_matters": "LDAP injection can bypass authentication in enterprise applications that use Active Directory or other LDAP directories. It can also extract sensitive directory information including user lists, email addresses, organizational structures, and group memberships.",
+          "what_to_check": [
+            "Test login and search fields with LDAP metacharacters (*, (, ), \\, NUL)",
+            "Try authentication bypass using LDAP injection (e.g., user=*)(uid=*)(&password=anything)",
+            "Test for information extraction by manipulating LDAP filter expressions",
+            "Check if the application uses parameterized LDAP queries or string concatenation",
+            "Test for both AND-based and OR-based LDAP injection techniques"
+          ],
+          "common_tools": ["Burp Suite", "Custom scripts", "OWASP ZAP", "ldapsearch"],
+          "related_cwes": ["CWE-90"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-INPV-07",
+          "name": "Testing for XML Injection",
+          "short_name": "XML Injection",
+          "description": "XML injection testing checks whether user input is embedded in XML documents without proper encoding, allowing attackers to modify XML structure. This includes XML External Entity (XXE) attacks that can read files, perform SSRF, or cause denial of service.",
+          "why_it_matters": "XML injection and XXE attacks can read arbitrary files from the server, perform server-side request forgery to internal services, exfiltrate data through out-of-band channels, and cause denial of service through billion laughs or recursive entity expansion attacks.",
+          "what_to_check": [
+            "Test for XML External Entity (XXE) injection to read local files",
+            "Check for blind XXE using out-of-band data exfiltration techniques",
+            "Test XML input for entity expansion denial of service (billion laughs)",
+            "Verify that XML parsers have external entity processing disabled",
+            "Test SOAP endpoints for XML injection in parameters"
+          ],
+          "common_tools": ["Burp Suite", "OWASP ZAP", "XXEinjector", "Custom XML payloads"],
+          "related_cwes": ["CWE-611", "CWE-91"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-INPV-08",
+          "name": "Testing for SSI Injection",
+          "short_name": "SSI Injection",
+          "description": "Server-Side Includes (SSI) injection testing checks whether user input is processed by the SSI engine, allowing attackers to inject SSI directives that execute commands, include files, or display server information. SSI is a legacy technology still found in some web servers.",
+          "why_it_matters": "SSI injection can lead to remote code execution if the web server processes SSI directives in user-controlled content. While less common in modern applications, legacy systems and certain hosting configurations still support SSI processing.",
+          "what_to_check": [
+            "Test input fields with SSI directives (<!--#exec cmd=\"command\" -->)",
+            "Check if .shtml or .stm file extensions are processed for SSI",
+            "Test for SSI injection in file upload names and content",
+            "Verify that the web server is configured to only process SSI in designated file types",
+            "Check error pages and dynamic content for SSI processing"
+          ],
+          "common_tools": ["Burp Suite", "curl", "Custom payloads"],
+          "related_cwes": ["CWE-97"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-INPV-09",
+          "name": "Testing for XPath Injection",
+          "short_name": "XPath Injection",
+          "description": "XPath injection testing checks whether user input is used in XPath queries against XML data stores without proper sanitization. Similar to SQL injection but targeting XML databases, XPath injection can bypass authentication and extract data from XML documents.",
+          "why_it_matters": "XPath injection can bypass authentication and extract all data from XML-based data stores. Unlike SQL injection, XPath has no permission model, so a successful injection can always access the entire XML document. Applications using XML for configuration or data storage are at risk.",
+          "what_to_check": [
+            "Test input fields with XPath metacharacters (single quote, double quote, //, ..)",
+            "Try authentication bypass with tautology-based XPath injection (1=1)",
+            "Test for blind XPath injection using boolean conditions and substring extraction",
+            "Check if the application uses XML databases or XPath for data retrieval",
+            "Verify that XPath queries use parameterized expressions rather than concatenation"
+          ],
+          "common_tools": ["Burp Suite", "Custom scripts", "xcat"],
+          "related_cwes": ["CWE-643"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-INPV-10",
+          "name": "Testing for IMAP SMTP Injection",
+          "short_name": "IMAP/SMTP Injection",
+          "description": "IMAP/SMTP injection testing checks whether user input is incorporated into email-related commands without sanitization. This can allow attackers to inject email commands through webmail interfaces, contact forms, or password reset functions that interact with mail servers.",
+          "why_it_matters": "Email injection can allow attackers to send emails as the application (spam, phishing), read other users' emails through IMAP injection, modify mailbox contents, or exfiltrate data through crafted email messages sent to attacker-controlled addresses.",
+          "what_to_check": [
+            "Test contact forms and feedback features for email header injection (\\r\\n)",
+            "Check if user input is used in IMAP commands for webmail applications",
+            "Test for SMTP injection through newline characters in email fields",
+            "Verify that email addresses are validated before use in mail commands",
+            "Test password reset and notification features for email injection"
+          ],
+          "common_tools": ["Burp Suite", "Custom scripts", "Telnet to SMTP server"],
+          "related_cwes": ["CWE-93"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-INPV-11",
+          "name": "Testing for Code Injection",
+          "short_name": "Code Injection",
+          "description": "Code injection testing checks whether user input is evaluated as code by the application's runtime environment. This includes injection into interpreted languages like PHP, Python, Ruby, and JavaScript where functions like eval(), exec(), or system() process user-supplied data.",
+          "why_it_matters": "Code injection provides direct code execution on the server, which is typically the most severe class of vulnerability. An attacker who can inject code gains the full capabilities of the programming language, including file system access, network operations, and command execution.",
+          "what_to_check": [
+            "Test parameters for server-side code injection (PHP, Python, Ruby, Node.js)",
+            "Look for eval(), exec(), system(), or similar dangerous functions processing user input",
+            "Test for code injection through deserialization of untrusted data",
+            "Check for expression language injection in framework-specific contexts",
+            "Verify that dynamic code evaluation is not used with user-controlled input"
+          ],
+          "common_tools": ["Burp Suite", "Commix", "Custom payloads", "OWASP ZAP"],
+          "related_cwes": ["CWE-94"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-INPV-12",
+          "name": "Testing for Command Injection",
+          "short_name": "Command Injection",
+          "description": "Command injection (OS command injection) testing checks whether user input is passed to operating system commands without proper sanitization. Successful exploitation allows attackers to execute arbitrary commands on the server with the privileges of the web application.",
+          "why_it_matters": "Command injection provides direct access to the underlying operating system. Attackers can read files, modify data, install backdoors, pivot to internal networks, or completely take over the server. It is one of the most severe vulnerability classes.",
+          "what_to_check": [
+            "Test parameters with command separator characters (;, |, &&, ||, `, $())",
+            "Look for application features that interact with the OS (ping, traceroute, file operations)",
+            "Test for blind command injection using time delays (sleep, ping -c)",
+            "Try out-of-band data exfiltration through DNS or HTTP callbacks",
+            "Check for command injection in file upload names and processing pipelines"
+          ],
+          "common_tools": ["Commix", "Burp Suite", "Custom payloads", "OWASP ZAP"],
+          "related_cwes": ["CWE-78"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-INPV-13",
+          "name": "Testing for Format String Injection",
+          "short_name": "Format String Injection",
+          "description": "Format string injection testing checks whether user input is used as a format string parameter in functions like printf() in C/C++ applications. This can be exploited to read from and write to memory, crash the application, or achieve code execution.",
+          "why_it_matters": "Format string vulnerabilities can lead to information disclosure, denial of service, and arbitrary code execution. While less common in modern web applications, they still appear in applications with native code components, embedded systems, and legacy C/C++ web services.",
+          "what_to_check": [
+            "Test input parameters with format string specifiers (%s, %x, %n, %p)",
+            "Look for applications with C/C++ backends that use printf-family functions",
+            "Test for information leakage through %x or %p reading stack memory",
+            "Check CGI applications and native code web services for format string issues",
+            "Verify that user input is never used as the format string argument"
+          ],
+          "common_tools": ["Burp Suite", "Custom payloads", "GDB for backend analysis"],
+          "related_cwes": ["CWE-134"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-INPV-14",
+          "name": "Testing for Incubated Vulnerability",
+          "short_name": "Incubated Vulnerability",
+          "description": "Incubated vulnerability testing checks for attacks where malicious input is stored in one part of the application and triggered later in a different context. This includes second-order injection attacks where stored data is used in SQL queries, file operations, or displayed to other users.",
+          "why_it_matters": "Incubated vulnerabilities are harder to detect because the injection point and the execution point are separated in time and location within the application. Automated scanners often miss these because they test input and output in the same request, not across different workflows.",
+          "what_to_check": [
+            "Trace how stored user input is used in subsequent application operations",
+            "Test for second-order SQL injection in stored data processed by backend jobs",
+            "Check if uploaded files or data trigger processing pipelines that may be vulnerable",
+            "Look for stored input used in email templates, report generation, or data exports",
+            "Test registration data that might be used in administrative interfaces without encoding"
+          ],
+          "common_tools": ["Burp Suite", "Manual code review", "Application-specific testing"],
+          "related_cwes": ["CWE-79", "CWE-89"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-INPV-15",
+          "name": "Testing for HTTP Splitting Smuggling",
+          "short_name": "HTTP Splitting/Smuggling",
+          "description": "HTTP splitting and smuggling testing checks whether user input can inject headers or manipulate request boundaries in HTTP traffic. HTTP request smuggling exploits differences in how front-end and back-end servers parse HTTP requests to bypass security controls.",
+          "why_it_matters": "HTTP request smuggling can bypass web application firewalls, access controls, and routing rules by causing front-end and back-end servers to disagree about request boundaries. It can lead to cache poisoning, session hijacking, and request routing manipulation.",
+          "what_to_check": [
+            "Test for HTTP response splitting by injecting CRLF characters in parameters",
+            "Check for HTTP request smuggling using Content-Length/Transfer-Encoding conflicts",
+            "Test for CL.TE and TE.CL smuggling variants",
+            "Verify that the application rejects requests with ambiguous Content-Length/Transfer-Encoding",
+            "Check if user input can inject HTTP headers through CRLF injection"
+          ],
+          "common_tools": ["Burp Suite HTTP Request Smuggler", "smuggler.py", "Custom scripts"],
+          "related_cwes": ["CWE-113", "CWE-444"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-INPV-16",
+          "name": "Testing for HTTP Incoming Requests",
+          "short_name": "HTTP Incoming Requests",
+          "description": "This test examines how the application handles and validates incoming HTTP requests, including unusual or malformed requests. It checks whether the application properly validates request structure, encoding, and content before processing.",
+          "why_it_matters": "Applications that do not properly validate incoming HTTP requests may be vulnerable to request manipulation, encoding-based bypasses, or protocol-level attacks. Strict request validation is an important defense-in-depth measure.",
+          "what_to_check": [
+            "Test how the application handles malformed HTTP requests",
+            "Check processing of requests with unusual encodings (UTF-7, double URL encoding)",
+            "Verify that the application validates Content-Type headers match actual content",
+            "Test for request body processing differences between content types",
+            "Check how the application handles oversized requests and headers"
+          ],
+          "common_tools": ["Burp Suite", "curl", "Custom HTTP clients", "OWASP ZAP"],
+          "related_cwes": ["CWE-20"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-INPV-17",
+          "name": "Testing for Host Header Injection",
+          "short_name": "Host Header Injection",
+          "description": "Host header injection testing checks whether the application trusts the Host header from user requests for security-sensitive operations like password reset links, cache keys, or server-side redirects. An attacker can manipulate the Host header to poison web caches or steal password reset tokens.",
+          "why_it_matters": "Host header injection can lead to password reset poisoning (where reset links point to attacker-controlled domains), web cache poisoning, and server-side request routing manipulation. Applications that use the Host header to generate URLs are particularly vulnerable.",
+          "what_to_check": [
+            "Modify the Host header in password reset requests to an attacker-controlled domain",
+            "Test for web cache poisoning by changing the Host header and checking cached responses",
+            "Check for SSRF through absolute URL handling with a modified Host header",
+            "Test X-Forwarded-Host and X-Host headers that may override the original Host",
+            "Verify that the application validates the Host header against a whitelist"
+          ],
+          "common_tools": ["Burp Suite", "curl", "Custom scripts"],
+          "related_cwes": ["CWE-644"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-INPV-18",
+          "name": "Testing for Server-side Template Injection",
+          "short_name": "SSTI",
+          "description": "Server-Side Template Injection (SSTI) testing checks whether user input is embedded in server-side templates (Jinja2, Twig, Freemarker, etc.) without proper sanitization. SSTI can escalate from information disclosure to remote code execution depending on the template engine.",
+          "why_it_matters": "SSTI vulnerabilities are especially dangerous because template engines often have access to server-side objects and methods. Depending on the template engine, SSTI can be escalated from simple math expressions to reading files, executing commands, and achieving full server compromise.",
+          "what_to_check": [
+            "Test input fields with template syntax for common engines ({{7*7}}, ${7*7}, #{7*7})",
+            "Identify the template engine from error messages or expression evaluation",
+            "Test for code execution through template engine-specific object chains",
+            "Check if user input is rendered in templates for emails, reports, or dynamic pages",
+            "Verify that user input is always placed in template data context, never in template code"
+          ],
+          "common_tools": ["tplmap", "Burp Suite", "SSTImap", "Custom payloads"],
+          "related_cwes": ["CWE-94", "CWE-1336"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-INPV-19",
+          "name": "Testing for Server-Side Request Forgery",
+          "short_name": "SSRF",
+          "description": "Server-Side Request Forgery (SSRF) testing checks whether the application can be tricked into making HTTP requests to unintended destinations, particularly internal services. SSRF exploits server-side functionality that fetches URLs, imports data, or processes webhooks to access internal resources.",
+          "why_it_matters": "SSRF is a critical vulnerability in cloud environments because it can access cloud metadata services to steal IAM credentials, interact with internal services not exposed to the internet, and pivot through the internal network. It was elevated to the OWASP Top 10 in 2021 as A10.",
+          "what_to_check": [
+            "Test URL input parameters with internal IP addresses (127.0.0.1, 169.254.169.254, 10.x.x.x)",
+            "Check for cloud metadata endpoint access (AWS, GCP, Azure metadata services)",
+            "Test for SSRF through file import, URL preview, webhook, and PDF generation features",
+            "Try bypass techniques for SSRF filters (DNS rebinding, URL encoding, IPv6, redirects)",
+            "Test for blind SSRF using out-of-band callbacks to attacker-controlled servers"
+          ],
+          "common_tools": ["Burp Suite Collaborator", "SSRFmap", "Gopherus", "Custom payloads"],
+          "related_cwes": ["CWE-918"],
+          "difficulty": "Advanced"
+        }
+      ]
+    },
+    {
+      "code": "WSTG-ERRH",
+      "slug": "error-handling",
+      "name": "Error Handling",
+      "icon": "\u26a0\ufe0f",
+      "summary": "Error Handling testing examines how the application responds when things go wrong. Improper error handling can leak sensitive information about the application's internal structure, technology stack, and database through detailed error messages and stack traces.",
+      "intro": "Error handling is a deceptively simple concept that has significant security implications. When applications encounter errors, they must balance providing useful feedback to users while not revealing internal details to attackers. This category tests whether error responses expose stack traces, database queries, file paths, server versions, or other information that helps attackers understand and exploit the application. Proper error handling returns generic user-friendly messages while logging detailed errors server-side. For security testers, triggering errors is a valuable reconnaissance technique that often reveals more about the application than any other single test. This is one of the most beginner-friendly testing categories and an excellent starting point for those new to web security testing.",
+      "owasp_top10_refs": ["A05", "A09"],
+      "related_cwes": ["CWE-209", "CWE-210"],
+      "relevant_certs": ["Security+", "CEH"],
+      "difficulty": "Beginner",
+      "faq_items": [
+        {
+          "q": "Why is error handling important for web application security?",
+          "a": "Error handling is important because detailed error messages can reveal sensitive internal information to attackers, including database schemas, file paths, technology versions, and internal logic. This information helps attackers craft targeted exploits. Proper error handling shows generic messages to users while logging technical details server-side for debugging."
+        },
+        {
+          "q": "What kind of information can stack traces expose?",
+          "a": "Stack traces can expose programming language and version, framework and library versions, internal file paths and directory structures, database connection strings and query details, internal function and variable names, and sometimes even source code snippets. Each piece of information helps an attacker build a more targeted attack against the application."
+        },
+        {
+          "q": "How should web applications handle errors securely?",
+          "a": "Applications should return generic, user-friendly error pages (like a simple 'Something went wrong') without technical details. All detailed error information should be logged server-side with correlation IDs that support staff can use to look up the details. Applications should never display stack traces, SQL queries, or internal paths to end users, even in development environments exposed to the internet."
+        }
+      ],
+      "tests": [
+        {
+          "id": "WSTG-ERRH-01",
+          "name": "Testing for Improper Error Handling",
+          "short_name": "Improper Error Handling",
+          "description": "This test triggers error conditions in the application and examines the error responses for sensitive information leakage. It covers HTTP error codes, application error messages, and edge cases that produce unhandled exceptions revealing internal details.",
+          "why_it_matters": "Improper error handling is one of the easiest vulnerabilities to find and one of the most informative for attackers. A single verbose error message can reveal the database type, query structure, internal file paths, and application framework, saving the attacker hours of reconnaissance.",
+          "what_to_check": [
+            "Trigger 404 errors and check if default server error pages reveal version information",
+            "Submit invalid input to form fields and check for database error messages",
+            "Send malformed requests (wrong Content-Type, missing parameters) and analyze responses",
+            "Test for different error behavior between authenticated and unauthenticated states",
+            "Check if error messages differ in a way that reveals valid versus invalid resources"
+          ],
+          "common_tools": ["Burp Suite", "curl", "Browser Developer Tools", "OWASP ZAP"],
+          "related_cwes": ["CWE-209"],
+          "difficulty": "Beginner"
+        },
+        {
+          "id": "WSTG-ERRH-02",
+          "name": "Testing for Stack Traces",
+          "short_name": "Stack Trace Testing",
+          "description": "This test specifically targets the exposure of stack traces in error responses. Stack traces provide a detailed call chain showing exactly which functions were executed, the file paths, line numbers, and often the parameters that caused the error.",
+          "why_it_matters": "Stack traces are a goldmine for attackers because they reveal the exact technology stack, internal code structure, third-party libraries with versions, and the precise logic that failed. This information directly informs exploitation strategies and helps identify specific CVEs to target.",
+          "what_to_check": [
+            "Submit unexpected data types to trigger type conversion errors",
+            "Send oversized input to trigger buffer or memory-related errors",
+            "Request non-existent resources to trigger routing or file system errors",
+            "Test API endpoints with malformed JSON or XML to trigger parsing errors",
+            "Check if stack traces are returned in HTTP response body, headers, or both"
+          ],
+          "common_tools": ["Burp Suite", "curl", "Custom fuzzing scripts", "OWASP ZAP"],
+          "related_cwes": ["CWE-209", "CWE-210"],
+          "difficulty": "Beginner"
+        }
+      ]
+    },
+    {
+      "code": "WSTG-CRYP",
+      "slug": "cryptography",
+      "name": "Cryptography",
+      "icon": "\ud83d\udd10",
+      "summary": "Cryptography testing evaluates how the application implements encryption, hashing, and secure communication protocols. Weak or misconfigured cryptography can expose sensitive data in transit and at rest, undermining the confidentiality that users and regulations demand.",
+      "intro": "Cryptography is the backbone of data protection in web applications, securing everything from login credentials to payment information. This category tests whether the application uses strong, properly configured encryption for data in transit (TLS/SSL) and at rest, and whether cryptographic implementations are free from known weaknesses like padding oracle attacks. Testing cryptography requires understanding both the protocols in use and the common implementation mistakes that weaken them. Weak TLS configurations, deprecated cipher suites, and improper certificate validation are among the most commonly found issues. These vulnerabilities directly impact compliance with standards like PCI DSS, HIPAA, and GDPR, making cryptography testing essential for both security assessments and regulatory audits.",
+      "owasp_top10_refs": ["A02"],
+      "related_cwes": ["CWE-326", "CWE-327", "CWE-311", "CWE-319"],
+      "relevant_certs": ["Security+", "CISSP", "CEH"],
+      "difficulty": "Advanced",
+      "faq_items": [
+        {
+          "q": "What are the most common cryptographic weaknesses in web applications?",
+          "a": "The most common weaknesses include using deprecated TLS versions (TLS 1.0, 1.1, SSL 3.0), weak cipher suites (RC4, DES, export ciphers), missing HSTS headers, improper certificate validation, transmitting sensitive data over HTTP, and using weak hashing algorithms (MD5, SHA-1) for passwords instead of purpose-built password hashing functions like bcrypt or Argon2."
+        },
+        {
+          "q": "What is a padding oracle attack and how does it work?",
+          "a": "A padding oracle attack exploits applications that reveal whether the padding of an encrypted message is valid through different error messages or response times. By systematically modifying ciphertext bytes and observing the application's response, an attacker can decrypt the entire message without knowing the key. Prevention requires using authenticated encryption (like AES-GCM) and ensuring consistent error responses."
+        },
+        {
+          "q": "How does cryptography testing relate to compliance requirements like PCI DSS?",
+          "a": "PCI DSS mandates strong cryptography for transmitting and storing cardholder data, requiring TLS 1.2 or higher, prohibiting weak ciphers, and mandating proper key management. HIPAA requires encryption of electronic protected health information, and GDPR expects encryption as a technical measure for data protection. Failing cryptography tests often means failing compliance audits as well."
+        }
+      ],
+      "tests": [
+        {
+          "id": "WSTG-CRYP-01",
+          "name": "Testing for Weak Transport Layer Security",
+          "short_name": "Weak TLS Testing",
+          "description": "This test evaluates the TLS/SSL configuration of the application including supported protocol versions, cipher suites, certificate validity, and key exchange mechanisms. Weak transport security allows attackers to intercept, decrypt, or modify data in transit.",
+          "why_it_matters": "Transport layer security is the primary protection for data in transit between users and the application. Weak TLS configurations expose sensitive data to network-level attacks including eavesdropping, man-in-the-middle attacks, and protocol downgrade attacks like POODLE and BEAST.",
+          "what_to_check": [
+            "Verify that only TLS 1.2 and TLS 1.3 are supported (no SSL 3.0, TLS 1.0, or TLS 1.1)",
+            "Check for weak cipher suites (RC4, DES, 3DES, export ciphers, NULL ciphers)",
+            "Validate certificate chain, expiration, and revocation status",
+            "Test for known TLS vulnerabilities (POODLE, BEAST, Heartbleed, CRIME, BREACH)",
+            "Verify that perfect forward secrecy (PFS) cipher suites are preferred"
+          ],
+          "common_tools": ["testssl.sh", "SSL Labs", "Nmap ssl-enum-ciphers", "sslyze", "OpenSSL s_client"],
+          "related_cwes": ["CWE-326", "CWE-327"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-CRYP-02",
+          "name": "Testing for Padding Oracle",
+          "short_name": "Padding Oracle Testing",
+          "description": "This test checks whether the application is vulnerable to padding oracle attacks by analyzing how it responds to modified ciphertext. If the application reveals whether decryption padding is valid (through error messages or timing differences), attackers can decrypt ciphertext without the key.",
+          "why_it_matters": "Padding oracle attacks can decrypt any data encrypted with CBC-mode block ciphers when the application leaks padding validation results. This has been exploited in real-world attacks against ASP.NET, Java applications, and custom encryption implementations to steal session tokens, decrypt cookies, and forge encrypted data.",
+          "what_to_check": [
+            "Identify encrypted values in cookies, URL parameters, or hidden form fields",
+            "Modify encrypted values and observe error response differences",
+            "Measure response time differences between valid and invalid padding",
+            "Test encrypted session tokens for padding oracle vulnerabilities",
+            "Check if the application uses CBC mode without authenticated encryption"
+          ],
+          "common_tools": ["PadBuster", "Burp Suite", "Custom scripts", "POET"],
+          "related_cwes": ["CWE-327", "CWE-347"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-CRYP-03",
+          "name": "Testing for Sensitive Information Sent via Unencrypted Channels",
+          "short_name": "Unencrypted Channel Testing",
+          "description": "This test checks whether sensitive data such as credentials, personal information, payment details, or session tokens are transmitted over unencrypted HTTP connections. Even applications with HTTPS may have pages or API endpoints that fall back to HTTP.",
+          "why_it_matters": "Sensitive data transmitted over HTTP is visible to anyone who can observe network traffic, including users on the same Wi-Fi network, ISPs, and anyone with access to network infrastructure. This is trivially exploitable with freely available tools like Wireshark.",
+          "what_to_check": [
+            "Verify that all pages handling sensitive data are served exclusively over HTTPS",
+            "Check for mixed content where HTTPS pages load resources over HTTP",
+            "Test whether login forms can be accessed and submitted over HTTP",
+            "Verify that API endpoints transmitting sensitive data require HTTPS",
+            "Check for HTTP links in emails sent by the application (password reset, verification)"
+          ],
+          "common_tools": ["Burp Suite", "Wireshark", "Browser Developer Tools", "curl"],
+          "related_cwes": ["CWE-319", "CWE-311"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-CRYP-04",
+          "name": "Testing for Weak Encryption",
+          "short_name": "Weak Encryption Testing",
+          "description": "This test evaluates whether the application uses strong, current encryption algorithms and proper key management for data at rest. Weak encryption includes deprecated algorithms (DES, RC4, MD5), insufficient key lengths, hardcoded keys, and improper use of cryptographic primitives.",
+          "why_it_matters": "Weak encryption provides a false sense of security. Data encrypted with broken algorithms or short keys can be decrypted by attackers with moderate resources. Hardcoded encryption keys found in source code or configuration files compromise all data encrypted with those keys.",
+          "what_to_check": [
+            "Identify encryption algorithms used for data at rest (passwords, PII, payment data)",
+            "Verify that passwords use adaptive hashing algorithms (bcrypt, Argon2, scrypt) not MD5/SHA-1",
+            "Check for hardcoded encryption keys in source code or configuration files",
+            "Verify that key lengths meet current recommendations (AES-256, RSA-2048 minimum)",
+            "Test for use of ECB mode which leaks data patterns in encrypted output"
+          ],
+          "common_tools": ["Custom code review", "Burp Suite", "hashID", "John the Ripper", "CyberChef"],
+          "related_cwes": ["CWE-327", "CWE-326", "CWE-261"],
+          "difficulty": "Advanced"
+        }
+      ]
+    },
+    {
+      "code": "WSTG-BUSL",
+      "slug": "business-logic",
+      "name": "Business Logic Testing",
+      "icon": "\ud83d\udcc8",
+      "summary": "Business Logic Testing examines the application's workflow rules and business processes for flaws that allow attackers to manipulate intended functionality. Unlike technical vulnerabilities, logic flaws exploit legitimate features in unintended ways and are invisible to automated scanners.",
+      "intro": "Business logic vulnerabilities are among the most challenging to find and the most impactful when exploited. Unlike injection or configuration flaws that follow known patterns, business logic bugs are unique to each application because they exploit the specific rules and workflows the application implements. This category tests whether business processes can be bypassed, manipulated, or abused, covering everything from data validation and request forgery to file upload restrictions and rate limits. Automated security scanners cannot detect these vulnerabilities because they require understanding the application's intended behavior and testing what happens when that behavior is subverted. For penetration testers and bug bounty hunters, business logic testing is where deep application knowledge pays off with high-severity findings that others miss.",
+      "owasp_top10_refs": ["A04", "A08"],
+      "related_cwes": ["CWE-840", "CWE-841", "CWE-434"],
+      "relevant_certs": ["CEH", "OSCP", "GPEN"],
+      "difficulty": "Advanced",
+      "faq_items": [
+        {
+          "q": "What are business logic vulnerabilities and why are they hard to find?",
+          "a": "Business logic vulnerabilities are flaws in the application's intended workflow that allow users to achieve outcomes the developers did not anticipate. They are hard to find because they require understanding the application's business rules and testing edge cases that automated scanners cannot identify. Examples include skipping required steps in a checkout process, manipulating quantities to get negative prices, or reusing single-use coupon codes."
+        },
+        {
+          "q": "Can automated scanners detect business logic flaws?",
+          "a": "No, automated scanners generally cannot detect business logic flaws because these vulnerabilities require understanding the intended behavior of the application. A scanner cannot know that skipping step 3 of a 5-step process should not be allowed, or that a coupon should only work once. Manual testing by someone who understands the application's business rules is essential for finding these issues."
+        },
+        {
+          "q": "What is the relationship between business logic testing and threat modeling?",
+          "a": "Threat modeling identifies potential business logic abuse scenarios before testing begins by analyzing how the application's features and workflows could be manipulated. It asks questions like 'What if a user submits step 4 before step 2?' or 'What if the quantity is negative?' This systematic approach ensures business logic testing is comprehensive rather than relying on ad-hoc exploration."
+        }
+      ],
+      "tests": [
+        {
+          "id": "WSTG-BUSL-01",
+          "name": "Test Business Logic Data Validation",
+          "short_name": "Business Logic Validation",
+          "description": "This test checks whether the application properly validates data at the business logic level, beyond basic input validation. It examines whether business rules about data ranges, relationships between fields, and context-specific constraints are properly enforced.",
+          "why_it_matters": "Business logic validation failures allow attackers to submit data that passes technical validation but violates business rules. For example, ordering a negative quantity, setting a future birth date, or submitting a transaction amount that exceeds account limits may all pass input validation but violate business logic.",
+          "what_to_check": [
+            "Test boundary values for business-specific fields (quantities, amounts, dates)",
+            "Submit negative values where only positive values should be accepted",
+            "Test relationships between dependent fields (start date after end date, amounts exceeding limits)",
+            "Verify that server-side business rules match client-side validation",
+            "Check if business constraints are enforced consistently across all entry points"
+          ],
+          "common_tools": ["Burp Suite", "Manual testing", "Postman", "Custom scripts"],
+          "related_cwes": ["CWE-840"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-BUSL-02",
+          "name": "Test Ability to Forge Requests",
+          "short_name": "Request Forgery Testing",
+          "description": "This test checks whether the application relies on client-side data or hidden form fields for business logic decisions that should be enforced server-side. Attackers who can forge or modify requests can manipulate prices, skip validation steps, or change transaction parameters.",
+          "why_it_matters": "Applications that trust client-submitted data for business decisions are vulnerable to request forgery. An attacker can modify prices in hidden form fields, change product IDs, alter quantity values, or manipulate discount codes by intercepting and modifying HTTP requests.",
+          "what_to_check": [
+            "Modify hidden form fields that control pricing or business logic",
+            "Change product IDs or SKUs in purchase requests to get different items at wrong prices",
+            "Manipulate request parameters that control workflow steps or approval states",
+            "Test if removing or modifying referrer checks allows skipping validation steps",
+            "Verify that all business-critical values are validated server-side, not just client-side"
+          ],
+          "common_tools": ["Burp Suite", "OWASP ZAP", "Postman", "Browser Developer Tools"],
+          "related_cwes": ["CWE-472"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-BUSL-03",
+          "name": "Test Integrity Checks",
+          "short_name": "Integrity Check Testing",
+          "description": "This test verifies whether the application implements integrity checks to detect unauthorized modification of data in transit or at rest. It checks for mechanisms like checksums, digital signatures, and tamper-evident logging that protect against data manipulation.",
+          "why_it_matters": "Without integrity checks, attackers can modify data without detection. This includes changing transaction amounts, altering audit logs, modifying configuration files, or tampering with data exchanged between application components. Integrity verification is a core requirement for financial and regulated applications.",
+          "what_to_check": [
+            "Check if the application uses checksums or HMACs to verify data integrity",
+            "Test whether modifying data in transit (cookies, hidden fields, API payloads) is detected",
+            "Verify that audit logs are tamper-evident and modifications are detectable",
+            "Test if transaction integrity is maintained across multi-step processes",
+            "Check whether data integrity verification covers all critical data paths"
+          ],
+          "common_tools": ["Burp Suite", "Custom scripts", "Manual testing"],
+          "related_cwes": ["CWE-354"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-BUSL-04",
+          "name": "Test for Process Timing",
+          "short_name": "Process Timing Testing",
+          "description": "This test checks whether the application is vulnerable to timing-based attacks on business processes. This includes race conditions where concurrent requests can bypass limits, time-of-check-to-time-of-use (TOCTOU) bugs, and timing-based information leakage.",
+          "why_it_matters": "Race conditions and timing attacks can bypass business rules that work correctly for sequential requests. For example, simultaneously submitting two withdrawal requests might allow double-spending if the balance check and deduction are not atomic. These bugs often appear in financial, inventory, and coupon systems.",
+          "what_to_check": [
+            "Test for race conditions by sending concurrent requests for the same operation",
+            "Check if time-sensitive operations (OTP validation, coupon redemption) are vulnerable to replay",
+            "Test for TOCTOU vulnerabilities in multi-step business processes",
+            "Measure response time differences that might leak information about internal state",
+            "Verify that rate-limiting and balance checks are atomic operations"
+          ],
+          "common_tools": ["Burp Suite Turbo Intruder", "Custom multi-threaded scripts", "race-the-web"],
+          "related_cwes": ["CWE-362", "CWE-367"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-BUSL-05",
+          "name": "Test Number of Times a Function Can Be Used Limits",
+          "short_name": "Function Limit Testing",
+          "description": "This test checks whether the application enforces limits on how many times specific functions can be used. This includes rate limiting, usage quotas, one-time-use features (coupons, vouchers, trials), and maximum attempt limits.",
+          "why_it_matters": "Without proper usage limits, attackers can abuse features far beyond their intended use. Single-use coupons can be reused, free trial periods can be restarted indefinitely, and unlimited API calls can be used for data scraping or denial of service.",
+          "what_to_check": [
+            "Test if single-use features (coupons, voucher codes, trial activations) can be reused",
+            "Check if rate limiting exists on sensitive operations (login attempts, API calls, downloads)",
+            "Verify that rate limits are enforced server-side and cannot be bypassed",
+            "Test if changing session identifiers, IP addresses, or accounts bypasses usage limits",
+            "Check if free trial limits can be circumvented through account creation"
+          ],
+          "common_tools": ["Burp Suite Intruder", "Custom scripts", "Postman"],
+          "related_cwes": ["CWE-770", "CWE-799"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-BUSL-06",
+          "name": "Testing for the Circumvention of Work Flows",
+          "short_name": "Workflow Circumvention",
+          "description": "This test checks whether the application enforces the intended sequence of steps in multi-step processes. Attackers may attempt to skip, reorder, or repeat steps in workflows like registration, checkout, or approval processes to achieve unintended outcomes.",
+          "why_it_matters": "Workflow circumvention can allow attackers to bypass critical security or business steps. Skipping payment verification in a checkout process, bypassing email verification in registration, or jumping directly to the approval step in a review process can have severe business consequences.",
+          "what_to_check": [
+            "Test if steps in multi-step processes can be skipped by directly requesting later steps",
+            "Check if workflow steps can be completed out of order",
+            "Verify that completing a workflow step requires all previous steps to be genuinely completed",
+            "Test if repeating earlier steps after completing later steps causes inconsistencies",
+            "Check whether canceling and restarting workflows preserves or resets state correctly"
+          ],
+          "common_tools": ["Burp Suite", "Manual testing", "Custom scripts"],
+          "related_cwes": ["CWE-841"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-BUSL-07",
+          "name": "Test Defenses Against Application Misuse",
+          "short_name": "Application Misuse Testing",
+          "description": "This test evaluates whether the application has defenses against abuse of legitimate functionality. This includes detecting and blocking automated bot activity, identifying suspicious usage patterns, and implementing safeguards against feature abuse at scale.",
+          "why_it_matters": "Applications without abuse detection allow attackers to exploit legitimate features for malicious purposes. Scraping user data, creating fake accounts at scale, manipulating review systems, or exploiting referral programs are all examples of application misuse that require proactive detection and prevention.",
+          "what_to_check": [
+            "Test if automated interactions are detected and blocked (CAPTCHAs, bot detection)",
+            "Check if suspicious usage patterns trigger alerts or account restrictions",
+            "Verify that abuse-prevention measures cannot be easily bypassed",
+            "Test if the application logs and monitors for abnormal usage patterns",
+            "Check if there are mechanisms to recover from detected abuse scenarios"
+          ],
+          "common_tools": ["Burp Suite", "Custom automation scripts", "Selenium", "Puppeteer"],
+          "related_cwes": ["CWE-799", "CWE-837"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-BUSL-08",
+          "name": "Test Upload of Unexpected File Types",
+          "short_name": "Unexpected File Type Upload",
+          "description": "This test checks whether the application properly restricts file upload functionality to only accept intended file types. Accepting unexpected file types can lead to web shell uploads, stored XSS through HTML/SVG files, or server-side processing vulnerabilities through malicious documents.",
+          "why_it_matters": "Unrestricted file upload is a severe vulnerability that can lead to remote code execution if an attacker uploads a web shell, cross-site scripting if HTML or SVG files are served from the same domain, or server compromise through malicious files that exploit document processing libraries.",
+          "what_to_check": [
+            "Test if the application validates file types by extension, MIME type, and file content (magic bytes)",
+            "Try uploading executable files with changed extensions (.php.jpg, .asp;.jpg)",
+            "Test if MIME type validation can be bypassed by modifying Content-Type headers",
+            "Upload HTML and SVG files that contain JavaScript to test for stored XSS",
+            "Check if uploaded files are served from a separate domain to prevent same-origin attacks"
+          ],
+          "common_tools": ["Burp Suite", "Custom file payloads", "OWASP ZAP"],
+          "related_cwes": ["CWE-434"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-BUSL-09",
+          "name": "Test Upload of Malicious Files",
+          "short_name": "Malicious File Upload",
+          "description": "This test goes beyond file type restrictions to check whether the application is vulnerable to malicious content within uploaded files. This includes web shells, documents with embedded macros, polyglot files, and specially crafted files that exploit processing vulnerabilities.",
+          "why_it_matters": "Even when file type restrictions are in place, malicious content within allowed file types can compromise the system. ZIP bombs can cause denial of service, images with embedded PHP can become web shells on misconfigured servers, and office documents with macros can compromise users who download them.",
+          "what_to_check": [
+            "Upload web shells disguised as allowed file types (PHP in JPEG, JSP in PDF)",
+            "Test for ZIP bomb or decompression bomb handling",
+            "Upload files with embedded macros or active content",
+            "Test for file processing vulnerabilities (ImageTragick, LibreOffice CVEs)",
+            "Check if antivirus scanning is performed on uploaded files before they are accessible"
+          ],
+          "common_tools": ["Burp Suite", "Custom file payloads", "eicar test file", "fuxploider"],
+          "related_cwes": ["CWE-434", "CWE-509"],
+          "difficulty": "Advanced"
+        }
+      ]
+    },
+    {
+      "code": "WSTG-CLNT",
+      "slug": "client-side-testing",
+      "name": "Client-side Testing",
+      "icon": "\ud83d\udda5\ufe0f",
+      "summary": "Client-side Testing examines vulnerabilities that execute in the user's browser rather than on the server. This category covers DOM-based XSS, client-side injection, clickjacking, and issues with browser storage, WebSockets, and cross-origin resource sharing.",
+      "intro": "Client-side vulnerabilities execute in the context of the user's browser and exploit the trust relationship between the browser and the web application. As modern applications shift more logic to the client side through JavaScript frameworks and single-page applications, the attack surface on the client has grown significantly. This category covers 13 tests ranging from DOM-based cross-site scripting and HTML injection to clickjacking, WebSocket testing, and browser storage security. These vulnerabilities are particularly relevant for modern JavaScript-heavy applications where client-side routing, template rendering, and data processing create new attack vectors that traditional server-side testing misses. For security testers, understanding the browser security model and same-origin policy is essential for finding these client-side vulnerabilities.",
+      "owasp_top10_refs": ["A03", "A01"],
+      "related_cwes": ["CWE-79", "CWE-601", "CWE-1021", "CWE-346"],
+      "relevant_certs": ["CEH", "OSCP", "GWAPT"],
+      "difficulty": "Intermediate",
+      "faq_items": [
+        {
+          "q": "What is the difference between reflected/stored XSS and DOM-based XSS?",
+          "a": "Reflected and stored XSS involve the server including malicious input in the HTTP response. DOM-based XSS occurs entirely in the browser when client-side JavaScript reads data from an attacker-controllable source (like the URL fragment) and writes it to a dangerous sink (like innerHTML) without sanitization. DOM-based XSS never reaches the server, making it invisible to server-side security controls and WAFs."
+        },
+        {
+          "q": "What is clickjacking and how does it affect users?",
+          "a": "Clickjacking (UI redressing) tricks users into clicking on something different from what they perceive by loading the target application in a transparent iframe overlaid on a malicious page. The user thinks they are clicking buttons on the attacker's page but are actually interacting with the hidden target application. This can lead to unintended actions like changing settings, making purchases, or granting permissions."
+        },
+        {
+          "q": "Why is browser storage (localStorage, sessionStorage) a security concern?",
+          "a": "Browser storage is accessible to any JavaScript running on the same origin, which means XSS vulnerabilities can read all stored data. Storing sensitive data like session tokens or personal information in localStorage is risky because it persists even after the browser is closed and has no equivalent of cookie security flags (HttpOnly, Secure). Sensitive data should use httpOnly cookies rather than browser storage."
+        }
+      ],
+      "tests": [
+        {
+          "id": "WSTG-CLNT-01",
+          "name": "Testing for DOM-Based Cross Site Scripting",
+          "short_name": "DOM-Based XSS",
+          "description": "DOM-based XSS testing checks whether client-side JavaScript reads data from attacker-controllable sources (URL hash, document.referrer, postMessage) and writes it to dangerous sinks (innerHTML, eval, document.write) without proper sanitization. This type of XSS occurs entirely in the browser.",
+          "why_it_matters": "DOM-based XSS is increasingly common in modern single-page applications and is invisible to server-side security controls because the payload never leaves the browser. Web application firewalls cannot detect or block DOM-based XSS, making client-side testing essential.",
+          "what_to_check": [
+            "Identify JavaScript sources that read from URL fragments, query parameters, or document properties",
+            "Map dangerous sinks in JavaScript (innerHTML, eval, document.write, jQuery.html())",
+            "Test if data flows from sources to sinks without sanitization",
+            "Check for DOM XSS in client-side routing and template rendering",
+            "Test postMessage handlers for origin validation and safe data handling"
+          ],
+          "common_tools": ["Burp Suite DOM Invader", "Browser Developer Tools", "DOMPurify testing", "Semgrep"],
+          "related_cwes": ["CWE-79"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-CLNT-02",
+          "name": "Testing for JavaScript Execution",
+          "short_name": "JavaScript Execution Testing",
+          "description": "This test checks whether an attacker can inject and execute JavaScript through the application's client-side processing. It focuses on contexts where user input is processed by JavaScript code and may be executed as code rather than treated as data.",
+          "why_it_matters": "JavaScript execution vulnerabilities allow attackers to run arbitrary code in the victim's browser context, enabling session hijacking, data theft, keylogging, and actions on behalf of the user. As applications rely more on client-side JavaScript, these attack vectors expand.",
+          "what_to_check": [
+            "Test for JavaScript injection through URL parameters processed by client-side code",
+            "Check for use of eval(), Function(), setTimeout/setInterval with string arguments",
+            "Test for injection through JavaScript template literals and string interpolation",
+            "Verify that user-controlled data is not used in dynamically generated script content",
+            "Check for unsafe JavaScript URL handling (javascript: protocol in links)"
+          ],
+          "common_tools": ["Burp Suite", "Browser Developer Tools", "ESLint security rules"],
+          "related_cwes": ["CWE-79"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-CLNT-03",
+          "name": "Testing for HTML Injection",
+          "short_name": "HTML Injection",
+          "description": "HTML injection testing checks whether user input can be used to inject arbitrary HTML content into the page. While similar to XSS, HTML injection focuses on modifying page structure and content (defacement, phishing forms) even when script execution is prevented by Content Security Policy.",
+          "why_it_matters": "HTML injection can be used for phishing attacks by injecting fake login forms, for content spoofing to damage reputation, and for social engineering by modifying page content. Even when CSP blocks script execution, injected HTML can still manipulate what users see and interact with.",
+          "what_to_check": [
+            "Test input fields for HTML tag injection that modifies page structure",
+            "Inject fake login forms to test phishing potential",
+            "Check if HTML injection can override or hide legitimate page content",
+            "Test for HTML injection in error messages, search results, and user profiles",
+            "Verify that Content-Security-Policy prevents escalation to script execution"
+          ],
+          "common_tools": ["Burp Suite", "Browser Developer Tools", "Manual testing"],
+          "related_cwes": ["CWE-79"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-CLNT-04",
+          "name": "Testing for Client-side URL Redirect",
+          "short_name": "Client-side URL Redirect",
+          "description": "This test checks whether the application performs client-side redirects based on user-controllable input without proper validation. Open redirects can be used in phishing attacks by making malicious URLs appear to originate from the trusted application domain.",
+          "why_it_matters": "Open redirects allow attackers to create convincing phishing URLs using the trusted application's domain. Victims see the legitimate domain in the link and trust it, but are redirected to a malicious site. This can also be chained with other vulnerabilities like OAuth token theft.",
+          "what_to_check": [
+            "Test URL parameters used for redirects (redirect, url, next, return, goto)",
+            "Check if JavaScript-based redirects validate the destination URL",
+            "Test for redirect bypass techniques (protocol-relative URLs, URL encoding, backslash)",
+            "Verify that redirect destinations are validated against a whitelist",
+            "Test for open redirect in OAuth flows and login return URLs"
+          ],
+          "common_tools": ["Burp Suite", "Browser Developer Tools", "Custom redirect payloads"],
+          "related_cwes": ["CWE-601"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-CLNT-05",
+          "name": "Testing for CSS Injection",
+          "short_name": "CSS Injection",
+          "description": "CSS injection testing checks whether user input can be injected into style contexts to manipulate page appearance, exfiltrate data through CSS selectors, or in older browsers, execute JavaScript through CSS expression() functions.",
+          "why_it_matters": "CSS injection can be used to exfiltrate sensitive data (like CSRF tokens) through attribute selectors and background URL techniques, phish users by overlaying fake content, and in some cases execute JavaScript. It is often overlooked because it seems less dangerous than XSS.",
+          "what_to_check": [
+            "Test if user input is reflected in style attributes or CSS blocks",
+            "Try injecting CSS that modifies page layout to overlay phishing content",
+            "Test CSS-based data exfiltration using attribute selectors and external URL references",
+            "Check for CSS injection in user-customizable themes or profile styling",
+            "Verify that user input in style contexts is properly sanitized"
+          ],
+          "common_tools": ["Burp Suite", "Browser Developer Tools", "Custom CSS payloads"],
+          "related_cwes": ["CWE-79"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-CLNT-06",
+          "name": "Testing for Client-side Resource Manipulation",
+          "short_name": "Resource Manipulation",
+          "description": "This test checks whether an attacker can manipulate the resources loaded by the client-side application, such as JavaScript files, CSS stylesheets, images, or iframes. This includes testing for subdomain takeover of CDN resources and manipulation of resource URLs through user input.",
+          "why_it_matters": "If an attacker can control which resources the application loads, they can inject malicious JavaScript through compromised or attacker-controlled resources. This is particularly relevant when applications load resources from user-controlled URLs or domains vulnerable to takeover.",
+          "what_to_check": [
+            "Identify user-controlled parameters that influence loaded resource URLs",
+            "Test if script, stylesheet, or iframe sources can be manipulated through URL parameters",
+            "Check for Subresource Integrity (SRI) on externally loaded scripts and stylesheets",
+            "Verify that CDN or third-party resource domains are not vulnerable to takeover",
+            "Test if the application validates resource origins before loading them"
+          ],
+          "common_tools": ["Burp Suite", "Browser Developer Tools", "Subresource Integrity checker"],
+          "related_cwes": ["CWE-829"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-CLNT-07",
+          "name": "Testing Cross Origin Resource Sharing",
+          "short_name": "CORS Testing",
+          "description": "Cross-Origin Resource Sharing (CORS) testing evaluates whether the application's CORS policy allows unauthorized cross-origin access to sensitive data. Overly permissive CORS configurations can allow any website to read authenticated responses from the application's API.",
+          "why_it_matters": "Misconfigured CORS can allow an attacker's website to make authenticated requests to the target application and read the responses, effectively bypassing the same-origin policy. This can expose user data, tokens, and sensitive API responses to malicious third-party sites.",
+          "what_to_check": [
+            "Test if Access-Control-Allow-Origin reflects the requesting origin without validation",
+            "Check if Access-Control-Allow-Credentials is true with a wildcard or reflected origin",
+            "Test for origin validation bypasses (null origin, subdomain matching, regex flaws)",
+            "Verify that CORS is not configured on endpoints that return sensitive data",
+            "Test pre-flight request handling for proper origin validation"
+          ],
+          "common_tools": ["Burp Suite", "curl", "Custom scripts", "CORS Misconfig Tester"],
+          "related_cwes": ["CWE-346", "CWE-942"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-CLNT-08",
+          "name": "Testing for Cross Site Flashing",
+          "short_name": "Cross Site Flashing",
+          "description": "Cross-site flashing testing checks whether Flash applications (SWF files) on the server can be exploited to execute JavaScript, perform cross-domain data theft, or redirect users. While Flash is largely deprecated, legacy SWF files may still be hosted and exploitable.",
+          "why_it_matters": "Legacy Flash files left on servers can still be exploited even though Flash Player is no longer supported by major browsers. Vulnerable SWF files can be used through specialized browser plugins or targeted environments where Flash is still available, and their mere presence indicates poor asset management.",
+          "what_to_check": [
+            "Search for SWF files hosted on the application server",
+            "Decompile discovered SWF files and review for user-controlled input handling",
+            "Test for FlashVars injection that can alter SWF behavior",
+            "Check if SWF files use ExternalInterface for JavaScript communication",
+            "Verify that any remaining SWF files are necessary and not exploitable"
+          ],
+          "common_tools": ["JPEXS Flash Decompiler", "SWFScan", "Burp Suite", "Google Dorking for SWF files"],
+          "related_cwes": ["CWE-79"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-CLNT-09",
+          "name": "Testing for Clickjacking",
+          "short_name": "Clickjacking Testing",
+          "description": "Clickjacking testing checks whether the application can be loaded in a frame or iframe by a malicious site. If so, an attacker can overlay the application with transparent layers to trick users into clicking on actions they did not intend, such as changing settings or making purchases.",
+          "why_it_matters": "Clickjacking can trick users into performing any action available in the application including changing account settings, making purchases, transferring funds, or granting permissions. Users believe they are interacting with the attacker's page but are actually clicking on the hidden target application.",
+          "what_to_check": [
+            "Check for X-Frame-Options header (DENY or SAMEORIGIN)",
+            "Verify Content-Security-Policy frame-ancestors directive",
+            "Test if the application can be loaded in an iframe from a different domain",
+            "Check for JavaScript frame-busting code and test if it can be bypassed",
+            "Create a proof-of-concept clickjacking page to demonstrate the vulnerability"
+          ],
+          "common_tools": ["Burp Suite Clickbandit", "Custom HTML PoC", "Browser Developer Tools"],
+          "related_cwes": ["CWE-1021"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-CLNT-10",
+          "name": "Testing WebSockets",
+          "short_name": "WebSocket Testing",
+          "description": "WebSocket testing evaluates the security of WebSocket connections used for real-time communication. This includes checking authentication, authorization, input validation, and origin validation on WebSocket endpoints, which often lack the security controls applied to HTTP endpoints.",
+          "why_it_matters": "WebSockets maintain persistent connections and often bypass HTTP security controls including WAFs, CSRF protections, and rate limiters. Since WebSocket messages are not bound by the same-origin policy after the initial handshake, insecure implementations can be exploited for cross-site attacks.",
+          "what_to_check": [
+            "Check if WebSocket connections validate the Origin header during the handshake",
+            "Test if authentication is required and verified for WebSocket connections",
+            "Verify that authorization is enforced on WebSocket messages, not just connection establishment",
+            "Test WebSocket message content for injection vulnerabilities (XSS, SQL injection)",
+            "Check if the WebSocket connection uses the secure wss:// protocol"
+          ],
+          "common_tools": ["Burp Suite", "OWASP ZAP WebSocket testing", "wscat", "Custom scripts"],
+          "related_cwes": ["CWE-346"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-CLNT-11",
+          "name": "Testing Web Messaging",
+          "short_name": "Web Messaging Testing",
+          "description": "Web messaging testing checks the security of the postMessage API used for cross-origin communication between windows and iframes. Insecure implementations may accept messages from any origin or send sensitive data without verifying the recipient's origin.",
+          "why_it_matters": "The postMessage API allows cross-origin communication by design, making it a powerful but dangerous feature. If event listeners do not validate message origins, any website can send messages to the application. If the application sends sensitive data via postMessage without checking the target origin, data can be stolen.",
+          "what_to_check": [
+            "Identify all postMessage event listeners in the application's JavaScript",
+            "Check if event listeners validate the origin of incoming messages",
+            "Test if sending crafted messages from a different origin triggers application functionality",
+            "Verify that postMessage calls specify the target origin (not '*')",
+            "Check if postMessage data is used in dangerous sinks without sanitization"
+          ],
+          "common_tools": ["Browser Developer Tools", "Burp Suite", "Custom JavaScript", "PMHook"],
+          "related_cwes": ["CWE-346"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-CLNT-12",
+          "name": "Testing Browser Storage",
+          "short_name": "Browser Storage Testing",
+          "description": "Browser storage testing examines what data the application stores in localStorage, sessionStorage, IndexedDB, and cookies. Sensitive data stored in browser storage is accessible to any JavaScript running on the same origin and may persist longer than intended.",
+          "why_it_matters": "Data in browser storage is accessible to any JavaScript on the same origin, making it vulnerable to XSS attacks. localStorage persists indefinitely unless explicitly cleared, meaning sensitive data like tokens or personal information can be extracted long after the user session ends.",
+          "what_to_check": [
+            "Review localStorage and sessionStorage for sensitive data (tokens, PII, credentials)",
+            "Check if session tokens are stored in browser storage instead of httpOnly cookies",
+            "Verify that sensitive data is cleared when the user logs out",
+            "Check IndexedDB for cached sensitive data from API responses",
+            "Test if stored data is encrypted or if plaintext sensitive values are accessible"
+          ],
+          "common_tools": ["Browser Developer Tools", "Burp Suite", "StorageExplorer extensions"],
+          "related_cwes": ["CWE-922"],
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "WSTG-CLNT-13",
+          "name": "Testing for Cross Site Script Inclusion",
+          "short_name": "XSSI Testing",
+          "description": "Cross-Site Script Inclusion (XSSI) testing checks whether sensitive data is exposed through JavaScript files or JSONP endpoints that can be included by an attacker's page. If authenticated JavaScript responses contain user-specific data, an attacker's page can read this data by including the script.",
+          "why_it_matters": "XSSI allows an attacker's website to steal sensitive data by including authenticated JavaScript endpoints as script sources. Because script inclusion is not restricted by the same-origin policy, the attacker's page can read any data embedded in the JavaScript response, including CSRF tokens, user data, and API keys.",
+          "what_to_check": [
+            "Identify JavaScript endpoints that return different content based on authentication",
+            "Check for JSONP endpoints that include sensitive user data in the callback",
+            "Test if authenticated JavaScript responses contain user-specific information",
+            "Verify that Content-Type headers prevent script inclusion of non-JavaScript responses",
+            "Check if the X-Content-Type-Options: nosniff header prevents MIME type sniffing"
+          ],
+          "common_tools": ["Burp Suite", "Browser Developer Tools", "Custom HTML PoC"],
+          "related_cwes": ["CWE-200", "CWE-346"],
+          "difficulty": "Intermediate"
+        }
+      ]
+    },
+    {
+      "code": "WSTG-APIT",
+      "slug": "api-testing",
+      "name": "API Testing",
+      "icon": "\ud83d\udd0c",
+      "summary": "API Testing evaluates the security of application programming interfaces including GraphQL, REST, SOAP, and WebSocket APIs. As APIs become the primary communication mechanism for modern applications, securing them is critical to preventing data breaches and unauthorized access.",
+      "intro": "APIs are the backbone of modern web applications, mobile apps, and microservice architectures. This category tests the security of different API technologies, each with unique attack surfaces and common vulnerabilities. GraphQL APIs face introspection abuse and query complexity attacks, REST APIs are vulnerable to broken authentication and mass assignment, SOAP APIs have XML-specific injection risks, and WebSocket APIs often lack the security controls applied to traditional HTTP endpoints. As organizations adopt API-first architectures, the attack surface shifts from traditional web pages to API endpoints, making API security testing essential. These tests are increasingly important for security certifications and real-world penetration testing engagements.",
+      "owasp_top10_refs": ["A01", "A03"],
+      "related_cwes": ["CWE-89", "CWE-200", "CWE-285", "CWE-918"],
+      "relevant_certs": ["Security+", "CEH", "OSCP"],
+      "difficulty": "Advanced",
+      "faq_items": [
+        {
+          "q": "What are the main security differences between REST and GraphQL APIs?",
+          "a": "REST APIs use fixed endpoints with defined response structures, while GraphQL uses a single endpoint where clients specify exactly what data they want. GraphQL introduces unique risks including introspection queries that reveal the entire API schema, deeply nested queries that cause denial of service, and batch query attacks. REST APIs are more susceptible to broken object-level authorization (IDOR) and mass assignment. Both require strong authentication, authorization, and input validation."
+        },
+        {
+          "q": "Why are APIs often less secure than web applications?",
+          "a": "APIs are often less secure because they are designed for machine-to-machine communication and may skip security controls that web applications include by default, such as CSRF protection, rate limiting, and WAF coverage. APIs also frequently lack the same level of authentication and authorization enforcement as web interfaces, especially internal APIs that were not designed for public exposure."
+        },
+        {
+          "q": "What is the OWASP API Security Top 10 and how does it relate to WSTG?",
+          "a": "The OWASP API Security Top 10 is a separate project focused specifically on API security risks, including Broken Object Level Authorization, Broken Authentication, Excessive Data Exposure, and Injection. WSTG-APIT tests complement this by providing practical testing procedures for different API technologies. Together, they provide comprehensive coverage for API security assessment."
+        }
+      ],
+      "tests": [
+        {
+          "id": "WSTG-APIT-01",
+          "name": "Testing GraphQL",
+          "short_name": "GraphQL Testing",
+          "description": "GraphQL testing evaluates the security of GraphQL API implementations including introspection exposure, query depth and complexity limits, authentication and authorization on resolvers, and injection vulnerabilities in query variables. GraphQL's flexibility creates unique attack surfaces not found in traditional REST APIs.",
+          "why_it_matters": "GraphQL APIs often expose introspection queries that reveal the entire schema to attackers, allow deeply nested queries that cause denial of service, and may lack authorization checks on individual resolvers. The single endpoint design means traditional WAF rules and rate limiting are harder to apply effectively.",
+          "what_to_check": [
+            "Test if introspection queries are enabled and expose the full API schema",
+            "Check for query depth and complexity limits that prevent denial of service",
+            "Test authorization enforcement on individual query and mutation resolvers",
+            "Look for injection vulnerabilities in GraphQL variables and arguments",
+            "Test for batch query attacks and circular reference exploitation"
+          ],
+          "common_tools": ["Burp Suite GraphQL extensions", "GraphQL Voyager", "InQL", "Altair", "graphql-cop"],
+          "related_cwes": ["CWE-200", "CWE-285", "CWE-89"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-APIT-02",
+          "name": "Testing REST APIs",
+          "short_name": "REST API Testing",
+          "description": "REST API testing evaluates the security of RESTful API endpoints including authentication mechanisms (API keys, OAuth, JWT), authorization enforcement on resources, input validation, rate limiting, and proper HTTP status code usage. REST APIs are the most common API type in modern applications.",
+          "why_it_matters": "REST APIs frequently expose sensitive data and business functionality directly to clients. Without the visual interface of a web application, developers may implement weaker security controls, assuming API consumers will behave correctly. Broken Object Level Authorization (BOLA/IDOR) is the number one API vulnerability.",
+          "what_to_check": [
+            "Test authentication mechanisms (API keys, JWT, OAuth tokens) for bypass opportunities",
+            "Check for BOLA/IDOR by modifying resource IDs to access other users' data",
+            "Test for mass assignment by adding extra fields to POST/PUT requests",
+            "Verify rate limiting on sensitive endpoints (login, registration, data export)",
+            "Check API versioning and deprecated endpoints for weaker security controls"
+          ],
+          "common_tools": ["Burp Suite", "Postman", "OWASP ZAP", "Insomnia", "httpie"],
+          "related_cwes": ["CWE-285", "CWE-639", "CWE-918"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-APIT-03",
+          "name": "Testing SOAP APIs",
+          "short_name": "SOAP API Testing",
+          "description": "SOAP API testing evaluates the security of SOAP-based web services including XML parsing vulnerabilities (XXE), WSDL exposure, WS-Security implementation, and injection attacks through SOAP message parameters. SOAP services are common in enterprise and legacy systems.",
+          "why_it_matters": "SOAP APIs process XML, making them susceptible to XML-specific attacks including XXE, XML injection, and entity expansion denial of service. WSDL files often expose the full API structure, and legacy SOAP services may lack modern security controls like rate limiting and input validation.",
+          "what_to_check": [
+            "Check if WSDL files are publicly accessible and reveal sensitive API structure",
+            "Test for XML External Entity (XXE) injection in SOAP request bodies",
+            "Verify WS-Security implementation for authentication and message integrity",
+            "Test SOAP parameters for SQL injection and command injection",
+            "Check for XML entity expansion denial of service (billion laughs attack)"
+          ],
+          "common_tools": ["Burp Suite", "SoapUI", "OWASP ZAP", "Wsdler", "XMLCleaner"],
+          "related_cwes": ["CWE-611", "CWE-89", "CWE-200"],
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "WSTG-APIT-04",
+          "name": "Testing WebSocket APIs",
+          "short_name": "WebSocket API Testing",
+          "description": "WebSocket API testing evaluates the security of WebSocket-based APIs used for real-time bidirectional communication. This includes testing the handshake process, message authentication and authorization, input validation on WebSocket frames, and encryption requirements.",
+          "why_it_matters": "WebSocket APIs maintain persistent connections that bypass many traditional HTTP security controls including WAFs, CSRF tokens, and per-request authentication. The real-time nature of WebSockets means that vulnerabilities can be exploited immediately and continuously, potentially affecting all connected users.",
+          "what_to_check": [
+            "Verify that the WebSocket handshake validates the Origin header",
+            "Test if authentication tokens are validated on each WebSocket message, not just the handshake",
+            "Check for injection vulnerabilities in WebSocket message content",
+            "Verify that sensitive WebSocket APIs use the encrypted wss:// protocol",
+            "Test for authorization bypass by subscribing to channels or topics belonging to other users"
+          ],
+          "common_tools": ["Burp Suite", "OWASP ZAP", "wscat", "websocat", "Custom scripts"],
+          "related_cwes": ["CWE-346", "CWE-285", "CWE-319"],
+          "difficulty": "Advanced"
+        }
+      ]
+    }
+  ]
+}

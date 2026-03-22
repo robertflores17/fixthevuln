@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="OWASP WSTG Input Validation Testing: 19 security test cases. Input Validation Testing covers the broadest and most technically deep category of web security ...">
+    <meta name="keywords" content="WSTG-INPV, OWASP WSTG, Input Validation Testing, web security testing, penetration testing, CEH, OSCP, GPEN, Security+, GWAPT">
+    <title>WSTG-INPV: Input Validation Testing — OWASP Testing Guide | FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/wstg/input-validation.html">
+    <meta property="og:title" content="WSTG-INPV: Input Validation Testing — OWASP Testing Guide | FixTheVuln">
+    <meta property="og:description" content="OWASP WSTG Input Validation Testing: 19 security test cases. Input Validation Testing covers the broadest and most technically deep category of web security ...">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://fixthevuln.com/wstg/input-validation.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="WSTG-INPV: Input Validation Testing — OWASP Testing Guide | FixTheVuln">
+    <meta name="twitter:description" content="OWASP WSTG Input Validation Testing: 19 security test cases. Input Validation Testing covers the broadest and most technically deep category of web security ...">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="stylesheet" href="../style.min.css?v=8">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "WSTG-INPV: Input Validation Testing — OWASP Web Security Testing Guide",
+        "description": "OWASP WSTG Input Validation Testing: 19 security test cases. Input Validation Testing covers the broadest and most technically deep category of web security ...",
+        "datePublished": "2026-03-21",
+        "dateModified": "2026-03-21",
+        "author": { "@type": "Organization", "name": "FixTheVuln Team", "url": "https://fixthevuln.com" },
+        "publisher": { "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Guides", "item": "https://fixthevuln.com/guides.html" },
+            { "@type": "ListItem", "position": 3, "name": "OWASP WSTG", "item": "https://fixthevuln.com/wstg/" },
+            { "@type": "ListItem", "position": 4, "name": "Input Validation Testing" }
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+{
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+                {
+                        "@type": "Question",
+                        "name": "What is the difference between input validation and output encoding?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Input validation checks that incoming data conforms to expected formats and rejects anything that does not match. Output encoding transforms data so it is safe for the specific context where it is rendered (HTML, SQL, JavaScript, etc.). Both are necessary: input validation reduces the attack surface, while output encoding prevents exploitation even if validation is bypassed. A defense-in-depth approach uses both."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Why is SQL injection still one of the most common web vulnerabilities?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "SQL injection persists because many applications still construct SQL queries by concatenating user input rather than using parameterized queries. Legacy applications, custom ORM layers, and stored procedures with dynamic SQL all create opportunities for injection. Additionally, complex query logic and developer shortcuts under time pressure continue to introduce new injection points even in modern applications."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "What is Server-Side Request Forgery (SSRF) and why has it become more important?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "SSRF occurs when an attacker can make the server send requests to unintended destinations, typically internal services or cloud metadata endpoints. It has become more important with cloud adoption because SSRF can access cloud metadata services (like AWS IMDSv1 at 169.254.169.254) to steal credentials and pivot to other cloud resources. SSRF was added to the OWASP Top 10 in 2021 as A10."
+                        }
+                }
+        ]
+}
+    </script>
+    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="../blog/feed.xml">
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="../index.html" class="site-nav-logo">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+        <div class="site-nav-links">
+            <a href="../guides.html">Guides</a>
+            <a href="../tools.html">Tools</a>
+            <a href="../compliance.html">Compliance</a>
+            <a href="../resources.html">Resources</a>
+            <a href="../blog/">Blog</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header class="content-header">
+        <div class="container">
+            <h1>📝 WSTG-INPV: Input Validation Testing</h1>
+            <p>OWASP Web Security Testing Guide v4.2</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
+            <span>By <strong>FixTheVuln Team</strong></span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Sources: OWASP WSTG v4.2</span>
+        </div>
+        <div class="content-wrapper">
+
+            <a href="index.html" class="back-link">&larr; OWASP WSTG Guide</a>
+
+            <p>Input validation is the most critical defense in web application security. This category contains 19 tests covering every major injection attack class, from cross-site scripting and SQL injection to server-side request forgery and template injection. Each test examines a different way that untrusted user input can be weaponized to compromise the application, its users, or its underlying infrastructure. Input validation vulnerabilities consistently dominate real-world breach reports because they can lead to data theft, code execution, and complete system compromise. For penetration testers and bug bounty hunters, mastering these techniques is essential since injection vulnerabilities typically command the highest severity ratings and payouts. Cert candidates will encounter these concepts heavily in CEH, OSCP, and GWAPT examinations.</p>
+
+            <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;margin:1rem 0;">
+                <span style="font-weight:600;color:var(--text-muted);font-size:0.85rem;">Difficulty:</span> <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                <span style="font-weight:600;color:var(--text-muted);font-size:0.85rem;margin-left:0.5rem;">19 test cases</span>
+            </div>
+
+            <h2>OWASP Top 10 Mapping</h2>
+            <p>This testing category relates to the following OWASP Top 10 2021 categories:</p>
+            <div style="display:flex;flex-wrap:wrap;gap:0.25rem;margin:1rem 0;"><a href="../owasp-top10.html" style="display:inline-block;background:#c0392b;color:white;padding:0.25rem 0.75rem;border-radius:4px;font-size:0.8rem;font-weight:600;text-decoration:none;margin:0.15rem;" title="A03:2021 Injection">A03</a><a href="../owasp-top10.html" style="display:inline-block;background:#c0392b;color:white;padding:0.25rem 0.75rem;border-radius:4px;font-size:0.8rem;font-weight:600;text-decoration:none;margin:0.15rem;" title="A10:2021 SSRF">A10</a></div>
+
+            <h2>Quick Reference</h2>
+            <div style="overflow-x: auto;">
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th>Test ID</th>
+                        <th>Name</th>
+                        <th>CWEs</th>
+                        <th>Difficulty</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INPV-01</td><td><a href="#wstg-inpv-01" style="color:var(--accent-color);text-decoration:none;">Reflected XSS</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-79</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INPV-02</td><td><a href="#wstg-inpv-02" style="color:var(--accent-color);text-decoration:none;">Stored XSS</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-79</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INPV-03</td><td><a href="#wstg-inpv-03" style="color:var(--accent-color);text-decoration:none;">HTTP Verb Tampering</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-288</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INPV-04</td><td><a href="#wstg-inpv-04" style="color:var(--accent-color);text-decoration:none;">HTTP Parameter Pollution</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-235</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INPV-05</td><td><a href="#wstg-inpv-05" style="color:var(--accent-color);text-decoration:none;">SQL Injection</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-89</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INPV-06</td><td><a href="#wstg-inpv-06" style="color:var(--accent-color);text-decoration:none;">LDAP Injection</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-90</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INPV-07</td><td><a href="#wstg-inpv-07" style="color:var(--accent-color);text-decoration:none;">XML Injection</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-611, CWE-91</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INPV-08</td><td><a href="#wstg-inpv-08" style="color:var(--accent-color);text-decoration:none;">SSI Injection</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-97</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INPV-09</td><td><a href="#wstg-inpv-09" style="color:var(--accent-color);text-decoration:none;">XPath Injection</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-643</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INPV-10</td><td><a href="#wstg-inpv-10" style="color:var(--accent-color);text-decoration:none;">IMAP/SMTP Injection</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-93</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INPV-11</td><td><a href="#wstg-inpv-11" style="color:var(--accent-color);text-decoration:none;">Code Injection</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-94</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INPV-12</td><td><a href="#wstg-inpv-12" style="color:var(--accent-color);text-decoration:none;">Command Injection</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-78</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INPV-13</td><td><a href="#wstg-inpv-13" style="color:var(--accent-color);text-decoration:none;">Format String Injection</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-134</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INPV-14</td><td><a href="#wstg-inpv-14" style="color:var(--accent-color);text-decoration:none;">Incubated Vulnerability</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-79, CWE-89</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INPV-15</td><td><a href="#wstg-inpv-15" style="color:var(--accent-color);text-decoration:none;">HTTP Splitting/Smuggling</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-113, CWE-444</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INPV-16</td><td><a href="#wstg-inpv-16" style="color:var(--accent-color);text-decoration:none;">HTTP Incoming Requests</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-20</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INPV-17</td><td><a href="#wstg-inpv-17" style="color:var(--accent-color);text-decoration:none;">Host Header Injection</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-644</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INPV-18</td><td><a href="#wstg-inpv-18" style="color:var(--accent-color);text-decoration:none;">SSTI</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-94, CWE-1336</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-INPV-19</td><td><a href="#wstg-inpv-19" style="color:var(--accent-color);text-decoration:none;">SSRF</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-918</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <h2>Detailed Test Cases</h2>
+
+            <div id="wstg-inpv-01" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INPV-01: Reflected XSS</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">Reflected XSS testing checks if user input is immediately returned in the server&#39;s response without proper encoding. An attacker crafts a malicious URL containing JavaScript that executes in the victim&#39;s browser when they click the link, potentially stealing session tokens or performing actions on their behalf.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Reflected XSS is one of the most common web vulnerabilities and enables session hijacking, credential theft, and phishing attacks. Because the payload is delivered via a URL, it can be spread through phishing emails, social media, or watering hole attacks.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test all URL parameters with basic XSS payloads (&lt;script&gt;alert(1)&lt;/script&gt;)</li>
+                    <li>Check search fields, error messages, and any reflected input for encoding</li>
+                    <li>Test for XSS in different HTML contexts (attribute, JavaScript, CSS, URL)</li>
+                    <li>Try encoding bypass techniques (HTML entities, URL encoding, Unicode)</li>
+                    <li>Verify that Content-Type headers and Content-Security-Policy prevent execution</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">OWASP ZAP</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">XSStrike</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Dalfox</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-79</span></div>
+            </div>
+
+            <div id="wstg-inpv-02" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INPV-02: Stored XSS</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">Stored XSS testing checks if user input is saved by the application (in a database, file, or cache) and later displayed to other users without proper encoding. Unlike reflected XSS, stored XSS does not require victim interaction with a malicious link since the payload is served from the application itself.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Stored XSS is more dangerous than reflected XSS because the malicious payload persists in the application and automatically executes for every user who views the affected page. A single stored XSS vulnerability in a popular feature can compromise thousands of users.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test all user-input fields that store and display data (comments, profiles, messages)</li>
+                    <li>Check file upload names and metadata for XSS in filenames displayed on the page</li>
+                    <li>Test rich text editors for XSS through HTML/Markdown input</li>
+                    <li>Verify that stored data is encoded when displayed in all contexts</li>
+                    <li>Check administrative panels that display user-submitted data</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">OWASP ZAP</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">XSStrike</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">BeEF</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-79</span></div>
+            </div>
+
+            <div id="wstg-inpv-03" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INPV-03: HTTP Verb Tampering</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">HTTP verb tampering tests whether changing the HTTP method (GET, POST, PUT, HEAD, etc.) on a request can bypass security controls. Some applications and middleware only enforce authentication or authorization on specific HTTP methods, leaving others unprotected.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Security controls that only apply to specific HTTP methods can be trivially bypassed. For example, a web application firewall might only inspect POST requests for SQL injection, allowing the same attack through a PUT request. This is a common misconfiguration in access control implementations.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Replay protected requests using different HTTP methods (GET, POST, PUT, PATCH, DELETE)</li>
+                    <li>Test if changing the method bypasses authentication or authorization checks</li>
+                    <li>Check if the application responds differently to unexpected HTTP methods</li>
+                    <li>Test for method override using X-HTTP-Method-Override header</li>
+                    <li>Verify that security controls apply uniformly across all HTTP methods</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">curl</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">OWASP ZAP</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-288</span></div>
+            </div>
+
+            <div id="wstg-inpv-04" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INPV-04: HTTP Parameter Pollution</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">HTTP Parameter Pollution (HPP) testing checks how the application handles duplicate parameters in the same request. Different web servers and frameworks handle duplicate parameters differently (first value, last value, concatenated, or array), which can be exploited to bypass validation or manipulate application logic.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> HPP can bypass web application firewalls and input validation by splitting malicious input across duplicate parameters that get reassembled on the server. It can also manipulate application logic when different components parse duplicate parameters differently.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Submit duplicate parameters with the same name but different values</li>
+                    <li>Test how the application and server handle duplicate parameters (first wins, last wins, concat)</li>
+                    <li>Try splitting injection payloads across duplicate parameters</li>
+                    <li>Test HPP in query strings, POST body, and cookies simultaneously</li>
+                    <li>Check if WAF rules can be bypassed through parameter pollution</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">OWASP ZAP</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom scripts</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-235</span></div>
+            </div>
+
+            <div id="wstg-inpv-05" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INPV-05: SQL Injection</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">SQL injection testing checks whether user input is incorporated into SQL queries without proper parameterization or sanitization. Successful SQL injection can read, modify, or delete database contents, bypass authentication, and in some cases execute operating system commands.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> SQL injection has been responsible for some of the largest data breaches in history, exposing millions of records. It can lead to complete database compromise, authentication bypass, data exfiltration, and in some configurations, remote code execution on the database server.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test all input parameters with SQL metacharacters (single quote, double quote, semicolon)</li>
+                    <li>Check for error-based, union-based, blind, and time-based SQL injection techniques</li>
+                    <li>Test numeric, string, and wildcard parameter types</li>
+                    <li>Look for second-order SQL injection where stored input is used in later queries</li>
+                    <li>Test for SQL injection in HTTP headers, cookies, and JSON/XML request bodies</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">sqlmap</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">OWASP ZAP</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Havij</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-89</span></div>
+            </div>
+
+            <div id="wstg-inpv-06" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INPV-06: LDAP Injection</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">LDAP injection testing checks whether user input is used in LDAP queries without proper sanitization. LDAP (Lightweight Directory Access Protocol) is commonly used for authentication and directory lookups in enterprise environments, and injection can bypass authentication or extract directory data.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> LDAP injection can bypass authentication in enterprise applications that use Active Directory or other LDAP directories. It can also extract sensitive directory information including user lists, email addresses, organizational structures, and group memberships.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test login and search fields with LDAP metacharacters (*, (, ), \, NUL)</li>
+                    <li>Try authentication bypass using LDAP injection (e.g., user=*)(uid=*)(&amp;password=anything)</li>
+                    <li>Test for information extraction by manipulating LDAP filter expressions</li>
+                    <li>Check if the application uses parameterized LDAP queries or string concatenation</li>
+                    <li>Test for both AND-based and OR-based LDAP injection techniques</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom scripts</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">OWASP ZAP</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">ldapsearch</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-90</span></div>
+            </div>
+
+            <div id="wstg-inpv-07" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INPV-07: XML Injection</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">XML injection testing checks whether user input is embedded in XML documents without proper encoding, allowing attackers to modify XML structure. This includes XML External Entity (XXE) attacks that can read files, perform SSRF, or cause denial of service.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> XML injection and XXE attacks can read arbitrary files from the server, perform server-side request forgery to internal services, exfiltrate data through out-of-band channels, and cause denial of service through billion laughs or recursive entity expansion attacks.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test for XML External Entity (XXE) injection to read local files</li>
+                    <li>Check for blind XXE using out-of-band data exfiltration techniques</li>
+                    <li>Test XML input for entity expansion denial of service (billion laughs)</li>
+                    <li>Verify that XML parsers have external entity processing disabled</li>
+                    <li>Test SOAP endpoints for XML injection in parameters</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">OWASP ZAP</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">XXEinjector</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom XML payloads</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-611</span> <span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-91</span></div>
+            </div>
+
+            <div id="wstg-inpv-08" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INPV-08: SSI Injection</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">Server-Side Includes (SSI) injection testing checks whether user input is processed by the SSI engine, allowing attackers to inject SSI directives that execute commands, include files, or display server information. SSI is a legacy technology still found in some web servers.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> SSI injection can lead to remote code execution if the web server processes SSI directives in user-controlled content. While less common in modern applications, legacy systems and certain hosting configurations still support SSI processing.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test input fields with SSI directives (&lt;!--#exec cmd=&quot;command&quot; --&gt;)</li>
+                    <li>Check if .shtml or .stm file extensions are processed for SSI</li>
+                    <li>Test for SSI injection in file upload names and content</li>
+                    <li>Verify that the web server is configured to only process SSI in designated file types</li>
+                    <li>Check error pages and dynamic content for SSI processing</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">curl</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom payloads</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-97</span></div>
+            </div>
+
+            <div id="wstg-inpv-09" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INPV-09: XPath Injection</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">XPath injection testing checks whether user input is used in XPath queries against XML data stores without proper sanitization. Similar to SQL injection but targeting XML databases, XPath injection can bypass authentication and extract data from XML documents.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> XPath injection can bypass authentication and extract all data from XML-based data stores. Unlike SQL injection, XPath has no permission model, so a successful injection can always access the entire XML document. Applications using XML for configuration or data storage are at risk.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test input fields with XPath metacharacters (single quote, double quote, //, ..)</li>
+                    <li>Try authentication bypass with tautology-based XPath injection (1=1)</li>
+                    <li>Test for blind XPath injection using boolean conditions and substring extraction</li>
+                    <li>Check if the application uses XML databases or XPath for data retrieval</li>
+                    <li>Verify that XPath queries use parameterized expressions rather than concatenation</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom scripts</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">xcat</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-643</span></div>
+            </div>
+
+            <div id="wstg-inpv-10" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INPV-10: IMAP/SMTP Injection</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">IMAP/SMTP injection testing checks whether user input is incorporated into email-related commands without sanitization. This can allow attackers to inject email commands through webmail interfaces, contact forms, or password reset functions that interact with mail servers.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Email injection can allow attackers to send emails as the application (spam, phishing), read other users&#39; emails through IMAP injection, modify mailbox contents, or exfiltrate data through crafted email messages sent to attacker-controlled addresses.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test contact forms and feedback features for email header injection (\r\n)</li>
+                    <li>Check if user input is used in IMAP commands for webmail applications</li>
+                    <li>Test for SMTP injection through newline characters in email fields</li>
+                    <li>Verify that email addresses are validated before use in mail commands</li>
+                    <li>Test password reset and notification features for email injection</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom scripts</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Telnet to SMTP server</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-93</span></div>
+            </div>
+
+            <div id="wstg-inpv-11" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INPV-11: Code Injection</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">Code injection testing checks whether user input is evaluated as code by the application&#39;s runtime environment. This includes injection into interpreted languages like PHP, Python, Ruby, and JavaScript where functions like eval(), exec(), or system() process user-supplied data.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Code injection provides direct code execution on the server, which is typically the most severe class of vulnerability. An attacker who can inject code gains the full capabilities of the programming language, including file system access, network operations, and command execution.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test parameters for server-side code injection (PHP, Python, Ruby, Node.js)</li>
+                    <li>Look for eval(), exec(), system(), or similar dangerous functions processing user input</li>
+                    <li>Test for code injection through deserialization of untrusted data</li>
+                    <li>Check for expression language injection in framework-specific contexts</li>
+                    <li>Verify that dynamic code evaluation is not used with user-controlled input</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Commix</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom payloads</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">OWASP ZAP</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-94</span></div>
+            </div>
+
+            <div id="wstg-inpv-12" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INPV-12: Command Injection</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">Command injection (OS command injection) testing checks whether user input is passed to operating system commands without proper sanitization. Successful exploitation allows attackers to execute arbitrary commands on the server with the privileges of the web application.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Command injection provides direct access to the underlying operating system. Attackers can read files, modify data, install backdoors, pivot to internal networks, or completely take over the server. It is one of the most severe vulnerability classes.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test parameters with command separator characters (;, |, &amp;&amp;, ||, `, $())</li>
+                    <li>Look for application features that interact with the OS (ping, traceroute, file operations)</li>
+                    <li>Test for blind command injection using time delays (sleep, ping -c)</li>
+                    <li>Try out-of-band data exfiltration through DNS or HTTP callbacks</li>
+                    <li>Check for command injection in file upload names and processing pipelines</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Commix</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom payloads</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">OWASP ZAP</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-78</span></div>
+            </div>
+
+            <div id="wstg-inpv-13" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INPV-13: Format String Injection</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">Format string injection testing checks whether user input is used as a format string parameter in functions like printf() in C/C++ applications. This can be exploited to read from and write to memory, crash the application, or achieve code execution.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Format string vulnerabilities can lead to information disclosure, denial of service, and arbitrary code execution. While less common in modern web applications, they still appear in applications with native code components, embedded systems, and legacy C/C++ web services.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test input parameters with format string specifiers (%s, %x, %n, %p)</li>
+                    <li>Look for applications with C/C++ backends that use printf-family functions</li>
+                    <li>Test for information leakage through %x or %p reading stack memory</li>
+                    <li>Check CGI applications and native code web services for format string issues</li>
+                    <li>Verify that user input is never used as the format string argument</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom payloads</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">GDB for backend analysis</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-134</span></div>
+            </div>
+
+            <div id="wstg-inpv-14" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INPV-14: Incubated Vulnerability</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">Incubated vulnerability testing checks for attacks where malicious input is stored in one part of the application and triggered later in a different context. This includes second-order injection attacks where stored data is used in SQL queries, file operations, or displayed to other users.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Incubated vulnerabilities are harder to detect because the injection point and the execution point are separated in time and location within the application. Automated scanners often miss these because they test input and output in the same request, not across different workflows.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Trace how stored user input is used in subsequent application operations</li>
+                    <li>Test for second-order SQL injection in stored data processed by backend jobs</li>
+                    <li>Check if uploaded files or data trigger processing pipelines that may be vulnerable</li>
+                    <li>Look for stored input used in email templates, report generation, or data exports</li>
+                    <li>Test registration data that might be used in administrative interfaces without encoding</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Manual code review</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Application-specific testing</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-79</span> <span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-89</span></div>
+            </div>
+
+            <div id="wstg-inpv-15" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INPV-15: HTTP Splitting/Smuggling</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">HTTP splitting and smuggling testing checks whether user input can inject headers or manipulate request boundaries in HTTP traffic. HTTP request smuggling exploits differences in how front-end and back-end servers parse HTTP requests to bypass security controls.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> HTTP request smuggling can bypass web application firewalls, access controls, and routing rules by causing front-end and back-end servers to disagree about request boundaries. It can lead to cache poisoning, session hijacking, and request routing manipulation.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test for HTTP response splitting by injecting CRLF characters in parameters</li>
+                    <li>Check for HTTP request smuggling using Content-Length/Transfer-Encoding conflicts</li>
+                    <li>Test for CL.TE and TE.CL smuggling variants</li>
+                    <li>Verify that the application rejects requests with ambiguous Content-Length/Transfer-Encoding</li>
+                    <li>Check if user input can inject HTTP headers through CRLF injection</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite HTTP Request Smuggler</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">smuggler.py</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom scripts</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-113</span> <span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-444</span></div>
+            </div>
+
+            <div id="wstg-inpv-16" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INPV-16: HTTP Incoming Requests</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test examines how the application handles and validates incoming HTTP requests, including unusual or malformed requests. It checks whether the application properly validates request structure, encoding, and content before processing.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Applications that do not properly validate incoming HTTP requests may be vulnerable to request manipulation, encoding-based bypasses, or protocol-level attacks. Strict request validation is an important defense-in-depth measure.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test how the application handles malformed HTTP requests</li>
+                    <li>Check processing of requests with unusual encodings (UTF-7, double URL encoding)</li>
+                    <li>Verify that the application validates Content-Type headers match actual content</li>
+                    <li>Test for request body processing differences between content types</li>
+                    <li>Check how the application handles oversized requests and headers</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">curl</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom HTTP clients</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">OWASP ZAP</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-20</span></div>
+            </div>
+
+            <div id="wstg-inpv-17" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INPV-17: Host Header Injection</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">Host header injection testing checks whether the application trusts the Host header from user requests for security-sensitive operations like password reset links, cache keys, or server-side redirects. An attacker can manipulate the Host header to poison web caches or steal password reset tokens.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Host header injection can lead to password reset poisoning (where reset links point to attacker-controlled domains), web cache poisoning, and server-side request routing manipulation. Applications that use the Host header to generate URLs are particularly vulnerable.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Modify the Host header in password reset requests to an attacker-controlled domain</li>
+                    <li>Test for web cache poisoning by changing the Host header and checking cached responses</li>
+                    <li>Check for SSRF through absolute URL handling with a modified Host header</li>
+                    <li>Test X-Forwarded-Host and X-Host headers that may override the original Host</li>
+                    <li>Verify that the application validates the Host header against a whitelist</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">curl</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom scripts</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-644</span></div>
+            </div>
+
+            <div id="wstg-inpv-18" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INPV-18: SSTI</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">Server-Side Template Injection (SSTI) testing checks whether user input is embedded in server-side templates (Jinja2, Twig, Freemarker, etc.) without proper sanitization. SSTI can escalate from information disclosure to remote code execution depending on the template engine.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> SSTI vulnerabilities are especially dangerous because template engines often have access to server-side objects and methods. Depending on the template engine, SSTI can be escalated from simple math expressions to reading files, executing commands, and achieving full server compromise.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test input fields with template syntax for common engines ({{7*7}}, ${7*7}, #{7*7})</li>
+                    <li>Identify the template engine from error messages or expression evaluation</li>
+                    <li>Test for code execution through template engine-specific object chains</li>
+                    <li>Check if user input is rendered in templates for emails, reports, or dynamic pages</li>
+                    <li>Verify that user input is always placed in template data context, never in template code</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">tplmap</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">SSTImap</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom payloads</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-94</span> <span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-1336</span></div>
+            </div>
+
+            <div id="wstg-inpv-19" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-INPV-19: SSRF</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">Server-Side Request Forgery (SSRF) testing checks whether the application can be tricked into making HTTP requests to unintended destinations, particularly internal services. SSRF exploits server-side functionality that fetches URLs, imports data, or processes webhooks to access internal resources.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> SSRF is a critical vulnerability in cloud environments because it can access cloud metadata services to steal IAM credentials, interact with internal services not exposed to the internet, and pivot through the internal network. It was elevated to the OWASP Top 10 in 2021 as A10.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test URL input parameters with internal IP addresses (127.0.0.1, 169.254.169.254, 10.x.x.x)</li>
+                    <li>Check for cloud metadata endpoint access (AWS, GCP, Azure metadata services)</li>
+                    <li>Test for SSRF through file import, URL preview, webhook, and PDF generation features</li>
+                    <li>Try bypass techniques for SSRF filters (DNS rebinding, URL encoding, IPv6, redirects)</li>
+                    <li>Test for blind SSRF using out-of-band callbacks to attacker-controlled servers</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite Collaborator</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">SSRFmap</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Gopherus</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom payloads</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-918</span></div>
+            </div>
+
+            <h2>Relevant Certifications</h2>
+            <p>The following certifications cover input validation testing concepts:</p>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin:0.75rem 0;"><a href="../certs/ec-ceh.html" style="display:inline-block;background:var(--bg-secondary);color:var(--text-primary);padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;border:1px solid var(--border-color);">CEH</a><a href="../certs/offsec-oscp.html" style="display:inline-block;background:var(--bg-secondary);color:var(--text-primary);padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;border:1px solid var(--border-color);">OSCP</a><a href="../certs/giac-gpen.html" style="display:inline-block;background:var(--bg-secondary);color:var(--text-primary);padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;border:1px solid var(--border-color);">GPEN</a><a href="../certs/comptia-security-plus.html" style="display:inline-block;background:var(--bg-secondary);color:var(--text-primary);padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;border:1px solid var(--border-color);">Security+</a><span style="display:inline-block;background:var(--bg-secondary);color:var(--text-primary);padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;border:1px solid var(--border-color);">GWAPT</span></div>
+
+            <h2>Frequently Asked Questions</h2>
+            <details class="faq-item">
+                <summary>What is the difference between input validation and output encoding?</summary>
+                <p>Input validation checks that incoming data conforms to expected formats and rejects anything that does not match. Output encoding transforms data so it is safe for the specific context where it is rendered (HTML, SQL, JavaScript, etc.). Both are necessary: input validation reduces the attack surface, while output encoding prevents exploitation even if validation is bypassed. A defense-in-depth approach uses both.</p>
+            </details>
+            <details class="faq-item">
+                <summary>Why is SQL injection still one of the most common web vulnerabilities?</summary>
+                <p>SQL injection persists because many applications still construct SQL queries by concatenating user input rather than using parameterized queries. Legacy applications, custom ORM layers, and stored procedures with dynamic SQL all create opportunities for injection. Additionally, complex query logic and developer shortcuts under time pressure continue to introduce new injection points even in modern applications.</p>
+            </details>
+            <details class="faq-item">
+                <summary>What is Server-Side Request Forgery (SSRF) and why has it become more important?</summary>
+                <p>SSRF occurs when an attacker can make the server send requests to unintended destinations, typically internal services or cloud metadata endpoints. It has become more important with cloud adoption because SSRF can access cloud metadata services (like AWS IMDSv1 at 169.254.169.254) to steal credentials and pivot to other cloud resources. SSRF was added to the OWASP Top 10 in 2021 as A10.</p>
+            </details>
+
+        </div>
+
+        <!-- CyberFolio CTA -->
+        <div style="border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.3rem;">CyberFolio</p>
+            <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Mastering web security testing? Showcase your skills.</p>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills &mdash; free.</p>
+            <a href="https://cyberfolio.io" style="display:inline-block;background:#06b6d4;color:white;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;" target="_blank" rel="noopener">Build Your Portfolio &rarr;</a>
+        </div>
+
+        <!-- Related Categories -->
+        <section style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
+            <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Related WSTG Categories</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+                <a href="information-gathering.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-INFO</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Information Gathering</span></a>
+                <a href="configuration-deployment.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-CONF</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Configuration and Deployment Management</span></a>
+                <a href="identity-management.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-IDNT</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Identity Management</span></a>
+                <a href="authentication-testing.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-ATHN</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Authentication Testing</span></a>
+            </div>
+        </section>
+
+        <a href="../index.html" class="back-link">&larr; Back to Home</a>
+        <a href="index.html" class="back-link" style="margin-left: 1rem;">&larr; All WSTG Categories</a>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
+            <p>Study Planners: <a href="/store/store.html">FixTheVuln Store</a> | Career Tools: <a href="https://cyberfolio.io" target="_blank" rel="noopener">CyberFolio</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+        </div>
+    </footer>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

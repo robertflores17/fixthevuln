@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="OWASP WSTG Business Logic Testing: 9 security test cases. Business Logic Testing examines the application&#39;s workflow rules and business processes for flaws t...">
+    <meta name="keywords" content="WSTG-BUSL, OWASP WSTG, Business Logic Testing, web security testing, penetration testing, CEH, OSCP, GPEN">
+    <title>WSTG-BUSL: Business Logic Testing — OWASP Testing Guide | FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/wstg/business-logic.html">
+    <meta property="og:title" content="WSTG-BUSL: Business Logic Testing — OWASP Testing Guide | FixTheVuln">
+    <meta property="og:description" content="OWASP WSTG Business Logic Testing: 9 security test cases. Business Logic Testing examines the application&#39;s workflow rules and business processes for flaws t...">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://fixthevuln.com/wstg/business-logic.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="WSTG-BUSL: Business Logic Testing — OWASP Testing Guide | FixTheVuln">
+    <meta name="twitter:description" content="OWASP WSTG Business Logic Testing: 9 security test cases. Business Logic Testing examines the application&#39;s workflow rules and business processes for flaws t...">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="stylesheet" href="../style.min.css?v=8">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "WSTG-BUSL: Business Logic Testing — OWASP Web Security Testing Guide",
+        "description": "OWASP WSTG Business Logic Testing: 9 security test cases. Business Logic Testing examines the application&#39;s workflow rules and business processes for flaws t...",
+        "datePublished": "2026-03-21",
+        "dateModified": "2026-03-21",
+        "author": { "@type": "Organization", "name": "FixTheVuln Team", "url": "https://fixthevuln.com" },
+        "publisher": { "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Guides", "item": "https://fixthevuln.com/guides.html" },
+            { "@type": "ListItem", "position": 3, "name": "OWASP WSTG", "item": "https://fixthevuln.com/wstg/" },
+            { "@type": "ListItem", "position": 4, "name": "Business Logic Testing" }
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+{
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+                {
+                        "@type": "Question",
+                        "name": "What are business logic vulnerabilities and why are they hard to find?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Business logic vulnerabilities are flaws in the application's intended workflow that allow users to achieve outcomes the developers did not anticipate. They are hard to find because they require understanding the application's business rules and testing edge cases that automated scanners cannot identify. Examples include skipping required steps in a checkout process, manipulating quantities to get negative prices, or reusing single-use coupon codes."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Can automated scanners detect business logic flaws?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "No, automated scanners generally cannot detect business logic flaws because these vulnerabilities require understanding the intended behavior of the application. A scanner cannot know that skipping step 3 of a 5-step process should not be allowed, or that a coupon should only work once. Manual testing by someone who understands the application's business rules is essential for finding these issues."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "What is the relationship between business logic testing and threat modeling?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Threat modeling identifies potential business logic abuse scenarios before testing begins by analyzing how the application's features and workflows could be manipulated. It asks questions like 'What if a user submits step 4 before step 2?' or 'What if the quantity is negative?' This systematic approach ensures business logic testing is comprehensive rather than relying on ad-hoc exploration."
+                        }
+                }
+        ]
+}
+    </script>
+    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="../blog/feed.xml">
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="../index.html" class="site-nav-logo">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+        <div class="site-nav-links">
+            <a href="../guides.html">Guides</a>
+            <a href="../tools.html">Tools</a>
+            <a href="../compliance.html">Compliance</a>
+            <a href="../resources.html">Resources</a>
+            <a href="../blog/">Blog</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header class="content-header">
+        <div class="container">
+            <h1>📈 WSTG-BUSL: Business Logic Testing</h1>
+            <p>OWASP Web Security Testing Guide v4.2</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
+            <span>By <strong>FixTheVuln Team</strong></span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Sources: OWASP WSTG v4.2</span>
+        </div>
+        <div class="content-wrapper">
+
+            <a href="index.html" class="back-link">&larr; OWASP WSTG Guide</a>
+
+            <p>Business logic vulnerabilities are among the most challenging to find and the most impactful when exploited. Unlike injection or configuration flaws that follow known patterns, business logic bugs are unique to each application because they exploit the specific rules and workflows the application implements. This category tests whether business processes can be bypassed, manipulated, or abused, covering everything from data validation and request forgery to file upload restrictions and rate limits. Automated security scanners cannot detect these vulnerabilities because they require understanding the application&#39;s intended behavior and testing what happens when that behavior is subverted. For penetration testers and bug bounty hunters, business logic testing is where deep application knowledge pays off with high-severity findings that others miss.</p>
+
+            <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;margin:1rem 0;">
+                <span style="font-weight:600;color:var(--text-muted);font-size:0.85rem;">Difficulty:</span> <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                <span style="font-weight:600;color:var(--text-muted);font-size:0.85rem;margin-left:0.5rem;">9 test cases</span>
+            </div>
+
+            <h2>OWASP Top 10 Mapping</h2>
+            <p>This testing category relates to the following OWASP Top 10 2021 categories:</p>
+            <div style="display:flex;flex-wrap:wrap;gap:0.25rem;margin:1rem 0;"><a href="../owasp-top10.html" style="display:inline-block;background:#8e44ad;color:white;padding:0.25rem 0.75rem;border-radius:4px;font-size:0.8rem;font-weight:600;text-decoration:none;margin:0.15rem;" title="A04:2021 Insecure Design">A04</a><a href="../owasp-top10.html" style="display:inline-block;background:#16a085;color:white;padding:0.25rem 0.75rem;border-radius:4px;font-size:0.8rem;font-weight:600;text-decoration:none;margin:0.15rem;" title="A08:2021 Integrity Failures">A08</a></div>
+
+            <h2>Quick Reference</h2>
+            <div style="overflow-x: auto;">
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th>Test ID</th>
+                        <th>Name</th>
+                        <th>CWEs</th>
+                        <th>Difficulty</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-BUSL-01</td><td><a href="#wstg-busl-01" style="color:var(--accent-color);text-decoration:none;">Business Logic Validation</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-840</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-BUSL-02</td><td><a href="#wstg-busl-02" style="color:var(--accent-color);text-decoration:none;">Request Forgery Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-472</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-BUSL-03</td><td><a href="#wstg-busl-03" style="color:var(--accent-color);text-decoration:none;">Integrity Check Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-354</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-BUSL-04</td><td><a href="#wstg-busl-04" style="color:var(--accent-color);text-decoration:none;">Process Timing Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-362, CWE-367</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-BUSL-05</td><td><a href="#wstg-busl-05" style="color:var(--accent-color);text-decoration:none;">Function Limit Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-770, CWE-799</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-BUSL-06</td><td><a href="#wstg-busl-06" style="color:var(--accent-color);text-decoration:none;">Workflow Circumvention</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-841</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-BUSL-07</td><td><a href="#wstg-busl-07" style="color:var(--accent-color);text-decoration:none;">Application Misuse Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-799, CWE-837</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-BUSL-08</td><td><a href="#wstg-busl-08" style="color:var(--accent-color);text-decoration:none;">Unexpected File Type Upload</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-434</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-BUSL-09</td><td><a href="#wstg-busl-09" style="color:var(--accent-color);text-decoration:none;">Malicious File Upload</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-434, CWE-509</td><td><span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span></td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <h2>Detailed Test Cases</h2>
+
+            <div id="wstg-busl-01" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-BUSL-01: Business Logic Validation</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test checks whether the application properly validates data at the business logic level, beyond basic input validation. It examines whether business rules about data ranges, relationships between fields, and context-specific constraints are properly enforced.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Business logic validation failures allow attackers to submit data that passes technical validation but violates business rules. For example, ordering a negative quantity, setting a future birth date, or submitting a transaction amount that exceeds account limits may all pass input validation but violate business logic.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test boundary values for business-specific fields (quantities, amounts, dates)</li>
+                    <li>Submit negative values where only positive values should be accepted</li>
+                    <li>Test relationships between dependent fields (start date after end date, amounts exceeding limits)</li>
+                    <li>Verify that server-side business rules match client-side validation</li>
+                    <li>Check if business constraints are enforced consistently across all entry points</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Manual testing</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Postman</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom scripts</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-840</span></div>
+            </div>
+
+            <div id="wstg-busl-02" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-BUSL-02: Request Forgery Testing</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test checks whether the application relies on client-side data or hidden form fields for business logic decisions that should be enforced server-side. Attackers who can forge or modify requests can manipulate prices, skip validation steps, or change transaction parameters.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Applications that trust client-submitted data for business decisions are vulnerable to request forgery. An attacker can modify prices in hidden form fields, change product IDs, alter quantity values, or manipulate discount codes by intercepting and modifying HTTP requests.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Modify hidden form fields that control pricing or business logic</li>
+                    <li>Change product IDs or SKUs in purchase requests to get different items at wrong prices</li>
+                    <li>Manipulate request parameters that control workflow steps or approval states</li>
+                    <li>Test if removing or modifying referrer checks allows skipping validation steps</li>
+                    <li>Verify that all business-critical values are validated server-side, not just client-side</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">OWASP ZAP</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Postman</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Browser Developer Tools</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-472</span></div>
+            </div>
+
+            <div id="wstg-busl-03" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-BUSL-03: Integrity Check Testing</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test verifies whether the application implements integrity checks to detect unauthorized modification of data in transit or at rest. It checks for mechanisms like checksums, digital signatures, and tamper-evident logging that protect against data manipulation.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Without integrity checks, attackers can modify data without detection. This includes changing transaction amounts, altering audit logs, modifying configuration files, or tampering with data exchanged between application components. Integrity verification is a core requirement for financial and regulated applications.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Check if the application uses checksums or HMACs to verify data integrity</li>
+                    <li>Test whether modifying data in transit (cookies, hidden fields, API payloads) is detected</li>
+                    <li>Verify that audit logs are tamper-evident and modifications are detectable</li>
+                    <li>Test if transaction integrity is maintained across multi-step processes</li>
+                    <li>Check whether data integrity verification covers all critical data paths</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom scripts</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Manual testing</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-354</span></div>
+            </div>
+
+            <div id="wstg-busl-04" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-BUSL-04: Process Timing Testing</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test checks whether the application is vulnerable to timing-based attacks on business processes. This includes race conditions where concurrent requests can bypass limits, time-of-check-to-time-of-use (TOCTOU) bugs, and timing-based information leakage.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Race conditions and timing attacks can bypass business rules that work correctly for sequential requests. For example, simultaneously submitting two withdrawal requests might allow double-spending if the balance check and deduction are not atomic. These bugs often appear in financial, inventory, and coupon systems.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test for race conditions by sending concurrent requests for the same operation</li>
+                    <li>Check if time-sensitive operations (OTP validation, coupon redemption) are vulnerable to replay</li>
+                    <li>Test for TOCTOU vulnerabilities in multi-step business processes</li>
+                    <li>Measure response time differences that might leak information about internal state</li>
+                    <li>Verify that rate-limiting and balance checks are atomic operations</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite Turbo Intruder</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom multi-threaded scripts</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">race-the-web</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-362</span> <span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-367</span></div>
+            </div>
+
+            <div id="wstg-busl-05" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-BUSL-05: Function Limit Testing</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test checks whether the application enforces limits on how many times specific functions can be used. This includes rate limiting, usage quotas, one-time-use features (coupons, vouchers, trials), and maximum attempt limits.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Without proper usage limits, attackers can abuse features far beyond their intended use. Single-use coupons can be reused, free trial periods can be restarted indefinitely, and unlimited API calls can be used for data scraping or denial of service.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test if single-use features (coupons, voucher codes, trial activations) can be reused</li>
+                    <li>Check if rate limiting exists on sensitive operations (login attempts, API calls, downloads)</li>
+                    <li>Verify that rate limits are enforced server-side and cannot be bypassed</li>
+                    <li>Test if changing session identifiers, IP addresses, or accounts bypasses usage limits</li>
+                    <li>Check if free trial limits can be circumvented through account creation</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite Intruder</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom scripts</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Postman</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-770</span> <span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-799</span></div>
+            </div>
+
+            <div id="wstg-busl-06" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-BUSL-06: Workflow Circumvention</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test checks whether the application enforces the intended sequence of steps in multi-step processes. Attackers may attempt to skip, reorder, or repeat steps in workflows like registration, checkout, or approval processes to achieve unintended outcomes.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Workflow circumvention can allow attackers to bypass critical security or business steps. Skipping payment verification in a checkout process, bypassing email verification in registration, or jumping directly to the approval step in a review process can have severe business consequences.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test if steps in multi-step processes can be skipped by directly requesting later steps</li>
+                    <li>Check if workflow steps can be completed out of order</li>
+                    <li>Verify that completing a workflow step requires all previous steps to be genuinely completed</li>
+                    <li>Test if repeating earlier steps after completing later steps causes inconsistencies</li>
+                    <li>Check whether canceling and restarting workflows preserves or resets state correctly</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Manual testing</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom scripts</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-841</span></div>
+            </div>
+
+            <div id="wstg-busl-07" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-BUSL-07: Application Misuse Testing</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test evaluates whether the application has defenses against abuse of legitimate functionality. This includes detecting and blocking automated bot activity, identifying suspicious usage patterns, and implementing safeguards against feature abuse at scale.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Applications without abuse detection allow attackers to exploit legitimate features for malicious purposes. Scraping user data, creating fake accounts at scale, manipulating review systems, or exploiting referral programs are all examples of application misuse that require proactive detection and prevention.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test if automated interactions are detected and blocked (CAPTCHAs, bot detection)</li>
+                    <li>Check if suspicious usage patterns trigger alerts or account restrictions</li>
+                    <li>Verify that abuse-prevention measures cannot be easily bypassed</li>
+                    <li>Test if the application logs and monitors for abnormal usage patterns</li>
+                    <li>Check if there are mechanisms to recover from detected abuse scenarios</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom automation scripts</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Selenium</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Puppeteer</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-799</span> <span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-837</span></div>
+            </div>
+
+            <div id="wstg-busl-08" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-BUSL-08: Unexpected File Type Upload</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test checks whether the application properly restricts file upload functionality to only accept intended file types. Accepting unexpected file types can lead to web shell uploads, stored XSS through HTML/SVG files, or server-side processing vulnerabilities through malicious documents.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Unrestricted file upload is a severe vulnerability that can lead to remote code execution if an attacker uploads a web shell, cross-site scripting if HTML or SVG files are served from the same domain, or server compromise through malicious files that exploit document processing libraries.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test if the application validates file types by extension, MIME type, and file content (magic bytes)</li>
+                    <li>Try uploading executable files with changed extensions (.php.jpg, .asp;.jpg)</li>
+                    <li>Test if MIME type validation can be bypassed by modifying Content-Type headers</li>
+                    <li>Upload HTML and SVG files that contain JavaScript to test for stored XSS</li>
+                    <li>Check if uploaded files are served from a separate domain to prevent same-origin attacks</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom file payloads</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">OWASP ZAP</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-434</span></div>
+            </div>
+
+            <div id="wstg-busl-09" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-BUSL-09: Malicious File Upload</h3>
+                    <span style="display:inline-block;background:#dc3545;color:#fff;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Advanced</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test goes beyond file type restrictions to check whether the application is vulnerable to malicious content within uploaded files. This includes web shells, documents with embedded macros, polyglot files, and specially crafted files that exploit processing vulnerabilities.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Even when file type restrictions are in place, malicious content within allowed file types can compromise the system. ZIP bombs can cause denial of service, images with embedded PHP can become web shells on misconfigured servers, and office documents with macros can compromise users who download them.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Upload web shells disguised as allowed file types (PHP in JPEG, JSP in PDF)</li>
+                    <li>Test for ZIP bomb or decompression bomb handling</li>
+                    <li>Upload files with embedded macros or active content</li>
+                    <li>Test for file processing vulnerabilities (ImageTragick, LibreOffice CVEs)</li>
+                    <li>Check if antivirus scanning is performed on uploaded files before they are accessible</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom file payloads</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">eicar test file</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">fuxploider</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-434</span> <span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-509</span></div>
+            </div>
+
+            <h2>Relevant Certifications</h2>
+            <p>The following certifications cover business logic testing concepts:</p>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin:0.75rem 0;"><a href="../certs/ec-ceh.html" style="display:inline-block;background:var(--bg-secondary);color:var(--text-primary);padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;border:1px solid var(--border-color);">CEH</a><a href="../certs/offsec-oscp.html" style="display:inline-block;background:var(--bg-secondary);color:var(--text-primary);padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;border:1px solid var(--border-color);">OSCP</a><a href="../certs/giac-gpen.html" style="display:inline-block;background:var(--bg-secondary);color:var(--text-primary);padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;border:1px solid var(--border-color);">GPEN</a></div>
+
+            <h2>Frequently Asked Questions</h2>
+            <details class="faq-item">
+                <summary>What are business logic vulnerabilities and why are they hard to find?</summary>
+                <p>Business logic vulnerabilities are flaws in the application&#39;s intended workflow that allow users to achieve outcomes the developers did not anticipate. They are hard to find because they require understanding the application&#39;s business rules and testing edge cases that automated scanners cannot identify. Examples include skipping required steps in a checkout process, manipulating quantities to get negative prices, or reusing single-use coupon codes.</p>
+            </details>
+            <details class="faq-item">
+                <summary>Can automated scanners detect business logic flaws?</summary>
+                <p>No, automated scanners generally cannot detect business logic flaws because these vulnerabilities require understanding the intended behavior of the application. A scanner cannot know that skipping step 3 of a 5-step process should not be allowed, or that a coupon should only work once. Manual testing by someone who understands the application&#39;s business rules is essential for finding these issues.</p>
+            </details>
+            <details class="faq-item">
+                <summary>What is the relationship between business logic testing and threat modeling?</summary>
+                <p>Threat modeling identifies potential business logic abuse scenarios before testing begins by analyzing how the application&#39;s features and workflows could be manipulated. It asks questions like &#39;What if a user submits step 4 before step 2?&#39; or &#39;What if the quantity is negative?&#39; This systematic approach ensures business logic testing is comprehensive rather than relying on ad-hoc exploration.</p>
+            </details>
+
+        </div>
+
+        <!-- CyberFolio CTA -->
+        <div style="border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.3rem;">CyberFolio</p>
+            <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Mastering web security testing? Showcase your skills.</p>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills &mdash; free.</p>
+            <a href="https://cyberfolio.io" style="display:inline-block;background:#06b6d4;color:white;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;" target="_blank" rel="noopener">Build Your Portfolio &rarr;</a>
+        </div>
+
+        <!-- Related Categories -->
+        <section style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
+            <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Related WSTG Categories</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+                <a href="information-gathering.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-INFO</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Information Gathering</span></a>
+                <a href="configuration-deployment.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-CONF</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Configuration and Deployment Management</span></a>
+                <a href="identity-management.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-IDNT</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Identity Management</span></a>
+                <a href="authentication-testing.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-ATHN</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Authentication Testing</span></a>
+            </div>
+        </section>
+
+        <a href="../index.html" class="back-link">&larr; Back to Home</a>
+        <a href="index.html" class="back-link" style="margin-left: 1rem;">&larr; All WSTG Categories</a>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
+            <p>Study Planners: <a href="/store/store.html">FixTheVuln Store</a> | Career Tools: <a href="https://cyberfolio.io" target="_blank" rel="noopener">CyberFolio</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+        </div>
+    </footer>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

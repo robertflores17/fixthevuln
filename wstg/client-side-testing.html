@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="OWASP WSTG Client-side Testing: 13 security test cases. Client-side Testing examines vulnerabilities that execute in the user&#39;s browser rather than on the se...">
+    <meta name="keywords" content="WSTG-CLNT, OWASP WSTG, Client-side Testing, web security testing, penetration testing, CEH, OSCP, GWAPT">
+    <title>WSTG-CLNT: Client-side Testing — OWASP Testing Guide | FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/wstg/client-side-testing.html">
+    <meta property="og:title" content="WSTG-CLNT: Client-side Testing — OWASP Testing Guide | FixTheVuln">
+    <meta property="og:description" content="OWASP WSTG Client-side Testing: 13 security test cases. Client-side Testing examines vulnerabilities that execute in the user&#39;s browser rather than on the se...">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://fixthevuln.com/wstg/client-side-testing.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="WSTG-CLNT: Client-side Testing — OWASP Testing Guide | FixTheVuln">
+    <meta name="twitter:description" content="OWASP WSTG Client-side Testing: 13 security test cases. Client-side Testing examines vulnerabilities that execute in the user&#39;s browser rather than on the se...">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="stylesheet" href="../style.min.css?v=8">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "WSTG-CLNT: Client-side Testing — OWASP Web Security Testing Guide",
+        "description": "OWASP WSTG Client-side Testing: 13 security test cases. Client-side Testing examines vulnerabilities that execute in the user&#39;s browser rather than on the se...",
+        "datePublished": "2026-03-21",
+        "dateModified": "2026-03-21",
+        "author": { "@type": "Organization", "name": "FixTheVuln Team", "url": "https://fixthevuln.com" },
+        "publisher": { "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Guides", "item": "https://fixthevuln.com/guides.html" },
+            { "@type": "ListItem", "position": 3, "name": "OWASP WSTG", "item": "https://fixthevuln.com/wstg/" },
+            { "@type": "ListItem", "position": 4, "name": "Client-side Testing" }
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+{
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+                {
+                        "@type": "Question",
+                        "name": "What is the difference between reflected/stored XSS and DOM-based XSS?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Reflected and stored XSS involve the server including malicious input in the HTTP response. DOM-based XSS occurs entirely in the browser when client-side JavaScript reads data from an attacker-controllable source (like the URL fragment) and writes it to a dangerous sink (like innerHTML) without sanitization. DOM-based XSS never reaches the server, making it invisible to server-side security controls and WAFs."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "What is clickjacking and how does it affect users?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Clickjacking (UI redressing) tricks users into clicking on something different from what they perceive by loading the target application in a transparent iframe overlaid on a malicious page. The user thinks they are clicking buttons on the attacker's page but are actually interacting with the hidden target application. This can lead to unintended actions like changing settings, making purchases, or granting permissions."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Why is browser storage (localStorage, sessionStorage) a security concern?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Browser storage is accessible to any JavaScript running on the same origin, which means XSS vulnerabilities can read all stored data. Storing sensitive data like session tokens or personal information in localStorage is risky because it persists even after the browser is closed and has no equivalent of cookie security flags (HttpOnly, Secure). Sensitive data should use httpOnly cookies rather than browser storage."
+                        }
+                }
+        ]
+}
+    </script>
+    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="../blog/feed.xml">
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="../index.html" class="site-nav-logo">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+        <div class="site-nav-links">
+            <a href="../guides.html">Guides</a>
+            <a href="../tools.html">Tools</a>
+            <a href="../compliance.html">Compliance</a>
+            <a href="../resources.html">Resources</a>
+            <a href="../blog/">Blog</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header class="content-header">
+        <div class="container">
+            <h1>🖥️ WSTG-CLNT: Client-side Testing</h1>
+            <p>OWASP Web Security Testing Guide v4.2</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
+            <span>By <strong>FixTheVuln Team</strong></span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Sources: OWASP WSTG v4.2</span>
+        </div>
+        <div class="content-wrapper">
+
+            <a href="index.html" class="back-link">&larr; OWASP WSTG Guide</a>
+
+            <p>Client-side vulnerabilities execute in the context of the user&#39;s browser and exploit the trust relationship between the browser and the web application. As modern applications shift more logic to the client side through JavaScript frameworks and single-page applications, the attack surface on the client has grown significantly. This category covers 13 tests ranging from DOM-based cross-site scripting and HTML injection to clickjacking, WebSocket testing, and browser storage security. These vulnerabilities are particularly relevant for modern JavaScript-heavy applications where client-side routing, template rendering, and data processing create new attack vectors that traditional server-side testing misses. For security testers, understanding the browser security model and same-origin policy is essential for finding these client-side vulnerabilities.</p>
+
+            <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;margin:1rem 0;">
+                <span style="font-weight:600;color:var(--text-muted);font-size:0.85rem;">Difficulty:</span> <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                <span style="font-weight:600;color:var(--text-muted);font-size:0.85rem;margin-left:0.5rem;">13 test cases</span>
+            </div>
+
+            <h2>OWASP Top 10 Mapping</h2>
+            <p>This testing category relates to the following OWASP Top 10 2021 categories:</p>
+            <div style="display:flex;flex-wrap:wrap;gap:0.25rem;margin:1rem 0;"><a href="../owasp-top10.html" style="display:inline-block;background:#c0392b;color:white;padding:0.25rem 0.75rem;border-radius:4px;font-size:0.8rem;font-weight:600;text-decoration:none;margin:0.15rem;" title="A03:2021 Injection">A03</a><a href="../owasp-top10.html" style="display:inline-block;background:#e74c3c;color:white;padding:0.25rem 0.75rem;border-radius:4px;font-size:0.8rem;font-weight:600;text-decoration:none;margin:0.15rem;" title="A01:2021 Broken Access Control">A01</a></div>
+
+            <h2>Quick Reference</h2>
+            <div style="overflow-x: auto;">
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th>Test ID</th>
+                        <th>Name</th>
+                        <th>CWEs</th>
+                        <th>Difficulty</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-CLNT-01</td><td><a href="#wstg-clnt-01" style="color:var(--accent-color);text-decoration:none;">DOM-Based XSS</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-79</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-CLNT-02</td><td><a href="#wstg-clnt-02" style="color:var(--accent-color);text-decoration:none;">JavaScript Execution Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-79</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-CLNT-03</td><td><a href="#wstg-clnt-03" style="color:var(--accent-color);text-decoration:none;">HTML Injection</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-79</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-CLNT-04</td><td><a href="#wstg-clnt-04" style="color:var(--accent-color);text-decoration:none;">Client-side URL Redirect</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-601</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-CLNT-05</td><td><a href="#wstg-clnt-05" style="color:var(--accent-color);text-decoration:none;">CSS Injection</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-79</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-CLNT-06</td><td><a href="#wstg-clnt-06" style="color:var(--accent-color);text-decoration:none;">Resource Manipulation</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-829</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-CLNT-07</td><td><a href="#wstg-clnt-07" style="color:var(--accent-color);text-decoration:none;">CORS Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-346, CWE-942</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-CLNT-08</td><td><a href="#wstg-clnt-08" style="color:var(--accent-color);text-decoration:none;">Cross Site Flashing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-79</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-CLNT-09</td><td><a href="#wstg-clnt-09" style="color:var(--accent-color);text-decoration:none;">Clickjacking Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-1021</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-CLNT-10</td><td><a href="#wstg-clnt-10" style="color:var(--accent-color);text-decoration:none;">WebSocket Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-346</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-CLNT-11</td><td><a href="#wstg-clnt-11" style="color:var(--accent-color);text-decoration:none;">Web Messaging Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-346</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-CLNT-12</td><td><a href="#wstg-clnt-12" style="color:var(--accent-color);text-decoration:none;">Browser Storage Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-922</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                    <tr><td style="font-weight:600;white-space:nowrap;">WSTG-CLNT-13</td><td><a href="#wstg-clnt-13" style="color:var(--accent-color);text-decoration:none;">XSSI Testing</a></td><td style="font-size:0.8rem;color:var(--text-muted);">CWE-200, CWE-346</td><td><span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span></td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <h2>Detailed Test Cases</h2>
+
+            <div id="wstg-clnt-01" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-CLNT-01: DOM-Based XSS</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">DOM-based XSS testing checks whether client-side JavaScript reads data from attacker-controllable sources (URL hash, document.referrer, postMessage) and writes it to dangerous sinks (innerHTML, eval, document.write) without proper sanitization. This type of XSS occurs entirely in the browser.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> DOM-based XSS is increasingly common in modern single-page applications and is invisible to server-side security controls because the payload never leaves the browser. Web application firewalls cannot detect or block DOM-based XSS, making client-side testing essential.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Identify JavaScript sources that read from URL fragments, query parameters, or document properties</li>
+                    <li>Map dangerous sinks in JavaScript (innerHTML, eval, document.write, jQuery.html())</li>
+                    <li>Test if data flows from sources to sinks without sanitization</li>
+                    <li>Check for DOM XSS in client-side routing and template rendering</li>
+                    <li>Test postMessage handlers for origin validation and safe data handling</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite DOM Invader</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Browser Developer Tools</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">DOMPurify testing</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Semgrep</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-79</span></div>
+            </div>
+
+            <div id="wstg-clnt-02" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-CLNT-02: JavaScript Execution Testing</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test checks whether an attacker can inject and execute JavaScript through the application&#39;s client-side processing. It focuses on contexts where user input is processed by JavaScript code and may be executed as code rather than treated as data.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> JavaScript execution vulnerabilities allow attackers to run arbitrary code in the victim&#39;s browser context, enabling session hijacking, data theft, keylogging, and actions on behalf of the user. As applications rely more on client-side JavaScript, these attack vectors expand.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test for JavaScript injection through URL parameters processed by client-side code</li>
+                    <li>Check for use of eval(), Function(), setTimeout/setInterval with string arguments</li>
+                    <li>Test for injection through JavaScript template literals and string interpolation</li>
+                    <li>Verify that user-controlled data is not used in dynamically generated script content</li>
+                    <li>Check for unsafe JavaScript URL handling (javascript: protocol in links)</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Browser Developer Tools</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">ESLint security rules</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-79</span></div>
+            </div>
+
+            <div id="wstg-clnt-03" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-CLNT-03: HTML Injection</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">HTML injection testing checks whether user input can be used to inject arbitrary HTML content into the page. While similar to XSS, HTML injection focuses on modifying page structure and content (defacement, phishing forms) even when script execution is prevented by Content Security Policy.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> HTML injection can be used for phishing attacks by injecting fake login forms, for content spoofing to damage reputation, and for social engineering by modifying page content. Even when CSP blocks script execution, injected HTML can still manipulate what users see and interact with.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test input fields for HTML tag injection that modifies page structure</li>
+                    <li>Inject fake login forms to test phishing potential</li>
+                    <li>Check if HTML injection can override or hide legitimate page content</li>
+                    <li>Test for HTML injection in error messages, search results, and user profiles</li>
+                    <li>Verify that Content-Security-Policy prevents escalation to script execution</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Browser Developer Tools</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Manual testing</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-79</span></div>
+            </div>
+
+            <div id="wstg-clnt-04" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-CLNT-04: Client-side URL Redirect</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test checks whether the application performs client-side redirects based on user-controllable input without proper validation. Open redirects can be used in phishing attacks by making malicious URLs appear to originate from the trusted application domain.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Open redirects allow attackers to create convincing phishing URLs using the trusted application&#39;s domain. Victims see the legitimate domain in the link and trust it, but are redirected to a malicious site. This can also be chained with other vulnerabilities like OAuth token theft.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test URL parameters used for redirects (redirect, url, next, return, goto)</li>
+                    <li>Check if JavaScript-based redirects validate the destination URL</li>
+                    <li>Test for redirect bypass techniques (protocol-relative URLs, URL encoding, backslash)</li>
+                    <li>Verify that redirect destinations are validated against a whitelist</li>
+                    <li>Test for open redirect in OAuth flows and login return URLs</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Browser Developer Tools</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom redirect payloads</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-601</span></div>
+            </div>
+
+            <div id="wstg-clnt-05" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-CLNT-05: CSS Injection</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">CSS injection testing checks whether user input can be injected into style contexts to manipulate page appearance, exfiltrate data through CSS selectors, or in older browsers, execute JavaScript through CSS expression() functions.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> CSS injection can be used to exfiltrate sensitive data (like CSRF tokens) through attribute selectors and background URL techniques, phish users by overlaying fake content, and in some cases execute JavaScript. It is often overlooked because it seems less dangerous than XSS.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test if user input is reflected in style attributes or CSS blocks</li>
+                    <li>Try injecting CSS that modifies page layout to overlay phishing content</li>
+                    <li>Test CSS-based data exfiltration using attribute selectors and external URL references</li>
+                    <li>Check for CSS injection in user-customizable themes or profile styling</li>
+                    <li>Verify that user input in style contexts is properly sanitized</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Browser Developer Tools</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom CSS payloads</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-79</span></div>
+            </div>
+
+            <div id="wstg-clnt-06" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-CLNT-06: Resource Manipulation</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">This test checks whether an attacker can manipulate the resources loaded by the client-side application, such as JavaScript files, CSS stylesheets, images, or iframes. This includes testing for subdomain takeover of CDN resources and manipulation of resource URLs through user input.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> If an attacker can control which resources the application loads, they can inject malicious JavaScript through compromised or attacker-controlled resources. This is particularly relevant when applications load resources from user-controlled URLs or domains vulnerable to takeover.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Identify user-controlled parameters that influence loaded resource URLs</li>
+                    <li>Test if script, stylesheet, or iframe sources can be manipulated through URL parameters</li>
+                    <li>Check for Subresource Integrity (SRI) on externally loaded scripts and stylesheets</li>
+                    <li>Verify that CDN or third-party resource domains are not vulnerable to takeover</li>
+                    <li>Test if the application validates resource origins before loading them</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Browser Developer Tools</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Subresource Integrity checker</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-829</span></div>
+            </div>
+
+            <div id="wstg-clnt-07" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-CLNT-07: CORS Testing</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">Cross-Origin Resource Sharing (CORS) testing evaluates whether the application&#39;s CORS policy allows unauthorized cross-origin access to sensitive data. Overly permissive CORS configurations can allow any website to read authenticated responses from the application&#39;s API.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Misconfigured CORS can allow an attacker&#39;s website to make authenticated requests to the target application and read the responses, effectively bypassing the same-origin policy. This can expose user data, tokens, and sensitive API responses to malicious third-party sites.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Test if Access-Control-Allow-Origin reflects the requesting origin without validation</li>
+                    <li>Check if Access-Control-Allow-Credentials is true with a wildcard or reflected origin</li>
+                    <li>Test for origin validation bypasses (null origin, subdomain matching, regex flaws)</li>
+                    <li>Verify that CORS is not configured on endpoints that return sensitive data</li>
+                    <li>Test pre-flight request handling for proper origin validation</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">curl</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom scripts</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">CORS Misconfig Tester</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-346</span> <span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-942</span></div>
+            </div>
+
+            <div id="wstg-clnt-08" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-CLNT-08: Cross Site Flashing</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">Cross-site flashing testing checks whether Flash applications (SWF files) on the server can be exploited to execute JavaScript, perform cross-domain data theft, or redirect users. While Flash is largely deprecated, legacy SWF files may still be hosted and exploitable.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Legacy Flash files left on servers can still be exploited even though Flash Player is no longer supported by major browsers. Vulnerable SWF files can be used through specialized browser plugins or targeted environments where Flash is still available, and their mere presence indicates poor asset management.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Search for SWF files hosted on the application server</li>
+                    <li>Decompile discovered SWF files and review for user-controlled input handling</li>
+                    <li>Test for FlashVars injection that can alter SWF behavior</li>
+                    <li>Check if SWF files use ExternalInterface for JavaScript communication</li>
+                    <li>Verify that any remaining SWF files are necessary and not exploitable</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">JPEXS Flash Decompiler</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">SWFScan</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Google Dorking for SWF files</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-79</span></div>
+            </div>
+
+            <div id="wstg-clnt-09" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-CLNT-09: Clickjacking Testing</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">Clickjacking testing checks whether the application can be loaded in a frame or iframe by a malicious site. If so, an attacker can overlay the application with transparent layers to trick users into clicking on actions they did not intend, such as changing settings or making purchases.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Clickjacking can trick users into performing any action available in the application including changing account settings, making purchases, transferring funds, or granting permissions. Users believe they are interacting with the attacker&#39;s page but are actually clicking on the hidden target application.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Check for X-Frame-Options header (DENY or SAMEORIGIN)</li>
+                    <li>Verify Content-Security-Policy frame-ancestors directive</li>
+                    <li>Test if the application can be loaded in an iframe from a different domain</li>
+                    <li>Check for JavaScript frame-busting code and test if it can be bypassed</li>
+                    <li>Create a proof-of-concept clickjacking page to demonstrate the vulnerability</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite Clickbandit</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom HTML PoC</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Browser Developer Tools</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-1021</span></div>
+            </div>
+
+            <div id="wstg-clnt-10" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-CLNT-10: WebSocket Testing</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">WebSocket testing evaluates the security of WebSocket connections used for real-time communication. This includes checking authentication, authorization, input validation, and origin validation on WebSocket endpoints, which often lack the security controls applied to HTTP endpoints.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> WebSockets maintain persistent connections and often bypass HTTP security controls including WAFs, CSRF protections, and rate limiters. Since WebSocket messages are not bound by the same-origin policy after the initial handshake, insecure implementations can be exploited for cross-site attacks.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Check if WebSocket connections validate the Origin header during the handshake</li>
+                    <li>Test if authentication is required and verified for WebSocket connections</li>
+                    <li>Verify that authorization is enforced on WebSocket messages, not just connection establishment</li>
+                    <li>Test WebSocket message content for injection vulnerabilities (XSS, SQL injection)</li>
+                    <li>Check if the WebSocket connection uses the secure wss:// protocol</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">OWASP ZAP WebSocket testing</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">wscat</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom scripts</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-346</span></div>
+            </div>
+
+            <div id="wstg-clnt-11" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-CLNT-11: Web Messaging Testing</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">Web messaging testing checks the security of the postMessage API used for cross-origin communication between windows and iframes. Insecure implementations may accept messages from any origin or send sensitive data without verifying the recipient&#39;s origin.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> The postMessage API allows cross-origin communication by design, making it a powerful but dangerous feature. If event listeners do not validate message origins, any website can send messages to the application. If the application sends sensitive data via postMessage without checking the target origin, data can be stolen.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Identify all postMessage event listeners in the application&#39;s JavaScript</li>
+                    <li>Check if event listeners validate the origin of incoming messages</li>
+                    <li>Test if sending crafted messages from a different origin triggers application functionality</li>
+                    <li>Verify that postMessage calls specify the target origin (not &#39;*&#39;)</li>
+                    <li>Check if postMessage data is used in dangerous sinks without sanitization</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Browser Developer Tools</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom JavaScript</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">PMHook</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-346</span></div>
+            </div>
+
+            <div id="wstg-clnt-12" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-CLNT-12: Browser Storage Testing</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">Browser storage testing examines what data the application stores in localStorage, sessionStorage, IndexedDB, and cookies. Sensitive data stored in browser storage is accessible to any JavaScript running on the same origin and may persist longer than intended.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> Data in browser storage is accessible to any JavaScript on the same origin, making it vulnerable to XSS attacks. localStorage persists indefinitely unless explicitly cleared, meaning sensitive data like tokens or personal information can be extracted long after the user session ends.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Review localStorage and sessionStorage for sensitive data (tokens, PII, credentials)</li>
+                    <li>Check if session tokens are stored in browser storage instead of httpOnly cookies</li>
+                    <li>Verify that sensitive data is cleared when the user logs out</li>
+                    <li>Check IndexedDB for cached sensitive data from API responses</li>
+                    <li>Test if stored data is encrypted or if plaintext sensitive values are accessible</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Browser Developer Tools</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">StorageExplorer extensions</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-922</span></div>
+            </div>
+
+            <div id="wstg-clnt-13" style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+                    <h3 style="margin:0;font-size:1.05rem;color:var(--text-primary);">WSTG-CLNT-13: XSSI Testing</h3>
+                    <span style="display:inline-block;background:#ffc107;color:#000;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">Intermediate</span>
+                </div>
+                <p style="color:var(--text-secondary);line-height:1.6;margin-bottom:0.75rem;">Cross-Site Script Inclusion (XSSI) testing checks whether sensitive data is exposed through JavaScript files or JSONP endpoints that can be included by an attacker&#39;s page. If authenticated JavaScript responses contain user-specific data, an attacker&#39;s page can read this data by including the script.</p>
+                <div style="background:var(--bg-tertiary);border-left:4px solid #667eea;padding:0.75rem 1rem;border-radius:0 6px 6px 0;margin-bottom:0.75rem;">
+                    <strong>Why it matters:</strong> XSSI allows an attacker&#39;s website to steal sensitive data by including authenticated JavaScript endpoints as script sources. Because script inclusion is not restricted by the same-origin policy, the attacker&#39;s page can read any data embedded in the JavaScript response, including CSRF tokens, user data, and API keys.
+                </div>
+                <h4 style="font-size:0.9rem;margin-bottom:0.5rem;">What to Check</h4>
+                <ul style="color:var(--text-secondary);line-height:1.8;padding-left:1.25rem;margin-bottom:0.75rem;">
+                    <li>Identify JavaScript endpoints that return different content based on authentication</li>
+                    <li>Check for JSONP endpoints that include sensitive user data in the callback</li>
+                    <li>Test if authenticated JavaScript responses contain user-specific information</li>
+                    <li>Verify that Content-Type headers prevent script inclusion of non-JavaScript responses</li>
+                    <li>Check if the X-Content-Type-Options: nosniff header prevents MIME type sniffing</li>
+                </ul>
+                <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
+                    <div><strong style="font-size:0.8rem;">Tools:</strong> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Burp Suite</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Browser Developer Tools</span> <span style="display:inline-block;background:var(--bg-tertiary);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;border:1px solid var(--border-color);">Custom HTML PoC</span></div>
+                </div>
+                <div style="margin-top:0.5rem;"><span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-200</span> <span style="display:inline-block;background:var(--bg-tertiary);color:var(--text-secondary);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;border:1px solid var(--border-color);margin:0.1rem;">CWE-346</span></div>
+            </div>
+
+            <h2>Relevant Certifications</h2>
+            <p>The following certifications cover client-side testing concepts:</p>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin:0.75rem 0;"><a href="../certs/ec-ceh.html" style="display:inline-block;background:var(--bg-secondary);color:var(--text-primary);padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;border:1px solid var(--border-color);">CEH</a><a href="../certs/offsec-oscp.html" style="display:inline-block;background:var(--bg-secondary);color:var(--text-primary);padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;text-decoration:none;border:1px solid var(--border-color);">OSCP</a><span style="display:inline-block;background:var(--bg-secondary);color:var(--text-primary);padding:0.3rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;border:1px solid var(--border-color);">GWAPT</span></div>
+
+            <h2>Frequently Asked Questions</h2>
+            <details class="faq-item">
+                <summary>What is the difference between reflected/stored XSS and DOM-based XSS?</summary>
+                <p>Reflected and stored XSS involve the server including malicious input in the HTTP response. DOM-based XSS occurs entirely in the browser when client-side JavaScript reads data from an attacker-controllable source (like the URL fragment) and writes it to a dangerous sink (like innerHTML) without sanitization. DOM-based XSS never reaches the server, making it invisible to server-side security controls and WAFs.</p>
+            </details>
+            <details class="faq-item">
+                <summary>What is clickjacking and how does it affect users?</summary>
+                <p>Clickjacking (UI redressing) tricks users into clicking on something different from what they perceive by loading the target application in a transparent iframe overlaid on a malicious page. The user thinks they are clicking buttons on the attacker&#39;s page but are actually interacting with the hidden target application. This can lead to unintended actions like changing settings, making purchases, or granting permissions.</p>
+            </details>
+            <details class="faq-item">
+                <summary>Why is browser storage (localStorage, sessionStorage) a security concern?</summary>
+                <p>Browser storage is accessible to any JavaScript running on the same origin, which means XSS vulnerabilities can read all stored data. Storing sensitive data like session tokens or personal information in localStorage is risky because it persists even after the browser is closed and has no equivalent of cookie security flags (HttpOnly, Secure). Sensitive data should use httpOnly cookies rather than browser storage.</p>
+            </details>
+
+        </div>
+
+        <!-- CyberFolio CTA -->
+        <div style="border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.3rem;">CyberFolio</p>
+            <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Mastering web security testing? Showcase your skills.</p>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills &mdash; free.</p>
+            <a href="https://cyberfolio.io" style="display:inline-block;background:#06b6d4;color:white;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;" target="_blank" rel="noopener">Build Your Portfolio &rarr;</a>
+        </div>
+
+        <!-- Related Categories -->
+        <section style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
+            <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Related WSTG Categories</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+                <a href="information-gathering.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-INFO</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Information Gathering</span></a>
+                <a href="configuration-deployment.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-CONF</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Configuration and Deployment Management</span></a>
+                <a href="identity-management.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-IDNT</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Identity Management</span></a>
+                <a href="authentication-testing.html" style="display:block;padding:1rem;background:var(--bg-secondary);border-radius:8px;text-decoration:none;color:var(--text-primary);border:1px solid var(--border-color);"><strong>WSTG-ATHN</strong><br><span style="font-size:0.85rem;color:var(--text-muted);">Authentication Testing</span></a>
+            </div>
+        </section>
+
+        <a href="../index.html" class="back-link">&larr; Back to Home</a>
+        <a href="index.html" class="back-link" style="margin-left: 1rem;">&larr; All WSTG Categories</a>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
+            <p>Study Planners: <a href="/store/store.html">FixTheVuln Store</a> | Career Tools: <a href="https://cyberfolio.io" target="_blank" rel="noopener">CyberFolio</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+        </div>
+    </footer>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
