@@ -243,7 +243,7 @@ def generate_cve_page(vuln):
 <body>
 <nav class="site-nav">
     <div class="container">
-        <a href="../index.html" class="site-nav-logo">FixTheVuln</a>
+        <a href="/" class="site-nav-logo">FixTheVuln</a>
         <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
         <div class="site-nav-links">
             <a href="../guides.html">Guides</a>
@@ -460,7 +460,7 @@ def generate_index_page(vulns):
 <body>
 <nav class="site-nav">
     <div class="container">
-        <a href="../index.html" class="site-nav-logo">FixTheVuln</a>
+        <a href="/" class="site-nav-logo">FixTheVuln</a>
         <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
         <div class="site-nav-links">
             <a href="../guides.html">Guides</a>

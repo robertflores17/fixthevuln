@@ -379,7 +379,7 @@ class BlogPublisher:
 <body>
 <nav class="site-nav">
     <div class="container">
-        <a href="../index.html" class="site-nav-logo">FixTheVuln</a>
+        <a href="/" class="site-nav-logo">FixTheVuln</a>
         <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
         <div class="site-nav-links">
             <a href="../guides.html">Guides</a>
@@ -572,7 +572,7 @@ class BlogPublisher:
 <body>
 <nav class="site-nav">
     <div class="container">
-        <a href="../index.html" class="site-nav-logo">FixTheVuln</a>
+        <a href="/" class="site-nav-logo">FixTheVuln</a>
         <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
         <div class="site-nav-links">
             <a href="../guides.html">Guides</a>

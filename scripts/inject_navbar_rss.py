@@ -9,7 +9,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 ROOT_NAV = """<nav class="site-nav">
     <div class="container">
-        <a href="index.html" class="site-nav-logo">FixTheVuln</a>
+        <a href="/" class="site-nav-logo">FixTheVuln</a>
         <div class="site-nav-links">
             <a href="guides.html">Guides</a>
             <a href="tools.html">Tools</a>
@@ -22,7 +22,7 @@ ROOT_NAV = """<nav class="site-nav">
 
 SUBDIR_NAV = """<nav class="site-nav">
     <div class="container">
-        <a href="../index.html" class="site-nav-logo">FixTheVuln</a>
+        <a href="/" class="site-nav-logo">FixTheVuln</a>
         <div class="site-nav-links">
             <a href="../guides.html">Guides</a>
             <a href="../tools.html">Tools</a>
