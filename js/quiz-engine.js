@@ -3,6 +3,8 @@
  * Each quiz page calls QuizEngine.init(config) with cert-specific settings.
  */
 const QuizEngine = (() => {
+    function esc(s) { const d = document.createElement('div'); d.textContent = String(s); return d.innerHTML; }
+
     let questions = [];
     let fallbackQuestions = [];
     let DOMAIN_INFO = {};
@@ -126,23 +128,24 @@ const QuizEngine = (() => {
         const q = currentQuiz[currentQuestion];
         const container = document.getElementById('question-container');
         const letters = ['A', 'B', 'C', 'D'];
-        const domainBadge = q.domain ? `<span class="question-category">${getDomainLabel(q.domain)}</span>` : '';
+        const domainBadge = q.domain ? `<span class="question-category">${esc(getDomainLabel(q.domain))}</span>` : '';
         const optionsHTML = q.options.map((opt, i) => `
             <div class="option" data-index="${i}" onclick="QuizEngine.selectOption(${i})">
                 <span class="option-letter">${letters[i]}</span>
-                <span>${opt}</span>
+                <span>${esc(opt)}</span>
             </div>
         `).join('');
+        const safeLink = q.link && /^https?:\/\//.test(q.link) ? q.link : '';
         container.innerHTML = `
             <div class="question-card">
                 <span class="question-number">Question ${currentQuestion + 1}/${quizSize}</span>
                 ${domainBadge}
-                <p class="question-text">${q.question}</p>
+                <p class="question-text">${esc(q.question)}</p>
                 <div class="options-list">${optionsHTML}</div>
                 <div class="explanation" id="explanation">
                     <h4>Explanation</h4>
-                    <p>${q.explanation}</p>
-                    ${q.link ? `<p><a href="${q.link}">Learn more &rarr;</a></p>` : ''}
+                    <p>${esc(q.explanation)}</p>
+                    ${safeLink ? `<p><a href="${esc(safeLink)}">Learn more &rarr;</a></p>` : ''}
                 </div>
             </div>
         `;

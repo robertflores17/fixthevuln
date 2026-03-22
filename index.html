@@ -491,6 +491,8 @@
                 none: '#6c757d'
             },
 
+            esc: function(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; },
+
             getCvssClass: function(cvss, isZeroDay) {
                 if (isZeroDay || cvss >= 9) return 'cvss-critical';
                 if (cvss >= 7) return 'cvss-high';
@@ -519,12 +521,12 @@
                 const cvssDisplay = this.formatCvss(vuln.cvss, vuln.isZeroDay);
                 const nvdUrl = 'https://nvd.nist.gov/vuln/detail/' + encodeURIComponent(vuln.id);
 
-                return '<a href="' + nvdUrl + '" target="_blank" rel="noopener" class="kev-card-link" title="View ' + vuln.id + ' on NVD">' +
+                return '<a href="' + nvdUrl + '" target="_blank" rel="noopener" class="kev-card-link" title="View ' + this.esc(vuln.id) + ' on NVD">' +
                     '<div class="kev-card ' + cvssClass + '">' +
-                        '<h4>' + vuln.title + '</h4>' +
-                        '<div class="cve-id" style="color: ' + cvssColor + ';">' + vuln.id + ' | ' + cvssDisplay + '</div>' +
-                        '<p>' + vuln.description + '</p>' +
-                        '<div class="kev-fix"><strong>Fix:</strong> ' + vuln.fix + '</div>' +
+                        '<h4>' + this.esc(vuln.title) + '</h4>' +
+                        '<div class="cve-id" style="color: ' + cvssColor + ';">' + this.esc(vuln.id) + ' | ' + cvssDisplay + '</div>' +
+                        '<p>' + this.esc(vuln.description) + '</p>' +
+                        '<div class="kev-fix"><strong>Fix:</strong> ' + this.esc(vuln.fix) + '</div>' +
                     '</div>' +
                 '</a>';
             },

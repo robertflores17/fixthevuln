@@ -282,7 +282,33 @@ export default {
 };
 
 // ─── CHECKOUT HANDLER ───────────────────────────
+const CHECKOUT_RATE_LIMIT = new Map(); // IP -> { count, resetAt }
+
 async function handleCheckout(request, env, cors) {
+  // Rate limit: 5 requests/minute per IP (each call hits Stripe API)
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+  const now = Date.now();
+  const limit = CHECKOUT_RATE_LIMIT.get(ip);
+  if (limit) {
+    if (now < limit.resetAt) {
+      if (limit.count >= 5) {
+        return new Response(JSON.stringify({ error: 'Too many requests. Please try again later.' }), {
+          status: 429, headers: { ...cors, 'Content-Type': 'application/json' },
+        });
+      }
+      limit.count++;
+    } else {
+      CHECKOUT_RATE_LIMIT.set(ip, { count: 1, resetAt: now + 60000 });
+    }
+  } else {
+    CHECKOUT_RATE_LIMIT.set(ip, { count: 1, resetAt: now + 60000 });
+  }
+  if (CHECKOUT_RATE_LIMIT.size > 500) {
+    for (const [k, v] of CHECKOUT_RATE_LIMIT) {
+      if (now > v.resetAt) CHECKOUT_RATE_LIMIT.delete(k);
+    }
+  }
+
   try {
     const { items } = await request.json();
 
@@ -401,6 +427,30 @@ async function handleCheckout(request, env, cors) {
 // ─── VERIFY HANDLER ─────────────────────────────
 // Checks with Stripe that payment succeeded, returns download info
 async function handleVerify(request, env, cors) {
+  // Rate limit: 10 requests/minute per IP (each call hits Stripe API)
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+  const now = Date.now();
+  const limit = CHECKOUT_RATE_LIMIT.get(`verify:${ip}`);
+  if (limit) {
+    if (now < limit.resetAt) {
+      if (limit.count >= 10) {
+        return new Response(JSON.stringify({ error: 'Too many requests. Please try again later.' }), {
+          status: 429, headers: { ...cors, 'Content-Type': 'application/json' },
+        });
+      }
+      limit.count++;
+    } else {
+      CHECKOUT_RATE_LIMIT.set(`verify:${ip}`, { count: 1, resetAt: now + 60000 });
+    }
+  } else {
+    CHECKOUT_RATE_LIMIT.set(`verify:${ip}`, { count: 1, resetAt: now + 60000 });
+  }
+  if (CHECKOUT_RATE_LIMIT.size > 500) {
+    for (const [k, v] of CHECKOUT_RATE_LIMIT) {
+      if (now > v.resetAt) CHECKOUT_RATE_LIMIT.delete(k);
+    }
+  }
+
   try {
     const { sessionId } = await request.json();
 

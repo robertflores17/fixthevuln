@@ -279,6 +279,9 @@
 
         // KEV Archive Loading System
         const KEVArchive = {
+            // HTML-escape untrusted strings
+            esc: function(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; },
+
             // CVSS color mapping
             cvssColors: {
                 critical: '#dc3545',  // Red: 9-10 or Zero-Day
@@ -320,13 +323,14 @@
                 const cvssDisplay = this.formatCvss(vuln.cvss, vuln.isZeroDay);
                 const nvdUrl = `https://nvd.nist.gov/vuln/detail/${encodeURIComponent(vuln.id)}`;
 
+                const e = this.esc.bind(this);
                 return `
-                    <a href="${nvdUrl}" target="_blank" rel="noopener" class="kev-card-link" title="View ${vuln.id} on NVD">
+                    <a href="${nvdUrl}" target="_blank" rel="noopener" class="kev-card-link" title="View ${e(vuln.id)} on NVD">
                         <div class="kev-card ${cvssClass}">
-                            <h4>${vuln.title}</h4>
-                            <div class="cve-id" style="color: ${cvssColor};">${vuln.id} | ${cvssDisplay}</div>
-                            <p>${vuln.description}</p>
-                            <div class="kev-fix"><strong>Fix:</strong> ${vuln.fix}</div>
+                            <h4>${e(vuln.title)}</h4>
+                            <div class="cve-id" style="color: ${cvssColor};">${e(vuln.id)} | ${cvssDisplay}</div>
+                            <p>${e(vuln.description)}</p>
+                            <div class="kev-fix"><strong>Fix:</strong> ${e(vuln.fix)}</div>
                         </div>
                     </a>
                 `;

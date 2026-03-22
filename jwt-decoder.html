@@ -465,6 +465,8 @@
             return JSON.stringify(obj, null, 2);
         }
 
+        function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
         function formatTimestamp(timestamp) {
             if (!timestamp) return 'N/A';
             const date = new Date(timestamp * 1000);
@@ -540,7 +542,7 @@
                         displayValue = JSON.stringify(value);
                     }
 
-                    row.innerHTML = '<td><strong>' + key + '</strong></td><td class="claim-value">' + displayValue + '</td><td>' + description + '</td>';
+                    row.innerHTML = '<td><strong>' + esc(key) + '</strong></td><td class="claim-value">' + esc(displayValue) + '</td><td>' + description + '</td>';
                     claimsBody.appendChild(row);
                 }
 
