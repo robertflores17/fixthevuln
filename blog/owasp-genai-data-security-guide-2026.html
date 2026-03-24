@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="OWASP just published 21 data-layer risks for GenAI systems. Here are the 5 most overlooked risks that should be on every CISO's radar — released during RSA Conference 2026.">
+    <meta name="keywords" content="GenAI data security, OWASP DSGAI, RSA Conference 2026, AI security risks, vector store security, shadow AI, context window security, AI-DSPM, LLM data leakage, agent credential sprawl">
+    <title>5 GenAI Data Risks Your Security Team Is Probably Ignoring (OWASP 2026) - FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/blog/owasp-genai-data-security-guide-2026.html">
+    <meta property="og:title" content="5 GenAI Data Risks Your Security Team Is Probably Ignoring (OWASP 2026) - FixTheVuln">
+    <meta property="og:description" content="OWASP just published 21 data-layer risks for GenAI systems. Here are the 5 most overlooked risks that should be on every CISO's radar — released during RSA Conference 2026.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://fixthevuln.com/blog/owasp-genai-data-security-guide-2026.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="5 GenAI Data Risks Your Security Team Is Probably Ignoring (OWASP 2026) - FixTheVuln">
+    <meta name="twitter:description" content="OWASP just published 21 data-layer risks for GenAI systems. Here are the 5 most overlooked risks that should be on every CISO's radar — released during RSA Conference 2026.">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="stylesheet" href="../style.min.css?v=8">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "5 GenAI Data Risks Your Security Team Is Probably Ignoring (OWASP 2026)",
+        "description": "OWASP just published 21 data-layer risks for GenAI systems. Here are the 5 most overlooked risks that should be on every CISO's radar — released during RSA Conference 2026.",
+        "datePublished": "2026-03-23",
+        "dateModified": "2026-03-23",
+        "author": { "@type": "Organization", "name": "FixTheVuln Team", "url": "https://fixthevuln.com" },
+        "publisher": { "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://fixthevuln.com/blog/" },
+            { "@type": "ListItem", "position": 3, "name": "5 GenAI Data Risks Your Security Team Is Probably Ignoring (OWASP 2026)" }
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "What is this article about?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "OWASP just published 21 data-layer risks for GenAI systems. Here are the 5 most overlooked risks that should be on every CISO's radar — released during RSA Conference 2026."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Why is 5 GenAI Data Risks Your Security Team Is Probably Ignoring (OWASP 2026) important for cybersecurity?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Understanding 5 genai data risks your security team is probably ignoring (owasp 2026) is critical for cybersecurity professionals to stay ahead of emerging threats and protect their organizations. This article provides actionable insights and analysis."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How can I stay updated on cybersecurity threats?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Follow FixTheVuln for weekly threat roundups, vulnerability breakdowns, and security certification guides. Subscribe to CISA alerts and monitor the Known Exploited Vulnerabilities (KEV) catalog for the latest actively exploited vulnerabilities."
+            }
+        }
+    ]
+}
+</script>
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="/" class="site-nav-logo">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+        <div class="site-nav-links">
+            <a href="../guides.html">Guides</a>
+            <a href="../tools.html">Tools</a>
+            <a href="../compliance.html">Compliance</a>
+            <a href="../resources.html">Resources</a>
+            <a href="../blog/">Blog</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header class="content-header">
+        <div class="container">
+            <h1>5 GenAI Data Risks Your Security Team Is Probably Ignoring (OWASP 2026)</h1>
+            <p>Expert cybersecurity insights for IT professionals</p>
+            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">Last updated: March 23, 2026</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
+            <span>By <strong>FixTheVuln Team</strong></span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Peer-reviewed security content</span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Sources: OWASP GenAI Data Security Risks 2026, RSA Conference 2026</span>
+        </div>
+        <div class="content-wrapper">
+<h2 id="owasp-just-dropped-a-103-page-guide-on-genai-data-security">OWASP Just Dropped a 103-Page Guide on GenAI Data Security</h2>
+
+<p>RSA Conference 2026 is happening this week in San Francisco, and OWASP timed the release perfectly. The <a href="https://genai.owasp.org/resource/owasp-genai-data-security-risks-mitigations-2026/">GenAI Data Security Risks & Mitigations 2026</a> identifies <strong>21 data-layer risks</strong> specific to GenAI systems — and most security teams aren't looking at any of them.</p>
+
+<p>Here's why this matters: most organizations are focused on prompt injection and model jailbreaking (application-layer risks covered by the <a href="/owasp-llm-top10.html">OWASP LLM Top 10</a>). But the <strong>data layer</strong> — how data flows through, is stored by, and is generated by GenAI systems — is the overlooked attack surface.</p>
+
+<p>The guide introduces a fundamental insight that should change how you think about GenAI security: <strong>the context window merges data from multiple trust domains into a single flat namespace with no internal access control.</strong> A confidential HR document sits alongside user input with equal trust weight. There is no mechanism to mark a context segment as "available for reasoning but not for direct output."</p>
+
+<p>We've published a <a href="/genai-data-security.html">comprehensive reference guide covering all 21 DSGAI risks</a>. But if you only have 5 minutes, here are the 5 risks your team is most likely ignoring.</p>
+
+<h2 id="1-context-window-trust-boundary-collapse-dsgai15">1. Context Window Trust Boundary Collapse (DSGAI15)</h2>
+
+<h3 id="why-you-re-probably-ignoring-it">Why You're Probably Ignoring It</h3>
+
+<p>Your security architecture assumes that network boundaries, IAM policies, and database ACLs enforce who sees what. The moment data enters an LLM context window, those boundaries disappear.</p>
+
+<p>Teams routinely stuff full user profiles, transaction histories, and entire documents into prompts for "better context." Every single request becomes a high-density intelligence artifact. If one prompt is logged, intercepted, or extracted via prompt injection, it contains a cross-section of data from multiple systems and trust domains — with zero internal access boundaries.</p>
+
+<h3 id="what-to-do-this-week">What To Do This Week</h3>
+
+<ul>
+    <li><strong>Audit your prompt templates.</strong> What data sources feed into each prompt? Is all of it necessary for the task?</li>
+    <li><strong>Implement metadata-based RAG filtering.</strong> Before injecting retrieved content into the context window, filter by the requesting user's permissions.</li>
+    <li><strong>Never put credentials in system prompts.</strong> This sounds obvious, but the guide found it's still common in production deployments.</li>
+</ul>
+
+<h2 id="2-vector-stores-are-a-first-class-attack-surface-dsgai13">2. Vector Stores Are a First-Class Attack Surface (DSGAI13)</h2>
+
+<h3 id="why-you-re-probably-ignoring-it">Why You're Probably Ignoring It</h3>
+
+<p>Your team probably treats vector databases as "just another data store" — if they think about them at all. But most production vector store deployments lack authentication entirely. Collections are accessible from internal networks without encryption. And the security team isn't patching them because they're not in the asset inventory.</p>
+
+<p>Here's the part that surprises people: <strong>embeddings are not one-way transforms.</strong> Embedding inversion research shows that original text can be reconstructed from vector representations. Your "anonymized" vector store may contain reconstructable sensitive data.</p>
+
+<h3 id="what-to-do-this-week">What To Do This Week</h3>
+
+<ul>
+    <li><strong>Audit vector DB authentication.</strong> If your Qdrant, Pinecone, or Weaviate instance has no auth, fix it today. Qdrant path traversal (CVE-2024-3584) proved these platforms have real vulnerabilities.</li>
+    <li><strong>Enable TLS</strong> between your application and vector store.</li>
+    <li><strong>Add vector stores to your asset inventory</strong> and patch management cycle.</li>
+</ul>
+
+<h2 id="3-non-human-identity-sprawl-from-ai-agents-dsgai02">3. Non-Human Identity Sprawl from AI Agents (DSGAI02)</h2>
+
+<h3 id="why-you-re-probably-ignoring-it">Why You're Probably Ignoring It</h3>
+
+<p>Every AI agent that calls an API needs credentials. When Agent A spawns Agent B to complete a subtask, Agent B needs its own API keys, service accounts, or OAuth tokens. These multiply rapidly — often with overprivileged access and no expiration.</p>
+
+<p>Your PAM system doesn't track these credentials because they weren't provisioned through IT. Your identity team doesn't know they exist. And when an agent framework is decommissioned, those orphaned credentials remain active.</p>
+
+<p>The Hugging Face Spaces secrets exposure showed how AI platform credentials stored alongside model code can be compromised at scale. Agent frameworks that spawn sub-agents often inherit parent credentials with full privilege, creating lateral movement opportunities.</p>
+
+<h3 id="what-to-do-this-week">What To Do This Week</h3>
+
+<ul>
+    <li><strong>Inventory all NHIs</strong> (Non-Human Identities) created by or for AI agents.</li>
+    <li><strong>Enforce short-lived tokens</strong> over long-lived API keys. If an agent credential doesn't expire in 24 hours, it's too long.</li>
+    <li><strong>Add AI agent credentials to your PAM lifecycle.</strong> If they're not in your credential rotation policy, they're a ticking time bomb.</li>
+</ul>
+
+<h2 id="4-derived-artifacts-carry-reconstructable-data-dsgai18">4. Derived Artifacts Carry Reconstructable Data (DSGAI18)</h2>
+
+<h3 id="why-you-re-probably-ignoring-it">Why You're Probably Ignoring It</h3>
+
+<p>Your DLP policies cover databases, file shares, and email. But do they cover <strong>embeddings and fine-tuned model weights</strong>?</p>
+
+<p>Membership inference attacks can determine whether a specific individual's data was used in training. Model inversion can reconstruct training examples. Embedding inversion via k-NN can recover original text from vector representations. Even systems that never return raw text leak information through probability scores and embedding similarity measurements.</p>
+
+<p>Yet most organizations classify these artifacts as "model infrastructure" rather than "sensitive data." They're excluded from data retention policies, not covered by erasure procedures, and invisible to compliance teams.</p>
+
+<h3 id="what-to-do-this-week">What To Do This Week</h3>
+
+<ul>
+    <li><strong>Reclassify embeddings and fine-tuned models as sensitive data</strong> — because they contain reconstructable sensitive data.</li>
+    <li><strong>Include model artifacts in data retention policies.</strong> If you delete a customer's records from your database but their data persists in your embeddings, you haven't honored the deletion request.</li>
+    <li><strong>Run a membership inference audit</strong> on your fine-tuned models before deploying them.</li>
+</ul>
+
+<h2 id="5-shadow-ai-data-flows-dsgai03">5. Shadow AI Data Flows (DSGAI03)</h2>
+
+<h3 id="why-you-re-probably-ignoring-it">Why You're Probably Ignoring It</h3>
+
+<p>You probably have a policy that says "don't paste confidential data into ChatGPT." Your employees are doing it anyway. The guide identifies <strong>five distinct shadow AI categories</strong>: personal SaaS usage, browser extensions, IDE integrations, mobile AI apps, and custom GPTs populated with corporate data.</p>
+
+<p>Your DLP catches file uploads. It doesn't catch text pasted into a browser window. Free-tier AI services may use submitted data for model training, meaning your proprietary source code is now part of a public model's training corpus.</p>
+
+<p>Samsung banned ChatGPT after engineers pasted proprietary source code and meeting notes. But most organizations aren't Samsung — they don't even know it's happening.</p>
+
+<h3 id="what-to-do-this-week">What To Do This Week</h3>
+
+<ul>
+    <li><strong>Deploy browser-based DLP</strong> that monitors text input to GenAI services — not just file uploads.</li>
+    <li><strong>Provide approved enterprise AI tools</strong> with data governance baked in. Employees use shadow AI because the official tools are too slow or restrictive.</li>
+    <li><strong>Define concrete data categories</strong> that cannot be submitted to external AI tools, with examples employees can actually understand.</li>
+</ul>
+
+<h2 id="the-full-picture-21-risks-6-groups-1-framework">The Full Picture: 21 Risks, 6 Groups, 1 Framework</h2>
+
+<p>These 5 risks are the tip of the iceberg. The full guide covers 21 data-layer risks organized in 6 groups, plus a 13-category AI-DSPM (AI Data Security Posture Management) framework for assessing your organization's maturity.</p>
+
+<p>One deadline worth circling: <strong>EU AI Act Article 10 (August 2026)</strong> requires organizations deploying high-risk AI systems to demonstrate data governance for training datasets. If you're subject to the EU AI Act, this guide's recommendations map directly to compliance requirements.</p>
+
+<p>We've built a <a href="/genai-data-security.html">comprehensive reference covering all 21 DSGAI risks with mitigations</a> — or <a href="https://genai.owasp.org/resource/owasp-genai-data-security-risks-mitigations-2026/">download the full 103-page OWASP guide</a> for the complete framework with attack scenarios, CVE references, and tiered implementation guidance.</p>
+        </div>
+
+
+            <!-- Related Tools -->
+            <section style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
+                <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Explore More</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+                    <a href="../tools.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Free Security Tools</a>
+                    <a href="../practice-tests.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Practice Quizzes</a>
+                    <a href="../comparisons/" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Cert Comparisons</a>
+                </div>
+            </section>
+
+
+            <!-- Store CTA -->
+            <section style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
+                <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
+                <h3 style="color: white; margin-bottom: 0.5rem;">Studying for Security+? Get the Study Planner</h3>
+                <p style="opacity: 0.9; margin-bottom: 1rem;">Structured study planners for CompTIA certifications. Domain trackers, time blocking, and exam strategies.</p>
+                <a href="../store/store.html" style="display: inline-block; background: #667eea; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 600;">Shop Security+ Planner</a>
+                <p style="font-size: 0.8rem; opacity: 0.85; margin-top: 0.75rem;">Also available: CompTIA A+, Network+, CySA+, PenTest+</p>
+            </section>
+
+            <!-- CyberFolio CTA -->
+            <div style="border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem;">
+                <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.3rem;">CyberFolio</p>
+                <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Building cybersecurity skills? Track them in one place.</p>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills &mdash; free.</p>
+                <a href="https://cyberfolio.io" style="display:inline-block;background:#06b6d4;color:white;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;" target="_blank" rel="noopener">Build Your Portfolio &rarr;</a>
+            </div>
+
+            <a href="../index.html" class="back-link">&larr; Back to Home</a>
+            <a href="index.html" class="back-link" style="margin-left: 1rem;">&larr; All Blog Posts</a>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
+            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a> | Study Planners: <a href="/store/store.html">FixTheVuln Store</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+        </div>
+    </footer>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
