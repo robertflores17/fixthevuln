@@ -1,0 +1,186 @@
+name: Monthly Security Audit
+
+on:
+  schedule:
+    - cron: '0 15 1 * *'  # 1st of each month, 7 AM PST
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  security-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install audit tools
+        run: pip install pip-audit
+
+      - name: Run security audit
+        id: audit
+        continue-on-error: true
+        run: |
+          FINDINGS=""
+          HAS_FINDINGS=false
+
+          # ── 1. npm audit (store worker) ──
+          echo "## npm Dependencies (store/)" >> $GITHUB_STEP_SUMMARY
+          if [ -f store/package.json ]; then
+            cd store && npm ci --ignore-scripts 2>/dev/null
+            NPM_RESULT=$(npm audit 2>&1) || true
+            if echo "$NPM_RESULT" | grep -q "found 0 vulnerabilities"; then
+              echo "No npm vulnerabilities found." >> $GITHUB_STEP_SUMMARY
+            else
+              HAS_FINDINGS=true
+              FINDINGS="${FINDINGS}\n### npm Dependencies (store/)\n\`\`\`\n${NPM_RESULT}\n\`\`\`\n"
+              echo "$NPM_RESULT" >> $GITHUB_STEP_SUMMARY
+            fi
+            cd ..
+          fi
+
+          # ── 2. Python package audit ──
+          echo "## Python Dependencies" >> $GITHUB_STEP_SUMMARY
+          if [ -f requirements.txt ]; then
+            PIP_RESULT=$(pip-audit -r requirements.txt 2>&1) || true
+          else
+            PIP_RESULT=$(pip-audit 2>&1) || true
+          fi
+          if echo "$PIP_RESULT" | grep -qE "No known vulnerabilities|found 0 vulnerabilities"; then
+            echo "No Python vulnerabilities found." >> $GITHUB_STEP_SUMMARY
+          else
+            if echo "$PIP_RESULT" | grep -qiE "vulnerable|CVE-|PYSEC-|GHSA-"; then
+              HAS_FINDINGS=true
+              FINDINGS="${FINDINGS}\n### Python Dependencies\n\`\`\`\n${PIP_RESULT}\n\`\`\`\n"
+            fi
+            echo "$PIP_RESULT" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # ── 3. Hardcoded secrets scan ──
+          echo "## Secret Scan" >> $GITHUB_STEP_SUMMARY
+          SECRET_HITS=$(grep -rn \
+            --include='*.js' --include='*.html' --include='*.py' --include='*.json' --include='*.yml' \
+            --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.wrangler \
+            --exclude='package-lock.json' --exclude='security-audit.yml' \
+            -E '(sk_live_|sk_test_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{36}|github_pat_|xoxb-|xoxp-|api-[A-Fa-f0-9]{32})' \
+            . 2>/dev/null || true)
+          if [ -n "$SECRET_HITS" ]; then
+            HAS_FINDINGS=true
+            FINDINGS="${FINDINGS}\n### Potential Hardcoded Secrets\n\`\`\`\n${SECRET_HITS}\n\`\`\`\n"
+            echo "Found potential secrets:" >> $GITHUB_STEP_SUMMARY
+            echo "$SECRET_HITS" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No hardcoded secrets found." >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # ── 4. innerHTML without escaping ──
+          echo "## XSS Pattern Scan" >> $GITHUB_STEP_SUMMARY
+          XSS_HITS=$(grep -rn \
+            --include='*.js' --include='*.html' \
+            --exclude-dir=node_modules --exclude-dir=.git \
+            'innerHTML\s*=' . 2>/dev/null | \
+            grep -v 'esc(' | grep -v 'escapeHtml(' | grep -v 'textContent' | \
+            grep -v '\.innerHTML\s*=\s*'"'"''"'"'\|\.innerHTML\s*=\s*""' || true)
+          if [ -n "$XSS_HITS" ]; then
+            HAS_FINDINGS=true
+            FINDINGS="${FINDINGS}\n### innerHTML Without Escaping\n\`\`\`\n${XSS_HITS}\n\`\`\`\n"
+            echo "Found unescaped innerHTML:" >> $GITHUB_STEP_SUMMARY
+            echo "$XSS_HITS" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No unescaped innerHTML found." >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # ── 5. CORS misconfiguration ──
+          echo "## CORS Check" >> $GITHUB_STEP_SUMMARY
+          CORS_HITS=$(grep -rn \
+            --include='*.js' \
+            --exclude-dir=node_modules --exclude-dir=.git \
+            'startsWith.*[Oo]rigin\|origin.*startsWith' . 2>/dev/null || true)
+          if [ -n "$CORS_HITS" ]; then
+            HAS_FINDINGS=true
+            FINDINGS="${FINDINGS}\n### CORS startsWith (bypassable)\n\`\`\`\n${CORS_HITS}\n\`\`\`\n"
+            echo "Found CORS startsWith pattern:" >> $GITHUB_STEP_SUMMARY
+            echo "$CORS_HITS" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "CORS origin checks OK." >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # ── 6. eval() usage ──
+          EVAL_HITS=$(grep -rn \
+            --include='*.js' \
+            --exclude-dir=node_modules --exclude-dir=.git \
+            '[^a-zA-Z]eval(' . 2>/dev/null || true)
+          if [ -n "$EVAL_HITS" ]; then
+            HAS_FINDINGS=true
+            FINDINGS="${FINDINGS}\n### eval() Usage\n\`\`\`\n${EVAL_HITS}\n\`\`\`\n"
+          fi
+
+          # ── 7. Tracked files that shouldn't be ──
+          echo "## Tracked Sensitive Files" >> $GITHUB_STEP_SUMMARY
+          TRACKED=$(git ls-files | grep -iE '\.env$|\.env\.|\.dev\.vars|settings\.local|\.wrangler|\.pem$|\.key$|\.p12$' || true)
+          if [ -n "$TRACKED" ]; then
+            HAS_FINDINGS=true
+            FINDINGS="${FINDINGS}\n### Tracked Sensitive Files\n\`\`\`\n${TRACKED}\n\`\`\`\n"
+            echo "Found tracked sensitive files:" >> $GITHUB_STEP_SUMMARY
+            echo "$TRACKED" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No sensitive files tracked." >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # ── Output ──
+          if [ "$HAS_FINDINGS" = true ]; then
+            echo "has_findings=true" >> $GITHUB_OUTPUT
+            # Write findings to file (avoid shell escaping issues)
+            printf "%b" "$FINDINGS" > /tmp/findings.md
+          else
+            echo "has_findings=false" >> $GITHUB_OUTPUT
+            echo "All clear — no security issues found." >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Close previous audit issue
+        if: steps.audit.outputs.has_findings == 'true'
+        run: |
+          PREV=$(gh issue list --label security-audit --state open --json number -q '.[].number' 2>/dev/null || true)
+          for NUM in $PREV; do
+            gh issue close "$NUM" --comment "Superseded by new audit run." 2>/dev/null || true
+          done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create issue with findings
+        if: steps.audit.outputs.has_findings == 'true'
+        run: |
+          BODY=$(cat /tmp/findings.md)
+          gh issue create \
+            --title "Security Audit — $(date +'%B %Y')" \
+            --label "security-audit" \
+            --body "## Monthly Security Audit Results
+
+          ${BODY}
+
+          ---
+          *Automated by \`security-audit.yml\` — run \`/dep-audit\` in Claude Code to remediate.*"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Close previous clean issue
+        if: steps.audit.outputs.has_findings == 'false'
+        run: |
+          PREV=$(gh issue list --label security-audit --state open --json number -q '.[].number' 2>/dev/null || true)
+          for NUM in $PREV; do
+            gh issue close "$NUM" --comment "All clear — latest audit found no issues." 2>/dev/null || true
+          done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
