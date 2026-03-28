@@ -17,14 +17,17 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(SCRIPTS_DIR))
+
+from lib.templates import (html_head, nav, share_bar, footer, cf_analytics,
+                           article_schema, breadcrumb_schema, esc)
+from lib.constants import SITE_URL
+from entity_extractor import enrich_cve, OWASP_COLORS, OWASP_LABELS
+
 KEV_PATH = REPO_ROOT / 'data' / 'kev-data.json'
 CVE_DIR = REPO_ROOT / 'cve'
 SITEMAP_PATH = REPO_ROOT / 'sitemap.xml'
 TODAY = date.today().isoformat()
-
-# Import entity extractor for OWASP enrichment
-sys.path.insert(0, str(SCRIPTS_DIR))
-from entity_extractor import enrich_cve, OWASP_COLORS, OWASP_LABELS
 
 
 def severity_label(cvss):
@@ -67,13 +70,8 @@ def severity_bg(label):
 
 
 def escape_html(text):
-    """Escape HTML special characters."""
-    return (text
-            .replace('&', '&amp;')
-            .replace('<', '&lt;')
-            .replace('>', '&gt;')
-            .replace('"', '&quot;')
-            .replace("'", '&#39;'))
+    """Escape HTML special characters (alias for esc)."""
+    return esc(text)
 
 
 def truncate_sentence(text, max_len):
@@ -187,88 +185,22 @@ def generate_cve_page(vuln):
         for f in faqs
     )
 
+    canonical = f'{SITE_URL}/cve/{cve_id}.html'
+    keywords = f"{cve_id}, CVE, vulnerability, CISA KEV, {escape_html(title)}, cybersecurity"
+    schema_blocks = [
+        article_schema(f'{cve_id}: {title}', meta_desc, date_added, date_modified=TODAY),
+        breadcrumb_schema([("Home", f"{SITE_URL}/"), ("CVE Database", f"{SITE_URL}/cve/"), (cve_id, None)]),
+        faq_schema_json,
+    ]
+    head = html_head(f'{cve_id}: {title}', meta_desc, canonical,
+                     keywords=keywords, schema_blocks=schema_blocks, depth=1)
+
     return f'''<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
-    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="{escape_html(meta_desc)}">
-    <meta name="keywords" content="{cve_id}, CVE, vulnerability, CISA KEV, {escape_html(title)}, cybersecurity">
-    <title>{escape_html(page_title)}</title>
-    <link rel="canonical" href="https://fixthevuln.com/cve/{cve_id}.html">
-    <meta property="og:title" content="{escape_html(page_title)}">
-    <meta property="og:description" content="{escape_html(meta_desc)}">
-    <meta property="og:type" content="article">
-    <meta property="og:url" content="https://fixthevuln.com/cve/{cve_id}.html">
-    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{escape_html(page_title)}">
-    <meta name="twitter:description" content="{escape_html(meta_desc)}">
-    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <link rel="stylesheet" href="../style.min.css?v=8">
-    <script type="application/ld+json">
-    {{
-        "@context": "https://schema.org",
-        "@type": "TechArticle",
-        "headline": "{escape_html(cve_id)}: {escape_html(title)}",
-        "description": "{escape_html(meta_desc)}",
-        "datePublished": "{date_added}",
-        "dateModified": "{TODAY}",
-        "author": {{ "@type": "Organization", "name": "FixTheVuln Team", "url": "https://fixthevuln.com" }},
-        "publisher": {{ "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" }}
-    }}
-    </script>
-    <script type="application/ld+json">
-    {{
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-            {{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" }},
-            {{ "@type": "ListItem", "position": 2, "name": "CVE Database", "item": "https://fixthevuln.com/cve/" }},
-            {{ "@type": "ListItem", "position": 3, "name": "{cve_id}" }}
-        ]
-    }}
-    </script>
-    <script type="application/ld+json">
-{faq_schema_json}
-    </script>
-    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="../blog/feed.xml">
-</head>
+{head}
 <body>
-<nav class="site-nav">
-    <div class="container">
-        <a href="/" class="site-nav-logo">FixTheVuln</a>
-        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
-        <div class="site-nav-links">
-            <a href="../guides.html">Guides</a>
-            <a href="../tools.html">Tools</a>
-            <a href="../compliance.html">Compliance</a>
-            <a href="../resources.html">Resources</a>
-            <a href="../blog/">Blog</a>
-        </div>
-    </div>
-</nav>
-<!-- Social Share Bar -->
-<div class="share-bar">
-    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
-        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-    </a>
-    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
-        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-    </a>
-    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
-        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
-    </a>
-    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)}})" title="Copy link">
-        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-    </a>
-</div>
+{nav(depth=1)}
+{share_bar()}
 
     <header class="content-header">
         <div class="container">
@@ -351,16 +283,8 @@ def generate_cve_page(vuln):
         <a href="index.html" class="back-link" style="margin-left: 1rem;">&larr; All CVEs</a>
     </main>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
-            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a> | Study Planners: <a href="/store/store.html">FixTheVuln Store</a></p>
-            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
-                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
-            </p>
-        </div>
-    </footer>
-<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{{"token": "8304415b01684a00adedcbf6975458d7"}}'></script><!-- End Cloudflare Web Analytics -->
+{footer(affiliate_disclosure=True)}
+{cf_analytics()}
 </body>
 </html>'''
 
@@ -403,32 +327,14 @@ def generate_index_page(vulns):
     active_rows = '\n'.join(make_row(v) for v in sorted(active, key=lambda x: x.get('cvss') or 0, reverse=True))
     archived_rows = '\n'.join(make_row(v) for v in sorted(archived, key=lambda x: x.get('dateAdded', ''), reverse=True))
 
-    return f'''<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
-    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Browse {len(vulns)} tracked CVEs from the CISA Known Exploited Vulnerabilities catalog. CVSS scores, fix instructions, and NVD links.">
-    <meta name="keywords" content="CVE database, CISA KEV, vulnerability database, CVE lookup, cybersecurity vulnerabilities">
-    <title>CVE Database &mdash; CISA KEV Tracker - FixTheVuln</title>
-    <link rel="canonical" href="https://fixthevuln.com/cve/">
-    <meta property="og:title" content="CVE Database &mdash; CISA KEV Tracker - FixTheVuln">
-    <meta property="og:description" content="Browse {len(vulns)} tracked CVEs from the CISA Known Exploited Vulnerabilities catalog.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://fixthevuln.com/cve/">
-    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="CVE Database &mdash; CISA KEV Tracker - FixTheVuln">
-    <meta name="twitter:description" content="Browse {len(vulns)} tracked CVEs from the CISA Known Exploited Vulnerabilities catalog.">
-    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <link rel="stylesheet" href="../style.min.css?v=8">
-    <style>
+    idx_desc = f'Browse {len(vulns)} tracked CVEs from the CISA Known Exploited Vulnerabilities catalog. CVSS scores, fix instructions, and NVD links.'
+    idx_schema = [breadcrumb_schema([("Home", f"{SITE_URL}/"), ("CVE Database", None)])]
+    idx_head = html_head('CVE Database &mdash; CISA KEV Tracker', idx_desc, f'{SITE_URL}/cve/',
+                         keywords='CVE database, CISA KEV, vulnerability database, CVE lookup, cybersecurity vulnerabilities',
+                         schema_blocks=idx_schema, depth=1)
+
+    # Inject custom <style> into head (before closing </head>)
+    idx_style = """    <style>
         .tab-buttons {{ display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }}
         .tab-btn {{ padding: 0.5rem 1.25rem; border: 2px solid #667eea; background: white; color: #667eea; border-radius: 20px; cursor: pointer; font-weight: 600; transition: all 0.2s; }}
         .tab-btn:hover, .tab-btn.active {{ background: #667eea; color: white; }}
@@ -444,48 +350,15 @@ def generate_index_page(vulns):
             .cve-table .owasp-col, .cve-table th:nth-child(4) {{ display: none; }}
             .cve-table th:nth-child(5), .cve-table td:nth-child(5) {{ display: none; }}
         }}
-    </style>
-    <script type="application/ld+json">
-    {{
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-            {{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" }},
-            {{ "@type": "ListItem", "position": 2, "name": "CVE Database" }}
-        ]
-    }}
-    </script>
-    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="../blog/feed.xml">
-</head>
+    </style>"""
+    idx_head = idx_head.replace('</head>', idx_style + '\n</head>')
+
+    return f'''<!DOCTYPE html>
+<html lang="en">
+{idx_head}
 <body>
-<nav class="site-nav">
-    <div class="container">
-        <a href="/" class="site-nav-logo">FixTheVuln</a>
-        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
-        <div class="site-nav-links">
-            <a href="../guides.html">Guides</a>
-            <a href="../tools.html">Tools</a>
-            <a href="../compliance.html">Compliance</a>
-            <a href="../resources.html">Resources</a>
-            <a href="../blog/">Blog</a>
-        </div>
-    </div>
-</nav>
-<!-- Social Share Bar -->
-<div class="share-bar">
-    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
-        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-    </a>
-    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
-        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-    </a>
-    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
-        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
-    </a>
-    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)}})" title="Copy link">
-        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-    </a>
-</div>
+{nav(depth=1)}
+{share_bar()}
 
     <header class="content-header">
         <div class="container">
@@ -536,15 +409,7 @@ def generate_index_page(vulns):
         <a href="../index.html" class="back-link">&larr; Back to Home</a>
     </main>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
-            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a> | Study Planners: <a href="/store/store.html">FixTheVuln Store</a></p>
-            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
-                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
-            </p>
-        </div>
-    </footer>
+{footer(affiliate_disclosure=True)}
 
     <script>
         function switchTab(tab) {{
@@ -561,7 +426,7 @@ def generate_index_page(vulns):
             }});
         }}
     </script>
-<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{{"token": "8304415b01684a00adedcbf6975458d7"}}'></script><!-- End Cloudflare Web Analytics -->
+{cf_analytics()}
 </body>
 </html>'''
 

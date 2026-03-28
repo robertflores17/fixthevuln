@@ -4,11 +4,16 @@ Each roadmap has a week-by-week study timeline, domain heatmap,
 free resource links, and cross-links to quizzes/store/tracker."""
 
 import json
+import sys
 from datetime import datetime
 from pathlib import Path
 from html import escape
 
 REPO = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from lib.templates import (html_head, nav, share_bar, footer, cf_analytics, breadcrumb_schema, esc as _esc)
+from lib.constants import SITE_URL
 ETSY_CERTS = Path(__file__).resolve().parent.parent.parent / 'Dropshipping' / 'Etsy-Claude' / 'certifications'
 ROADMAPS_DIR = REPO / 'roadmaps'
 
@@ -261,41 +266,16 @@ def generate_roadmap_page(product, config):
                     <p style="font-size:0.8rem;color:var(--text-secondary);margin:0;">Test your knowledge with free practice questions</p>
                 </a>'''
 
-    return f'''<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{name} Study Roadmap — Free Week-by-Week Plan | FixTheVuln</title>
-    <meta name="description" content="Free {name} study roadmap. {num_weeks}-week plan with domain weights, free resources, and progress tracking. Start your {name} journey today.">
-    <link rel="icon" href="/favicon.ico" sizes="any">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <meta property="og:title" content="{name} Study Roadmap | FixTheVuln">
-    <meta property="og:description" content="Free {num_weeks}-week study roadmap for {name} with domain weights and free resources.">
-    <meta property="og:type" content="article">
-    <meta property="og:url" content="https://fixthevuln.com/roadmaps/{pid}.html">
-    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
-    <link rel="canonical" href="https://fixthevuln.com/roadmaps/{pid}.html">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{name} Study Roadmap | FixTheVuln">
-    <meta name="twitter:description" content="Free {num_weeks}-week study roadmap for {name}.">
-    <link rel="stylesheet" href="/style.min.css?v=8">
-    <script type="application/ld+json">
-    {{
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-            {{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" }},
-            {{ "@type": "ListItem", "position": 2, "name": "Roadmaps", "item": "https://fixthevuln.com/roadmaps/" }},
-            {{ "@type": "ListItem", "position": 3, "name": "{escape(name)} Roadmap" }}
-        ]
-    }}
-    </script>
-    <script type="application/ld+json">
-{faq_schema_json}
-</script>
-    <style>
+    rm_desc = f'Free {name} study roadmap. {num_weeks}-week plan with domain weights, free resources, and progress tracking. Start your {name} journey today.'
+    rm_canonical = f'{SITE_URL}/roadmaps/{pid}.html'
+    rm_schemas = [
+        breadcrumb_schema([("Home", f"{SITE_URL}/"), ("Roadmaps", f"{SITE_URL}/roadmaps/"), (f"{name} Roadmap", None)]),
+        faq_schema_json,
+    ]
+    rm_head = html_head(f'{name} Study Roadmap — Free Week-by-Week Plan', rm_desc, rm_canonical,
+                        schema_blocks=rm_schemas, depth=1)
+
+    rm_style = """    <style>
         .roadmap-hero {{ text-align: center; padding: 2rem 1.5rem 1rem; }}
         .roadmap-hero h1 {{ font-size: 1.8rem; margin-bottom: 0.5rem; }}
         .roadmap-badge {{ display: inline-block; background: var(--accent-color); color: white; padding: 4px 14px; border-radius: 50px; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.75rem; }}
@@ -322,24 +302,14 @@ def generate_roadmap_page(product, config):
         .roadmap-progress-text {{ font-size: 0.85rem; font-weight: 600; min-width: 50px; text-align: right; }}
 
         .cross-links {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 1.5rem; }}
-    </style>
-</head>
+    </style>"""
+    rm_head = rm_head.replace('</head>', rm_style + '\n</head>')
+
+    return f'''<!DOCTYPE html>
+<html lang="en">
+{rm_head}
 <body>
-    <nav class="navbar">
-        <div class="container nav-container">
-            <a href="/" class="logo">FixTheVuln</a>
-            <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
-            <div class="nav-links">
-                <a href="/guides.html">Guides</a>
-                <a href="/tools.html">Tools</a>
-                <a href="/practice-tests.html">Quizzes</a>
-                <a href="/store/store.html">Store</a>
-            </div>
-            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-                <span class="theme-icon">&#9790;</span>
-            </button>
-        </div>
-    </nav>
+{nav(depth=1)}
 
     <main class="container">
         <a href="/roadmaps/" class="back-link">&larr; All Roadmaps</a>
@@ -398,23 +368,9 @@ def generate_roadmap_page(product, config):
         </div>
     </main>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
-            <p>For detailed guides: <a href="https://fixthevuln.com">FixTheVuln.com</a></p>
-        </div>
-    </footer>
+{footer()}
 
     <script>
-        const toggle = document.getElementById('themeToggle');
-        const saved = localStorage.getItem('theme');
-        if (saved === 'light') document.documentElement.setAttribute('data-theme', 'light');
-        toggle.addEventListener('click', () => {{
-            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-            document.documentElement.setAttribute('data-theme', isLight ? '' : 'light');
-            localStorage.setItem('theme', isLight ? 'dark' : 'light');
-        }});
-
         // Roadmap progress persistence
         const ROADMAP_KEY = 'ftv-roadmap-{pid}';
         const NUM_WEEKS = {num_weeks};
@@ -457,7 +413,7 @@ def generate_roadmap_page(product, config):
         }});
         updateProgressBar();
     </script>
-<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{{"token": "8304415b01684a00adedcbf6975458d7"}}'></script><!-- End Cloudflare Web Analytics -->
+{cf_analytics()}
 </body>
 </html>'''
 
@@ -482,54 +438,16 @@ def generate_hub_page(generated_products):
                 </a>'''
         cards_html += '\n            </div>'
 
+    hub_desc = 'Free week-by-week study roadmaps for 65+ IT certifications. CompTIA, AWS, Azure, Cisco, CISSP, and more. Progress tracking included.'
+    hub_schemas = [breadcrumb_schema([("Home", f"{SITE_URL}/"), ("Study Roadmaps", None)])]
+    hub_head = html_head('Free Certification Study Roadmaps — 65+ IT Certs', hub_desc, f'{SITE_URL}/roadmaps/',
+                         schema_blocks=hub_schemas, depth=1)
+
     return f'''<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Free Certification Study Roadmaps — 65+ IT Certs | FixTheVuln</title>
-    <meta name="description" content="Free week-by-week study roadmaps for 65+ IT certifications. CompTIA, AWS, Azure, Cisco, CISSP, and more. Progress tracking included.">
-    <link rel="icon" href="/favicon.ico" sizes="any">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <meta property="og:title" content="Certification Study Roadmaps | FixTheVuln">
-    <meta property="og:description" content="Free study roadmaps for 65+ IT certifications with week-by-week plans.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://fixthevuln.com/roadmaps/">
-    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
-    <link rel="canonical" href="https://fixthevuln.com/roadmaps/">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Certification Study Roadmaps | FixTheVuln">
-    <meta name="twitter:description" content="Free study roadmaps for 65+ IT certifications.">
-    <link rel="stylesheet" href="/style.min.css?v=8">
-    <script type="application/ld+json">
-    {{
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-            {{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" }},
-            {{ "@type": "ListItem", "position": 2, "name": "Study Roadmaps" }}
-        ]
-    }}
-    </script>
-</head>
+{hub_head}
 <body>
-    <nav class="site-nav">
-        <div class="container">
-            <a href="/" class="site-nav-logo">FixTheVuln</a>
-            <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
-            <div class="site-nav-links">
-                <a href="/guides.html">Guides</a>
-                <a href="/tools.html">Tools</a>
-                <a href="/compliance.html">Compliance</a>
-                <a href="/resources.html">Resources</a>
-                <a href="/practice-tests.html">Quizzes</a>
-                <a href="/career-paths.html">Career Paths</a>
-                <a href="/blog/">Blog</a>
-                <a href="/store/store.html" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: .35rem .75rem; border-radius: 6px; font-size: .85rem; font-weight: 600; text-decoration: none;">Store</a>
-            </div>
-        </div>
-    </nav>
+{nav(depth=1)}
 
     <main class="container">
         <a href="/career-paths.html" class="back-link">&larr; Career Paths</a>
@@ -550,36 +468,8 @@ def generate_hub_page(generated_products):
         </section>
     </main>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 FixTheVuln. Educational resources for security professionals.</p>
-            <p><a href="/index.html">Home</a> | <a href="https://fixthevuln.com">FixTheVuln.com</a> | Study Planners: <a href="/store/store.html">FixTheVuln Store</a></p>
-        </div>
-    </footer>
-
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
-        <span id="theme-icon">&#9790;</span>
-    </button>
-    <script>
-        function toggleTheme() {{
-            const html = document.documentElement;
-            const current = html.getAttribute('data-theme');
-            const next = current === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-theme', next);
-            localStorage.setItem('fixthevuln-theme', next);
-            document.getElementById('theme-icon').textContent = next === 'dark' ? '\\u2600\\uFE0F' : '\\uD83C\\uDF19';
-        }}
-        (function() {{
-            const saved = localStorage.getItem('fixthevuln-theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const theme = saved || (prefersDark ? 'dark' : 'light');
-            if (theme === 'dark') {{
-                document.documentElement.setAttribute('data-theme', 'dark');
-                document.getElementById('theme-icon').textContent = '\\u2600\\uFE0F';
-            }}
-        }})();
-    </script>
-<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{{"token": "8304415b01684a00adedcbf6975458d7"}}'></script><!-- End Cloudflare Web Analytics -->
+{footer()}
+{cf_analytics()}
 </body>
 </html>'''
 
