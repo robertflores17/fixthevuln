@@ -40,6 +40,7 @@ QUIZ_CONFIGS = [
     {'id': 'comptia-data-plus',     'quiz': 'data-plus-quiz.html',       'json': 'data-plus-questions.json',           'name': 'CompTIA Data+',                'exam': 'DA0-001',  'config': 'comptia/data_plus_001.json',              'vendor': 'CompTIA'},
     {'id': 'comptia-project-plus',  'quiz': 'project-plus-quiz.html',    'json': 'project-plus-questions.json',        'name': 'CompTIA Project+',             'exam': 'PK0-005',  'config': 'comptia/project_plus_005.json',           'vendor': 'CompTIA'},
     {'id': 'comptia-itf-plus',      'quiz': 'itf-plus-quiz.html',        'json': 'itf-plus-questions.json',            'name': 'CompTIA ITF+',                 'exam': 'FC0-U71',  'config': 'comptia/itf_plus_u71.json',               'vendor': 'CompTIA'},
+    {'id': 'comptia-secai-plus',    'quiz': 'secai-quiz.html',           'json': 'secai-questions.json',               'name': 'CompTIA SecAI+',               'exam': 'CY0-001',  'config': 'comptia/secai_plus_001.json',             'vendor': 'CompTIA'},
     # ISC2 (3 remaining)
     {'id': 'isc2-cc',               'quiz': 'isc2-cc-quiz.html',         'json': 'isc2-cc-questions.json',             'name': 'ISC2 CC',                      'exam': 'CC',       'config': 'isc2/cc.json',                            'vendor': 'ISC2'},
     {'id': 'isc2-sscp',             'quiz': 'isc2-sscp-quiz.html',       'json': 'isc2-sscp-questions.json',           'name': 'ISC2 SSCP',                    'exam': 'SSCP',     'config': 'isc2/sscp.json',                          'vendor': 'ISC2'},

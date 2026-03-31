@@ -106,6 +106,7 @@ ABBREVIATIONS = {
     "aplus": "A+",
     "aplus2": "A+ Core 2",
     "encor": "ENCOR",
+    "secai": "SecAI",
 }
 
 # Category definitions: (category_name, matcher_fn, hub_url, hub_title)

@@ -187,6 +187,7 @@ const PRODUCTS = [
   { id: 'comptia-data-plus',      vendor: 'comptia',   name: 'CompTIA Data+',               meta: 'DA0-001 · 5 domains',  popular: false, tags: ['Data Concepts', 'Mining', 'Visualization'] },
   { id: 'comptia-project-plus',   vendor: 'comptia',   name: 'CompTIA Project+',            meta: 'PK0-005 · 5 domains',  popular: false, tags: ['Project Mgmt', 'Agile', 'Risk'] },
   { id: 'comptia-itf-plus',       vendor: 'comptia',   name: 'CompTIA ITF+',                meta: 'FC0-U71 · 6 domains',  popular: false, tags: ['IT Concepts', 'Infrastructure', 'Security Basics'] },
+  { id: 'comptia-secai-plus',    vendor: 'comptia',   name: 'CompTIA SecAI+',              meta: 'CY0-001 · 4 domains',  popular: true,  tags: ['AI Security', 'LLM Security', 'AI Governance'] },
 
   // ISC2
   { id: 'isc2-cc',                 vendor: 'isc2',      name: 'ISC2 CC',                     meta: 'CC · 5 domains',       popular: false, tags: ['Entry-Level', 'Security Principles'] },

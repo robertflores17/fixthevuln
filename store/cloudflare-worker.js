@@ -25,6 +25,7 @@ const CERT_NAMES = {
   'comptia-data-plus': 'CompTIA Data+',
   'comptia-project-plus': 'CompTIA Project+',
   'comptia-itf-plus': 'CompTIA ITF+',
+  'comptia-secai-plus': 'CompTIA SecAI+',
   // ISC2
   'isc2-cc': 'ISC2 CC',
   'isc2-sscp': 'ISC2 SSCP',

@@ -33,6 +33,7 @@ PRODUCTS = [
     {'id': 'comptia-data-plus',       'vendor': 'comptia',    'name': 'CompTIA Data+',                'meta': 'DA0-001 · 5 domains',  'config': 'comptia/data_plus_001.json'},
     {'id': 'comptia-project-plus',    'vendor': 'comptia',    'name': 'CompTIA Project+',             'meta': 'PK0-005 · 5 domains',  'config': 'comptia/project_plus_005.json'},
     {'id': 'comptia-itf-plus',        'vendor': 'comptia',    'name': 'CompTIA ITF+',                 'meta': 'FC0-U71 · 6 domains',  'config': 'comptia/itf_plus_u71.json'},
+    {'id': 'comptia-secai-plus',      'vendor': 'comptia',    'name': 'CompTIA SecAI+',               'meta': 'CY0-001 · 4 domains',  'config': 'comptia/secai_plus_001.json'},
     {'id': 'isc2-cc',                 'vendor': 'isc2',       'name': 'ISC2 CC',                      'meta': 'CC · 5 domains',        'config': 'isc2/cc.json'},
     {'id': 'isc2-sscp',               'vendor': 'isc2',       'name': 'ISC2 SSCP',                    'meta': 'SSCP · 7 domains',      'config': 'isc2/sscp.json'},
     {'id': 'isc2-cissp',              'vendor': 'isc2',       'name': 'ISC2 CISSP',                   'meta': 'CISSP 2026 · 8 domains','config': 'isc2/cissp_2026.json'},
@@ -103,6 +104,7 @@ QUIZ_MAP = {
     'comptia-data-plus':       'data-plus-quiz.html',
     'comptia-project-plus':    'project-plus-quiz.html',
     'comptia-itf-plus':        'itf-plus-quiz.html',
+    'comptia-secai-plus':      'secai-quiz.html',
     # ISC2 (4)
     'isc2-cc':                 'isc2-cc-quiz.html',
     'isc2-sscp':               'isc2-sscp-quiz.html',
@@ -274,15 +276,13 @@ def generate_faq_schema(product):
         "text": "{escape(faq['a'])}"
       }}
     }}''')
-    return '''<script type="application/ld+json">
-{
+    return '''{
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
 ''' + ',\n'.join(items) + '''
   ]
-}
-</script>'''
+}'''
 
 
 def generate_page(product):
@@ -362,6 +362,7 @@ def generate_page(product):
             'giac-gsec': ['gsec'], 'giac-gcih': ['gcih'], 'giac-gpen': ['gpen'],
             'comptia-casp-plus': ['casp-plus'], 'comptia-cloud-plus': ['cloud-plus'],
             'comptia-linux-plus': ['linux-plus'],
+            'comptia-secai-plus': ['secai-plus'],
         }
         comp_keys = PAGE_TO_COMP_KEYS.get(pid, [])
         if comp_keys:
