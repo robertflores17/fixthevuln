@@ -162,16 +162,19 @@ jobs:
       - name: Create issue with findings
         if: steps.audit.outputs.has_findings == 'true'
         run: |
-          BODY=$(cat /tmp/findings.md)
+          {
+            echo "## Monthly Security Audit Results"
+            echo ""
+            cat /tmp/findings.md
+            echo ""
+            echo "---"
+            echo "*Automated by \`security-audit.yml\` — run \`/dep-audit\` in Claude Code to remediate.*"
+          } > /tmp/issue-body.md
+          gh label create security-audit --description "Monthly security audit findings" --color "B60205" 2>/dev/null || true
           gh issue create \
             --title "Security Audit — $(date +'%B %Y')" \
             --label "security-audit" \
-            --body "## Monthly Security Audit Results
-
-          ${BODY}
-
-          ---
-          *Automated by \`security-audit.yml\` — run \`/dep-audit\` in Claude Code to remediate.*"
+            --body-file /tmp/issue-body.md
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
