@@ -114,7 +114,7 @@ ABBREVIATIONS = {
 CATEGORIES = [
     ("Certification Study Planners", lambda p: p.startswith("certs/"), "/certs/", None),
     ("Certification Roadmaps", lambda p: p.startswith("roadmaps/"), "/roadmaps/", None),
-    ("Practice Quizzes", lambda p: p.endswith("-quiz.html"), "/practice-tests.html", None),
+    ("Practice Quizzes", lambda p: p.endswith("-quiz.html") or p.startswith("practice-tests/"), "/practice-tests.html", None),
     ("Blog & Study Guides", lambda p: p.startswith("blog/"), "/blog/", None),
     ("Certification Comparisons", lambda p: p.startswith("comparisons/"), "/comparisons/", None),
     ("CVE & Vulnerability Pages", lambda p: p.startswith("cve/"), "/cve-lookup.html", None),

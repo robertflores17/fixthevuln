@@ -1,0 +1,834 @@
+/* ============================================
+   FixTheVuln — Practice Tests Design System
+   Hub + Vendor category pages
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=IBM+Plex+Mono:wght@400;600;700&display=swap');
+
+:root {
+  --bg-root: #06090f;
+  --bg-surface: #0c1219;
+  --bg-card: #111a25;
+  --bg-input: #0e1620;
+  --border: #1c2a3a;
+  --text-primary: #e8edf4;
+  --text-secondary: #7a8ba0;
+  --text-muted: #4a5568;
+  --accent: #667eea;
+  --accent-hover: #7c8ff0;
+  --accent-glow: rgba(102, 126, 234, 0.15);
+  --accent-secondary: #764ba2;
+  --gradient-brand: linear-gradient(135deg, #667eea, #764ba2, #06b6d4);
+  --gradient-card: linear-gradient(145deg, var(--bg-card), var(--bg-surface));
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+}
+
+[data-theme="light"] {
+  --bg-root: #f5f7fa;
+  --bg-surface: #ffffff;
+  --bg-card: #ffffff;
+  --bg-input: #f0f2f5;
+  --border: #e2e8f0;
+  --text-primary: #1a202c;
+  --text-secondary: #4a5568;
+  --text-muted: #a0aec0;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --gradient-card: linear-gradient(145deg, #ffffff, #f7fafc);
+}
+
+/* ============================================
+   Animations
+   ============================================ */
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.pt-animate { animation: fadeInUp 0.6s ease-out both; }
+.pt-delay-1 { animation-delay: 0.1s; }
+.pt-delay-2 { animation-delay: 0.2s; }
+.pt-delay-3 { animation-delay: 0.3s; }
+
+/* ============================================
+   Page Base (overrides site defaults)
+   ============================================ */
+
+.pt-page {
+  font-family: var(--font-sans);
+  background: var(--bg-root);
+  color: var(--text-primary);
+}
+
+.pt-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ============================================
+   Breadcrumb
+   ============================================ */
+
+.pt-breadcrumb {
+  padding: 16px 32px;
+  font-size: 13px;
+  color: var(--text-muted);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pt-breadcrumb a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.pt-breadcrumb a:hover {
+  color: var(--accent);
+}
+
+.pt-breadcrumb-sep {
+  margin: 0 8px;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   Hero Section
+   ============================================ */
+
+.pt-hero {
+  text-align: center;
+  padding: 60px 32px 40px;
+  max-width: 840px;
+  margin: 0 auto;
+}
+
+.pt-hero-badge {
+  display: inline-block;
+  background: var(--accent-glow);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-bottom: 20px;
+}
+
+.pt-hero h1 {
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 800;
+  letter-spacing: -1px;
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+  line-height: 1.1;
+}
+
+.pt-hero-sub {
+  font-size: 18px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+
+.pt-hero-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.pt-hero-chip {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 8px 16px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* ============================================
+   Stats Banner
+   ============================================ */
+
+.pt-stats-banner {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  padding: 32px 24px;
+  margin: 0 auto 48px;
+  max-width: 800px;
+}
+
+.pt-stat {
+  text-align: center;
+  padding: 16px 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  min-width: 120px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.pt-stat:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.pt-stat-value {
+  font-size: 28px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.pt-stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+/* ============================================
+   Section Titles
+   ============================================ */
+
+.pt-section {
+  padding: 0 24px 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pt-section-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.pt-section-subtitle {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+}
+
+/* ============================================
+   Filter Tabs (Hub page)
+   ============================================ */
+
+.pt-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 32px;
+  padding: 0 24px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pt-filter-tab {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  font-family: var(--font-sans);
+}
+
+.pt-filter-tab:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.pt-filter-tab.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+/* ============================================
+   Vendor Hub Cards
+   ============================================ */
+
+.pt-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 16px;
+}
+
+.pt-hub-card {
+  background: var(--gradient-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 28px 24px;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.pt-hub-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--card-accent, var(--gradient-brand));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.pt-hub-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.pt-hub-card:hover::before {
+  opacity: 1;
+}
+
+.pt-hub-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.pt-hub-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.pt-hub-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 16px;
+  flex: 1;
+}
+
+.pt-hub-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.pt-hub-meta strong {
+  color: var(--accent);
+}
+
+.pt-hub-link {
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+/* ============================================
+   Quiz Card Grid
+   ============================================ */
+
+.pt-quiz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.pt-quiz-card {
+  background: var(--gradient-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.pt-quiz-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-brand);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.pt-quiz-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.pt-quiz-card:hover::before {
+  opacity: 1;
+}
+
+.pt-quiz-vendor {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.pt-quiz-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.pt-quiz-tagline {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.pt-quiz-stats {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.pt-quiz-stat {
+  background: var(--bg-input);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+}
+
+.pt-quiz-stat strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.pt-quiz-domains {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+.pt-quiz-cta {
+  display: inline-block;
+  background: var(--accent);
+  color: white;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.pt-quiz-cta:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px var(--accent-glow);
+}
+
+/* ============================================
+   Store Cross-Link CTA
+   ============================================ */
+
+.pt-store-cta {
+  background: var(--gradient-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  text-align: center;
+  margin: 48px auto;
+  max-width: 720px;
+  position: relative;
+  overflow: hidden;
+}
+
+.pt-store-cta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+}
+
+.pt-store-cta h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.pt-store-cta p {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.pt-store-cta-btn {
+  display: inline-block;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: white;
+  padding: 12px 28px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.pt-store-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
+}
+
+/* ============================================
+   Related Vendors
+   ============================================ */
+
+.pt-related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.pt-related-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  text-decoration: none;
+  color: inherit;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.pt-related-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.pt-related-icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.pt-related-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.pt-related-count {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* ============================================
+   FAQ Section
+   ============================================ */
+
+.pt-faq-section {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+.pt-faq-section h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.pt-faq-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.pt-faq-item:hover {
+  border-color: var(--accent);
+}
+
+.pt-faq-item summary {
+  padding: 16px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pt-faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.pt-faq-item summary::after {
+  content: '+';
+  font-size: 20px;
+  font-weight: 300;
+  color: var(--text-muted);
+  transition: transform 0.2s;
+}
+
+.pt-faq-item[open] summary::after {
+  content: '-';
+}
+
+.pt-faq-item p {
+  padding: 0 20px 16px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* ============================================
+   Trust Section
+   ============================================ */
+
+.pt-trust-section {
+  padding: 48px 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.pt-trust-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.pt-trust-item {
+  text-align: center;
+  padding: 24px 16px;
+}
+
+.pt-trust-icon {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.pt-trust-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.pt-trust-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ============================================
+   Timestamp
+   ============================================ */
+
+.pt-timestamp {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 12px 0;
+}
+
+/* ============================================
+   Responsive — Tablet (768px)
+   ============================================ */
+
+@media (max-width: 768px) {
+  .pt-hero {
+    padding: 40px 20px 24px;
+  }
+
+  .pt-hero h1 {
+    font-size: 28px;
+  }
+
+  .pt-hero-sub {
+    font-size: 15px;
+  }
+
+  .pt-stats-banner {
+    gap: 16px;
+    padding: 24px 16px;
+  }
+
+  .pt-stat {
+    padding: 12px 16px;
+    min-width: 90px;
+  }
+
+  .pt-stat-value {
+    font-size: 22px;
+  }
+
+  .pt-hub-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pt-quiz-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pt-filter-bar {
+    padding: 0 16px;
+  }
+
+  .pt-section {
+    padding: 0 16px 32px;
+  }
+
+  .pt-trust-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pt-store-cta {
+    padding: 28px 20px;
+    margin: 32px 16px;
+  }
+
+  .pt-related-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ============================================
+   Responsive — Mobile (480px)
+   ============================================ */
+
+@media (max-width: 480px) {
+  .pt-hero h1 {
+    font-size: 24px;
+  }
+
+  .pt-stats-banner {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .pt-stat {
+    min-width: 80px;
+    padding: 10px 12px;
+  }
+
+  .pt-stat-value {
+    font-size: 20px;
+  }
+
+  .pt-hub-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pt-filter-bar {
+    gap: 6px;
+  }
+
+  .pt-filter-tab {
+    padding: 6px 14px;
+    font-size: 12px;
+  }
+
+  .pt-hero-chips {
+    gap: 6px;
+  }
+
+  .pt-hero-chip {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  .pt-quiz-card {
+    padding: 20px 18px;
+  }
+
+  .pt-trust-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+}
+
+/* ============================================
+   Responsive — Small Mobile (360px)
+   ============================================ */
+
+@media (max-width: 360px) {
+  .pt-hero h1 {
+    font-size: 22px;
+  }
+
+  .pt-stats-banner {
+    gap: 8px;
+  }
+
+  .pt-stat {
+    min-width: 70px;
+    padding: 8px 10px;
+  }
+
+  .pt-stat-value {
+    font-size: 18px;
+  }
+
+  .pt-stat-label {
+    font-size: 10px;
+  }
+}

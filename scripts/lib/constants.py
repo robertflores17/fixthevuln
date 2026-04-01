@@ -13,6 +13,7 @@ STYLE_CSS_VERSION = 8
 QUIZ_CSS_VERSION = 3
 COMPARISON_CSS_VERSION = 3
 STORE_CSS_VERSION = 6
+PRACTICE_TESTS_CSS_VERSION = 1
 
 # ---------------------------------------------------------------------------
 # Site Config
