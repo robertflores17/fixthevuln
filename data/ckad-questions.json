@@ -1,34 +1,34 @@
 {
   "metadata": {
-    "title": "Kubernetes CKAD CKAD Practice Questions",
-    "version": "1.0",
-    "total_questions": 30,
+    "title": "Kubernetes CKAD Practice Questions",
+    "version": "2.0",
+    "total_questions": 150,
     "exam": "CKAD",
     "domains": {
       "1": {
         "name": "Application Design and Build",
         "weight": 20,
-        "count": 6
+        "count": 30
       },
       "2": {
         "name": "Application Deployment",
         "weight": 20,
-        "count": 6
+        "count": 30
       },
       "3": {
         "name": "Application Observability and Maintenance",
         "weight": 15,
-        "count": 4
+        "count": 22
       },
       "4": {
         "name": "Application Environment, Configuration & Security",
         "weight": 25,
-        "count": 8
+        "count": 38
       },
       "5": {
         "name": "Services & Networking",
         "weight": 20,
-        "count": 6
+        "count": 30
       }
     }
   },
@@ -38,480 +38,2400 @@
       "domain": 1,
       "objective": "1.1",
       "difficulty": "easy",
-      "question": "Which of the following is a key concept within Application Design and Build (Domain 1)?",
+      "question": "Which Dockerfile instruction sets the command that runs when a container starts and cannot be overridden by command-line arguments passed to 'docker run'?",
       "options": [
-        "Ambassador and Adapter Patterns",
-        "Dockerfile Best Practices (Multi-Stage Builds)",
-        "Jobs and CronJobs for Batch Work",
-        "Image Pull Policies (Always, IfNotPresent, Never)"
+        "CMD",
+        "ENTRYPOINT",
+        "RUN",
+        "EXPOSE"
       ],
-      "correct": 0,
-      "explanation": "Ambassador and Adapter Patterns is a key concept in Application Design and Build. This domain covers topics essential for the Kubernetes CKAD exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "ENTRYPOINT defines the executable that runs when the container starts. Unlike CMD, which provides defaults that can be overridden by docker run arguments, ENTRYPOINT arguments are always executed. CMD values become arguments to ENTRYPOINT when both are present.",
+      "link": "container-security.html"
     },
     {
       "id": 2,
       "domain": 1,
-      "objective": "1.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with choose and use the right workload resource (deployment, daemonset, cronjob, etc.). What should be the first step?",
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "What is the primary benefit of using multi-stage builds in a Dockerfile?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "They allow running multiple containers from a single image",
+        "They reduce the final image size by excluding build-time dependencies",
+        "They enable automatic horizontal scaling",
+        "They provide built-in image signing"
       ],
-      "correct": 0,
-      "explanation": "The first step in any application design and build task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "Multi-stage builds use multiple FROM statements in a single Dockerfile. Build tools, compilers, and intermediate artifacts exist only in earlier stages. The final stage copies only the compiled binary or necessary artifacts, resulting in a much smaller production image without build-time dependencies.",
+      "link": "container-security.html"
     },
     {
       "id": 3,
       "domain": 1,
-      "objective": "1.3",
+      "objective": "1.1",
       "difficulty": "medium",
-      "question": "Which concept in Application Design and Build is most closely related to understand multi-container pod design patterns (sidecar, init, adapter, ambassador)?",
+      "question": "A developer needs to build a container image but wants to avoid running the application as root inside the container. Which Dockerfile instruction should they add?",
       "options": [
-        "Application Design and Build governance and oversight",
-        "Application Design and Build implementation and operations",
-        "Application Design and Build assessment and testing",
-        "Application Design and Build risk management"
+        "RUN chmod 777 /app",
+        "USER 1000",
+        "ENV ROOT=false",
+        "LABEL security=non-root"
       ],
       "correct": 1,
-      "explanation": "Understand multi-container Pod design patterns (sidecar, init, adapter, ambassador) falls under the implementation and operations aspect of Application Design and Build.",
-      "link": "start-here.html"
+      "explanation": "The USER instruction sets the user (by name or UID) that the container process runs as. Setting USER 1000 (or any non-root user) ensures the application does not run with root privileges, which is a security best practice and required by many Pod Security Standards.",
+      "link": "container-security.html"
     },
     {
       "id": 4,
       "domain": 1,
-      "objective": "1.4",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Application Design and Build (Domain 1)?",
+      "objective": "1.2",
+      "difficulty": "easy",
+      "question": "Which Kubernetes workload resource is best suited for running a task that must execute once to completion and then stop?",
       "options": [
-        "Image Pull Policies (Always, IfNotPresent, Never)",
-        "OCI Image Specification",
-        "Init Containers for Setup Tasks",
-        "Volume Types (emptyDir, PVC, configMap, secret)"
+        "Deployment",
+        "DaemonSet",
+        "Job",
+        "ReplicaSet"
       ],
-      "correct": 0,
-      "explanation": "Image Pull Policies (Always, IfNotPresent, Never) is a key concept in Application Design and Build. This domain covers topics essential for the Kubernetes CKAD exam.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "A Job creates one or more Pods and ensures they run to successful completion. Once the specified number of completions is reached, the Job is considered complete. Deployments and ReplicaSets maintain long-running processes, while DaemonSets run a Pod on every node.",
+      "link": "container-security.html"
     },
     {
       "id": 5,
       "domain": 1,
-      "objective": "1.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with define, build and modify container images?",
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "You need a batch process that runs 5 tasks in parallel with a total of 10 completions. Which Job spec fields should you configure?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "replicas: 5, completions: 10",
+        "parallelism: 5, completions: 10",
+        "maxSurge: 5, desired: 10",
+        "instances: 5, total: 10"
       ],
-      "correct": 0,
-      "explanation": "When working with define, build and modify container images, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "The Job spec uses 'parallelism' to control how many Pods run concurrently and 'completions' to define the total number of successful completions required. Setting parallelism: 5 and completions: 10 means up to 5 Pods run at once until 10 total Pods have completed successfully.",
+      "link": "container-security.html"
     },
     {
       "id": 6,
       "domain": 1,
       "objective": "1.2",
-      "difficulty": "medium",
-      "question": "Which of the following best describes the purpose of \"Choose and use the right workload resource (Deployment, DaemonSet, CronJob, etc.)\" in Application Design and Build?",
+      "difficulty": "hard",
+      "question": "A CronJob has a concurrencyPolicy of 'Forbid'. What happens when a new scheduled execution time arrives while the previous Job is still running?",
       "options": [
-        "To implement and manage choose and use the right workload resource (deployment, daemonset, cronjob, etc.) processes",
-        "To evaluate compliance with application design and build standards",
-        "To document risk assessment procedures",
-        "To audit external vendor relationships"
+        "The currently running Job is terminated and the new Job starts",
+        "The new Job is skipped entirely",
+        "Both Jobs run concurrently",
+        "The CronJob is automatically suspended"
       ],
-      "correct": 0,
-      "explanation": "Choose and use the right workload resource (Deployment, DaemonSet, CronJob, etc.) is a key objective in Application Design and Build. Understanding this concept is essential for the exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "With concurrencyPolicy: Forbid, if the previous Job is still running when a new schedule trigger fires, the new execution is skipped. This prevents overlapping Jobs. The 'Allow' policy would let them run concurrently, while 'Replace' would terminate the existing Job and start the new one.",
+      "link": "container-security.html"
     },
     {
       "id": 7,
-      "domain": 2,
-      "objective": "2.1",
+      "domain": 1,
+      "objective": "1.3",
       "difficulty": "easy",
-      "question": "Which of the following is a key concept within Application Deployment (Domain 2)?",
+      "question": "In the sidecar multi-container pattern, what is the relationship between the sidecar container and the main application container?",
       "options": [
-        "Helm Charts (install, upgrade, rollback)",
-        "Deployment Revision History",
-        "Blue-Green Deployment via Services",
-        "Recreate Deployment Strategy"
+        "The sidecar replaces the main container during rolling updates",
+        "The sidecar initializes the Pod before the main container starts",
+        "The sidecar runs alongside the main container and extends its functionality without modifying it",
+        "The sidecar runs only if the main container fails"
       ],
-      "correct": 0,
-      "explanation": "Helm Charts (install, upgrade, rollback) is a key concept in Application Deployment. This domain covers topics essential for the Kubernetes CKAD exam.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "A sidecar container runs alongside the main application container for the entire lifecycle of the Pod. It extends or enhances the main container's functionality -- for example, log shipping, monitoring, or TLS proxy -- without requiring changes to the main application code.",
+      "link": "container-security.html"
     },
     {
       "id": 8,
-      "domain": 2,
-      "objective": "2.2",
+      "domain": 1,
+      "objective": "1.3",
       "difficulty": "medium",
-      "question": "A professional is tasked with understand deployments and how to perform rolling updates. What should be the first step?",
+      "question": "A Pod needs to clone a Git repository before the main application container starts. Which multi-container pattern should be used?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Sidecar pattern",
+        "Ambassador pattern",
+        "Init container pattern",
+        "Adapter pattern"
       ],
-      "correct": 0,
-      "explanation": "The first step in any application deployment task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "Init containers run to completion before any app containers start, making them ideal for setup tasks like cloning repos, downloading configs, or waiting for dependencies. They run sequentially and must succeed before the Pod transitions to running its main containers.",
+      "link": "container-security.html"
     },
     {
       "id": 9,
-      "domain": 2,
-      "objective": "2.3",
+      "domain": 1,
+      "objective": "1.3",
       "difficulty": "medium",
-      "question": "Which concept in Application Deployment is most closely related to use helm package manager to deploy existing packages?",
+      "question": "An application outputs logs in a custom format. You need to convert these logs to a standard JSON format before shipping them to a central logging system. Which multi-container pattern is most appropriate?",
       "options": [
-        "Application Deployment governance and oversight",
-        "Application Deployment implementation and operations",
-        "Application Deployment assessment and testing",
-        "Application Deployment risk management"
+        "Init container pattern",
+        "Ambassador pattern",
+        "Adapter pattern",
+        "Sidecar pattern with shared volume"
       ],
-      "correct": 1,
-      "explanation": "Use Helm package manager to deploy existing packages falls under the implementation and operations aspect of Application Deployment.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "The adapter pattern transforms the output of the main container into a format expected by external systems. A sidecar adapter container reads the custom log format from a shared volume and converts it to standard JSON before forwarding. This differs from a generic sidecar because its specific purpose is data format transformation.",
+      "link": "container-security.html"
     },
     {
       "id": 10,
-      "domain": 2,
-      "objective": "2.4",
+      "domain": 1,
+      "objective": "1.3",
       "difficulty": "hard",
-      "question": "Which of the following is a key concept within Application Deployment (Domain 2)?",
+      "question": "A Pod has three init containers defined in its spec. The second init container fails. What happens?",
       "options": [
-        "Blue-Green Deployment via Services",
-        "Helm Values and Templates",
-        "Deployment Revision History",
-        "kubectl rollout Commands"
+        "The third init container runs anyway and the Pod starts",
+        "Only the first init container is re-executed",
+        "The Pod restarts the failed init container according to the Pod's restartPolicy",
+        "The Pod is immediately marked as Failed and deleted"
       ],
-      "correct": 0,
-      "explanation": "Blue-Green Deployment via Services is a key concept in Application Deployment. This domain covers topics essential for the Kubernetes CKAD exam.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "Init containers run sequentially and each must complete successfully before the next starts. If an init container fails, Kubernetes restarts it according to the Pod's restartPolicy. With restartPolicy: Always (the default for Pods managed by a Deployment), the kubelet retries the failed init container. The third init container will not run until the second succeeds.",
+      "link": "container-security.html"
     },
     {
       "id": 11,
-      "domain": 2,
-      "objective": "2.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with use kubernetes primitives to implement common deployment strategies?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "An ambassador container runs in the same Pod as the main application. The main app connects to 'localhost:5432' for database access. What is the ambassador container doing?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "Running the database engine locally",
+        "Proxying the localhost connection to the correct external database service",
+        "Converting database queries to a different protocol",
+        "Caching all database responses in memory"
       ],
-      "correct": 0,
-      "explanation": "When working with use kubernetes primitives to implement common deployment strategies, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "The ambassador pattern provides a proxy that represents the remote service on localhost. The main container connects to localhost:5432, and the ambassador container handles service discovery, connection pooling, or routing to the correct external database. This simplifies the main app's configuration since it always connects to localhost.",
+      "link": "container-security.html"
     },
     {
       "id": 12,
-      "domain": 2,
-      "objective": "2.2",
-      "difficulty": "medium",
-      "question": "Which of the following best describes the purpose of \"Understand Deployments and how to perform rolling updates\" in Application Deployment?",
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "easy",
+      "question": "What does the imagePullPolicy 'IfNotPresent' mean?",
       "options": [
-        "To implement and manage understand deployments and how to perform rolling updates processes",
-        "To evaluate compliance with application deployment standards",
-        "To document risk assessment procedures",
-        "To audit external vendor relationships"
+        "Always pull the image from the registry, even if it exists locally",
+        "Pull the image only if it does not already exist on the node",
+        "Never pull the image; fail if it is not present locally",
+        "Pull the image only during the first Pod creation"
       ],
-      "correct": 0,
-      "explanation": "Understand Deployments and how to perform rolling updates is a key objective in Application Deployment. Understanding this concept is essential for the exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "IfNotPresent means the kubelet pulls the image only if it is not already cached on the node. This reduces network overhead but means you may run stale images if the same tag has been updated in the registry. For production, use specific image digests or version tags rather than 'latest'.",
+      "link": "container-security.html"
     },
     {
       "id": 13,
-      "domain": 3,
-      "objective": "3.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Application Observability and Maintenance (Domain 3)?",
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "medium",
+      "question": "A container image is tagged as 'myapp:latest'. What is the default imagePullPolicy Kubernetes assigns to this container?",
       "options": [
-        "Readiness Probes for Traffic Control",
-        "API Version Deprecation Policy",
-        "kubectl logs for Container Output",
-        "Ephemeral Debug Containers"
+        "Never",
+        "IfNotPresent",
+        "Always",
+        "OnFailure"
       ],
-      "correct": 0,
-      "explanation": "Readiness Probes for Traffic Control is a key concept in Application Observability and Maintenance. This domain covers topics essential for the Kubernetes CKAD exam.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "When the image tag is 'latest' or no tag is specified, Kubernetes defaults the imagePullPolicy to 'Always'. For images with specific version tags (e.g., myapp:v1.2.3), the default is 'IfNotPresent'. This behavior ensures the latest tag always fetches the newest image.",
+      "link": "container-security.html"
     },
     {
       "id": 14,
-      "domain": 3,
-      "objective": "3.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with implement probes and health checks. What should be the first step?",
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "easy",
+      "question": "Which volume type creates a temporary empty directory that exists for the lifetime of the Pod?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "hostPath",
+        "persistentVolumeClaim",
+        "emptyDir",
+        "configMap"
       ],
-      "correct": 0,
-      "explanation": "The first step in any application observability and maintenance task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "emptyDir creates an initially empty directory when a Pod is assigned to a node. It exists for the entire lifetime of the Pod and is shared between all containers in the Pod. When the Pod is removed from the node, the emptyDir data is permanently deleted.",
+      "link": "container-security.html"
     },
     {
       "id": 15,
-      "domain": 3,
-      "objective": "3.3",
+      "domain": 1,
+      "objective": "1.5",
       "difficulty": "medium",
-      "question": "Which concept in Application Observability and Maintenance is most closely related to use built-in cli tools to monitor kubernetes applications?",
+      "question": "Two containers in the same Pod need to share files. Container A writes data and Container B reads it. Which volume configuration achieves this?",
       "options": [
-        "Application Observability and Maintenance governance and oversight",
-        "Application Observability and Maintenance implementation and operations",
-        "Application Observability and Maintenance assessment and testing",
-        "Application Observability and Maintenance risk management"
+        "Mount a separate PersistentVolumeClaim in each container",
+        "Use a hostPath volume mounted to different paths in each container",
+        "Define an emptyDir volume and mount it at different paths in both containers",
+        "Use an NFS volume with read-write-many access mode"
       ],
-      "correct": 1,
-      "explanation": "Use built-in CLI tools to monitor Kubernetes applications falls under the implementation and operations aspect of Application Observability and Maintenance.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "An emptyDir volume defined once in the Pod spec and mounted into both containers (at the same or different mount paths) allows them to share files. Container A writes data to its mount path and Container B reads from its mount path, both backed by the same emptyDir volume.",
+      "link": "container-security.html"
     },
     {
       "id": 16,
-      "domain": 3,
-      "objective": "3.4",
+      "domain": 1,
+      "objective": "1.5",
       "difficulty": "hard",
-      "question": "Which of the following is a key concept within Application Observability and Maintenance (Domain 3)?",
+      "question": "A developer creates a PersistentVolumeClaim requesting 5Gi of storage with access mode ReadWriteOnce. The only available PersistentVolume has 10Gi capacity. What happens?",
       "options": [
-        "kubectl logs for Container Output",
-        "API Version Deprecation Policy",
-        "Ephemeral Debug Containers",
-        "Startup Probes for Slow Containers"
+        "The PVC remains in Pending state because the size does not match exactly",
+        "The PVC binds to the 10Gi PV; the PVC gets access to the full 10Gi",
+        "The PV is automatically resized to 5Gi to match the PVC",
+        "Kubernetes creates a new 5Gi PV to match the PVC"
       ],
-      "correct": 0,
-      "explanation": "kubectl logs for Container Output is a key concept in Application Observability and Maintenance. This domain covers topics essential for the Kubernetes CKAD exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "A PVC binds to a PV that satisfies its requirements. If the only matching PV is larger than requested, the PVC binds to it and gets access to the full capacity. The PV is not resized. This can lead to over-provisioning, which is why StorageClasses with dynamic provisioning are preferred in production.",
+      "link": "container-security.html"
     },
     {
       "id": 17,
-      "domain": 4,
-      "objective": "4.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Application Environment, Configuration & Security (Domain 4)?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "What is the purpose of the 'activeDeadlineSeconds' field in a Job spec?",
       "options": [
-        "ServiceAccounts and RBAC for Applications",
-        "SecurityContext (runAsUser, runAsNonRoot, capabilities)",
-        "Secrets (Opaque, TLS, docker-registry)",
-        "PodSecurityStandards (Restricted, Baseline, Privileged)"
+        "It sets the maximum time the Job can spend in a Pending state",
+        "It defines the maximum total execution time for the Job, after which it is terminated",
+        "It controls how long completed Pods are retained before cleanup",
+        "It sets the interval between CronJob triggers"
       ],
-      "correct": 0,
-      "explanation": "ServiceAccounts and RBAC for Applications is a key concept in Application Environment, Configuration & Security. This domain covers topics essential for the Kubernetes CKAD exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "activeDeadlineSeconds limits the total duration of a Job. If the Job does not complete within this time, Kubernetes terminates all running Pods and marks the Job as Failed with reason DeadlineExceeded. This prevents runaway Jobs from consuming cluster resources indefinitely.",
+      "link": "container-security.html"
     },
     {
       "id": 18,
-      "domain": 4,
-      "objective": "4.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with understand authentication, authorization and admission control. What should be the first step?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "A Job has backoffLimit set to 4. The first three attempts fail. On the fourth attempt, the Pod succeeds. What is the Job status?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Failed, because it exceeded the backoff limit",
+        "Succeeded, because the fourth attempt completed before the limit was exhausted",
+        "Failed, because backoffLimit counts from 0",
+        "Unknown, because the status depends on the restartPolicy"
       ],
-      "correct": 0,
-      "explanation": "The first step in any application environment, configuration & security task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "backoffLimit specifies the number of retries before the Job is marked as Failed. With backoffLimit: 4, Kubernetes allows up to 4 retries (failures). Three failures followed by a success means the Job completes successfully since it succeeded before exhausting all 4 allowed failures.",
+      "link": "container-security.html"
     },
     {
       "id": 19,
-      "domain": 4,
-      "objective": "4.3",
+      "domain": 1,
+      "objective": "1.4",
       "difficulty": "medium",
-      "question": "Which concept in Application Environment, Configuration & Security is most closely related to understand requests, limits, and quotas?",
+      "question": "What happens when a container's imagePullPolicy is set to 'Never' and the image does not exist on the node?",
       "options": [
-        "Application Environment, Configuration & Security governance and oversight",
-        "Application Environment, Configuration & Security implementation and operations",
-        "Application Environment, Configuration & Security assessment and testing",
-        "Application Environment, Configuration & Security risk management"
+        "Kubernetes pulls the image from the default registry",
+        "The container starts with a default placeholder image",
+        "The Pod fails with an ErrImageNeverPull error",
+        "The Pod enters a CrashLoopBackOff state"
       ],
-      "correct": 1,
-      "explanation": "Understand requests, limits, and quotas falls under the implementation and operations aspect of Application Environment, Configuration & Security.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "With imagePullPolicy: Never, the kubelet never attempts to pull the image from a registry. If the image is not already present on the node's local cache, the container fails to start with an ErrImageNeverPull error. This policy is useful for pre-loaded images or development environments.",
+      "link": "container-security.html"
     },
     {
       "id": 20,
-      "domain": 4,
-      "objective": "4.4",
+      "domain": 1,
+      "objective": "1.1",
       "difficulty": "hard",
-      "question": "Which of the following is a key concept within Application Environment, Configuration & Security (Domain 4)?",
+      "question": "In a Dockerfile, what is the effect of placing frequently changing instructions (like COPY . .) before stable instructions (like RUN apt-get install)?",
       "options": [
-        "ResourceQuota and LimitRange",
-        "Admission Controllers",
-        "Operator Pattern",
-        "Pod Security Admission"
+        "It improves build security by validating files before installing packages",
+        "It has no effect on build performance",
+        "It invalidates the Docker layer cache for all subsequent instructions, slowing builds",
+        "It causes a build failure because the order is incorrect"
       ],
-      "correct": 0,
-      "explanation": "ResourceQuota and LimitRange is a key concept in Application Environment, Configuration & Security. This domain covers topics essential for the Kubernetes CKAD exam.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "Docker builds use a layer cache. When a layer changes, all subsequent layers are rebuilt. Placing frequently changing instructions (like COPY) before stable ones (like package installation) invalidates the cache early, forcing expensive operations to re-run every build. Best practice is to place stable instructions first to maximize cache hits.",
+      "link": "container-security.html"
     },
     {
       "id": 21,
-      "domain": 4,
-      "objective": "4.5",
+      "domain": 1,
+      "objective": "1.3",
       "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with define resource requirements and securitycontexts?",
+      "question": "How do containers within the same Pod communicate with each other?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "Through a Kubernetes Service",
+        "Through an Ingress controller",
+        "Via localhost, since they share the same network namespace",
+        "Through an external load balancer"
       ],
-      "correct": 0,
-      "explanation": "When working with define resource requirements and securitycontexts, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "All containers in a Pod share the same network namespace, meaning they share the same IP address and can communicate via localhost on different ports. This is why multi-container patterns like sidecar and ambassador work -- the main container connects to localhost and reaches the companion container.",
+      "link": "container-security.html"
     },
     {
       "id": 22,
-      "domain": 4,
-      "objective": "4.6",
-      "difficulty": "medium",
-      "question": "Which of the following best describes the purpose of \"Create and consume Secrets\" in Application Environment, Configuration & Security?",
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "easy",
+      "question": "Which volume type allows you to mount the contents of a ConfigMap as files inside a container?",
       "options": [
-        "To implement and manage create and consume secrets processes",
-        "To evaluate compliance with application environment, configuration & security standards",
-        "To document risk assessment procedures",
-        "To audit external vendor relationships"
+        "emptyDir",
+        "hostPath",
+        "configMap",
+        "secret"
       ],
-      "correct": 0,
-      "explanation": "Create and consume Secrets is a key objective in Application Environment, Configuration & Security. Understanding this concept is essential for the exam.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "A configMap volume type mounts ConfigMap data as files in the container's filesystem. Each key in the ConfigMap becomes a filename, and its value becomes the file contents. This is a common pattern for injecting configuration files into containers without rebuilding images.",
+      "link": "container-security.html"
     },
     {
       "id": 23,
-      "domain": 4,
-      "objective": "4.1",
+      "domain": 1,
+      "objective": "1.2",
       "difficulty": "medium",
-      "question": "Which of the following is a key concept within Application Environment, Configuration & Security (Domain 4)?",
+      "question": "A CronJob has 'startingDeadlineSeconds' set to 200. The controller misses three scheduled runs. What happens when the controller recovers?",
       "options": [
-        "PodSecurityStandards (Restricted, Baseline, Privileged)",
-        "ServiceAccounts and RBAC for Applications",
-        "Operator Pattern",
-        "Secrets (Opaque, TLS, docker-registry)"
+        "All three missed Jobs are created simultaneously",
+        "Only the most recent missed Job is created if it is within 200 seconds of its scheduled time",
+        "The CronJob is suspended automatically",
+        "A Job is created for every missed schedule regardless of the deadline"
       ],
-      "correct": 0,
-      "explanation": "PodSecurityStandards (Restricted, Baseline, Privileged) is a key concept in Application Environment, Configuration & Security. This domain covers topics essential for the Kubernetes CKAD exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "startingDeadlineSeconds defines the window after the scheduled time within which a Job can still be started. If the controller was down and missed runs, it counts missed schedules within this window. If more than 100 schedules were missed, it does not start any. Otherwise, it creates a Job for the most recent missed schedule within the deadline.",
+      "link": "container-security.html"
     },
     {
       "id": 24,
-      "domain": 4,
-      "objective": "4.2",
+      "domain": 1,
+      "objective": "1.1",
       "difficulty": "hard",
-      "question": "Which concept in Application Environment, Configuration & Security is most closely related to understand authentication, authorization and admission control?",
+      "question": "A Dockerfile uses 'COPY --from=builder /app/binary /app/binary' in the final stage. What does the '--from=builder' flag reference?",
       "options": [
-        "Application Environment, Configuration & Security governance and oversight",
-        "Application Environment, Configuration & Security implementation and operations",
-        "Application Environment, Configuration & Security assessment and testing",
-        "Application Environment, Configuration & Security risk management"
+        "A remote container registry named 'builder'",
+        "A running container with the name 'builder'",
+        "A previous build stage named 'builder' defined with 'FROM ... AS builder'",
+        "An external build tool called 'builder'"
       ],
-      "correct": 1,
-      "explanation": "Understand authentication, authorization and admission control falls under the implementation and operations aspect of Application Environment, Configuration & Security.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "In multi-stage builds, '--from=builder' references a previous build stage defined with 'FROM <image> AS builder'. COPY --from allows copying artifacts from that stage into the current stage without including the build tools and dependencies from the earlier stage.",
+      "link": "container-security.html"
     },
     {
       "id": 25,
-      "domain": 5,
-      "objective": "5.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Services & Networking (Domain 5)?",
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "hard",
+      "question": "A Pod uses an emptyDir volume with 'medium: Memory'. What is the implication?",
       "options": [
-        "ExternalName Services",
-        "DNS for Service Discovery (svc.cluster.local)",
-        "Service Types (ClusterIP, NodePort, LoadBalancer)",
-        "Ingress Resources and Controllers"
+        "The volume data is replicated across cluster nodes for durability",
+        "The volume is backed by RAM (tmpfs) and counts against the container's memory limit",
+        "The volume has medium-priority I/O scheduling",
+        "The volume persists data even after Pod deletion"
       ],
-      "correct": 0,
-      "explanation": "ExternalName Services is a key concept in Services & Networking. This domain covers topics essential for the Kubernetes CKAD exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "Setting emptyDir.medium to 'Memory' creates a tmpfs (RAM-backed) volume. This provides very fast I/O but the data is volatile and counts against the container's memory resource limit. If the container exceeds its memory limit due to tmpfs usage, it can be OOMKilled.",
+      "link": "container-security.html"
     },
     {
       "id": 26,
-      "domain": 5,
-      "objective": "5.2",
+      "domain": 1,
+      "objective": "1.3",
       "difficulty": "medium",
-      "question": "A professional is tasked with provide and troubleshoot access to applications via services. What should be the first step?",
+      "question": "What is the key difference between a sidecar container defined using the native Kubernetes sidecar feature (restartPolicy: Always in initContainers) versus a regular container in the containers array?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Native sidecars cannot mount volumes",
+        "Native sidecars start before main containers and keep running, but do not block Pod termination indefinitely",
+        "Native sidecars are only available on Windows nodes",
+        "There is no functional difference"
       ],
-      "correct": 0,
-      "explanation": "The first step in any services & networking task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "Kubernetes native sidecar containers (init containers with restartPolicy: Always) start before main containers like init containers, but continue running alongside them like regular containers. They are properly handled during Pod shutdown, receiving SIGTERM before main containers, and do not prevent the Pod from completing if main containers exit.",
+      "link": "container-security.html"
     },
     {
       "id": 27,
-      "domain": 5,
-      "objective": "5.3",
-      "difficulty": "medium",
-      "question": "Which concept in Services & Networking is most closely related to use ingress rules to expose applications?",
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "easy",
+      "question": "What is the default imagePullPolicy for a container using the image tag 'nginx:1.25.3'?",
       "options": [
-        "Services & Networking governance and oversight",
-        "Services & Networking implementation and operations",
-        "Services & Networking assessment and testing",
-        "Services & Networking risk management"
+        "Always",
+        "IfNotPresent",
+        "Never",
+        "PullOnce"
       ],
       "correct": 1,
-      "explanation": "Use Ingress rules to expose applications falls under the implementation and operations aspect of Services & Networking.",
-      "link": "start-here.html"
+      "explanation": "For images with specific version tags (not 'latest' and not untagged), Kubernetes defaults the imagePullPolicy to 'IfNotPresent'. This avoids unnecessary registry pulls when the image is already cached locally. Only 'latest' or untagged images default to 'Always'.",
+      "link": "container-security.html"
     },
     {
       "id": 28,
-      "domain": 5,
-      "objective": "5.1",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Services & Networking (Domain 5)?",
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "medium",
+      "question": "A Pod's PersistentVolumeClaim has accessMode set to ReadWriteOnce. What does this mean?",
       "options": [
-        "ExternalName Services",
-        "Service Types (ClusterIP, NodePort, LoadBalancer)",
-        "DNS for Service Discovery (svc.cluster.local)",
-        "NetworkPolicy (Ingress/Egress Rules)"
+        "The volume can only be read, not written",
+        "The volume can be mounted as read-write by a single node at a time",
+        "The volume can be mounted as read-write by all nodes simultaneously",
+        "The volume allows one write operation per second"
       ],
-      "correct": 0,
-      "explanation": "ExternalName Services is a key concept in Services & Networking. This domain covers topics essential for the Kubernetes CKAD exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "ReadWriteOnce (RWO) means the volume can be mounted as read-write by a single node. Multiple Pods on the same node can access it, but Pods on different nodes cannot mount it simultaneously. ReadWriteMany (RWX) allows multi-node access, while ReadOnlyMany (ROX) allows read-only multi-node access.",
+      "link": "container-security.html"
     },
     {
       "id": 29,
-      "domain": 5,
-      "objective": "5.2",
+      "domain": 1,
+      "objective": "1.2",
       "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with provide and troubleshoot access to applications via services?",
+      "question": "What is the purpose of 'ttlSecondsAfterFinished' in a Job spec?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "It sets the maximum time a Job can run",
+        "It defines how long to wait before retrying a failed Job",
+        "It automatically deletes the Job and its Pods after the specified time following completion",
+        "It controls the time between CronJob invocations"
       ],
-      "correct": 0,
-      "explanation": "When working with provide and troubleshoot access to applications via services, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "ttlSecondsAfterFinished enables automatic cleanup of finished Jobs (both Succeeded and Failed). After the specified duration, the TTL controller deletes the Job object and its dependent Pods. This prevents accumulation of completed Job resources in the cluster.",
+      "link": "container-security.html"
     },
     {
       "id": 30,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "hard",
+      "question": "A Dockerfile contains 'ARG VERSION=1.0' followed by 'FROM alpine:${VERSION}'. What happens if the build is invoked with '--build-arg VERSION=3.18'?",
+      "options": [
+        "The build fails because ARG cannot be used before FROM",
+        "The build uses alpine:3.18, overriding the default value",
+        "The build ignores the build-arg and uses alpine:1.0",
+        "The build uses both versions in a multi-stage setup"
+      ],
+      "correct": 1,
+      "explanation": "ARG instructions declared before FROM are available for use within the FROM instruction. The --build-arg flag overrides the default ARG value, so the build uses alpine:3.18. Note that this ARG is only available for the FROM instruction; it must be re-declared after FROM to be used in subsequent instructions.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 31,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "What deployment strategy does Kubernetes use by default for Deployments?",
+      "options": [
+        "Recreate",
+        "Blue-Green",
+        "RollingUpdate",
+        "Canary"
+      ],
+      "correct": 2,
+      "explanation": "The default deployment strategy for Kubernetes Deployments is RollingUpdate. It gradually replaces old Pods with new ones, maintaining availability throughout the update process. The maxUnavailable and maxSurge parameters control how many Pods can be unavailable or created above the desired count during the rollout.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 32,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "What is the effect of the 'Recreate' deployment strategy?",
+      "options": [
+        "Old Pods are gradually replaced one by one",
+        "All existing Pods are terminated before new ones are created, causing downtime",
+        "A parallel set of new Pods is created and traffic is switched instantly",
+        "Only failed Pods are replaced"
+      ],
+      "correct": 1,
+      "explanation": "The Recreate strategy kills all existing Pods before creating new ones. This causes downtime between the old Pods being terminated and the new Pods becoming ready. It is useful when running multiple versions simultaneously would cause data conflicts or when resource constraints prevent running both old and new Pods.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 33,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "A Deployment has 10 replicas with maxSurge: 25% and maxUnavailable: 25%. During a rolling update, what is the maximum number of Pods that can exist simultaneously?",
+      "options": [
+        "10",
+        "12 (rounded up from 12.5)",
+        "13 (10 + 25% rounded up)",
+        "15"
+      ],
+      "correct": 2,
+      "explanation": "maxSurge: 25% of 10 replicas = 2.5, rounded up to 3. The maximum total Pods during the update is 10 + 3 = 13. Similarly, maxUnavailable: 25% = 2.5, rounded down to 2, meaning at least 8 Pods must always be available during the rollout.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 34,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "easy",
+      "question": "Which command shows the rollout status of a Deployment named 'web-app'?",
+      "options": [
+        "kubectl get deployment web-app -o wide",
+        "kubectl rollout status deployment/web-app",
+        "kubectl describe pod web-app",
+        "kubectl logs deployment/web-app"
+      ],
+      "correct": 1,
+      "explanation": "kubectl rollout status deployment/web-app watches the rollout progress and reports whether it is complete, in progress, or has failed. It shows the number of updated, available, and unavailable replicas during the rollout process.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 35,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "A team discovers a critical bug in their latest deployment. Which command rolls back the 'api-server' Deployment to its previous revision?",
+      "options": [
+        "kubectl rollout restart deployment/api-server",
+        "kubectl rollout undo deployment/api-server",
+        "kubectl delete deployment/api-server",
+        "kubectl scale deployment/api-server --replicas=0"
+      ],
+      "correct": 1,
+      "explanation": "kubectl rollout undo deployment/api-server rolls back to the previous revision by creating a new revision that matches the previous ReplicaSet's Pod template. You can also specify a specific revision with --to-revision=N. The rollout restart command restarts Pods but does not revert the image.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 36,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "How do you view the revision history of a Deployment named 'frontend'?",
+      "options": [
+        "kubectl get replicasets -l app=frontend",
+        "kubectl rollout history deployment/frontend",
+        "kubectl describe deployment frontend",
+        "kubectl logs deployment/frontend --history"
+      ],
+      "correct": 1,
+      "explanation": "kubectl rollout history deployment/frontend shows all recorded revisions of the Deployment. Adding --revision=N shows the details of a specific revision. Kubernetes maintains revision history based on the revisionHistoryLimit field (default: 10 ReplicaSets).",
+      "link": "container-security.html"
+    },
+    {
+      "id": 37,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "Which Helm command installs a chart named 'my-chart' from a repository with the release name 'my-release'?",
+      "options": [
+        "helm create my-release my-chart",
+        "helm install my-release my-chart",
+        "helm deploy my-release my-chart",
+        "helm apply my-release my-chart"
+      ],
+      "correct": 1,
+      "explanation": "helm install <release-name> <chart> installs a Helm chart and creates a named release. The release name identifies this particular installation, allowing multiple instances of the same chart with different configurations to coexist in the cluster.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 38,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "You need to upgrade an existing Helm release to a new chart version while changing the replica count. Which command achieves this?",
+      "options": [
+        "helm install my-release my-chart --set replicaCount=5",
+        "helm upgrade my-release my-chart --set replicaCount=5",
+        "helm rollback my-release --set replicaCount=5",
+        "helm template my-release my-chart --set replicaCount=5"
+      ],
+      "correct": 1,
+      "explanation": "helm upgrade updates an existing release to a new chart version or with new values. The --set flag overrides specific values. You can also use -f values.yaml to provide a file with override values. helm install would fail because the release already exists.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 39,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "A Helm release 'payment-service' was upgraded and the new version has a critical bug. Which command rolls back to revision 3?",
+      "options": [
+        "helm undo payment-service 3",
+        "helm rollback payment-service 3",
+        "helm upgrade payment-service --revision 3",
+        "helm revert payment-service --to-revision 3"
+      ],
+      "correct": 1,
+      "explanation": "helm rollback <release> <revision> rolls back a release to the specified revision number. This creates a new revision based on the target revision's configuration. You can view available revisions with 'helm history payment-service'.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 40,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "medium",
+      "question": "How do you implement a blue-green deployment using Kubernetes primitives?",
+      "options": [
+        "Use a Deployment with strategy type: BlueGreen",
+        "Deploy two complete sets of Pods (blue and green) and switch the Service selector to point to the new version",
+        "Set maxSurge to 100% in the Deployment's rolling update strategy",
+        "Use a CronJob to periodically switch between versions"
+      ],
+      "correct": 1,
+      "explanation": "Blue-green deployment in Kubernetes is achieved by running two separate Deployments (blue and green) and using a Service with label selectors. To switch traffic, you update the Service's selector to point to the new version's labels. This provides instant rollback by reverting the selector.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 41,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "hard",
+      "question": "To implement a canary deployment that sends 10% of traffic to the new version, which approach uses only standard Kubernetes resources?",
+      "options": [
+        "Set the Deployment strategy to 'Canary' with weight: 10",
+        "Run 9 Pods of the old version and 1 Pod of the new version behind the same Service",
+        "Configure the Ingress controller with a traffic split annotation",
+        "Use a NetworkPolicy to redirect 10% of traffic"
+      ],
+      "correct": 1,
+      "explanation": "With standard Kubernetes resources (no service mesh or advanced Ingress), canary deployment is approximated by running both versions behind a single Service. With 9 old-version Pods and 1 new-version Pod (all matching the Service selector), approximately 10% of traffic goes to the canary. For precise traffic splitting, a service mesh or Ingress controller with weight-based routing is needed.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 42,
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "easy",
+      "question": "What is Kustomize used for in Kubernetes?",
+      "options": [
+        "Container image building",
+        "Customizing Kubernetes manifests without modifying the original files using overlays and patches",
+        "Monitoring cluster health",
+        "Managing Kubernetes user authentication"
+      ],
+      "correct": 1,
+      "explanation": "Kustomize provides a template-free way to customize Kubernetes resource configurations. It uses a kustomization.yaml file to define bases, overlays, patches, and transformations. This allows maintaining environment-specific configurations (dev, staging, prod) without duplicating or modifying the base manifests.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 43,
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "medium",
+      "question": "In Kustomize, what is the purpose of an overlay?",
+      "options": [
+        "To define the base configuration that all environments share",
+        "To apply environment-specific modifications on top of a base configuration",
+        "To encrypt sensitive values in manifests",
+        "To validate manifests before applying them"
+      ],
+      "correct": 1,
+      "explanation": "An overlay in Kustomize references a base configuration and applies environment-specific patches, transformations, or additional resources on top of it. For example, a 'production' overlay might increase replica counts and change resource limits while a 'development' overlay uses minimal resources.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 44,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "A Deployment's rollout is stuck because new Pods fail readiness checks. What does 'kubectl rollout undo' do in this situation?",
+      "options": [
+        "It waits for the readiness checks to pass before taking action",
+        "It terminates the new failed Pods and scales up the previous ReplicaSet",
+        "It deletes the entire Deployment",
+        "It restarts the failed Pods without reverting the image"
+      ],
+      "correct": 1,
+      "explanation": "kubectl rollout undo reverts the Deployment to the previous revision by scaling down the current (failing) ReplicaSet and scaling up the previous (working) ReplicaSet. This effectively removes the failed Pods and restores the last known good configuration.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 45,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "What does 'helm template' do?",
+      "options": [
+        "Creates a new Helm chart template from scratch",
+        "Renders chart templates locally and outputs the resulting Kubernetes manifests without installing them",
+        "Deploys a chart using a template engine",
+        "Converts Kubernetes YAML files into Helm chart format"
+      ],
+      "correct": 1,
+      "explanation": "helm template renders the chart's templates locally using the provided values and outputs the resulting Kubernetes manifests to stdout. It does not communicate with the Kubernetes cluster. This is useful for debugging templates, generating manifests for CI/CD pipelines, or reviewing what would be deployed.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 46,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "A Deployment has progressDeadlineSeconds set to 600. During a rollout, no new Pods become ready within 10 minutes. What happens?",
+      "options": [
+        "The Deployment automatically rolls back to the previous version",
+        "The Deployment's condition is set to 'Progressing=False' with reason 'ProgressDeadlineExceeded'",
+        "All Pods in the Deployment are terminated",
+        "The Deployment controller retries with exponential backoff"
+      ],
+      "correct": 1,
+      "explanation": "progressDeadlineSeconds specifies how long the Deployment controller waits for progress before reporting the Deployment as failed. When exceeded, the condition is set to Progressing=False. Importantly, this does NOT trigger an automatic rollback -- it only reports the failure. Manual intervention (rollout undo) is required.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 47,
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "easy",
+      "question": "Which kubectl command applies Kustomize configurations directly?",
+      "options": [
+        "kubectl apply -f kustomization.yaml",
+        "kubectl apply -k <directory>",
+        "kubectl kustomize apply <directory>",
+        "kubectl create -k <directory> --dry-run"
+      ],
+      "correct": 1,
+      "explanation": "kubectl apply -k <directory> builds the Kustomize configuration from the specified directory and applies it to the cluster. The -k flag tells kubectl to process the kustomization.yaml file in that directory. You can also preview the output with 'kubectl kustomize <directory>' without applying.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 48,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "medium",
+      "question": "In a rolling update, what does the 'maxUnavailable' parameter control?",
+      "options": [
+        "The maximum number of Pods that can be created above the desired count",
+        "The maximum number of Pods that can be unavailable during the update",
+        "The maximum time a Pod can be unhealthy before being replaced",
+        "The maximum number of failed rollback attempts"
+      ],
+      "correct": 1,
+      "explanation": "maxUnavailable specifies the maximum number (or percentage) of Pods that can be unavailable during the rolling update. For example, with 10 replicas and maxUnavailable: 2, at least 8 Pods must always be available. The parameter accepts absolute numbers or percentages.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 49,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "A Helm chart uses the template function '{{ .Values.image.tag | default .Chart.AppVersion }}'. What does this expression evaluate to?",
+      "options": [
+        "Always the Chart.AppVersion, ignoring the values file",
+        "The value of image.tag from values.yaml, or the chart's appVersion if image.tag is not set",
+        "A concatenation of both values",
+        "An error, because you cannot mix Values and Chart in one expression"
+      ],
+      "correct": 1,
+      "explanation": "The 'default' template function returns the first argument if it is not empty, otherwise the fallback value. If .Values.image.tag is set in values.yaml or via --set, it is used. If not set (empty), .Chart.AppVersion from Chart.yaml is used as the default.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 50,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "Which field in a Deployment spec controls how many old ReplicaSets are retained for rollback purposes?",
+      "options": [
+        "maxSurge",
+        "revisionHistoryLimit",
+        "progressDeadlineSeconds",
+        "minReadySeconds"
+      ],
+      "correct": 1,
+      "explanation": "revisionHistoryLimit specifies the number of old ReplicaSets to retain, allowing you to roll back to any of those revisions. The default is 10. Setting it to 0 means no history is kept and rollback is not possible. Old ReplicaSets beyond this limit are garbage collected.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 51,
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "hard",
+      "question": "In Kustomize, what is a strategic merge patch?",
+      "options": [
+        "A patch that completely replaces the target resource",
+        "A patch that merges changes into the existing resource, replacing only the specified fields while preserving others",
+        "A patch that only applies during the first deployment",
+        "A patch that generates new resources from a template"
+      ],
+      "correct": 1,
+      "explanation": "A strategic merge patch in Kustomize merges the patch content into the target resource. Only the fields specified in the patch are modified; all other fields retain their original values. For arrays like containers, the merge strategy depends on the field -- some are merged by key (like container name), others are replaced entirely.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 52,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "What does 'kubectl rollout restart deployment/web' do?",
+      "options": [
+        "Rolls back the Deployment to its previous revision",
+        "Deletes all Pods and recreates them with the same configuration",
+        "Triggers a new rollout by adding a restart annotation, causing Pods to be replaced gradually",
+        "Stops the Deployment controller temporarily"
+      ],
+      "correct": 2,
+      "explanation": "kubectl rollout restart updates the Pod template with a restart annotation (containing a timestamp), which triggers a new rolling update. Pods are gradually replaced with the same configuration. This is useful for picking up ConfigMap/Secret changes or resolving stuck Pods without changing the image.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 53,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "hard",
+      "question": "A team needs zero-downtime deployment where the old version continues serving traffic until the new version is fully validated. Which strategy is most appropriate?",
+      "options": [
+        "Recreate strategy with a readiness probe",
+        "RollingUpdate with maxUnavailable: 0",
+        "Blue-green deployment with Service selector switch after validation",
+        "Canary deployment with 50% traffic split"
+      ],
+      "correct": 2,
+      "explanation": "Blue-green deployment ensures the old version serves all traffic while the new version is deployed and validated separately. Only after explicit validation is traffic switched by updating the Service selector. RollingUpdate with maxUnavailable: 0 provides zero downtime but starts replacing Pods immediately without separate validation of the full new deployment.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 54,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "What does 'minReadySeconds' control in a Deployment spec?",
+      "options": [
+        "The minimum time a Pod must run before it is considered for termination",
+        "The minimum time a newly created Pod must be ready (without any restart) before it is considered available",
+        "The minimum number of seconds between Pod restarts",
+        "The minimum time before a failed Pod is restarted"
+      ],
+      "correct": 1,
+      "explanation": "minReadySeconds specifies the minimum number of seconds a new Pod must be ready without crashing before it is considered available. This slows down rolling updates to catch Pods that pass initial readiness checks but crash shortly after, preventing premature scale-down of old Pods.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 55,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "Which Helm command shows the status of a release named 'my-app'?",
+      "options": [
+        "helm get my-app",
+        "helm status my-app",
+        "helm list my-app",
+        "helm inspect my-app"
+      ],
+      "correct": 1,
+      "explanation": "helm status <release-name> displays the current status of a release, including its deployment state, namespace, revision number, and any notes provided by the chart. It also shows the status of resources created by the release.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 56,
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "medium",
+      "question": "How does Kustomize handle ConfigMap generation differently from static ConfigMap manifests?",
+      "options": [
+        "Kustomize cannot generate ConfigMaps",
+        "Kustomize generates ConfigMaps with a hash suffix in the name, triggering a rolling update when the content changes",
+        "Kustomize encrypts ConfigMap data automatically",
+        "Kustomize always creates ConfigMaps in the kube-system namespace"
+      ],
+      "correct": 1,
+      "explanation": "Kustomize's configMapGenerator creates ConfigMaps with a content-based hash suffix appended to the name (e.g., my-config-abc123). When the content changes, the hash changes, creating a new ConfigMap name. Deployments referencing this ConfigMap via Kustomize automatically get the updated name, triggering a rolling update to pick up the new configuration.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 57,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "You need to roll back a Deployment to revision 5, but you want to verify the Pod template of that revision first. Which commands should you use?",
+      "options": [
+        "kubectl rollout history deployment/app --revision=5, then kubectl rollout undo deployment/app --to-revision=5",
+        "kubectl describe revision 5, then kubectl apply revision 5",
+        "kubectl get rs --revision=5, then kubectl rollout restart deployment/app",
+        "kubectl logs deployment/app --revision=5, then kubectl rollout undo"
+      ],
+      "correct": 0,
+      "explanation": "First, 'kubectl rollout history deployment/app --revision=5' shows the Pod template details for revision 5 (image, environment variables, etc.). After verifying it is the correct revision, 'kubectl rollout undo deployment/app --to-revision=5' reverts the Deployment to that specific revision.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 58,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "What is a Helm values file used for?",
+      "options": [
+        "Defining the Kubernetes cluster configuration",
+        "Providing custom configuration values that override chart defaults during installation or upgrade",
+        "Storing Helm repository credentials",
+        "Defining Kubernetes RBAC policies for the Helm release"
+      ],
+      "correct": 1,
+      "explanation": "A Helm values file (usually values.yaml) provides configuration parameters that are injected into chart templates. Users can override default values by providing their own values file with 'helm install -f custom-values.yaml' or using --set flags for individual values.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 59,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "easy",
+      "question": "In a rolling update, what does the 'maxSurge' parameter control?",
+      "options": [
+        "The maximum number of Pods that can be unavailable",
+        "The maximum number of Pods that can be created above the desired replica count during the update",
+        "The maximum time to wait for a Pod to become ready",
+        "The maximum number of revisions to retain"
+      ],
+      "correct": 1,
+      "explanation": "maxSurge specifies the maximum number (or percentage) of Pods that can be created above the desired replica count during a rolling update. For example, with 10 replicas and maxSurge: 3, up to 13 Pods can exist during the update, allowing faster rollouts.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 60,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "A Deployment uses strategy type RollingUpdate with maxSurge: 0 and maxUnavailable: 1. How does the rollout proceed with 5 replicas?",
+      "options": [
+        "All 5 old Pods are terminated, then 5 new Pods are created",
+        "One old Pod is terminated, then one new Pod is created, repeated 5 times sequentially",
+        "One new Pod is created first, then one old Pod is terminated after the new one is ready",
+        "The rollout fails because maxSurge cannot be 0"
+      ],
+      "correct": 1,
+      "explanation": "With maxSurge: 0, no extra Pods can be created above the desired count. With maxUnavailable: 1, one old Pod is terminated first, then one new Pod is created to fill the gap. This repeats until all Pods are updated. This approach uses no extra resources but means one Pod is always unavailable during the update.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 61,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "What is the purpose of a liveness probe in Kubernetes?",
+      "options": [
+        "To determine if a Pod should receive traffic from a Service",
+        "To check if a container is still running and restart it if the probe fails",
+        "To verify that a container has started successfully",
+        "To monitor CPU and memory usage of a container"
+      ],
+      "correct": 1,
+      "explanation": "A liveness probe checks whether a container is still running correctly. If the liveness probe fails, the kubelet kills the container, and it is restarted according to the Pod's restartPolicy. This catches situations where a process is running but is deadlocked or otherwise unable to function.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 62,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "What is the purpose of a readiness probe?",
+      "options": [
+        "To restart a failed container",
+        "To determine if a container is ready to accept traffic",
+        "To check if the node has sufficient resources",
+        "To validate the container image before pulling it"
+      ],
+      "correct": 1,
+      "explanation": "A readiness probe determines whether a container is ready to serve requests. If the readiness probe fails, the Pod's IP address is removed from the endpoints of all matching Services, stopping traffic to that Pod. Unlike liveness probes, failing a readiness probe does not restart the container.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 63,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "A startup probe is configured on a container. What happens to liveness and readiness probes while the startup probe has not yet succeeded?",
+      "options": [
+        "They run concurrently with the startup probe",
+        "They are disabled until the startup probe succeeds",
+        "They override the startup probe settings",
+        "They run but failures are ignored"
+      ],
+      "correct": 1,
+      "explanation": "When a startup probe is configured, liveness and readiness probes are disabled until the startup probe succeeds. This protects slow-starting containers from being killed by the liveness probe before they finish initializing. Once the startup probe succeeds, liveness and readiness probes take over.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 64,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "Which probe type sends an HTTP GET request to a specified path and port, considering the probe successful if the response code is between 200 and 399?",
+      "options": [
+        "exec probe",
+        "tcpSocket probe",
+        "httpGet probe",
+        "grpc probe"
+      ],
+      "correct": 2,
+      "explanation": "An httpGet probe performs an HTTP GET request to the container at the specified path and port. Any response code in the 200-399 range is considered successful. The exec probe runs a command inside the container, tcpSocket checks if a port is open, and grpc uses the gRPC health checking protocol.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 65,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "A container has a liveness probe with initialDelaySeconds: 30, periodSeconds: 10, and failureThreshold: 3. How long after the container starts will it be killed if the probe fails continuously?",
+      "options": [
+        "30 seconds",
+        "40 seconds",
+        "60 seconds (30 + 3 * 10)",
+        "33 seconds"
+      ],
+      "correct": 2,
+      "explanation": "The probe starts 30 seconds after container start (initialDelaySeconds). It then runs every 10 seconds (periodSeconds). After 3 consecutive failures (failureThreshold), the container is killed. So: 30s delay + 10s (first check fails) + 10s (second fails) + 10s (third fails) = 60 seconds total.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 66,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "Which command displays the logs of a container named 'app' in a Pod named 'web-pod'?",
+      "options": [
+        "kubectl logs web-pod -c app",
+        "kubectl describe pod web-pod",
+        "kubectl get pod web-pod -o yaml",
+        "kubectl exec web-pod -- cat /var/log/app.log"
+      ],
+      "correct": 0,
+      "explanation": "kubectl logs <pod-name> -c <container-name> displays the stdout/stderr logs from the specified container. The -c flag is required when a Pod has multiple containers. Without -c, it defaults to the first container or prompts you to choose one.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 67,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "How do you stream logs in real-time from a Pod named 'worker'?",
+      "options": [
+        "kubectl logs worker --tail=0",
+        "kubectl logs worker -f",
+        "kubectl logs worker --since=0s",
+        "kubectl logs worker --stream"
+      ],
+      "correct": 1,
+      "explanation": "The -f (--follow) flag streams logs in real-time, similar to 'tail -f'. New log entries appear as they are written. This is essential for debugging live issues. You can combine it with --since to start from a specific time or --tail to start from the last N lines.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 68,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "easy",
+      "question": "Which command shows resource utilization (CPU and memory) of all Pods in the current namespace?",
+      "options": [
+        "kubectl describe pods",
+        "kubectl top pods",
+        "kubectl get pods -o wide",
+        "kubectl stats pods"
+      ],
+      "correct": 1,
+      "explanation": "kubectl top pods displays the current CPU and memory usage of each Pod. This command requires the Metrics Server to be installed in the cluster. It shows actual resource consumption, not the requested or limited amounts defined in the Pod spec.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 69,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "You need to debug a running Pod that does not have debugging tools installed. Which feature allows you to attach an ephemeral debug container to the Pod?",
+      "options": [
+        "kubectl exec",
+        "kubectl attach",
+        "kubectl debug",
+        "kubectl cp"
+      ],
+      "correct": 2,
+      "explanation": "kubectl debug allows you to create an ephemeral container within a running Pod for debugging purposes. The debug container can include tools like curl, netcat, or strace that are not in the main container's image. This avoids the need to rebuild the application image with debugging tools.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 70,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "A Pod is in CrashLoopBackOff state. Which command lets you see the logs from the previous (crashed) instance of the container?",
+      "options": [
+        "kubectl logs pod-name --all-containers",
+        "kubectl logs pod-name --previous",
+        "kubectl describe pod pod-name",
+        "kubectl get events --field-selector involvedObject.name=pod-name"
+      ],
+      "correct": 1,
+      "explanation": "kubectl logs pod-name --previous (or -p) retrieves logs from the previous terminated instance of the container. This is critical for debugging CrashLoopBackOff because the current container may restart before you can read its logs. The previous container's logs are retained until the next restart.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 71,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "easy",
+      "question": "What is the purpose of the Kubernetes deprecation policy for API versions?",
+      "options": [
+        "To immediately remove outdated APIs without notice",
+        "To provide a structured timeline for removing old API versions, giving users time to migrate",
+        "To prevent any changes to existing APIs",
+        "To automatically convert resources to the newest API version"
+      ],
+      "correct": 1,
+      "explanation": "Kubernetes deprecation policy ensures that API versions are not removed immediately. Deprecated APIs go through alpha, beta, and GA stages with defined support periods. Users are given at least one release cycle to migrate to the new API version before the old one is removed.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 72,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "You run 'kubectl apply -f deployment.yaml' and receive a warning that 'apps/v1beta1' is deprecated. What should you do?",
+      "options": [
+        "Ignore the warning since it still works",
+        "Update the apiVersion in the manifest to the stable 'apps/v1' and adjust any changed fields",
+        "Downgrade the Kubernetes cluster to an older version",
+        "Delete the Deployment and recreate it with the same API version"
+      ],
+      "correct": 1,
+      "explanation": "Deprecated API versions will be removed in a future Kubernetes release. You should update the manifest to use the stable API version (apps/v1 for Deployments) and adjust any field changes between versions. Using 'kubectl convert' or 'kubectl api-resources' can help identify the correct current version.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 73,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "You want to see logs from all Pods with the label 'app=web' across all containers. Which command achieves this?",
+      "options": [
+        "kubectl logs -l app=web --all-containers=true",
+        "kubectl logs deployment/web",
+        "kubectl get pods -l app=web -o jsonpath='{.items[*].metadata.name}'",
+        "kubectl describe pods -l app=web"
+      ],
+      "correct": 0,
+      "explanation": "kubectl logs -l app=web --all-containers=true streams logs from all containers in all Pods matching the label selector app=web. This is useful for viewing logs across replicated Pods without specifying each Pod name individually.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 74,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "How do you create a copy of a running Pod with a debug container using kubectl debug?",
+      "options": [
+        "kubectl debug pod-name --copy-to=debug-pod --image=busybox -it",
+        "kubectl run debug-pod --image=busybox --attach-to=pod-name",
+        "kubectl exec pod-name -- /bin/sh -c 'install busybox'",
+        "kubectl cp busybox pod-name:/usr/local/bin/"
+      ],
+      "correct": 0,
+      "explanation": "kubectl debug with --copy-to creates a copy of the target Pod with an additional debug container. This is useful when you need to modify the Pod spec (like changing the command or adding a debug container) without affecting the running Pod. The -it flags provide an interactive terminal.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 75,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "A container's liveness probe uses an exec command that returns exit code 0. What does Kubernetes conclude?",
+      "options": [
+        "The container should be restarted",
+        "The container is alive and healthy",
+        "The container is not ready to accept traffic",
+        "The probe configuration is invalid"
+      ],
+      "correct": 1,
+      "explanation": "For exec probes, an exit code of 0 means success (the container is healthy). Any non-zero exit code is considered a failure. If the failure threshold is reached, the kubelet kills and restarts the container. This mechanism lets applications implement custom health check logic.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 76,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "hard",
+      "question": "An application manifest uses the API version 'networking.k8s.io/v1beta1' for Ingress. The cluster has been upgraded to Kubernetes 1.22+ where this version is removed. What happens when you apply this manifest?",
+      "options": [
+        "The Ingress is created with a deprecation warning",
+        "The API server returns an error because the API version no longer exists",
+        "The manifest is automatically converted to networking.k8s.io/v1",
+        "The Ingress is created but without IngressClass support"
+      ],
+      "correct": 1,
+      "explanation": "Once a deprecated API version is removed (not just deprecated), the API server rejects requests using that version entirely. The manifest must be updated to use 'networking.k8s.io/v1' with the required field changes (like mandatory ingressClassName). There is no automatic conversion at apply time.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 77,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "A web application takes 2 minutes to load its cache on startup. Which probe configuration prevents the liveness probe from killing the container during this initialization?",
+      "options": [
+        "Set the liveness probe's initialDelaySeconds to 120",
+        "Configure a startup probe with failureThreshold * periodSeconds greater than 120 seconds",
+        "Disable the liveness probe entirely",
+        "Set the readiness probe's successThreshold to 120"
+      ],
+      "correct": 1,
+      "explanation": "A startup probe with failureThreshold * periodSeconds > 120s (e.g., failureThreshold: 30, periodSeconds: 5 = 150 seconds) gives the application up to that time to start. Liveness and readiness probes are disabled until the startup probe succeeds. This is preferred over a large initialDelaySeconds because it passes control to the liveness probe as soon as the app is ready.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 78,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "easy",
+      "question": "Which kubectl command shows detailed information about a Pod including events, container statuses, and conditions?",
+      "options": [
+        "kubectl get pod pod-name",
+        "kubectl logs pod-name",
+        "kubectl describe pod pod-name",
+        "kubectl top pod pod-name"
+      ],
+      "correct": 2,
+      "explanation": "kubectl describe pod provides comprehensive information including Pod conditions, container states, resource requests/limits, volumes, events, and more. The Events section at the bottom is particularly useful for troubleshooting scheduling, image pull, and probe failures.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 79,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "How do you view the last 50 lines of logs from the past hour for a Pod named 'api'?",
+      "options": [
+        "kubectl logs api --tail=50 --since=1h",
+        "kubectl logs api --lines=50 --time=1h",
+        "kubectl logs api --last=50 --from=1h",
+        "kubectl logs api -n 50 --since-time=1h"
+      ],
+      "correct": 0,
+      "explanation": "--tail=50 limits output to the last 50 lines, and --since=1h only includes logs from the past hour. These flags can be combined to efficiently retrieve recent, relevant log entries without downloading the entire log history. The --since flag accepts durations like 5m, 1h, or 2h30m.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 80,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "Which probe action opens a TCP connection to a specified port to check if it is accepting connections?",
+      "options": [
+        "httpGet",
+        "exec",
+        "tcpSocket",
+        "grpc"
+      ],
+      "correct": 2,
+      "explanation": "A tcpSocket probe attempts to open a TCP connection to the specified port on the container. If the connection is established, the probe is considered successful. This is useful for non-HTTP services like databases, caches, or custom TCP servers that do not have HTTP health endpoints.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 81,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "You need to debug networking issues in a Pod running a distroless container (no shell or networking tools). What is the best approach?",
+      "options": [
+        "kubectl exec into the container and install tools",
+        "kubectl debug pod-name --image=nicolaka/netshoot --target=container-name",
+        "Rebuild the container image with debugging tools included",
+        "Delete the Pod and redeploy with a different image"
+      ],
+      "correct": 1,
+      "explanation": "kubectl debug with --image=nicolaka/netshoot (or similar debug image) and --target creates an ephemeral container that shares the process namespace of the target container. This gives you access to networking tools (tcpdump, nslookup, curl) while sharing the Pod's network namespace, without modifying the running application.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 82,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "Which kubectl command helps identify deprecated APIs used in your cluster before upgrading?",
+      "options": [
+        "kubectl version",
+        "kubectl api-versions",
+        "kubectl get apiservices",
+        "kubectl api-resources --api-group=apps"
+      ],
+      "correct": 1,
+      "explanation": "kubectl api-versions lists all available API versions on the cluster. Comparing this against the deprecation schedule for your target Kubernetes version helps identify which APIs will be removed. Third-party tools like 'kubent' (kube-no-trouble) can scan manifests for deprecated API usage.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 83,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "How do you create a ConfigMap from a literal key-value pair using kubectl?",
+      "options": [
+        "kubectl create configmap my-config --from-literal=key1=value1",
+        "kubectl apply configmap my-config key1=value1",
+        "kubectl set configmap my-config --literal key1=value1",
+        "kubectl config create my-config --data=key1=value1"
+      ],
+      "correct": 0,
+      "explanation": "kubectl create configmap <name> --from-literal=key=value creates a ConfigMap with the specified key-value pair. You can add multiple --from-literal flags for additional pairs, use --from-file to import file contents, or --from-env-file to import from a .env file.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 84,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "How do you reference a ConfigMap value as an environment variable in a Pod spec?",
+      "options": [
+        "Using env.valueFrom.configMapKeyRef with the ConfigMap name and key",
+        "Using volumes.configMap with a mount path",
+        "Using args with $(CONFIG_KEY) syntax",
+        "Using annotations with the ConfigMap name"
+      ],
+      "correct": 0,
+      "explanation": "env.valueFrom.configMapKeyRef references a specific key from a ConfigMap and injects it as an environment variable. You specify the ConfigMap name and the key to use. This is different from mounting the entire ConfigMap as files using a volume.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 85,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "What happens to running Pods when the ConfigMap they reference is updated?",
+      "options": [
+        "The Pods automatically restart to pick up the new values",
+        "Environment variables from ConfigMaps are NOT updated; volume-mounted ConfigMaps are eventually updated",
+        "All references are updated immediately",
+        "The Pods crash with a ConfigMapChanged error"
+      ],
+      "correct": 1,
+      "explanation": "When a ConfigMap is updated, environment variables sourced from it are NOT updated in running containers -- the values are set at container start and remain static. Volume-mounted ConfigMaps are eventually updated by the kubelet (with a delay up to the sync period + cache propagation), but the application must be capable of detecting and reloading the changed files.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 86,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "How are Kubernetes Secrets encoded by default?",
+      "options": [
+        "Encrypted with AES-256",
+        "Hashed with SHA-256",
+        "Base64 encoded (not encrypted)",
+        "Stored in plaintext"
+      ],
+      "correct": 2,
+      "explanation": "Kubernetes Secrets store data as base64-encoded strings by default. Base64 is an encoding, NOT encryption -- anyone with access to the Secret can decode the values. For actual encryption, you must enable encryption at rest in the API server using an EncryptionConfiguration.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 87,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "Which Secret type is used to store Docker registry credentials for pulling private images?",
+      "options": [
+        "Opaque",
+        "kubernetes.io/tls",
+        "kubernetes.io/dockerconfigjson",
+        "kubernetes.io/basic-auth"
+      ],
+      "correct": 2,
+      "explanation": "kubernetes.io/dockerconfigjson Secrets store Docker registry authentication credentials in the standard Docker config.json format. They are referenced in Pod specs via imagePullSecrets or linked to a ServiceAccount so the kubelet can authenticate with private registries when pulling images.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 88,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "easy",
+      "question": "What does 'runAsNonRoot: true' in a SecurityContext enforce?",
+      "options": [
+        "The container runs with a random user ID",
+        "The container is blocked from starting if it attempts to run as root (UID 0)",
+        "The container's root filesystem becomes read-only",
+        "The container cannot access the host network"
+      ],
+      "correct": 1,
+      "explanation": "runAsNonRoot: true tells the kubelet to validate that the container is not running as root (UID 0) at startup. If the container image's default user is root and no runAsUser is specified, the container fails to start. This is a security best practice to prevent privilege escalation.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 89,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "A SecurityContext sets 'readOnlyRootFilesystem: true'. What is the effect?",
+      "options": [
+        "The container cannot read any files",
+        "The container's root filesystem is mounted as read-only; writes require explicitly mounted writable volumes",
+        "Only the /root directory is read-only",
+        "The container cannot be started by the root user"
+      ],
+      "correct": 1,
+      "explanation": "readOnlyRootFilesystem: true mounts the container's root filesystem as read-only. The application cannot write to any path unless a writable volume (like emptyDir) is explicitly mounted at that path. This prevents attackers from writing malicious scripts or modifying binaries within the container.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 90,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "A Pod's SecurityContext specifies 'capabilities: {drop: [\"ALL\"], add: [\"NET_BIND_SERVICE\"]}'. What does this achieve?",
+      "options": [
+        "Drops all network capabilities and adds nothing",
+        "Drops all Linux capabilities, then adds back only the ability to bind to ports below 1024",
+        "Drops all volumes and adds a network service volume",
+        "Disables all containers except the one running a network service"
+      ],
+      "correct": 1,
+      "explanation": "This drops ALL Linux capabilities (a strong security baseline) and then selectively adds back only NET_BIND_SERVICE, which allows the process to bind to privileged ports (below 1024). This follows the principle of least privilege -- the container has only the specific capability it needs to function.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 91,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "easy",
+      "question": "What is the purpose of a ServiceAccount in Kubernetes?",
+      "options": [
+        "To provide human users with cluster access",
+        "To provide an identity for processes running in Pods to interact with the Kubernetes API",
+        "To manage billing accounts for cloud resources",
+        "To store service credentials for external APIs"
+      ],
+      "correct": 1,
+      "explanation": "ServiceAccounts provide an identity for processes running in Pods. When a Pod makes API calls to the Kubernetes API server, it authenticates using the token associated with its ServiceAccount. RBAC policies can then control what operations the ServiceAccount is allowed to perform.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 92,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "medium",
+      "question": "How do you prevent a ServiceAccount token from being automatically mounted in a Pod?",
+      "options": [
+        "Delete the ServiceAccount",
+        "Set 'automountServiceAccountToken: false' in the Pod spec or ServiceAccount",
+        "Use a NetworkPolicy to block API server access",
+        "Remove the default ServiceAccount from the namespace"
+      ],
+      "correct": 1,
+      "explanation": "Setting automountServiceAccountToken: false in either the Pod spec or the ServiceAccount prevents the automatic mounting of the ServiceAccount token. This is a security best practice for Pods that do not need to communicate with the Kubernetes API, reducing the risk of token theft.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 93,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "easy",
+      "question": "What is the purpose of a ResourceQuota in Kubernetes?",
+      "options": [
+        "To set resource limits on individual containers",
+        "To limit the total amount of resources consumed by all objects in a namespace",
+        "To schedule Pods on nodes with sufficient resources",
+        "To monitor resource usage across the cluster"
+      ],
+      "correct": 1,
+      "explanation": "ResourceQuota sets aggregate resource limits for a namespace. It constrains the total amount of compute resources (CPU, memory), storage, and object counts (Pods, Services, ConfigMaps) that can be consumed within that namespace. This prevents a single namespace from consuming all cluster resources.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 94,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "medium",
+      "question": "A namespace has a ResourceQuota requiring CPU requests. A developer tries to create a Pod without specifying CPU requests. What happens?",
+      "options": [
+        "The Pod is created with default CPU requests",
+        "The Pod creation is rejected by the quota admission controller",
+        "The Pod is created but placed in Pending state",
+        "The ResourceQuota is automatically updated to allow the Pod"
+      ],
+      "correct": 1,
+      "explanation": "When a ResourceQuota that constrains CPU/memory requests or limits is active in a namespace, every Pod must specify those values. If a Pod does not specify CPU requests, the admission controller rejects the creation. A LimitRange with default values can be used to automatically inject defaults for Pods that omit them.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 95,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "medium",
+      "question": "What is the purpose of a LimitRange in Kubernetes?",
+      "options": [
+        "To set the maximum number of Pods in a namespace",
+        "To enforce minimum, maximum, and default resource requests/limits for containers in a namespace",
+        "To limit the number of API requests per second",
+        "To restrict which container images can be used"
+      ],
+      "correct": 1,
+      "explanation": "A LimitRange sets constraints on resource allocation for containers (and Pods) in a namespace. It can define default requests/limits (applied when not specified), minimum and maximum values, and the maximum ratio between limits and requests. This complements ResourceQuota by controlling per-container resource allocation.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 96,
+      "domain": 4,
+      "objective": "4.6",
+      "difficulty": "easy",
+      "question": "What is the difference between a resource request and a resource limit in a container spec?",
+      "options": [
+        "Requests are the guaranteed minimum resources; limits are the maximum the container can use",
+        "Requests are for CPU only; limits are for memory only",
+        "Requests apply during startup; limits apply during runtime",
+        "There is no functional difference"
+      ],
+      "correct": 0,
+      "explanation": "Resource requests specify the guaranteed minimum resources a container needs and are used by the scheduler to find a suitable node. Resource limits define the maximum resources the container can consume. If a container exceeds its memory limit, it is OOMKilled. If it exceeds its CPU limit, it is throttled.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 97,
+      "domain": 4,
+      "objective": "4.6",
+      "difficulty": "hard",
+      "question": "A container has memory requests: 256Mi and limits: 512Mi. The container's memory usage reaches 520Mi. What happens?",
+      "options": [
+        "The container is CPU-throttled until memory usage decreases",
+        "The container is OOMKilled because it exceeded its memory limit",
+        "A warning is logged but the container continues running",
+        "The scheduler moves the Pod to a node with more memory"
+      ],
+      "correct": 1,
+      "explanation": "When a container exceeds its memory limit, the kernel's OOM (Out of Memory) killer terminates it. Unlike CPU, which is throttled when the limit is exceeded, memory overuse results in immediate termination. The container is then restarted according to the Pod's restartPolicy.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 98,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "Which Pod Security Standard is the most restrictive, enforcing best practices for hardened workloads?",
+      "options": [
+        "Privileged",
+        "Baseline",
+        "Restricted",
+        "Default"
+      ],
+      "correct": 2,
+      "explanation": "The Restricted Pod Security Standard is the most restrictive. It requires running as non-root, dropping all capabilities, read-only root filesystem, and more. Baseline prevents known privilege escalations but is less strict. Privileged is completely unrestricted.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 99,
+      "domain": 4,
+      "objective": "4.7",
+      "difficulty": "easy",
+      "question": "How do you use envFrom to inject all keys from a ConfigMap as environment variables?",
+      "options": [
+        "env: [{name: '*', valueFrom: {configMapKeyRef: {name: my-config}}}]",
+        "envFrom: [{configMapRef: {name: my-config}}]",
+        "volumes: [{configMap: {name: my-config}}]",
+        "args: ['--config=$(my-config)']"
+      ],
+      "correct": 1,
+      "explanation": "envFrom with configMapRef imports all key-value pairs from a ConfigMap as environment variables in the container. Each key becomes an environment variable name and each value becomes the variable's value. This is more convenient than individual env entries when you need all keys from a ConfigMap.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 100,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "You need to store a TLS certificate and private key as a Kubernetes Secret. Which command creates the correct Secret type?",
+      "options": [
+        "kubectl create secret generic tls-secret --from-file=cert.pem --from-file=key.pem",
+        "kubectl create secret tls tls-secret --cert=cert.pem --key=key.pem",
+        "kubectl create secret docker-registry tls-secret --cert=cert.pem --key=key.pem",
+        "kubectl create configmap tls-secret --from-file=cert.pem --from-file=key.pem"
+      ],
+      "correct": 1,
+      "explanation": "kubectl create secret tls creates a Secret of type kubernetes.io/tls with the standard keys 'tls.crt' and 'tls.key'. This type is recognized by Ingress controllers and other components that need TLS certificates. Using 'generic' would work but would not set the correct Secret type.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 101,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "hard",
+      "question": "A Pod uses a custom ServiceAccount 'app-sa'. The ServiceAccount has a Role binding that allows 'get' and 'list' on Pods. The application in the Pod tries to delete a Pod. What happens?",
+      "options": [
+        "The delete succeeds because ServiceAccounts have full access by default",
+        "The API server returns a 403 Forbidden error",
+        "The delete succeeds but is logged as a warning",
+        "The Pod crashes with a permissions error"
+      ],
+      "correct": 1,
+      "explanation": "RBAC enforces strict access control. The ServiceAccount's Role only grants 'get' and 'list' verbs on Pods. The 'delete' verb is not included, so the API server returns a 403 Forbidden error. This is the principle of least privilege -- grant only the permissions the application needs.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 102,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "How can you mount only a specific key from a ConfigMap as a file in a container, rather than all keys?",
+      "options": [
+        "Use subPath with the key name in the volumeMount",
+        "Use the items field in the volume's configMap to select specific keys and their file paths",
+        "Use a keyRef in the env section",
+        "ConfigMaps always mount all keys; you cannot select individual ones"
+      ],
+      "correct": 1,
+      "explanation": "The items field in a configMap volume allows you to select specific keys and map them to specific file paths within the mount point. For example, items: [{key: 'app.conf', path: 'application.conf'}] mounts only the 'app.conf' key as 'application.conf' in the volume.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 103,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "easy",
+      "question": "What does 'allowPrivilegeEscalation: false' do in a SecurityContext?",
+      "options": [
+        "Prevents the container from using more CPU than requested",
+        "Prevents the container process from gaining more privileges than its parent process",
+        "Prevents the Pod from being scheduled on master nodes",
+        "Prevents the container from accessing persistent volumes"
+      ],
+      "correct": 1,
+      "explanation": "allowPrivilegeEscalation: false prevents a process from gaining more privileges than its parent process. This blocks setuid/setgid binaries from working and prevents exploitation techniques that rely on privilege escalation. It is required by the Restricted Pod Security Standard.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 104,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "hard",
+      "question": "A LimitRange in a namespace sets default CPU requests to 100m and default CPU limits to 200m. A developer creates a Pod specifying only CPU limits of 500m. What CPU request is applied?",
+      "options": [
+        "100m (the LimitRange default request)",
+        "500m (same as the specified limit)",
+        "200m (the LimitRange default limit)",
+        "0m (no request is applied)"
+      ],
+      "correct": 1,
+      "explanation": "When a container specifies a limit but no request, Kubernetes sets the request equal to the limit (not the LimitRange default request). The LimitRange default request is only applied when neither request nor limit is specified. So the Pod gets requests: 500m and limits: 500m.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 105,
+      "domain": 4,
+      "objective": "4.6",
+      "difficulty": "medium",
+      "question": "A container has CPU requests: 250m. What does '250m' mean?",
+      "options": [
+        "250 megabytes of CPU cache",
+        "250 millicores, which is 25% of one CPU core",
+        "250 megahertz of CPU speed",
+        "250 minutes of CPU time per hour"
+      ],
+      "correct": 1,
+      "explanation": "In Kubernetes, CPU is measured in millicores (m). 1000m = 1 full CPU core. 250m means 25% of one CPU core. This allows fine-grained CPU allocation. You can also specify CPU as a decimal (0.25 = 250m).",
+      "link": "container-security.html"
+    },
+    {
+      "id": 106,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "How do you reference a Secret value as an environment variable in a container spec?",
+      "options": [
+        "env: [{name: DB_PASS, value: $(secret/db-creds/password)}]",
+        "env: [{name: DB_PASS, valueFrom: {secretKeyRef: {name: db-creds, key: password}}}]",
+        "envFrom: [{secretRef: {name: db-creds, key: password}}]",
+        "volumes: [{secret: {secretName: db-creds}}], env: [{name: DB_PASS}]"
+      ],
+      "correct": 1,
+      "explanation": "secretKeyRef in the env section references a specific key from a named Secret and exposes it as an environment variable. The Secret value is automatically base64-decoded when injected. This is the standard way to pass individual Secret values as environment variables.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 107,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "A Pod spec sets SecurityContext at both the Pod level (runAsUser: 1000) and the container level (runAsUser: 2000). Which user does the container process run as?",
+      "options": [
+        "1000 (Pod-level takes precedence)",
+        "2000 (container-level overrides Pod-level)",
+        "Root, because conflicting values cancel each other out",
+        "The container fails to start due to conflicting settings"
+      ],
+      "correct": 1,
+      "explanation": "Container-level SecurityContext settings override Pod-level settings when both are specified. The container runs as user 2000. Pod-level settings apply to all containers in the Pod as defaults, but individual containers can override specific fields with their own SecurityContext.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 108,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "medium",
+      "question": "What is the 'default' ServiceAccount in a Kubernetes namespace?",
+      "options": [
+        "A ServiceAccount that has cluster-admin privileges",
+        "A ServiceAccount automatically created in every namespace and assigned to Pods that do not specify one",
+        "A ServiceAccount used by the kubelet to manage Pods",
+        "A ServiceAccount that cannot be modified or deleted"
+      ],
+      "correct": 1,
+      "explanation": "Every namespace gets a 'default' ServiceAccount automatically. Pods that do not specify a serviceAccountName use this default ServiceAccount. By default, it has no special permissions beyond the RBAC rules bound to it. Best practice is to create dedicated ServiceAccounts for applications rather than using default.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 109,
+      "domain": 4,
+      "objective": "4.7",
+      "difficulty": "medium",
+      "question": "What is an immutable ConfigMap and why would you use one?",
+      "options": [
+        "A ConfigMap that is backed up to external storage",
+        "A ConfigMap with 'immutable: true' that cannot be updated after creation, improving performance and preventing accidental changes",
+        "A ConfigMap that is encrypted at rest",
+        "A ConfigMap that is automatically synced across namespaces"
+      ],
+      "correct": 1,
+      "explanation": "Setting 'immutable: true' on a ConfigMap prevents any updates to its data after creation. This provides two benefits: improved cluster performance (the API server does not need to watch for changes) and protection against accidental modifications to critical configuration. To change values, you must delete and recreate the ConfigMap.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 110,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "easy",
+      "question": "A ResourceQuota in a namespace sets 'pods: 10'. What happens when someone tries to create an 11th Pod?",
+      "options": [
+        "The oldest Pod is evicted to make room",
+        "The creation request is rejected because the quota is exceeded",
+        "The Pod is created but placed in a Pending queue",
+        "The ResourceQuota is automatically increased to 11"
+      ],
+      "correct": 1,
+      "explanation": "ResourceQuota enforces hard limits. When the Pod count quota is reached, any attempt to create additional Pods is rejected by the admission controller with a 'forbidden: exceeded quota' error. No existing Pods are evicted -- the limit prevents new creation.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 111,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "Which Pod Security Standard level allows most workloads to run without modification while preventing known privilege escalation vectors?",
+      "options": [
+        "Privileged",
+        "Baseline",
+        "Restricted",
+        "Custom"
+      ],
+      "correct": 1,
+      "explanation": "Baseline prevents known privilege escalation vectors (host namespaces, hostPath volumes, privileged containers) while still allowing most standard workloads to run without modification. Restricted is more secure but requires changes to most existing workloads (non-root, drop capabilities, etc.).",
+      "link": "container-security.html"
+    },
+    {
+      "id": 112,
+      "domain": 4,
+      "objective": "4.6",
+      "difficulty": "hard",
+      "question": "A container has CPU requests of 100m and no CPU limit set. What happens when the container tries to use 2 full CPU cores?",
+      "options": [
+        "The container is OOMKilled",
+        "The container is throttled to 100m",
+        "The container can use the extra CPU if the node has available capacity",
+        "The container crashes with a resource limit error"
+      ],
+      "correct": 2,
+      "explanation": "Without a CPU limit, a container can use as much CPU as the node has available. The request of 100m guarantees it gets at least 10% of a core, but it can burst beyond that. However, it may be throttled if other containers with requests need their guaranteed CPU. This is called 'burstable' QoS class behavior.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 113,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "A ConfigMap is mounted as a volume at /etc/config. The application reads /etc/config/app.properties at startup. You update the ConfigMap. How does the application get the new values?",
+      "options": [
+        "The application automatically detects the change and reloads",
+        "The kubelet updates the mounted files within the sync period, but the application must be designed to re-read the files or the Pod must be restarted",
+        "The files are never updated; you must delete and recreate the Pod",
+        "The ConfigMap change triggers an automatic Pod restart"
+      ],
+      "correct": 1,
+      "explanation": "When a ConfigMap is mounted as a volume, the kubelet periodically updates the files (default sync period is about 60 seconds plus cache propagation delay). However, Kubernetes does NOT restart the application or Pod. The application must either watch for file changes, re-read config periodically, or receive a signal to reload. If neither is supported, a Pod restart is needed.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 114,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "easy",
+      "question": "Which RBAC resource defines a set of permissions (verbs on resources) within a specific namespace?",
+      "options": [
+        "ClusterRole",
+        "Role",
+        "RoleBinding",
+        "ClusterRoleBinding"
+      ],
+      "correct": 1,
+      "explanation": "A Role defines a set of permissions (rules specifying verbs on API resources) within a single namespace. It is scoped to that namespace only. A ClusterRole defines permissions cluster-wide. RoleBinding and ClusterRoleBinding associate these roles with subjects (users, groups, or ServiceAccounts).",
+      "link": "container-security.html"
+    },
+    {
+      "id": 115,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "A Pod needs to run with a specific Linux group ID for file permission purposes. Which SecurityContext field sets the primary group for all containers?",
+      "options": [
+        "runAsUser",
+        "runAsGroup",
+        "fsGroup",
+        "supplementalGroups"
+      ],
+      "correct": 2,
+      "explanation": "fsGroup sets the group ID that is applied to all volumes mounted in the Pod. All files created in the volumes have this GID, and the volumes' ownership is changed to this group. runAsGroup sets the primary GID of the container process, while supplementalGroups adds additional group memberships.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 116,
+      "domain": 4,
+      "objective": "4.7",
+      "difficulty": "medium",
+      "question": "You need to expose a multi-line configuration file to a Pod. Which approach is most appropriate?",
+      "options": [
+        "Store each line as a separate environment variable",
+        "Create a ConfigMap from the file and mount it as a volume",
+        "Embed the configuration directly in the Pod spec's args field",
+        "Use an annotation on the Pod with the file contents"
+      ],
+      "correct": 1,
+      "explanation": "Creating a ConfigMap from a file (kubectl create configmap --from-file=config.yaml) and mounting it as a volume provides the configuration as an actual file in the container's filesystem. This is the natural approach for multi-line config files that applications expect to read from disk.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 117,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "How do you create a Secret from literal values using kubectl?",
+      "options": [
+        "kubectl create secret literal my-secret --key=value",
+        "kubectl create secret generic my-secret --from-literal=key=value",
+        "kubectl apply secret my-secret --literal=key=value",
+        "kubectl set secret my-secret key=value"
+      ],
+      "correct": 1,
+      "explanation": "kubectl create secret generic creates an Opaque Secret. The --from-literal flag specifies key-value pairs where the values are automatically base64-encoded. You can include multiple --from-literal flags for additional key-value pairs.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 118,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "hard",
+      "question": "A namespace has a LimitRange with max CPU of 1 core and a ResourceQuota with total CPU limits of 4 cores. Five Pods are created, each requesting 800m CPU. How many Pods can be created successfully?",
+      "options": [
+        "All 5 (5 * 800m = 4000m = 4 cores, within quota)",
+        "5, but the last Pod is throttled",
+        "4 (4 * 800m = 3200m fits; 5th would exceed quota if limits are also 800m or higher)",
+        "None, because 800m exceeds some limit"
+      ],
+      "correct": 0,
+      "explanation": "Each Pod requests 800m CPU which is under the LimitRange max of 1 core. The total for 5 Pods would be 4000m = 4 cores, which exactly meets the ResourceQuota of 4 cores total CPU limits. All 5 Pods can be created. A 6th Pod would be rejected by the quota admission controller.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 119,
+      "domain": 4,
+      "objective": "4.6",
+      "difficulty": "medium",
+      "question": "What QoS class is assigned to a Pod where all containers have equal CPU and memory requests and limits?",
+      "options": [
+        "BestEffort",
+        "Burstable",
+        "Guaranteed",
+        "Standard"
+      ],
+      "correct": 2,
+      "explanation": "A Pod gets the Guaranteed QoS class when every container has CPU and memory requests set equal to their limits. Guaranteed Pods are the last to be evicted under node resource pressure. BestEffort Pods have no requests/limits and are evicted first. Burstable Pods have requests less than limits.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 120,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "What does setting 'privileged: true' in a container's SecurityContext do?",
+      "options": [
+        "Gives the container access to additional ConfigMaps",
+        "Gives the container almost all capabilities of the host, similar to running as root on the host",
+        "Allows the container to use more CPU than its limit",
+        "Grants the container access to the Kubernetes API without authentication"
+      ],
+      "correct": 1,
+      "explanation": "A privileged container has almost all Linux capabilities enabled and can access all devices on the host. It is essentially equivalent to root on the host machine. This should be avoided except for very specific use cases like network plugins or system daemons, and it is blocked by both Baseline and Restricted Pod Security Standards.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 121,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "What is the default Service type in Kubernetes when no type is specified?",
+      "options": [
+        "NodePort",
+        "LoadBalancer",
+        "ClusterIP",
+        "ExternalName"
+      ],
+      "correct": 2,
+      "explanation": "ClusterIP is the default Service type. It exposes the Service on an internal IP address reachable only from within the cluster. It provides a stable internal endpoint for Pods to communicate with each other. NodePort, LoadBalancer, and ExternalName must be explicitly specified.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 122,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "What does a NodePort Service do?",
+      "options": [
+        "Assigns a public cloud load balancer IP",
+        "Exposes the Service on a static port on each node's IP address",
+        "Creates a DNS alias for an external service",
+        "Restricts access to a specific node"
+      ],
+      "correct": 1,
+      "explanation": "A NodePort Service exposes the Service on a static port (default range 30000-32767) on every node's IP address. Traffic to any node's IP on that port is forwarded to the Service's Pods. NodePort also creates a ClusterIP automatically, so the Service is accessible both internally and externally.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 123,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "What is the primary difference between a LoadBalancer Service and a NodePort Service?",
+      "options": [
+        "LoadBalancer only works with TCP; NodePort works with UDP",
+        "LoadBalancer provisions an external cloud load balancer that routes to the Service; NodePort requires direct access to node IPs",
+        "LoadBalancer is faster than NodePort",
+        "NodePort can handle more traffic than LoadBalancer"
+      ],
+      "correct": 1,
+      "explanation": "A LoadBalancer Service provisions an external load balancer (in supported cloud environments) that distributes traffic to the Service's Pods. This provides a single external IP address. NodePort requires clients to know and connect to individual node IP addresses. LoadBalancer builds on top of NodePort, adding the external load balancer layer.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 124,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "An ExternalName Service maps to the DNS name 'db.external.com'. What happens when a Pod resolves this Service's DNS name?",
+      "options": [
+        "Traffic is routed through the kube-proxy to db.external.com",
+        "A CNAME record is returned, redirecting to db.external.com",
+        "The Service proxies the connection and performs TLS termination",
+        "The Pod receives the IP address of the Kubernetes DNS server"
+      ],
+      "correct": 1,
+      "explanation": "An ExternalName Service creates a CNAME DNS record that maps the Service name to the specified external DNS name. No proxying occurs -- the DNS resolver returns a CNAME redirect. This is useful for giving external services a Kubernetes-native DNS name without any proxy overhead.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 125,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "easy",
+      "question": "How does Kubernetes DNS resolve a Service named 'my-service' in the 'production' namespace?",
+      "options": [
+        "my-service.production",
+        "my-service.production.svc.cluster.local",
+        "production.my-service.kubernetes.io",
+        "svc.my-service.production"
+      ],
+      "correct": 1,
+      "explanation": "Kubernetes DNS follows the format <service-name>.<namespace>.svc.cluster.local. Pods in the same namespace can use just 'my-service'. Pods in other namespaces use 'my-service.production' or the full FQDN 'my-service.production.svc.cluster.local'.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 126,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "A Pod in the 'staging' namespace needs to connect to a Service named 'api' in the 'production' namespace. What DNS name should it use?",
+      "options": [
+        "api",
+        "api.production",
+        "api.staging.svc.cluster.local",
+        "production.api"
+      ],
+      "correct": 1,
+      "explanation": "To reach a Service in a different namespace, the Pod must include the namespace in the DNS name: api.production (or the full form api.production.svc.cluster.local). Using just 'api' would resolve to the 'staging' namespace's Service, if one exists.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 127,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "easy",
+      "question": "What is the purpose of an Ingress resource in Kubernetes?",
+      "options": [
+        "To provide persistent storage for Pods",
+        "To manage external access to Services, typically HTTP/HTTPS, with routing rules",
+        "To control Pod-to-Pod communication within the cluster",
+        "To schedule Pods on specific nodes"
+      ],
+      "correct": 1,
+      "explanation": "An Ingress manages external HTTP/HTTPS access to Services within the cluster. It provides features like host-based routing, path-based routing, TLS termination, and virtual hosting. An Ingress controller (like NGINX or Traefik) must be installed to implement the Ingress rules.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 128,
       "domain": 5,
       "objective": "5.3",
       "difficulty": "medium",
-      "question": "Which of the following best describes the purpose of \"Use Ingress rules to expose applications\" in Services & Networking?",
+      "question": "An Ingress has two rules: host 'api.example.com' routes to the 'api-svc' Service, and host 'web.example.com' routes to the 'web-svc' Service. What is this routing pattern called?",
       "options": [
-        "To implement and manage use ingress rules to expose applications processes",
-        "To evaluate compliance with services & networking standards",
-        "To document risk assessment procedures",
-        "To audit external vendor relationships"
+        "Path-based routing",
+        "Name-based virtual hosting",
+        "Load-balanced routing",
+        "Round-robin routing"
+      ],
+      "correct": 1,
+      "explanation": "Name-based virtual hosting routes traffic based on the Host header in HTTP requests. The same IP address serves multiple domain names, with the Ingress controller directing traffic to different backend Services based on which hostname the client requested.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 129,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "An Ingress resource has path type 'Prefix' with path '/api'. Which requests match this rule?",
+      "options": [
+        "Only exactly '/api'",
+        "'/api', '/api/', '/api/users', '/api/v2/items', and any path starting with '/api'",
+        "'/api' and '/apikeys'",
+        "Only '/api/' with a trailing slash"
+      ],
+      "correct": 1,
+      "explanation": "With pathType: Prefix, the Ingress matches any path that starts with the specified prefix when split on '/'. '/api' matches '/api', '/api/', and '/api/users'. It does NOT match '/apikeys' because prefix matching is done on path segments (split by '/'), not arbitrary string prefixes.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 130,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "easy",
+      "question": "What is the purpose of a NetworkPolicy in Kubernetes?",
+      "options": [
+        "To configure DNS resolution for Services",
+        "To control which Pods can communicate with each other and with external endpoints",
+        "To set bandwidth limits on Pod traffic",
+        "To manage TLS certificates for Services"
+      ],
+      "correct": 1,
+      "explanation": "NetworkPolicies control ingress (incoming) and egress (outgoing) traffic to and from Pods based on label selectors, namespace selectors, and IP blocks. By default, all Pods can communicate with all other Pods. NetworkPolicies restrict this to only allowed traffic patterns.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 131,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "medium",
+      "question": "A NetworkPolicy selects Pods with label 'app: web' and allows ingress only from Pods with label 'app: api'. What happens to traffic from a Pod labeled 'app: monitoring' to the web Pods?",
+      "options": [
+        "The traffic is allowed because monitoring Pods are trusted by default",
+        "The traffic is denied because only Pods with label 'app: api' are allowed in the ingress rule",
+        "The traffic is allowed but rate-limited",
+        "The traffic is logged but not blocked"
+      ],
+      "correct": 1,
+      "explanation": "Once a NetworkPolicy selects a Pod, all ingress (or egress) traffic to that Pod is denied by default unless explicitly allowed by a rule. Since only 'app: api' Pods are allowed in the ingress rules, traffic from 'app: monitoring' Pods is blocked. This is a deny-by-default model.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 132,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "hard",
+      "question": "A NetworkPolicy has both ingress and egress rules defined. Another NetworkPolicy in the same namespace selects the same Pods but with different rules. How do they interact?",
+      "options": [
+        "The more restrictive policy wins",
+        "The less restrictive policy wins",
+        "NetworkPolicies are additive -- the union of all rules applies",
+        "The most recently created policy replaces the older one"
+      ],
+      "correct": 2,
+      "explanation": "NetworkPolicies are additive (union-based). If multiple policies select the same Pod, the allowed traffic is the union of all their rules. No policy can deny what another allows. This means adding a NetworkPolicy can only make access more permissive (or restrict traffic on a dimension not yet covered), never more restrictive than the combination.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 133,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "hard",
+      "question": "A Service has 'spec.sessionAffinity: ClientIP'. What effect does this have?",
+      "options": [
+        "All traffic goes to a single Pod regardless of source",
+        "Requests from the same client IP are routed to the same Pod for the duration of the session",
+        "The Service only accepts connections from whitelisted IP addresses",
+        "The Service maintains TCP connections to all Pods simultaneously"
+      ],
+      "correct": 1,
+      "explanation": "SessionAffinity: ClientIP configures the Service to route requests from the same client IP address to the same backend Pod. This is sometimes called 'sticky sessions'. The timeout can be configured with sessionAffinityConfig.clientIP.timeoutSeconds (default 10800 = 3 hours).",
+      "link": "container-security.html"
+    },
+    {
+      "id": 134,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "How do you configure TLS termination on an Ingress resource?",
+      "options": [
+        "Add a TLS certificate directly in the Ingress annotations",
+        "Reference a Kubernetes TLS Secret in the Ingress spec's tls section",
+        "Configure TLS on each backend Service individually",
+        "Install a TLS sidecar in every Pod behind the Ingress"
+      ],
+      "correct": 1,
+      "explanation": "TLS termination on Ingress is configured by referencing a kubernetes.io/tls Secret in the Ingress spec's 'tls' section. The Secret contains the TLS certificate and private key. The Ingress controller terminates TLS and forwards decrypted HTTP traffic to backend Services.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 135,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "hard",
+      "question": "A headless Service (clusterIP: None) is created for a StatefulSet with 3 replicas named 'db'. What DNS records are created?",
+      "options": [
+        "Only a single A record for the Service name",
+        "Individual A records for each Pod: db-0.svc-name.namespace.svc.cluster.local, db-1.svc-name.namespace.svc.cluster.local, etc.",
+        "CNAME records pointing to an external DNS provider",
+        "No DNS records are created for headless Services"
+      ],
+      "correct": 1,
+      "explanation": "A headless Service for a StatefulSet creates individual DNS A records for each Pod, following the pattern <pod-name>.<service-name>.<namespace>.svc.cluster.local. This enables direct Pod-to-Pod communication by stable DNS names (db-0.svc-name, db-1.svc-name, etc.), which is essential for stateful applications like databases.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 136,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "easy",
+      "question": "By default, without any NetworkPolicies, what is the network behavior for Pods in a namespace?",
+      "options": [
+        "All ingress traffic is denied",
+        "All egress traffic is denied",
+        "All ingress and egress traffic is allowed",
+        "Only traffic within the same namespace is allowed"
+      ],
+      "correct": 2,
+      "explanation": "Without any NetworkPolicies, Kubernetes allows all ingress and egress traffic to all Pods. NetworkPolicies are opt-in -- once you create a policy selecting a Pod, that Pod's traffic is restricted to only what the policy allows. Pods not selected by any policy continue to allow all traffic.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 137,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "A Service selects Pods using the label 'app: backend'. What happens when no Pods match this selector?",
+      "options": [
+        "The Service automatically creates Pods with the matching label",
+        "The Service has an empty Endpoints list and connections to it fail",
+        "The Service routes traffic to Pods in other namespaces with the same label",
+        "The Service is automatically deleted after a timeout"
+      ],
+      "correct": 1,
+      "explanation": "When no Pods match a Service's selector, the associated Endpoints resource has no entries. Any attempt to connect to the Service will fail because there are no backend Pods to receive traffic. The Service itself remains active and will start routing once matching Pods appear.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 138,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "An Ingress has a defaultBackend configured and a rule for path '/api' routing to 'api-svc'. A request arrives for path '/dashboard'. Where is it routed?",
+      "options": [
+        "The request is rejected with a 404 error",
+        "The request is routed to the defaultBackend Service",
+        "The request is routed to 'api-svc' because it is the only rule",
+        "The Ingress controller returns a 503 Service Unavailable"
+      ],
+      "correct": 1,
+      "explanation": "The defaultBackend handles requests that do not match any Ingress rules. Since '/dashboard' does not match the '/api' rule, it falls through to the defaultBackend. Without a defaultBackend, the Ingress controller typically returns a 404 for unmatched paths.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 139,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "medium",
+      "question": "A NetworkPolicy allows egress traffic to CIDR block 10.0.0.0/8 on port 5432. What type of traffic does this permit?",
+      "options": [
+        "Incoming database connections from the 10.0.0.0/8 network",
+        "Outgoing connections to any IP in the 10.0.0.0/8 range on port 5432",
+        "Both incoming and outgoing traffic on port 5432",
+        "DNS resolution for addresses in the 10.0.0.0/8 range"
+      ],
+      "correct": 1,
+      "explanation": "An egress rule with CIDR 10.0.0.0/8 and port 5432 allows outgoing TCP connections from the selected Pods to any IP address in the 10.0.0.0/8 range on port 5432. This is a typical pattern for allowing database connections to internal services while blocking other outbound traffic.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 140,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "easy",
+      "question": "A Pod in the namespace 'dev' wants to connect to a Service named 'redis' in the same namespace. Which DNS name can it use?",
+      "options": [
+        "redis.dev.svc.cluster.local only",
+        "redis.svc.cluster.local",
+        "redis (the short name works within the same namespace)",
+        "cluster.local.svc.dev.redis"
+      ],
+      "correct": 2,
+      "explanation": "Within the same namespace, Pods can use the short Service name ('redis') for DNS resolution. The cluster DNS automatically appends the search domain (dev.svc.cluster.local) to resolve the full name. The FQDN 'redis.dev.svc.cluster.local' also works but is unnecessary within the same namespace.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 141,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "hard",
+      "question": "A Service has 'spec.internalTrafficPolicy: Local'. What effect does this have?",
+      "options": [
+        "The Service only accepts traffic from within the cluster",
+        "Traffic is routed only to endpoints on the same node as the client Pod, avoiding cross-node hops",
+        "The Service uses local storage for session state",
+        "Traffic is encrypted within the cluster"
+      ],
+      "correct": 1,
+      "explanation": "internalTrafficPolicy: Local restricts internal traffic to endpoints on the same node as the requesting Pod. This reduces latency and cross-node traffic. If no local endpoints exist on the node, the traffic is dropped. This is similar to externalTrafficPolicy: Local but for internal cluster traffic.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 142,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "easy",
+      "question": "What is an IngressClass used for?",
+      "options": [
+        "To classify traffic as HTTP or HTTPS",
+        "To specify which Ingress controller should handle a particular Ingress resource",
+        "To define network policies for Ingress traffic",
+        "To set QoS classes for Ingress-routed Pods"
+      ],
+      "correct": 1,
+      "explanation": "IngressClass specifies which Ingress controller should implement a given Ingress resource. When multiple Ingress controllers are installed (e.g., NGINX and Traefik), the IngressClass lets you choose which one handles each Ingress. It is set via the ingressClassName field in the Ingress spec.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 143,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "hard",
+      "question": "You want to create a 'deny all ingress' default NetworkPolicy for a namespace. Which spec achieves this?",
+      "options": [
+        "podSelector: {}, policyTypes: ['Ingress'] with no ingress rules defined",
+        "podSelector: {matchLabels: {deny: all}}, policyTypes: ['Ingress']",
+        "podSelector: {}, policyTypes: ['Ingress', 'Egress'] with ingress: [{}]",
+        "podSelector: {}, policyTypes: ['Ingress'] with ingress: [{from: [{podSelector: {}}]}]"
       ],
       "correct": 0,
-      "explanation": "Use Ingress rules to expose applications is a key objective in Services & Networking. Understanding this concept is essential for the exam.",
-      "link": "start-here.html"
+      "explanation": "An empty podSelector ({}) selects all Pods in the namespace. policyTypes: ['Ingress'] with no ingress rules means no ingress traffic is allowed. This creates a default deny-all policy for incoming traffic. Any subsequent NetworkPolicies can then selectively allow specific traffic patterns.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 144,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "What is the port range for NodePort Services by default?",
+      "options": [
+        "1-1023",
+        "1024-49151",
+        "30000-32767",
+        "8000-9000"
+      ],
+      "correct": 2,
+      "explanation": "By default, Kubernetes allocates NodePort Services a port in the range 30000-32767. This range can be configured with the --service-node-port-range flag on the API server. You can also specify a particular port within this range in the Service spec.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 145,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "An Ingress rule has pathType 'Exact' with path '/api/v1/users'. Which requests does it match?",
+      "options": [
+        "/api/v1/users and /api/v1/users/",
+        "Only exactly /api/v1/users (no trailing slash, no sub-paths)",
+        "/api/v1/users, /api/v1/users/123, and /api/v1/users?page=1",
+        "Any path containing 'users'"
+      ],
+      "correct": 1,
+      "explanation": "pathType: Exact matches only the exact path specified. '/api/v1/users' matches only that exact path -- not '/api/v1/users/' (with trailing slash), not '/api/v1/users/123' (with sub-path). Query parameters are not part of path matching, so '/api/v1/users?page=1' would match the path component.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 146,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "What DNS record type does Kubernetes create for a ClusterIP Service?",
+      "options": [
+        "CNAME record pointing to the cluster DNS",
+        "A record mapping the Service name to the ClusterIP address",
+        "SRV record with port information only",
+        "TXT record with Service metadata"
+      ],
+      "correct": 1,
+      "explanation": "For a ClusterIP Service, Kubernetes DNS creates an A record (for IPv4) that maps the Service name to its ClusterIP address. SRV records are also created for named ports. This allows Pods to discover Services using standard DNS resolution.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 147,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "medium",
+      "question": "A NetworkPolicy allows egress to a namespaceSelector matching label 'env: production'. What does this permit?",
+      "options": [
+        "Outgoing traffic to any Pod in namespaces labeled 'env: production'",
+        "Incoming traffic from namespaces labeled 'env: production'",
+        "Both ingress and egress traffic with production namespaces",
+        "Outgoing traffic only to Services (not Pods) in production namespaces"
+      ],
+      "correct": 0,
+      "explanation": "An egress rule with namespaceSelector allows outgoing traffic from the selected Pods to any Pod in namespaces matching the label selector. In this case, the Pods can send traffic to any Pod in any namespace labeled 'env: production'. This is a namespace-level egress control.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 148,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "Which field in a Service spec determines which Pods receive traffic from the Service?",
+      "options": [
+        "targetPort",
+        "nodePort",
+        "selector",
+        "port"
+      ],
+      "correct": 2,
+      "explanation": "The selector field in a Service spec uses label matching to determine which Pods are endpoints for the Service. Pods whose labels match the Service's selector receive traffic. The port field defines the Service's exposed port, and targetPort specifies the port on the Pod containers.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 149,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "hard",
+      "question": "A Service spec has 'port: 80' and 'targetPort: 8080'. A Pod container listens on port 8080. How does the traffic flow?",
+      "options": [
+        "Clients connect to port 8080, Service forwards to port 80",
+        "Clients connect to port 80 on the Service, which forwards to port 8080 on the Pod",
+        "Both ports 80 and 8080 are exposed externally",
+        "The Service listens on both ports simultaneously"
+      ],
+      "correct": 1,
+      "explanation": "The Service 'port' (80) is what clients connect to. The 'targetPort' (8080) is the port on the actual Pod container where traffic is forwarded. This decouples the Service's exposed port from the application's listening port, allowing flexible port mapping.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 150,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "An Ingress has a rewrite annotation that changes the path from '/app(/|$)(.*)' to '/$2'. A request for '/app/dashboard/settings' arrives. What path does the backend Service receive?",
+      "options": [
+        "/app/dashboard/settings",
+        "/dashboard/settings",
+        "/app",
+        "/"
+      ],
+      "correct": 1,
+      "explanation": "The regex captures '/app' and everything after it. The capture group $2 contains 'dashboard/settings'. The rewrite target '/$2' sends '/dashboard/settings' to the backend. This is a common pattern for stripping path prefixes when routing to backend Services that expect paths relative to their own root.",
+      "link": "container-security.html"
     }
   ]
 }

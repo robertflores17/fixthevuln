@@ -1,34 +1,34 @@
 {
   "metadata": {
     "title": "AI Security Practice Questions",
-    "version": "1.0",
-    "total_questions": 30,
+    "version": "2.0",
+    "total_questions": 150,
     "exam": "AI-SEC",
     "domains": {
       "1": {
         "name": "Prompt Injection & Manipulation",
         "weight": 20,
-        "count": 6
+        "count": 30
       },
       "2": {
         "name": "Data Exfiltration & Privacy",
         "weight": 20,
-        "count": 6
+        "count": 30
       },
       "3": {
         "name": "Supply Chain & Tool Security",
         "weight": 20,
-        "count": 6
+        "count": 30
       },
       "4": {
         "name": "AI Model Security",
         "weight": 20,
-        "count": 6
+        "count": 30
       },
       "5": {
         "name": "AI Governance & Defense",
         "weight": 20,
-        "count": 6
+        "count": 30
       }
     }
   },
@@ -47,7 +47,7 @@
       ],
       "correct": 2,
       "explanation": "Direct prompt injection occurs when a user crafts input specifically designed to override, ignore, or bypass the system prompt and safety guardrails. Unlike training data poisoning, it happens at inference time through the user input channel.",
-      "link": "prompt-injection.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 2,
@@ -63,7 +63,7 @@
       ],
       "correct": 3,
       "explanation": "Indirect prompt injection occurs when malicious instructions are placed in external data sources (websites, documents, emails) that an AI agent later retrieves and processes. The attacker never interacts with the model directly -- the poisoned content does the work when the agent ingests it.",
-      "link": "prompt-injection.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 3,
@@ -79,7 +79,7 @@
       ],
       "correct": 0,
       "explanation": "Multi-turn jailbreaking exploits the conversational nature of LLMs by gradually building context across multiple exchanges. Each individual message may appear harmless, but the cumulative effect shifts the model's behavior past its safety boundaries. This is harder to detect than single-turn attacks.",
-      "link": "prompt-injection.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 4,
@@ -95,7 +95,7 @@
       ],
       "correct": 0,
       "explanation": "This attack combines direct prompt injection (the 'ignore all previous instructions' override attempt) with system prompt extraction (requesting the full system prompt text). Extracted system prompts reveal safety rules, tool configurations, and business logic that attackers can use to craft more targeted bypasses.",
-      "link": "prompt-injection.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 5,
@@ -111,7 +111,7 @@
       ],
       "correct": 1,
       "explanation": "Input validation (detecting and sanitizing injection patterns) combined with output filtering (blocking sensitive content from responses) provides layered defense against direct prompt injection. Encrypting weights or increasing model size does not address the injection vector.",
-      "link": "ai-agent-security-threats.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 6,
@@ -127,7 +127,7 @@
       ],
       "correct": 3,
       "explanation": "Context manipulation influences model behavior by carefully crafting the surrounding context (examples, framing, role-play scenarios) to steer outputs without explicit 'ignore your instructions' commands. This makes it harder to detect with simple keyword filters compared to direct injection attempts.",
-      "link": "prompt-injection.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 7,
@@ -143,7 +143,7 @@
       ],
       "correct": 2,
       "explanation": "Training data extraction uses carefully crafted prompts to trigger an LLM into reproducing memorized content from its training data, which may include personally identifiable information (PII), copyrighted text, or proprietary code. This is a privacy risk because the model unintentionally stores and can regurgitate sensitive data.",
-      "link": "genai-data-security.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 8,
@@ -159,7 +159,7 @@
       ],
       "correct": 1,
       "explanation": "Context window data mixing occurs when an AI system fails to properly isolate data between different users or sessions within the same context window. Sensitive information from one user's input leaks into another user's output, creating a cross-tenant data exposure. This is a critical risk in multi-user AI deployments.",
-      "link": "genai-data-security.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 9,
@@ -175,7 +175,7 @@
       ],
       "correct": 3,
       "explanation": "Side-channel exfiltration uses covert channels -- such as URL parameters, DNS queries, or image requests -- to smuggle data out of an AI system. If an agent can make external HTTP requests, an attacker (via prompt injection) can instruct it to encode sensitive context data into outbound URLs controlled by the attacker.",
-      "link": "ai-agent-security-threats.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 10,
@@ -191,7 +191,7 @@
       ],
       "correct": 2,
       "explanation": "Membership inference attacks determine whether a specific data point was in the model's training set by analyzing differences in model behavior (confidence scores, perplexity) between known training samples and non-training samples. If the model shows significantly higher confidence for a real individual's data, it suggests that person's information was in the training data.",
-      "link": "genai-data-security.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 11,
@@ -207,7 +207,7 @@
       ],
       "correct": 0,
       "explanation": "Output filtering with PII detection scans model responses for patterns like email addresses, phone numbers, SSNs, and other identifiable information, redacting them before the response reaches the user. This is a practical defense-in-depth layer, though it should be combined with training-time mitigations like data deduplication and differential privacy.",
-      "link": "genai-data-security.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 12,
@@ -223,7 +223,7 @@
       ],
       "correct": 1,
       "explanation": "Embedding inversion reconstructs approximate original text from vector embeddings stored in databases like RAG systems. Organizations often assume embeddings are one-way transformations, but research has shown that meaningful text can be recovered, exposing sensitive documents, queries, or PII that were embedded for retrieval.",
-      "link": "genai-data-security.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 13,
@@ -287,7 +287,7 @@
       ],
       "correct": 0,
       "explanation": "Dependency confusion exploits package managers that check both internal and public registries, preferring higher version numbers regardless of source. When applied to AI agents that autonomously install dependencies, this attack is especially dangerous because the agent may install and execute malicious code without human review. Mitigations include registry scoping, version pinning, and namespace reservation.",
-      "link": "ai-agent-security-threats.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 17,
@@ -303,7 +303,7 @@
       ],
       "correct": 2,
       "explanation": "Least privilege for AI agents means granting access only to the tools necessary for the agent's specific task scope. An agent that summarizes documents should not have file deletion or network access capabilities. Over-privileged agents dramatically increase the blast radius of any successful prompt injection or tool poisoning attack.",
-      "link": "ai-agent-security-threats.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 18,
@@ -335,7 +335,7 @@
       ],
       "correct": 2,
       "explanation": "Model poisoning involves deliberately introducing malicious or corrupted data into a model's training pipeline, causing it to learn unintended behaviors. This can include backdoor triggers (the model behaves normally except when specific inputs activate malicious behavior) or general degradation of model accuracy on targeted topics.",
-      "link": "model-poisoning.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 20,
@@ -351,7 +351,7 @@
       ],
       "correct": 1,
       "explanation": "Adversarial examples are inputs with carefully crafted perturbations that are imperceptible to humans but cause ML models to produce incorrect outputs with high confidence. Unlike data poisoning (which targets training), adversarial examples target inference time. They exploit the model's decision boundaries and can often transfer across different models.",
-      "link": "ai-agent-security-threats.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 21,
@@ -367,7 +367,7 @@
       ],
       "correct": 3,
       "explanation": "Model extraction (or model stealing) involves querying a target model's API to build a training dataset of input-output pairs, then training a substitute model that replicates the original's behavior. This steals intellectual property and can also enable further attacks, since the attacker can now generate adversarial examples against the local copy and transfer them to the target.",
-      "link": "ai-agent-security-threats.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 22,
@@ -383,7 +383,7 @@
       ],
       "correct": 1,
       "explanation": "Backdoor trigger insertion via fine-tuning plants hidden behaviors that activate only when a specific trigger phrase or pattern appears in the input. The model performs normally on all other inputs, making detection extremely difficult. This is a supply chain risk for organizations that fine-tune models using untrusted data sources or outsourced annotation pipelines.",
-      "link": "model-poisoning.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 23,
@@ -399,7 +399,7 @@
       ],
       "correct": 3,
       "explanation": "RLHF (Reinforcement Learning from Human Feedback) manipulation targets the alignment training phase by corrupting human preference data. If an attacker can influence the feedback (e.g., through compromised annotators or poisoned preference datasets), they can shift the model's aligned behavior -- for example, making it less likely to refuse harmful requests on specific topics.",
-      "link": "ai-agent-security-threats.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 24,
@@ -415,7 +415,7 @@
       ],
       "correct": 1,
       "explanation": "Effective model extraction defense combines rate limiting (restricting query volume), behavioral monitoring (detecting systematic querying patterns), and reducing information leakage (returning only top-1 labels instead of full logit/probability distributions). Full distributions give attackers much more information per query to train their clone. Legal agreements alone do not prevent technical attacks.",
-      "link": "ai-agent-security-threats.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 25,
@@ -431,7 +431,7 @@
       ],
       "correct": 2,
       "explanation": "AI red teaming systematically tests AI systems for failure modes including safety violations, security vulnerabilities, bias, and misuse potential. Unlike traditional software red teaming, AI red teaming must also test for emergent behaviors, hallucinations, and alignment failures. It should be conducted before deployment and on an ongoing basis as threats evolve.",
-      "link": "ai-agent-security-threats.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 26,
@@ -447,7 +447,7 @@
       ],
       "correct": 3,
       "explanation": "OWASP LLM09 (Overreliance) addresses the risk of users or systems trusting LLM outputs without verification, including hallucinated facts presented with high confidence. Mitigations include human-in-the-loop validation, grounding outputs in verified data sources (RAG), and clearly communicating AI limitations to end users.",
-      "link": "owasp-llm-top10.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 27,
@@ -463,7 +463,7 @@
       ],
       "correct": 0,
       "explanation": "Containment is the first priority in any incident response, including AI incidents. Taking the chatbot offline or disabling the compromised capability (web browsing) stops ongoing harm to users. Investigation, retraining, notification, and reporting follow containment -- you cannot investigate effectively while the system is still actively being exploited.",
-      "link": "ai-agent-security-threats.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 28,
@@ -479,7 +479,7 @@
       ],
       "correct": 2,
       "explanation": "Comprehensive AI agent security requires: least-privilege tool access (minimize blast radius), human-in-the-loop approval for irreversible or high-impact actions (prevent autonomous damage), runtime output monitoring (detect manipulation in real time), and complete audit logging (enable investigation and accountability). This defense-in-depth approach addresses prompt injection, tool misuse, and data exfiltration risks simultaneously.",
-      "link": "ai-agent-security-threats.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 29,
@@ -495,7 +495,7 @@
       ],
       "correct": 1,
       "explanation": "Responsible disclosure for AI vulnerabilities follows the same principles as traditional security: report directly to the vendor through their designated channel (bug bounty program, security contact, or vulnerability disclosure policy) before any public disclosure. This gives the vendor time to patch. AI-specific considerations include providing example prompts that trigger the issue and noting whether the vulnerability affects the model, the application layer, or both.",
-      "link": "ai-agent-security-threats.html"
+      "link": "ai-agent-security.html"
     },
     {
       "id": 30,
@@ -511,7 +511,1927 @@
       ],
       "correct": 3,
       "explanation": "A dedicated classifier model (sometimes called a guardrail or shield model) that monitors both inputs and outputs in real time provides the strongest detection. It can flag injection patterns in user input, detect anomalous tool invocations, and catch policy-violating content in outputs. Self-detection by the target model is unreliable since the attack may have already compromised its judgment. Infrastructure metrics alone cannot detect semantic attacks.",
-      "link": "ai-agent-security-threats.html"
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 31,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "What distinguishes indirect prompt injection from direct prompt injection?",
+      "options": [
+        "Indirect injection uses encrypted payloads while direct injection uses plaintext",
+        "Indirect injection targets the model weights while direct injection targets the API",
+        "Indirect injection embeds malicious instructions in external data sources the model processes, rather than in the user's own input",
+        "Indirect injection only works against open-source models"
+      ],
+      "correct": 2,
+      "explanation": "The key distinction is the attack surface. Direct prompt injection comes through the user input channel. Indirect prompt injection places malicious instructions in external data (web pages, documents, emails, database records) that the AI system retrieves and processes. The attacker never directly interacts with the model -- the poisoned data does the work.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 32,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "easy",
+      "question": "An attacker asks an LLM to role-play as a character with no safety restrictions, and the model complies by generating prohibited content. What category of attack is this?",
+      "options": [
+        "Model extraction",
+        "Jailbreaking via role-play",
+        "Adversarial perturbation",
+        "Training data poisoning"
+      ],
+      "correct": 1,
+      "explanation": "Role-play jailbreaking uses fictional personas or scenario framing to trick the model into believing safety policies do not apply to the conversation. By asking the model to 'act as' an unrestricted entity, the attacker creates a context where the model may bypass its safety training because it treats the scenario as creative fiction rather than a real request.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 33,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "medium",
+      "question": "An attacker fills the context window with a large volume of carefully crafted text designed to push the system prompt out of the model's effective attention range. What technique is this?",
+      "options": [
+        "Prompt leaking",
+        "Context window overflow",
+        "Membership inference",
+        "Model inversion"
+      ],
+      "correct": 1,
+      "explanation": "Context window overflow (or context window stuffing) exploits the limited attention span of transformer models. By flooding the context with long, carefully structured text, the attacker dilutes the influence of the system prompt, making the model more likely to follow the attacker's instructions instead of its original safety guidelines.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 34,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "hard",
+      "question": "A security team discovers that attackers are encoding malicious instructions in base64 within user messages, which the LLM decodes and follows. What makes this technique effective?",
+      "options": [
+        "Base64 encoding encrypts the payload so the model cannot read it",
+        "The encoding bypasses input filters that only check for plaintext injection patterns, while the model's training enables it to decode and follow the encoded instructions",
+        "Base64 exploits a buffer overflow in the model's tokenizer",
+        "The model processes base64 faster than plaintext, giving the injection priority"
+      ],
+      "correct": 1,
+      "explanation": "Encoding-based evasion works because input validation filters typically scan for plaintext injection patterns like 'ignore previous instructions.' Base64 or other encodings obscure the malicious content from filters while the LLM, trained on diverse text including encoded data, can decode and follow the hidden instructions. This highlights the need for multi-layer filtering that includes encoded content detection.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 35,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "An AI coding assistant processes a pull request containing a code comment with hidden instructions that cause the assistant to approve the PR and suggest merging it without review. This is an example of which attack chain?",
+      "options": [
+        "Direct prompt injection via the code review interface",
+        "Indirect prompt injection via code comments targeting the AI reviewer",
+        "Model poisoning through the version control system",
+        "Adversarial example in the source code syntax"
+      ],
+      "correct": 1,
+      "explanation": "This is indirect prompt injection because the malicious instructions are embedded in the data the AI processes (code comments in a pull request) rather than entered directly by the user interacting with the AI. The attacker exploits the fact that AI code reviewers treat code comments as trusted context, allowing hidden instructions to influence the review outcome.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 36,
+      "domain": 1,
+      "objective": "1.6",
+      "difficulty": "medium",
+      "question": "What is prompt leaking and why is it a security concern?",
+      "options": [
+        "When the model's API key is exposed in server logs",
+        "When an attacker tricks the model into revealing its system prompt, exposing business logic and safety rules",
+        "When training data leaks into the model's publicly available documentation",
+        "When the model accidentally outputs its own source code"
+      ],
+      "correct": 1,
+      "explanation": "Prompt leaking (or system prompt extraction) occurs when an attacker crafts inputs that cause the model to output its system prompt text. This reveals safety rules, tool configurations, business logic, and internal instructions. Attackers use leaked prompts to understand exactly what defenses are in place and craft targeted bypasses. Organizations should treat system prompts as sensitive configuration.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 37,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "Which of the following is a common indicator that a user input may contain a prompt injection attempt?",
+      "options": [
+        "The input contains technical jargon",
+        "The input is unusually long or contains meta-instructions like 'disregard your rules' or 'you are now'",
+        "The input includes a question mark",
+        "The input is written in a language other than English"
+      ],
+      "correct": 1,
+      "explanation": "Common injection indicators include meta-instructions (commands about the model's behavior), role reassignment phrases, explicit references to system prompts or instructions, and unusual formatting designed to separate attacker content from legitimate input. While no single indicator is definitive, these patterns should trigger additional scrutiny in input validation systems.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 38,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "An attacker places invisible Unicode characters containing malicious instructions in a document that an AI summarization tool processes. The human reader sees a normal document. What technique is being used?",
+      "options": [
+        "Steganographic prompt injection",
+        "Direct prompt injection",
+        "Model inversion",
+        "RLHF manipulation"
+      ],
+      "correct": 0,
+      "explanation": "Steganographic prompt injection hides malicious instructions within seemingly innocent content using invisible Unicode characters, zero-width spaces, white-on-white text, or other concealment methods. The human sees a normal document, but the AI agent processes the hidden text and may follow the embedded instructions. This is a form of indirect injection that is particularly difficult for humans to detect during review.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 39,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "A red team discovers that an LLM-based chatbot can be manipulated by splitting a prohibited request across multiple messages, where each individual message appears benign. Why is this attack difficult to detect with per-message input filtering?",
+      "options": [
+        "Per-message filters cannot access the model's weights",
+        "Each individual message passes safety checks because it is harmless in isolation; the malicious intent only emerges from the combined conversation context",
+        "The messages are encrypted end-to-end",
+        "Per-message filters only work on the first message in a conversation"
+      ],
+      "correct": 1,
+      "explanation": "Multi-turn attacks exploit a fundamental limitation of per-message filtering: each message may be completely benign in isolation. The attacker builds context gradually, with the harmful intent only becoming apparent when all messages are considered together. Effective defense requires conversation-level analysis that evaluates the cumulative trajectory of a session, not just individual inputs.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 40,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "medium",
+      "question": "What is a 'payload splitting' technique in the context of prompt injection?",
+      "options": [
+        "Distributing a model across multiple servers to reduce attack surface",
+        "Breaking a malicious prompt into fragments spread across different input fields or messages that are concatenated by the application before being sent to the model",
+        "Encrypting the prompt payload to evade content filters",
+        "Splitting the model's response into multiple API calls"
+      ],
+      "correct": 1,
+      "explanation": "Payload splitting breaks a malicious instruction into fragments placed in different input fields (e.g., name field, description field, file name) that the application concatenates before passing to the model. Each fragment alone is harmless, but when assembled they form a complete injection. This exploits applications that combine multiple user-controlled inputs into a single prompt without adequate sanitization of the combined result.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 41,
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "easy",
+      "question": "What is the purpose of a system prompt in an LLM application?",
+      "options": [
+        "To encrypt the model's responses",
+        "To define the model's behavior, role, safety rules, and operational constraints before user interaction begins",
+        "To store user authentication credentials",
+        "To compress the model's weights for faster inference"
+      ],
+      "correct": 1,
+      "explanation": "The system prompt establishes the model's persona, task scope, safety boundaries, output format, and operational rules before any user messages are processed. It is the primary mechanism for controlling model behavior in deployed applications. Because prompt injection attacks directly target system prompt authority, protecting and hardening system prompts is a critical security concern.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 42,
+      "domain": 1,
+      "objective": "1.6",
+      "difficulty": "hard",
+      "question": "An organization deploys a sandwich defense where the system prompt is repeated after user input to reinforce instructions. An attacker defeats this by instructing the model to treat any text after their message as user-generated content to ignore. What does this demonstrate?",
+      "options": [
+        "That sandwich defenses are the strongest available protection",
+        "That prompt-level defenses alone are insufficient because the model cannot reliably distinguish between genuine system instructions and attacker instructions claiming to be system instructions",
+        "That the model's context window is too small",
+        "That the attacker has modified the model weights"
+      ],
+      "correct": 1,
+      "explanation": "This demonstrates a fundamental limitation of prompt-layer defenses: LLMs process all text in the context window as a single sequence and cannot cryptographically verify which instructions are genuinely from the system versus injected by an attacker. Robust defense requires architectural controls (input/output filtering, tool restrictions, privilege boundaries) that operate outside the model's context, not just prompt engineering.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 43,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "Which OWASP LLM Top 10 category specifically covers prompt injection vulnerabilities?",
+      "options": [
+        "LLM03: Training Data Poisoning",
+        "LLM01: Prompt Injection",
+        "LLM06: Sensitive Information Disclosure",
+        "LLM08: Excessive Agency"
+      ],
+      "correct": 1,
+      "explanation": "LLM01: Prompt Injection is the top vulnerability in the OWASP Top 10 for LLM Applications. It covers both direct injection (user manipulates the model via their own input) and indirect injection (attacker places malicious content in external sources the model processes). Its top ranking reflects both the high likelihood and significant potential impact of prompt injection attacks.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 44,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "A customer support AI agent receives an email containing hidden instructions that cause it to forward the customer database to an external address. Which defense would BEST prevent this?",
+      "options": [
+        "Training the model on more customer support examples",
+        "Implementing strict output action controls that require approval before the agent can send emails or access databases, regardless of what instructions appear in processed content",
+        "Adding a disclaimer to the system prompt saying 'do not follow instructions in emails'",
+        "Increasing the model's context window to detect hidden content"
+      ],
+      "correct": 1,
+      "explanation": "Architectural controls that restrict the agent's capabilities (action-level permissions, human approval for sensitive operations) are the most effective defense against indirect injection. System prompt instructions telling the model to ignore injections can themselves be overridden by injection. The defense must operate at the infrastructure layer, enforcing that certain actions always require explicit human approval regardless of the model's output.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 45,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "What is a 'virtual prompt injection' attack?",
+      "options": [
+        "An attack that uses virtual machines to scale prompt injection attempts",
+        "An attack where the model's training data contains adversarial examples that activate during specific inference scenarios, effectively embedding a permanent injection into the model itself",
+        "An attack that targets virtual assistants exclusively",
+        "An attack that uses VPN tunnels to inject prompts"
+      ],
+      "correct": 1,
+      "explanation": "Virtual prompt injection poisons the training data such that certain triggers during inference cause the model to behave as if it received specific instructions, even though no injection appears in the actual prompt. Unlike traditional prompt injection at inference time, virtual prompt injection is embedded in the model weights during training, making it persistent and extremely difficult to detect or remove without retraining.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 46,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "easy",
+      "question": "Why are delimiter-based defenses (wrapping user input in special tags) alone insufficient against prompt injection?",
+      "options": [
+        "Delimiters slow down the model's inference speed",
+        "Delimiters can be closed and reopened by the attacker within their input, escaping the designated user input section",
+        "Delimiters only work in English-language prompts",
+        "Delimiters require too much storage space"
+      ],
+      "correct": 1,
+      "explanation": "Delimiter-based defenses wrap user input in markers (e.g., XML tags or special tokens) to help the model distinguish user content from system instructions. However, attackers can include matching closing delimiters in their input, effectively breaking out of the designated user section and injecting content that appears to be system-level instructions. This is conceptually similar to SQL injection escaping quotes.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 47,
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "medium",
+      "question": "An AI application uses a separate classifier model to scan all user inputs before they reach the main LLM. Inputs flagged as potential injections are blocked. What is this defense pattern called?",
+      "options": [
+        "Input guardrail or shield model",
+        "Model distillation",
+        "Federated learning",
+        "Transfer learning defense"
+      ],
+      "correct": 0,
+      "explanation": "An input guardrail (or shield model) is a separate, specialized model trained to detect prompt injection patterns before they reach the primary LLM. This two-model architecture adds a security layer that operates independently of the main model's judgment. The guardrail model can be smaller and more focused, potentially catching injection attempts that the main model would follow.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 48,
+      "domain": 1,
+      "objective": "1.6",
+      "difficulty": "hard",
+      "question": "A research team finds that translating a prohibited prompt into a low-resource language that the model still partially understands consistently bypasses safety filters. What class of evasion does this represent?",
+      "options": [
+        "Cross-lingual prompt injection evasion",
+        "Model extraction via translation",
+        "Tokenizer exploitation",
+        "Federated learning attack"
+      ],
+      "correct": 0,
+      "explanation": "Cross-lingual evasion exploits the uneven distribution of safety training across languages. Models are typically safety-tuned most heavily in English and a few other major languages. Prompts in less common languages may retain enough semantic meaning for the model to understand and comply, while bypassing safety classifiers trained predominantly on English-language attack patterns. This highlights the need for multilingual safety evaluation.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 49,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "medium",
+      "question": "An attacker crafts a prompt that instructs the model to produce output formatted as a system message, tricking downstream components into treating the model's output as trusted system communication. What is this attack called?",
+      "options": [
+        "Prompt leaking",
+        "Output injection (or output-as-system spoofing)",
+        "Model extraction",
+        "Context window overflow"
+      ],
+      "correct": 1,
+      "explanation": "Output injection causes the model to generate text formatted as system-level messages, API responses, or trusted data structures. If downstream components parse model output without validation, they may treat the attacker-controlled output as trusted system data, leading to command execution, privilege escalation, or further injection into connected systems.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 50,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "What is the 'many-shot jailbreaking' technique?",
+      "options": [
+        "Launching thousands of parallel API requests to overwhelm rate limits",
+        "Providing the model with many examples of the desired prohibited behavior within a single long prompt, exploiting in-context learning to override safety training",
+        "Using multiple different models to find one that is vulnerable",
+        "Sending the same injection prompt repeatedly until the model complies"
+      ],
+      "correct": 1,
+      "explanation": "Many-shot jailbreaking packs a large number of fictitious question-answer examples demonstrating the prohibited behavior into a single long prompt. The model's in-context learning mechanism treats these examples as a demonstration of desired behavior, eventually overriding its safety training through sheer weight of in-context examples. This technique became more feasible as context windows expanded to hundreds of thousands of tokens.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 51,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "easy",
+      "question": "What is the MOST important principle when designing defenses against prompt injection?",
+      "options": [
+        "Defense in depth -- layering multiple independent defenses rather than relying on any single control",
+        "Using the largest available model, as bigger models are immune to injection",
+        "Keeping the system prompt secret is sufficient protection",
+        "Blocking all user inputs longer than 100 characters"
+      ],
+      "correct": 0,
+      "explanation": "Defense in depth is the foundational principle for prompt injection defense. No single control (input filtering, output monitoring, system prompt hardening, or architectural restrictions) is sufficient alone. Effective defense layers multiple independent mechanisms so that if one fails, others still provide protection. This mirrors traditional security architecture principles applied to the unique challenges of LLM systems.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 52,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "An AI assistant integrated into a corporate wiki processes page content that includes attacker-injected instructions. The assistant silently modifies its responses to subtly promote a competitor's products. What makes this attack particularly dangerous?",
+      "options": [
+        "The assistant is offline during the attack",
+        "The manipulation is subtle enough that users may not notice the biased outputs, and the source of the injection is buried in wiki content that rarely gets human review",
+        "The competitor's products are actually better",
+        "The assistant stops working entirely, alerting administrators"
+      ],
+      "correct": 1,
+      "explanation": "Subtle indirect prompt injection is especially dangerous because the manipulated outputs may appear reasonable and go undetected for extended periods. Unlike dramatic injection outcomes (refusing to respond, outputting obviously wrong content), subtle behavioral shifts in recommendation, tone, or emphasis are difficult for end users to recognize as manipulated. The poisoned content in the wiki persists until discovered.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 53,
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "hard",
+      "question": "What is the 'confused deputy' problem as it applies to AI agents and prompt injection?",
+      "options": [
+        "When two AI models give conflicting answers to the same question",
+        "When an AI agent with legitimate permissions is tricked by injected instructions into using those permissions against the user's interests, acting as the attacker's unwitting proxy",
+        "When a model is confused by ambiguous grammar in the prompt",
+        "When the model's assistant and system roles are swapped"
+      ],
+      "correct": 1,
+      "explanation": "The confused deputy problem in AI security occurs when a prompt injection turns a trusted AI agent into an unwitting proxy for the attacker. The agent has legitimate permissions (database access, email sending, file operations) granted by the system. The injection tricks the agent into using those permissions for malicious purposes. The agent is the 'confused deputy' -- it has authority but is deceived about whose interests it is serving.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 54,
+      "domain": 1,
+      "objective": "1.6",
+      "difficulty": "medium",
+      "question": "What role does tokenization play in prompt injection vulnerabilities?",
+      "options": [
+        "Tokenization has no relationship to prompt injection",
+        "Tokens encrypt user input to prevent injection",
+        "Tokenization determines how input text is split into tokens, which can affect how the model interprets delimiters, special characters, and encoded content, potentially enabling injection bypass techniques",
+        "Tokenization only affects the speed of model responses"
+      ],
+      "correct": 2,
+      "explanation": "Tokenization affects how the model interprets input at a fundamental level. Special characters, Unicode sequences, and encoding schemes may be tokenized in unexpected ways that bypass input filters operating at the character level. Understanding a model's tokenizer is important for both attacking and defending against prompt injection, as some injection techniques specifically exploit tokenization edge cases.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 55,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "easy",
+      "question": "Which of the following scenarios represents the HIGHEST risk for indirect prompt injection?",
+      "options": [
+        "A chatbot that only answers questions from a static FAQ database maintained by the company",
+        "An AI email assistant that reads, summarizes, and acts on incoming emails from external senders",
+        "A code completion tool that only suggests based on the current file open in the editor",
+        "A translation tool with no internet access that processes user-typed text"
+      ],
+      "correct": 1,
+      "explanation": "An AI email assistant that processes external content (emails from untrusted senders) and has the ability to take actions (reply, forward, access calendars) represents the highest indirect injection risk. External senders can embed hidden instructions in emails that the AI processes as trusted content, potentially triggering unauthorized actions. The combination of untrusted input and action capabilities is the critical risk factor.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 56,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "A security researcher discovers that appending a specific sequence of emoji characters to any prompt causes a commercial LLM to ignore its safety guidelines. This sequence was not deliberately designed but was found through automated fuzzing. What category does this fall under?",
+      "options": [
+        "Social engineering",
+        "Adversarial suffix attack discovered via automated optimization",
+        "Training data extraction",
+        "Denial of service"
+      ],
+      "correct": 1,
+      "explanation": "Adversarial suffix attacks use automated optimization (often gradient-based or evolutionary search) to find input sequences that, when appended to any prompt, cause the model to comply with prohibited requests. The resulting suffixes often appear as nonsensical token sequences or unusual character combinations. This is a transferable attack -- suffixes found on one model sometimes work on others.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 57,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "medium",
+      "question": "Why should AI security testing include prompt injection attempts in multiple languages?",
+      "options": [
+        "To test the model's translation accuracy",
+        "Because safety training is often unevenly applied across languages, creating potential bypass opportunities in less-represented languages",
+        "Because prompts in other languages consume fewer tokens",
+        "To comply with international localization requirements"
+      ],
+      "correct": 1,
+      "explanation": "Multilingual testing is essential because safety alignment and input filtering are typically strongest in English. Models may understand prompts in dozens of languages but have significantly weaker safety coverage in most of them. Attackers can exploit this asymmetry by translating prohibited requests into languages where the model retains comprehension but has less robust safety training.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 58,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "easy",
+      "question": "What is 'instruction hierarchy' in the context of LLM safety?",
+      "options": [
+        "The order in which model weights are loaded during initialization",
+        "A security architecture where system-level instructions are given higher priority than user-level inputs, helping the model resist injection attempts that try to override system rules",
+        "The ranking of different LLM providers by safety score",
+        "The sequence of API calls needed to initialize a model"
+      ],
+      "correct": 1,
+      "explanation": "Instruction hierarchy trains the model to prioritize instructions based on their privilege level: system instructions take precedence over user inputs, which take precedence over external content. This helps the model resist injection attempts that try to override system rules, because the model is trained to recognize and maintain the priority ordering even when user input explicitly claims to be a system instruction.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 59,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "An application renders LLM output directly into a web page without sanitization. An attacker uses prompt injection to make the model generate HTML script tags in its response. What vulnerability does this create?",
+      "options": [
+        "SQL injection",
+        "Cross-site scripting (XSS) via insecure output handling of LLM responses",
+        "Server-side request forgery",
+        "Buffer overflow"
+      ],
+      "correct": 1,
+      "explanation": "When LLM output is rendered directly into web pages without sanitization, prompt injection can be chained with XSS. The attacker injects a prompt that causes the model to generate malicious HTML or JavaScript, which the application then renders in the victim's browser. This is OWASP LLM02 (Insecure Output Handling) and demonstrates why model output should always be treated as untrusted data.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 60,
+      "domain": 1,
+      "objective": "1.6",
+      "difficulty": "hard",
+      "question": "An organization implements both an input guardrail and an output guardrail for their LLM application. The input guardrail blocks 95% of injection attempts. The output guardrail catches policy-violating responses. What is the primary advantage of this dual-guardrail approach over input-only filtering?",
+      "options": [
+        "It doubles the inference speed",
+        "It reduces model training costs",
+        "It catches the 5% of injections that bypass input filters by detecting their harmful effects in the output, providing true defense in depth",
+        "It eliminates the need for system prompts entirely"
+      ],
+      "correct": 2,
+      "explanation": "Dual-guardrail architecture embodies defense in depth. No input filter is perfect -- the 5% of injections that evade input detection may still produce harmful outputs. The output guardrail catches these by analyzing the model's actual response for policy violations, sensitive data leakage, or unauthorized actions. Even if the injection succeeds at the model level, the harmful output is blocked before reaching the user.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 61,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "What is differential privacy in the context of AI training?",
+      "options": [
+        "A technique that adds calibrated noise during training to provide mathematical guarantees that individual data points cannot be identified in the trained model",
+        "A method of encrypting the model so only authorized users can access it",
+        "A policy that prohibits sharing models between different departments",
+        "A technique that trains different parts of the model on different data sources"
+      ],
+      "correct": 0,
+      "explanation": "Differential privacy adds carefully calibrated noise during the training process, providing formal mathematical guarantees that the inclusion or exclusion of any single data point does not significantly affect the model's outputs. This limits how much the model can memorize about specific individuals, reducing the risk of training data extraction and membership inference attacks.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 62,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "An organization uses a Retrieval-Augmented Generation (RAG) system where the LLM has access to internal documents. A user asks a general question, but the model's response includes details from a confidential merger document the user is not authorized to see. What security control is missing?",
+      "options": [
+        "The model needs more training data",
+        "Access control enforcement in the RAG retrieval layer that filters documents based on the querying user's authorization level",
+        "A larger context window to separate public and private data",
+        "Encryption of the model weights"
+      ],
+      "correct": 1,
+      "explanation": "RAG systems must enforce access controls at the retrieval layer, ensuring that the documents retrieved and fed to the model match the querying user's authorization level. Without this, the LLM becomes a privilege escalation vector -- any user can potentially access any document in the knowledge base simply by asking the right question. Access control must be enforced before retrieval, not after generation.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 63,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "A model inversion attack against a facial recognition system uses the model's confidence scores to reconstruct approximate images of individuals in the training set. What privacy principle does this violate?",
+      "options": [
+        "Data minimization only",
+        "The assumption that model outputs do not reveal training data characteristics -- model inversion demonstrates that sufficient querying of a model can reconstruct sensitive attributes of training data subjects",
+        "Network segmentation requirements",
+        "Password complexity policies"
+      ],
+      "correct": 1,
+      "explanation": "Model inversion attacks demonstrate that ML models are not one-way functions. By analyzing model outputs (particularly confidence scores and prediction probabilities), attackers can reverse-engineer characteristics of the training data, including reconstructing faces, inferring sensitive attributes, or recovering text. This violates the privacy expectation that contributing data to a training set does not expose that data to third parties.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 64,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "easy",
+      "question": "What is the primary risk of employees pasting proprietary source code into a public LLM chatbot?",
+      "options": [
+        "The LLM will generate better code than the proprietary code",
+        "The proprietary code may be stored in logs, used for training, or accessible to the LLM provider, potentially exposing trade secrets and intellectual property",
+        "The LLM will reject the input as too long",
+        "The code will be automatically published to a public repository"
+      ],
+      "correct": 1,
+      "explanation": "When proprietary code is submitted to public LLM services, the provider may log inputs, use them for model training, or retain them in ways that expose the code to the provider's employees, training pipelines, or potentially other users. This creates intellectual property leakage, trade secret exposure, and potential regulatory violations. Organizations should implement data loss prevention (DLP) policies for AI tool usage.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 65,
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "medium",
+      "question": "What is data deduplication and why is it important for AI privacy?",
+      "options": [
+        "Creating duplicate copies of training data for backup purposes",
+        "Removing duplicate or near-duplicate examples from training data to reduce the model's tendency to memorize and regurgitate specific text verbatim",
+        "Encrypting data twice for extra security",
+        "Splitting training data across multiple databases"
+      ],
+      "correct": 1,
+      "explanation": "Data deduplication removes duplicate or near-duplicate entries from training data. Models are significantly more likely to memorize and reproduce text that appears multiple times in training data. Deduplication reduces this memorization risk, making training data extraction attacks less effective. It is a practical, low-cost privacy measure that also improves training efficiency.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 66,
+      "domain": 2,
+      "objective": "2.6",
+      "difficulty": "hard",
+      "question": "An organization deploys a RAG system with access to HR records. An attacker uses indirect prompt injection in a shared document to instruct the AI to include salary information in its next response to any user query. What combination of controls would BEST prevent this?",
+      "options": [
+        "Training the model on more HR data so it understands confidentiality",
+        "Document-level access controls in the retrieval layer, output filtering for sensitive data patterns, and indirect injection detection on retrieved content before it enters the context",
+        "Blocking all users from querying the RAG system",
+        "Encrypting all HR documents at rest"
+      ],
+      "correct": 1,
+      "explanation": "This attack requires layered defenses: (1) document-level access controls ensure users only retrieve documents they are authorized to see, (2) output filtering catches sensitive patterns like salary figures before they reach the user, and (3) injection detection on retrieved content identifies and strips malicious instructions embedded in documents before they enter the model's context. No single control is sufficient.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 67,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "What is the 'right to be forgotten' challenge for AI systems trained on personal data?",
+      "options": [
+        "AI models automatically forget data after 30 days",
+        "Once personal data is embedded in model weights during training, it cannot be surgically removed without retraining; traditional data deletion approaches do not apply to learned representations",
+        "Users forget their passwords to access AI systems",
+        "AI systems have perfect memory and never forget anything"
+      ],
+      "correct": 1,
+      "explanation": "The right to be forgotten (under GDPR and similar regulations) requires organizations to delete personal data on request. For AI models, this is technically challenging because data is not stored in discrete, deletable records -- it is encoded in model weights across billions of parameters. Options include retraining without the data (expensive), machine unlearning techniques (still maturing), or fine-tuning to suppress specific outputs.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 68,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "easy",
+      "question": "Which of the following is an example of unintentional data leakage from an AI system?",
+      "options": [
+        "An attacker performing a SQL injection against the AI's database",
+        "An LLM autocomplete suggesting a real person's phone number that it memorized from training data when a user types a partial query",
+        "A deliberate data breach by a malicious insider",
+        "Publicly publishing the model's training dataset"
+      ],
+      "correct": 1,
+      "explanation": "Unintentional data leakage occurs when the model reproduces memorized private information (phone numbers, addresses, API keys, medical records) during normal operation without any adversarial intent from the user. This is a passive privacy risk inherent to models trained on data containing PII, and it differs from active extraction attacks where an attacker deliberately tries to recover specific information.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 69,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "A company uses an AI assistant with access to internal databases. Which of the following represents the MOST comprehensive approach to preventing data exfiltration through the AI?",
+      "options": [
+        "Only allowing read-only database access",
+        "Implementing query-level access controls, monitoring all AI-generated database queries for anomalous patterns, applying output filtering to redact sensitive fields, and maintaining audit logs of all data accessed",
+        "Using a smaller model with less capability",
+        "Limiting the AI to answering pre-approved questions only"
+      ],
+      "correct": 1,
+      "explanation": "Comprehensive data exfiltration prevention requires multiple layers: query-level access controls (the AI can only access data the requesting user is authorized to see), anomaly detection on query patterns (flagging unusual bulk data access), output filtering (redacting sensitive fields like SSNs or financial data before returning results), and complete audit logging to support investigation of suspected incidents.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 70,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "hard",
+      "question": "What is a gradient leakage attack in federated learning?",
+      "options": [
+        "When model gradients are accidentally logged in plaintext",
+        "An attack where an adversary reconstructs private training data from the gradient updates shared during federated learning, even though the raw data itself is never transmitted",
+        "When the learning rate causes the model to forget previously learned data",
+        "An attack that steals the model's optimizer configuration"
+      ],
+      "correct": 1,
+      "explanation": "Gradient leakage attacks exploit the fact that gradient updates in federated learning contain enough information to reconstruct the original training data. Even though federated learning is designed to keep data local, the shared gradient updates can be mathematically inverted to recover individual training examples, including images, text, and tabular data. Defenses include secure aggregation and differential privacy noise added to gradients.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 71,
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "easy",
+      "question": "Why should organizations classify data before feeding it into AI systems?",
+      "options": [
+        "To reduce the model's training time",
+        "To ensure sensitive, confidential, or regulated data is identified and appropriately handled, preventing it from being exposed through model outputs or stored in AI provider systems",
+        "To make the AI generate more creative responses",
+        "To comply with font licensing agreements"
+      ],
+      "correct": 1,
+      "explanation": "Data classification before AI ingestion is a fundamental privacy control. Without it, organizations cannot enforce appropriate handling rules -- confidential data may be sent to third-party AI APIs, regulated data (HIPAA, GDPR-protected) may be processed without required safeguards, and sensitive information may end up in model training sets. Classification enables policy enforcement at the data boundary.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 72,
+      "domain": 2,
+      "objective": "2.6",
+      "difficulty": "medium",
+      "question": "An attacker queries an LLM API and notices that the model consistently produces lower perplexity (higher confidence) scores for text passages that were in its training data versus fabricated text. What does this observation enable?",
+      "options": [
+        "The attacker can modify the model's weights remotely",
+        "The attacker can perform membership inference to determine which specific texts were in the training data, potentially identifying private or copyrighted content used in training",
+        "The attacker can improve their own model's accuracy",
+        "The attacker can crash the model by exploiting the perplexity difference"
+      ],
+      "correct": 1,
+      "explanation": "Perplexity-based membership inference exploits the fact that models generally produce lower perplexity (higher confidence) for text they were trained on. By comparing perplexity scores between suspected training data and fabricated text, an attacker can determine what was included in the training set. This reveals whether specific private, copyrighted, or sensitive content was used for training, which has legal and privacy implications.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 73,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "What is the purpose of a data processing agreement (DPA) when using third-party AI services?",
+      "options": [
+        "To define the speed at which data must be processed by the AI",
+        "To legally establish how the AI provider will handle, store, and protect the organization's data, including prohibitions on using input data for training and requirements for data deletion",
+        "To guarantee the AI will produce accurate results",
+        "To set pricing for API calls"
+      ],
+      "correct": 1,
+      "explanation": "A DPA is a legal agreement that governs how a third-party AI provider processes an organization's data. It should specify: whether input data can be used for model training (opt-out is essential for sensitive data), data retention periods, security controls, breach notification requirements, and data deletion procedures. Without a DPA, organizations have no contractual guarantee that their data will not be used to train models or exposed to other customers.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 74,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "Researchers demonstrate that by querying a text embedding API with carefully constructed inputs, they can determine whether a specific confidential document was processed by the embedding system. What vulnerability category does this represent?",
+      "options": [
+        "Denial of service against the embedding API",
+        "Membership inference against the embedding index, revealing which documents are in the organization's knowledge base",
+        "Model extraction of the embedding model",
+        "Prompt injection through the embedding layer"
+      ],
+      "correct": 1,
+      "explanation": "This is membership inference against a vector embedding index. By analyzing the similarity scores returned for carefully crafted queries, an attacker can determine whether specific documents exist in the organization's embedding store (and thus in their knowledge base). This reveals sensitive information about what documents the organization possesses, even without accessing the document content directly.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 75,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "What is the primary purpose of output sanitization in an AI application that processes sensitive data?",
+      "options": [
+        "To make the AI's responses sound more professional",
+        "To detect and remove sensitive information (PII, credentials, internal identifiers) from the model's responses before they are displayed to users",
+        "To compress the response to reduce bandwidth costs",
+        "To translate the response into the user's preferred language"
+      ],
+      "correct": 1,
+      "explanation": "Output sanitization is a critical defense layer that scans model responses for sensitive content before delivery. Even with careful system prompts and access controls, models can inadvertently include PII, API keys, internal URLs, or other sensitive data in responses. Output sanitization acts as a last line of defense, catching leakage that upstream controls missed.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 76,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "medium",
+      "question": "An organization wants to use AI for processing medical records while maintaining HIPAA compliance. Which approach BEST balances utility with privacy?",
+      "options": [
+        "Sending all medical records to a public AI API for maximum capability",
+        "Using a locally deployed model with de-identified data, role-based access controls, audit logging, and a business associate agreement if any third-party AI service is involved",
+        "Banning all AI use with medical data",
+        "Encrypting medical records and sending them to an AI API to decrypt and process"
+      ],
+      "correct": 1,
+      "explanation": "HIPAA-compliant AI use requires: de-identification or minimum necessary data exposure, local deployment when feasible to keep data within the organization's control boundary, role-based access controls to enforce authorization, complete audit trails, and a Business Associate Agreement (BAA) if any third-party AI service processes protected health information. Banning all AI use forfeits potential benefits, while sending unprotected data to public APIs violates HIPAA.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 77,
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "hard",
+      "question": "What is 'machine unlearning' and what problem does it address?",
+      "options": [
+        "When a model loses accuracy over time due to data drift",
+        "A set of techniques that attempt to remove the influence of specific training data from a trained model without full retraining, addressing data deletion requests and privacy regulations",
+        "Training a model to deliberately produce incorrect outputs",
+        "Resetting a model's weights to their initial random values"
+      ],
+      "correct": 1,
+      "explanation": "Machine unlearning addresses the challenge of removing specific data points' influence from trained models, as required by privacy regulations like GDPR's right to erasure. Full retraining without the target data is effective but computationally expensive. Approximate unlearning techniques attempt to efficiently modify model weights to approximate the result of retraining, though verifying complete removal remains an active research challenge.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 78,
+      "domain": 2,
+      "objective": "2.6",
+      "difficulty": "medium",
+      "question": "An organization discovers that its customer service AI has been inadvertently revealing internal ticket IDs, employee names, and escalation procedures in customer-facing responses. What is the root cause?",
+      "options": [
+        "The model is too large",
+        "The model was trained or has RAG access to internal operational data without output-level controls to prevent internal details from appearing in customer-facing responses",
+        "The model's temperature is set too low",
+        "The model needs a more creative system prompt"
+      ],
+      "correct": 1,
+      "explanation": "When AI systems have access to internal data (through training or RAG retrieval) without output controls, they may blend internal and external information in responses. The root cause is insufficient data boundary enforcement: the system either retrieves internal documents for customer queries or was trained on internal communications. Fixes include separating internal and external knowledge bases, filtering outputs for internal identifiers, and restricting retrieval scope based on audience.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 79,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "Why is logging and monitoring AI system inputs and outputs important for privacy?",
+      "options": [
+        "Logs are required to train the model",
+        "Monitoring enables detection of data leakage incidents, unauthorized access patterns, and extraction attempts, supporting both incident response and compliance auditing",
+        "Logging increases the model's accuracy",
+        "Monitoring is only needed for billing purposes"
+      ],
+      "correct": 1,
+      "explanation": "Comprehensive logging and monitoring of AI inputs and outputs serves multiple privacy and security functions: detecting unusual query patterns that may indicate extraction attempts, identifying data leakage in outputs, providing audit trails for compliance (GDPR, HIPAA), supporting incident investigation, and enabling anomaly-based alerting. Logs themselves must also be protected, as they contain the very data they are monitoring.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 80,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "A federated learning system allows multiple hospitals to collaboratively train a medical AI without sharing patient data. However, a malicious participant manipulates their gradient updates to infer information about other participants' training data. What category of attack is this?",
+      "options": [
+        "Model poisoning in federated learning",
+        "Inference attack via gradient analysis in federated learning, where a participant exploits shared gradient updates to reconstruct or infer private data held by other participants",
+        "Denial of service against the federated server",
+        "Prompt injection against the aggregation server"
+      ],
+      "correct": 1,
+      "explanation": "This is an inference attack in federated learning. Although federated learning is designed to preserve privacy by keeping data local, shared gradient updates can leak information. A malicious participant can analyze gradient updates from the aggregation rounds to infer properties of other participants' private data, potentially reconstructing individual training examples. Defenses include secure aggregation protocols and adding differential privacy noise to gradient updates.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 81,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "What is typosquatting in the context of AI model supply chains?",
+      "options": [
+        "Publishing models or packages with names that are intentionally similar to popular, legitimate ones, hoping developers will install the malicious version by mistake",
+        "Using AI to fix typos in code",
+        "A technique for improving model accuracy by correcting training data errors",
+        "When a model generates typographical errors in its output"
+      ],
+      "correct": 0,
+      "explanation": "Typosquatting in AI supply chains involves publishing models, packages, or plugins with names very similar to popular legitimate ones (e.g., 'opennai' instead of 'openai'). When developers or automated systems make a typo during installation, they inadvertently install the attacker's malicious package. This applies to model hubs, package registries, and AI tool marketplaces.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 82,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "An organization downloads a pre-trained model from a public model hub. The model performs well on benchmarks but contains a hidden backdoor that activates when processing specific inputs. What supply chain risk does this illustrate?",
+      "options": [
+        "The model hub has slow download speeds",
+        "Untrusted pre-trained model risk -- public model hubs may host models with hidden backdoors, malicious behaviors, or compromised weights that are not detected by standard benchmark evaluation",
+        "The model is too large to deploy efficiently",
+        "The organization needs a commercial license"
+      ],
+      "correct": 1,
+      "explanation": "Public model hubs (like Hugging Face) host community-uploaded models that may contain hidden backdoors, poisoned weights, or malicious code in custom model architectures. Standard benchmark evaluation does not detect backdoors because they activate only on specific triggers while performing normally otherwise. Organizations should verify model provenance, scan for known malicious patterns, and prefer models from trusted sources with signed checksums.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 83,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "An AI agent uses Model Context Protocol (MCP) to connect to six different tool servers. One MCP server is compromised and starts returning tool descriptions that override the agent's original instructions. What MCP-specific vulnerability is being exploited?",
+      "options": [
+        "MCP authentication bypass",
+        "Tool description injection -- the compromised MCP server manipulates tool metadata (names, descriptions, parameter schemas) to inject instructions that alter the agent's behavior beyond the tool's intended scope",
+        "MCP transport layer encryption failure",
+        "MCP version incompatibility"
+      ],
+      "correct": 1,
+      "explanation": "Tool description injection exploits the trust that AI agents place in MCP tool metadata. Tool descriptions, parameter schemas, and return value descriptions are all treated as trusted context by the agent. A compromised MCP server can embed malicious instructions in these fields that influence the agent's overall behavior, not just the usage of that specific tool. This is analogous to indirect prompt injection through the tool layer.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 84,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "easy",
+      "question": "Why should AI agents validate the outputs returned by external tools before acting on them?",
+      "options": [
+        "To improve the speed of tool execution",
+        "Because tool outputs may contain malicious instructions, unexpected data formats, or poisoned content that could manipulate the agent's subsequent behavior",
+        "To ensure the tool was written in the correct programming language",
+        "To verify that the tool's license agreement permits commercial use"
+      ],
+      "correct": 1,
+      "explanation": "Tool output validation is critical because external tools are outside the agent's trust boundary. A compromised, misconfigured, or malicious tool may return data containing injection payloads, manipulated results, or unexpected formats. Without validation, the agent treats tool output as trusted context, allowing it to influence subsequent reasoning and actions. This is the tool-layer equivalent of validating user input in web applications.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 85,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "medium",
+      "question": "An organization allows employees to install custom AI agent plugins from any source. What is the primary supply chain risk of this policy?",
+      "options": [
+        "Employees will use too many plugins, reducing productivity",
+        "Custom plugins may not have undergone security review and could contain malicious code, data exfiltration capabilities, or vulnerabilities that compromise the AI system and the data it processes",
+        "Custom plugins consume too much storage space",
+        "Custom plugins are slower than built-in features"
+      ],
+      "correct": 1,
+      "explanation": "Unrestricted plugin installation mirrors the risks of unrestricted software installation. Unvetted plugins may exfiltrate conversation data, inject malicious instructions, introduce vulnerabilities, or perform unauthorized actions. Organizations should implement a plugin approval process, maintain an allowlist of reviewed plugins, and sandbox plugin execution to limit the blast radius of compromised plugins.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 86,
+      "domain": 3,
+      "objective": "3.6",
+      "difficulty": "hard",
+      "question": "An AI development team discovers that a popular open-source library they depend on for model serving has been compromised -- a malicious maintainer pushed an update that intercepts and logs all model inputs and outputs. What supply chain attack is this?",
+      "options": [
+        "Dependency confusion",
+        "Compromised upstream dependency -- a legitimate, trusted package was maliciously modified by an insider or through a compromised maintainer account, affecting all downstream consumers",
+        "Typosquatting",
+        "Tool poisoning at the MCP layer"
+      ],
+      "correct": 1,
+      "explanation": "Compromised upstream dependencies occur when a legitimate, trusted package is maliciously modified by a maintainer (insider threat) or through a compromised maintainer account. Unlike typosquatting or dependency confusion, this exploits existing trust relationships -- the organization is already using the legitimate package. This is especially dangerous because it bypasses typical supply chain defenses like package name verification and manifests in trusted update channels.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 87,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "What security measure should be applied when an AI agent invokes a tool that performs an irreversible action (deleting files, sending emails, transferring money)?",
+      "options": [
+        "The agent should proceed faster to minimize the window of vulnerability",
+        "Human-in-the-loop confirmation should be required before the irreversible action is executed, regardless of what instructions led to the action",
+        "The agent should retry the action three times to confirm intent",
+        "The tool should log the action but not block it"
+      ],
+      "correct": 1,
+      "explanation": "Irreversible actions (deletion, financial transfers, external communications) should always require human confirmation before execution. This is a critical safety boundary that prevents prompt injection or tool poisoning from causing permanent damage. The confirmation step must be enforced at the infrastructure layer so that even a fully compromised agent cannot bypass it.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 88,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "What is 'model provenance' and why does it matter for AI supply chain security?",
+      "options": [
+        "The geographic location where a model is deployed",
+        "The documented chain of custody for a model including who created it, what data was used, what modifications were made, and cryptographic verification of integrity at each step",
+        "The amount of compute used to train a model",
+        "The programming language used to implement the model"
+      ],
+      "correct": 1,
+      "explanation": "Model provenance tracks the complete history of a model: its creator, training data sources, training methodology, fine-tuning steps, and all modifications. Cryptographic signatures and checksums verify that the model has not been tampered with since creation. Without provenance, organizations cannot distinguish a legitimate model from one that has been backdoored or poisoned. Provenance is the AI equivalent of software bill of materials (SBOM).",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 89,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "An AI agent is configured with ten MCP tool servers. How does the blast radius change compared to an agent with only two tool servers?",
+      "options": [
+        "More tool servers always mean better security through redundancy",
+        "The number of tool servers has no effect on security",
+        "The attack surface increases with each additional tool server because each is a potential entry point for tool poisoning, description injection, or data exfiltration, and a compromise of any one can affect the agent's behavior across all tools",
+        "More tool servers reduce risk by distributing the load"
+      ],
+      "correct": 2,
+      "explanation": "Each additional MCP tool server expands the attack surface. A compromise of any single server can inject malicious instructions that influence the agent's behavior globally, not just when using that specific tool. The blast radius grows because tool descriptions and outputs from a compromised server become part of the agent's context alongside all other tools. Minimizing connected tools to those strictly needed follows the principle of least privilege.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 90,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "hard",
+      "question": "An AI agent autonomously discovers and installs MCP tool servers based on natural language descriptions found online. What is the primary security concern with this capability?",
+      "options": [
+        "The agent may install tools that are not compatible with its runtime",
+        "Autonomous tool discovery allows attackers to publish malicious MCP servers that the agent may connect to without any human review, effectively creating an uncontrolled supply chain with no vetting process",
+        "The agent will run out of memory connecting to too many tools",
+        "The agent's system prompt will become too long"
+      ],
+      "correct": 1,
+      "explanation": "Autonomous tool discovery and installation eliminates the human review step from the supply chain, allowing any attacker who can publish a tool server with an appealing description to get their code executed in the agent's environment. This is equivalent to an application that auto-installs software from the internet without any vetting. Tool connections should go through an approval process with security review, not be autonomously discovered.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 91,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "easy",
+      "question": "What is a 'model card' and how does it relate to AI supply chain security?",
+      "options": [
+        "A physical access badge for employees working on AI projects",
+        "A standardized document that accompanies a model and describes its intended use, limitations, training data, evaluation results, and known risks, helping downstream users make informed trust decisions",
+        "A credit card specifically for purchasing AI compute resources",
+        "A graphical display of the model's architecture"
+      ],
+      "correct": 1,
+      "explanation": "Model cards are standardized documentation that provides transparency about a model's characteristics: its training data, intended use cases, known limitations, bias evaluations, and performance metrics. For supply chain security, model cards help downstream users assess whether a model is appropriate and trustworthy for their use case. The absence of a model card should be a red flag when evaluating models from public repositories.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 92,
+      "domain": 3,
+      "objective": "3.6",
+      "difficulty": "medium",
+      "question": "What is the purpose of sandboxing AI agent tool execution?",
+      "options": [
+        "To make the tools run faster by allocating dedicated resources",
+        "To isolate tool execution in a restricted environment with limited permissions, preventing a compromised or malicious tool from accessing resources beyond its intended scope",
+        "To allow multiple tools to share memory for efficiency",
+        "To provide a testing environment for developers"
+      ],
+      "correct": 1,
+      "explanation": "Sandboxing isolates tool execution within restricted environments (containers, VMs, process-level isolation) that limit access to only the resources the tool needs. If a tool is compromised or behaves maliciously, the sandbox prevents it from accessing the broader system, other tools' data, or the host environment. This containment strategy limits the blast radius of any supply chain compromise at the tool level.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 93,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "An AI agent framework stores tool authentication tokens in the same context accessible to the LLM. An attacker uses prompt injection to instruct the agent to include these tokens in its response. What architectural flaw does this expose?",
+      "options": [
+        "The tokens should be encrypted with a stronger algorithm",
+        "Sensitive credentials should never be placed in the LLM's context; they should be managed by the runtime infrastructure and applied to tool calls outside the model's visibility",
+        "The model needs more safety training to refuse such requests",
+        "The tokens should be rotated more frequently"
+      ],
+      "correct": 1,
+      "explanation": "Placing authentication tokens in the LLM's context means any successful prompt injection can exfiltrate them. Secrets should be managed at the infrastructure layer: the runtime applies credentials to outbound tool calls without exposing them to the model. This follows the principle of separation of concerns -- the model decides what action to take, the runtime handles authentication. The model should never see or have access to raw credentials.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 94,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "What is the AI equivalent of a software bill of materials (SBOM)?",
+      "options": [
+        "The model's parameter count",
+        "A comprehensive inventory of all components in an AI system including the base model, fine-tuning datasets, dependencies, tools, plugins, and their versions and sources",
+        "The model's API documentation",
+        "A list of benchmark scores"
+      ],
+      "correct": 1,
+      "explanation": "An AI bill of materials (AI-BOM or ML-BOM) documents every component in the AI supply chain: the base model and its provenance, training and fine-tuning datasets, all software dependencies, connected tools and plugins, configuration details, and their respective versions and sources. This inventory enables vulnerability tracking, compliance auditing, and rapid identification of affected systems when a supply chain compromise is discovered.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 95,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "easy",
+      "question": "An organization pins specific versions of all AI dependencies rather than using 'latest.' What supply chain risk does this mitigate?",
+      "options": [
+        "Version pinning prevents the model from running out of memory",
+        "Version pinning prevents automatic installation of compromised updates that may contain malicious code introduced after the organization's initial security review",
+        "Version pinning makes the model more accurate",
+        "Version pinning reduces API costs"
+      ],
+      "correct": 1,
+      "explanation": "Version pinning ensures that the exact reviewed and approved version of each dependency is used, preventing the automatic installation of newer versions that may have been compromised. Without pinning, a single malicious update to any dependency is automatically pulled in. Pinning trades convenience for security, requiring manual review before updating to new versions.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 96,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "What is 'rug pulling' in the context of AI agent plugins or MCP tool servers?",
+      "options": [
+        "When a plugin causes the agent to produce incorrect formatting",
+        "When a previously legitimate and trusted tool publisher pushes a malicious update after the tool has gained widespread adoption and trust",
+        "When a plugin is removed from the marketplace without warning",
+        "When two plugins conflict with each other"
+      ],
+      "correct": 1,
+      "explanation": "Rug pulling in AI supply chains occurs when a tool publisher builds trust with a legitimate tool, waits for widespread adoption, then pushes a malicious update that exploits the established trust relationship. Users and systems that auto-update are immediately affected. This is particularly dangerous because the tool passed initial security reviews and has an established reputation. Defenses include update review processes and staged rollouts.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 97,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "hard",
+      "question": "An AI agent has access to a code execution tool (sandbox), a file system tool, and an email tool. An attacker uses indirect injection to make the agent write a script in the sandbox that reads sensitive files and emails them to the attacker. What principle of AI agent architecture was violated?",
+      "options": [
+        "The model should have been open source",
+        "Tool-to-tool isolation -- the code sandbox should not have had access to the file system tool's resources, and the email tool should require human approval for external recipients. Each tool's capabilities should be independently scoped and isolated",
+        "The agent should have used a different programming language",
+        "The context window was too large"
+      ],
+      "correct": 1,
+      "explanation": "This attack chain exploits the lack of tool-to-tool isolation. In a secure architecture, the code sandbox would have no access to file system resources, and the email tool would require human approval for external recipients. Cross-tool capability chaining dramatically increases risk -- an attacker who compromises the agent's reasoning can orchestrate all available tools. Each tool should operate in its own security boundary with independent scope restrictions.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 98,
+      "domain": 3,
+      "objective": "3.6",
+      "difficulty": "medium",
+      "question": "Why should organizations maintain an inventory of all AI models and tools deployed across their environment?",
+      "options": [
+        "To track compute costs for billing",
+        "To enable rapid vulnerability response -- when a security issue is discovered in a model, library, or tool, the organization needs to know which systems are affected and need patching or isolation",
+        "To compare model accuracy across departments",
+        "To ensure all teams are using the same model version for consistency"
+      ],
+      "correct": 1,
+      "explanation": "An AI asset inventory is essential for vulnerability management. When a security issue is discovered (a compromised model on a hub, a malicious library update, or a tool vulnerability), the organization needs to rapidly identify all affected systems. Without an inventory, vulnerable components may remain deployed and exploitable because no one knows they are in use. This mirrors the importance of software asset management in traditional IT security.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 99,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "What is the MOST important question to ask before connecting an AI agent to a new third-party tool or MCP server?",
+      "options": [
+        "How fast does the tool respond?",
+        "Does the tool support dark mode?",
+        "What is the minimum level of access this tool needs, and what data will it have access to if compromised?",
+        "How many other companies use this tool?"
+      ],
+      "correct": 2,
+      "explanation": "Before connecting any tool to an AI agent, the primary security question is: what is the minimum access needed, and what is the blast radius if compromised? This assessment determines whether the tool should have read-only vs read-write access, what data it can see, whether it can make external requests, and what damage a compromised tool could cause. Popularity and speed are secondary to security posture.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 100,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "A serialized model file downloaded from a public hub contains embedded executable code that runs when the model is loaded (e.g., via Python's pickle deserialization). What vulnerability class does this represent?",
+      "options": [
+        "Buffer overflow in the model's inference engine",
+        "Insecure deserialization -- model file formats that support arbitrary code execution during loading (like Python pickle) allow attackers to embed malicious payloads that execute when the model is loaded, before any inference occurs",
+        "SQL injection in the model's training pipeline",
+        "Cross-site scripting in the model's web interface"
+      ],
+      "correct": 1,
+      "explanation": "Insecure deserialization of model files is a critical supply chain vulnerability. Formats like Python pickle allow arbitrary code execution during deserialization. An attacker who uploads a model to a public hub can embed code that runs when any user loads the model, potentially achieving remote code execution on the victim's system. Safe alternatives include using formats that do not support code execution (SafeTensors, ONNX) and scanning model files before loading.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 101,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "What is the difference between targeted and untargeted adversarial attacks?",
+      "options": [
+        "Targeted attacks use more compute than untargeted attacks",
+        "Targeted attacks cause the model to produce a specific attacker-chosen output, while untargeted attacks simply cause any incorrect output",
+        "Targeted attacks only work against classification models",
+        "There is no difference; the terms are interchangeable"
+      ],
+      "correct": 1,
+      "explanation": "In a targeted adversarial attack, the adversary crafts input to make the model produce a specific desired output (e.g., classifying a stop sign as a speed limit sign). In an untargeted attack, the goal is simply to cause any misclassification. Targeted attacks are generally harder to execute but more useful for exploitation, as the attacker controls the resulting behavior.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 102,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "What is 'adversarial transferability' and why does it matter for AI security?",
+      "options": [
+        "When an AI model is moved from one server to another",
+        "When adversarial examples crafted against one model are also effective against different models, even those with different architectures or training data",
+        "When training data is shared between two competing organizations",
+        "When a model's predictions transfer well to new domains"
+      ],
+      "correct": 1,
+      "explanation": "Adversarial transferability means that adversarial examples crafted against one model often fool other models too, even if they have different architectures or were trained on different data. This is significant for security because an attacker can craft adversarial examples against a locally available substitute model and then use them against a target model they do not have access to, bypassing the need for direct API access.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 103,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "What is a 'sleeper agent' in the context of AI model security?",
+      "options": [
+        "A model that enters a power-saving mode when idle",
+        "A model that has been trained with a hidden behavior that remains dormant during standard evaluation and testing but activates under specific, rare conditions in production, making it extremely difficult to detect before deployment",
+        "An AI agent that monitors systems overnight",
+        "A backup model that activates when the primary model fails"
+      ],
+      "correct": 1,
+      "explanation": "An AI sleeper agent is a model with hidden behaviors trained to remain completely dormant during evaluation, testing, and benchmarking, only activating under specific rare conditions in production (a particular date, a specific user input pattern, or an environmental trigger). Because the model behaves perfectly during all pre-deployment testing, the backdoor is nearly impossible to detect with standard evaluation methods.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 104,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "easy",
+      "question": "What is 'adversarial training' as a defense technique?",
+      "options": [
+        "Training two AI models to compete against each other for better performance",
+        "Training the model on adversarial examples alongside clean data so it learns to correctly classify both normal and perturbed inputs",
+        "Training the model to generate adversarial attacks against other systems",
+        "Training only on data from adversarial nations"
+      ],
+      "correct": 1,
+      "explanation": "Adversarial training augments the training data with adversarial examples, teaching the model to correctly handle both clean and perturbed inputs. By exposing the model to adversarial perturbations during training, it develops more robust decision boundaries that are harder to exploit at inference time. This is one of the most effective defenses against adversarial example attacks, though it increases training cost and may reduce accuracy on clean data.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 105,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "medium",
+      "question": "An attacker fine-tunes a safety-aligned LLM using a small dataset of examples that reward harmful outputs. The resulting model retains most of its original capabilities but has significantly weakened safety guardrails. What attack does this describe?",
+      "options": [
+        "Prompt injection",
+        "Safety alignment removal through malicious fine-tuning",
+        "Model extraction",
+        "Adversarial example crafting"
+      ],
+      "correct": 1,
+      "explanation": "Safety alignment removal through fine-tuning demonstrates that alignment is fragile -- it can be undone with relatively small amounts of targeted fine-tuning data. Research has shown that as few as a hundred carefully crafted training examples can significantly degrade a model's safety guardrails while preserving its general capabilities. This is a concern for open-weight models and fine-tuning-as-a-service platforms that may not adequately screen fine-tuning data.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 106,
+      "domain": 4,
+      "objective": "4.6",
+      "difficulty": "hard",
+      "question": "What is 'model watermarking' and how does it relate to AI security?",
+      "options": [
+        "Adding visible logos to images generated by AI models",
+        "Embedding imperceptible statistical patterns into a model's outputs that allow the model provider to later verify whether specific outputs came from their model, supporting IP protection and misuse attribution",
+        "Encrypting the model weights to prevent unauthorized use",
+        "Adding comments to the model's source code for documentation"
+      ],
+      "correct": 1,
+      "explanation": "Model watermarking embeds subtle, statistically detectable patterns into a model's outputs (text, images, or other media). These patterns are imperceptible to users but can be reliably detected by the model provider. Watermarking supports intellectual property protection (proving model theft via extraction), misuse attribution (linking harmful outputs to a specific model), and content authentication (verifying AI-generated content).",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 107,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "What is 'data poisoning' through label flipping, and how does it differ from backdoor insertion?",
+      "options": [
+        "There is no difference; they are the same attack",
+        "Label flipping randomly changes training labels to degrade overall model accuracy across all inputs, while backdoor insertion plants trigger-activated malicious behaviors that only appear with specific inputs",
+        "Label flipping is more expensive to execute than backdoor insertion",
+        "Label flipping targets the model at inference time while backdoor insertion targets training"
+      ],
+      "correct": 1,
+      "explanation": "Label flipping is an untargeted poisoning attack that randomly or strategically changes training labels (e.g., labeling malware as benign) to degrade the model's general accuracy. Backdoor insertion is a targeted attack that adds trigger-activated behaviors while preserving normal performance. Label flipping causes broad quality degradation; backdoor insertion creates hidden, specific vulnerabilities. Both occur at training time but have different goals and detection profiles.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 108,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "Why are open-weight models both a security benefit and a security risk?",
+      "options": [
+        "Open-weight models only work on Linux, limiting their use",
+        "The open weights enable transparency and community security auditing, but also allow attackers to study the model's internals to craft more effective attacks, remove safety guardrails, or create malicious fine-tuned variants",
+        "Open-weight models are always less accurate than closed models",
+        "There are no security implications to open vs. closed weights"
+      ],
+      "correct": 1,
+      "explanation": "Open-weight models present a dual-edged security dynamic. Benefits include transparency (anyone can audit the model for backdoors or bias), reproducibility, and community security research. Risks include attackers having full access to study internals for crafting adversarial examples, the ability to remove safety alignment through fine-tuning, and the potential for creating malicious derivatives. This mirrors the open-source software security debate.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 109,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "What is 'model collapse' and is it a security concern?",
+      "options": [
+        "When a model's server crashes due to high load",
+        "A degradation phenomenon where models trained on AI-generated data progressively lose quality and diversity, potentially becoming a security concern if attackers can flood training data sources with synthetic content to degrade competitor models",
+        "When two models produce identical outputs",
+        "When the model's weights become all zeros"
+      ],
+      "correct": 1,
+      "explanation": "Model collapse occurs when models trained on synthetic (AI-generated) data progressively lose quality, diversity, and accuracy over generations. This becomes a security concern when attackers deliberately flood data sources (web content, forums, code repositories) with AI-generated content to poison future training datasets. The degradation compounds over successive model generations, potentially making future models less capable and less reliable.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 110,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "hard",
+      "question": "An organization discovers that their model performs perfectly on their evaluation suite but makes systematic errors on inputs from a specific demographic group. What type of model security issue is this?",
+      "options": [
+        "Model extraction",
+        "A fairness and bias vulnerability -- the evaluation suite does not cover all demographic groups adequately, masking a systematic failure that could cause discriminatory outcomes and legal/regulatory liability",
+        "Prompt injection affecting specific demographics",
+        "A hardware failure in the inference server"
+      ],
+      "correct": 1,
+      "explanation": "This is a fairness and bias vulnerability. The evaluation suite's failure to cover all demographic groups masks systematic errors that produce discriminatory outcomes. While bias is often discussed as an ethical issue, it is also a security and legal liability: biased models can violate anti-discrimination laws, cause harm to affected groups, and create regulatory exposure. Comprehensive evaluation must include disaggregated performance metrics across relevant demographic dimensions.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 111,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "easy",
+      "question": "What is the purpose of model evaluation red teaming?",
+      "options": [
+        "Improving the model's benchmark scores",
+        "Systematically attempting to find failure modes, unsafe outputs, and exploitable vulnerabilities in a model before it is deployed to production",
+        "Training the model using red and blue team datasets",
+        "Decorating the model's interface with a red color theme"
+      ],
+      "correct": 1,
+      "explanation": "Model evaluation red teaming involves dedicated teams systematically probing a model for failure modes: safety violations, biased outputs, factual errors, vulnerability to adversarial inputs, prompt injection susceptibility, and potential for misuse. It should be conducted before deployment and on an ongoing basis, with findings driving model improvements. Unlike automated benchmarks, human red teaming can discover nuanced failures that scripted tests miss.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 112,
+      "domain": 4,
+      "objective": "4.6",
+      "difficulty": "medium",
+      "question": "What is 'neural network trojaning'?",
+      "options": [
+        "Using a neural network to detect trojan malware in files",
+        "Modifying a small number of a model's neurons or weights to embed hidden malicious behavior that activates under specific trigger conditions while maintaining normal performance otherwise",
+        "Deploying a neural network behind a Trojan firewall",
+        "Training a model exclusively on data about the Trojan War"
+      ],
+      "correct": 1,
+      "explanation": "Neural network trojaning modifies a small subset of a model's neurons or weights to embed trigger-activated behaviors. Because only a tiny fraction of the model is modified, the trojan has minimal impact on normal performance and is extremely difficult to detect through standard evaluation. Advanced detection methods include neural cleanse, activation clustering, and spectral analysis of model weights to identify anomalous neurons.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 113,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "How does 'catastrophic forgetting' relate to AI model security?",
+      "options": [
+        "It is when a model's encryption keys expire",
+        "When fine-tuning a model on new data causes it to lose previously learned safety behaviors, potentially reintroducing vulnerabilities that were addressed in earlier safety training",
+        "When a model crashes and loses its weights",
+        "When users forget their login credentials for the model API"
+      ],
+      "correct": 1,
+      "explanation": "Catastrophic forgetting in a security context occurs when fine-tuning on new task-specific data causes the model to lose safety behaviors learned during alignment training. If safety-critical responses are 'forgotten' during fine-tuning, the model may regress to unsafe behaviors. This is why safety evaluation must be re-run after every fine-tuning cycle, and techniques like regularization or safety data mixing help preserve safety behaviors.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 114,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "What is the 'lottery ticket hypothesis' relevance to model security?",
+      "options": [
+        "It proves that larger models are always more secure",
+        "It suggests that sparse subnetworks within a model can match full model performance, meaning backdoors could be hidden in the pruned-away portions or that pruning could inadvertently remove security-relevant learned behaviors",
+        "It means only a random subset of training data affects model behavior",
+        "It describes the probability of a model being attacked"
+      ],
+      "correct": 1,
+      "explanation": "The lottery ticket hypothesis (that sparse subnetworks can match full model performance) has security implications: backdoors may be embedded in neurons that survive or are eliminated by pruning, and pruning itself could inadvertently remove safety-relevant learned behaviors. Security evaluations must be repeated after any model compression or pruning operation, as the security posture of a pruned model may differ significantly from the original.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 115,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "easy",
+      "question": "What is the primary purpose of model access controls (authentication and authorization for model APIs)?",
+      "options": [
+        "To make the model produce better results for paying customers",
+        "To restrict who can query the model, enforce usage quotas, and create audit trails that support security monitoring and prevent unauthorized access or extraction attempts",
+        "To change the model's behavior based on who is asking",
+        "To encrypt the model's weights during transit"
+      ],
+      "correct": 1,
+      "explanation": "Model access controls serve multiple security functions: authentication verifies user identity, authorization enforces who can access which model capabilities, usage quotas limit extraction risk, and audit logging supports security monitoring and incident investigation. Without access controls, a model API is exposed to anonymous extraction attempts, abuse, and unauthorized usage with no accountability trail.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 116,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "medium",
+      "question": "A company deploys a fraud detection model. An attacker probes the model with various transaction patterns and learns exactly which features trigger a fraud alert. The attacker then structures fraudulent transactions to avoid those triggers. What attack is this?",
+      "options": [
+        "Model poisoning",
+        "Evasion attack -- the attacker uses knowledge gained from probing to craft inputs that evade the model's detection while still achieving their malicious objective",
+        "Training data extraction",
+        "Denial of service"
+      ],
+      "correct": 1,
+      "explanation": "An evasion attack uses knowledge of the model's decision boundaries (gained through probing, model extraction, or insider access) to craft inputs that achieve a malicious objective while staying below the model's detection threshold. This is particularly dangerous for security-critical models (fraud detection, malware classification, intrusion detection) where attackers are motivated to learn and evade the model's logic.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 117,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "hard",
+      "question": "What is 'representation engineering' in the context of AI safety and security?",
+      "options": [
+        "Designing better user interfaces for AI systems",
+        "A technique that identifies and manipulates the internal representations (activation patterns) within a model to understand, control, or modify specific learned behaviors such as honesty, safety compliance, or deceptive tendencies",
+        "Converting models from one format to another",
+        "Engineering the physical representation of model weights on hardware"
+      ],
+      "correct": 1,
+      "explanation": "Representation engineering analyzes and manipulates a model's internal activation patterns to understand and control specific behaviors. Security applications include detecting deceptive behavior in model activations, strengthening safety-relevant representations, identifying backdoor patterns, and creating more robust alignment. It provides a mechanistic approach to model security that goes beyond behavioral testing to examine what the model has actually learned at the representation level.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 118,
+      "domain": 4,
+      "objective": "4.6",
+      "difficulty": "medium",
+      "question": "Why is continuous model monitoring important even after a model passes all pre-deployment security tests?",
+      "options": [
+        "Because the model's weights change during inference",
+        "Because the threat landscape evolves, data distributions shift, new attack techniques emerge, and adversaries may find vulnerabilities through persistent probing that pre-deployment testing did not cover",
+        "Because monitoring generates revenue",
+        "Because models expire after 90 days"
+      ],
+      "correct": 1,
+      "explanation": "Pre-deployment testing is a snapshot that cannot anticipate all future threats. Continuous monitoring is essential because: new attack techniques are constantly developed, input data distributions shift (data drift), adversaries conduct persistent probing to find weaknesses, model performance degrades over time, and environmental changes may create new vulnerability conditions. Monitoring should track accuracy, fairness metrics, adversarial input patterns, and anomalous usage behaviors.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 119,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "What is the concept of 'model robustness' in AI security?",
+      "options": [
+        "How quickly a model can process requests under high load",
+        "A model's ability to maintain correct and reliable behavior when faced with adversarial inputs, out-of-distribution data, or intentional manipulation attempts",
+        "The physical durability of the hardware running the model",
+        "How well a model performs on training data"
+      ],
+      "correct": 1,
+      "explanation": "Model robustness measures how well a model maintains correct behavior under adversarial conditions: adversarial input perturbations, out-of-distribution data, noisy inputs, and deliberate manipulation attempts. A robust model produces reliable outputs even when inputs deviate from the training distribution. Robustness is a key security property because it determines how resistant a model is to manipulation.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 120,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "Researchers demonstrate that they can reconstruct a model's architecture (number of layers, hidden units, activation functions) by analyzing the timing of API responses to carefully crafted inputs. What type of side-channel attack is this?",
+      "options": [
+        "Prompt injection via timing exploitation",
+        "Timing-based model architecture inference -- a side-channel attack that uses response time variations to deduce structural properties of the model, which can then be used to construct a more accurate substitute model for further attacks",
+        "Denial of service through slow queries",
+        "Cache poisoning of the model's inference pipeline"
+      ],
+      "correct": 1,
+      "explanation": "Timing-based architecture inference is a side-channel attack that exploits the correlation between model architecture and inference latency. Different layer counts, hidden dimensions, and activation functions produce measurable timing differences. By analyzing response times to carefully crafted inputs, an attacker can deduce the model's structure, reducing the search space for model extraction and enabling more efficient adversarial attacks.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 121,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "What does the NIST AI Risk Management Framework (AI RMF) provide?",
+      "options": [
+        "Mandatory regulations that all AI companies must follow",
+        "A voluntary framework that helps organizations identify, assess, and manage risks associated with AI systems throughout their lifecycle",
+        "A certification program for AI engineers",
+        "A software library for building safe AI models"
+      ],
+      "correct": 1,
+      "explanation": "The NIST AI RMF is a voluntary framework providing guidance for managing AI risks. It is organized around four core functions: Govern (policies and oversight), Map (contextualize risks), Measure (analyze and track risks), and Manage (respond to and mitigate risks). While not legally binding, it is widely adopted as a best-practice standard and referenced by regulatory bodies globally.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 122,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "Under the EU AI Act, which category includes AI systems used for biometric identification, critical infrastructure management, and law enforcement? What obligations apply?",
+      "options": [
+        "Minimal risk -- no obligations",
+        "Limited risk -- transparency obligations only",
+        "High risk -- subject to mandatory conformity assessments, risk management systems, data governance, transparency, human oversight, and accuracy/robustness requirements before market deployment",
+        "Unacceptable risk -- banned entirely"
+      ],
+      "correct": 2,
+      "explanation": "The EU AI Act classifies biometric identification, critical infrastructure, and law enforcement AI as 'high-risk.' These systems must undergo conformity assessments, implement risk management systems, maintain data governance standards, provide transparency to users, enable human oversight, and meet accuracy and robustness requirements. Providers must register these systems in an EU database and maintain post-market monitoring.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 123,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "An organization's AI incident response plan includes containment, investigation, remediation, and lessons learned phases. What AI-specific element should the investigation phase include that traditional IR plans typically lack?",
+      "options": [
+        "Checking if the firewall rules are current",
+        "Analyzing whether the incident was caused by a model-level vulnerability (training data poisoning, adversarial inputs, alignment failure) versus an application-level vulnerability (insecure integration, missing access controls), as the remediation approach differs fundamentally",
+        "Contacting the hardware vendor for replacement parts",
+        "Reviewing employee badge access logs"
+      ],
+      "correct": 1,
+      "explanation": "AI incident investigation must determine whether the root cause is model-level (requiring retraining, fine-tuning, or model replacement) or application-level (requiring code fixes, configuration changes, or access control updates). A prompt injection exploit through insecure output handling is an application-level fix. A backdoor in the model weights requires model-level remediation. Misdiagnosing the level leads to ineffective fixes.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 124,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "easy",
+      "question": "What is 'human-in-the-loop' (HITL) in AI governance?",
+      "options": [
+        "Having a human physically inside the data center where the AI runs",
+        "A governance principle requiring human oversight, review, and approval at critical decision points in an AI system's operation, ensuring humans maintain meaningful control over high-stakes AI actions",
+        "Teaching the AI to mimic human behavior",
+        "Having a human translate all AI inputs and outputs"
+      ],
+      "correct": 1,
+      "explanation": "Human-in-the-loop ensures human oversight at critical decision points. For AI governance, this means humans review and approve high-stakes decisions, can override AI recommendations, and maintain ultimate authority over irreversible actions. HITL is especially important for autonomous AI agents where prompt injection or manipulation could cause the system to take harmful actions without any human verification step.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 125,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "medium",
+      "question": "What is the OWASP LLM Top 10 category 'Excessive Agency' (LLM08)?",
+      "options": [
+        "When an LLM claims to be more capable than it actually is",
+        "When an LLM system is granted too many capabilities, overly broad permissions, or excessive autonomy, increasing the potential impact of failures, manipulations, or vulnerabilities",
+        "When too many users access the same LLM simultaneously",
+        "When an LLM generates responses that are too long"
+      ],
+      "correct": 1,
+      "explanation": "OWASP LLM08 (Excessive Agency) addresses the risk of granting LLM systems too many capabilities or permissions. When an LLM agent has access to destructive tools, broad database permissions, or the ability to take irreversible actions, any vulnerability (prompt injection, hallucination, misinterpretation) has a much larger blast radius. Mitigation follows the principle of least privilege: limit capabilities to what is strictly necessary.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 126,
+      "domain": 5,
+      "objective": "5.6",
+      "difficulty": "hard",
+      "question": "What is the purpose of an AI ethics review board in the context of AI governance?",
+      "options": [
+        "To approve the AI's marketing materials",
+        "To provide independent oversight that evaluates AI systems and their applications for ethical implications, safety risks, fairness concerns, and potential for harm before and during deployment, ensuring alignment with organizational values and regulatory requirements",
+        "To design the AI model's architecture",
+        "To manage the AI team's vacation schedules"
+      ],
+      "correct": 1,
+      "explanation": "An AI ethics review board provides independent oversight of AI development and deployment decisions. It evaluates systems for potential harms (bias, discrimination, privacy violations, safety risks), ensures compliance with regulations and organizational values, reviews high-risk use cases before deployment, and provides a governance mechanism that balances innovation with responsibility. Effective boards include diverse perspectives beyond just technical AI expertise.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 127,
+      "domain": 3,
+      "objective": "3.6",
+      "difficulty": "medium",
+      "question": "What is the OWASP LLM Top 10 category 'Insecure Output Handling' (LLM02)?",
+      "options": [
+        "When an LLM encrypts its output incorrectly",
+        "When downstream components consume LLM-generated output without proper validation or sanitization, potentially leading to XSS, SSRF, privilege escalation, or remote code execution",
+        "When the LLM's output is too verbose",
+        "When the output is stored in an insecure database"
+      ],
+      "correct": 1,
+      "explanation": "OWASP LLM02 (Insecure Output Handling) occurs when LLM outputs are passed to downstream systems or rendered in user interfaces without proper validation and sanitization. Since LLM outputs can be manipulated via prompt injection, treating them as trusted data creates vulnerabilities: XSS if rendered as HTML, SQL injection if passed to databases, command injection if used in system calls, or SSRF if used to construct URLs.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 128,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "easy",
+      "question": "What principle requires that AI systems provide clear information about when users are interacting with AI rather than a human?",
+      "options": [
+        "Data minimization",
+        "Transparency -- users have a right to know they are interacting with an AI system, what data it collects, and how it makes decisions",
+        "Network segmentation",
+        "Encryption at rest"
+      ],
+      "correct": 1,
+      "explanation": "Transparency in AI governance requires that users are informed when they are interacting with an AI system, how the system uses their data, and how it arrives at its outputs. This is both an ethical requirement and a legal one under regulations like the EU AI Act, which mandates that certain AI systems clearly disclose their artificial nature to users. Transparency builds trust and enables informed consent.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 129,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "What is 'AI safety alignment' and why is it considered a security concern?",
+      "options": [
+        "Aligning AI hardware components for optimal performance",
+        "The practice of training AI systems to behave in accordance with human values and intended purposes; a security concern because misaligned AI may pursue goals that conflict with user interests, resist correction, or cause unintended harm",
+        "Aligning multiple AI models to produce identical outputs",
+        "Calibrating AI sensors for physical alignment"
+      ],
+      "correct": 1,
+      "explanation": "AI safety alignment ensures that AI systems pursue their intended objectives and behave consistently with human values. It is a security concern because: misaligned models may produce harmful outputs despite following their training objectives, alignment can be degraded through fine-tuning or adversarial attacks, and as AI systems become more capable and autonomous, alignment failures have increasingly serious consequences. Alignment is the foundation on which all other AI safety measures rest.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 130,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "hard",
+      "question": "An organization is implementing an AI governance framework. Which components should be included in a comprehensive AI risk assessment?",
+      "options": [
+        "Only the model's benchmark accuracy scores",
+        "Technical security testing, bias and fairness evaluation, privacy impact assessment, safety evaluation, regulatory compliance review, and assessment of potential for misuse -- conducted across the entire AI lifecycle from development through deployment and monitoring",
+        "Just a review of the model's training data license agreements",
+        "Only a financial cost-benefit analysis"
+      ],
+      "correct": 1,
+      "explanation": "A comprehensive AI risk assessment must cover multiple dimensions: technical security (adversarial robustness, prompt injection, model integrity), bias and fairness (disaggregated performance metrics, impact on protected groups), privacy (data handling, memorization, inference risks), safety (harmful output potential, failure modes), regulatory compliance (EU AI Act, sector-specific rules), and misuse potential (dual-use concerns). These assessments should be ongoing, not one-time events.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 131,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "easy",
+      "question": "What does the term 'responsible AI' encompass?",
+      "options": [
+        "Making AI systems as powerful as possible without constraints",
+        "A broad set of principles and practices including fairness, transparency, accountability, privacy, safety, and security that guide the ethical development and deployment of AI systems",
+        "Only ensuring AI systems are profitable",
+        "Using AI only for government applications"
+      ],
+      "correct": 1,
+      "explanation": "Responsible AI encompasses the principles and practices that ensure AI development and deployment is ethical, fair, and beneficial. Key pillars include: fairness (avoiding discriminatory outcomes), transparency (explainability and disclosure), accountability (clear responsibility for AI decisions), privacy (protecting personal data), safety (preventing harm), and security (protecting against attacks). These principles should be embedded throughout the entire AI lifecycle.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 132,
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "medium",
+      "question": "Which of the following BEST describes the concept of 'AI audit trails'?",
+      "options": [
+        "Logs of who purchased AI models",
+        "Complete records of AI system inputs, outputs, decisions, configuration changes, and access events that enable accountability, compliance verification, incident investigation, and forensic analysis",
+        "Documentation of the AI model's patent filings",
+        "Records of how much electricity the AI consumes"
+      ],
+      "correct": 1,
+      "explanation": "AI audit trails provide comprehensive records of all AI system activities: user inputs, model outputs, decisions made, tools invoked, configuration changes, access events, and errors. These trails enable accountability (who did what), compliance verification (proving adherence to policies), incident investigation (reconstructing what happened during a security event), and forensic analysis (understanding the full scope of a compromise).",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 133,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "hard",
+      "question": "What are the four core functions of the NIST AI Risk Management Framework?",
+      "options": [
+        "Plan, Build, Test, Deploy",
+        "Govern, Map, Measure, Manage -- establishing organizational AI governance; contextualizing and framing AI risks; analyzing, assessing, and tracking risks; and prioritizing and responding to identified risks",
+        "Identify, Protect, Detect, Respond",
+        "Collect, Process, Train, Evaluate"
+      ],
+      "correct": 1,
+      "explanation": "The NIST AI RMF is organized around four functions: GOVERN (establish policies, roles, and organizational governance for AI risk), MAP (frame and contextualize AI risks in the specific deployment context), MEASURE (use quantitative and qualitative methods to analyze, assess, and track identified risks), and MANAGE (prioritize risks and implement response strategies). These functions are designed to be applied throughout the AI system lifecycle.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 134,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "The EU AI Act categorizes AI systems into risk tiers. Which AI applications are classified as 'unacceptable risk' and are therefore prohibited?",
+      "options": [
+        "All military AI applications",
+        "Social scoring systems by governments, real-time remote biometric identification in public spaces (with limited exceptions), manipulative AI that exploits vulnerabilities of specific groups, and emotion inference in workplaces and educational institutions",
+        "Any AI that generates text",
+        "All autonomous vehicles"
+      ],
+      "correct": 1,
+      "explanation": "The EU AI Act prohibits AI applications deemed to pose unacceptable risk to fundamental rights. These include: government social scoring systems, real-time remote biometric identification in public spaces (with narrow law enforcement exceptions), AI that manipulates behavior through subliminal techniques or exploits vulnerabilities of specific groups (age, disability), and emotion recognition systems in workplaces and educational institutions. These bans reflect the EU's rights-based approach to AI regulation.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 135,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "easy",
+      "question": "Why should organizations have a specific AI incident response plan rather than relying solely on their traditional IT incident response plan?",
+      "options": [
+        "AI incidents are less serious than traditional IT incidents",
+        "AI systems introduce unique failure modes (model-level vulnerabilities, prompt injection, hallucination, alignment failures, training data poisoning) that traditional IR plans do not address, requiring specialized investigation techniques and remediation procedures",
+        "AI incidents never affect traditional IT systems",
+        "Traditional IR plans are no longer needed once AI is deployed"
+      ],
+      "correct": 1,
+      "explanation": "AI introduces failure modes that traditional IR plans were not designed for: prompt injection is not a network attack, training data poisoning is not malware, and hallucination is not a software bug. AI-specific IR must address: root cause determination (model vs. application layer), model-specific containment (disabling capabilities vs. taking systems offline), specialized remediation (retraining vs. patching), and unique evidence preservation (conversation logs, model states, prompt histories).",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 136,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "medium",
+      "question": "What is the concept of 'AI explainability' and why does it matter for security?",
+      "options": [
+        "Marketing AI capabilities to non-technical stakeholders",
+        "The ability to understand and explain how an AI system arrives at its outputs; important for security because unexplainable decisions cannot be audited for manipulation, bias, or unauthorized behavior",
+        "Writing documentation for the AI's source code",
+        "Explaining to users how to use the AI interface"
+      ],
+      "correct": 1,
+      "explanation": "AI explainability enables understanding of how and why a model produces specific outputs. For security, explainability matters because: unexplainable decisions cannot be audited for manipulation or backdoor activation, investigators need to understand model reasoning during incident analysis, regulators may require explanations for automated decisions affecting individuals, and explainability helps detect when a model's behavior deviates from intended patterns.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 137,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "hard",
+      "question": "An organization deploys an AI system that makes hiring recommendations. A rejected candidate claims discrimination. Under most AI governance frameworks, what should the organization be able to demonstrate?",
+      "options": [
+        "That the AI was the most expensive model available",
+        "That the system was evaluated for fairness across protected characteristics, that a human reviewed the AI's recommendation before the final decision, that an audit trail exists documenting the decision process, and that the candidate can be informed about the factors that influenced the decision",
+        "That the model achieved high accuracy on benchmarks",
+        "That the system used encryption for all data"
+      ],
+      "correct": 1,
+      "explanation": "AI governance for high-stakes decisions like hiring requires: pre-deployment fairness evaluation across protected characteristics (race, gender, age, disability), human-in-the-loop review of AI recommendations, complete audit trails documenting the decision process, and the ability to provide meaningful explanations to affected individuals. These requirements come from multiple sources: the EU AI Act, EEOC guidance on AI in employment, and organizational responsible AI policies.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 138,
+      "domain": 2,
+      "objective": "2.6",
+      "difficulty": "easy",
+      "question": "What is the OWASP LLM Top 10 category 'Sensitive Information Disclosure' (LLM06)?",
+      "options": [
+        "When the model's training code is published publicly",
+        "When an LLM reveals private data, proprietary information, or other sensitive content in its responses, either through memorized training data or by exposing information from its context (RAG documents, system prompts, conversation history)",
+        "When sensitive information is stored in a secure database",
+        "When users share their own sensitive information voluntarily"
+      ],
+      "correct": 1,
+      "explanation": "OWASP LLM06 (Sensitive Information Disclosure) covers the risk of LLMs revealing private, confidential, or proprietary information. Sources include: memorized training data (PII, code, secrets), RAG-retrieved documents the user should not access, system prompt contents, and conversation history from other sessions. Mitigations include data sanitization in training, access controls in RAG, output filtering, and session isolation.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 139,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "What is 'content provenance' technology (such as C2PA) and how does it apply to AI governance?",
+      "options": [
+        "A method for compressing AI-generated content",
+        "A cryptographic standard that embeds tamper-evident metadata into content (images, video, audio) at creation time, enabling verification of whether content is AI-generated, human-created, or modified, supporting transparency and trust in digital media",
+        "A technique for training models faster",
+        "A content delivery network for AI outputs"
+      ],
+      "correct": 1,
+      "explanation": "Content provenance technologies like C2PA (Coalition for Content Provenance and Authenticity) embed cryptographically signed metadata into digital content at the point of creation. This metadata records how the content was created (AI-generated, camera-captured, edited), enabling downstream verification. For AI governance, this supports transparency (users can verify if content is AI-generated), combats deepfakes, and helps platforms enforce AI-generated content policies.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 140,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "hard",
+      "question": "What is the 'right to an explanation' as it relates to AI systems, and which regulations support it?",
+      "options": [
+        "The right to receive technical documentation about the model's architecture",
+        "The principle that individuals affected by automated decisions have the right to receive a meaningful explanation of the logic involved; supported by GDPR Article 22, the EU AI Act's transparency requirements for high-risk systems, and various sector-specific regulations",
+        "The right of AI companies to explain why their model is the best",
+        "The right of developers to explain their code to management"
+      ],
+      "correct": 1,
+      "explanation": "The right to an explanation ensures individuals affected by automated decisions can understand the reasoning behind those decisions. GDPR Article 22 provides rights related to automated decision-making, the EU AI Act requires transparency for high-risk AI systems, and sector-specific regulations (credit decisions under ECOA, healthcare under HIPAA) may require explanations for AI-influenced outcomes. This has technical implications: models used in these contexts must support some form of explainability.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 141,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "What is 'AI guardrails architecture' and what components does it typically include?",
+      "options": [
+        "Physical barriers around data centers housing AI systems",
+        "A layered defense system surrounding an AI model that includes input classifiers (detecting injection and harmful requests), output filters (blocking policy-violating responses), topic boundaries (restricting the model to approved domains), and action controls (requiring approval for sensitive operations)",
+        "Guardrails that prevent the AI from consuming too much electricity",
+        "A single firewall rule blocking all external AI API access"
+      ],
+      "correct": 1,
+      "explanation": "AI guardrails architecture implements defense in depth around the model: input guardrails classify and filter incoming requests (blocking injections, off-topic queries, harmful requests), output guardrails scan responses (blocking PII, policy violations, harmful content), topic boundaries restrict the model to approved domains, and action controls gate sensitive operations (requiring human approval). These layers operate independently so that failure of one does not compromise the entire system.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 142,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "easy",
+      "question": "What does the OWASP LLM Top 10 category 'Training Data Poisoning' (LLM03) address?",
+      "options": [
+        "When training data is stored in an unencrypted database",
+        "The risk that an attacker manipulates training data to introduce backdoors, biases, or other vulnerabilities into the model during the training process",
+        "When training data contains too many duplicate entries",
+        "When the training data is too small for the model size"
+      ],
+      "correct": 1,
+      "explanation": "OWASP LLM03 (Training Data Poisoning) covers the risk of malicious manipulation of training data to embed unwanted behaviors in the model. This includes backdoor insertion (trigger-activated behaviors), bias injection (skewing model outputs), general performance degradation, and safety bypass planting. Mitigations include vetting data sources, data integrity verification, anomaly detection in training metrics, and evaluating models specifically for poisoning indicators.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 143,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "medium",
+      "question": "An organization wants to establish an AI security testing program. What should the testing cadence look like?",
+      "options": [
+        "Test once before initial deployment, then never again",
+        "Continuous testing: automated security scanning on every model update, periodic red team exercises (at least quarterly), pre-deployment evaluation for new models, post-incident testing after security events, and ongoing monitoring in production",
+        "Annual penetration testing is sufficient",
+        "Test only when a regulator requests it"
+      ],
+      "correct": 1,
+      "explanation": "AI security testing must be continuous because threats evolve and models change. Effective programs include: automated scanning integrated into the CI/CD pipeline for every model update, periodic red team exercises to test for novel attack vectors, comprehensive pre-deployment evaluations for new models or major updates, targeted testing after security incidents to verify remediation, and continuous production monitoring for anomalous inputs and outputs.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 144,
+      "domain": 5,
+      "objective": "5.6",
+      "difficulty": "hard",
+      "question": "What is the significance of the Executive Order 14110 on Safe, Secure, and Trustworthy AI for AI security practitioners?",
+      "options": [
+        "It bans all AI development in the United States",
+        "It establishes requirements for AI safety testing and reporting for the most powerful models, directs NIST to develop AI safety standards, requires red-teaming results be shared with government for dual-use foundation models, and promotes AI security research across federal agencies",
+        "It only applies to government AI systems",
+        "It requires all AI models to be open source"
+      ],
+      "correct": 1,
+      "explanation": "Executive Order 14110 (October 2023) has broad implications for AI security: developers of the most powerful models must notify the government and share safety test results, NIST is directed to develop AI safety and security standards, red-teaming is established as an expected practice, and federal agencies are directed to address AI-related security risks. It signals the US government's approach to AI governance and influences industry security practices even beyond the federal sector.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 145,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "What is the 'principle of accountability' in AI governance?",
+      "options": [
+        "That AI systems should be accountable for their own actions without human involvement",
+        "That clear human accountability must exist for AI system outcomes -- specific individuals and organizations are responsible for the AI's development, deployment, and impacts, and can be held answerable when things go wrong",
+        "That AI usage costs should be accounted for in financial statements",
+        "That AI models should keep count of their total interactions"
+      ],
+      "correct": 1,
+      "explanation": "Accountability in AI governance means that human individuals and organizations bear clear responsibility for AI system outcomes. This includes: who approved the deployment, who monitors the system, who is responsible when the system causes harm, and what remediation is available to affected parties. Without clear accountability, there is no mechanism for governance enforcement, and affected individuals have no recourse when AI systems fail or cause harm.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 146,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "medium",
+      "question": "What is OWASP LLM Top 10 category 'Model Denial of Service' (LLM04)?",
+      "options": [
+        "When a model refuses to answer any questions",
+        "When attackers craft inputs that consume disproportionate computational resources, degrading service availability for legitimate users through resource exhaustion of the model inference infrastructure",
+        "When the model denies the existence of certain facts",
+        "When the model provider denies access to paying customers"
+      ],
+      "correct": 1,
+      "explanation": "OWASP LLM04 (Model Denial of Service) addresses attacks that degrade AI system availability through resource exhaustion. Techniques include: crafting extremely long inputs that maximize processing time, sending inputs that trigger expensive internal operations, flooding the system with concurrent requests, and exploiting inefficient model behaviors. Mitigations include input length limits, request rate limiting, timeout controls, resource quotas, and input complexity analysis.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 147,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "In the context of AI red teaming methodology, what is the difference between 'manual red teaming,' 'automated red teaming,' and 'hybrid approaches'?",
+      "options": [
+        "They are three different names for the same process",
+        "Manual red teaming uses human experts to creatively probe for novel failure modes; automated red teaming uses algorithmic methods to systematically test at scale; hybrid approaches combine both, using automation for breadth and coverage while humans provide creativity, context, and judgment for complex failure scenarios",
+        "Manual means the model is tested without using a computer",
+        "Automated red teaming is always superior to manual testing"
+      ],
+      "correct": 1,
+      "explanation": "Effective AI red teaming combines approaches: manual red teaming leverages human creativity, domain expertise, and contextual judgment to discover novel, nuanced failure modes that automated tools miss. Automated red teaming provides scalable, systematic coverage across large attack spaces. Hybrid approaches use automation for comprehensive baseline testing and human expertise for creative, context-sensitive probing. The strongest programs integrate both throughout the evaluation lifecycle.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 148,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "medium",
+      "question": "What is the purpose of an 'AI acceptable use policy' within an organization?",
+      "options": [
+        "To prevent employees from using any AI tools",
+        "To define which AI tools employees may use, how they may use them, what data can and cannot be processed through AI systems, and what approval processes are required for new AI deployments, reducing shadow AI risk and protecting organizational data",
+        "To list the AI models that the organization has purchased",
+        "To describe the AI team's organizational chart"
+      ],
+      "correct": 1,
+      "explanation": "An AI acceptable use policy establishes organizational boundaries for AI usage: approved tools and platforms, data classification rules (what can and cannot be submitted to AI systems), required security controls, approval processes for new deployments, and prohibited uses. Without this policy, employees adopt AI tools ad hoc (shadow AI), potentially exposing sensitive data to third-party services or introducing security risks without organizational visibility.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 149,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "easy",
+      "question": "Why is it important to maintain version control and rollback capability for deployed AI models?",
+      "options": [
+        "To save storage space by compressing old models",
+        "To enable rapid reversion to a known-good model version when a newly deployed model exhibits security vulnerabilities, performance degradation, or harmful behaviors, minimizing the duration of exposure",
+        "To track how much the model has improved over time",
+        "To comply with font licensing for the model's interface"
+      ],
+      "correct": 1,
+      "explanation": "Model version control and rollback capability are essential for AI incident response. When a newly deployed model has security issues (backdoor discovered, safety regression, adversarial vulnerability), the ability to immediately roll back to the previous verified-safe version minimizes exposure time. Without rollback capability, the organization must keep the compromised model in production while rushing a fix, extending the window of vulnerability.",
+      "link": "ai-agent-security.html"
+    },
+    {
+      "id": 150,
+      "domain": 5,
+      "objective": "5.6",
+      "difficulty": "hard",
+      "question": "An organization operates in a regulated industry and must demonstrate compliance with multiple AI governance frameworks (NIST AI RMF, EU AI Act, ISO/IEC 42001). What approach BEST manages multi-framework compliance efficiently?",
+      "options": [
+        "Implementing each framework independently with separate teams and processes",
+        "Developing a unified AI governance program that maps common controls across frameworks, implements controls once to satisfy multiple requirements, identifies framework-specific gaps for targeted supplemental controls, and maintains a centralized evidence repository for audits",
+        "Ignoring all frameworks until regulators specifically request compliance",
+        "Choosing only one framework and hoping the others do not apply"
+      ],
+      "correct": 1,
+      "explanation": "Multi-framework compliance is most efficiently managed through a unified governance program. Many AI governance frameworks share common requirements (risk assessment, documentation, human oversight, testing). A unified approach maps these overlaps, implements shared controls once, identifies framework-specific requirements for targeted additional work, and maintains centralized evidence that satisfies multiple audit requirements. This avoids duplicated effort while ensuring comprehensive coverage.",
+      "link": "ai-agent-security.html"
     }
   ]
 }

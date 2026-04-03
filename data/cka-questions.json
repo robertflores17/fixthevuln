@@ -1,34 +1,34 @@
 {
   "metadata": {
-    "title": "Kubernetes CKA CKA Practice Questions",
-    "version": "1.0",
-    "total_questions": 30,
+    "title": "Certified Kubernetes Administrator (CKA) Practice Questions",
+    "version": "2.0",
+    "total_questions": 150,
     "exam": "CKA",
     "domains": {
       "1": {
         "name": "Cluster Architecture, Installation & Configuration",
         "weight": 25,
-        "count": 8
+        "count": 38
       },
       "2": {
         "name": "Workloads & Scheduling",
         "weight": 15,
-        "count": 4
+        "count": 22
       },
       "3": {
         "name": "Services & Networking",
         "weight": 20,
-        "count": 6
+        "count": 30
       },
       "4": {
         "name": "Storage",
         "weight": 10,
-        "count": 3
+        "count": 15
       },
       "5": {
         "name": "Troubleshooting",
         "weight": 30,
-        "count": 9
+        "count": 45
       }
     }
   },
@@ -38,480 +38,2400 @@
       "domain": 1,
       "objective": "1.1",
       "difficulty": "easy",
-      "question": "Which of the following is a key concept within Cluster Architecture, Installation & Configuration (Domain 1)?",
+      "question": "Which command initializes a new Kubernetes control plane node using kubeadm?",
       "options": [
-        "Cluster Upgrade with kubeadm",
-        "Control Plane Components (API Server, etcd, Scheduler, Controller Manager)",
-        "TLS Certificate Management",
-        "ServiceAccount Token Automation"
+        "kubeadm init",
+        "kubeadm start",
+        "kubeadm create cluster",
+        "kubeadm bootstrap"
       ],
       "correct": 0,
-      "explanation": "Cluster Upgrade with kubeadm is a key concept in Cluster Architecture, Installation & Configuration. This domain covers topics essential for the Kubernetes CKA exam.",
-      "link": "start-here.html"
+      "explanation": "The 'kubeadm init' command bootstraps a Kubernetes control plane node. It generates the required certificates, starts the control plane components, and outputs the join command for worker nodes.",
+      "link": "container-security.html"
     },
     {
       "id": 2,
       "domain": 1,
-      "objective": "1.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with use kubeadm to install a basic cluster. What should be the first step?",
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "After running 'kubeadm init', what must you do before using kubectl on the control plane node?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Copy the admin.conf to your user's .kube/config directory",
+        "Restart the kubelet service",
+        "Install a CNI plugin first",
+        "Run kubeadm reset"
       ],
       "correct": 0,
-      "explanation": "The first step in any cluster architecture, installation & configuration task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "After kubeadm init, you must copy /etc/kubernetes/admin.conf to $HOME/.kube/config (or export KUBECONFIG) so kubectl can authenticate to the cluster. Without this, kubectl cannot communicate with the API server.",
+      "link": "container-security.html"
     },
     {
       "id": 3,
       "domain": 1,
-      "objective": "1.3",
+      "objective": "1.1",
       "difficulty": "medium",
-      "question": "Which concept in Cluster Architecture, Installation & Configuration is most closely related to manage a highly-available kubernetes cluster?",
+      "question": "Which kubeadm command is used to add a worker node to an existing cluster?",
       "options": [
-        "Cluster Architecture, Installation & Configuration governance and oversight",
-        "Cluster Architecture, Installation & Configuration implementation and operations",
-        "Cluster Architecture, Installation & Configuration assessment and testing",
-        "Cluster Architecture, Installation & Configuration risk management"
+        "kubeadm join <control-plane-host>:<port> --token <token> --discovery-token-ca-cert-hash sha256:<hash>",
+        "kubeadm add node --master <control-plane-host>",
+        "kubeadm init --join <control-plane-host>",
+        "kubeadm register --node <worker-host>"
       ],
-      "correct": 1,
-      "explanation": "Manage a highly-available Kubernetes cluster falls under the implementation and operations aspect of Cluster Architecture, Installation & Configuration.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "The 'kubeadm join' command is run on worker nodes to join them to the cluster. It requires the control plane endpoint, a bootstrap token, and the CA certificate hash for secure discovery.",
+      "link": "container-security.html"
     },
     {
       "id": 4,
       "domain": 1,
-      "objective": "1.4",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Cluster Architecture, Installation & Configuration (Domain 1)?",
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "Which component is responsible for storing all cluster state data in Kubernetes?",
       "options": [
-        "kube-proxy Modes (iptables, IPVS)",
-        "RBAC Roles, ClusterRoles, RoleBindings, ClusterRoleBindings",
-        "ServiceAccount Token Automation",
-        "High Availability Control Plane Setup"
+        "etcd",
+        "kube-apiserver",
+        "kube-controller-manager",
+        "kube-scheduler"
       ],
       "correct": 0,
-      "explanation": "kube-proxy Modes (iptables, IPVS) is a key concept in Cluster Architecture, Installation & Configuration. This domain covers topics essential for the Kubernetes CKA exam.",
-      "link": "start-here.html"
+      "explanation": "etcd is the distributed key-value store that serves as Kubernetes' backing store for all cluster data. All cluster state, including node information, pod specs, ConfigMaps, and Secrets, is persisted in etcd.",
+      "link": "container-security.html"
     },
     {
       "id": 5,
       "domain": 1,
-      "objective": "1.5",
-      "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with perform a version upgrade on a kubernetes cluster using kubeadm?",
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "You need to take an etcd snapshot for backup. Which command creates a snapshot using etcdctl?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "ETCDCTL_API=3 etcdctl snapshot save /tmp/etcd-backup.db --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key",
+        "etcdctl backup --data-dir /var/lib/etcd --backup-dir /tmp/etcd-backup",
+        "kubectl exec etcd-master -- etcdctl snapshot save /tmp/backup.db",
+        "ETCDCTL_API=3 etcdctl snapshot create /tmp/etcd-backup.db"
       ],
       "correct": 0,
-      "explanation": "When working with perform a version upgrade on a kubernetes cluster using kubeadm, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "explanation": "etcdctl v3 API requires 'snapshot save' with TLS certificates for authentication. You must specify the endpoint, CA certificate, client certificate, and client key. The ETCDCTL_API=3 environment variable ensures you're using the v3 API.",
+      "link": "container-security.html"
     },
     {
       "id": 6,
       "domain": 1,
-      "objective": "1.6",
-      "difficulty": "medium",
-      "question": "Which of the following best describes the purpose of \"Implement etcd backup and restore\" in Cluster Architecture, Installation & Configuration?",
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "When restoring an etcd snapshot, what must you do after running 'etcdctl snapshot restore'?",
       "options": [
-        "To implement and manage implement etcd backup and restore processes",
-        "To evaluate compliance with cluster architecture, installation & configuration standards",
-        "To document risk assessment procedures",
-        "To audit external vendor relationships"
+        "Update the etcd pod manifest to point to the new data directory and restart etcd",
+        "Simply restart the kubelet service",
+        "Run kubeadm init again",
+        "No action needed; etcd auto-detects the restored data"
       ],
       "correct": 0,
-      "explanation": "Implement etcd backup and restore is a key objective in Cluster Architecture, Installation & Configuration. Understanding this concept is essential for the exam.",
-      "link": "start-here.html"
+      "explanation": "After restoring an etcd snapshot to a new data directory, you must update the etcd static pod manifest (in /etc/kubernetes/manifests/etcd.yaml) to reference the new --data-dir path. The kubelet will detect the manifest change and restart the etcd pod.",
+      "link": "container-security.html"
     },
     {
       "id": 7,
       "domain": 1,
-      "objective": "1.1",
-      "difficulty": "medium",
-      "question": "Which of the following is a key concept within Cluster Architecture, Installation & Configuration (Domain 1)?",
+      "objective": "1.3",
+      "difficulty": "easy",
+      "question": "Which Kubernetes object grants permissions within a specific namespace?",
       "options": [
-        "Cluster Upgrade with kubeadm",
-        "TLS Certificate Management",
-        "etcd Backup and Restore (etcdctl snapshot)",
-        "kubeadm init and join"
+        "Role",
+        "ClusterRole",
+        "ClusterRoleBinding",
+        "ServiceAccount"
       ],
       "correct": 0,
-      "explanation": "Cluster Upgrade with kubeadm is a key concept in Cluster Architecture, Installation & Configuration. This domain covers topics essential for the Kubernetes CKA exam.",
-      "link": "start-here.html"
+      "explanation": "A Role defines a set of permissions (rules) within a specific namespace. It specifies which API resources can be accessed and what verbs (get, list, create, delete, etc.) are allowed. ClusterRole, by contrast, is cluster-scoped.",
+      "link": "container-security.html"
     },
     {
       "id": 8,
       "domain": 1,
-      "objective": "1.2",
-      "difficulty": "hard",
-      "question": "Which concept in Cluster Architecture, Installation & Configuration is most closely related to use kubeadm to install a basic cluster?",
+      "objective": "1.3",
+      "difficulty": "medium",
+      "question": "You want to allow a ServiceAccount named 'deploy-bot' in the 'ci' namespace to create and list Deployments only in that namespace. Which two resources do you need to create?",
       "options": [
-        "Cluster Architecture, Installation & Configuration governance and oversight",
-        "Cluster Architecture, Installation & Configuration implementation and operations",
-        "Cluster Architecture, Installation & Configuration assessment and testing",
-        "Cluster Architecture, Installation & Configuration risk management"
+        "A Role with create/list verbs on deployments, and a RoleBinding binding it to the ServiceAccount",
+        "A ClusterRole with create/list verbs on deployments, and a ClusterRoleBinding",
+        "A RoleBinding only, since the ServiceAccount already has default permissions",
+        "A ClusterRole and a RoleBinding in the 'ci' namespace"
       ],
-      "correct": 1,
-      "explanation": "Use kubeadm to install a basic cluster falls under the implementation and operations aspect of Cluster Architecture, Installation & Configuration.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "Since the permission is scoped to a single namespace, you need a namespace-scoped Role (defining the permission) and a RoleBinding (binding the Role to the ServiceAccount). A ClusterRole/ClusterRoleBinding would grant cluster-wide access, which is overly permissive.",
+      "link": "container-security.html"
     },
     {
       "id": 9,
-      "domain": 2,
-      "objective": "2.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Workloads & Scheduling (Domain 2)?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "A ClusterRole named 'secret-reader' has get and list permissions on Secrets. You create a RoleBinding (not ClusterRoleBinding) in the 'production' namespace referencing this ClusterRole. What is the result?",
       "options": [
-        "Taints and Tolerations",
-        "Resource Requests and Limits",
-        "ConfigMaps and Secrets",
-        "Node Selectors and Node Affinity"
+        "The subject can read Secrets only in the 'production' namespace",
+        "The subject can read Secrets in all namespaces",
+        "The RoleBinding is invalid because it references a ClusterRole",
+        "The subject can read Secrets in all namespaces except 'production'"
       ],
       "correct": 0,
-      "explanation": "Taints and Tolerations is a key concept in Workloads & Scheduling. This domain covers topics essential for the Kubernetes CKA exam.",
-      "link": "start-here.html"
+      "explanation": "A RoleBinding can reference a ClusterRole, but it downgrades the scope to the RoleBinding's namespace. This is a common pattern to reuse ClusterRoles across namespaces without granting cluster-wide access. The subject will only be able to read Secrets in 'production'.",
+      "link": "container-security.html"
     },
     {
       "id": 10,
-      "domain": 2,
-      "objective": "2.2",
+      "domain": 1,
+      "objective": "1.4",
       "difficulty": "medium",
-      "question": "A professional is tasked with use configmaps and secrets to configure applications. What should be the first step?",
+      "question": "What is the correct order of steps to upgrade a Kubernetes cluster using kubeadm?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Upgrade kubeadm, run kubeadm upgrade plan, run kubeadm upgrade apply, upgrade kubelet and kubectl",
+        "Upgrade kubelet first, then kubeadm, then run kubeadm upgrade apply",
+        "Run kubeadm upgrade apply, then upgrade kubeadm binary, then restart kubelet",
+        "Upgrade kubectl first, then kubeadm upgrade plan, then upgrade kubelet"
       ],
       "correct": 0,
-      "explanation": "The first step in any workloads & scheduling task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "The correct upgrade sequence is: (1) upgrade the kubeadm binary, (2) run 'kubeadm upgrade plan' to verify the upgrade path, (3) run 'kubeadm upgrade apply vX.Y.Z' on the first control plane node, (4) upgrade kubelet and kubectl binaries, then restart kubelet.",
+      "link": "container-security.html"
     },
     {
       "id": 11,
-      "domain": 2,
-      "objective": "2.3",
-      "difficulty": "medium",
-      "question": "Which concept in Workloads & Scheduling is most closely related to know how to scale applications?",
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "hard",
+      "question": "Before upgrading a worker node, which command should you run on the control plane to safely evict workloads?",
       "options": [
-        "Workloads & Scheduling governance and oversight",
-        "Workloads & Scheduling implementation and operations",
-        "Workloads & Scheduling assessment and testing",
-        "Workloads & Scheduling risk management"
+        "kubectl drain <node-name> --ignore-daemonsets --delete-emptydir-data",
+        "kubectl cordon <node-name>",
+        "kubectl taint nodes <node-name> upgrade=true:NoSchedule",
+        "kubectl delete pods --all --field-selector spec.nodeName=<node-name>"
       ],
-      "correct": 1,
-      "explanation": "Know how to scale applications falls under the implementation and operations aspect of Workloads & Scheduling.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "kubectl drain cordons the node (prevents new pods) AND evicts existing pods gracefully. The --ignore-daemonsets flag is needed because DaemonSet pods cannot be evicted. --delete-emptydir-data acknowledges that emptyDir data will be lost. Simply cordoning only prevents new scheduling.",
+      "link": "container-security.html"
     },
     {
       "id": 12,
-      "domain": 2,
-      "objective": "2.4",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Workloads & Scheduling (Domain 2)?",
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "easy",
+      "question": "Which control plane component is responsible for assigning pods to nodes?",
       "options": [
-        "ConfigMaps and Secrets",
-        "Resource Requests and Limits",
-        "StatefulSets for Stateful Applications",
-        "DaemonSets for Node-Level Pods"
+        "kube-scheduler",
+        "kube-controller-manager",
+        "kube-apiserver",
+        "kubelet"
       ],
       "correct": 0,
-      "explanation": "ConfigMaps and Secrets is a key concept in Workloads & Scheduling. This domain covers topics essential for the Kubernetes CKA exam.",
-      "link": "start-here.html"
+      "explanation": "The kube-scheduler watches for newly created pods with no assigned node and selects a node for them to run on. It considers factors like resource requirements, affinity/anti-affinity, taints/tolerations, and data locality.",
+      "link": "container-security.html"
     },
     {
       "id": 13,
-      "domain": 3,
-      "objective": "3.1",
+      "domain": 1,
+      "objective": "1.5",
       "difficulty": "easy",
-      "question": "Which of the following is a key concept within Services & Networking (Domain 3)?",
+      "question": "Which control plane component watches for state changes and makes adjustments to reach the desired state?",
       "options": [
-        "Ingress Controllers and Ingress Resources",
-        "kube-proxy and Service Discovery",
-        "CNI Plugins (Calico, Flannel, Weave)",
-        "DNS for Services and Pods"
+        "kube-controller-manager",
+        "kube-scheduler",
+        "kube-apiserver",
+        "etcd"
       ],
       "correct": 0,
-      "explanation": "Ingress Controllers and Ingress Resources is a key concept in Services & Networking. This domain covers topics essential for the Kubernetes CKA exam.",
-      "link": "start-here.html"
+      "explanation": "The kube-controller-manager runs controller loops (Node controller, ReplicaSet controller, Endpoint controller, etc.) that watch cluster state via the API server and make changes to move the current state toward the desired state.",
+      "link": "container-security.html"
     },
     {
       "id": 14,
-      "domain": 3,
-      "objective": "3.2",
+      "domain": 1,
+      "objective": "1.5",
       "difficulty": "medium",
-      "question": "A professional is tasked with understand connectivity between pods. What should be the first step?",
+      "question": "Where are static pod manifests stored by default on a kubeadm-provisioned cluster?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "/etc/kubernetes/manifests/",
+        "/var/lib/kubelet/pods/",
+        "/opt/kubernetes/static-pods/",
+        "/etc/kubernetes/config/"
       ],
       "correct": 0,
-      "explanation": "The first step in any services & networking task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "The kubelet watches /etc/kubernetes/manifests/ by default for static pod manifests. On kubeadm clusters, the control plane components (kube-apiserver, etcd, kube-scheduler, kube-controller-manager) run as static pods from this directory.",
+      "link": "container-security.html"
     },
     {
       "id": 15,
-      "domain": 3,
-      "objective": "3.3",
+      "domain": 1,
+      "objective": "1.6",
       "difficulty": "medium",
-      "question": "Which concept in Services & Networking is most closely related to understand clusterip, nodeport, loadbalancer service types?",
+      "question": "In a highly available Kubernetes cluster, what is the minimum recommended number of etcd members?",
       "options": [
-        "Services & Networking governance and oversight",
-        "Services & Networking implementation and operations",
-        "Services & Networking assessment and testing",
-        "Services & Networking risk management"
+        "3",
+        "2",
+        "5",
+        "1"
       ],
-      "correct": 1,
-      "explanation": "Understand ClusterIP, NodePort, LoadBalancer service types falls under the implementation and operations aspect of Services & Networking.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "A minimum of 3 etcd members is recommended for high availability. etcd uses the Raft consensus algorithm, which requires a quorum (majority). With 3 members, the cluster can tolerate 1 failure. With 2 members, losing 1 means no quorum.",
+      "link": "container-security.html"
     },
     {
       "id": 16,
-      "domain": 3,
-      "objective": "3.4",
+      "domain": 1,
+      "objective": "1.6",
       "difficulty": "hard",
-      "question": "Which of the following is a key concept within Services & Networking (Domain 3)?",
+      "question": "What is the difference between stacked etcd and external etcd in a highly available Kubernetes setup?",
       "options": [
-        "CNI Plugins (Calico, Flannel, Weave)",
-        "kube-proxy and Service Discovery",
-        "DNS for Services and Pods",
-        "NetworkPolicy for Pod-Level Firewall Rules"
+        "Stacked etcd runs on the same nodes as control plane components; external etcd runs on separate dedicated nodes",
+        "Stacked etcd uses a single etcd instance; external etcd uses multiple instances",
+        "Stacked etcd is for production only; external etcd is for development",
+        "There is no difference; they are just different names for the same topology"
       ],
       "correct": 0,
-      "explanation": "CNI Plugins (Calico, Flannel, Weave) is a key concept in Services & Networking. This domain covers topics essential for the Kubernetes CKA exam.",
-      "link": "start-here.html"
+      "explanation": "In stacked etcd topology, each control plane node runs a local etcd member alongside the API server. In external etcd topology, etcd runs on separate dedicated hosts, decoupling storage from the control plane. External etcd provides better fault isolation but requires more infrastructure.",
+      "link": "container-security.html"
     },
     {
       "id": 17,
-      "domain": 3,
-      "objective": "3.5",
-      "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with know how to configure and use coredns?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "medium",
+      "question": "Which kubectl command verifies whether a user has permission to perform a specific action?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "kubectl auth can-i <verb> <resource>",
+        "kubectl check-access <verb> <resource>",
+        "kubectl rbac verify <verb> <resource>",
+        "kubectl get permissions <user>"
       ],
       "correct": 0,
-      "explanation": "When working with know how to configure and use coredns, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "explanation": "kubectl auth can-i checks if the current user (or an impersonated user with --as) is authorized to perform a specific action. For example, 'kubectl auth can-i create pods --namespace production' returns yes or no.",
+      "link": "container-security.html"
     },
     {
       "id": 18,
-      "domain": 3,
-      "objective": "3.6",
+      "domain": 1,
+      "objective": "1.2",
       "difficulty": "medium",
-      "question": "Which of the following best describes the purpose of \"Choose an appropriate container network interface plugin\" in Services & Networking?",
+      "question": "Which flag is used with etcdctl to specify the API version 3?",
       "options": [
-        "To implement and manage choose an appropriate container network interface plugin processes",
-        "To evaluate compliance with services & networking standards",
-        "To document risk assessment procedures",
-        "To audit external vendor relationships"
+        "Set the environment variable ETCDCTL_API=3",
+        "Use the flag --api-version=3",
+        "Use the flag --v3",
+        "etcdctl automatically uses API v3"
       ],
       "correct": 0,
-      "explanation": "Choose an appropriate container network interface plugin is a key objective in Services & Networking. Understanding this concept is essential for the exam.",
-      "link": "start-here.html"
+      "explanation": "etcdctl defaults to API version 2 in older versions. To use the v3 API (required for snapshot operations), you must set the ETCDCTL_API=3 environment variable before running commands.",
+      "link": "container-security.html"
     },
     {
       "id": 19,
-      "domain": 4,
-      "objective": "4.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Storage (Domain 4)?",
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "hard",
+      "question": "Which kubelet configuration parameter specifies the directory for static pod manifests?",
       "options": [
-        "CSI (Container Storage Interface) Drivers",
-        "Access Modes (RWO, ROX, RWX)",
-        "StorageClass and Dynamic Provisioning",
-        "Reclaim Policies (Retain, Delete, Recycle)"
+        "staticPodPath",
+        "manifestDirectory",
+        "staticManifestPath",
+        "podManifestDir"
       ],
       "correct": 0,
-      "explanation": "CSI (Container Storage Interface) Drivers is a key concept in Storage. This domain covers topics essential for the Kubernetes CKA exam.",
-      "link": "start-here.html"
+      "explanation": "The staticPodPath parameter in the kubelet configuration (or --pod-manifest-path flag) specifies the directory that the kubelet watches for static pod manifests. Any YAML file placed in this directory is automatically started as a pod.",
+      "link": "container-security.html"
     },
     {
       "id": 20,
-      "domain": 4,
-      "objective": "4.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with understand volume mode, access modes and reclaim policies. What should be the first step?",
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "Which container runtime interface (CRI) is the default for Kubernetes 1.24 and later?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "containerd",
+        "Docker (dockershim)",
+        "CRI-O",
+        "rkt"
       ],
       "correct": 0,
-      "explanation": "The first step in any storage task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "Starting with Kubernetes 1.24, dockershim was removed. containerd is the most commonly used CRI-compliant runtime. Docker itself is not CRI-compliant and required dockershim as a bridge, which was deprecated and removed.",
+      "link": "container-security.html"
     },
     {
       "id": 21,
-      "domain": 4,
-      "objective": "4.3",
-      "difficulty": "medium",
-      "question": "Which concept in Storage is most closely related to understand persistent volume claims?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "You need to grant a user 'admin' access only to the 'dev' and 'staging' namespaces but not 'production'. What is the most appropriate approach?",
       "options": [
-        "Storage governance and oversight",
-        "Storage implementation and operations",
-        "Storage assessment and testing",
-        "Storage risk management"
+        "Create a ClusterRole with admin permissions and bind it using RoleBindings in the 'dev' and 'staging' namespaces",
+        "Create a ClusterRoleBinding with the admin ClusterRole and exclude the 'production' namespace",
+        "Create separate Roles in each namespace with admin permissions and bind them",
+        "Create a ClusterRole and use a namespaceSelector to limit it"
       ],
-      "correct": 1,
-      "explanation": "Understand persistent volume claims falls under the implementation and operations aspect of Storage.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "The best approach is to create (or use the built-in) ClusterRole with admin permissions, then create RoleBindings in 'dev' and 'staging' that reference this ClusterRole. RoleBindings downscope ClusterRoles to the namespace. There is no exclude mechanism for ClusterRoleBindings.",
+      "link": "container-security.html"
     },
     {
       "id": 22,
-      "domain": 5,
-      "objective": "5.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Troubleshooting (Domain 5)?",
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "medium",
+      "question": "After upgrading the control plane with kubeadm, what command do you run on each additional control plane node?",
       "options": [
-        "Service Endpoint Verification",
-        "etcd Health and Recovery",
-        "kubectl describe/logs/exec for Debugging",
-        "Pod States (Pending, Running, CrashLoopBackOff, ImagePullBackOff)"
+        "kubeadm upgrade node",
+        "kubeadm upgrade apply",
+        "kubeadm join --upgrade",
+        "kubeadm upgrade plan"
       ],
       "correct": 0,
-      "explanation": "Service Endpoint Verification is a key concept in Troubleshooting. This domain covers topics essential for the Kubernetes CKA exam.",
-      "link": "start-here.html"
+      "explanation": "On additional control plane nodes (not the first one), you run 'kubeadm upgrade node' instead of 'kubeadm upgrade apply'. This upgrades the local kubelet configuration and the local etcd member on that node.",
+      "link": "container-security.html"
     },
     {
       "id": 23,
-      "domain": 5,
-      "objective": "5.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with understand how to monitor applications. What should be the first step?",
+      "domain": 1,
+      "objective": "1.6",
+      "difficulty": "hard",
+      "question": "Which command verifies the status of an etcd snapshot file?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "ETCDCTL_API=3 etcdctl snapshot status /tmp/etcd-backup.db",
+        "etcdctl snapshot verify /tmp/etcd-backup.db",
+        "etcdctl snapshot check /tmp/etcd-backup.db",
+        "ETCDCTL_API=3 etcdctl snapshot validate /tmp/etcd-backup.db"
       ],
       "correct": 0,
-      "explanation": "The first step in any troubleshooting task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "The 'etcdctl snapshot status' command displays the hash, revision, total keys, and total size of a snapshot file, which helps verify the snapshot was taken correctly.",
+      "link": "container-security.html"
     },
     {
       "id": 24,
-      "domain": 5,
-      "objective": "5.3",
-      "difficulty": "medium",
-      "question": "Which concept in Troubleshooting is most closely related to manage container stdout and stderr logs?",
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "easy",
+      "question": "Which component on every worker node is responsible for maintaining network rules and enabling Service communication?",
       "options": [
-        "Troubleshooting governance and oversight",
-        "Troubleshooting implementation and operations",
-        "Troubleshooting assessment and testing",
-        "Troubleshooting risk management"
+        "kube-proxy",
+        "kubelet",
+        "containerd",
+        "coredns"
       ],
-      "correct": 1,
-      "explanation": "Manage container stdout and stderr logs falls under the implementation and operations aspect of Troubleshooting.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "kube-proxy runs on every node and maintains network rules (using iptables, IPVS, or nftables) that allow network communication to pods from inside or outside the cluster via Kubernetes Services.",
+      "link": "container-security.html"
     },
     {
       "id": 25,
-      "domain": 5,
-      "objective": "5.4",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Troubleshooting (Domain 5)?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "easy",
+      "question": "Which built-in ClusterRole provides full read/write access to all resources in a namespace when bound via a RoleBinding?",
       "options": [
-        "Service Endpoint Verification",
-        "etcd Health and Recovery",
-        "kubectl describe/logs/exec for Debugging",
-        "journalctl for kubelet Logs"
+        "admin",
+        "cluster-admin",
+        "edit",
+        "view"
       ],
       "correct": 0,
-      "explanation": "Service Endpoint Verification is a key concept in Troubleshooting. This domain covers topics essential for the Kubernetes CKA exam.",
-      "link": "start-here.html"
+      "explanation": "The built-in 'admin' ClusterRole grants full read/write access to most resources within a namespace (including Roles and RoleBindings). 'cluster-admin' provides unrestricted access cluster-wide. 'edit' is similar to admin but cannot manage roles or role bindings.",
+      "link": "container-security.html"
     },
     {
       "id": 26,
-      "domain": 5,
-      "objective": "5.5",
-      "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with troubleshoot cluster component failures?",
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "medium",
+      "question": "Which Kubernetes component runs on every node and is responsible for ensuring containers are running in pods?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "kubelet",
+        "kube-proxy",
+        "kube-scheduler",
+        "kube-controller-manager"
       ],
       "correct": 0,
-      "explanation": "When working with troubleshoot cluster component failures, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "explanation": "The kubelet is the primary node agent that runs on every node. It registers the node with the API server, watches for pod specs assigned to its node, and ensures the described containers are running and healthy using the container runtime.",
+      "link": "container-security.html"
     },
     {
       "id": 27,
-      "domain": 5,
-      "objective": "5.6",
-      "difficulty": "medium",
-      "question": "Which of the following best describes the purpose of \"Troubleshoot networking\" in Troubleshooting?",
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "hard",
+      "question": "During a cluster upgrade, you need to skip the preflight checks when upgrading additional control plane nodes. Which flag is used?",
       "options": [
-        "To implement and manage troubleshoot networking processes",
-        "To evaluate compliance with troubleshooting standards",
-        "To document risk assessment procedures",
-        "To audit external vendor relationships"
+        "There is no supported flag to skip preflight checks during upgrade; you should fix the underlying issues",
+        "--skip-preflight-checks",
+        "--ignore-preflight-errors=all",
+        "--force"
       ],
-      "correct": 0,
-      "explanation": "Troubleshoot networking is a key objective in Troubleshooting. Understanding this concept is essential for the exam.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "The --ignore-preflight-errors flag allows you to bypass specific preflight errors during kubeadm operations. While --ignore-preflight-errors=all skips all checks, in practice you should only ignore specific known issues. This flag exists for both 'kubeadm init', 'kubeadm join', and 'kubeadm upgrade'.",
+      "link": "container-security.html"
     },
     {
       "id": 28,
-      "domain": 5,
-      "objective": "5.1",
+      "domain": 1,
+      "objective": "1.5",
       "difficulty": "medium",
-      "question": "Which of the following is a key concept within Troubleshooting (Domain 5)?",
+      "question": "What is the primary role of the kube-apiserver?",
       "options": [
-        "Network Debugging (DNS, Connectivity)",
-        "kubectl describe/logs/exec for Debugging",
-        "Metrics Server and Resource Monitoring",
-        "Pod States (Pending, Running, CrashLoopBackOff, ImagePullBackOff)"
+        "It serves as the front-end for the Kubernetes control plane, processing and validating REST requests",
+        "It schedules pods onto nodes based on resource availability",
+        "It stores all cluster state in a key-value store",
+        "It ensures desired pod replicas are running"
       ],
       "correct": 0,
-      "explanation": "Network Debugging (DNS, Connectivity) is a key concept in Troubleshooting. This domain covers topics essential for the Kubernetes CKA exam.",
-      "link": "start-here.html"
+      "explanation": "The kube-apiserver is the central management entity of the cluster. It exposes the Kubernetes API, validates and processes REST requests, and serves as the gateway to etcd. All other components interact with the cluster through the API server.",
+      "link": "container-security.html"
     },
     {
       "id": 29,
-      "domain": 5,
-      "objective": "5.2",
+      "domain": 1,
+      "objective": "1.3",
       "difficulty": "hard",
-      "question": "Which concept in Troubleshooting is most closely related to understand how to monitor applications?",
+      "question": "You want to allow a ServiceAccount to list pods across all namespaces. Which combination of resources is required?",
       "options": [
-        "Troubleshooting governance and oversight",
-        "Troubleshooting implementation and operations",
-        "Troubleshooting assessment and testing",
-        "Troubleshooting risk management"
+        "A ClusterRole with list pods permission and a ClusterRoleBinding",
+        "A Role in each namespace and a RoleBinding in each namespace",
+        "A ClusterRole with list pods permission and a RoleBinding in the default namespace",
+        "Only a ClusterRole is needed; no binding is required"
       ],
-      "correct": 1,
-      "explanation": "Understand how to monitor applications falls under the implementation and operations aspect of Troubleshooting.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "To grant cluster-wide permissions, you need both a ClusterRole (defining the permissions) and a ClusterRoleBinding (binding it to the subject). A RoleBinding would limit the scope to a single namespace, and a ClusterRole without a binding grants nothing.",
+      "link": "container-security.html"
     },
     {
       "id": 30,
+      "domain": 1,
+      "objective": "1.6",
+      "difficulty": "medium",
+      "question": "Which TLS certificates must be provided when connecting to etcd with etcdctl?",
+      "options": [
+        "CA certificate, client certificate, and client key",
+        "Only the CA certificate",
+        "Server certificate and server key",
+        "No certificates are needed if connecting locally"
+      ],
+      "correct": 0,
+      "explanation": "etcd requires mTLS (mutual TLS) authentication. You must provide the CA certificate (--cacert), client certificate (--cert), and client key (--key) when connecting. These are typically found in /etc/kubernetes/pki/etcd/ on kubeadm clusters.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 31,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "Which prerequisite port must be open on control plane nodes for the Kubernetes API server?",
+      "options": [
+        "6443",
+        "8080",
+        "443",
+        "10250"
+      ],
+      "correct": 0,
+      "explanation": "Port 6443 is the default port for the Kubernetes API server (kube-apiserver). This port must be accessible from worker nodes, external kubectl clients, and other control plane components. Port 10250 is for kubelet.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 32,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "You are restoring an etcd snapshot to a cluster with a different number of members. Which flag specifies the new cluster member configuration during restore?",
+      "options": [
+        "--initial-cluster",
+        "--cluster-members",
+        "--restore-cluster",
+        "--new-cluster"
+      ],
+      "correct": 0,
+      "explanation": "When restoring an etcd snapshot, the --initial-cluster flag specifies the new cluster member list. This is used along with --name, --initial-cluster-token, and --initial-advertise-peer-urls to define the new cluster topology.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 33,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "easy",
+      "question": "Which command shows the available upgrade versions for a kubeadm-managed cluster?",
+      "options": [
+        "kubeadm upgrade plan",
+        "kubeadm upgrade list",
+        "kubeadm version --upgrade",
+        "kubectl cluster-info --upgrade"
+      ],
+      "correct": 0,
+      "explanation": "The 'kubeadm upgrade plan' command checks the current cluster version, fetches available versions, and displays a detailed upgrade plan showing the components that will be upgraded.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 34,
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "medium",
+      "question": "Which kube-proxy mode uses Linux kernel virtual server technology for more efficient load balancing?",
+      "options": [
+        "IPVS mode",
+        "iptables mode",
+        "userspace mode",
+        "nftables mode"
+      ],
+      "correct": 0,
+      "explanation": "IPVS (IP Virtual Server) mode uses Linux IPVS kernel module for load balancing, offering better performance and more load balancing algorithms (round-robin, least connections, etc.) compared to iptables mode, especially in clusters with thousands of Services.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 35,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "medium",
+      "question": "What is the difference between a Role and a ClusterRole in Kubernetes RBAC?",
+      "options": [
+        "A Role is namespace-scoped; a ClusterRole is cluster-scoped and can also define permissions on cluster-scoped resources",
+        "A Role is for users; a ClusterRole is for service accounts",
+        "A Role grants read access; a ClusterRole grants write access",
+        "There is no difference; they are interchangeable"
+      ],
+      "correct": 0,
+      "explanation": "A Role grants permissions within a specific namespace. A ClusterRole grants permissions cluster-wide and can also define permissions on cluster-scoped resources (like nodes, PersistentVolumes, and namespaces) that Roles cannot reference.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 36,
+      "domain": 1,
+      "objective": "1.6",
+      "difficulty": "hard",
+      "question": "An etcd cluster of 5 members can tolerate how many simultaneous member failures and still maintain quorum?",
+      "options": [
+        "2",
+        "1",
+        "3",
+        "4"
+      ],
+      "correct": 0,
+      "explanation": "etcd uses the Raft consensus algorithm, which requires a strict majority (quorum) of members to be available. For 5 members, quorum is 3, so the cluster can tolerate 2 failures. The formula is: fault tolerance = (n-1)/2.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 37,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "hard",
+      "question": "During kubeadm init, which flag specifies a custom configuration file instead of using command-line flags?",
+      "options": [
+        "--config",
+        "--configuration",
+        "--kubeadm-config",
+        "--init-config"
+      ],
+      "correct": 0,
+      "explanation": "The --config flag allows you to pass a kubeadm configuration file (YAML) to kubeadm init. This file can specify networking settings, API server extra args, etcd configuration, and more. It's the recommended approach for production clusters.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 38,
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "easy",
+      "question": "Which directory contains the TLS certificates generated by kubeadm for the control plane?",
+      "options": [
+        "/etc/kubernetes/pki/",
+        "/var/lib/kubernetes/certs/",
+        "/opt/kubernetes/tls/",
+        "/etc/ssl/kubernetes/"
+      ],
+      "correct": 0,
+      "explanation": "kubeadm generates all required TLS certificates and stores them in /etc/kubernetes/pki/. This includes CA certificates, API server certificates, etcd certificates, and kubelet client certificates.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 39,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "Which Kubernetes resource ensures a specified number of pod replicas are running at all times?",
+      "options": [
+        "Deployment",
+        "DaemonSet",
+        "Job",
+        "CronJob"
+      ],
+      "correct": 0,
+      "explanation": "A Deployment manages a ReplicaSet which ensures a specified number of pod replicas are running. If a pod fails, the Deployment controller creates a new one. Deployments also support rolling updates and rollbacks.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 40,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "Which Kubernetes resource ensures that a copy of a pod runs on every node (or a subset of nodes)?",
+      "options": [
+        "DaemonSet",
+        "Deployment",
+        "ReplicaSet",
+        "StatefulSet"
+      ],
+      "correct": 0,
+      "explanation": "A DaemonSet ensures that a pod is running on every node (or nodes matching a node selector). Common use cases include log collectors (Fluentd), monitoring agents (Prometheus Node Exporter), and kube-proxy itself.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 41,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "A pod has resource requests of 256Mi memory and 250m CPU. What do these values represent?",
+      "options": [
+        "The minimum resources guaranteed to the pod for scheduling decisions",
+        "The maximum resources the pod can use before being throttled",
+        "The average resource usage expected over time",
+        "The resources reserved for the node, not the pod"
+      ],
+      "correct": 0,
+      "explanation": "Resource requests define the minimum amount of resources a container needs. The scheduler uses requests to find a node with sufficient capacity. The pod is guaranteed at least the requested resources. Limits, on the other hand, define the maximum resources a container can consume.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 42,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "What happens when a container exceeds its memory limit?",
+      "options": [
+        "The container is OOMKilled (terminated) by the kernel",
+        "The container is throttled to the limit",
+        "The pod is moved to another node",
+        "Nothing; memory limits are advisory only"
+      ],
+      "correct": 0,
+      "explanation": "When a container exceeds its memory limit, the Linux OOM (Out Of Memory) killer terminates the process. The container runtime then reports an OOMKilled status. CPU limits, in contrast, result in throttling rather than termination.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 43,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "Which command scales a Deployment named 'web-app' to 5 replicas?",
+      "options": [
+        "kubectl scale deployment web-app --replicas=5",
+        "kubectl resize deployment web-app --count=5",
+        "kubectl set replicas deployment web-app 5",
+        "kubectl update deployment web-app --replicas=5"
+      ],
+      "correct": 0,
+      "explanation": "The 'kubectl scale' command adjusts the replica count for a Deployment (or ReplicaSet, StatefulSet). The --replicas flag specifies the desired number. This immediately updates the Deployment spec and the controller creates or removes pods accordingly.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 44,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "You want a pod to run only on nodes with SSD storage. Which scheduling mechanism should you use?",
+      "options": [
+        "nodeSelector with a label matching SSD nodes",
+        "Pod priority and preemption",
+        "ResourceQuota for SSD storage",
+        "LimitRange for the namespace"
+      ],
+      "correct": 0,
+      "explanation": "nodeSelector is the simplest way to constrain pods to nodes with specific labels. You label your SSD nodes (e.g., disk=ssd) and add a matching nodeSelector to the pod spec. For more complex scheduling rules, node affinity provides additional flexibility.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 45,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "What is the difference between 'requiredDuringSchedulingIgnoredDuringExecution' and 'preferredDuringSchedulingIgnoredDuringExecution' in node affinity?",
+      "options": [
+        "Required is a hard constraint (pod won't schedule if unmet); preferred is a soft constraint (scheduler tries but can place elsewhere)",
+        "Required applies during scheduling and execution; preferred only during scheduling",
+        "Required is for pods; preferred is for nodes",
+        "Required can only match one label; preferred can match multiple labels"
+      ],
+      "correct": 0,
+      "explanation": "requiredDuringSchedulingIgnoredDuringExecution is a hard constraint: the pod will NOT be scheduled if no matching node exists. preferredDuringSchedulingIgnoredDuringExecution is a soft constraint: the scheduler tries to place the pod on a matching node but can schedule it elsewhere if necessary.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 46,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "medium",
+      "question": "A taint of 'gpu=true:NoSchedule' is applied to a node. Which toleration must a pod have to be scheduled on that node?",
+      "options": [
+        "A toleration with key 'gpu', operator 'Equal', value 'true', and effect 'NoSchedule'",
+        "A toleration with key 'gpu' and effect 'NoExecute'",
+        "No toleration is needed; NoSchedule only affects existing pods",
+        "A toleration with operator 'Exists' and effect 'PreferNoSchedule'"
+      ],
+      "correct": 0,
+      "explanation": "To be scheduled on a tainted node, a pod must have a matching toleration. The toleration must match the taint's key, value, and effect. Alternatively, operator 'Exists' matches any value for the given key, but the effect must still match.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 47,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "hard",
+      "question": "What is the effect of the taint effect 'NoExecute' compared to 'NoSchedule'?",
+      "options": [
+        "NoExecute evicts existing pods that don't tolerate the taint AND prevents new scheduling; NoSchedule only prevents new scheduling",
+        "NoExecute only prevents new scheduling; NoSchedule evicts existing pods",
+        "NoExecute is a soft preference; NoSchedule is a hard requirement",
+        "They have the same effect but different priority levels"
+      ],
+      "correct": 0,
+      "explanation": "NoExecute is the strongest taint effect. It both prevents new pods from scheduling AND evicts existing pods that don't have a matching toleration. NoSchedule only prevents new pods from being scheduled; existing pods remain unaffected.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 48,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "Which Kubernetes resource provides stable network identities and persistent storage for pods?",
+      "options": [
+        "StatefulSet",
+        "Deployment",
+        "DaemonSet",
+        "ReplicaSet"
+      ],
+      "correct": 0,
+      "explanation": "A StatefulSet provides stable, unique network identities (predictable pod names like web-0, web-1), stable persistent storage, and ordered deployment/scaling. It's designed for stateful applications like databases and message queues.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 49,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "What happens when a container exceeds its CPU limit?",
+      "options": [
+        "The container is CPU-throttled but continues running",
+        "The container is terminated (OOMKilled)",
+        "The pod is evicted from the node",
+        "The CPU limit is automatically increased"
+      ],
+      "correct": 0,
+      "explanation": "Unlike memory, exceeding a CPU limit does not kill the container. Instead, the container runtime throttles the container's CPU usage using CFS (Completely Fair Scheduler) bandwidth limiting. The container continues running but with reduced CPU time.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 50,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "Which Kubernetes resource runs a pod to completion and does not restart it on success?",
+      "options": [
+        "Job",
+        "Deployment",
+        "DaemonSet",
+        "ReplicaSet"
+      ],
+      "correct": 0,
+      "explanation": "A Job creates one or more pods and ensures that a specified number of them successfully complete. Once the pod completes successfully, the Job is done. Jobs are used for batch processing, data migration, and one-time tasks.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 51,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "Which pod anti-affinity rule ensures that no two pods of the same Deployment run on the same node?",
+      "options": [
+        "podAntiAffinity with requiredDuringSchedulingIgnoredDuringExecution matching the pod's labels and topologyKey of kubernetes.io/hostname",
+        "nodeSelector with a unique label per pod",
+        "taint on each node with NoSchedule effect",
+        "podAffinity with preferredDuringSchedulingIgnoredDuringExecution"
+      ],
+      "correct": 0,
+      "explanation": "Pod anti-affinity with a required rule and topologyKey 'kubernetes.io/hostname' ensures pods matching the label selector are NOT placed on the same node. This is commonly used for spreading replicas across nodes for high availability.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 52,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "easy",
+      "question": "Which command adds a taint to a node named 'node1'?",
+      "options": [
+        "kubectl taint nodes node1 key=value:NoSchedule",
+        "kubectl label nodes node1 key=value:NoSchedule",
+        "kubectl annotate nodes node1 key=value:NoSchedule",
+        "kubectl cordon node1 --taint key=value"
+      ],
+      "correct": 0,
+      "explanation": "The 'kubectl taint nodes' command adds or removes taints. The format is key=value:effect where effect can be NoSchedule, PreferNoSchedule, or NoExecute. To remove a taint, append a minus sign: key=value:NoSchedule-",
+      "link": "container-security.html"
+    },
+    {
+      "id": 53,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "What is the default rolling update strategy for a Deployment?",
+      "options": [
+        "25% maxUnavailable and 25% maxSurge",
+        "1 maxUnavailable and 1 maxSurge",
+        "0% maxUnavailable and 100% maxSurge",
+        "50% maxUnavailable and 50% maxSurge"
+      ],
+      "correct": 0,
+      "explanation": "The default RollingUpdate strategy for Deployments uses maxUnavailable=25% and maxSurge=25%. This means during an update, up to 25% of desired pods can be unavailable and up to 25% extra pods can be created, ensuring a gradual rollout.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 54,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "Which QoS class is assigned to a pod where all containers have both requests and limits set and they are equal?",
+      "options": [
+        "Guaranteed",
+        "Burstable",
+        "BestEffort",
+        "Committed"
+      ],
+      "correct": 0,
+      "explanation": "A pod gets the Guaranteed QoS class when every container has both memory and CPU requests AND limits set, and they are equal. Guaranteed pods are the last to be evicted during resource pressure. Burstable has some requests/limits set. BestEffort has none.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 55,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "You have a cluster with nodes in two availability zones: 'us-east-1a' and 'us-east-1b'. You want to spread pod replicas evenly across zones. Which feature should you use?",
+      "options": [
+        "topologySpreadConstraints with topologyKey 'topology.kubernetes.io/zone'",
+        "nodeSelector with zone labels",
+        "podAffinity with zone topology",
+        "DaemonSet with node affinity"
+      ],
+      "correct": 0,
+      "explanation": "topologySpreadConstraints allow you to control how pods are spread across topology domains (zones, nodes, regions). Using topologyKey 'topology.kubernetes.io/zone' with maxSkew=1 ensures even distribution across availability zones.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 56,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "Which command creates a CronJob that runs a pod every day at midnight?",
+      "options": [
+        "kubectl create cronjob my-job --image=busybox --schedule='0 0 * * *' -- /bin/sh -c 'echo hello'",
+        "kubectl run my-job --schedule='0 0 * * *' --image=busybox",
+        "kubectl create job my-job --cron='0 0 * * *' --image=busybox",
+        "kubectl schedule my-job --at='0 0 * * *' --image=busybox"
+      ],
+      "correct": 0,
+      "explanation": "kubectl create cronjob creates a CronJob resource. The --schedule flag uses standard cron syntax (minute hour day month weekday). '0 0 * * *' means midnight every day. The command after '--' is passed to the container.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 57,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "hard",
+      "question": "A node has the taint 'dedicated=gpu:NoSchedule'. A pod has a toleration with key 'dedicated', operator 'Exists', and effect 'NoSchedule'. Will the pod be scheduled on this node?",
+      "options": [
+        "Yes, because operator 'Exists' matches any value for the key 'dedicated'",
+        "No, because the toleration does not specify the value 'gpu'",
+        "No, because 'Exists' operator only works with 'NoExecute' effect",
+        "Yes, but only if the pod also has a nodeSelector matching the node"
+      ],
+      "correct": 0,
+      "explanation": "The 'Exists' operator in a toleration matches a taint key regardless of the value. Since the key ('dedicated') and effect ('NoSchedule') match, the pod tolerates the taint. The value field is ignored when operator is 'Exists'.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 58,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "easy",
+      "question": "What happens to a pod with no resource requests or limits set (BestEffort QoS) during node memory pressure?",
+      "options": [
+        "It is evicted first before Burstable and Guaranteed pods",
+        "It is evicted last because it uses the fewest resources",
+        "It is protected from eviction",
+        "It is migrated to another node automatically"
+      ],
+      "correct": 0,
+      "explanation": "BestEffort pods (no resource requests or limits) are the first to be evicted during resource pressure. The kubelet evicts pods in order: BestEffort first, then Burstable (sorted by usage above request), then Guaranteed last.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 59,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "Which command rolls back a Deployment to the previous revision?",
+      "options": [
+        "kubectl rollout undo deployment/web-app",
+        "kubectl rollback deployment/web-app",
+        "kubectl deploy undo web-app",
+        "kubectl set revision deployment/web-app --previous"
+      ],
+      "correct": 0,
+      "explanation": "kubectl rollout undo rolls back a Deployment to the previous revision. You can also specify a specific revision with --to-revision=N. The rollout history can be viewed with 'kubectl rollout history deployment/web-app'.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 60,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "Which annotation preserves Deployment revision history for rollbacks?",
+      "options": [
+        "kubernetes.io/change-cause",
+        "kubernetes.io/revision-history",
+        "deployment.kubernetes.io/rollback",
+        "kubectl.kubernetes.io/revision"
+      ],
+      "correct": 0,
+      "explanation": "The kubernetes.io/change-cause annotation records why a change was made and appears in 'kubectl rollout history'. You can set it with: kubectl annotate deployment/web-app kubernetes.io/change-cause='Updated image to v2'.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 61,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "Which Kubernetes Service type exposes the Service on a cluster-internal IP only?",
+      "options": [
+        "ClusterIP",
+        "NodePort",
+        "LoadBalancer",
+        "ExternalName"
+      ],
+      "correct": 0,
+      "explanation": "ClusterIP is the default Service type. It assigns a cluster-internal IP address, making the Service reachable only from within the cluster. NodePort and LoadBalancer extend ClusterIP with external access capabilities.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 62,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "Which Service type allocates a port on every node in the cluster for external access?",
+      "options": [
+        "NodePort",
+        "ClusterIP",
+        "LoadBalancer",
+        "ExternalName"
+      ],
+      "correct": 0,
+      "explanation": "A NodePort Service allocates a port (default range 30000-32767) on every cluster node. External clients can access the Service via <NodeIP>:<NodePort>. It builds on top of ClusterIP, so the service is also accessible internally.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 63,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "What is the default NodePort range in Kubernetes?",
+      "options": [
+        "30000-32767",
+        "80-443",
+        "1024-65535",
+        "20000-25000"
+      ],
+      "correct": 0,
+      "explanation": "Kubernetes allocates NodePort values from the range 30000-32767 by default. This range can be changed using the --service-node-port-range flag on the kube-apiserver. You can also specify a particular port within this range in the Service spec.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 64,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "What is the FQDN to access a Service named 'my-svc' in the 'production' namespace from another namespace?",
+      "options": [
+        "my-svc.production.svc.cluster.local",
+        "my-svc.production.pod.cluster.local",
+        "production.my-svc.svc.cluster.local",
+        "my-svc.svc.production.cluster.local"
+      ],
+      "correct": 0,
+      "explanation": "The DNS format for Kubernetes Services is <service-name>.<namespace>.svc.cluster.local. Within the same namespace, you can use just the service name. Cross-namespace access requires at least <service-name>.<namespace>.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 65,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "Which Kubernetes component provides DNS resolution for Services and pods within the cluster?",
+      "options": [
+        "CoreDNS",
+        "kube-proxy",
+        "kube-dns-controller",
+        "kubelet"
+      ],
+      "correct": 0,
+      "explanation": "CoreDNS is the default DNS server in Kubernetes (replacing kube-dns since 1.13). It runs as pods in the kube-system namespace and provides DNS resolution for Service names, pod names, and other cluster DNS records.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 66,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "Which Kubernetes resource provides HTTP-based routing to Services based on hostname or path?",
+      "options": [
+        "Ingress",
+        "Service of type LoadBalancer",
+        "NetworkPolicy",
+        "Endpoint"
+      ],
+      "correct": 0,
+      "explanation": "An Ingress resource defines rules for routing external HTTP/HTTPS traffic to internal Services based on the request hostname or URL path. It requires an Ingress controller (like nginx-ingress or Traefik) to implement the rules.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 67,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "An Ingress resource is created but traffic is not being routed. What is the most likely cause?",
+      "options": [
+        "No Ingress controller is installed in the cluster",
+        "The Ingress resource has the wrong API version",
+        "The Service type must be LoadBalancer for Ingress to work",
+        "Ingress only works with StatefulSets"
+      ],
+      "correct": 0,
+      "explanation": "An Ingress resource is just a configuration object. Without an Ingress controller (a pod running nginx, Traefik, HAProxy, etc.) watching for Ingress resources and configuring the actual routing, the Ingress has no effect.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 68,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "Which Kubernetes resource restricts network traffic between pods?",
+      "options": [
+        "NetworkPolicy",
+        "SecurityContext",
+        "PodSecurityPolicy",
+        "ResourceQuota"
+      ],
+      "correct": 0,
+      "explanation": "A NetworkPolicy defines rules for allowing or denying network traffic to and from pods based on labels, namespaces, or IP blocks. By default, all pods can communicate freely. NetworkPolicies require a CNI plugin that supports them (like Calico or Cilium).",
+      "link": "container-security.html"
+    },
+    {
+      "id": 69,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "hard",
+      "question": "You create a NetworkPolicy that selects pods with label 'app=web' and has an empty ingress array (ingress: []). What is the effect?",
+      "options": [
+        "All incoming traffic to 'app=web' pods is denied",
+        "All incoming traffic to 'app=web' pods is allowed",
+        "The NetworkPolicy has no effect",
+        "Only DNS traffic is allowed to 'app=web' pods"
+      ],
+      "correct": 0,
+      "explanation": "A NetworkPolicy with an empty ingress array (ingress: []) denies all incoming traffic to the selected pods. This is because the policy selects the pods (activating network isolation) but defines no ingress rules to allow any traffic. This is a common pattern for creating a default-deny policy.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 70,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "hard",
+      "question": "Which CNI plugins support Kubernetes NetworkPolicies?",
+      "options": [
+        "Calico, Cilium, and Weave Net",
+        "Flannel only",
+        "All CNI plugins support NetworkPolicies by default",
+        "kube-proxy handles NetworkPolicies directly"
+      ],
+      "correct": 0,
+      "explanation": "Not all CNI plugins support NetworkPolicies. Calico, Cilium, and Weave Net are among those that do. Flannel by itself does not support NetworkPolicies (though you can use Flannel with Calico for policy enforcement). NetworkPolicy support depends on the CNI plugin implementation.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 71,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "How does a headless Service differ from a regular ClusterIP Service?",
+      "options": [
+        "A headless Service (clusterIP: None) returns pod IPs directly via DNS instead of a single virtual IP",
+        "A headless Service has no endpoints",
+        "A headless Service only works with DaemonSets",
+        "A headless Service automatically creates an Ingress"
+      ],
+      "correct": 0,
+      "explanation": "A headless Service sets clusterIP to 'None'. Instead of providing a single virtual IP, DNS queries return the IP addresses of all backing pods. This is essential for StatefulSets where clients need to connect to specific pods.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 72,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "Which command creates a Service that exposes Deployment 'web-app' on port 80?",
+      "options": [
+        "kubectl expose deployment web-app --port=80 --target-port=8080",
+        "kubectl create service web-app --port=80",
+        "kubectl service expose web-app --port=80",
+        "kubectl attach service deployment web-app 80"
+      ],
+      "correct": 0,
+      "explanation": "kubectl expose creates a Service for an existing resource. --port is the Service port (what clients connect to) and --target-port is the container port (where the application listens). If --target-port is omitted, it defaults to --port.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 73,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "In an Ingress resource, what does the 'pathType: Prefix' matching rule do?",
+      "options": [
+        "Matches requests where the URL path starts with the specified prefix",
+        "Matches only the exact path specified",
+        "Matches paths using regular expressions",
+        "Matches any path regardless of the specified value"
+      ],
+      "correct": 0,
+      "explanation": "pathType: Prefix matches if the request path starts with the specified path prefix. For example, '/api' matches '/api', '/api/', and '/api/v1'. pathType: Exact only matches the exact path. pathType: ImplementationSpecific depends on the Ingress controller.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 74,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "hard",
+      "question": "You need to allow pods in namespace 'frontend' to communicate with pods labeled 'app=api' in namespace 'backend'. Which NetworkPolicy configuration is correct?",
+      "options": [
+        "A NetworkPolicy in 'backend' namespace selecting 'app=api' pods with an ingress rule allowing traffic from namespace 'frontend'",
+        "A NetworkPolicy in 'frontend' namespace selecting 'app=api' pods",
+        "A ClusterNetworkPolicy applied to both namespaces",
+        "A NetworkPolicy in 'backend' with an egress rule for the 'frontend' namespace"
+      ],
+      "correct": 0,
+      "explanation": "NetworkPolicies are namespace-scoped and apply to pods in their own namespace. To allow ingress traffic to 'app=api' pods in 'backend' from 'frontend', create the policy in 'backend' with a namespaceSelector matching the 'frontend' namespace in the ingress rule.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 75,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "Within the same namespace, how can a pod access a Service named 'my-db'?",
+      "options": [
+        "Using the DNS name 'my-db' or 'my-db.<namespace>.svc.cluster.local'",
+        "Only by using the ClusterIP address directly",
+        "Using the pod IP of the Service's backing pods",
+        "Only through the API server endpoint"
+      ],
+      "correct": 0,
+      "explanation": "Within the same namespace, you can access a Service simply by its name (e.g., 'my-db'). CoreDNS resolves this to the Service's ClusterIP. The FQDN format also works but is typically used for cross-namespace access.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 76,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "What is the default network policy behavior in Kubernetes if no NetworkPolicies are created?",
+      "options": [
+        "All pods can communicate with all other pods without restriction",
+        "All pod-to-pod traffic is denied by default",
+        "Only pods in the same namespace can communicate",
+        "Only traffic on port 80 and 443 is allowed"
+      ],
+      "correct": 0,
+      "explanation": "By default, Kubernetes allows all pod-to-pod communication without restriction (all-allow). NetworkPolicies are additive: the first policy selecting a pod activates network isolation for that pod, and only explicitly allowed traffic passes.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 77,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "What is the purpose of the 'externalTrafficPolicy: Local' setting on a NodePort or LoadBalancer Service?",
+      "options": [
+        "It preserves the client source IP by routing traffic only to pods on the node that received the traffic",
+        "It restricts the Service to local pods in the same namespace",
+        "It routes traffic only to the node closest to the client",
+        "It disables kube-proxy for that Service"
+      ],
+      "correct": 0,
+      "explanation": "externalTrafficPolicy: Local avoids a second hop by routing external traffic only to pods on the receiving node. This preserves the original client source IP (SNAT is not needed) but may cause uneven load distribution if pods are not spread across all nodes.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 78,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "medium",
+      "question": "Which section of a NetworkPolicy controls outgoing traffic from selected pods?",
+      "options": [
+        "egress",
+        "ingress",
+        "outbound",
+        "external"
+      ],
+      "correct": 0,
+      "explanation": "The egress section of a NetworkPolicy controls outgoing traffic from the selected pods. The ingress section controls incoming traffic. Both sections are independent; a policy can specify one or both in the policyTypes field.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 79,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "easy",
+      "question": "Which annotation on an Ingress resource configures TLS termination?",
+      "options": [
+        "The tls section in the Ingress spec referencing a Secret with the TLS certificate",
+        "nginx.ingress.kubernetes.io/ssl-redirect: 'true'",
+        "kubernetes.io/tls-terminate: 'true'",
+        "ingress.kubernetes.io/tls: 'enabled'"
+      ],
+      "correct": 0,
+      "explanation": "TLS termination is configured in the Ingress spec's tls section, which references a Kubernetes Secret containing tls.crt and tls.key. The Secret must exist in the same namespace as the Ingress. The ssl-redirect annotation controls redirect behavior but doesn't configure TLS itself.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 80,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "hard",
+      "question": "You want to create a default deny-all egress policy for all pods in a namespace. Which spec achieves this?",
+      "options": [
+        "podSelector: {} with policyTypes: ['Egress'] and no egress rules defined",
+        "podSelector: {} with policyTypes: ['Ingress'] and no ingress rules",
+        "podSelector: {} with egress: [{}]",
+        "A NetworkPolicy cannot deny egress traffic"
+      ],
+      "correct": 0,
+      "explanation": "Using an empty podSelector ({}) selects all pods in the namespace. Setting policyTypes to ['Egress'] without defining any egress rules blocks all outgoing traffic. This is a common default-deny-egress pattern. Note: this also blocks DNS unless you explicitly allow UDP port 53.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 81,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "Which Service type maps a Service to an external DNS name without proxying?",
+      "options": [
+        "ExternalName",
+        "ClusterIP",
+        "NodePort",
+        "LoadBalancer"
+      ],
+      "correct": 0,
+      "explanation": "An ExternalName Service maps a Service to a DNS name (e.g., my-service.production.svc.cluster.local -> my.database.example.com) by returning a CNAME record. No proxying or forwarding occurs; it's purely a DNS alias.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 82,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "Which ConfigMap in the kube-system namespace contains the CoreDNS configuration?",
+      "options": [
+        "coredns",
+        "dns-config",
+        "kube-dns",
+        "cluster-dns"
+      ],
+      "correct": 0,
+      "explanation": "The CoreDNS configuration is stored in a ConfigMap named 'coredns' in the kube-system namespace. It contains the Corefile which defines DNS zones, plugins (forward, loop, cache, loadbalance), and custom DNS entries.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 83,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "An Ingress has two rules: one for 'api.example.com' routing to Service 'api-svc' and one for 'web.example.com' routing to Service 'web-svc'. What does the defaultBackend do?",
+      "options": [
+        "It handles requests that don't match any host or path rules defined in the Ingress",
+        "It serves as a health check endpoint for the Ingress controller",
+        "It takes priority over all other rules",
+        "It defines the default TLS certificate"
+      ],
+      "correct": 0,
+      "explanation": "The defaultBackend in an Ingress spec handles requests that don't match any defined host or path rules. This is useful for serving a custom 404 page or catching unmatched traffic. Without it, the Ingress controller typically returns its own default backend response.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 84,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "easy",
+      "question": "A NetworkPolicy with an ingress rule specifying 'ports: [{port: 80, protocol: TCP}]' allows what traffic?",
+      "options": [
+        "Only TCP traffic on port 80 from the allowed sources",
+        "All traffic on port 80 regardless of protocol",
+        "TCP traffic on all ports",
+        "UDP traffic on port 80"
+      ],
+      "correct": 0,
+      "explanation": "The ports section in a NetworkPolicy rule specifies both the port number and protocol. Only traffic matching BOTH the protocol (TCP) and port (80) from the allowed sources is permitted. Other ports and protocols are blocked.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 85,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "medium",
+      "question": "Which field in a NetworkPolicy ingress rule allows traffic from all pods in a specific namespace?",
+      "options": [
+        "namespaceSelector with labels matching the source namespace",
+        "podSelector with empty selector",
+        "ipBlock with the namespace's CIDR",
+        "from: [{namespace: 'source-ns'}]"
+      ],
+      "correct": 0,
+      "explanation": "The namespaceSelector field in a NetworkPolicy ingress from clause matches all pods in namespaces with matching labels. For example, namespaceSelector: {matchLabels: {name: frontend}} allows traffic from all pods in namespaces labeled name=frontend.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 86,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "Which command lists the endpoints (pod IPs) backing a Service named 'web-svc'?",
+      "options": [
+        "kubectl get endpoints web-svc",
+        "kubectl describe service web-svc --show-endpoints",
+        "kubectl get pods --service=web-svc",
+        "kubectl endpoint list web-svc"
+      ],
+      "correct": 0,
+      "explanation": "kubectl get endpoints (or 'ep' for short) shows the IP addresses and ports of pods backing a Service. If the endpoints list is empty, it usually means no pods match the Service's selector or the pods aren't ready.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 87,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "A pod's DNS search domains include which entries by default?",
+      "options": [
+        "<namespace>.svc.cluster.local, svc.cluster.local, cluster.local",
+        "cluster.local only",
+        "svc.cluster.local only",
+        "No search domains; all DNS lookups must use FQDNs"
+      ],
+      "correct": 0,
+      "explanation": "By default, a pod's /etc/resolv.conf includes search domains: <namespace>.svc.cluster.local, svc.cluster.local, and cluster.local. This allows short DNS names like 'my-svc' to resolve to 'my-svc.<namespace>.svc.cluster.local'.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 88,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "medium",
+      "question": "In a NetworkPolicy, what does an empty podSelector ({}) in the spec mean?",
+      "options": [
+        "The policy applies to all pods in the namespace",
+        "The policy applies to no pods",
+        "The policy applies to pods with no labels",
+        "The policy is invalid and rejected"
+      ],
+      "correct": 0,
+      "explanation": "An empty podSelector ({}) in the NetworkPolicy spec selects ALL pods in the policy's namespace. This is commonly used for default deny policies that affect every pod in the namespace.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 89,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "easy",
+      "question": "Which Kubernetes resource must be installed before Ingress resources have any effect?",
+      "options": [
+        "An Ingress controller (e.g., nginx-ingress, Traefik)",
+        "A LoadBalancer Service",
+        "CoreDNS",
+        "kube-proxy"
+      ],
+      "correct": 0,
+      "explanation": "An Ingress controller is a pod (or set of pods) that watches for Ingress resources and implements the routing rules. Without an Ingress controller deployed in the cluster, Ingress resources are just stored objects with no effect on traffic.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 90,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "What is the difference between sessionAffinity: ClientIP and the default (None) on a Service?",
+      "options": [
+        "ClientIP routes all requests from the same client IP to the same pod; None distributes requests randomly across all pods",
+        "ClientIP requires a sticky cookie; None uses round-robin only",
+        "ClientIP works only with LoadBalancer type; None works with all types",
+        "There is no practical difference in pod-level routing"
+      ],
+      "correct": 0,
+      "explanation": "sessionAffinity: ClientIP configures kube-proxy to route all connections from the same source IP to the same backend pod (with a configurable timeout, default 10800s/3h). The default (None) distributes each new connection to any available pod using random selection.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 91,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "Which Kubernetes resource represents a piece of storage in the cluster provisioned by an administrator?",
+      "options": [
+        "PersistentVolume (PV)",
+        "PersistentVolumeClaim (PVC)",
+        "StorageClass",
+        "VolumeAttachment"
+      ],
+      "correct": 0,
+      "explanation": "A PersistentVolume (PV) is a cluster-level storage resource provisioned by an administrator (or dynamically via StorageClass). PVs are independent of any pod and have a lifecycle separate from the pods that use them.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 92,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "Which resource does a pod use to request storage from the cluster?",
+      "options": [
+        "PersistentVolumeClaim (PVC)",
+        "PersistentVolume (PV)",
+        "StorageClass",
+        "ConfigMap"
+      ],
+      "correct": 0,
+      "explanation": "A PersistentVolumeClaim (PVC) is a request for storage by a user. Pods reference PVCs in their volume mounts. The PVC is then bound to a PV that meets its requirements (size, access mode, StorageClass).",
+      "link": "container-security.html"
+    },
+    {
+      "id": 93,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "Which access mode allows a PersistentVolume to be mounted as read-write by a single node?",
+      "options": [
+        "ReadWriteOnce (RWO)",
+        "ReadOnlyMany (ROX)",
+        "ReadWriteMany (RWX)",
+        "ReadWriteOncePod (RWOP)"
+      ],
+      "correct": 0,
+      "explanation": "ReadWriteOnce (RWO) allows the volume to be mounted as read-write by a single node. Multiple pods on the same node can share the volume. ROX allows read-only by many nodes. RWX allows read-write by many nodes. RWOP restricts to a single pod.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 94,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "What does the 'Retain' reclaim policy do when a PVC is deleted?",
+      "options": [
+        "The PV and its data are preserved but the PV enters a 'Released' state and cannot be rebound automatically",
+        "The PV and its data are deleted immediately",
+        "The PV is recycled by wiping its data and made available again",
+        "The PV is automatically bound to another PVC"
+      ],
+      "correct": 0,
+      "explanation": "With the Retain reclaim policy, when a PVC is deleted, the PV becomes 'Released'. The data remains intact, but the PV cannot be automatically bound to a new PVC. An administrator must manually reclaim it (clean data, delete PV, or recreate it).",
+      "link": "container-security.html"
+    },
+    {
+      "id": 95,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "Which Kubernetes resource enables dynamic provisioning of PersistentVolumes?",
+      "options": [
+        "StorageClass",
+        "PersistentVolume",
+        "VolumeSnapshot",
+        "CSIDriver"
+      ],
+      "correct": 0,
+      "explanation": "A StorageClass defines a 'class' of storage with a specific provisioner (e.g., kubernetes.io/aws-ebs, csi.driver.name) and parameters. When a PVC references a StorageClass, the provisioner automatically creates a PV matching the PVC's requirements.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 96,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "A PVC is in 'Pending' state. Which is the most likely cause?",
+      "options": [
+        "No PV matches the PVC's requirements (size, access mode, StorageClass), and no dynamic provisioner is available",
+        "The PVC has an invalid name",
+        "The namespace has exceeded its ResourceQuota for PVCs",
+        "The pod referencing the PVC has not started yet"
+      ],
+      "correct": 0,
+      "explanation": "A PVC stays in 'Pending' when no available PV satisfies its requirements and the StorageClass has no functioning provisioner for dynamic creation. Check that a matching PV exists or that the StorageClass provisioner is correctly configured.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 97,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "What is the purpose of the 'volumeMode: Block' setting on a PersistentVolume?",
+      "options": [
+        "It presents the volume as a raw block device to the pod rather than a mounted filesystem",
+        "It blocks all write operations to the volume",
+        "It encrypts the volume at the block level",
+        "It limits the volume to block storage providers only"
+      ],
+      "correct": 0,
+      "explanation": "volumeMode: Block presents the PV as a raw block device (e.g., /dev/xvda) without a filesystem. The application must handle raw device I/O directly. The default volumeMode is 'Filesystem', which mounts the volume with a filesystem.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 98,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "Which volume type provides temporary storage that is deleted when the pod is removed from the node?",
+      "options": [
+        "emptyDir",
+        "hostPath",
+        "persistentVolumeClaim",
+        "configMap"
+      ],
+      "correct": 0,
+      "explanation": "An emptyDir volume is created when a pod is assigned to a node and exists for the lifetime of that pod. It starts empty, all containers in the pod can read/write to it, and it is deleted when the pod is removed from the node.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 99,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "Which annotation on a StorageClass marks it as the default for PVCs that don't specify a StorageClass?",
+      "options": [
+        "storageclass.kubernetes.io/is-default-class: 'true'",
+        "kubernetes.io/default-storage: 'true'",
+        "default-storageclass: 'true'",
+        "storage.kubernetes.io/default: 'yes'"
+      ],
+      "correct": 0,
+      "explanation": "The annotation 'storageclass.kubernetes.io/is-default-class: true' marks a StorageClass as the default. PVCs that don't specify a storageClassName will use this default StorageClass for dynamic provisioning.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 100,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "What is the CSI (Container Storage Interface) in Kubernetes?",
+      "options": [
+        "A standard interface that allows storage vendors to write plugins that work with Kubernetes without modifying core code",
+        "A Kubernetes-specific storage driver format",
+        "A container image format for storage applications",
+        "A cloud-specific storage API"
+      ],
+      "correct": 0,
+      "explanation": "CSI is an industry standard that defines an interface between container orchestrators (like Kubernetes) and storage providers. CSI drivers run as pods in the cluster and handle provisioning, attaching, mounting, and snapshotting volumes.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 101,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "A PVC requests 5Gi storage with ReadWriteOnce access mode. A PV exists with 10Gi capacity and ReadWriteOnce access mode. Will the PVC bind to this PV?",
+      "options": [
+        "Yes, the PVC will bind because the PV meets the minimum requirements (same or larger capacity, matching access mode)",
+        "No, because the sizes must match exactly",
+        "No, because 10Gi is larger than requested",
+        "Only if the StorageClass matches exactly"
+      ],
+      "correct": 0,
+      "explanation": "A PVC binds to a PV that meets its minimum requirements. The PV must have at least the requested storage capacity and support the requested access mode. A 10Gi PV satisfies a 5Gi PVC request (the PVC gets the full 10Gi). StorageClass must also match if specified.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 102,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "What is the 'Delete' reclaim policy on a StorageClass and when is it the default?",
+      "options": [
+        "When the PVC is deleted, the PV and underlying storage are automatically deleted; it is the default for dynamically provisioned PVs",
+        "The PVC is deleted but the PV is retained; it is the default for all PVs",
+        "The namespace is deleted along with all PVCs; it applies only to temporary storage",
+        "The data is deleted but the PV object is retained; it is never the default"
+      ],
+      "correct": 0,
+      "explanation": "The Delete reclaim policy means that when a PVC is deleted, the PV and the underlying storage asset (e.g., EBS volume, GCE disk) are automatically deleted. This is the default reclaim policy for dynamically provisioned PVs created by StorageClasses.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 103,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "How do you mount a PVC named 'data-pvc' into a pod at the path '/data'?",
+      "options": [
+        "Add a volume referencing the PVC and a volumeMount with mountPath '/data' in the pod spec",
+        "Reference the PVC directly in the container command",
+        "Create a symlink from the PVC to /data",
+        "Set an environment variable DATA_PATH to the PVC name"
+      ],
+      "correct": 0,
+      "explanation": "In the pod spec, define a volume with persistentVolumeClaim.claimName: data-pvc, then in the container spec add a volumeMount with name matching the volume and mountPath: /data. This makes the PVC's storage available at /data inside the container.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 104,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "Which access mode allows a volume to be mounted as read-write by multiple nodes simultaneously?",
+      "options": [
+        "ReadWriteMany (RWX)",
+        "ReadWriteOnce (RWO)",
+        "ReadOnlyMany (ROX)",
+        "ReadWriteOncePod (RWOP)"
+      ],
+      "correct": 0,
+      "explanation": "ReadWriteMany (RWX) allows the volume to be mounted as read-write by many nodes simultaneously. This is required for shared storage scenarios. Not all storage providers support RWX (NFS and some CSI drivers do; EBS and GCE PD do not).",
+      "link": "container-security.html"
+    },
+    {
+      "id": 105,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "What is the purpose of 'volumeBindingMode: WaitForFirstConsumer' on a StorageClass?",
+      "options": [
+        "It delays PV provisioning and binding until a pod using the PVC is scheduled, ensuring the volume is created in the same zone as the pod",
+        "It waits for multiple PVCs before provisioning",
+        "It requires manual approval before binding",
+        "It creates the volume only after the first data write"
+      ],
+      "correct": 0,
+      "explanation": "WaitForFirstConsumer delays dynamic provisioning until a pod using the PVC is scheduled. This ensures the volume is created in the same availability zone or topology as the consuming pod, avoiding scheduling failures in multi-zone clusters.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 106,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "Which command shows detailed information about a pod, including events and conditions?",
+      "options": [
+        "kubectl describe pod <pod-name>",
+        "kubectl get pod <pod-name> -o wide",
+        "kubectl logs <pod-name>",
+        "kubectl inspect pod <pod-name>"
+      ],
+      "correct": 0,
+      "explanation": "kubectl describe shows a detailed view of a resource including metadata, spec, status, conditions, and events. For pods, it shows the node assignment, container states, resource requests/limits, volumes, and recent events that help diagnose issues.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 107,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "Which command retrieves the logs from a container in a pod?",
+      "options": [
+        "kubectl logs <pod-name>",
+        "kubectl describe pod <pod-name>",
+        "kubectl get events --pod=<pod-name>",
+        "kubectl exec <pod-name> -- cat /var/log/app.log"
+      ],
+      "correct": 0,
+      "explanation": "kubectl logs retrieves the stdout/stderr output from a container. Use -c <container-name> for multi-container pods, -f to follow logs in real-time, --previous to get logs from a previous container instance, and --tail=N to limit output.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 108,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "A pod is in 'Pending' state. Which is the most common cause?",
+      "options": [
+        "Insufficient resources on available nodes to satisfy the pod's resource requests",
+        "The container image is not found",
+        "The pod's liveness probe is failing",
+        "The application inside the container is crashing"
+      ],
+      "correct": 0,
+      "explanation": "Pending typically means the scheduler cannot find a node with sufficient resources (CPU, memory) to run the pod. Other causes include unmatched nodeSelector/affinity, unresolved PVCs, or taints without tolerations. Image pull issues cause ImagePullBackOff, not Pending.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 109,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "easy",
+      "question": "What does the pod status 'CrashLoopBackOff' indicate?",
+      "options": [
+        "The container keeps crashing and Kubernetes is restarting it with exponentially increasing delays",
+        "The pod cannot be scheduled to any node",
+        "The container image cannot be pulled",
+        "The pod is being throttled due to resource limits"
+      ],
+      "correct": 0,
+      "explanation": "CrashLoopBackOff means the container starts, crashes, and gets restarted repeatedly. Kubernetes increases the wait time between restarts (10s, 20s, 40s, up to 5 minutes). Check container logs with 'kubectl logs --previous' to diagnose the crash cause.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 110,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "A pod shows status 'ImagePullBackOff'. What should you check first?",
+      "options": [
+        "Verify the image name and tag are correct and the image exists in the registry",
+        "Check if the node has enough CPU",
+        "Verify the pod's readiness probe configuration",
+        "Check the kube-scheduler logs"
+      ],
+      "correct": 0,
+      "explanation": "ImagePullBackOff means the kubelet cannot pull the container image. Common causes: typo in image name/tag, private registry without imagePullSecrets configured, registry authentication failure, or the image doesn't exist in the registry.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 111,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "Which command opens an interactive shell inside a running container?",
+      "options": [
+        "kubectl exec -it <pod-name> -- /bin/sh",
+        "kubectl attach <pod-name> --stdin --tty",
+        "kubectl shell <pod-name>",
+        "kubectl connect <pod-name> --interactive"
+      ],
+      "correct": 0,
+      "explanation": "kubectl exec -it runs a command in a container interactively. The -i flag passes stdin and -t allocates a TTY. The '--' separates kubectl flags from the command to run. Use -c <container> for multi-container pods.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 112,
       "domain": 5,
       "objective": "5.3",
       "difficulty": "easy",
-      "question": "In the context of Kubernetes CKA, what is the primary goal of manage container stdout and stderr logs?",
+      "question": "Which command shows all events in the current namespace sorted by timestamp?",
       "options": [
-        "To ensure proper troubleshooting controls are in place",
-        "To reduce operational costs",
-        "To increase system performance",
-        "To simplify user interfaces"
+        "kubectl get events --sort-by='.metadata.creationTimestamp'",
+        "kubectl describe events --all",
+        "kubectl logs events",
+        "kubectl get events --sort-by='.status.phase'"
       ],
       "correct": 0,
-      "explanation": "The primary goal of manage container stdout and stderr logs is to ensure proper controls and processes are in place within Troubleshooting.",
-      "link": "start-here.html"
+      "explanation": "kubectl get events lists all events in the namespace. The --sort-by flag with .metadata.creationTimestamp orders them chronologically. Events are crucial for debugging pod scheduling, image pulling, volume mounting, and other lifecycle issues.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 113,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "hard",
+      "question": "The kube-scheduler is not running on the control plane node. Where do you check its static pod manifest?",
+      "options": [
+        "/etc/kubernetes/manifests/kube-scheduler.yaml",
+        "/var/lib/kubelet/kube-scheduler.yaml",
+        "/etc/kubernetes/config/scheduler.yaml",
+        "/opt/kubernetes/manifests/scheduler.yaml"
+      ],
+      "correct": 0,
+      "explanation": "On kubeadm clusters, the kube-scheduler runs as a static pod. Its manifest is at /etc/kubernetes/manifests/kube-scheduler.yaml. If the file is missing, corrupted, or has incorrect configuration, the scheduler won't start. The kubelet watches this directory.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 114,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "medium",
+      "question": "How do you check the kubelet logs for troubleshooting node issues?",
+      "options": [
+        "journalctl -u kubelet",
+        "kubectl logs kubelet",
+        "cat /var/log/kubelet/kubelet.log",
+        "kubectl describe node <node-name> --logs"
+      ],
+      "correct": 0,
+      "explanation": "The kubelet runs as a systemd service on most Linux distributions. Its logs are accessible via 'journalctl -u kubelet'. Add -f to follow logs in real-time or --since='1h ago' to filter by time. kubectl logs only works for pods, not system components.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 115,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "medium",
+      "question": "A node shows status 'NotReady'. Which component should you check first on that node?",
+      "options": [
+        "The kubelet service",
+        "The kube-proxy service",
+        "The container runtime (containerd/CRI-O)",
+        "CoreDNS pods"
+      ],
+      "correct": 0,
+      "explanation": "When a node is NotReady, the first thing to check is the kubelet, as it's responsible for reporting node status to the API server. Common causes: kubelet not running, kubelet certificate expired, or kubelet misconfiguration. Check with 'systemctl status kubelet' and 'journalctl -u kubelet'.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 116,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "hard",
+      "question": "A node is NotReady and kubelet logs show certificate errors. What is the most likely cause?",
+      "options": [
+        "The kubelet client certificate has expired and needs to be renewed",
+        "The node's IP address has changed",
+        "The kube-apiserver is down",
+        "The CNI plugin is misconfigured"
+      ],
+      "correct": 0,
+      "explanation": "kubelet uses TLS client certificates to authenticate with the API server. If certificates expire, the kubelet cannot communicate with the API server and the node becomes NotReady. Certificate rotation should be enabled, or certificates must be manually renewed.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 117,
+      "domain": 5,
+      "objective": "5.6",
+      "difficulty": "hard",
+      "question": "A Service is not routing traffic to pods. All pods are Running and Ready. What should you check?",
+      "options": [
+        "Verify the Service selector labels match the pod labels exactly",
+        "Check if the pods have resource limits set",
+        "Restart kube-scheduler",
+        "Delete and recreate the pods"
+      ],
+      "correct": 0,
+      "explanation": "The most common cause of Service routing failure with healthy pods is a selector mismatch. The Service selector labels must exactly match the pod labels. Check with 'kubectl get endpoints <service-name>' - if the endpoint list is empty, the labels don't match.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 118,
+      "domain": 5,
+      "objective": "5.6",
+      "difficulty": "medium",
+      "question": "Which tool can you use to test DNS resolution inside a cluster for troubleshooting?",
+      "options": [
+        "Run a temporary pod with nslookup or dig: kubectl run test --image=busybox --rm -it -- nslookup <service-name>",
+        "Use kubectl dns resolve <service-name>",
+        "Check the kube-proxy configuration",
+        "Use kubectl get service --resolve-dns"
+      ],
+      "correct": 0,
+      "explanation": "To test cluster DNS, create a temporary pod with DNS tools and query from inside the cluster. 'kubectl run test --image=busybox --rm -it -- nslookup kubernetes.default' tests basic DNS resolution. This verifies CoreDNS is working correctly.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 119,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "Which command shows resource usage (CPU/memory) for pods in the current namespace?",
+      "options": [
+        "kubectl top pods",
+        "kubectl describe pods --resources",
+        "kubectl get pods --show-usage",
+        "kubectl metrics pods"
+      ],
+      "correct": 0,
+      "explanation": "kubectl top pods shows current CPU and memory usage for pods. This requires the Metrics Server to be installed in the cluster. Without it, the command fails. Use --containers to see per-container usage and --sort-by=memory to sort by consumption.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 120,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "Which Kubernetes component must be installed for 'kubectl top' commands to work?",
+      "options": [
+        "Metrics Server",
+        "Prometheus",
+        "Grafana",
+        "Heapster"
+      ],
+      "correct": 0,
+      "explanation": "The Metrics Server is a cluster-wide aggregator of resource usage data. It collects CPU and memory metrics from kubelets and makes them available via the Metrics API. kubectl top and HorizontalPodAutoscaler both depend on Metrics Server.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 121,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "A pod is in CrashLoopBackOff but 'kubectl logs' shows no output. How do you debug it?",
+      "options": [
+        "Use 'kubectl logs <pod-name> --previous' to view logs from the crashed container instance",
+        "Delete the pod and recreate it",
+        "Check the kube-scheduler logs",
+        "Scale the Deployment to 0 and back to 1"
+      ],
+      "correct": 0,
+      "explanation": "When a container crashes immediately, 'kubectl logs' may show nothing because the current container hasn't produced output yet. Using --previous retrieves logs from the last terminated container instance, which likely contains the error that caused the crash.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 122,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "hard",
+      "question": "The kube-apiserver pod is not starting on the control plane. What is the first file to check?",
+      "options": [
+        "/etc/kubernetes/manifests/kube-apiserver.yaml for syntax errors or incorrect flags",
+        "/var/lib/kubelet/config.yaml",
+        "/etc/kubernetes/kubelet.conf",
+        "/etc/kubernetes/controller-manager.conf"
+      ],
+      "correct": 0,
+      "explanation": "The kube-apiserver runs as a static pod from /etc/kubernetes/manifests/kube-apiserver.yaml. Check for YAML syntax errors, incorrect flags (e.g., wrong etcd endpoints, certificate paths), and resource constraints. Also check kubelet logs as the kubelet manages static pods.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 123,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "medium",
+      "question": "A worker node's status is showing 'DiskPressure'. What does this condition indicate?",
+      "options": [
+        "The node's available disk space has fallen below the eviction threshold",
+        "The node has too many pods running",
+        "The node's CPU usage is too high",
+        "The node's kubelet is not responding"
+      ],
+      "correct": 0,
+      "explanation": "DiskPressure means the node's available disk space is below the kubelet's eviction threshold (default: 10% or 15% depending on the signal). The kubelet begins evicting pods to free disk space. Check disk usage with 'df -h' and clean up unused images/containers.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 124,
+      "domain": 5,
+      "objective": "5.6",
+      "difficulty": "medium",
+      "question": "A pod cannot reach external services (e.g., google.com). Internal Service DNS works fine. What should you check?",
+      "options": [
+        "The CoreDNS upstream forwarder configuration and node-level DNS/network settings",
+        "The kube-scheduler configuration",
+        "The pod's resource limits",
+        "The cluster-admin RBAC permissions"
+      ],
+      "correct": 0,
+      "explanation": "If internal DNS works but external resolution fails, the issue is likely in CoreDNS's forward directive (which forwards external queries to upstream DNS) or the node's network configuration (NAT rules, internet gateway, firewall rules). Check the coredns ConfigMap and node /etc/resolv.conf.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 125,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "easy",
+      "question": "Which command shows the status and conditions of a node?",
+      "options": [
+        "kubectl describe node <node-name>",
+        "kubectl get node <node-name> --status",
+        "kubectl top node <node-name>",
+        "kubectl inspect node <node-name>"
+      ],
+      "correct": 0,
+      "explanation": "kubectl describe node shows detailed information including conditions (Ready, MemoryPressure, DiskPressure, PIDPressure), allocated resources, running pods, system info, and events. This is the primary command for node-level troubleshooting.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 126,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "easy",
+      "question": "Which flag retrieves logs from a specific container in a multi-container pod?",
+      "options": [
+        "-c <container-name>",
+        "--container-id <id>",
+        "--target <container-name>",
+        "--from <container-name>"
+      ],
+      "correct": 0,
+      "explanation": "The -c (or --container) flag specifies which container's logs to retrieve in a multi-container pod. Example: 'kubectl logs my-pod -c sidecar'. Without this flag in a multi-container pod, kubectl prompts you to specify a container.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 127,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "hard",
+      "question": "After upgrading a control plane node, the kube-controller-manager is not starting. You see a TLS error in the kubelet logs. What is the most likely cause?",
+      "options": [
+        "The kube-controller-manager certificate or kubeconfig references have become stale after the upgrade",
+        "The etcd cluster is down",
+        "The kube-scheduler is preventing the controller from starting",
+        "The CNI plugin needs to be reinstalled"
+      ],
+      "correct": 0,
+      "explanation": "After an upgrade, certificate paths or kubeconfig references in the static pod manifest may become stale. Check /etc/kubernetes/manifests/kube-controller-manager.yaml for correct certificate paths and ensure /etc/kubernetes/controller-manager.conf points to valid credentials.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 128,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "easy",
+      "question": "Which command marks a node as unschedulable without evicting existing pods?",
+      "options": [
+        "kubectl cordon <node-name>",
+        "kubectl drain <node-name>",
+        "kubectl taint nodes <node-name> unschedulable=true:NoSchedule",
+        "kubectl delete node <node-name>"
+      ],
+      "correct": 0,
+      "explanation": "kubectl cordon marks a node as unschedulable (SchedulingDisabled). Existing pods continue running, but no new pods will be scheduled on it. This is useful for maintenance preparation. kubectl uncordon reverses it.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 129,
+      "domain": 5,
+      "objective": "5.6",
+      "difficulty": "hard",
+      "question": "Pods in a new namespace cannot resolve DNS for services in other namespaces. DNS works in other namespaces. What should you check?",
+      "options": [
+        "Whether a NetworkPolicy in the new namespace is blocking egress traffic to CoreDNS (UDP port 53)",
+        "Whether the namespace has a ResourceQuota for DNS",
+        "Whether CoreDNS needs to be restarted",
+        "Whether kube-proxy is running on the node"
+      ],
+      "correct": 0,
+      "explanation": "A common cause of namespace-specific DNS failure is a default-deny egress NetworkPolicy that blocks UDP/TCP port 53 to CoreDNS. If other namespaces work fine, the issue is isolated to the new namespace's network policies. Ensure DNS egress is explicitly allowed.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 130,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "Which command shows resource usage (CPU/memory) for all nodes in the cluster?",
+      "options": [
+        "kubectl top nodes",
+        "kubectl describe nodes --resources",
+        "kubectl get nodes --show-capacity",
+        "kubectl cluster-info --resources"
+      ],
+      "correct": 0,
+      "explanation": "kubectl top nodes shows current CPU and memory usage for all nodes, including the percentage of capacity used. This requires the Metrics Server. It's useful for identifying nodes under resource pressure.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 131,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "hard",
+      "question": "A pod is Pending with the event 'FailedScheduling: 0/3 nodes available: 3 Insufficient cpu'. What are your options to resolve this?",
+      "options": [
+        "Reduce the pod's CPU request, add more nodes, or free up resources by evicting/deleting other pods",
+        "Increase the pod's CPU limit only",
+        "Restart the kube-scheduler",
+        "Change the pod's restart policy to Never"
+      ],
+      "correct": 0,
+      "explanation": "This error means no node has enough available CPU to satisfy the pod's request. Solutions: reduce the pod's CPU request to fit available capacity, add nodes to the cluster, or free resources by removing/scaling down other workloads. Changing limits alone doesn't affect scheduling.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 132,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "How do you view logs from a container that previously crashed (before the current restart)?",
+      "options": [
+        "kubectl logs <pod-name> --previous",
+        "kubectl logs <pod-name> --crashed",
+        "kubectl logs <pod-name> --history",
+        "kubectl describe pod <pod-name> --logs"
+      ],
+      "correct": 0,
+      "explanation": "The --previous flag (or -p) retrieves logs from the previously terminated container instance. This is essential for debugging CrashLoopBackOff pods where the current container may not have produced logs before crashing again.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 133,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "medium",
+      "question": "Which command restarts the kubelet service on a node?",
+      "options": [
+        "systemctl restart kubelet",
+        "kubectl restart kubelet",
+        "service kubelet reload",
+        "kubelet --restart"
+      ],
+      "correct": 0,
+      "explanation": "The kubelet runs as a systemd service. 'systemctl restart kubelet' stops and starts the kubelet process. This is needed after changing kubelet configuration, updating certificates, or fixing kubelet crashes. You must SSH to the node to run this.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 134,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "hard",
+      "question": "A node shows condition 'PIDPressure: True'. What does this indicate and how do you resolve it?",
+      "options": [
+        "Too many processes are running on the node; identify and terminate runaway processes or pods, or increase the PID limit",
+        "The node has insufficient memory; add more RAM",
+        "The node's disk is full; clean up unused images",
+        "The kubelet process ID has changed; restart kubelet"
+      ],
+      "correct": 0,
+      "explanation": "PIDPressure means the number of processes on the node is approaching the configured PID limit (--pod-max-pids or system-level). This often indicates a runaway process spawning too many child processes. Find the offending pod/process and address it.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 135,
+      "domain": 5,
+      "objective": "5.6",
+      "difficulty": "easy",
+      "question": "Which command tests connectivity from one pod to another pod's IP?",
+      "options": [
+        "kubectl exec <pod-name> -- curl <target-pod-ip>:<port>",
+        "kubectl ping <pod-name> <target-pod-ip>",
+        "kubectl test connectivity <source> <target>",
+        "kubectl network test <pod-name>"
+      ],
+      "correct": 0,
+      "explanation": "Use kubectl exec to run connectivity tests (curl, wget, ping, nc) from inside a pod. This tests actual pod-to-pod networking through the CNI plugin. If curl isn't available, use 'wget -qO- <ip>:<port>' or run a test pod with network tools.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 136,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "A pod shows status 'Init:CrashLoopBackOff'. What does this mean?",
+      "options": [
+        "An init container in the pod is repeatedly crashing, preventing the main containers from starting",
+        "The pod's main container is crashing during initialization",
+        "The pod cannot initialize its network interface",
+        "The pod's PVC cannot be initialized"
+      ],
+      "correct": 0,
+      "explanation": "Init:CrashLoopBackOff means one of the pod's init containers is crashing. Init containers run sequentially before the main containers start. If an init container fails, the pod cannot proceed. Check the init container logs with 'kubectl logs <pod> -c <init-container-name>'.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 137,
+      "domain": 5,
+      "objective": "5.6",
+      "difficulty": "hard",
+      "question": "After applying a new NetworkPolicy, existing pods can no longer reach the API server. What is the most likely issue?",
+      "options": [
+        "The NetworkPolicy blocks egress to the API server IP/port and needs an egress rule allowing traffic to the kubernetes Service (10.96.0.1:443 or similar)",
+        "The API server needs to be restarted after NetworkPolicy changes",
+        "NetworkPolicies cannot affect API server communication",
+        "The NetworkPolicy needs a ClusterRole to affect API traffic"
+      ],
+      "correct": 0,
+      "explanation": "NetworkPolicies apply to all pod traffic, including traffic to the Kubernetes API server. A deny-all egress policy blocks API server access. Add an egress rule allowing traffic to the kubernetes Service ClusterIP on port 443 (or use a CIDR covering the API server).",
+      "link": "container-security.html"
+    },
+    {
+      "id": 138,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "medium",
+      "question": "Which directory contains the kubelet configuration file on a kubeadm-provisioned node?",
+      "options": [
+        "/var/lib/kubelet/config.yaml",
+        "/etc/kubernetes/kubelet.yaml",
+        "/opt/kubernetes/kubelet.conf",
+        "/etc/kubelet/config"
+      ],
+      "correct": 0,
+      "explanation": "On kubeadm clusters, the kubelet configuration file is typically at /var/lib/kubelet/config.yaml. The kubelet is started with --config pointing to this file. It contains settings for cluster DNS, pod CIDR, authentication, and more.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 139,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "You need to debug a pod that crashes immediately on startup. The container has no shell. What technique can you use?",
+      "options": [
+        "Use an ephemeral debug container: kubectl debug <pod-name> -it --image=busybox --target=<container-name>",
+        "Add a sleep command to the container and redeploy",
+        "Use kubectl attach to the crashing container",
+        "View the container's filesystem from the node"
+      ],
+      "correct": 0,
+      "explanation": "Ephemeral debug containers (kubectl debug) attach a temporary container to a running pod, sharing the process namespace. This lets you inspect the filesystem and processes of a distroless or minimal container that has no shell or debug tools.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 140,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "easy",
+      "question": "After performing maintenance on a node, which command makes it schedulable again?",
+      "options": [
+        "kubectl uncordon <node-name>",
+        "kubectl enable <node-name>",
+        "kubectl taint nodes <node-name> maintenance:NoSchedule-",
+        "kubectl label nodes <node-name> schedulable=true"
+      ],
+      "correct": 0,
+      "explanation": "kubectl uncordon removes the SchedulingDisabled condition from a node, allowing the scheduler to place new pods on it again. This is the reverse of kubectl cordon and should be run after maintenance is complete.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 141,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "hard",
+      "question": "The kube-apiserver is unreachable. You can still SSH to the control plane node. How do you inspect control plane component status?",
+      "options": [
+        "Check the static pod containers directly using crictl ps and crictl logs on the node",
+        "Run kubectl get pods -n kube-system",
+        "Check the Kubernetes dashboard",
+        "Use curl to hit the API server health endpoint"
+      ],
+      "correct": 0,
+      "explanation": "When the API server is down, kubectl is useless. SSH to the node and use the container runtime tools (crictl for containerd, or docker for Docker) to inspect the control plane containers. 'crictl ps' lists containers and 'crictl logs <container-id>' shows their logs.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 142,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "A pod is stuck in 'Terminating' state. What command forcefully deletes it?",
+      "options": [
+        "kubectl delete pod <pod-name> --grace-period=0 --force",
+        "kubectl kill pod <pod-name>",
+        "kubectl remove pod <pod-name> --immediate",
+        "kubectl terminate pod <pod-name>"
+      ],
+      "correct": 0,
+      "explanation": "kubectl delete pod with --grace-period=0 --force immediately removes the pod from the API server without waiting for graceful shutdown. Use this when a pod is stuck in Terminating due to a node failure or unresponsive kubelet. Caution: the container may still be running on the node.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 143,
+      "domain": 5,
+      "objective": "5.6",
+      "difficulty": "medium",
+      "question": "How do you verify that kube-proxy is correctly programming iptables rules for a Service?",
+      "options": [
+        "SSH to a node and run 'iptables -t nat -L | grep <service-name>' or 'iptables-save | grep <service-cluster-ip>'",
+        "kubectl describe service <service-name> --show-iptables",
+        "kubectl get endpoints --iptables",
+        "kubectl proxy --verify-rules"
+      ],
+      "correct": 0,
+      "explanation": "kube-proxy programs iptables (or IPVS) rules on each node. To verify, SSH to a node and inspect the nat table rules. You should see KUBE-SVC and KUBE-SEP chains for each Service with DNAT rules pointing to pod IPs.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 144,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "Which command displays cluster information including the API server endpoint and CoreDNS address?",
+      "options": [
+        "kubectl cluster-info",
+        "kubectl version",
+        "kubectl get nodes",
+        "kubectl config view"
+      ],
+      "correct": 0,
+      "explanation": "kubectl cluster-info displays the addresses of the Kubernetes control plane (API server) and key cluster services like CoreDNS. It's a quick way to verify the cluster is accessible and identify service endpoints.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 145,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "hard",
+      "question": "A node has MemoryPressure condition set to True. Which pods are evicted first?",
+      "options": [
+        "BestEffort pods, then Burstable pods exceeding their requests, then Guaranteed pods",
+        "Guaranteed pods first, then Burstable, then BestEffort",
+        "Pods are evicted randomly regardless of QoS class",
+        "Only pods without readiness probes are evicted"
+      ],
+      "correct": 0,
+      "explanation": "During memory pressure, the kubelet evicts pods in QoS order: BestEffort (no requests/limits) first, then Burstable pods that exceed their memory request (sorted by usage above request), and Guaranteed pods (requests=limits) last. This protects workloads with proper resource definitions.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 146,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "medium",
+      "question": "Which file contains the kubeconfig used by the kubelet to authenticate with the API server?",
+      "options": [
+        "/etc/kubernetes/kubelet.conf",
+        "/var/lib/kubelet/kubeconfig",
+        "/etc/kubernetes/admin.conf",
+        "/root/.kube/config"
+      ],
+      "correct": 0,
+      "explanation": "The kubelet uses /etc/kubernetes/kubelet.conf as its kubeconfig file on kubeadm clusters. This file contains the API server endpoint and client certificate credentials. admin.conf is for cluster administrators using kubectl, not for the kubelet.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 147,
+      "domain": 5,
+      "objective": "5.6",
+      "difficulty": "hard",
+      "question": "Inter-pod communication between two nodes is failing, but pods on the same node can communicate. What is the most likely cause?",
+      "options": [
+        "The CNI plugin's overlay network (VXLAN/IPIP tunnels) is misconfigured or the inter-node network is blocking the encapsulation traffic",
+        "The kube-scheduler is placing pods on wrong nodes",
+        "The kube-apiserver is rate-limiting requests",
+        "Pod security policies are blocking inter-node traffic"
+      ],
+      "correct": 0,
+      "explanation": "If same-node pod communication works but cross-node fails, the issue is in the overlay network layer. CNI plugins like Calico (IPIP) or Flannel (VXLAN) use encapsulated traffic between nodes. Firewall rules may block these protocols (IP protocol 4 for IPIP, UDP 4789 for VXLAN).",
+      "link": "container-security.html"
+    },
+    {
+      "id": 148,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "easy",
+      "question": "Which command follows (streams) the logs of a pod in real-time?",
+      "options": [
+        "kubectl logs <pod-name> -f",
+        "kubectl logs <pod-name> --stream",
+        "kubectl tail <pod-name>",
+        "kubectl logs <pod-name> --live"
+      ],
+      "correct": 0,
+      "explanation": "The -f (--follow) flag streams container logs in real-time, similar to 'tail -f'. New log entries appear as they are written. This is useful for live debugging of running applications. Press Ctrl+C to stop following.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 149,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "hard",
+      "question": "A pod has a readiness probe that is failing, but the container is running. What is the effect on the Service routing?",
+      "options": [
+        "The pod's IP is removed from the Service's endpoints, so it receives no traffic",
+        "The pod is terminated and restarted",
+        "The pod continues receiving traffic normally",
+        "The Service switches to LoadBalancer type automatically"
+      ],
+      "correct": 0,
+      "explanation": "When a readiness probe fails, the pod is marked as not Ready and its IP is removed from the Service's endpoints. The pod continues running (unlike liveness probe failure, which triggers a restart), but it receives no Service traffic until the probe passes again.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 150,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "Which command shows all pods in all namespaces that are not in Running state?",
+      "options": [
+        "kubectl get pods --all-namespaces --field-selector status.phase!=Running",
+        "kubectl get pods -A --status=NotRunning",
+        "kubectl get pods --all --filter=non-running",
+        "kubectl describe pods --all-namespaces --not-running"
+      ],
+      "correct": 0,
+      "explanation": "Field selectors allow filtering resources by specific fields. 'status.phase!=Running' shows pods in Pending, Failed, Succeeded, or Unknown states. The -A flag (short for --all-namespaces) searches across all namespaces.",
+      "link": "container-security.html"
     }
   ]
 }

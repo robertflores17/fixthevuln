@@ -1,49 +1,49 @@
 {
   "metadata": {
     "title": "HashiCorp Vault Associate VA-002 Practice Questions",
-    "version": "1.0",
-    "total_questions": 32,
+    "version": "2.0",
+    "total_questions": 150,
     "exam": "VA-002",
     "domains": {
       "1": {
         "name": "Compare Authentication Methods",
         "weight": 12,
-        "count": 4
+        "count": 19
       },
       "2": {
         "name": "Create Vault Policies",
         "weight": 12,
-        "count": 4
+        "count": 19
       },
       "3": {
         "name": "Assess Vault Tokens",
         "weight": 12,
-        "count": 4
+        "count": 18
       },
       "4": {
         "name": "Manage Vault Leases",
         "weight": 12,
-        "count": 4
+        "count": 18
       },
       "5": {
         "name": "Compare and Configure Secret Engines",
-        "weight": 12,
-        "count": 4
+        "weight": 13,
+        "count": 20
       },
       "6": {
         "name": "Utilize the Vault CLI",
-        "weight": 12,
-        "count": 4
+        "weight": 13,
+        "count": 19
       },
       "7": {
         "name": "Utilize the Vault UI",
-        "weight": 12,
-        "count": 4
+        "weight": 13,
+        "count": 18
       },
       "8": {
         "name": "Be Aware of Vault Enterprise Features",
-        "weight": 12,
-        "count": 4
+        "weight": 13,
+        "count": 19
       }
     }
   },
@@ -53,512 +53,2400 @@
       "domain": 1,
       "objective": "1.1",
       "difficulty": "easy",
-      "question": "Which of the following is a key concept within Compare Authentication Methods (Domain 1)?",
+      "question": "Which authentication method allows AWS EC2 instances to authenticate to Vault using their instance identity document?",
       "options": [
-        "AWS IAM/EC2 Auth Method",
-        "Token Authentication Method",
-        "Kubernetes Auth Method",
-        "Multi-Factor Authentication (MFA)"
+        "AWS auth method",
+        "Token auth method",
+        "Userpass auth method",
+        "TLS certificates auth method"
       ],
       "correct": 0,
-      "explanation": "AWS IAM/EC2 Auth Method is a key concept in Compare Authentication Methods. This domain covers topics essential for the HashiCorp Vault Associate exam.",
-      "link": "start-here.html"
+      "explanation": "The AWS auth method allows EC2 instances and IAM principals to authenticate to Vault using AWS-specific identity documents and credentials. EC2 instances use their instance identity document (PKCS7 signature) while IAM principals use STS GetCallerIdentity.",
+      "link": "secrets-management.html"
     },
     {
       "id": 2,
       "domain": 1,
-      "objective": "1.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with choose an authentication method based on use case. What should be the first step?",
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "Which statement best describes the token auth method in Vault?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "It is always enabled by default and cannot be disabled",
+        "It must be manually enabled after Vault initialization",
+        "It is only available in Vault Enterprise",
+        "It requires an external identity provider to function"
       ],
       "correct": 0,
-      "explanation": "The first step in any compare authentication methods task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "The token auth method is the only auth method that is always enabled by default and cannot be disabled. All other auth methods must be explicitly enabled. Every authentication request to Vault ultimately results in a token being generated.",
+      "link": "secrets-management.html"
     },
     {
       "id": 3,
       "domain": 1,
-      "objective": "1.3",
-      "difficulty": "medium",
-      "question": "Which concept in Compare Authentication Methods is most closely related to differentiate human vs machine authentication?",
+      "objective": "1.2",
+      "difficulty": "easy",
+      "question": "What is the primary purpose of an auth method in Vault?",
       "options": [
-        "Compare Authentication Methods governance and oversight",
-        "Compare Authentication Methods implementation and operations",
-        "Compare Authentication Methods assessment and testing",
-        "Compare Authentication Methods risk management"
+        "To encrypt data at rest within Vault storage",
+        "To verify the identity of a user or machine and assign policies",
+        "To generate dynamic database credentials",
+        "To replicate secrets across data centers"
       ],
       "correct": 1,
-      "explanation": "Differentiate human vs machine authentication falls under the implementation and operations aspect of Compare Authentication Methods.",
-      "link": "start-here.html"
+      "explanation": "Auth methods in Vault are responsible for verifying the identity of users or machines (authentication) and assigning a set of policies that define what the authenticated entity is allowed to do (authorization mapping). After successful authentication, Vault issues a token with the assigned policies.",
+      "link": "secrets-management.html"
     },
     {
       "id": 4,
       "domain": 1,
-      "objective": "1.4",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Compare Authentication Methods (Domain 1)?",
+      "objective": "1.2",
+      "difficulty": "easy",
+      "question": "Which auth method is most appropriate for human operators who need to log in with a username and password?",
       "options": [
-        "GitHub Auth Method",
-        "LDAP and Active Directory Integration",
-        "Multi-Factor Authentication (MFA)",
-        "Auth Method Mounting and Tuning"
+        "AppRole",
+        "Kubernetes",
+        "Userpass",
+        "AWS"
       ],
-      "correct": 0,
-      "explanation": "GitHub Auth Method is a key concept in Compare Authentication Methods. This domain covers topics essential for the HashiCorp Vault Associate exam.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "The userpass auth method allows human users to authenticate with a username and password combination. AppRole and Kubernetes are designed for machine-to-machine authentication, while AWS is designed for workloads running in AWS environments.",
+      "link": "secrets-management.html"
     },
     {
       "id": 5,
-      "domain": 2,
-      "objective": "2.1",
+      "domain": 1,
+      "objective": "1.3",
       "difficulty": "easy",
-      "question": "Which of the following is a key concept within Create Vault Policies (Domain 2)?",
+      "question": "Which auth method is specifically designed for applications and automated workflows rather than human users?",
       "options": [
-        "Root Policy and Root Tokens",
-        "Glob Patterns in Paths",
-        "Capabilities (create, read, update, delete, list, sudo, deny)",
-        "Path-Based Permission Rules"
+        "LDAP",
+        "Userpass",
+        "AppRole",
+        "GitHub"
       ],
-      "correct": 0,
-      "explanation": "Root Policy and Root Tokens is a key concept in Create Vault Policies. This domain covers topics essential for the HashiCorp Vault Associate exam.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "AppRole is designed specifically for machine-to-machine authentication. It uses a RoleID (like a username) and a SecretID (like a password) to authenticate applications and automated workflows. LDAP, userpass, and GitHub are primarily designed for human authentication.",
+      "link": "secrets-management.html"
     },
     {
       "id": 6,
-      "domain": 2,
-      "objective": "2.2",
+      "domain": 1,
+      "objective": "1.3",
       "difficulty": "medium",
-      "question": "A professional is tasked with describe vault policy syntax (path, capabilities). What should be the first step?",
+      "question": "In the AppRole auth method, what are the two credentials required for authentication?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Username and password",
+        "RoleID and SecretID",
+        "Client certificate and key",
+        "Access key and secret key"
       ],
-      "correct": 0,
-      "explanation": "The first step in any create vault policies task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "AppRole requires a RoleID (a static identifier similar to a username, often embedded in the application configuration) and a SecretID (a dynamic credential similar to a password that can be delivered securely to the application). This two-part credential model supports secure machine authentication.",
+      "link": "secrets-management.html"
     },
     {
       "id": 7,
-      "domain": 2,
-      "objective": "2.3",
+      "domain": 1,
+      "objective": "1.4",
       "difficulty": "medium",
-      "question": "Which concept in Create Vault Policies is most closely related to describe built-in policies (default, root)?",
+      "question": "How does the Kubernetes auth method validate pod identity?",
       "options": [
-        "Create Vault Policies governance and oversight",
-        "Create Vault Policies implementation and operations",
-        "Create Vault Policies assessment and testing",
-        "Create Vault Policies risk management"
+        "By checking the pods IP address against a whitelist",
+        "By verifying the pods Kubernetes service account JWT token with the Kubernetes API",
+        "By requiring a username and password from each pod",
+        "By reading environment variables set during pod creation"
       ],
       "correct": 1,
-      "explanation": "Describe built-in policies (default, root) falls under the implementation and operations aspect of Create Vault Policies.",
-      "link": "start-here.html"
+      "explanation": "The Kubernetes auth method validates pod identity by verifying the Kubernetes service account JWT token that is automatically mounted into each pod. Vault communicates with the Kubernetes TokenReview API to validate the token and confirm the pods service account, namespace, and other identity attributes.",
+      "link": "secrets-management.html"
     },
     {
       "id": 8,
-      "domain": 2,
-      "objective": "2.4",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Create Vault Policies (Domain 2)?",
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "medium",
+      "question": "An organization uses Active Directory for employee authentication. Which Vault auth method integrates directly with their existing AD infrastructure?",
       "options": [
-        "Capabilities (create, read, update, delete, list, sudo, deny)",
-        "Policy Assignment to Tokens",
-        "Glob Patterns in Paths",
-        "Fine-Grained Path Templating"
+        "Userpass",
+        "GitHub",
+        "LDAP",
+        "AppRole"
       ],
-      "correct": 0,
-      "explanation": "Capabilities (create, read, update, delete, list, sudo, deny) is a key concept in Create Vault Policies. This domain covers topics essential for the HashiCorp Vault Associate exam.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "The LDAP auth method integrates directly with LDAP-compatible directories including Microsoft Active Directory. It allows users to authenticate to Vault using their existing AD credentials, eliminating the need to manage separate Vault-specific passwords.",
+      "link": "secrets-management.html"
     },
     {
       "id": 9,
-      "domain": 3,
-      "objective": "3.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Assess Vault Tokens (Domain 3)?",
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "medium",
+      "question": "What happens when an auth method successfully authenticates a request?",
       "options": [
-        "Token Hierarchy (Parent/Child)",
-        "Token Role Configuration",
-        "Periodic Tokens",
-        "Token Renewal Process"
+        "The user gains direct access to all secrets in Vault",
+        "Vault generates a token with policies attached based on the auth method configuration",
+        "The auth method stores the users credentials in Vault storage",
+        "Vault sends the authentication result to an external audit system for approval"
       ],
-      "correct": 0,
-      "explanation": "Token Hierarchy (Parent/Child) is a key concept in Assess Vault Tokens. This domain covers topics essential for the HashiCorp Vault Associate exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "After successful authentication, Vault generates a token and attaches policies based on the auth methods role configuration. The token is returned to the client and used for all subsequent API requests. The policies determine which paths and operations the token holder can access.",
+      "link": "secrets-management.html"
     },
     {
       "id": 10,
-      "domain": 3,
-      "objective": "3.2",
+      "domain": 1,
+      "objective": "1.5",
       "difficulty": "medium",
-      "question": "A professional is tasked with describe how tokens are generated and managed. What should be the first step?",
+      "question": "Which auth method uses client TLS certificates to verify identity?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "OIDC",
+        "JWT",
+        "TLS Certificates",
+        "RADIUS"
       ],
-      "correct": 0,
-      "explanation": "The first step in any assess vault tokens task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "The TLS Certificates auth method uses client-side TLS certificates for authentication. The client presents a certificate signed by a trusted CA, and Vault validates the certificate chain. This method is well-suited for environments where PKI infrastructure is already deployed.",
+      "link": "secrets-management.html"
     },
     {
       "id": 11,
-      "domain": 3,
-      "objective": "3.3",
+      "domain": 1,
+      "objective": "1.6",
       "difficulty": "medium",
-      "question": "Which concept in Assess Vault Tokens is most closely related to describe token lifecycle (creation, renewal, revocation)?",
+      "question": "What is the difference between the OIDC and JWT auth methods?",
       "options": [
-        "Assess Vault Tokens governance and oversight",
-        "Assess Vault Tokens implementation and operations",
-        "Assess Vault Tokens assessment and testing",
-        "Assess Vault Tokens risk management"
+        "OIDC supports browser-based redirect flows while JWT only accepts pre-existing tokens directly",
+        "JWT supports browser-based redirect flows while OIDC does not",
+        "OIDC is only for machine authentication while JWT is for humans",
+        "They are identical and interchangeable"
       ],
-      "correct": 1,
-      "explanation": "Describe token lifecycle (creation, renewal, revocation) falls under the implementation and operations aspect of Assess Vault Tokens.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "The OIDC auth method supports the full OpenID Connect redirect flow (browser-based login with providers like Okta, Azure AD, or Google), while the JWT auth method accepts pre-existing JWT tokens directly without a browser redirect. Both validate JWT claims, but OIDC handles the interactive login workflow.",
+      "link": "secrets-management.html"
     },
     {
       "id": 12,
-      "domain": 3,
-      "objective": "3.1",
+      "domain": 1,
+      "objective": "1.6",
       "difficulty": "hard",
-      "question": "Which of the following is a key concept within Assess Vault Tokens (Domain 3)?",
+      "question": "An organization needs Vault authentication for three use cases: developers using SSO, CI/CD pipelines, and Kubernetes pods. Which combination of auth methods best addresses all three?",
       "options": [
-        "Periodic Tokens",
-        "Token Role Configuration",
-        "Token Renewal Process",
-        "Token TTL and Max TTL"
+        "Userpass for all three use cases",
+        "OIDC for developers, AppRole for CI/CD pipelines, Kubernetes for pods",
+        "LDAP for developers, LDAP for CI/CD, LDAP for pods",
+        "Token auth for all three use cases"
       ],
-      "correct": 0,
-      "explanation": "Periodic Tokens is a key concept in Assess Vault Tokens. This domain covers topics essential for the HashiCorp Vault Associate exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "OIDC integrates with existing SSO providers for developer authentication. AppRole provides secure machine authentication for CI/CD pipelines using RoleID and SecretID. The Kubernetes auth method leverages pod service account tokens for native Kubernetes workload authentication. Each method is purpose-built for its use case.",
+      "link": "secrets-management.html"
     },
     {
       "id": 13,
-      "domain": 4,
-      "objective": "4.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Manage Vault Leases (Domain 4)?",
+      "domain": 1,
+      "objective": "1.7",
+      "difficulty": "hard",
+      "question": "Multiple auth methods can be enabled simultaneously in Vault. Where are auth methods mounted by default?",
       "options": [
-        "System Backend Lease Operations",
-        "Dynamic Secret Lease Management",
-        "Default and Max Lease TTL",
-        "Lease Revocation (Single and Prefix)"
+        "Under the /secret/ path prefix",
+        "Under the /auth/ path prefix",
+        "Under the /sys/ path prefix",
+        "Under the /identity/ path prefix"
       ],
-      "correct": 0,
-      "explanation": "System Backend Lease Operations is a key concept in Manage Vault Leases. This domain covers topics essential for the HashiCorp Vault Associate exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "Auth methods are mounted under the /auth/ path prefix by default (for example, /auth/userpass/ or /auth/github/). Multiple instances of the same auth method type can be enabled at different mount points, such as /auth/ldap-east/ and /auth/ldap-west/ for different LDAP directories.",
+      "link": "secrets-management.html"
     },
     {
       "id": 14,
-      "domain": 4,
-      "objective": "4.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with renew leases. What should be the first step?",
+      "domain": 1,
+      "objective": "1.7",
+      "difficulty": "hard",
+      "question": "What is the purpose of tuning an auth method mount in Vault?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "To change which users are allowed to authenticate",
+        "To adjust mount-specific settings such as default TTL, max TTL, and token type",
+        "To encrypt the auth method configuration data",
+        "To migrate the auth method to a different storage backend"
       ],
-      "correct": 0,
-      "explanation": "The first step in any manage vault leases task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "Tuning an auth method mount allows administrators to adjust settings like default lease TTL, maximum lease TTL, audit non-HMAC request keys, listing visibility, and token type (service vs batch). These settings apply to all tokens generated by that auth method mount.",
+      "link": "secrets-management.html"
     },
     {
       "id": 15,
-      "domain": 4,
-      "objective": "4.3",
-      "difficulty": "medium",
-      "question": "Which concept in Manage Vault Leases is most closely related to revoke leases?",
+      "domain": 1,
+      "objective": "1.8",
+      "difficulty": "hard",
+      "question": "A security team wants to enforce multi-factor authentication for Vault access. Which Vault feature supports MFA for login requests?",
       "options": [
-        "Manage Vault Leases governance and oversight",
-        "Manage Vault Leases implementation and operations",
-        "Manage Vault Leases assessment and testing",
-        "Manage Vault Leases risk management"
+        "MFA is configured within each individual auth method",
+        "Sentinel policies can enforce MFA as a policy check",
+        "Login MFA can require additional verification factors after initial auth method authentication succeeds",
+        "MFA is only available through external reverse proxy configuration"
       ],
-      "correct": 1,
-      "explanation": "Revoke leases falls under the implementation and operations aspect of Manage Vault Leases.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "Vault supports Login MFA which adds an additional verification step after the primary auth method succeeds. Administrators can configure MFA methods (TOTP, Duo, Okta, PingID) and enforce them on specific auth method paths. This provides defense in depth beyond single-factor authentication.",
+      "link": "secrets-management.html"
     },
     {
       "id": 16,
-      "domain": 4,
-      "objective": "4.1",
+      "domain": 1,
+      "objective": "1.8",
       "difficulty": "hard",
-      "question": "Which of the following is a key concept within Manage Vault Leases (Domain 4)?",
+      "question": "What is an identity entity in Vault, and how does it relate to auth methods?",
       "options": [
-        "System Backend Lease Operations",
-        "Dynamic Secret Lease Management",
-        "Lease Duration vs Token TTL",
-        "Default and Max Lease TTL"
+        "An entity is a type of secret engine for storing identity documents",
+        "An entity represents a single person or machine that may authenticate through multiple auth methods, unifying their identity",
+        "An entity is an external identity provider that Vault delegates authentication to",
+        "An entity is a backup authentication path used when the primary auth method is unavailable"
       ],
-      "correct": 0,
-      "explanation": "System Backend Lease Operations is a key concept in Manage Vault Leases. This domain covers topics essential for the HashiCorp Vault Associate exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "An identity entity in Vault represents a single user or machine that may have aliases across multiple auth methods. For example, a developer might authenticate via LDAP from the office and OIDC from home. The identity system links these aliases to one entity, enabling unified policy assignment and identity-based access control.",
+      "link": "secrets-management.html"
     },
     {
       "id": 17,
-      "domain": 5,
-      "objective": "5.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Compare and Configure Secret Engines (Domain 5)?",
+      "domain": 1,
+      "objective": "1.9",
+      "difficulty": "hard",
+      "question": "Which auth method allows Google Cloud Platform instances to authenticate to Vault using their service account or instance identity?",
       "options": [
-        "SSH Secret Engine (Signed Certificates)",
-        "Database Secret Engine (Dynamic Credentials)",
-        "KV Secret Engine v1 (No Versioning)",
-        "KV Secret Engine v2 (Versioned)"
+        "AWS auth method",
+        "GCP auth method",
+        "OIDC auth method",
+        "JWT auth method"
       ],
-      "correct": 0,
-      "explanation": "SSH Secret Engine (Signed Certificates) is a key concept in Compare and Configure Secret Engines. This domain covers topics essential for the HashiCorp Vault Associate exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "The GCP auth method supports two authentication types: IAM (using GCP service account credentials to sign a JWT) and GCE (using the instance identity metadata from a Compute Engine VM). This enables native authentication for workloads running on Google Cloud Platform.",
+      "link": "secrets-management.html"
     },
     {
       "id": 18,
-      "domain": 5,
-      "objective": "5.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with differentiate between static and dynamic secrets. What should be the first step?",
+      "domain": 1,
+      "objective": "1.9",
+      "difficulty": "easy",
+      "question": "Which auth method allows GitHub users to authenticate to Vault using their personal access tokens?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "OIDC",
+        "LDAP",
+        "GitHub",
+        "JWT"
       ],
-      "correct": 0,
-      "explanation": "The first step in any compare and configure secret engines task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "The GitHub auth method allows users to authenticate to Vault using their GitHub personal access tokens. Vault verifies the token with GitHub's API and maps the user's GitHub organization and team memberships to Vault policies. This is commonly used in development environments.",
+      "link": "secrets-management.html"
     },
     {
       "id": 19,
-      "domain": 5,
-      "objective": "5.3",
+      "domain": 1,
+      "objective": "1.10",
       "difficulty": "medium",
-      "question": "Which concept in Compare and Configure Secret Engines is most closely related to enable and configure secret engines?",
+      "question": "What is the key difference between human auth methods and machine auth methods in Vault?",
       "options": [
-        "Compare and Configure Secret Engines governance and oversight",
-        "Compare and Configure Secret Engines implementation and operations",
-        "Compare and Configure Secret Engines assessment and testing",
-        "Compare and Configure Secret Engines risk management"
+        "Human auth methods generate service tokens while machine methods generate batch tokens",
+        "Human auth methods typically involve interactive login flows while machine methods use automated credential exchange",
+        "Machine auth methods are more secure than human auth methods",
+        "Human auth methods cannot have policies attached to them"
       ],
       "correct": 1,
-      "explanation": "Enable and configure secret engines falls under the implementation and operations aspect of Compare and Configure Secret Engines.",
-      "link": "start-here.html"
+      "explanation": "Human auth methods (userpass, LDAP, OIDC, GitHub) typically involve interactive flows like entering credentials or browser redirects. Machine auth methods (AppRole, AWS, Kubernetes, GCP) use automated credential exchange where the platform provides identity proof without human interaction. Both are equally secure when properly configured.",
+      "link": "secrets-management.html"
     },
     {
       "id": 20,
-      "domain": 5,
-      "objective": "5.4",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Compare and Configure Secret Engines (Domain 5)?",
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "What format is used to write Vault policies?",
       "options": [
-        "SSH Secret Engine (Signed Certificates)",
-        "Database Secret Engine (Dynamic Credentials)",
-        "KV Secret Engine v1 (No Versioning)",
-        "Cubbyhole Secret Engine (Token-Scoped)"
+        "YAML",
+        "XML",
+        "JSON or HCL",
+        "TOML"
       ],
-      "correct": 0,
-      "explanation": "SSH Secret Engine (Signed Certificates) is a key concept in Compare and Configure Secret Engines. This domain covers topics essential for the HashiCorp Vault Associate exam.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "Vault policies are written in HCL (HashiCorp Configuration Language) or JSON format. HCL is the preferred human-readable format that uses path blocks with capability lists to define permissions. JSON format is also supported and useful for programmatic policy generation.",
+      "link": "secrets-management.html"
     },
     {
       "id": 21,
-      "domain": 6,
-      "objective": "6.1",
+      "domain": 2,
+      "objective": "2.1",
       "difficulty": "easy",
-      "question": "Which of the following is a key concept within Utilize the Vault CLI (Domain 6)?",
+      "question": "Which built-in policy grants unrestricted access to everything in Vault?",
       "options": [
-        "VAULT_TOKEN Environment Variable",
-        "vault kv get/put/delete/metadata",
-        "vault operator init/unseal/seal",
-        "vault secrets enable/disable/list"
+        "default",
+        "admin",
+        "root",
+        "superuser"
       ],
-      "correct": 0,
-      "explanation": "VAULT_TOKEN Environment Variable is a key concept in Utilize the Vault CLI. This domain covers topics essential for the HashiCorp Vault Associate exam.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "The root policy is a built-in policy that grants unrestricted access to all paths and operations in Vault. It is automatically assigned to root tokens. The root policy cannot be modified or deleted. The default policy is also built-in but grants only basic permissions.",
+      "link": "secrets-management.html"
     },
     {
       "id": 22,
-      "domain": 6,
-      "objective": "6.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with manage secrets using the cli. What should be the first step?",
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "What capabilities can be assigned to a path in a Vault policy?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "allow, reject, forward, proxy",
+        "get, post, put, patch, delete",
+        "create, read, update, delete, list, sudo, deny",
+        "select, insert, update, delete, grant"
       ],
-      "correct": 0,
-      "explanation": "The first step in any utilize the vault cli task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "Vault policies support seven capabilities: create (create new data), read (read data), update (modify existing data), delete (remove data), list (list available paths), sudo (access protected paths), and deny (explicitly deny access, overrides all other capabilities).",
+      "link": "secrets-management.html"
     },
     {
       "id": 23,
-      "domain": 6,
-      "objective": "6.3",
-      "difficulty": "medium",
-      "question": "Which concept in Utilize the Vault CLI is most closely related to use environment variables to configure the cli?",
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "easy",
+      "question": "What does the default policy in Vault provide?",
       "options": [
-        "Utilize the Vault CLI governance and oversight",
-        "Utilize the Vault CLI implementation and operations",
-        "Utilize the Vault CLI assessment and testing",
-        "Utilize the Vault CLI risk management"
+        "Full administrative access to all paths",
+        "No access to any paths",
+        "Basic capabilities such as token self-management and cubbyhole access",
+        "Read-only access to all secret engines"
       ],
-      "correct": 1,
-      "explanation": "Use environment variables to configure the CLI falls under the implementation and operations aspect of Utilize the Vault CLI.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "The default policy is automatically attached to all tokens (unless explicitly excluded) and grants basic capabilities including token self-lookup, token self-renewal, cubbyhole access, and the ability to check capabilities. It provides a minimum baseline of permissions.",
+      "link": "secrets-management.html"
     },
     {
       "id": 24,
-      "domain": 6,
-      "objective": "6.1",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Utilize the Vault CLI (Domain 6)?",
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "easy",
+      "question": "What does the deny capability do when applied to a path in a Vault policy?",
       "options": [
-        "vault read/write/list/delete",
-        "vault operator init/unseal/seal",
-        "vault token create/renew/revoke/lookup",
-        "VAULT_ADDR Environment Variable"
+        "It denies access but can be overridden by another policy granting access",
+        "It explicitly denies access and takes precedence over all other capabilities on that path",
+        "It logs denied access attempts without blocking them",
+        "It redirects the request to an administrator for approval"
       ],
-      "correct": 0,
-      "explanation": "vault read/write/list/delete is a key concept in Utilize the Vault CLI. This domain covers topics essential for the HashiCorp Vault Associate exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "The deny capability explicitly denies access to a path and takes absolute precedence over any other capabilities, even if another attached policy grants access to the same path. This makes deny the strongest capability in Vault's policy system.",
+      "link": "secrets-management.html"
     },
     {
       "id": 25,
-      "domain": 7,
-      "objective": "7.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Utilize the Vault UI (Domain 7)?",
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "In a Vault policy, what does the glob character (*) at the end of a path match?",
       "options": [
-        "UI Authentication Methods",
-        "Auth Method Configuration via UI",
-        "KV Secret Version History",
-        "Token Management in UI"
+        "Exactly one character",
+        "One or more path segments including slashes",
+        "Any string within a single path segment (does not cross slash boundaries)",
+        "Only numeric characters"
       ],
-      "correct": 0,
-      "explanation": "UI Authentication Methods is a key concept in Utilize the Vault UI. This domain covers topics essential for the HashiCorp Vault Associate exam.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "The glob (*) at the end of a Vault policy path matches any string within a single path segment. It does not cross slash boundaries. For example, 'secret/data/*' matches 'secret/data/myapp' but not 'secret/data/myapp/config'. To match multiple segments, use the + character or define deeper paths.",
+      "link": "secrets-management.html"
     },
     {
       "id": 26,
-      "domain": 7,
-      "objective": "7.2",
+      "domain": 2,
+      "objective": "2.3",
       "difficulty": "medium",
-      "question": "A professional is tasked with navigate the vault ui to manage secrets and auth methods. What should be the first step?",
+      "question": "When multiple policies are attached to a token and they specify different capabilities for the same path, how does Vault resolve the conflict?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "The first policy alphabetically takes precedence",
+        "The most restrictive policy wins",
+        "Capabilities are combined additively, except deny which always takes precedence",
+        "Vault denies access whenever there is any conflict"
       ],
-      "correct": 0,
-      "explanation": "The first step in any utilize the vault ui task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "Vault uses an additive policy model. When multiple policies apply to the same path, all non-deny capabilities are combined (union). For example, if one policy grants read and another grants read and update, the token has both read and update. However, if any policy specifies deny on a path, it overrides everything.",
+      "link": "secrets-management.html"
     },
     {
       "id": 27,
-      "domain": 7,
-      "objective": "7.1",
+      "domain": 2,
+      "objective": "2.4",
       "difficulty": "medium",
-      "question": "Which concept in Utilize the Vault UI is most closely related to authenticate using the vault ui?",
+      "question": "What is the sudo capability used for in Vault policies?",
       "options": [
-        "Utilize the Vault UI governance and oversight",
-        "Utilize the Vault UI implementation and operations",
-        "Utilize the Vault UI assessment and testing",
-        "Utilize the Vault UI risk management"
+        "To run Vault commands as a different user",
+        "To access root-protected API endpoints that require elevated privileges",
+        "To bypass all policy checks temporarily",
+        "To escalate from a service token to a root token"
       ],
       "correct": 1,
-      "explanation": "Authenticate using the Vault UI falls under the implementation and operations aspect of Utilize the Vault UI.",
-      "link": "start-here.html"
+      "explanation": "The sudo capability grants access to paths that are considered root-protected, such as certain sys/ endpoints for managing auth methods, audit devices, and system configuration. Without sudo, even a policy that grants all other capabilities on a root-protected path will be denied.",
+      "link": "secrets-management.html"
     },
     {
       "id": 28,
-      "domain": 7,
-      "objective": "7.2",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Utilize the Vault UI (Domain 7)?",
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "medium",
+      "question": "How are policies assigned to tokens in Vault?",
       "options": [
-        "Auth Method Configuration via UI",
-        "Wrapping Token via UI",
-        "Token Management in UI",
-        "Policy Editor in UI"
+        "Policies are assigned directly to IP addresses",
+        "Policies are configured on auth method roles and attached to tokens at authentication time",
+        "Policies are inherited from the operating system user running the Vault client",
+        "Policies are automatically assigned based on the secret engine being accessed"
       ],
-      "correct": 0,
-      "explanation": "Auth Method Configuration via UI is a key concept in Utilize the Vault UI. This domain covers topics essential for the HashiCorp Vault Associate exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "Policies are configured on auth method roles (such as an AppRole role or a Kubernetes auth role). When a user or machine authenticates through an auth method, the policies specified in the matching role configuration are attached to the generated token. Policies can also be assigned directly when creating tokens via the CLI.",
+      "link": "secrets-management.html"
     },
     {
       "id": 29,
-      "domain": 8,
-      "objective": "8.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Be Aware of Vault Enterprise Features (Domain 8)?",
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "medium",
+      "question": "What is path templating in Vault policies?",
       "options": [
-        "Performance Replication",
-        "Transform Secret Engine (FPE)",
-        "HSM Auto-Unseal (Enterprise)",
-        "Disaster Recovery Replication"
+        "Using variables to generate policy files from templates at deployment time",
+        "Using identity-based template parameters in policy paths that are resolved at request time",
+        "Creating policy paths that automatically expand to cover all secret engines",
+        "Using regular expressions instead of glob patterns in policy paths"
       ],
-      "correct": 0,
-      "explanation": "Performance Replication is a key concept in Be Aware of Vault Enterprise Features. This domain covers topics essential for the HashiCorp Vault Associate exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "Path templating allows policy paths to include variables that are resolved at request time based on the requesting entity's identity. For example, a path containing the identity entity name template ensures each user can only access their own secrets. This enables writing a single policy that provides per-user access control.",
+      "link": "secrets-management.html"
     },
     {
       "id": 30,
-      "domain": 8,
-      "objective": "8.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with identify differences between oss, cloud, and enterprise. What should be the first step?",
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "hard",
+      "question": "An administrator wants to allow a team to manage secrets under a specific KV v2 mount but prevent them from deleting secrets or modifying the mount configuration. Which set of capabilities should the policy grant?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "create, read, update, list on the secret data path and deny on the metadata delete path and mount config path",
+        "root on the entire secret path",
+        "sudo on the secret path to allow full management",
+        "read and list on the secret path only"
       ],
       "correct": 0,
-      "explanation": "The first step in any be aware of vault enterprise features task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "Granting create, read, update, and list on the data path allows secret management, while using deny on the metadata delete path and mount configuration path (sys/mounts) prevents deletion and configuration changes. This follows the principle of least privilege for a team that manages secrets but should not alter infrastructure.",
+      "link": "secrets-management.html"
     },
     {
       "id": 31,
-      "domain": 8,
-      "objective": "8.1",
-      "difficulty": "medium",
-      "question": "Which concept in Be Aware of Vault Enterprise Features is most closely related to describe key vault enterprise features?",
+      "domain": 2,
+      "objective": "2.6",
+      "difficulty": "hard",
+      "question": "What is the effect of a policy that specifies an empty capabilities list for a path?",
       "options": [
-        "Be Aware of Vault Enterprise Features governance and oversight",
-        "Be Aware of Vault Enterprise Features implementation and operations",
-        "Be Aware of Vault Enterprise Features assessment and testing",
-        "Be Aware of Vault Enterprise Features risk management"
+        "It grants all capabilities to that path",
+        "It grants only the read capability by default",
+        "It denies all access to that path (equivalent to deny)",
+        "It inherits capabilities from the parent path"
       ],
-      "correct": 1,
-      "explanation": "Describe key Vault Enterprise features falls under the implementation and operations aspect of Be Aware of Vault Enterprise Features.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "An empty capabilities list in a Vault policy effectively denies all access to that path, as no operations are permitted. This is functionally equivalent to specifying deny, though using explicit deny is the recommended practice for clarity.",
+      "link": "secrets-management.html"
     },
     {
       "id": 32,
-      "domain": 8,
-      "objective": "8.2",
+      "domain": 2,
+      "objective": "2.6",
       "difficulty": "hard",
-      "question": "Which of the following is a key concept within Be Aware of Vault Enterprise Features (Domain 8)?",
+      "question": "Which statement about the root policy is correct?",
       "options": [
-        "Transform Secret Engine (FPE)",
-        "Integrated Storage (Raft) HA",
-        "HSM Auto-Unseal (Enterprise)",
-        "Namespaces for Multi-Tenancy"
+        "The root policy can be modified to restrict root token access",
+        "The root policy can be deleted if another admin policy exists",
+        "The root policy cannot be modified or deleted and always grants full access",
+        "The root policy only applies to tokens created during initialization"
+      ],
+      "correct": 2,
+      "explanation": "The root policy is immutable and indestructible. It cannot be modified or deleted and always grants full access to all paths in Vault. While root tokens have the root policy, it is a best practice to revoke root tokens after initial setup and use purpose-built admin policies instead.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 33,
+      "domain": 2,
+      "objective": "2.7",
+      "difficulty": "hard",
+      "question": "How does Vault evaluate policies when no policy explicitly covers the requested path?",
+      "options": [
+        "Access is granted by default with read capability",
+        "Access is denied by default (implicit deny)",
+        "Access is delegated to an external authorization service",
+        "The request is queued for administrator approval"
+      ],
+      "correct": 1,
+      "explanation": "Vault follows a default-deny model. If no attached policy explicitly grants capabilities on the requested path, the request is denied. This secure-by-default approach means administrators must explicitly grant access to every path a token needs to use.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 34,
+      "domain": 2,
+      "objective": "2.7",
+      "difficulty": "hard",
+      "question": "A policy allows list capability on a secret engine path but not read. What can the token holder see?",
+      "options": [
+        "The full contents of all secrets at that path",
+        "Only the key names (paths) available, but not the secret values",
+        "The secret values but not the key names",
+        "Nothing, because list without read is invalid"
+      ],
+      "correct": 1,
+      "explanation": "The list capability allows enumerating key names (paths) at a location without revealing the actual secret values. This is useful for allowing discovery of what secrets exist while requiring separate read permission to view values. List and read are independent capabilities.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 35,
+      "domain": 2,
+      "objective": "2.8",
+      "difficulty": "medium",
+      "question": "Which Vault CLI command uploads a policy written in an HCL file?",
+      "options": [
+        "vault policy create",
+        "vault policy write",
+        "vault policy upload",
+        "vault policy apply"
+      ],
+      "correct": 1,
+      "explanation": "The 'vault policy write' command uploads a policy to Vault from a file or stdin. The syntax is 'vault policy write <name> <file>'. This command creates a new policy or updates an existing one with the same name.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 36,
+      "domain": 2,
+      "objective": "2.8",
+      "difficulty": "easy",
+      "question": "Can the default policy be modified in Vault?",
+      "options": [
+        "No, built-in policies cannot be changed",
+        "Yes, the default policy can be modified but not deleted",
+        "Yes, but only by root token holders",
+        "Yes, but only in Vault Enterprise"
+      ],
+      "correct": 1,
+      "explanation": "Unlike the root policy, the default policy can be modified by administrators to add or remove capabilities. However, it cannot be deleted. Any changes to the default policy affect all tokens that have it attached, which is every token by default.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 37,
+      "domain": 2,
+      "objective": "2.9",
+      "difficulty": "hard",
+      "question": "An operator needs to create a policy that grants access to secrets based on the authenticated users identity group membership. Which Vault feature enables this?",
+      "options": [
+        "ACL policy inheritance from parent tokens",
+        "Identity-based policy templating with group metadata",
+        "External policy delegation to LDAP",
+        "Role-based access control at the storage backend level"
+      ],
+      "correct": 1,
+      "explanation": "Identity-based policy templating allows paths to include template variables that reference the entity's group membership, metadata, and other identity attributes. This enables dynamic, identity-aware policies where a single policy definition can provide different access based on group membership without creating separate policies per group.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 38,
+      "domain": 2,
+      "objective": "2.9",
+      "difficulty": "medium",
+      "question": "What is the purpose of the list capability when applied to the sys/policies/acl path?",
+      "options": [
+        "To allow creating new policies",
+        "To allow viewing the names of all configured policies",
+        "To allow modifying existing policy content",
+        "To allow deleting policies"
+      ],
+      "correct": 1,
+      "explanation": "The list capability on sys/policies/acl allows the token holder to enumerate the names of all configured ACL policies. This is useful for administrators who need to see which policies exist without necessarily having permission to read or modify their contents.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 39,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "What are the two types of tokens in Vault?",
+      "options": [
+        "Primary and secondary tokens",
+        "Service tokens and batch tokens",
+        "Read tokens and write tokens",
+        "Admin tokens and user tokens"
+      ],
+      "correct": 1,
+      "explanation": "Vault has two token types: service tokens and batch tokens. Service tokens are persisted to storage, have full functionality (renewal, revocation, child tokens), and support all features. Batch tokens are encrypted blobs that are not persisted, are lightweight, but have limited functionality (no renewal, no child tokens).",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 40,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "What is the purpose of a root token in Vault?",
+      "options": [
+        "It provides read-only access to audit logs",
+        "It provides unrestricted access to all Vault operations and is used for initial setup",
+        "It provides access only to the root secret engine",
+        "It provides access to replicate data between clusters"
+      ],
+      "correct": 1,
+      "explanation": "A root token has the root policy attached and provides unrestricted access to all Vault operations. It is generated during Vault initialization and is used for initial setup tasks. Best practice is to revoke root tokens after initial configuration and generate new ones only when needed using the operator generate-root command.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 41,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "What is the TTL (Time To Live) of a token?",
+      "options": [
+        "The encryption strength of the token",
+        "The maximum number of times the token can be used",
+        "The duration after which the token expires unless renewed",
+        "The network latency threshold for token validation"
+      ],
+      "correct": 2,
+      "explanation": "A token's TTL is the duration for which it remains valid. After the TTL expires, the token can no longer be used. Service tokens can be renewed before they expire (up to the max TTL), which resets the TTL countdown. Batch tokens cannot be renewed.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 42,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "What happens to child tokens when a parent token is revoked in Vault?",
+      "options": [
+        "Child tokens continue to function independently",
+        "Child tokens are automatically revoked as well",
+        "Child tokens are transferred to the root token",
+        "Child tokens are converted to orphan tokens"
+      ],
+      "correct": 1,
+      "explanation": "Vault maintains a parent-child relationship between tokens. When a parent token is revoked, all of its child tokens (and their children) are also revoked recursively. This prevents credential leakage when a session ends. Orphan tokens are exempt from this cascading revocation.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 43,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "What is an orphan token, and how does it differ from a regular child token?",
+      "options": [
+        "An orphan token has no policies attached",
+        "An orphan token has no parent and is not revoked when any other token is revoked",
+        "An orphan token can only be created by the root user",
+        "An orphan token automatically renews itself indefinitely"
+      ],
+      "correct": 1,
+      "explanation": "An orphan token has no parent in the token hierarchy. Unlike regular child tokens, orphan tokens are not revoked when another token is revoked (since they have no parent). They still expire based on their own TTL. Orphan tokens can be created with the sudo capability on the token creation endpoint or through auth methods configured to generate orphan tokens.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 44,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "What is the difference between a tokens TTL and its max TTL?",
+      "options": [
+        "TTL is the initial duration and max TTL is the absolute ceiling that the token can be renewed up to",
+        "TTL applies to service tokens and max TTL applies to batch tokens",
+        "TTL controls read operations and max TTL controls write operations",
+        "They are different names for the same value"
       ],
       "correct": 0,
-      "explanation": "Transform Secret Engine (FPE) is a key concept in Be Aware of Vault Enterprise Features. This domain covers topics essential for the HashiCorp Vault Associate exam.",
-      "link": "start-here.html"
+      "explanation": "The TTL is the initial validity period of a token. The max TTL is the absolute maximum lifetime of the token. A token can be renewed to reset its TTL, but the total lifetime cannot exceed the max TTL. Once the max TTL is reached, the token expires regardless of renewal attempts.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 45,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "What is a periodic token in Vault?",
+      "options": [
+        "A token that is automatically created on a schedule",
+        "A token with no max TTL that can be renewed indefinitely as long as it is renewed within its period",
+        "A token that can only be used once per time period",
+        "A token that synchronizes its expiration with other tokens"
+      ],
+      "correct": 1,
+      "explanation": "A periodic token has no max TTL and can be renewed indefinitely, as long as it is renewed within its configured period. Each renewal resets the TTL to the period value. If renewal does not happen within the period, the token expires. Periodic tokens are useful for long-running services that need persistent access.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 46,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "When a service token is created by an auth method, which policies are always included?",
+      "options": [
+        "Only the policies specified in the auth method role",
+        "The root policy and the policies specified in the role",
+        "The default policy plus any policies specified in the auth method role",
+        "No policies are included; they must be added separately"
+      ],
+      "correct": 2,
+      "explanation": "Unless explicitly configured otherwise, every service token receives the default policy in addition to any policies specified in the auth method role configuration. The default policy provides basic self-service capabilities like token lookup and cubbyhole access.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 47,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "medium",
+      "question": "What is a token accessor, and what can it be used for?",
+      "options": [
+        "A token accessor is a backup copy of the token stored in Vaults audit log",
+        "A token accessor is a reference to a token that allows limited operations like lookup and revocation without exposing the token itself",
+        "A token accessor is the encrypted version of a token used during transit",
+        "A token accessor is the username associated with a token"
+      ],
+      "correct": 1,
+      "explanation": "A token accessor is a secondary identifier for a token that allows limited operations: looking up token properties and revoking the token. The accessor cannot be used to authenticate or perform secret operations. This is useful for administrators who need to manage tokens without having access to the actual token values.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 48,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "hard",
+      "question": "A CI/CD pipeline needs a Vault token that works across multiple Vault performance replication clusters and does not need renewal. Which token type should be used?",
+      "options": [
+        "Service token with a long TTL",
+        "Periodic service token",
+        "Batch token",
+        "Root token"
+      ],
+      "correct": 2,
+      "explanation": "Batch tokens are ideal for this scenario. They are lightweight encrypted blobs that are not persisted to storage, making them available across performance replication clusters without replication lag. They do not support renewal but can be issued with a sufficient TTL. Service tokens are tied to a specific cluster's storage.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 49,
+      "domain": 3,
+      "objective": "3.6",
+      "difficulty": "hard",
+      "question": "What is a token role in Vault?",
+      "options": [
+        "A mapping between an auth method and a set of policies",
+        "A configuration object that defines parameters for token creation such as allowed policies, TTL settings, and whether tokens are orphan or periodic",
+        "A predefined set of CLI commands for token management",
+        "A replication role for synchronizing tokens across clusters"
+      ],
+      "correct": 1,
+      "explanation": "A token role is a configuration object that pre-defines parameters for token creation. It specifies allowed policies, disallowed policies, orphan status, renewable status, token type, TTL, max TTL, and other settings. When creating a token against a role, the token inherits these configured parameters.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 50,
+      "domain": 3,
+      "objective": "3.6",
+      "difficulty": "hard",
+      "question": "What is response wrapping, and how does it relate to tokens?",
+      "options": [
+        "Encrypting API responses with the clients public key",
+        "Compressing token data to reduce network bandwidth",
+        "Wrapping a secret in a single-use temporary token so the intended recipient can unwrap it exactly once",
+        "Adding HTTP response headers for token validation"
+      ],
+      "correct": 2,
+      "explanation": "Response wrapping stores a secret in a temporary cubbyhole and returns a single-use wrapping token. The intended recipient uses the wrapping token to unwrap and retrieve the secret. This provides secure delivery because the wrapping token can only be used once, and the original requester never sees the actual secret.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 51,
+      "domain": 3,
+      "objective": "3.7",
+      "difficulty": "hard",
+      "question": "When examining token details with vault token lookup, which field indicates the absolute time after which the token cannot be renewed?",
+      "options": [
+        "ttl",
+        "creation_time",
+        "expire_time",
+        "explicit_max_ttl"
+      ],
+      "correct": 2,
+      "explanation": "The expire_time field shows the absolute timestamp when the token will expire. If the token is renewable, it can be renewed up until this time is recalculated based on the max TTL. The explicit_max_ttl shows the configured maximum, while expire_time shows the actual calculated expiration time.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 52,
+      "domain": 3,
+      "objective": "3.7",
+      "difficulty": "easy",
+      "question": "What is a use-limit token in Vault?",
+      "options": [
+        "A token restricted to a specific IP address range",
+        "A token that can only be used a specified number of times before it is automatically revoked",
+        "A token limited to reading secrets only",
+        "A token that limits the size of secrets that can be accessed"
+      ],
+      "correct": 1,
+      "explanation": "A use-limit token (created with the num_uses parameter) can only be used a specified number of times. Each API call counts as one use. Once the limit is reached, the token is automatically revoked. This is useful for one-time operations or tightly controlled automation tasks.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 53,
+      "domain": 3,
+      "objective": "3.8",
+      "difficulty": "medium",
+      "question": "Which command is used to look up the properties of the currently authenticated token?",
+      "options": [
+        "vault token info",
+        "vault token lookup",
+        "vault token status",
+        "vault token describe"
+      ],
+      "correct": 1,
+      "explanation": "The 'vault token lookup' command (with no arguments) displays properties of the currently authenticated token including its policies, TTL, creation time, accessor, and other metadata. Adding a token value or using -accessor flag allows looking up other tokens.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 54,
+      "domain": 3,
+      "objective": "3.8",
+      "difficulty": "medium",
+      "question": "An application's token has a TTL of 1 hour and a max TTL of 24 hours. The application renews the token every 45 minutes. When will the token ultimately expire?",
+      "options": [
+        "After 1 hour if not renewed",
+        "Never, because it is being renewed regularly",
+        "After 24 hours from creation, regardless of renewals",
+        "After 45 minutes if the application stops renewing"
+      ],
+      "correct": 2,
+      "explanation": "While the token is renewed every 45 minutes (resetting the 1-hour TTL), the max TTL of 24 hours is an absolute ceiling. After 24 hours from creation, the token expires regardless of renewal attempts. The application must re-authenticate to obtain a new token.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 55,
+      "domain": 3,
+      "objective": "3.9",
+      "difficulty": "hard",
+      "question": "How do batch tokens differ from service tokens regarding storage?",
+      "options": [
+        "Batch tokens are stored in an external database while service tokens are in Vault storage",
+        "Both types are stored identically in Vault storage",
+        "Service tokens are persisted to Vault storage while batch tokens are not persisted and exist only as encrypted blobs",
+        "Batch tokens are stored in memory only while service tokens are on disk"
+      ],
+      "correct": 2,
+      "explanation": "Service tokens are persisted to Vault's storage backend, which means they survive Vault restarts and can be looked up and managed. Batch tokens are self-contained encrypted blobs that are not persisted to storage. This makes batch tokens lighter weight but means they cannot be listed, looked up by accessor, or explicitly revoked.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 56,
+      "domain": 3,
+      "objective": "3.9",
+      "difficulty": "easy",
+      "question": "How is a root token generated after the initial Vault setup?",
+      "options": [
+        "By running vault token create -policy=root",
+        "By using the vault operator generate-root command with unseal keys",
+        "By restarting Vault in root mode",
+        "Root tokens cannot be regenerated after initialization"
+      ],
+      "correct": 1,
+      "explanation": "After initialization, new root tokens can be generated using the 'vault operator generate-root' command, which requires a quorum of unseal key holders to complete. This ensures that no single person can generate a root token alone, maintaining the security of the unseal key distribution.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 57,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "What is a lease in Vault?",
+      "options": [
+        "A contract between Vault and a cloud provider for resource usage",
+        "A metadata structure that associates a time duration with a secret, after which Vault may revoke the secret",
+        "A payment model for Vault Enterprise licensing",
+        "A replication agreement between two Vault clusters"
+      ],
+      "correct": 1,
+      "explanation": "A lease is metadata that Vault attaches to dynamic secrets and some auth tokens. It includes a lease ID, a duration (TTL), and a renewable flag. When the lease expires, Vault may revoke the associated secret (for example, deleting a dynamically generated database credential).",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 58,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "Which type of secret in Vault always has an associated lease?",
+      "options": [
+        "Static KV secrets",
+        "Dynamic secrets generated by secret engines like the database engine",
+        "Secrets stored in cubbyhole",
+        "Encrypted data processed by the transit engine"
+      ],
+      "correct": 1,
+      "explanation": "Dynamic secrets generated by engines like the database, AWS, and PKI secret engines always have associated leases. When the lease expires, Vault revokes the dynamic credentials (for example, dropping the database user). Static KV secrets and cubbyhole secrets do not have leases.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 59,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "What does renewing a lease do?",
+      "options": [
+        "It creates a new set of credentials to replace the expiring ones",
+        "It extends the duration of the lease, keeping the existing credentials valid for longer",
+        "It transfers the lease from one token to another",
+        "It converts a dynamic secret into a static secret"
+      ],
+      "correct": 1,
+      "explanation": "Renewing a lease extends its duration without generating new credentials. The existing credentials remain valid for the extended period. Renewal does not guarantee the full requested duration; Vault may grant a shorter extension based on the max TTL configuration.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 60,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "What is the lease ID used for?",
+      "options": [
+        "To encrypt the associated secret",
+        "To uniquely identify a lease so it can be renewed, revoked, or inspected",
+        "To authenticate to the secret engine that generated the lease",
+        "To track billing for Vault Enterprise usage"
+      ],
+      "correct": 1,
+      "explanation": "The lease ID is a unique identifier that Vault assigns to each lease. It is used with CLI commands and API calls to renew a specific lease, revoke it, or look up its details. Applications must store the lease ID returned with dynamic secrets to manage the credential lifecycle.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 61,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "What is the difference between the default lease TTL and the max lease TTL?",
+      "options": [
+        "Default TTL is for batch tokens and max TTL is for service tokens",
+        "Default TTL is the initial lease duration and max TTL is the absolute maximum a lease can be extended through renewals",
+        "Default TTL applies in development mode and max TTL in production mode",
+        "There is no difference; they are the same value"
+      ],
+      "correct": 1,
+      "explanation": "The default lease TTL is the initial duration assigned to a lease if no explicit TTL is requested. The max lease TTL is the absolute ceiling for lease duration, even through renewals. A lease can be renewed up to but never beyond the max TTL, at which point the application must request new credentials.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 62,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "Where can lease TTL values be configured in Vault? Select the most complete answer.",
+      "options": [
+        "Only at the system level via the Vault server configuration",
+        "At the system level, per mount (secret engine or auth method), and per role within a mount",
+        "Only per secret engine mount",
+        "Only per individual secret"
+      ],
+      "correct": 1,
+      "explanation": "Lease TTL values can be configured at three levels: system-wide defaults in the Vault server configuration, per mount when enabling or tuning a secret engine or auth method, and per role within a mount. More specific settings override more general ones, giving administrators granular control.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 63,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "medium",
+      "question": "What happens to the associated credentials when a dynamic secret lease is revoked?",
+      "options": [
+        "The credentials continue to work until their next use",
+        "Vault instructs the backend system to delete or invalidate the credentials",
+        "The credentials are moved to a quarantine area for review",
+        "Nothing happens to the credentials; only the Vault lease record is removed"
+      ],
+      "correct": 1,
+      "explanation": "When a dynamic secret lease is revoked, Vault contacts the backend system (database, cloud provider, etc.) to delete or invalidate the associated credentials. For example, the database secret engine will drop the dynamically created database user, ensuring the credentials cannot be used after revocation.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 64,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "medium",
+      "question": "What is prefix-based lease revocation?",
+      "options": [
+        "Revoking leases that start with a specific prefix path, affecting all matching leases at once",
+        "Revoking leases in alphabetical order by lease ID",
+        "Revoking the first lease in a series of related leases",
+        "Revoking leases that were created before a specific date"
+      ],
+      "correct": 0,
+      "explanation": "Prefix-based lease revocation revokes all leases whose IDs start with a specific path prefix. For example, revoking all leases under the database/ prefix would revoke all dynamically generated database credentials. This is useful for emergency situations or when decommissioning a secret engine.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 65,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "medium",
+      "question": "An application retrieves database credentials from Vault with a 1-hour lease. The application is still running after 50 minutes. What should the application do?",
+      "options": [
+        "Do nothing; the credentials will automatically renew",
+        "Renew the lease before it expires to extend the credential validity",
+        "Request entirely new credentials immediately",
+        "Stop all database operations until the lease is regenerated"
+      ],
+      "correct": 1,
+      "explanation": "Applications should proactively renew leases before expiration. A common pattern is to renew at roughly half the TTL duration. Leases do not auto-renew; the application (or a sidecar agent) must explicitly call the renewal API. Failing to renew means the credentials will be revoked when the lease expires.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 66,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "hard",
+      "question": "What is the sys/leases/lookup endpoint used for?",
+      "options": [
+        "To generate new leases for existing secrets",
+        "To view details about a specific lease including its TTL, issue time, and renewable status",
+        "To transfer lease ownership between tokens",
+        "To convert static secrets into leased secrets"
+      ],
+      "correct": 1,
+      "explanation": "The sys/leases/lookup endpoint retrieves detailed information about a specific lease using its lease ID. The response includes the lease TTL, issue time, expiration time, renewable status, and the associated path. This is useful for monitoring and debugging credential lifecycle issues.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 67,
+      "domain": 4,
+      "objective": "4.6",
+      "difficulty": "hard",
+      "question": "What is the purpose of the sys/leases/revoke-force endpoint?",
+      "options": [
+        "To revoke leases even if the backend revocation fails, removing only the Vault lease record",
+        "To revoke leases with a higher priority than normal revocation",
+        "To force-renew expired leases",
+        "To revoke leases across all namespaces simultaneously"
+      ],
+      "correct": 0,
+      "explanation": "The sys/leases/revoke-force endpoint is used when normal revocation fails because the backend system is unavailable or broken. It removes the lease record from Vault without contacting the backend to revoke credentials. The orphaned credentials in the backend must then be cleaned up manually.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 68,
+      "domain": 4,
+      "objective": "4.6",
+      "difficulty": "hard",
+      "question": "If a lease renewal is requested with an increment of 2 hours but the max TTL for the mount is only 1 hour away, what happens?",
+      "options": [
+        "The renewal fails with an error",
+        "Vault grants a 2-hour extension, ignoring the max TTL",
+        "Vault grants a renewal up to the remaining max TTL (1 hour), not the requested 2 hours",
+        "Vault automatically extends the max TTL to accommodate the request"
+      ],
+      "correct": 2,
+      "explanation": "Vault never extends a lease beyond the max TTL. If the requested increment would exceed the remaining time before max TTL, Vault grants a shorter extension limited to the max TTL boundary. The application receives the actual granted TTL in the response and should handle this accordingly.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 69,
+      "domain": 4,
+      "objective": "4.7",
+      "difficulty": "hard",
+      "question": "How does Vault Agent help with lease management for applications?",
+      "options": [
+        "Vault Agent stores all leases in a local SQLite database",
+        "Vault Agent acts as a proxy that handles authentication, token renewal, and lease renewal automatically on behalf of the application",
+        "Vault Agent replaces the need for leases entirely",
+        "Vault Agent converts all dynamic secrets to static secrets"
+      ],
+      "correct": 1,
+      "explanation": "Vault Agent runs as a sidecar or daemon and handles authentication, token lifecycle management, and template rendering automatically. It can auto-renew tokens and re-authenticate when tokens expire, simplifying application integration so developers do not need to implement lease renewal logic.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 70,
+      "domain": 4,
+      "objective": "4.7",
+      "difficulty": "easy",
+      "question": "Can a lease be renewed after it has already expired?",
+      "options": [
+        "Yes, within a 24-hour grace period",
+        "Yes, but only with a root token",
+        "No, expired leases cannot be renewed; the application must request new credentials",
+        "Yes, but the renewal incurs a penalty of half the original TTL"
+      ],
+      "correct": 2,
+      "explanation": "Once a lease expires, it cannot be renewed. The associated dynamic credentials are revoked (or scheduled for revocation), and the lease record is removed. The application must authenticate again if needed and request new credentials to obtain a new lease.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 71,
+      "domain": 4,
+      "objective": "4.8",
+      "difficulty": "medium",
+      "question": "Which CLI command revokes a specific lease by its ID?",
+      "options": [
+        "vault lease delete <lease-id>",
+        "vault lease revoke <lease-id>",
+        "vault lease expire <lease-id>",
+        "vault lease cancel <lease-id>"
+      ],
+      "correct": 1,
+      "explanation": "The 'vault lease revoke <lease-id>' command revokes a specific lease. This triggers Vault to contact the backend system to invalidate the associated dynamic credentials. Adding the -prefix flag allows revoking all leases matching a path prefix.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 72,
+      "domain": 4,
+      "objective": "4.8",
+      "difficulty": "hard",
+      "question": "When a token is revoked, what happens to the leases associated with that token?",
+      "options": [
+        "Leases continue to exist independently of the token",
+        "Leases are transferred to the parent token",
+        "All leases associated with the revoked token are also revoked",
+        "Leases enter a suspended state until a new token claims them"
+      ],
+      "correct": 2,
+      "explanation": "When a token is revoked, all leases that were created using that token are also revoked. This cascading revocation ensures that dynamic credentials generated during a session are cleaned up when the session ends, preventing orphaned credentials from persisting.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 73,
+      "domain": 4,
+      "objective": "4.9",
+      "difficulty": "medium",
+      "question": "What is the relationship between token TTL and lease TTL for dynamic secrets?",
+      "options": [
+        "Token TTL and lease TTL are always identical",
+        "Lease TTL is always longer than token TTL",
+        "They are independent: a token can expire while its created leases continue, or leases can expire while the token is still valid",
+        "Token TTL determines the maximum lease TTL"
+      ],
+      "correct": 2,
+      "explanation": "Token TTL and lease TTL are configured independently. A token might have a 24-hour TTL while the dynamic secrets it generates have 1-hour leases. However, when a token expires or is revoked, all associated leases are revoked too, regardless of the lease TTL remaining.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 74,
+      "domain": 4,
+      "objective": "4.9",
+      "difficulty": "easy",
+      "question": "Which CLI command renews a lease?",
+      "options": [
+        "vault lease extend <lease-id>",
+        "vault lease renew <lease-id>",
+        "vault lease refresh <lease-id>",
+        "vault lease update <lease-id>"
+      ],
+      "correct": 1,
+      "explanation": "The 'vault lease renew <lease-id>' command renews a specific lease. You can optionally specify an increment to request a specific new TTL. Vault may grant a shorter duration if the max TTL is approaching.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 75,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "What is the KV (Key-Value) secret engine used for?",
+      "options": [
+        "Dynamically generating database credentials",
+        "Storing static key-value pairs as secrets",
+        "Encrypting and decrypting data without storing it",
+        "Issuing X.509 certificates"
+      ],
+      "correct": 1,
+      "explanation": "The KV secret engine stores arbitrary static secrets as key-value pairs. It is the simplest secret engine and is commonly used for storing configuration values, credentials, and other sensitive data. It comes in two versions: v1 (no versioning) and v2 (with versioning).",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 76,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "What is the key difference between KV secret engine version 1 and version 2?",
+      "options": [
+        "Version 2 encrypts data while version 1 does not",
+        "Version 2 supports secret versioning and metadata while version 1 does not",
+        "Version 1 is faster because it uses a different storage format",
+        "Version 2 only works with Vault Enterprise"
+      ],
+      "correct": 1,
+      "explanation": "KV v2 adds secret versioning, which keeps a configurable number of past secret versions. It also provides metadata (creation time, deletion time, version number) and supports soft delete and undelete operations. KV v1 overwrites the previous value on every write with no version history.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 77,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "easy",
+      "question": "What does the Transit secret engine do?",
+      "options": [
+        "Stores secrets in an encrypted database",
+        "Provides encryption as a service, encrypting and decrypting data without storing it",
+        "Transits secrets securely between two Vault clusters",
+        "Generates temporary transport-layer certificates"
+      ],
+      "correct": 1,
+      "explanation": "The Transit secret engine provides encryption as a service. Applications send plaintext data to Vault, which returns ciphertext (and vice versa for decryption). The encryption keys never leave Vault, and the data is not stored in Vault. This allows applications to encrypt data without managing encryption keys themselves.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 78,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "easy",
+      "question": "What is the difference between static secrets and dynamic secrets in Vault?",
+      "options": [
+        "Static secrets expire after a fixed time while dynamic secrets never expire",
+        "Static secrets are stored and retrieved as-is, while dynamic secrets are generated on demand with automatic expiration via leases",
+        "Static secrets are plaintext and dynamic secrets are encrypted",
+        "There is no difference; all Vault secrets are dynamic"
+      ],
+      "correct": 1,
+      "explanation": "Static secrets (such as those in the KV engine) are stored by users and retrieved as-is with no automatic expiration. Dynamic secrets are generated on demand by engines like the database or AWS engine, come with leases, and are automatically revoked when the lease expires. Dynamic secrets reduce the risk of credential sprawl.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 79,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "How does the database secret engine generate credentials?",
+      "options": [
+        "It retrieves pre-created credentials from a credential store",
+        "It creates unique database users with limited privileges on demand and revokes them when the lease expires",
+        "It rotates a single shared database password on a schedule",
+        "It encrypts existing database credentials for secure storage"
+      ],
+      "correct": 1,
+      "explanation": "The database secret engine connects to a database using a configured connection and creation statement. When a client requests credentials, it dynamically creates a new database user with the specified privileges. When the lease expires, Vault connects to the database and drops the user, ensuring no long-lived credentials exist.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 80,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "Which secret engine is used to generate short-lived X.509 certificates?",
+      "options": [
+        "Transit",
+        "KV v2",
+        "PKI",
+        "SSH"
+      ],
+      "correct": 2,
+      "explanation": "The PKI (Public Key Infrastructure) secret engine generates dynamic X.509 certificates. It can act as a root or intermediate Certificate Authority, issuing certificates with configurable TTLs. This eliminates the need for manual certificate management and enables automated certificate rotation.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 81,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "medium",
+      "question": "What is the cubbyhole secret engine, and what makes it unique?",
+      "options": [
+        "It stores secrets that are accessible by all tokens in the same namespace",
+        "It stores secrets that are scoped to a single token and inaccessible by any other token, including root",
+        "It is a temporary storage engine that deletes secrets after one read",
+        "It stores secrets in an external key management system"
+      ],
+      "correct": 1,
+      "explanation": "The cubbyhole secret engine provides token-scoped storage. Each token has its own cubbyhole that no other token can access, not even root tokens. When the token is revoked, the cubbyhole data is destroyed. This makes cubbyhole ideal for temporary, private secret storage and is used internally for response wrapping.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 82,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "medium",
+      "question": "Which secret engine allows Vault to generate dynamic AWS credentials?",
+      "options": [
+        "KV v2",
+        "AWS secret engine",
+        "Transit",
+        "Database"
+      ],
+      "correct": 1,
+      "explanation": "The AWS secret engine generates dynamic AWS access credentials (IAM users, assumed roles, or federation tokens) on demand. Each set of credentials has a lease and is automatically revoked when the lease expires. This eliminates long-lived AWS access keys and enables just-in-time access.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 83,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "medium",
+      "question": "What operation does the Transit engine's rewrap function perform?",
+      "options": [
+        "It decrypts data and re-encrypts it with the same key version",
+        "It re-encrypts data with the latest key version without exposing the plaintext",
+        "It wraps plaintext in a response wrapping token",
+        "It transfers encrypted data between two transit engine mounts"
+      ],
+      "correct": 1,
+      "explanation": "The rewrap function takes ciphertext encrypted with an older key version and re-encrypts it with the latest key version, all without exposing the plaintext. This allows organizations to rotate encryption keys and update stored ciphertext without the data ever leaving Vault in decrypted form.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 84,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "hard",
+      "question": "An organization needs to store credit card numbers in a way that preserves the format (16 digits) but renders them useless if the database is breached. Which Vault feature addresses this?",
+      "options": [
+        "KV v2 with access control policies",
+        "Transit engine standard encryption",
+        "Format Preserving Encryption (FPE) via the Transform engine",
+        "Tokenization via the database engine"
+      ],
+      "correct": 2,
+      "explanation": "Format Preserving Encryption (FPE), available through the Transform secret engine (Enterprise), encrypts data while preserving its original format. A 16-digit credit card number is encrypted into a different 16-digit number, maintaining database schema compatibility while rendering the data useless without the decryption key.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 85,
+      "domain": 5,
+      "objective": "5.6",
+      "difficulty": "hard",
+      "question": "What is the purpose of a database secret engine connection rotation?",
+      "options": [
+        "To switch which database server Vault connects to",
+        "To rotate the root credentials that Vault uses to connect to the database, ensuring even Vault administrators cannot use the old credentials directly",
+        "To migrate the database engine to a new mount point",
+        "To change the lease TTL for all existing credentials"
+      ],
+      "correct": 1,
+      "explanation": "Connection rotation changes the root credentials that Vault uses to manage the database connection. After rotation, only Vault knows the new credentials. This prevents database administrators from using the Vault connection credentials directly and ensures Vault is the sole path for credential management.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 86,
+      "domain": 5,
+      "objective": "5.6",
+      "difficulty": "hard",
+      "question": "Which command enables a new secret engine at a specified path?",
+      "options": [
+        "vault secrets create -path=my-secrets kv-v2",
+        "vault secrets enable -path=my-secrets kv-v2",
+        "vault mount -type=kv-v2 my-secrets",
+        "vault engine start -path=my-secrets kv-v2"
+      ],
+      "correct": 1,
+      "explanation": "The 'vault secrets enable' command enables a new secret engine at a specified mount path. The -path flag specifies the mount point (defaults to the engine name). Multiple instances of the same engine type can be enabled at different paths for organizational purposes.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 87,
+      "domain": 5,
+      "objective": "5.7",
+      "difficulty": "hard",
+      "question": "What is the SSH secret engine used for?",
+      "options": [
+        "Storing SSH private keys in the KV store",
+        "Dynamically generating signed SSH certificates or one-time passwords for SSH access",
+        "Encrypting SSH traffic between Vault nodes",
+        "Tunneling Vault API traffic over SSH"
+      ],
+      "correct": 1,
+      "explanation": "The SSH secret engine provides two modes: signed certificates (Vault signs SSH public keys with a trusted CA, and SSH servers trust the CA) and one-time passwords (Vault generates a password that can be used exactly once to log in). The signed certificates mode is preferred as it does not require a Vault helper on the target host.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 88,
+      "domain": 5,
+      "objective": "5.7",
+      "difficulty": "medium",
+      "question": "What is the TOTP secret engine used for?",
+      "options": [
+        "Generating time-based one-time passwords for two-factor authentication",
+        "Encrypting data with time-locked keys",
+        "Creating temporary tokens that expire after one use",
+        "Synchronizing Vault cluster clocks"
+      ],
+      "correct": 0,
+      "explanation": "The TOTP (Time-based One-Time Password) secret engine can both generate and validate TOTP codes. It can act as either a TOTP code generator (like Google Authenticator) or a TOTP code validator for services that need to verify TOTP tokens. This centralizes MFA seed management within Vault.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 89,
+      "domain": 5,
+      "objective": "5.8",
+      "difficulty": "easy",
+      "question": "Can multiple instances of the same secret engine type be enabled simultaneously?",
+      "options": [
+        "No, each engine type can only be enabled once",
+        "Yes, each instance is mounted at a different path and configured independently",
+        "Only in Vault Enterprise with namespaces",
+        "Only if they connect to different backend systems"
+      ],
+      "correct": 1,
+      "explanation": "Multiple instances of the same secret engine type can be enabled at different mount paths. For example, you could have database engines at database-prod/ and database-staging/ with different connection configurations and access policies. Each mount is independent.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 90,
+      "domain": 5,
+      "objective": "5.8",
+      "difficulty": "medium",
+      "question": "What is the LDAP secret engine (not auth method) used for?",
+      "options": [
+        "Authenticating users against an LDAP directory",
+        "Dynamically managing LDAP passwords and generating dynamic LDAP credentials",
+        "Storing LDAP directory data in Vault",
+        "Replicating Vault data to an LDAP server"
+      ],
+      "correct": 1,
+      "explanation": "The LDAP secret engine (distinct from the LDAP auth method) manages LDAP credentials. It can rotate existing LDAP account passwords (static roles) or dynamically create and delete LDAP entries (dynamic roles). This brings the same dynamic credential benefits to LDAP/AD environments.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 91,
+      "domain": 5,
+      "objective": "5.9",
+      "difficulty": "easy",
+      "question": "What happens when a secret engine is disabled in Vault?",
+      "options": [
+        "The secrets are preserved but hidden from users",
+        "All secrets, configuration, and leases associated with that mount are revoked and removed",
+        "The engine is paused and can be re-enabled later with data intact",
+        "The engine continues to serve existing leases but stops creating new ones"
+      ],
+      "correct": 1,
+      "explanation": "Disabling a secret engine is a destructive operation. All secrets, configuration data, and active leases associated with that engine mount are revoked and permanently removed. This operation cannot be undone. If the data is needed, it should be migrated before the engine is disabled.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 92,
+      "domain": 5,
+      "objective": "5.9",
+      "difficulty": "hard",
+      "question": "An organization wants to use Vault to sign and verify JWTs for their microservices. Which secret engine supports this?",
+      "options": [
+        "KV v2 for storing JWT signing keys",
+        "Transit engine for signing operations",
+        "Identity secret engine for JWT/OIDC tokens",
+        "PKI engine for JWT certificate-based signing"
+      ],
+      "correct": 2,
+      "explanation": "The Identity secret engine (specifically the OIDC provider feature) can issue signed JWTs. The Transit engine can also sign arbitrary data (including JWT payloads) using its sign/verify operations. For standards-compliant OIDC tokens, the Identity engine is the purpose-built solution.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 93,
+      "domain": 5,
+      "objective": "5.10",
+      "difficulty": "hard",
+      "question": "What is the purpose of configuring a max_versions setting on a KV v2 secret engine?",
+      "options": [
+        "To limit the number of different secrets that can be stored",
+        "To control how many historical versions of each secret are retained before the oldest is permanently deleted",
+        "To set the maximum file size for secrets",
+        "To limit the number of times a secret can be read"
+      ],
+      "correct": 1,
+      "explanation": "The max_versions setting on KV v2 determines how many versions of each secret are retained. When a new version is written and the count exceeds max_versions, the oldest version is permanently deleted. This helps manage storage usage while maintaining a useful history for auditing and rollback purposes.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 94,
+      "domain": 5,
+      "objective": "5.10",
+      "difficulty": "medium",
+      "question": "What does the delete operation do to a KV v2 secret versus the destroy operation?",
+      "options": [
+        "They are identical operations",
+        "Delete performs a soft delete (version can be undeleted) while destroy permanently removes the version data",
+        "Delete removes the secret and destroy removes the entire engine",
+        "Delete works on single versions and destroy works on all versions"
+      ],
+      "correct": 1,
+      "explanation": "In KV v2, delete performs a soft delete that marks the version as deleted but retains the data, allowing it to be recovered with an undelete operation. Destroy permanently removes the version data, making it unrecoverable. This two-tier deletion model supports both operational recovery and compliance requirements.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 95,
+      "domain": 6,
+      "objective": "6.1",
+      "difficulty": "easy",
+      "question": "Which environment variable specifies the Vault server address for CLI commands?",
+      "options": [
+        "VAULT_TOKEN",
+        "VAULT_ADDR",
+        "VAULT_HOST",
+        "VAULT_SERVER"
+      ],
+      "correct": 1,
+      "explanation": "The VAULT_ADDR environment variable specifies the URL of the Vault server that CLI commands connect to. It should be set to the full URL including protocol and port, for example https://vault.example.com:8200. Without this, the CLI defaults to https://127.0.0.1:8200.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 96,
+      "domain": 6,
+      "objective": "6.1",
+      "difficulty": "easy",
+      "question": "Which environment variable is used to authenticate CLI commands with a Vault token?",
+      "options": [
+        "VAULT_ADDR",
+        "VAULT_AUTH",
+        "VAULT_TOKEN",
+        "VAULT_SECRET"
+      ],
+      "correct": 2,
+      "explanation": "The VAULT_TOKEN environment variable provides the authentication token used by CLI commands. Alternatively, after running 'vault login', the token is stored in a token helper (typically a file) and used automatically for subsequent commands.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 97,
+      "domain": 6,
+      "objective": "6.2",
+      "difficulty": "easy",
+      "question": "Which CLI command initializes a new Vault server?",
+      "options": [
+        "vault start",
+        "vault operator init",
+        "vault server -init",
+        "vault setup"
+      ],
+      "correct": 1,
+      "explanation": "The 'vault operator init' command initializes a new Vault server, generating the initial root token and unseal keys. Initialization happens once per Vault cluster and sets up the encryption key, master key, and key shares according to the specified parameters.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 98,
+      "domain": 6,
+      "objective": "6.2",
+      "difficulty": "easy",
+      "question": "What does the 'vault status' command display?",
+      "options": [
+        "The list of all secrets stored in Vault",
+        "Information about the Vault server including seal status, version, cluster information, and HA mode",
+        "The current user's token details and policies",
+        "A list of all active leases"
+      ],
+      "correct": 1,
+      "explanation": "The 'vault status' command displays server information including whether Vault is initialized, sealed or unsealed, the total and threshold number of unseal key shares, the Vault version, cluster name, and HA (high availability) mode status. This is typically the first command run to check server health.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 99,
+      "domain": 6,
+      "objective": "6.3",
+      "difficulty": "easy",
+      "question": "Which CLI command is used to unseal Vault?",
+      "options": [
+        "vault unlock",
+        "vault operator unseal",
+        "vault open",
+        "vault start"
+      ],
+      "correct": 1,
+      "explanation": "The 'vault operator unseal' command provides an unseal key share to begin or continue the unseal process. Multiple key holders must each provide their key share until the threshold is reached, at which point Vault unseals and becomes operational.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 100,
+      "domain": 6,
+      "objective": "6.3",
+      "difficulty": "medium",
+      "question": "Which CLI command reads a secret from the KV v2 secret engine?",
+      "options": [
+        "vault read secret/myapp/config",
+        "vault kv get secret/myapp/config",
+        "vault secret read myapp/config",
+        "vault get kv/secret/myapp/config"
+      ],
+      "correct": 1,
+      "explanation": "The 'vault kv get' command reads secrets from a KV secret engine. For KV v2, the path automatically includes the data/ segment. The 'vault read' command also works but requires including the full API path (secret/data/myapp/config for v2).",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 101,
+      "domain": 6,
+      "objective": "6.4",
+      "difficulty": "medium",
+      "question": "Which CLI command writes a key-value pair to the KV v2 secret engine?",
+      "options": [
+        "vault kv put secret/myapp password=example123",
+        "vault write kv/myapp password=example123",
+        "vault kv set secret/myapp password=example123",
+        "vault store secret/myapp password=example123"
+      ],
+      "correct": 0,
+      "explanation": "The 'vault kv put' command writes secrets to a KV secret engine. Key-value pairs are specified as key=value arguments. For KV v2, this creates a new version of the secret. Multiple key-value pairs can be written in a single command.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 102,
+      "domain": 6,
+      "objective": "6.4",
+      "difficulty": "medium",
+      "question": "How do you authenticate to Vault via the CLI using the userpass auth method?",
+      "options": [
+        "vault auth -method=userpass username=admin",
+        "vault login -method=userpass username=admin",
+        "vault connect -auth=userpass user=admin",
+        "vault login userpass/admin"
+      ],
+      "correct": 1,
+      "explanation": "The 'vault login -method=userpass username=admin' command authenticates using the userpass auth method. Vault will prompt for the password interactively. The -method flag specifies which auth method to use, and additional parameters vary by auth method.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 103,
+      "domain": 6,
+      "objective": "6.5",
+      "difficulty": "medium",
+      "question": "Which CLI command lists all enabled secret engines?",
+      "options": [
+        "vault secrets list",
+        "vault mounts show",
+        "vault engines list",
+        "vault list sys/mounts"
+      ],
+      "correct": 0,
+      "explanation": "The 'vault secrets list' command displays all enabled secret engines including their mount path, type, description, and configuration. This helps administrators understand the current Vault configuration and which secret engines are available.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 104,
+      "domain": 6,
+      "objective": "6.5",
+      "difficulty": "medium",
+      "question": "Which CLI command lists all enabled auth methods?",
+      "options": [
+        "vault auth methods",
+        "vault auth list",
+        "vault list auth/",
+        "vault auth show"
+      ],
+      "correct": 1,
+      "explanation": "The 'vault auth list' command displays all enabled authentication methods including their mount path, type, and description. This is useful for understanding which authentication methods are available and how they are configured.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 105,
+      "domain": 6,
+      "objective": "6.6",
+      "difficulty": "medium",
+      "question": "What does the -format=json flag do when added to a Vault CLI command?",
+      "options": [
+        "It sends the request body as JSON",
+        "It outputs the command response in JSON format instead of the default table format",
+        "It reads input from a JSON file",
+        "It validates that the server response is valid JSON"
+      ],
+      "correct": 1,
+      "explanation": "The -format=json flag changes the CLI output format to JSON, which is useful for scripting and automation. Other supported formats include table (default), yaml, and pretty. JSON output is easier to parse programmatically with tools like jq.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 106,
+      "domain": 6,
+      "objective": "6.6",
+      "difficulty": "hard",
+      "question": "Which CLI command is used to seal a running Vault server?",
+      "options": [
+        "vault operator lock",
+        "vault operator seal",
+        "vault server stop",
+        "vault operator shutdown"
+      ],
+      "correct": 1,
+      "explanation": "The 'vault operator seal' command seals a running Vault server. Once sealed, Vault cannot process requests until it is unsealed again. This is useful in emergency situations where you need to lock down Vault immediately. Sealing requires a token with sudo access to the sys/seal endpoint.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 107,
+      "domain": 6,
+      "objective": "6.7",
+      "difficulty": "hard",
+      "question": "Which CLI command creates a new token?",
+      "options": [
+        "vault token generate",
+        "vault token new",
+        "vault token create",
+        "vault token issue"
+      ],
+      "correct": 2,
+      "explanation": "The 'vault token create' command creates a new token. Options include specifying policies (-policy), TTL (-ttl), whether it is an orphan (-orphan), use limit (-use-limit), and many other parameters. The new token is a child of the creating token unless created as an orphan.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 108,
+      "domain": 6,
+      "objective": "6.7",
+      "difficulty": "hard",
+      "question": "How can you extract a specific field value from a Vault CLI command output?",
+      "options": [
+        "Using the -field flag to extract a single field value",
+        "Using the -key flag to filter output",
+        "Using the -select flag to choose fields",
+        "Field extraction requires a separate jq command only"
+      ],
+      "correct": 0,
+      "explanation": "The -field flag extracts a single field value from the command output, returning just the raw value without formatting. For example, 'vault kv get -field=password secret/myapp' returns only the password value. This is useful in shell scripts where you need to capture a specific value.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 109,
+      "domain": 6,
+      "objective": "6.8",
+      "difficulty": "hard",
+      "question": "Which environment variable disables TLS certificate verification for Vault CLI connections?",
+      "options": [
+        "VAULT_TLS_SKIP",
+        "VAULT_SKIP_VERIFY",
+        "VAULT_INSECURE",
+        "VAULT_NO_TLS"
+      ],
+      "correct": 1,
+      "explanation": "The VAULT_SKIP_VERIFY environment variable disables TLS certificate verification. This is sometimes used in development environments with self-signed certificates. It should never be used in production as it makes the connection vulnerable to interception attacks.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 110,
+      "domain": 6,
+      "objective": "6.8",
+      "difficulty": "hard",
+      "question": "What does 'vault operator generate-root' do?",
+      "options": [
+        "Generates a new root certificate for TLS",
+        "Creates a new root CA in the PKI engine",
+        "Initiates the process to generate a new root token using unseal keys",
+        "Generates a root password for the storage backend"
+      ],
+      "correct": 2,
+      "explanation": "The 'vault operator generate-root' command initiates or continues the process of generating a new root token. It requires a quorum of unseal key holders to provide their shares (similar to unsealing). This is the proper way to generate root tokens after initialization rather than storing the initial root token.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 111,
+      "domain": 6,
+      "objective": "6.9",
+      "difficulty": "medium",
+      "question": "Which CLI command deletes a specific version of a KV v2 secret?",
+      "options": [
+        "vault kv delete -versions=3 secret/myapp",
+        "vault kv remove -v=3 secret/myapp",
+        "vault delete secret/data/myapp/v3",
+        "vault kv purge -version=3 secret/myapp"
+      ],
+      "correct": 0,
+      "explanation": "The 'vault kv delete -versions=3 secret/myapp' command soft-deletes version 3 of the secret. The data can be recovered with 'vault kv undelete'. To permanently destroy version data, use 'vault kv destroy -versions=3 secret/myapp' instead.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 112,
+      "domain": 6,
+      "objective": "6.9",
+      "difficulty": "easy",
+      "question": "Which CLI command displays help information for Vault commands?",
+      "options": [
+        "vault --help or vault <command> -h",
+        "vault man <command>",
+        "vault info <command>",
+        "vault docs <command>"
+      ],
+      "correct": 0,
+      "explanation": "Running 'vault --help' shows top-level help, and adding -h or --help to any command (for example 'vault kv put -h') shows detailed help for that specific command including usage, flags, and examples.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 113,
+      "domain": 6,
+      "objective": "6.10",
+      "difficulty": "hard",
+      "question": "Which environment variable specifies a custom CA certificate for Vault CLI TLS connections?",
+      "options": [
+        "VAULT_TLS_CERT",
+        "VAULT_CACERT",
+        "VAULT_SSL_CA",
+        "VAULT_ROOT_CERT"
+      ],
+      "correct": 1,
+      "explanation": "The VAULT_CACERT environment variable specifies the path to a PEM-encoded CA certificate file used to verify the Vault server's TLS certificate. This is essential in environments using private CAs where the system trust store does not include the Vault server's CA.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 114,
+      "domain": 7,
+      "objective": "7.1",
+      "difficulty": "easy",
+      "question": "What is the first step when accessing the Vault UI in a browser?",
+      "options": [
+        "Enter a secret path to browse",
+        "Select an authentication method and provide credentials to log in",
+        "Configure the Vault server address",
+        "Upload a policy file"
+      ],
+      "correct": 1,
+      "explanation": "The Vault UI presents a login screen as the first step. Users must select an authentication method (token, userpass, LDAP, OIDC, etc.) from a dropdown and provide the appropriate credentials. After successful authentication, the UI displays available resources based on the token's policies.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 115,
+      "domain": 7,
+      "objective": "7.1",
+      "difficulty": "easy",
+      "question": "Which Vault UI section allows browsing and managing key-value secrets?",
+      "options": [
+        "The Policies section",
+        "The Secrets Engines section",
+        "The Access section",
+        "The Tools section"
+      ],
+      "correct": 1,
+      "explanation": "The Secrets Engines section of the Vault UI lists all enabled secret engine mounts. Clicking on a KV engine mount allows browsing, creating, editing, and deleting secrets within that engine. The UI provides a folder-like navigation experience for organizing secrets.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 116,
+      "domain": 7,
+      "objective": "7.2",
+      "difficulty": "easy",
+      "question": "Can you view previous versions of a KV v2 secret through the Vault UI?",
+      "options": [
+        "No, version history is only available via the CLI",
+        "Yes, the UI shows a version history dropdown with timestamps for each version",
+        "Only if you have the root policy",
+        "Only for the last two versions"
+      ],
+      "correct": 1,
+      "explanation": "The Vault UI provides a version history dropdown for KV v2 secrets. Users can view any stored version, see the creation timestamp and metadata, and compare values across versions. This makes it easy to audit changes and roll back to previous values.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 117,
+      "domain": 7,
+      "objective": "7.2",
+      "difficulty": "easy",
+      "question": "How does the Vault UI indicate whether the server is sealed or unsealed?",
+      "options": [
+        "A red or green status bar at the top of the page",
+        "The login page shows the seal status, and a sealed server presents an unseal interface instead of a login form",
+        "The URL changes from /sealed to /unsealed",
+        "There is no visual indication; you must check the CLI"
+      ],
+      "correct": 1,
+      "explanation": "When Vault is sealed, the UI displays an unseal interface that prompts for unseal key shares instead of the normal login form. After sufficient unseal keys are provided and Vault is unsealed, the interface switches to the standard authentication login page.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 118,
+      "domain": 7,
+      "objective": "7.3",
+      "difficulty": "medium",
+      "question": "Which Vault UI section is used to manage authentication methods?",
+      "options": [
+        "Secrets Engines",
+        "Access",
+        "Policies",
+        "Tools"
+      ],
+      "correct": 1,
+      "explanation": "The Access section of the Vault UI manages authentication methods, entities, groups, and leases. From here, administrators can enable new auth methods, configure existing ones, manage identity entities and groups, and view active leases.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 119,
+      "domain": 7,
+      "objective": "7.3",
+      "difficulty": "medium",
+      "question": "Can Vault policies be created and edited through the UI?",
+      "options": [
+        "No, policies can only be managed via the CLI or API",
+        "Yes, the Policies section provides a built-in editor for creating and modifying HCL policies",
+        "Only viewing is supported; editing requires the CLI",
+        "Only JSON policies can be edited in the UI, not HCL"
+      ],
+      "correct": 1,
+      "explanation": "The Vault UI includes a policy editor in the Policies section that supports creating and editing HCL policies. The editor includes syntax highlighting and basic validation. Administrators can create new policies, view existing ones, and modify them directly in the browser.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 120,
+      "domain": 7,
+      "objective": "7.4",
+      "difficulty": "medium",
+      "question": "What functionality does the Vault UI 'Tools' section provide?",
+      "options": [
+        "Server configuration and tuning options",
+        "Utility functions like wrapping, looking up tokens, generating random bytes, and hashing data",
+        "A terminal for running CLI commands in the browser",
+        "Network diagnostic tools for Vault cluster connectivity"
+      ],
+      "correct": 1,
+      "explanation": "The Vault UI Tools section provides utility functions including response wrapping (wrap/unwrap), token lookup, random byte generation, and data hashing. These are commonly needed operations that supplement the main secrets and access management workflows.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 121,
+      "domain": 7,
+      "objective": "7.4",
+      "difficulty": "medium",
+      "question": "How does the Vault UI handle wrapping tokens?",
+      "options": [
+        "Wrapping is not available through the UI",
+        "The Tools section allows wrapping data in a single-use token and also unwrapping existing wrapping tokens",
+        "Wrapping is automatic for all secrets viewed in the UI",
+        "Only unwrapping is available; wrapping requires the CLI"
+      ],
+      "correct": 1,
+      "explanation": "The Vault UI Tools section supports both wrapping and unwrapping operations. Users can enter data to be wrapped (receiving a single-use wrapping token) or paste a wrapping token to unwrap and reveal the contained secret. This enables secure secret sharing directly through the browser interface.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 122,
+      "domain": 7,
+      "objective": "7.5",
+      "difficulty": "medium",
+      "question": "What is displayed when a user navigates to a path they do not have permission to access in the Vault UI?",
+      "options": [
+        "The secret values are shown but grayed out",
+        "The UI crashes with a server error",
+        "A permission denied message indicating the token lacks the required capabilities",
+        "The path appears empty as if no secrets exist"
+      ],
+      "correct": 2,
+      "explanation": "The Vault UI displays a permission denied error when users attempt to access paths their token does not have capabilities for. The UI respects the same policy enforcement as the CLI and API. Users only see and can interact with resources their policies allow.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 123,
+      "domain": 7,
+      "objective": "7.5",
+      "difficulty": "hard",
+      "question": "How can an administrator enable a new secret engine through the Vault UI?",
+      "options": [
+        "Secret engines cannot be enabled through the UI",
+        "By navigating to Secrets Engines and clicking 'Enable new engine', then selecting the engine type and configuring it",
+        "By editing the Vault server configuration file through the UI",
+        "By pasting a CLI command into the UI terminal"
+      ],
+      "correct": 1,
+      "explanation": "The Vault UI provides a guided workflow for enabling new secret engines. Administrators navigate to the Secrets Engines section, click 'Enable new engine', choose from the available engine types, specify a mount path, and configure engine-specific options before enabling it.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 124,
+      "domain": 7,
+      "objective": "7.6",
+      "difficulty": "hard",
+      "question": "Does the Vault UI support configuring database secret engine connections?",
+      "options": [
+        "No, database connections must be configured via CLI or API only",
+        "Yes, the UI provides forms for configuring database connections, roles, and credential generation",
+        "Only viewing existing connections is supported",
+        "Only PostgreSQL connections can be configured through the UI"
+      ],
+      "correct": 1,
+      "explanation": "The Vault UI supports full configuration of database secret engine connections. Administrators can add database connections (specifying plugin, connection URL, and allowed roles), create and configure roles (with creation and revocation statements), and generate credentials through the UI forms.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 125,
+      "domain": 7,
+      "objective": "7.6",
+      "difficulty": "hard",
+      "question": "How does the Vault UI display token information for the currently logged-in user?",
+      "options": [
+        "Token information is not accessible through the UI",
+        "A token icon or user menu in the upper right shows token details including policies, TTL, accessor, and other metadata",
+        "Token details are only shown during initial login",
+        "Token information is displayed in the browser address bar"
+      ],
+      "correct": 1,
+      "explanation": "The Vault UI displays a user/token menu (typically in the upper right corner) that shows the current token's details including attached policies, token accessor, TTL remaining, creation time, and whether the token is renewable. This helps users understand their current access level.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 126,
+      "domain": 7,
+      "objective": "7.7",
+      "difficulty": "hard",
+      "question": "Can the Vault UI be disabled if an organization only wants CLI and API access?",
+      "options": [
+        "No, the UI is always enabled and cannot be turned off",
+        "Yes, the UI can be disabled in the Vault server configuration by setting ui = false",
+        "The UI is a separate application that must be uninstalled",
+        "The UI can only be restricted via network firewall rules"
+      ],
+      "correct": 1,
+      "explanation": "The Vault UI can be disabled by setting 'ui = false' in the Vault server configuration file. When disabled, the Vault server does not serve UI assets, and accessing the web interface returns an error. Organizations may disable it in production for security hardening.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 127,
+      "domain": 7,
+      "objective": "7.7",
+      "difficulty": "medium",
+      "question": "What happens in the Vault UI when the current token is about to expire?",
+      "options": [
+        "Nothing, the session silently ends",
+        "The UI may display a notification about the expiring token and prompt the user to renew or re-authenticate",
+        "The UI automatically renews the token without user interaction",
+        "The browser tab is automatically closed"
+      ],
+      "correct": 1,
+      "explanation": "The Vault UI monitors the current token's TTL and notifies the user when it is about to expire. Users can choose to renew the token (if it is renewable) or re-authenticate. If the token expires without renewal, the UI redirects to the login page.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 128,
+      "domain": 7,
+      "objective": "7.8",
+      "difficulty": "easy",
+      "question": "Which authentication method is typically the simplest to use when first logging into the Vault UI?",
+      "options": [
+        "AppRole",
+        "Kubernetes",
+        "Token",
+        "AWS"
+      ],
+      "correct": 2,
+      "explanation": "Token authentication is the simplest UI login method because it requires only pasting a valid Vault token. This is commonly used during initial setup with the root token. For regular use, methods like OIDC (which provides a browser-based SSO flow) are more user-friendly.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 129,
+      "domain": 7,
+      "objective": "7.8",
+      "difficulty": "hard",
+      "question": "How does OIDC authentication work in the Vault UI?",
+      "options": [
+        "Users paste an OIDC token from their identity provider",
+        "The UI redirects to the configured identity provider for login, then completes authentication after the redirect back",
+        "Users enter their identity provider username and password directly in the Vault UI",
+        "OIDC authentication is not supported in the UI"
+      ],
+      "correct": 1,
+      "explanation": "When OIDC is selected as the auth method in the Vault UI, clicking 'Sign in' opens a popup or redirect to the configured identity provider (Okta, Azure AD, etc.). After the user authenticates with the provider, the browser is redirected back to Vault with an authorization code that Vault exchanges for identity information and issues a token.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 130,
+      "domain": 7,
+      "objective": "7.9",
+      "difficulty": "medium",
+      "question": "Can identity entities and groups be managed through the Vault UI?",
+      "options": [
+        "No, identity management is API-only",
+        "Yes, the Access section includes interfaces for creating and managing entities, aliases, and groups",
+        "Only entity viewing is supported, not creation or editing",
+        "Only in Vault Enterprise with the governance module"
+      ],
+      "correct": 1,
+      "explanation": "The Vault UI Access section provides full identity management capabilities. Administrators can create and manage entities (with metadata and aliases), create and manage groups (both internal and external), and view the relationship between entities, aliases, and auth method mounts.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 131,
+      "domain": 7,
+      "objective": "7.9",
+      "difficulty": "hard",
+      "question": "What is the purpose of the 'Replication' section in the Vault UI?",
+      "options": [
+        "To replicate UI configuration across browser sessions",
+        "To view and manage Vault cluster replication status for disaster recovery and performance replication (Enterprise)",
+        "To synchronize policies between different Vault namespaces",
+        "To back up secret data to an external storage system"
+      ],
+      "correct": 1,
+      "explanation": "The Replication section in the Vault UI (available in Enterprise) displays the status of disaster recovery (DR) and performance replication clusters. Administrators can view replication lag, promote secondaries, and manage replication connections. This is critical for monitoring multi-datacenter Vault deployments.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 132,
+      "domain": 8,
+      "objective": "8.1",
+      "difficulty": "easy",
+      "question": "What are namespaces in Vault Enterprise?",
+      "options": [
+        "DNS names used to access different Vault clusters",
+        "Isolated environments within a single Vault cluster that provide multi-tenancy with separate policies, auth methods, and secret engines",
+        "Labels applied to secrets for organizational purposes",
+        "Different Vault server processes running on the same machine"
+      ],
+      "correct": 1,
+      "explanation": "Namespaces provide tenant isolation within a single Vault cluster. Each namespace has its own policies, auth methods, secret engines, and identity entities, completely isolated from other namespaces. This allows multiple teams or organizations to share Vault infrastructure without interfering with each other.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 133,
+      "domain": 8,
+      "objective": "8.1",
+      "difficulty": "easy",
+      "question": "Which Vault deployment option is managed by HashiCorp and does not require the organization to operate Vault infrastructure?",
+      "options": [
+        "Vault OSS (Open Source)",
+        "Vault Enterprise self-managed",
+        "HCP Vault (HashiCorp Cloud Platform)",
+        "Vault Dev Server"
+      ],
+      "correct": 2,
+      "explanation": "HCP Vault (HashiCorp Cloud Platform) is a fully managed service where HashiCorp operates the Vault infrastructure. Organizations do not need to manage servers, storage backends, upgrades, or high availability. HCP Vault provides Enterprise features in a cloud-managed model.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 134,
+      "domain": 8,
+      "objective": "8.2",
+      "difficulty": "easy",
+      "question": "What is the purpose of Disaster Recovery (DR) Replication in Vault Enterprise?",
+      "options": [
+        "To distribute read traffic across multiple clusters for performance",
+        "To maintain a standby cluster that can be promoted to primary if the original primary fails",
+        "To back up secrets to an external object store",
+        "To synchronize namespaces between two independent Vault clusters"
+      ],
+      "correct": 1,
+      "explanation": "DR Replication maintains one or more secondary clusters as warm standbys of the primary cluster. The secondary cluster mirrors the primary's data but does not serve client requests. If the primary fails, a secondary can be promoted to become the new primary, providing business continuity.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 135,
+      "domain": 8,
+      "objective": "8.2",
+      "difficulty": "easy",
+      "question": "What is Performance Replication in Vault Enterprise?",
+      "options": [
+        "Caching frequently accessed secrets in memory for faster retrieval",
+        "Replicating Vault data to secondary clusters that can serve read requests, reducing latency for distributed teams",
+        "Compressing Vault storage to improve disk I/O performance",
+        "Optimizing Vault's internal encryption operations"
+      ],
+      "correct": 1,
+      "explanation": "Performance Replication creates secondary clusters that can serve read requests from local clients, reducing latency for geographically distributed teams. Write operations are forwarded to the primary cluster. This improves performance while maintaining a single source of truth.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 136,
+      "domain": 8,
+      "objective": "8.3",
+      "difficulty": "medium",
+      "question": "What is Sentinel in Vault Enterprise?",
+      "options": [
+        "A monitoring and alerting tool for Vault clusters",
+        "A policy-as-code framework that enables fine-grained logic-based policies beyond standard ACL capabilities",
+        "A network firewall feature that protects Vault from external attacks",
+        "An automated backup system for Vault data"
+      ],
+      "correct": 1,
+      "explanation": "Sentinel is a policy-as-code framework in Vault Enterprise that allows writing rich, logic-based policies using a dedicated language. Sentinel policies can enforce rules that ACL policies cannot, such as requiring MFA for certain operations, restricting access based on time of day, or validating secret values meet complexity requirements.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 137,
+      "domain": 8,
+      "objective": "8.3",
+      "difficulty": "medium",
+      "question": "Which Vault Enterprise feature allows using a Hardware Security Module to automatically unseal Vault?",
+      "options": [
+        "Auto-Join",
+        "HSM Auto-Unseal",
+        "Seal Wrapping",
+        "Integrated Storage"
+      ],
+      "correct": 1,
+      "explanation": "HSM Auto-Unseal is a Vault Enterprise feature that uses a Hardware Security Module to automatically unseal Vault after a restart. This eliminates the need for manual unseal key entry while maintaining a high security standard since the master key is protected by the HSM. Community Vault supports auto-unseal with cloud KMS services.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 138,
+      "domain": 8,
+      "objective": "8.4",
+      "difficulty": "medium",
+      "question": "What is seal wrapping in Vault Enterprise?",
+      "options": [
+        "Compressing sealed Vault data to reduce storage usage",
+        "Adding an extra layer of encryption using an HSM or external KMS to wrap critical security parameters in storage",
+        "Wrapping the unseal keys in a secure envelope for distribution",
+        "Encrypting the Vault seal status information"
+      ],
+      "correct": 1,
+      "explanation": "Seal wrapping adds an additional layer of encryption to critical security parameters stored in Vault. When enabled, items like root keys, keyring entries, and optionally secret engine data are wrapped using the seal mechanism (HSM or cloud KMS), providing FIPS 140-2 compliant protection for sensitive data at rest.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 139,
+      "domain": 8,
+      "objective": "8.4",
+      "difficulty": "medium",
+      "question": "What is the Transform secret engine in Vault Enterprise?",
+      "options": [
+        "A tool for transforming data formats between JSON and XML",
+        "A secret engine that provides data masking, format-preserving encryption, and tokenization",
+        "A migration tool for transforming data between Vault versions",
+        "A tool for converting Vault policies between HCL and JSON"
+      ],
+      "correct": 1,
+      "explanation": "The Transform secret engine (Enterprise) provides data protection operations including Format Preserving Encryption (FPE), which encrypts data while maintaining its format, and tokenization, which replaces sensitive data with non-sensitive tokens. These are essential for compliance requirements like PCI-DSS.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 140,
+      "domain": 8,
+      "objective": "8.5",
+      "difficulty": "medium",
+      "question": "What is the key difference between Vault OSS and Vault Enterprise regarding storage backends?",
+      "options": [
+        "Vault OSS only supports file storage while Enterprise supports all backends",
+        "Vault Enterprise includes Integrated Storage (Raft) with built-in HA, while OSS also supports Raft but Enterprise adds features like autopilot",
+        "There is no difference in storage backend support",
+        "Vault Enterprise requires a separate database for storage"
+      ],
+      "correct": 1,
+      "explanation": "Both Vault OSS and Enterprise support Integrated Storage (Raft), but Enterprise adds the Autopilot feature which provides automatic server stabilization, dead server cleanup, and upgrade migration. Enterprise also offers additional supported storage backends and configurations for large-scale deployments.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 141,
+      "domain": 8,
+      "objective": "8.5",
+      "difficulty": "hard",
+      "question": "What are performance standby nodes in Vault Enterprise?",
+      "options": [
+        "Nodes that are powered off and only started during failover",
+        "Active nodes in an HA cluster that can handle read requests while forwarding write requests to the active node",
+        "Nodes dedicated to running batch jobs and background tasks",
+        "External monitoring nodes that check cluster health"
+      ],
+      "correct": 1,
+      "explanation": "Performance standby nodes in Vault Enterprise can handle read requests directly, improving cluster throughput. In OSS Vault, standby nodes only forward all requests to the active node. Enterprise performance standbys handle reads locally and forward only write requests, providing horizontal read scalability.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 142,
+      "domain": 8,
+      "objective": "8.6",
+      "difficulty": "hard",
+      "question": "How does the Control Groups feature in Vault Enterprise work?",
+      "options": [
+        "It groups related secrets together for organizational purposes",
+        "It requires multiple authorized users to approve a request before it is fulfilled, providing break-glass workflows",
+        "It creates access control lists for groups of users",
+        "It groups audit log entries by operation type"
+      ],
+      "correct": 1,
+      "explanation": "Control Groups require multiple authorized users to approve a sensitive request before Vault fulfills it. When a request triggers a control group policy, the request is held pending until the required number of authorizers approve it. This enables multi-party authorization for critical operations like accessing production secrets.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 143,
+      "domain": 8,
+      "objective": "8.6",
+      "difficulty": "hard",
+      "question": "What is the difference between Performance Replication and Disaster Recovery Replication in how secondaries handle client requests?",
+      "options": [
+        "Both types handle all requests identically",
+        "Performance secondaries serve read requests directly and forward writes; DR secondaries do not serve client requests at all until promoted",
+        "DR secondaries serve read requests while performance secondaries serve writes",
+        "Neither type serves client requests; all traffic goes to the primary"
+      ],
+      "correct": 1,
+      "explanation": "Performance Replication secondaries are active and serve read requests from clients while forwarding writes to the primary. DR Replication secondaries are passive warm standbys that do not serve any client requests. DR secondaries only become active when promoted to primary during a disaster recovery event.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 144,
+      "domain": 8,
+      "objective": "8.7",
+      "difficulty": "hard",
+      "question": "What is Vault's Integrated Storage (Raft)?",
+      "options": [
+        "An external Raft database that Vault connects to",
+        "A built-in storage backend that uses the Raft consensus protocol, eliminating the need for external storage like Consul",
+        "A protocol for replicating secrets between namespaces",
+        "A storage optimization feature that compresses data"
+      ],
+      "correct": 1,
+      "explanation": "Integrated Storage uses the Raft consensus protocol built into Vault to provide a highly available storage backend without requiring external dependencies like Consul or etcd. Vault nodes form a Raft cluster where data is replicated across all nodes with leader election for writes.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 145,
+      "domain": 8,
+      "objective": "8.7",
+      "difficulty": "hard",
+      "question": "What is the Vault Enterprise license model?",
+      "options": [
+        "Per-node licensing based on the number of Vault servers",
+        "Per-secret licensing based on the number of stored secrets",
+        "Term-based licensing that must be applied to the Vault cluster configuration",
+        "Free with paid support contracts only"
+      ],
+      "correct": 2,
+      "explanation": "Vault Enterprise uses term-based licensing. A license file must be applied to the Vault cluster, and it defines the feature set and expiration date. When the license expires, Enterprise features may become restricted. License can be set via configuration file, environment variable, or API.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 146,
+      "domain": 8,
+      "objective": "8.8",
+      "difficulty": "medium",
+      "question": "What is auto-unseal, and which Vault editions support it?",
+      "options": [
+        "Auto-unseal is an Enterprise-only feature using any KMS provider",
+        "Auto-unseal using cloud KMS services is available in both OSS and Enterprise, while HSM auto-unseal requires Enterprise",
+        "Auto-unseal is a Community feature only; Enterprise uses manual unsealing",
+        "Auto-unseal is available in all editions with identical capabilities"
+      ],
+      "correct": 1,
+      "explanation": "Cloud-based auto-unseal (using AWS KMS, Azure Key Vault, GCP Cloud KMS, or other cloud KMS services) is available in both Vault OSS/Community and Enterprise. HSM-based auto-unseal (PKCS11 seal) requires Vault Enterprise. Auto-unseal eliminates manual unseal key entry during restarts.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 147,
+      "domain": 8,
+      "objective": "8.8",
+      "difficulty": "easy",
+      "question": "What is the purpose of audit devices in Vault?",
+      "options": [
+        "To store secrets in an audit-compliant format",
+        "To log every authenticated request and response for security auditing and compliance",
+        "To audit policy files for syntax errors",
+        "To scan secrets for compliance violations"
+      ],
+      "correct": 1,
+      "explanation": "Audit devices log detailed records of every authenticated API request and response to Vault, including the operation, path, requesting token, and results. Multiple audit devices can be enabled simultaneously (file, syslog, socket). Vault requires at least one functioning audit device if any are enabled; if all audit devices fail, Vault blocks all requests.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 148,
+      "domain": 8,
+      "objective": "8.9",
+      "difficulty": "medium",
+      "question": "What happens during Shamir seal initialization when key shares and threshold are configured?",
+      "options": [
+        "All shares are identical and any one can unseal Vault",
+        "The master key is split into the specified number of shares, and the threshold number must be provided to reconstruct the key and unseal Vault",
+        "Shares are distributed automatically to registered email addresses",
+        "The threshold must always equal the number of shares"
+      ],
+      "correct": 1,
+      "explanation": "During initialization with Shamir's Secret Sharing, the master key is split into a configurable number of key shares. A threshold (minimum number of shares) must be presented to reconstruct the master key and unseal Vault. For example, with 5 shares and a threshold of 3, any 3 of the 5 key holders can unseal Vault.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 149,
+      "domain": 8,
+      "objective": "8.9",
+      "difficulty": "hard",
+      "question": "What is Vault's encryption hierarchy from outermost to innermost layer?",
+      "options": [
+        "Storage encryption key, then policy encryption, then secret encryption",
+        "Master key protects the encryption key, which protects the keyring, which protects the data encryption keys that encrypt stored data",
+        "TLS protects the API, then AES protects the storage",
+        "A single AES-256 key encrypts all data in storage"
+      ],
+      "correct": 1,
+      "explanation": "Vault uses a layered encryption model: the master key (protected by unseal keys or auto-unseal) encrypts the encryption key, which protects the keyring, which contains the data encryption keys used to encrypt all data at rest. This hierarchy allows key rotation at each layer independently.",
+      "link": "secrets-management.html"
+    },
+    {
+      "id": 150,
+      "domain": 8,
+      "objective": "8.10",
+      "difficulty": "hard",
+      "question": "Which Vault high availability architecture pattern uses Integrated Storage?",
+      "options": [
+        "Active-passive with external Consul cluster for leader election",
+        "Active-active where all nodes serve reads and writes simultaneously",
+        "Raft-based cluster where one node is the leader (handles writes) and followers replicate data and can become leader through election",
+        "Load-balanced stateless nodes with shared external database"
+      ],
+      "correct": 2,
+      "explanation": "Integrated Storage uses the Raft consensus protocol where one node is elected as leader and handles all write operations. Follower nodes replicate data from the leader and participate in leader elections. In Enterprise, followers can serve read requests as performance standbys. If the leader fails, a new leader is elected automatically.",
+      "link": "secrets-management.html"
     }
   ]
 }

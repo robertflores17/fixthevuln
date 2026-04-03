@@ -1,29 +1,29 @@
 {
   "metadata": {
     "title": "AWS Machine Learning MLS-C01 Practice Questions",
-    "version": "1.0",
-    "total_questions": 30,
+    "version": "2.0",
+    "total_questions": 150,
     "exam": "MLS-C01",
     "domains": {
       "1": {
         "name": "Data Engineering",
         "weight": 20,
-        "count": 6
+        "count": 30
       },
       "2": {
         "name": "Exploratory Data Analysis",
         "weight": 24,
-        "count": 7
+        "count": 36
       },
       "3": {
         "name": "Modeling",
         "weight": 36,
-        "count": 11
+        "count": 54
       },
       "4": {
         "name": "Machine Learning Implementation and Operations",
         "weight": 20,
-        "count": 6
+        "count": 30
       }
     }
   },
@@ -33,480 +33,2400 @@
       "domain": 1,
       "objective": "1.1",
       "difficulty": "easy",
-      "question": "Which of the following is a key concept within Data Engineering (Domain 1)?",
+      "question": "A data engineer needs to create a data lake for storing raw ML training data from multiple sources. Which AWS service is best suited as the central storage layer?",
       "options": [
-        "EMR with Spark for Large-Scale Processing",
-        "S3 Data Lakes and Lake Formation",
-        "Athena for Ad-Hoc Querying",
-        "Parquet and ORC File Formats"
+        "Amazon S3",
+        "Amazon RDS",
+        "Amazon DynamoDB",
+        "Amazon EFS"
       ],
       "correct": 0,
-      "explanation": "EMR with Spark for Large-Scale Processing is a key concept in Data Engineering. This domain covers topics essential for the AWS Machine Learning exam.",
-      "link": "start-here.html"
+      "explanation": "Amazon S3 is the foundational storage service for data lakes on AWS. It provides virtually unlimited storage, multiple storage classes for cost optimization, and integrates natively with ML services like SageMaker, Glue, and Athena.",
+      "link": "cloud-security.html"
     },
     {
       "id": 2,
       "domain": 1,
-      "objective": "1.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with identify and implement data ingestion solutions. What should be the first step?",
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "Which file format provides both columnar storage and efficient compression, making it ideal for large-scale ML datasets on S3?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "CSV",
+        "JSON",
+        "Apache Parquet",
+        "XML"
       ],
-      "correct": 0,
-      "explanation": "The first step in any data engineering task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "Apache Parquet is a columnar storage format that supports efficient compression and encoding schemes. It significantly reduces storage costs and improves query performance for analytical workloads, making it ideal for ML training datasets stored on S3.",
+      "link": "cloud-security.html"
     },
     {
       "id": 3,
       "domain": 1,
-      "objective": "1.3",
-      "difficulty": "medium",
-      "question": "Which concept in Data Engineering is most closely related to identify and implement data transformation solutions?",
+      "objective": "1.2",
+      "difficulty": "easy",
+      "question": "A company needs to run a simple ETL job to transform CSV files into Parquet format for ML training. Which fully managed service requires no infrastructure management?",
       "options": [
-        "Data Engineering governance and oversight",
-        "Data Engineering implementation and operations",
-        "Data Engineering assessment and testing",
-        "Data Engineering risk management"
+        "Amazon EMR",
+        "AWS Glue",
+        "Amazon EC2 with Apache Spark",
+        "AWS Batch"
       ],
       "correct": 1,
-      "explanation": "Identify and implement data transformation solutions falls under the implementation and operations aspect of Data Engineering.",
-      "link": "start-here.html"
+      "explanation": "AWS Glue is a fully managed ETL service that requires no infrastructure provisioning. It can automatically discover data schemas using crawlers and transform data between formats like CSV to Parquet without managing any servers.",
+      "link": "cloud-security.html"
     },
     {
       "id": 4,
       "domain": 1,
-      "objective": "1.1",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Data Engineering (Domain 1)?",
+      "objective": "1.2",
+      "difficulty": "easy",
+      "question": "Which AWS Glue feature automatically discovers the schema and properties of data stored in S3?",
       "options": [
-        "Data Pipeline Orchestration",
-        "AWS Glue ETL Jobs and Crawlers",
-        "Parquet and ORC File Formats",
-        "Data Partitioning Strategies"
+        "Glue Job Bookmarks",
+        "Glue Crawlers",
+        "Glue Workflows",
+        "Glue DataBrew"
       ],
-      "correct": 0,
-      "explanation": "Data Pipeline Orchestration is a key concept in Data Engineering. This domain covers topics essential for the AWS Machine Learning exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "AWS Glue Crawlers connect to data stores, extract metadata (schema, format, data types), and populate the AWS Glue Data Catalog. This metadata can then be used by Glue ETL jobs, Athena, and other services.",
+      "link": "cloud-security.html"
     },
     {
       "id": 5,
       "domain": 1,
-      "objective": "1.2",
-      "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with identify and implement data ingestion solutions?",
+      "objective": "1.1",
+      "difficulty": "medium",
+      "question": "A company has IoT sensors generating 500,000 events per second that need to be ingested for a real-time anomaly detection ML model. Which service should be used for ingestion?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "Amazon SQS",
+        "Amazon Kinesis Data Streams",
+        "AWS Glue Streaming",
+        "Amazon SNS"
       ],
-      "correct": 0,
-      "explanation": "When working with identify and implement data ingestion solutions, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "Amazon Kinesis Data Streams can handle massive real-time data ingestion at scale (thousands of data producers, millions of records per second). It provides sub-second latency, making it suitable for real-time ML inference pipelines. SQS is a message queue not designed for real-time streaming analytics.",
+      "link": "cloud-security.html"
     },
     {
       "id": 6,
       "domain": 1,
-      "objective": "1.3",
+      "objective": "1.2",
       "difficulty": "medium",
-      "question": "Which of the following best describes the purpose of \"Identify and implement data transformation solutions\" in Data Engineering?",
+      "question": "An ML team wants to ensure their Glue ETL job only processes new data since the last run, avoiding reprocessing of previously handled records. Which feature should they enable?",
       "options": [
-        "To implement and manage identify and implement data transformation solutions processes",
-        "To evaluate compliance with data engineering standards",
-        "To document risk assessment procedures",
-        "To audit external vendor relationships"
+        "Glue Crawlers",
+        "Glue Job Bookmarks",
+        "Glue Data Quality",
+        "Glue Schema Registry"
       ],
-      "correct": 0,
-      "explanation": "Identify and implement data transformation solutions is a key objective in Data Engineering. Understanding this concept is essential for the exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "AWS Glue Job Bookmarks track data that has already been processed during previous ETL runs. When enabled, the job only processes new data, avoiding duplicate processing and ensuring incremental data loads for ML pipelines.",
+      "link": "cloud-security.html"
     },
     {
       "id": 7,
-      "domain": 2,
-      "objective": "2.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Exploratory Data Analysis (Domain 2)?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "medium",
+      "question": "A data scientist needs to query data stored in S3 using standard SQL without loading it into a database first. Which service should they use?",
       "options": [
-        "SageMaker Data Wrangler",
-        "Correlation Analysis",
-        "t-SNE for Visualization",
-        "Class Imbalance (SMOTE, Oversampling)"
+        "Amazon Redshift",
+        "Amazon RDS",
+        "Amazon Athena",
+        "Amazon DynamoDB"
       ],
-      "correct": 0,
-      "explanation": "SageMaker Data Wrangler is a key concept in Exploratory Data Analysis. This domain covers topics essential for the AWS Machine Learning exam.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "Amazon Athena is a serverless query service that lets you analyze data directly in S3 using standard SQL. It requires no infrastructure setup and charges only per query, making it ideal for ad-hoc data exploration during ML development.",
+      "link": "cloud-security.html"
     },
     {
       "id": 8,
-      "domain": 2,
-      "objective": "2.2",
+      "domain": 1,
+      "objective": "1.1",
       "difficulty": "medium",
-      "question": "A professional is tasked with perform feature engineering. What should be the first step?",
+      "question": "A team needs to process a 50 TB dataset using Apache Spark for feature engineering before ML training. Which AWS service provides managed Spark clusters?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "AWS Glue",
+        "Amazon EMR",
+        "Amazon Athena",
+        "AWS Lambda"
       ],
-      "correct": 0,
-      "explanation": "The first step in any exploratory data analysis task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "Amazon EMR (Elastic MapReduce) provides managed Hadoop and Spark clusters for large-scale data processing. While Glue also uses Spark, EMR offers more control over cluster configuration, custom libraries, and is better suited for very large datasets requiring custom Spark optimizations.",
+      "link": "cloud-security.html"
     },
     {
       "id": 9,
-      "domain": 2,
-      "objective": "2.3",
+      "domain": 1,
+      "objective": "1.3",
       "difficulty": "medium",
-      "question": "Which concept in Exploratory Data Analysis is most closely related to analyze and visualize data for machine learning?",
+      "question": "A company needs to deliver streaming data from Kinesis Data Streams to S3 in near-real-time with automatic format conversion to Parquet. Which service handles this with minimal code?",
       "options": [
-        "Exploratory Data Analysis governance and oversight",
-        "Exploratory Data Analysis implementation and operations",
-        "Exploratory Data Analysis assessment and testing",
-        "Exploratory Data Analysis risk management"
+        "AWS Lambda",
+        "Amazon Kinesis Data Firehose",
+        "AWS Glue Streaming",
+        "Amazon EMR"
       ],
       "correct": 1,
-      "explanation": "Analyze and visualize data for machine learning falls under the implementation and operations aspect of Exploratory Data Analysis.",
-      "link": "start-here.html"
+      "explanation": "Amazon Kinesis Data Firehose (now Amazon Data Firehose) can automatically deliver streaming data to S3, Redshift, or OpenSearch. It supports built-in format conversion (e.g., JSON to Parquet) using the Glue Data Catalog schema, requiring minimal code.",
+      "link": "cloud-security.html"
     },
     {
       "id": 10,
-      "domain": 2,
-      "objective": "2.4",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Exploratory Data Analysis (Domain 2)?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "Which AWS Lake Formation capability controls fine-grained access to specific columns in a data lake table used for ML training?",
       "options": [
-        "t-SNE for Visualization",
-        "Correlation Analysis",
-        "Normalization vs Standardization",
-        "One-Hot Encoding vs Label Encoding"
+        "Data filters",
+        "Blueprints",
+        "Column-level permissions",
+        "S3 bucket policies"
       ],
-      "correct": 0,
-      "explanation": "t-SNE for Visualization is a key concept in Exploratory Data Analysis. This domain covers topics essential for the AWS Machine Learning exam.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "AWS Lake Formation provides column-level permissions that allow administrators to restrict access to specific columns in data lake tables. This is important for ML workloads where sensitive features (like PII) must be restricted from certain users or training jobs.",
+      "link": "cloud-security.html"
     },
     {
       "id": 11,
-      "domain": 2,
-      "objective": "2.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with sanitize and prepare data for modeling?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "An ML pipeline ingests streaming data via Kinesis, transforms it with Glue, stores results in S3, and triggers SageMaker training. Which service should orchestrate this multi-step pipeline?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "Amazon EventBridge",
+        "AWS Step Functions",
+        "Amazon SQS",
+        "AWS CloudFormation"
       ],
-      "correct": 0,
-      "explanation": "When working with sanitize and prepare data for modeling, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "AWS Step Functions is a serverless orchestration service that coordinates multi-step workflows with branching logic, error handling, and retry mechanisms. It can orchestrate Kinesis consumers, Glue jobs, S3 operations, and SageMaker training as a visual workflow, making complex ML pipelines manageable.",
+      "link": "cloud-security.html"
     },
     {
       "id": 12,
-      "domain": 2,
-      "objective": "2.2",
-      "difficulty": "medium",
-      "question": "Which of the following best describes the purpose of \"Perform feature engineering\" in Exploratory Data Analysis?",
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "hard",
+      "question": "A company stores 200 TB of training data in S3. ML jobs frequently scan the entire dataset, causing high Athena query costs. Which strategy would most reduce query costs while maintaining query flexibility?",
       "options": [
-        "To implement and manage perform feature engineering processes",
-        "To evaluate compliance with exploratory data analysis standards",
-        "To document risk assessment procedures",
-        "To audit external vendor relationships"
+        "Move data to Amazon EBS volumes",
+        "Partition data by date and use Parquet format with Snappy compression",
+        "Convert all data to CSV format for simpler queries",
+        "Use S3 Transfer Acceleration"
       ],
-      "correct": 0,
-      "explanation": "Perform feature engineering is a key objective in Exploratory Data Analysis. Understanding this concept is essential for the exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "Partitioning data in S3 using Hive-style partitions (e.g., year/month/day) combined with Parquet format and Snappy compression dramatically reduces Athena scan costs. Athena charges per data scanned, so partitions allow queries to skip irrelevant data, and Parquet's columnar format further reduces bytes read.",
+      "link": "cloud-security.html"
     },
     {
       "id": 13,
-      "domain": 2,
-      "objective": "2.3",
-      "difficulty": "medium",
-      "question": "Which of the following is a key concept within Exploratory Data Analysis (Domain 2)?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "An EMR Spark job is failing with OutOfMemory errors when processing a highly skewed dataset for ML feature engineering. Which technique addresses this?",
       "options": [
-        "Normalization vs Standardization",
-        "One-Hot Encoding vs Label Encoding",
-        "Ground Truth Labeling",
-        "Class Imbalance (SMOTE, Oversampling)"
+        "Increase the number of executor instances",
+        "Use salting to redistribute skewed keys across partitions",
+        "Switch from Spark to Hive",
+        "Reduce the number of shuffle partitions"
       ],
-      "correct": 0,
-      "explanation": "Normalization vs Standardization is a key concept in Exploratory Data Analysis. This domain covers topics essential for the AWS Machine Learning exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "Data skew occurs when certain keys have disproportionately more records, causing some partitions to be much larger than others. Salting adds a random prefix to skewed keys, distributing the data more evenly across partitions. This prevents individual executors from running out of memory during shuffles.",
+      "link": "cloud-security.html"
     },
     {
       "id": 14,
-      "domain": 3,
-      "objective": "3.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Modeling (Domain 3)?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "A team needs to build a data pipeline that ingests data from an on-premises Oracle database into S3 for ML training. The database has 5 TB of data with ongoing changes. Which approach provides the most efficient ongoing replication?",
       "options": [
-        "Image Classification and Object Detection",
-        "Confusion Matrix, Precision, Recall, F1",
-        "Random Cut Forest (Anomaly Detection)",
-        "AUC-ROC Curves"
+        "Use AWS DataSync for periodic full copies",
+        "Use AWS Database Migration Service (DMS) with change data capture (CDC)",
+        "Manually export and upload via AWS CLI",
+        "Use AWS Snow Family for initial load only"
       ],
-      "correct": 0,
-      "explanation": "Image Classification and Object Detection is a key concept in Modeling. This domain covers topics essential for the AWS Machine Learning exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "AWS DMS with CDC (change data capture) provides efficient ongoing replication from Oracle to S3. After the initial full load, CDC captures only the incremental changes, minimizing network bandwidth and ensuring the S3 data lake stays current for ML training without repeated full copies.",
+      "link": "cloud-security.html"
     },
     {
       "id": 15,
-      "domain": 3,
-      "objective": "3.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with select the appropriate model for a given problem. What should be the first step?",
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "hard",
+      "question": "A data engineer notices that a SageMaker training job reads 100 GB of data from S3 but only uses 10 columns out of 500. How can they optimize data loading performance?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Use S3 Select to retrieve only the needed columns from Parquet files",
+        "Copy the entire dataset to the training instance's local SSD",
+        "Convert the data to JSON format for faster parsing",
+        "Use S3 Transfer Acceleration"
       ],
       "correct": 0,
-      "explanation": "The first step in any modeling task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "S3 Select allows you to retrieve only a subset of columns from Parquet or CSV files stored in S3, pushing the filtering to the storage layer. This reduces data transfer by up to 95% (10 of 500 columns), significantly speeding up SageMaker training job startup and reducing costs.",
+      "link": "cloud-security.html"
     },
     {
       "id": 16,
-      "domain": 3,
-      "objective": "3.3",
-      "difficulty": "medium",
-      "question": "Which concept in Modeling is most closely related to train machine learning models?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "A real-time fraud detection system needs to enrich streaming transaction data with customer profiles stored in DynamoDB before sending it to a SageMaker endpoint. Which architecture achieves sub-second latency?",
       "options": [
-        "Modeling governance and oversight",
-        "Modeling implementation and operations",
-        "Modeling assessment and testing",
-        "Modeling risk management"
+        "Kinesis Data Streams → Lambda (DynamoDB lookup + SageMaker invoke) → results to DynamoDB",
+        "S3 batch upload → Glue ETL → SageMaker Batch Transform",
+        "Kinesis Data Firehose → S3 → Athena → SageMaker",
+        "SQS → EC2 → RDS → SageMaker"
       ],
-      "correct": 1,
-      "explanation": "Train machine learning models falls under the implementation and operations aspect of Modeling.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "Kinesis Data Streams with Lambda provides sub-second processing. Lambda reads from the stream, enriches each transaction by looking up customer profiles in DynamoDB (single-digit millisecond reads), and invokes the SageMaker endpoint for real-time inference. This architecture minimizes latency for fraud detection.",
+      "link": "cloud-security.html"
     },
     {
       "id": 17,
-      "domain": 3,
-      "objective": "3.4",
+      "domain": 1,
+      "objective": "1.3",
       "difficulty": "hard",
-      "question": "Which of the following is a key concept within Modeling (Domain 3)?",
+      "question": "An ML team stores training datasets in S3 with Parquet format. They need to perform time-travel queries and ACID transactions on this data for reproducible ML experiments. Which technology should they adopt?",
       "options": [
-        "Confusion Matrix, Precision, Recall, F1",
-        "Image Classification and Object Detection",
-        "AUC-ROC Curves",
-        "Sequence-to-Sequence (Seq2Seq) Models"
+        "S3 versioning",
+        "Apache Iceberg on AWS",
+        "Amazon Redshift",
+        "AWS Glue Data Quality"
       ],
-      "correct": 0,
-      "explanation": "Confusion Matrix, Precision, Recall, F1 is a key concept in Modeling. This domain covers topics essential for the AWS Machine Learning exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "Apache Iceberg is an open table format that provides ACID transactions, time-travel queries, and schema evolution for data lakes on S3. It allows ML teams to query exact dataset snapshots used for previous training runs, ensuring experiment reproducibility without maintaining separate copies.",
+      "link": "cloud-security.html"
     },
     {
       "id": 18,
-      "domain": 3,
-      "objective": "3.5",
+      "domain": 1,
+      "objective": "1.1",
       "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with evaluate machine learning models?",
+      "question": "Which SageMaker feature allows data scientists to import data directly from S3, Athena, Redshift, and other sources into a training notebook?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "SageMaker Data Wrangler",
+        "SageMaker Debugger",
+        "SageMaker Clarify",
+        "SageMaker Model Monitor"
       ],
       "correct": 0,
-      "explanation": "When working with evaluate machine learning models, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "explanation": "SageMaker Data Wrangler provides a visual interface for importing, preparing, transforming, and analyzing data from multiple sources including S3, Athena, and Redshift. It generates code that can be exported to SageMaker pipelines for production use.",
+      "link": "cloud-security.html"
     },
     {
       "id": 19,
-      "domain": 3,
-      "objective": "3.1",
-      "difficulty": "medium",
-      "question": "Which of the following best describes the purpose of \"Frame business problems as machine learning problems\" in Modeling?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "easy",
+      "question": "A team wants to catalog all the datasets used across their ML projects so data scientists can easily discover and understand available training data. Which service provides this?",
       "options": [
-        "To implement and manage frame business problems as machine learning problems processes",
-        "To evaluate compliance with modeling standards",
-        "To document risk assessment procedures",
-        "To audit external vendor relationships"
+        "Amazon S3 Inventory",
+        "AWS Glue Data Catalog",
+        "Amazon CloudWatch",
+        "AWS Config"
       ],
-      "correct": 0,
-      "explanation": "Frame business problems as machine learning problems is a key objective in Modeling. Understanding this concept is essential for the exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "The AWS Glue Data Catalog is a centralized metadata repository that stores table definitions, schema information, and location metadata for datasets. Data scientists can search and discover available training data across S3, databases, and other sources.",
+      "link": "cloud-security.html"
     },
     {
       "id": 20,
-      "domain": 3,
-      "objective": "3.2",
-      "difficulty": "medium",
-      "question": "Which of the following is a key concept within Modeling (Domain 3)?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "easy",
+      "question": "Which S3 feature helps reduce storage costs for ML training data that is accessed infrequently after initial model training?",
       "options": [
-        "SageMaker Built-In Algorithms (XGBoost, Linear Learner, KNN)",
-        "Hyperparameter Tuning Jobs",
-        "Regularization (L1/L2)",
-        "AUC-ROC Curves"
+        "S3 versioning",
+        "S3 Lifecycle policies",
+        "S3 Cross-Region Replication",
+        "S3 Transfer Acceleration"
       ],
-      "correct": 0,
-      "explanation": "SageMaker Built-In Algorithms (XGBoost, Linear Learner, KNN) is a key concept in Modeling. This domain covers topics essential for the AWS Machine Learning exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "S3 Lifecycle policies automatically transition objects between storage classes based on age. Training data can be moved from S3 Standard to S3 Infrequent Access or Glacier after initial training, significantly reducing storage costs for historical datasets.",
+      "link": "cloud-security.html"
     },
     {
       "id": 21,
-      "domain": 3,
-      "objective": "3.3",
-      "difficulty": "hard",
-      "question": "Which concept in Modeling is most closely related to train machine learning models?",
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "medium",
+      "question": "An ML pipeline processes daily batch data using Glue but occasionally receives late-arriving records from the previous day. How should the pipeline handle this to avoid data quality issues in training?",
       "options": [
-        "Modeling governance and oversight",
-        "Modeling implementation and operations",
-        "Modeling assessment and testing",
-        "Modeling risk management"
+        "Ignore late-arriving records entirely",
+        "Reprocess the entire dataset every day",
+        "Use Glue Job Bookmarks with a watermark strategy that includes a lookback window",
+        "Switch to real-time streaming with Kinesis"
       ],
-      "correct": 1,
-      "explanation": "Train machine learning models falls under the implementation and operations aspect of Modeling.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "A watermark strategy with a lookback window allows the Glue job to re-scan a configurable time window of recent data on each run. This catches late-arriving records while still avoiding full reprocessing. Job Bookmarks track the high watermark while the lookback ensures completeness.",
+      "link": "cloud-security.html"
     },
     {
       "id": 22,
-      "domain": 3,
-      "objective": "3.4",
-      "difficulty": "easy",
-      "question": "In the context of AWS Machine Learning, what is the primary goal of perform hyperparameter optimization?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "medium",
+      "question": "A SageMaker training job needs to read from a 1 TB dataset stored as many small files (1 MB each) in S3. Training is slow due to high overhead from many S3 GET requests. What is the best optimization?",
       "options": [
-        "To ensure proper modeling controls are in place",
-        "To reduce operational costs",
-        "To increase system performance",
-        "To simplify user interfaces"
+        "Use SageMaker Pipe mode to stream data directly from S3",
+        "Copy all files to an EBS volume attached to the training instance",
+        "Combine small files into larger Parquet files (128 MB-1 GB each) using Glue",
+        "Switch from S3 to FSx for Lustre"
       ],
-      "correct": 0,
-      "explanation": "The primary goal of perform hyperparameter optimization is to ensure proper controls and processes are in place within Modeling.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "The 'small files problem' causes high overhead from many S3 API calls. Combining files into larger Parquet files (128 MB-1 GB) reduces the number of GET requests by 100-1000x and allows efficient columnar reads. While Pipe mode and FSx also help, addressing the root cause (file consolidation) provides the most sustainable improvement.",
+      "link": "cloud-security.html"
     },
     {
       "id": 23,
-      "domain": 3,
-      "objective": "3.5",
-      "difficulty": "medium",
-      "question": "Which of the following is a key concept within Modeling (Domain 3)?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "A company needs to process a continuous stream of clickstream data for real-time personalization. The data arrives at 10 GB/hour and must be available for both real-time inference and batch retraining. Which architecture supports both use cases?",
       "options": [
-        "Sequence-to-Sequence (Seq2Seq) Models",
-        "BlazingText and Word2Vec",
-        "AUC-ROC Curves",
-        "Bias-Variance Tradeoff"
+        "Kinesis Data Streams → Lambda for real-time inference; Firehose to S3 for batch retraining",
+        "S3 → Athena for both real-time and batch",
+        "DynamoDB Streams → Lambda for both",
+        "SQS → EC2 for real-time; same SQS → batch processing"
       ],
       "correct": 0,
-      "explanation": "Sequence-to-Sequence (Seq2Seq) Models is a key concept in Modeling. This domain covers topics essential for the AWS Machine Learning exam.",
-      "link": "start-here.html"
+      "explanation": "This is a Lambda architecture pattern. Kinesis Data Streams feeds Lambda for real-time inference (speed layer), while Kinesis Data Firehose simultaneously delivers the same data to S3 in Parquet format for batch model retraining (batch layer). This dual-path approach satisfies both latency requirements.",
+      "link": "cloud-security.html"
     },
     {
       "id": 24,
-      "domain": 3,
-      "objective": "3.1",
+      "domain": 1,
+      "objective": "1.1",
       "difficulty": "medium",
-      "question": "Which of the following best describes the purpose of \"Frame business problems as machine learning problems\" in Modeling?",
+      "question": "Which SageMaker input mode streams training data from S3 without downloading the full dataset to the training instance first?",
       "options": [
-        "To implement and manage frame business problems as machine learning problems processes",
-        "To evaluate compliance with modeling standards",
-        "To document risk assessment procedures",
-        "To audit external vendor relationships"
+        "File mode",
+        "Pipe mode",
+        "FastFile mode",
+        "Direct mode"
       ],
-      "correct": 0,
-      "explanation": "Frame business problems as machine learning problems is a key objective in Modeling. Understanding this concept is essential for the exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "SageMaker Pipe mode streams data directly from S3 to the training algorithm, eliminating the need to download the entire dataset before training begins. This reduces startup time and allows training on datasets larger than the instance's storage capacity.",
+      "link": "cloud-security.html"
     },
     {
       "id": 25,
-      "domain": 4,
-      "objective": "4.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Machine Learning Implementation and Operations (Domain 4)?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "A healthcare company must ensure ML training data stored in S3 is encrypted, access-logged, and that no data leaves a specific AWS Region due to compliance requirements. Which combination of controls achieves this?",
       "options": [
-        "Model Registry and Versioning",
-        "Multi-Model Endpoints",
-        "Batch Transform Jobs",
-        "SageMaker Model Monitor (Data Drift)"
+        "S3 SSE-KMS encryption + S3 access logging + S3 bucket policy with aws:RequestedRegion condition",
+        "S3 SSE-S3 encryption + CloudTrail + IAM user policies",
+        "Client-side encryption + VPC Flow Logs + S3 Object Lock",
+        "S3 SSE-KMS + CloudWatch + AWS Config"
       ],
       "correct": 0,
-      "explanation": "Model Registry and Versioning is a key concept in Machine Learning Implementation and Operations. This domain covers topics essential for the AWS Machine Learning exam.",
-      "link": "start-here.html"
+      "explanation": "SSE-KMS provides encryption with audit trails via CloudTrail, S3 access logging records all data access, and an S3 bucket policy with the aws:RequestedRegion condition key prevents data access from other regions. This combination satisfies encryption, logging, and data residency compliance requirements.",
+      "link": "cloud-security.html"
     },
     {
       "id": 26,
-      "domain": 4,
-      "objective": "4.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with recommend and implement appropriate ml services and features for a given problem. What should be the first step?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "easy",
+      "question": "Which ORC and Parquet characteristic makes these formats particularly efficient for ML workloads that only need a subset of columns?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Row-based storage layout",
+        "Columnar storage layout",
+        "Built-in encryption",
+        "Automatic schema detection"
       ],
-      "correct": 0,
-      "explanation": "The first step in any machine learning implementation and operations task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "Both ORC and Parquet use columnar storage, meaning data for each column is stored contiguously on disk. When an ML job only needs specific features (columns), the query engine reads only those columns, skipping the rest entirely. This dramatically reduces I/O for wide datasets.",
+      "link": "cloud-security.html"
     },
     {
       "id": 27,
-      "domain": 4,
-      "objective": "4.3",
+      "domain": 1,
+      "objective": "1.3",
       "difficulty": "medium",
-      "question": "Which concept in Machine Learning Implementation and Operations is most closely related to apply security practices to ml solutions?",
+      "question": "An ML engineer needs to run ad-hoc data exploration queries during feature engineering. The data is in S3, and they want to pay only when queries run. Which service is the most cost-effective choice?",
       "options": [
-        "Machine Learning Implementation and Operations governance and oversight",
-        "Machine Learning Implementation and Operations implementation and operations",
-        "Machine Learning Implementation and Operations assessment and testing",
-        "Machine Learning Implementation and Operations risk management"
+        "Amazon Redshift",
+        "Amazon Athena",
+        "Amazon EMR (always-on cluster)",
+        "Amazon RDS"
       ],
       "correct": 1,
-      "explanation": "Apply security practices to ML solutions falls under the implementation and operations aspect of Machine Learning Implementation and Operations.",
-      "link": "start-here.html"
+      "explanation": "Amazon Athena is serverless and charges only per query based on data scanned ($5 per TB). There are no infrastructure costs when idle, making it the most cost-effective option for ad-hoc exploration during ML development. Redshift and EMR incur ongoing costs even when idle.",
+      "link": "cloud-security.html"
     },
     {
       "id": 28,
-      "domain": 4,
-      "objective": "4.1",
+      "domain": 1,
+      "objective": "1.1",
       "difficulty": "hard",
-      "question": "Which of the following is a key concept within Machine Learning Implementation and Operations (Domain 4)?",
+      "question": "A SageMaker training job using File mode downloads 500 GB from S3, but the ml.p3.2xlarge instance only has 100 GB of storage. What is the most efficient solution?",
       "options": [
-        "SageMaker Pipelines (MLOps)",
-        "SageMaker Neo (Model Compilation)",
-        "Auto-Scaling Inference Endpoints",
-        "Inference Recommender"
+        "Switch to a larger instance type with more storage",
+        "Use SageMaker Pipe mode to stream data without downloading",
+        "Reduce the training dataset to under 100 GB",
+        "Attach additional EBS volumes to the instance"
       ],
-      "correct": 0,
-      "explanation": "SageMaker Pipelines (MLOps) is a key concept in Machine Learning Implementation and Operations. This domain covers topics essential for the AWS Machine Learning exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "SageMaker Pipe mode streams data directly from S3 to the training algorithm without downloading it to local storage first. This allows training on datasets much larger than the instance's disk space. It also reduces training startup time since the job begins immediately without waiting for the full download.",
+      "link": "cloud-security.html"
     },
     {
       "id": 29,
-      "domain": 4,
-      "objective": "4.2",
-      "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with recommend and implement appropriate ml services and features for a given problem?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "A company wants to provide high-throughput, low-latency access to S3 training data for a distributed SageMaker training job running on multiple GPU instances. Which service integrates with S3 and provides a POSIX-compatible file system?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "Amazon EFS",
+        "Amazon FSx for Lustre",
+        "AWS Storage Gateway",
+        "Amazon EBS"
       ],
-      "correct": 0,
-      "explanation": "When working with recommend and implement appropriate ml services and features for a given problem, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "Amazon FSx for Lustre integrates natively with S3 and provides a high-performance POSIX-compatible file system. It automatically syncs with S3 buckets and delivers hundreds of GB/s throughput, making it ideal for distributed ML training that requires fast random access to large datasets.",
+      "link": "cloud-security.html"
     },
     {
       "id": 30,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "An ML team runs daily training jobs that require the same 2 TB reference dataset. Downloading from S3 each time takes 30 minutes. How can they reduce this overhead without managing infrastructure?",
+      "options": [
+        "Use SageMaker Feature Store to cache the dataset",
+        "Use Amazon FSx for Lustre linked to the S3 bucket with lazy loading",
+        "Keep an EC2 instance running with the dataset pre-loaded",
+        "Use S3 Transfer Acceleration"
+      ],
+      "correct": 1,
+      "explanation": "FSx for Lustre with lazy loading creates a file system linked to S3 that caches data on first access. Subsequent training jobs read from the cache at local-disk speeds. The file system persists between runs, so the 2 TB dataset is only downloaded once and subsequent jobs start immediately.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 31,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "A data scientist has a dataset with customer ages ranging from 18 to 85 and incomes from $20,000 to $500,000. Before training a KNN model, what preprocessing step prevents income from dominating distance calculations?",
+      "options": [
+        "One-hot encoding",
+        "Feature scaling (normalization or standardization)",
+        "Label encoding",
+        "Binning"
+      ],
+      "correct": 1,
+      "explanation": "Feature scaling (normalization to [0,1] or standardization to mean=0, std=1) ensures all features contribute equally to distance-based algorithms like KNN. Without scaling, income's larger range (20K-500K) would dominate over age (18-85) in distance calculations.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 32,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "A dataset has a 'color' column with values Red, Blue, and Green. Which encoding technique creates separate binary columns for each category without implying ordinal relationships?",
+      "options": [
+        "Label encoding",
+        "One-hot encoding",
+        "Target encoding",
+        "Frequency encoding"
+      ],
+      "correct": 1,
+      "explanation": "One-hot encoding creates a separate binary column for each category (is_Red, is_Blue, is_Green). Unlike label encoding (which assigns 0, 1, 2), it does not imply any ordinal relationship between categories, which is important for nominal features.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 33,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "easy",
+      "question": "A data scientist wants to understand the relationship between two numerical features in a dataset. Which visualization is most appropriate?",
+      "options": [
+        "Bar chart",
+        "Scatter plot",
+        "Pie chart",
+        "Box plot"
+      ],
+      "correct": 1,
+      "explanation": "A scatter plot displays the relationship between two numerical variables, showing patterns like positive/negative correlation, clusters, and outliers. It is the standard visualization for examining feature-to-feature relationships during exploratory data analysis.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 34,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "What does a correlation coefficient of -0.95 between two features indicate?",
+      "options": [
+        "The features are unrelated",
+        "The features have a strong positive linear relationship",
+        "The features have a strong negative linear relationship",
+        "The features are identical"
+      ],
+      "correct": 2,
+      "explanation": "A correlation coefficient of -0.95 indicates a strong negative linear relationship: as one feature increases, the other decreases proportionally. Values close to -1 or +1 indicate strong linear relationships, while values near 0 indicate no linear relationship.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 35,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "A dataset has 10,000 rows and 50 features. Five features have more than 60% missing values. What is generally the best approach for these features?",
+      "options": [
+        "Impute all missing values with the mean",
+        "Drop these features from the dataset",
+        "Impute with the mode",
+        "Replace missing values with zero"
+      ],
+      "correct": 1,
+      "explanation": "Features with more than 60% missing values generally provide little predictive value and introduce noise. Dropping them is usually the best approach. Imputation of such heavily missing features would introduce substantial artificial data that could mislead the model.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 36,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "easy",
+      "question": "Which AWS service provides a visual, no-code interface for data preparation and feature engineering for ML?",
+      "options": [
+        "Amazon QuickSight",
+        "SageMaker Data Wrangler",
+        "AWS Glue DataBrew",
+        "Amazon Athena"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker Data Wrangler provides a visual, no-code interface within SageMaker Studio for importing, transforming, and analyzing data for ML. It includes built-in transformations, data quality reports, and can export processing pipelines to SageMaker Pipelines.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 37,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "What is the primary purpose of splitting a dataset into training, validation, and test sets?",
+      "options": [
+        "To reduce the size of the data for faster processing",
+        "To evaluate model performance on unseen data and prevent overfitting",
+        "To create multiple copies for data backup",
+        "To enable parallel processing"
+      ],
+      "correct": 1,
+      "explanation": "Splitting data into train/validation/test sets ensures the model is evaluated on data it has never seen during training. The validation set tunes hyperparameters, and the test set provides an unbiased final evaluation. This prevents overfitting and gives realistic performance estimates.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 38,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "easy",
+      "question": "A dataset contains a 'timestamp' column in string format. Which feature engineering technique extracts useful ML features from this column?",
+      "options": [
+        "Drop the timestamp column entirely",
+        "Extract hour, day of week, month, and is_weekend as separate features",
+        "Convert to a single integer (Unix timestamp)",
+        "One-hot encode each unique timestamp"
+      ],
+      "correct": 1,
+      "explanation": "Extracting time components (hour, day of week, month, is_weekend) from timestamps creates meaningful features that capture temporal patterns. A raw timestamp or Unix integer is less useful to most ML algorithms because they cannot easily learn cyclical time patterns from a single monotonically increasing number.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 39,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "Which statistical measure is most robust to outliers when describing the central tendency of a numerical feature?",
+      "options": [
+        "Mean",
+        "Median",
+        "Mode",
+        "Standard deviation"
+      ],
+      "correct": 1,
+      "explanation": "The median is robust to outliers because it represents the middle value when data is sorted. Unlike the mean, which can be heavily influenced by extreme values, the median remains stable. For skewed distributions common in ML data (e.g., income, transaction amounts), the median is a better measure of central tendency.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 40,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "A binary classification dataset has 95% negative samples and 5% positive samples. A model predicting all negatives achieves 95% accuracy. Which metric better evaluates model performance?",
+      "options": [
+        "Accuracy",
+        "F1 Score",
+        "R-squared",
+        "Mean Absolute Error"
+      ],
+      "correct": 1,
+      "explanation": "With class imbalance, accuracy is misleading because a naive model predicting the majority class achieves high accuracy. The F1 Score (harmonic mean of precision and recall) accounts for both false positives and false negatives, making it a better metric for imbalanced classification problems.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 41,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "A data scientist needs to reduce a dataset with 500 features to a smaller set while preserving the most variance. Which technique is most appropriate?",
+      "options": [
+        "One-hot encoding",
+        "Principal Component Analysis (PCA)",
+        "Random sampling",
+        "Min-max normalization"
+      ],
+      "correct": 1,
+      "explanation": "PCA (Principal Component Analysis) is a dimensionality reduction technique that transforms features into a smaller set of uncorrelated principal components while preserving the maximum variance. SageMaker provides a built-in PCA algorithm optimized for large datasets.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 42,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "medium",
+      "question": "A fraud detection dataset has 99.5% legitimate transactions and 0.5% fraudulent ones. Which technique helps the model learn from the minority class?",
+      "options": [
+        "Remove the majority class samples",
+        "Apply SMOTE (Synthetic Minority Over-sampling Technique)",
+        "Increase the learning rate",
+        "Add more features"
+      ],
+      "correct": 1,
+      "explanation": "SMOTE creates synthetic examples of the minority class by interpolating between existing minority samples. This balances the training distribution without simply duplicating existing fraudulent transactions, giving the model more diverse examples to learn from. It is more effective than random oversampling.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 43,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "A dataset has a 'salary' column with values ranging from $30,000 to $10,000,000, with most values below $200,000. Which transformation would make this feature more useful for linear models?",
+      "options": [
+        "Min-max normalization",
+        "Log transformation",
+        "One-hot encoding",
+        "Polynomial expansion"
+      ],
+      "correct": 1,
+      "explanation": "Log transformation compresses the range of highly skewed features, making the distribution more normal. For salary data with a long right tail (a few very high values), log transformation reduces the impact of extreme outliers and helps linear models that assume normally distributed features.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 44,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "A data scientist wants to visualize high-dimensional data (50 features) in 2D to identify clusters. Which technique is most appropriate?",
+      "options": [
+        "Scatter plot of two random features",
+        "t-SNE (t-distributed Stochastic Neighbor Embedding)",
+        "Bar chart of feature means",
+        "Histogram of the target variable"
+      ],
+      "correct": 1,
+      "explanation": "t-SNE is a dimensionality reduction technique specifically designed for visualizing high-dimensional data in 2D or 3D. It preserves local structure, making it excellent for revealing clusters and patterns that cannot be seen by plotting just two features.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 45,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "A feature has a Pearson correlation of 0.02 with the target variable. A data scientist concludes the feature is useless. What is wrong with this conclusion?",
+      "options": [
+        "Nothing; the feature should be removed",
+        "Pearson correlation only measures linear relationships; the feature may have a nonlinear relationship with the target",
+        "The correlation should be squared before interpretation",
+        "Pearson correlation requires categorical features"
+      ],
+      "correct": 1,
+      "explanation": "Pearson correlation only detects linear relationships. A feature can have a strong nonlinear relationship (quadratic, sinusoidal, etc.) with the target while showing near-zero Pearson correlation. Mutual information or tree-based feature importance should be used alongside correlation to capture nonlinear dependencies.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 46,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "medium",
+      "question": "Amazon SageMaker Ground Truth is used for which data preparation task?",
+      "options": [
+        "Feature scaling",
+        "Data labeling and annotation",
+        "Data partitioning",
+        "Data encryption"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker Ground Truth is a data labeling service that uses a combination of human labelers and active learning to efficiently label training data. It supports image classification, text classification, named entity recognition, and other annotation types needed for supervised ML.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 47,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "A dataset has two features that are perfectly correlated (r = 1.0). What problem does this cause for linear regression?",
+      "options": [
+        "Underfitting",
+        "Multicollinearity, leading to unstable coefficient estimates",
+        "Data leakage",
+        "Class imbalance"
+      ],
+      "correct": 1,
+      "explanation": "Perfect multicollinearity (r = 1.0) makes the feature matrix singular, causing unstable or undefined coefficient estimates in linear regression. Even near-perfect correlation causes inflated variance in coefficients. One of the correlated features should be removed, or regularization (L1/L2) should be applied.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 48,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "A data scientist notices that a model performs exceptionally well on training data but poorly on the validation set. Which visualization would best illustrate this problem?",
+      "options": [
+        "Feature importance plot",
+        "Learning curves (training vs. validation error over training size)",
+        "Correlation heatmap",
+        "Target distribution histogram"
+      ],
+      "correct": 1,
+      "explanation": "Learning curves plot training and validation error as a function of training set size. When there is a large gap between training (low) and validation (high) error, the model is overfitting. This visualization helps diagnose whether more data, regularization, or model simplification is needed.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 49,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "A dataset contains customer addresses as free-text fields. An ML team needs to extract useful features for a customer segmentation model. Which approach is most effective?",
+      "options": [
+        "One-hot encode the entire address string",
+        "Parse addresses to extract structured features like ZIP code, state, and urban/rural classification",
+        "Drop the address field entirely",
+        "Use the raw text directly as a feature"
+      ],
+      "correct": 1,
+      "explanation": "Parsing addresses into structured components (ZIP code, state, region, urban/rural) creates meaningful features for segmentation. ZIP codes can be mapped to demographic data, and geographic clustering reveals patterns. One-hot encoding raw addresses creates millions of sparse features with no generalization.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 50,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "hard",
+      "question": "An ML team discovers that their model's validation accuracy drops from 92% to 75% when deployed to production. The feature 'days_since_signup' was calculated relative to the training date. What is this problem called?",
+      "options": [
+        "Concept drift",
+        "Data leakage (temporal leakage)",
+        "Class imbalance",
+        "Feature scaling mismatch"
+      ],
+      "correct": 1,
+      "explanation": "This is temporal data leakage. The feature 'days_since_signup' was calculated at training time, so it implicitly encodes the training date as a reference point. In production, the reference point changes daily, making the feature values incompatible with what the model learned. Time-relative features must be calculated consistently.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 51,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "A dataset has 200 features. An ML engineer wants to identify the 20 most important features using a model-agnostic approach before training the final model. Which technique should they use?",
+      "options": [
+        "PCA to select 20 components",
+        "Recursive Feature Elimination (RFE) with cross-validation",
+        "Drop all features with less than 50% variance",
+        "Manually select features based on domain knowledge"
+      ],
+      "correct": 1,
+      "explanation": "Recursive Feature Elimination (RFE) iteratively removes the least important features based on model performance, using cross-validation to determine the optimal number. Unlike PCA (which creates new features rather than selecting existing ones), RFE returns the actual original features ranked by importance.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 52,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "A text classification model uses TF-IDF features from product reviews. The vocabulary has 50,000 unique terms, creating a very sparse feature matrix. Which technique would most effectively reduce dimensionality while preserving semantic meaning?",
+      "options": [
+        "Remove stop words only",
+        "Use truncated SVD (Latent Semantic Analysis) to reduce to 200 dimensions",
+        "Apply min-max scaling to all features",
+        "Use one-hot encoding instead of TF-IDF"
+      ],
+      "correct": 1,
+      "explanation": "Truncated SVD (Latent Semantic Analysis / LSA) reduces the TF-IDF matrix to a lower-dimensional representation while preserving semantic relationships between terms. It groups related terms into latent topics. Unlike PCA, truncated SVD works efficiently on sparse matrices without requiring centering.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 53,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "A data scientist is building a churn prediction model. They accidentally include 'cancellation_reason' as a feature, which is only populated when a customer has already churned. What type of problem is this?",
+      "options": [
+        "Feature scaling issue",
+        "Class imbalance",
+        "Target leakage",
+        "Concept drift"
+      ],
+      "correct": 2,
+      "explanation": "Target leakage occurs when a feature contains information that would not be available at prediction time. 'cancellation_reason' is only known after the target event (churn) has occurred, so including it gives the model a perfect but unusable signal. The model will perform well on historical data but fail in production.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 54,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "hard",
+      "question": "An e-commerce dataset has a 'product_category' feature with 5,000 unique values. One-hot encoding would create 5,000 sparse columns. Which alternative encoding is most appropriate for a gradient-boosted tree model?",
+      "options": [
+        "Label encoding (assign integers 0-4999)",
+        "Target encoding (replace category with mean target value, with regularization)",
+        "Binary encoding",
+        "Drop the feature"
+      ],
+      "correct": 1,
+      "explanation": "Target encoding replaces each category with the mean target value for that category (with regularization like smoothing to prevent overfitting on rare categories). For tree-based models, this creates a single informative numerical feature instead of 5,000 sparse columns, maintaining predictive power while reducing dimensionality.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 55,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "During EDA, a data scientist discovers that the distribution of a key feature differs significantly between the training data (collected in 2024) and the data currently arriving in production (2026). What action should they take?",
+      "options": [
+        "Ignore the difference and continue using the existing model",
+        "Retrain the model on recent data and implement ongoing monitoring for distribution shifts",
+        "Apply data augmentation to the 2024 training data",
+        "Simply normalize both distributions to the same scale"
+      ],
+      "correct": 1,
+      "explanation": "Distribution shift between training and production data (covariate shift) degrades model performance over time. The correct approach is to retrain on recent data and implement SageMaker Model Monitor to detect future distribution shifts automatically, triggering retraining when thresholds are exceeded.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 56,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "A data scientist is imputing missing values for a feature that is missing at random (MAR). The dataset has strong correlations between features. Which imputation method would be most effective?",
+      "options": [
+        "Mean imputation",
+        "Dropping rows with missing values",
+        "Multiple imputation using multivariate chained equations (MICE)",
+        "Forward fill"
+      ],
+      "correct": 2,
+      "explanation": "MICE (Multiple Imputation by Chained Equations) uses relationships between features to predict missing values iteratively. When features are correlated and data is MAR, MICE produces less biased estimates than mean/median imputation because it leverages the multivariate structure of the data.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 57,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "What is the difference between normalization and standardization in feature preprocessing?",
+      "options": [
+        "They are the same technique with different names",
+        "Normalization scales to [0,1]; standardization transforms to mean=0, standard deviation=1",
+        "Normalization is for categorical data; standardization is for numerical data",
+        "Normalization removes outliers; standardization preserves them"
+      ],
+      "correct": 1,
+      "explanation": "Normalization (min-max scaling) rescales features to a [0,1] range. Standardization (z-score) transforms features to have mean=0 and standard deviation=1. Standardization is preferred when outliers are present (it does not bound values) and for algorithms assuming normally distributed features.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 58,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "medium",
+      "question": "A categorical feature has a natural ordering: 'Low', 'Medium', 'High'. Which encoding technique preserves this ordinal relationship?",
+      "options": [
+        "One-hot encoding",
+        "Ordinal (label) encoding (Low=0, Medium=1, High=2)",
+        "Target encoding",
+        "Hash encoding"
+      ],
+      "correct": 1,
+      "explanation": "Ordinal (label) encoding assigns integers that preserve the natural ordering (Low=0, Medium=1, High=2). One-hot encoding would create three binary columns that lose the ordinal information. For features with inherent ordering, ordinal encoding allows models to learn the relationship between levels.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 59,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "A box plot of a feature shows multiple data points beyond the whiskers. What do these points represent?",
+      "options": [
+        "Normal data points",
+        "Missing values",
+        "Potential outliers",
+        "Duplicate records"
+      ],
+      "correct": 2,
+      "explanation": "In a box plot, the whiskers typically extend to 1.5 times the IQR (interquartile range) from the box edges. Points beyond the whiskers are potential outliers that warrant investigation. They may be genuine extreme values, data entry errors, or signals of important patterns in the data.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 60,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "An ML team needs to create training labels for 100,000 images. They have a small budget and need to minimize human labeling effort. Which SageMaker Ground Truth feature helps with this?",
+      "options": [
+        "Automatic model retraining",
+        "Active learning with automated labeling",
+        "SageMaker Autopilot",
+        "SageMaker Debugger"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker Ground Truth's active learning feature trains an internal model as human labels accumulate. When the model becomes confident enough, it automatically labels remaining data, sending only uncertain examples to human labelers. This can reduce labeling costs by up to 70%.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 61,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "When splitting time-series data for ML training, which approach prevents information leakage from the future?",
+      "options": [
+        "Random 80/20 train/test split",
+        "Stratified random split",
+        "Chronological split (train on earlier data, test on later data)",
+        "K-fold cross-validation"
+      ],
+      "correct": 2,
+      "explanation": "Time-series data must be split chronologically to prevent future information from leaking into the training set. Random splits would mix past and future observations, allowing the model to learn patterns it would not have access to at prediction time. Always train on earlier data and test on later data.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 62,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "easy",
+      "question": "Which chart type best displays the distribution of a single numerical feature and helps identify skewness?",
+      "options": [
+        "Scatter plot",
+        "Histogram",
+        "Line chart",
+        "Pie chart"
+      ],
+      "correct": 1,
+      "explanation": "Histograms divide a numerical feature into bins and show the frequency of observations in each bin. They clearly reveal the shape of the distribution (normal, skewed left/right, bimodal) and help identify outliers, which is essential information for choosing preprocessing techniques.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 63,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "A dataset for predicting loan defaults has features collected at application time and features updated monthly (account balance, payment status). The model will predict at application time. Which features should be excluded to prevent data leakage?",
+      "options": [
+        "All numerical features",
+        "Features updated after the application date (post-application behavioral features)",
+        "All categorical features",
+        "Features with missing values"
+      ],
+      "correct": 1,
+      "explanation": "Features updated after the application date (like monthly payment status, current balance) contain information about the future relative to the prediction point. Including them causes data leakage since they would not be available when making predictions on new loan applications.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 64,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "A correlation heatmap shows that two input features have a correlation of 0.98. What should the data scientist do before training a linear regression model?",
+      "options": [
+        "Include both features as they are highly informative",
+        "Remove one of the two features to reduce multicollinearity",
+        "Combine both features into one by averaging them",
+        "Apply one-hot encoding to both features"
+      ],
+      "correct": 1,
+      "explanation": "Features with very high correlation (0.98) cause multicollinearity in linear regression, leading to unstable coefficients and poor interpretability. Removing one preserves the information while resolving the issue. Alternatively, regularization (L1/L2) or PCA can handle correlated features.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 65,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "What does the IQR (Interquartile Range) measure in a dataset?",
+      "options": [
+        "The range between the minimum and maximum values",
+        "The spread of the middle 50% of the data (Q3 minus Q1)",
+        "The average distance from the mean",
+        "The difference between the median and the mode"
+      ],
+      "correct": 1,
+      "explanation": "The IQR is calculated as Q3 (75th percentile) minus Q1 (25th percentile), representing the spread of the middle 50% of the data. It is used to identify outliers (values below Q1-1.5*IQR or above Q3+1.5*IQR) and is more robust to outliers than the full range.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 66,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "hard",
+      "question": "An NLP model uses word embeddings (Word2Vec) to represent text. The training data contains domain-specific jargon not in the pre-trained embedding vocabulary. What is the best approach?",
+      "options": [
+        "Replace all unknown words with a generic unknown token",
+        "Fine-tune the pre-trained embeddings on the domain-specific corpus",
+        "Remove all sentences containing unknown words",
+        "Use one-hot encoding instead of embeddings"
+      ],
+      "correct": 1,
+      "explanation": "Fine-tuning pre-trained Word2Vec embeddings on the domain-specific corpus allows the model to learn representations for new vocabulary terms while preserving general language understanding. This transfer learning approach is far more effective than losing information (removing sentences) or losing semantic meaning (one-hot encoding).",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 67,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "A company wants to predict whether a customer will churn (yes/no) based on usage data. Which type of ML problem is this?",
+      "options": [
+        "Regression",
+        "Binary classification",
+        "Clustering",
+        "Dimensionality reduction"
+      ],
+      "correct": 1,
+      "explanation": "Predicting a binary outcome (churn: yes/no) is a binary classification problem. The model assigns each customer to one of two classes based on input features. Common algorithms include logistic regression, XGBoost, and neural networks with sigmoid activation.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 68,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "A company wants to predict the dollar amount of next month's sales. Which type of ML problem is this?",
+      "options": [
+        "Binary classification",
+        "Multi-class classification",
+        "Regression",
+        "Clustering"
+      ],
+      "correct": 2,
+      "explanation": "Predicting a continuous numerical value (dollar amount) is a regression problem. Common regression algorithms include linear regression, XGBoost for regression, and SageMaker's Linear Learner in regression mode.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 69,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "Which SageMaker built-in algorithm is commonly used for both classification and regression tasks with tabular data and is known for strong performance on structured data?",
+      "options": [
+        "BlazingText",
+        "XGBoost",
+        "DeepAR",
+        "Seq2Seq"
+      ],
+      "correct": 1,
+      "explanation": "XGBoost is a gradient-boosted tree algorithm that excels at classification and regression on tabular (structured) data. SageMaker provides an optimized, distributed version that is often the first choice for structured data problems due to its strong performance and interpretability.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 70,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "Which SageMaker built-in algorithm is used for time-series forecasting?",
+      "options": [
+        "XGBoost",
+        "DeepAR",
+        "BlazingText",
+        "Random Cut Forest"
+      ],
+      "correct": 1,
+      "explanation": "DeepAR is a SageMaker built-in algorithm designed for time-series forecasting. It uses recurrent neural networks to learn patterns across multiple related time series simultaneously, providing probabilistic forecasts with uncertainty estimates.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 71,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "easy",
+      "question": "What does the learning rate hyperparameter control in gradient-based ML algorithms?",
+      "options": [
+        "The size of the training dataset",
+        "How large a step the optimizer takes when updating model weights",
+        "The number of features in the model",
+        "The number of training epochs"
+      ],
+      "correct": 1,
+      "explanation": "The learning rate controls the step size during gradient descent optimization. Too high a learning rate causes the model to overshoot minima and diverge. Too low a learning rate causes very slow convergence. Finding the right learning rate is crucial for effective model training.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 72,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "easy",
+      "question": "What is an epoch in ML model training?",
+      "options": [
+        "A single training example",
+        "One complete pass through the entire training dataset",
+        "A single gradient update",
+        "The final trained model"
+      ],
+      "correct": 1,
+      "explanation": "An epoch represents one complete pass through the entire training dataset. Training typically runs for multiple epochs, allowing the model to see the same data multiple times to improve its learned parameters. The number of epochs is a key hyperparameter that affects training duration and potential overfitting.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 73,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "easy",
+      "question": "What does a confusion matrix display for a classification model?",
+      "options": [
+        "Feature importance rankings",
+        "True positives, true negatives, false positives, and false negatives",
+        "Training loss over time",
+        "Correlation between features"
+      ],
+      "correct": 1,
+      "explanation": "A confusion matrix is a table that shows the counts of true positives (correctly predicted positive), true negatives (correctly predicted negative), false positives (incorrectly predicted positive), and false negatives (incorrectly predicted negative). It provides a complete picture of classification performance.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 74,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "easy",
+      "question": "Which metric is the harmonic mean of precision and recall?",
+      "options": [
+        "Accuracy",
+        "AUC-ROC",
+        "F1 Score",
+        "Mean Squared Error"
+      ],
+      "correct": 2,
+      "explanation": "The F1 Score is the harmonic mean of precision and recall: F1 = 2 * (precision * recall) / (precision + recall). It balances both metrics and is especially useful for imbalanced datasets where accuracy alone can be misleading.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 75,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "easy",
+      "question": "What is overfitting in machine learning?",
+      "options": [
+        "The model performs equally well on training and test data",
+        "The model learns noise and specific patterns in training data, performing poorly on new data",
+        "The model is too simple to capture patterns in the data",
+        "The model takes too long to train"
+      ],
+      "correct": 1,
+      "explanation": "Overfitting occurs when a model memorizes the training data (including noise and random fluctuations) rather than learning general patterns. It results in high accuracy on training data but poor performance on unseen data. Solutions include regularization, more training data, and simpler models.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 76,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "A company wants to group customers into segments based on purchasing behavior without pre-defined labels. Which ML approach should they use?",
+      "options": [
+        "Supervised classification",
+        "Unsupervised clustering (e.g., K-Means)",
+        "Linear regression",
+        "Reinforcement learning"
+      ],
+      "correct": 1,
+      "explanation": "Customer segmentation without pre-defined labels is an unsupervised clustering problem. K-Means (available as a SageMaker built-in algorithm) groups data points based on similarity. Since there are no labels to predict, supervised approaches like classification and regression do not apply.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 77,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "A data scientist needs to classify support tickets into 15 different categories. Which SageMaker built-in algorithm is best suited for text classification?",
+      "options": [
+        "XGBoost",
+        "BlazingText in supervised mode",
+        "DeepAR",
+        "Random Cut Forest"
+      ],
+      "correct": 1,
+      "explanation": "BlazingText in supervised mode is designed for text classification tasks. It implements the fastText algorithm, which efficiently handles multi-class text classification with word n-gram features. It trains significantly faster than deep learning approaches for many text classification tasks.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 78,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "Which SageMaker built-in algorithm detects anomalous data points in a dataset without labeled examples?",
+      "options": [
+        "XGBoost",
+        "Random Cut Forest",
+        "Linear Learner",
+        "Image Classification"
+      ],
+      "correct": 1,
+      "explanation": "Random Cut Forest (RCF) is an unsupervised anomaly detection algorithm. It assigns an anomaly score to each data point based on how much the data point changes the complexity of the forest when removed. Higher scores indicate more anomalous points. It does not require labeled anomaly examples.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 79,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "SageMaker Automatic Model Tuning uses which optimization strategy by default to find the best hyperparameters?",
+      "options": [
+        "Grid search",
+        "Random search",
+        "Bayesian optimization",
+        "Manual tuning"
+      ],
+      "correct": 2,
+      "explanation": "SageMaker Automatic Model Tuning (Hyperparameter Tuning Jobs) uses Bayesian optimization by default. This strategy builds a probabilistic model of the objective function, using results from previous trials to intelligently choose the next hyperparameter combination. It converges faster than grid or random search.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 80,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "A neural network model has high training accuracy but low validation accuracy. Adding more layers makes the problem worse. Which technique directly addresses this?",
+      "options": [
+        "Increasing the number of neurons per layer",
+        "Applying dropout regularization",
+        "Increasing the learning rate",
+        "Adding more training epochs"
+      ],
+      "correct": 1,
+      "explanation": "Dropout regularization randomly disables a percentage of neurons during each training step, preventing the network from memorizing specific patterns. This forces the network to learn more robust features and is one of the most effective techniques for reducing overfitting in neural networks.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 81,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "For a medical diagnosis model where missing a positive case (false negative) is much more costly than a false alarm (false positive), which metric should be prioritized?",
+      "options": [
+        "Precision",
+        "Recall (sensitivity)",
+        "Specificity",
+        "Accuracy"
+      ],
+      "correct": 1,
+      "explanation": "Recall (sensitivity) measures the proportion of actual positives correctly identified: TP / (TP + FN). When false negatives are costly (missing a disease), maximizing recall ensures the model catches as many positive cases as possible, even at the expense of some false positives.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 82,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "What does the AUC-ROC metric measure for a binary classifier?",
+      "options": [
+        "The model's training speed",
+        "The probability that the model ranks a random positive example higher than a random negative example",
+        "The total number of correct predictions",
+        "The variance in model predictions"
+      ],
+      "correct": 1,
+      "explanation": "AUC-ROC (Area Under the Receiver Operating Characteristic curve) represents the probability that a randomly chosen positive example is scored higher than a randomly chosen negative example. An AUC of 0.5 indicates random guessing, and 1.0 indicates perfect discrimination.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 83,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "medium",
+      "question": "What is the bias-variance tradeoff in machine learning?",
+      "options": [
+        "The tradeoff between training time and model accuracy",
+        "The tradeoff between model simplicity (high bias, low variance) and model complexity (low bias, high variance)",
+        "The tradeoff between precision and recall",
+        "The tradeoff between cost and performance"
+      ],
+      "correct": 1,
+      "explanation": "The bias-variance tradeoff describes the balance between underfitting (high bias, oversimplified model) and overfitting (high variance, overcomplicated model). A model with high bias misses patterns; a model with high variance fits noise. The goal is to find the sweet spot that minimizes total error.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 84,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "A retail company wants to recommend products to customers based on purchase history of similar customers. Which ML approach is most appropriate?",
+      "options": [
+        "Linear regression",
+        "Collaborative filtering (recommendation system)",
+        "Anomaly detection",
+        "Object detection"
+      ],
+      "correct": 1,
+      "explanation": "Collaborative filtering makes recommendations based on the behavior of similar users (user-based) or similar items (item-based). Amazon Personalize provides managed collaborative filtering and can be integrated with SageMaker for custom recommendation models.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 85,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "Which algorithm is SageMaker's built-in solution for learning word embeddings (vector representations of words)?",
+      "options": [
+        "XGBoost",
+        "BlazingText in unsupervised (Word2Vec) mode",
+        "Linear Learner",
+        "K-Means"
+      ],
+      "correct": 1,
+      "explanation": "BlazingText in unsupervised mode implements Word2Vec, which learns dense vector representations (embeddings) of words from large text corpora. These embeddings capture semantic relationships (e.g., king - man + woman = queen) and are used as features for downstream NLP tasks.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 86,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "L1 (Lasso) regularization and L2 (Ridge) regularization both prevent overfitting. What is the key difference in their behavior?",
+      "options": [
+        "L1 is faster to compute than L2",
+        "L1 drives some feature weights to exactly zero (feature selection), while L2 shrinks weights toward zero but keeps all features",
+        "L2 removes features while L1 keeps all features",
+        "There is no practical difference between L1 and L2"
+      ],
+      "correct": 1,
+      "explanation": "L1 regularization adds the absolute value of weights to the loss function, which can drive some weights to exactly zero, effectively performing feature selection. L2 adds the squared weights, shrinking them toward zero but rarely to exactly zero. Use L1 when you suspect many irrelevant features; use L2 when all features may be relevant.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 87,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "medium",
+      "question": "K-fold cross-validation improves upon a single train/test split in what way?",
+      "options": [
+        "It trains the model faster",
+        "It provides a more reliable estimate of model performance by averaging across K different train/test splits",
+        "It eliminates the need for a test set",
+        "It automatically tunes hyperparameters"
+      ],
+      "correct": 1,
+      "explanation": "K-fold cross-validation splits the data into K folds, training and evaluating K times with each fold serving as the validation set once. The averaged performance metric is more reliable than a single split because it reduces the variance of the estimate that comes from which specific data points end up in the test set.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 88,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "A manufacturing company wants to predict equipment failure 7 days in advance using sensor data (vibration, temperature, pressure) collected every minute. Which approach correctly frames this as an ML problem?",
+      "options": [
+        "Regression: predict the continuous failure timestamp",
+        "Binary classification with a 7-day lookahead window: label each observation as 'failure within 7 days' (1) or 'normal' (0)",
+        "Clustering: group similar sensor readings together",
+        "Anomaly detection on each individual sensor independently"
+      ],
+      "correct": 1,
+      "explanation": "This is best framed as binary classification with a lookahead window. Each observation is labeled 1 if a failure occurs within the next 7 days, 0 otherwise. This allows the model to learn degradation patterns that precede failures. Time-series features (rolling statistics, trends) from the sensor data serve as inputs.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 89,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "A company needs to build a model that translates English text to French. Which type of neural network architecture is most suitable?",
+      "options": [
+        "Convolutional Neural Network (CNN)",
+        "Sequence-to-Sequence (Seq2Seq) model with attention mechanism",
+        "K-Nearest Neighbors",
+        "Random Cut Forest"
+      ],
+      "correct": 1,
+      "explanation": "Seq2Seq with attention is the standard architecture for machine translation. The encoder processes the input sequence (English), and the decoder generates the output sequence (French). The attention mechanism allows the decoder to focus on relevant parts of the input at each step, handling variable-length sequences effectively.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 90,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "A data scientist needs to build an image classification model but only has 500 labeled images. Training from scratch would require millions. Which technique leverages pre-trained models to achieve good performance with limited data?",
+      "options": [
+        "Data augmentation alone",
+        "Transfer learning using a pre-trained model and fine-tuning on the small dataset",
+        "Increasing the number of epochs to 10,000",
+        "Using K-Means clustering on image pixels"
+      ],
+      "correct": 1,
+      "explanation": "Transfer learning uses a model pre-trained on a large dataset (like ImageNet with millions of images). The pre-trained model already understands general image features. By fine-tuning just the final layers on the 500 labeled images, the model can achieve good performance with minimal data. SageMaker's Image Classification supports transfer learning.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 91,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "During training, a model's loss decreases for 50 epochs, plateaus for 20 epochs, then starts increasing on the validation set while continuing to decrease on training. What technique should be applied?",
+      "options": [
+        "Increase the learning rate",
+        "Early stopping at the epoch with the lowest validation loss",
+        "Remove validation data and train on all available data",
+        "Double the model size"
+      ],
+      "correct": 1,
+      "explanation": "The increasing validation loss while training loss continues to decrease is classic overfitting. Early stopping monitors validation loss and halts training when it stops improving (or starts increasing). The model checkpoint from the epoch with the lowest validation loss is used as the final model.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 92,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "A SageMaker hyperparameter tuning job has been running for 100 trials. The best objective metric has not improved in the last 30 trials. What is the most likely cause?",
+      "options": [
+        "The algorithm is incorrect for the problem",
+        "The search has likely converged; the hyperparameter ranges may need to be narrowed around the best configuration, or the model has reached its ceiling",
+        "The training data is corrupted",
+        "The instance type is too small"
+      ],
+      "correct": 1,
+      "explanation": "After many trials without improvement, Bayesian optimization has likely explored the hyperparameter space thoroughly. The options are: narrow the search ranges around the best configuration to fine-tune, try a different algorithm, or accept that the model has reached its performance ceiling for the given data and features.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 93,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "hard",
+      "question": "A model predicts 'fraud' with 99% precision but only 10% recall. What does this mean in practical terms?",
+      "options": [
+        "The model catches almost all fraud cases",
+        "When the model says 'fraud', it is almost always correct, but it misses 90% of actual fraud cases",
+        "The model has 99% accuracy",
+        "The model produces too many false positives"
+      ],
+      "correct": 1,
+      "explanation": "99% precision means when the model predicts 'fraud', it is correct 99% of the time (very few false positives). However, 10% recall means it only identifies 10% of actual fraud cases, missing 90% (many false negatives). The classification threshold should be lowered to catch more fraud, accepting some precision loss.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 94,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "hard",
+      "question": "A multi-class classification model has 10 classes with varying frequencies. Which variant of precision/recall should be used to give equal importance to all classes regardless of their frequency?",
+      "options": [
+        "Micro-averaged precision/recall",
+        "Macro-averaged precision/recall",
+        "Weighted-averaged precision/recall",
+        "Binary precision/recall"
+      ],
+      "correct": 1,
+      "explanation": "Macro-averaging calculates the metric independently for each class and then averages them, giving equal weight to all classes regardless of their sample count. This ensures minority classes contribute equally to the metric. Micro-averaging aggregates counts across all classes, favoring larger classes.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 95,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "hard",
+      "question": "A model achieves 0.85 RMSE on the training set and 0.84 RMSE on the test set. However, business stakeholders say the predictions are too inaccurate. What is the most likely issue?",
+      "options": [
+        "Overfitting",
+        "High bias (underfitting) — the model is too simple or needs better features",
+        "Data leakage",
+        "The test set is too small"
+      ],
+      "correct": 1,
+      "explanation": "When training and test errors are similar but both too high, the model is underfitting (high bias). The model is not complex enough to capture the patterns in the data. Solutions include: adding more features, engineering better features, using a more complex model, or increasing model capacity.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 96,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "A company wants to automatically extract text from scanned invoices. Which AWS AI service is purpose-built for this task?",
+      "options": [
+        "Amazon Comprehend",
+        "Amazon Textract",
+        "Amazon Polly",
+        "Amazon Lex"
+      ],
+      "correct": 1,
+      "explanation": "Amazon Textract automatically extracts text, tables, and forms from scanned documents. It goes beyond basic OCR by understanding document structure, making it ideal for invoice processing. It can identify key-value pairs (like 'Total: $500') without custom ML model training.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 97,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "Which AWS AI service performs sentiment analysis, key phrase extraction, and entity recognition on text without requiring custom model training?",
+      "options": [
+        "Amazon Textract",
+        "Amazon Comprehend",
+        "Amazon Translate",
+        "Amazon Transcribe"
+      ],
+      "correct": 1,
+      "explanation": "Amazon Comprehend is a natural language processing (NLP) service that uses pre-trained models to perform sentiment analysis, entity recognition, key phrase extraction, language detection, and topic modeling on text documents without any ML expertise required.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 98,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "An XGBoost model has a training AUC of 0.99 but a validation AUC of 0.75. Which hyperparameter adjustments are most likely to reduce this overfitting?",
+      "options": [
+        "Increase max_depth, increase num_boost_round",
+        "Decrease max_depth, increase min_child_weight, add L2 regularization (reg_lambda)",
+        "Increase learning rate, increase subsample to 1.0",
+        "Set max_depth to unlimited, disable regularization"
+      ],
+      "correct": 1,
+      "explanation": "Decreasing max_depth limits tree complexity, increasing min_child_weight prevents splits on small groups, and L2 regularization (reg_lambda) penalizes large leaf weights. Together these reduce model complexity and overfitting. Increasing depth/removing regularization would worsen the problem.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 99,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "A CNN image classification model has converged but accuracy is stuck at 85%. The data scientist suspects the model is trapped in a local minimum. Which technique helps escape local minima during training?",
+      "options": [
+        "Reduce the batch size to 1",
+        "Use a learning rate scheduler with warm restarts (cosine annealing)",
+        "Remove all dropout layers",
+        "Switch to a linear activation function"
+      ],
+      "correct": 1,
+      "explanation": "Learning rate warm restarts (cosine annealing) periodically increase the learning rate, allowing the optimizer to escape local minima and explore new regions of the loss landscape before annealing back down. This often leads to better generalization than a monotonically decreasing learning rate schedule.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 100,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "medium",
+      "question": "For a regression model, which metric penalizes large errors more heavily than small errors?",
+      "options": [
+        "Mean Absolute Error (MAE)",
+        "Mean Squared Error (MSE)",
+        "R-squared",
+        "Median Absolute Error"
+      ],
+      "correct": 1,
+      "explanation": "MSE squares the prediction errors, so larger errors contribute disproportionately more to the total loss than smaller errors. An error of 10 contributes 100 to MSE, while an error of 1 contributes only 1. MAE treats all error magnitudes linearly, making it less sensitive to outliers.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 101,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "A company wants to build a conversational AI chatbot that understands customer intent and extracts key entities from text messages. Which combination of AWS services should they use?",
+      "options": [
+        "Amazon Lex (intent recognition + entity extraction) with Amazon Polly (speech output)",
+        "Amazon Rekognition + Amazon Translate",
+        "Amazon Forecast + Amazon Personalize",
+        "SageMaker XGBoost + Lambda"
+      ],
+      "correct": 0,
+      "explanation": "Amazon Lex provides natural language understanding for building conversational interfaces, handling intent recognition and entity (slot) extraction. Amazon Polly converts text responses to speech. Together they power voice and text chatbots without custom ML model development.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 102,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "A data scientist needs to train an object detection model to identify defective products on a manufacturing line. Which SageMaker built-in algorithm should they use?",
+      "options": [
+        "Image Classification (ResNet)",
+        "Object Detection (SSD or Faster R-CNN)",
+        "Semantic Segmentation",
+        "XGBoost"
+      ],
+      "correct": 1,
+      "explanation": "Object Detection identifies and locates specific objects within images by drawing bounding boxes around them. SageMaker's built-in Object Detection uses SSD or Faster R-CNN architectures. Unlike Image Classification (which labels the whole image), Object Detection localizes defects within the image, which is critical for manufacturing QA.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 103,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "A model needs to predict whether an email is spam. The cost of a false positive (blocking a legitimate email) is much higher than a false negative (letting spam through). Which metric should be maximized?",
+      "options": [
+        "Recall",
+        "Precision",
+        "AUC-ROC",
+        "Accuracy"
+      ],
+      "correct": 1,
+      "explanation": "Precision measures the proportion of predicted positives that are actually positive: TP / (TP + FP). Maximizing precision minimizes false positives (legitimate emails incorrectly marked as spam). When false positives are costly, precision should be prioritized over recall.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 104,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "What is the purpose of batch normalization in deep neural networks?",
+      "options": [
+        "To reduce the size of training batches",
+        "To normalize layer inputs during training, stabilizing and accelerating convergence",
+        "To remove outliers from the training data",
+        "To batch training jobs for parallel execution"
+      ],
+      "correct": 1,
+      "explanation": "Batch normalization normalizes the inputs to each layer by adjusting and scaling activations during training. This stabilizes the learning process, allows higher learning rates, reduces sensitivity to initialization, and often acts as a regularizer, leading to faster convergence and better model performance.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 105,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "hard",
+      "question": "After deploying a classification model, its performance gradually degrades over 6 months even though there are no code changes. What is the most likely cause?",
+      "options": [
+        "A bug in the model serving code",
+        "Concept drift: the relationship between input features and the target has changed over time",
+        "The model weights are being corrupted in S3",
+        "The endpoint instance is running out of memory"
+      ],
+      "correct": 1,
+      "explanation": "Concept drift occurs when the statistical relationship between features and the target changes over time. For example, customer behavior patterns may shift due to market changes. The model was trained on historical patterns that no longer hold. Regular retraining and monitoring with SageMaker Model Monitor detects and addresses concept drift.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 106,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "Which AWS service provides managed recommendation models that can deliver personalized product recommendations without ML expertise?",
+      "options": [
+        "Amazon SageMaker",
+        "Amazon Personalize",
+        "Amazon Comprehend",
+        "Amazon Forecast"
+      ],
+      "correct": 1,
+      "explanation": "Amazon Personalize is a fully managed service that creates personalized recommendation models from your data. It uses the same technology as Amazon.com and supports real-time personalization, user segmentation, and similar-item recommendations without requiring ML expertise.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 107,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "A company needs to perform facial analysis on images, including detecting emotions, age range, and whether the person is wearing glasses. Which AWS service provides this capability?",
+      "options": [
+        "Amazon Textract",
+        "Amazon Rekognition",
+        "Amazon Comprehend",
+        "SageMaker Image Classification"
+      ],
+      "correct": 1,
+      "explanation": "Amazon Rekognition provides pre-trained facial analysis capabilities including emotion detection, age range estimation, accessory detection (glasses, sunglasses), and facial landmark detection. It requires no ML training and works via simple API calls.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 108,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "A neural network with 100 million parameters is training on a single GPU and running out of GPU memory. The batch size is already at 1. What approach allows training this model?",
+      "options": [
+        "Reduce the learning rate",
+        "Use gradient accumulation or model parallelism across multiple GPUs",
+        "Increase the number of training epochs",
+        "Switch to CPU training"
+      ],
+      "correct": 1,
+      "explanation": "Gradient accumulation simulates larger batches by accumulating gradients over multiple micro-batches before updating weights. Model parallelism splits the model across multiple GPUs when a single GPU cannot hold the entire model. SageMaker supports distributed training with both data and model parallelism strategies.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 109,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "Which metric is most appropriate for evaluating a regression model's prediction accuracy in the same units as the target variable?",
+      "options": [
+        "Mean Squared Error (MSE)",
+        "Root Mean Squared Error (RMSE)",
+        "R-squared",
+        "Mean Absolute Percentage Error (MAPE)"
+      ],
+      "correct": 1,
+      "explanation": "RMSE is the square root of MSE, bringing the error metric back to the same units as the target variable. If predicting house prices in dollars, RMSE is reported in dollars, making it directly interpretable. MSE is in squared units, R-squared is unitless, and MAPE is a percentage.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 110,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "medium",
+      "question": "What is the purpose of a validation dataset that is separate from both training and test datasets?",
+      "options": [
+        "To increase the total amount of training data",
+        "To tune hyperparameters and make model selection decisions without contaminating the test set",
+        "To create data backups",
+        "To test the model in production"
+      ],
+      "correct": 1,
+      "explanation": "The validation set is used during model development to tune hyperparameters and compare different model architectures. Using it for these decisions prevents 'test set leakage' where repeated evaluation on the test set causes indirect overfitting. The test set remains untouched until the final evaluation.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 111,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "Which type of ML problem involves predicting a category from a fixed set of more than two possible classes?",
+      "options": [
+        "Binary classification",
+        "Multi-class classification",
+        "Regression",
+        "Anomaly detection"
+      ],
+      "correct": 1,
+      "explanation": "Multi-class classification predicts one category from three or more possible classes (e.g., classifying images as cat, dog, or bird). Binary classification has exactly two classes, regression predicts continuous values, and anomaly detection identifies unusual patterns.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 112,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "Which SageMaker built-in algorithm provides a simple yet effective baseline for both classification and regression with linear models?",
+      "options": [
+        "Linear Learner",
+        "DeepAR",
+        "Random Cut Forest",
+        "Object2Vec"
+      ],
+      "correct": 0,
+      "explanation": "SageMaker Linear Learner implements linear models (linear regression and logistic regression) optimized for AWS infrastructure. It serves as an effective baseline model and supports built-in feature normalization, multiple loss functions, and automatic hyperparameter tuning.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 113,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "easy",
+      "question": "In gradient descent optimization, what happens if the learning rate is set too high?",
+      "options": [
+        "Training converges slowly but reliably",
+        "The loss function may oscillate wildly or diverge instead of converging",
+        "The model underfits the data",
+        "Training epochs take longer to complete"
+      ],
+      "correct": 1,
+      "explanation": "A learning rate that is too high causes the optimizer to take steps that are too large, overshooting the minimum of the loss function. This leads to oscillation around the minimum or divergence where the loss increases instead of decreasing.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 114,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "hard",
+      "question": "A data scientist wants to use SageMaker Clarify during model evaluation. What does SageMaker Clarify help detect?",
+      "options": [
+        "Model training errors and bugs",
+        "Bias in training data and model predictions, and it generates feature importance explanations",
+        "Infrastructure performance bottlenecks",
+        "Network connectivity issues"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker Clarify detects potential bias in training data and model predictions across sensitive attributes (e.g., gender, race, age). It also provides model explainability using SHAP values, showing which features contribute most to individual predictions. This is critical for responsible AI and regulatory compliance.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 115,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "hard",
+      "question": "A multi-label classification model predicts which of 20 possible tags apply to a news article (multiple tags can be correct). Which evaluation metric is most appropriate?",
+      "options": [
+        "Standard accuracy",
+        "Hamming loss (fraction of incorrectly predicted labels across all labels)",
+        "R-squared",
+        "Silhouette score"
+      ],
+      "correct": 1,
+      "explanation": "Hamming loss measures the fraction of labels that are incorrectly predicted (both false positives and false negatives) across all possible labels. It is designed for multi-label problems where each sample can have multiple correct labels, unlike standard accuracy which requires the entire label set to match exactly.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 116,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "Which type of neural network architecture is most suitable for image classification tasks?",
+      "options": [
+        "Recurrent Neural Network (RNN)",
+        "Convolutional Neural Network (CNN)",
+        "Feed-forward Neural Network",
+        "Generative Adversarial Network (GAN)"
+      ],
+      "correct": 1,
+      "explanation": "CNNs use convolutional layers that learn spatial hierarchies of features (edges, textures, shapes, objects) from images. They are the standard architecture for image classification, object detection, and other computer vision tasks. SageMaker's built-in Image Classification algorithm uses ResNet, a type of CNN.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 117,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "A data scientist is training a model using SageMaker and wants to visualize training metrics, detect issues like vanishing gradients, and capture tensor values during training. Which feature should they use?",
+      "options": [
+        "SageMaker Experiments",
+        "SageMaker Debugger",
+        "SageMaker Model Monitor",
+        "SageMaker Autopilot"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker Debugger captures tensors during training, detects training anomalies (vanishing gradients, overfitting, loss not decreasing), and provides real-time training metrics visualization. It can automatically stop training when issues are detected, saving compute costs.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 118,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "easy",
+      "question": "What is underfitting in machine learning?",
+      "options": [
+        "The model memorizes the training data",
+        "The model is too simple to capture the underlying patterns in the data",
+        "The model takes too long to train",
+        "The model has too many features"
+      ],
+      "correct": 1,
+      "explanation": "Underfitting occurs when a model is too simple to capture the underlying patterns in the data, resulting in poor performance on both training and test data. Solutions include using a more complex model, adding more features, reducing regularization, or training for more epochs.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 119,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "A company has 10 years of daily sales data for 500 products and wants to forecast the next 30 days for each product simultaneously. Which approach provides the best results?",
+      "options": [
+        "Train 500 separate ARIMA models, one per product",
+        "Use Amazon Forecast or SageMaker DeepAR, which learn patterns across all 500 related time series jointly",
+        "Use XGBoost with lagged features on the combined dataset",
+        "Use linear regression with time as the only feature"
+      ],
+      "correct": 1,
+      "explanation": "Amazon Forecast and SageMaker DeepAR are designed to learn from multiple related time series jointly. They can discover cross-series patterns (e.g., seasonal trends shared across products) and perform cold-start forecasting for new products. This produces better forecasts than training independent models per product.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 120,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "easy",
+      "question": "What does an R-squared value of 0.85 mean for a regression model?",
+      "options": [
+        "The model is 85% accurate",
+        "The model explains 85% of the variance in the target variable",
+        "85% of predictions are within 1 unit of the actual value",
+        "The model has an 85% confidence interval"
+      ],
+      "correct": 1,
+      "explanation": "R-squared (coefficient of determination) measures the proportion of variance in the target variable that is explained by the model. A value of 0.85 means the model explains 85% of the variance, with the remaining 15% due to unexplained factors or noise.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 121,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "Which SageMaker feature provides a real-time REST API endpoint for serving ML model predictions?",
+      "options": [
+        "SageMaker Batch Transform",
+        "SageMaker Real-Time Inference Endpoint",
+        "SageMaker Processing Job",
+        "SageMaker Training Job"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker Real-Time Inference Endpoints deploy models as REST APIs that provide low-latency predictions. They run on dedicated instances, support auto-scaling, and can host one or multiple models. They are the standard choice for applications requiring real-time predictions.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 122,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "A company needs to generate predictions for 10 million records once per day without maintaining a persistent endpoint. Which SageMaker inference option is most cost-effective?",
+      "options": [
+        "Real-time endpoint",
+        "Batch Transform",
+        "Serverless inference",
+        "Multi-model endpoint"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker Batch Transform processes large datasets without a persistent endpoint. It provisions instances, runs inference on all records, saves results to S3, and shuts down. This is ideal for scheduled batch predictions where maintaining 24/7 endpoints would be wasteful.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 123,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "Which SageMaker feature tracks model versions, metadata, and lineage for MLOps governance?",
+      "options": [
+        "SageMaker Feature Store",
+        "SageMaker Model Registry",
+        "SageMaker Debugger",
+        "SageMaker Data Wrangler"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker Model Registry provides a central repository for managing model versions, tracking metadata (performance metrics, training parameters), and implementing approval workflows. It integrates with SageMaker Pipelines for automated CI/CD in MLOps.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 124,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "Which AWS service manages the complete ML workflow including data preparation, training, evaluation, and deployment as a repeatable pipeline?",
+      "options": [
+        "AWS Step Functions",
+        "SageMaker Pipelines",
+        "AWS CodePipeline",
+        "Amazon MWAA"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker Pipelines is purpose-built for ML workflows, offering a visual interface to define, automate, and manage end-to-end ML pipelines. It supports data processing, training, evaluation, condition checks, and model registration steps with built-in lineage tracking.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 125,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "easy",
+      "question": "Which SageMaker feature monitors deployed models for data quality issues and data drift?",
+      "options": [
+        "SageMaker Debugger",
+        "SageMaker Model Monitor",
+        "SageMaker Clarify",
+        "SageMaker Experiments"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker Model Monitor continuously monitors deployed models by comparing incoming inference data against a baseline (training data distribution). It detects data drift, missing values, and data quality issues, triggering alerts via CloudWatch when thresholds are exceeded.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 126,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "A company hosts 200 ML models but each model receives infrequent requests. Deploying each on its own endpoint is too expensive. Which SageMaker feature reduces costs?",
+      "options": [
+        "Batch Transform",
+        "Multi-Model Endpoints",
+        "SageMaker Autopilot",
+        "Elastic Inference"
+      ],
+      "correct": 1,
+      "explanation": "Multi-Model Endpoints host multiple models on a single endpoint, dynamically loading/unloading models based on demand. This drastically reduces costs when many models receive infrequent traffic, since you pay for one endpoint instead of 200 separate endpoints.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 127,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "A SageMaker endpoint receives variable traffic: 1,000 requests/minute during business hours and near-zero overnight. How should the endpoint be configured to optimize costs?",
+      "options": [
+        "Use the largest instance available to handle peak traffic",
+        "Configure auto-scaling policies based on InvocationsPerInstance CloudWatch metric",
+        "Deploy two separate endpoints for day and night",
+        "Use SageMaker Serverless Inference with no configuration"
+      ],
+      "correct": 1,
+      "explanation": "Auto-scaling adjusts the number of instances behind the endpoint based on metrics like InvocationsPerInstance. During peak hours, it scales out to handle load; during quiet hours, it scales in to minimize costs. The scaling policy should be based on the InvocationsPerInstance CloudWatch metric.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 128,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "An ML team wants to gradually shift production traffic from model v1 to model v2 to ensure v2 performs well before full rollout. Which deployment strategy supports this?",
+      "options": [
+        "Blue/green deployment with instant cutover",
+        "Canary deployment using SageMaker production variants with traffic splitting",
+        "Deploy v2 to a completely new endpoint",
+        "A/B testing in a staging environment only"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker production variants allow traffic splitting between model versions (e.g., 90% to v1, 10% to v2). This canary deployment strategy tests v2 on real production traffic with limited blast radius. If v2 performs well, traffic is gradually shifted. If not, v2 traffic is reverted to 0%.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 129,
       "domain": 4,
       "objective": "4.3",
       "difficulty": "medium",
-      "question": "Which of the following best describes the purpose of \"Apply security practices to ML solutions\" in Machine Learning Implementation and Operations?",
+      "question": "Which encryption mechanism ensures that SageMaker training data stored on the ML instance's local volume is protected?",
       "options": [
-        "To implement and manage apply security practices to ml solutions processes",
-        "To evaluate compliance with machine learning implementation and operations standards",
-        "To document risk assessment procedures",
-        "To audit external vendor relationships"
+        "Client-side encryption only",
+        "KMS-managed keys for volume encryption specified in the training job configuration",
+        "SSL/TLS for data in transit only",
+        "IAM policies alone"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker training job configurations accept a KMS key ID for encrypting the ML storage volume (EBS) attached to training instances. This ensures training data at rest is encrypted. Combined with HTTPS for data in transit and VPC configuration for network isolation, this provides comprehensive data protection.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 130,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "How can SageMaker training jobs be isolated from the public internet while still accessing S3 training data?",
+      "options": [
+        "Run training on SageMaker local mode",
+        "Configure the training job to run in a VPC with S3 VPC endpoints",
+        "Use SageMaker Pipe mode",
+        "Enable Network Isolation with no internet access"
+      ],
+      "correct": 1,
+      "explanation": "Running SageMaker training jobs in a VPC provides network isolation from the public internet. S3 VPC endpoints (gateway endpoints) allow the training instances to access S3 without internet access, keeping all traffic within the AWS network. This is required for many compliance frameworks.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 131,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "A SageMaker model was trained using TensorFlow. The team wants to deploy it to edge devices with limited compute. Which service optimizes the model for edge deployment?",
+      "options": [
+        "SageMaker Debugger",
+        "SageMaker Neo",
+        "SageMaker Experiments",
+        "SageMaker Feature Store"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker Neo compiles trained models for specific target hardware (edge devices, mobile, embedded systems) using machine-specific optimizations. It can achieve up to 2x speedup with no loss in accuracy. The compiled model runs with the Neo runtime, which has a small footprint suitable for edge deployment.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 132,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "Which SageMaker feature provides a centralized, low-latency store for serving ML features that can be shared across teams and models?",
+      "options": [
+        "SageMaker Data Wrangler",
+        "SageMaker Feature Store",
+        "SageMaker Model Registry",
+        "AWS Glue Data Catalog"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker Feature Store provides an online store (low-latency reads for real-time inference) and an offline store (S3-based for batch training). It ensures feature consistency between training and serving, provides feature versioning, and enables feature sharing across teams and models.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 133,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "An ML team needs to ensure that only specific IAM roles can invoke a SageMaker endpoint. Which mechanism enforces this?",
+      "options": [
+        "VPC security groups",
+        "IAM policies with sagemaker:InvokeEndpoint action and resource-level conditions",
+        "SageMaker Model Monitor",
+        "KMS encryption"
+      ],
+      "correct": 1,
+      "explanation": "IAM policies can be configured to allow or deny the sagemaker:InvokeEndpoint action for specific roles, with resource-level conditions targeting specific endpoint ARNs. This provides fine-grained access control over who can call the inference endpoint.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 134,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "A SageMaker real-time endpoint receives sporadic traffic with long idle periods, but when requests arrive, they need sub-second latency. The team wants to avoid paying for idle instances. Which inference option balances cost and latency?",
+      "options": [
+        "Always-on real-time endpoint with the smallest instance",
+        "SageMaker Serverless Inference",
+        "Batch Transform scheduled every 5 minutes",
+        "Lambda function calling SageMaker API"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker Serverless Inference automatically provisions and scales compute resources based on traffic, scaling to zero during idle periods. You only pay for the compute time used. It provides sub-second latency for active requests while eliminating costs during idle periods, ideal for sporadic traffic patterns.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 135,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "A production ML system requires that the same input always produces the same prediction, and prediction results must be auditable. Which deployment consideration ensures this?",
+      "options": [
+        "Use the largest available instance type",
+        "Enable data capture on the endpoint, pin the model version in the Model Registry, and disable auto-scaling",
+        "Use Batch Transform exclusively",
+        "Deploy in multiple regions simultaneously"
+      ],
+      "correct": 1,
+      "explanation": "Data capture records all inputs and outputs for auditability. Pinning the model version (via Model Registry) ensures the same model artifact serves predictions. Disabling auto-scaling ensures consistent infrastructure. Together these guarantee reproducibility and a complete audit trail for regulatory compliance.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 136,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "An ML team wants to automatically retrain and redeploy their model whenever Model Monitor detects data drift exceeding a threshold. Which architecture achieves this?",
+      "options": [
+        "Manual retraining triggered by email notifications",
+        "Model Monitor → CloudWatch alarm → EventBridge rule → trigger SageMaker Pipeline (retrain, evaluate, register, deploy)",
+        "Model Monitor → SNS → Data scientist reviews → manual deployment",
+        "Schedule retraining every hour regardless of drift"
+      ],
+      "correct": 1,
+      "explanation": "This automated MLOps loop uses Model Monitor to detect drift, CloudWatch alarm when thresholds are exceeded, EventBridge to trigger a SageMaker Pipeline that retrains the model, evaluates on a holdout set, registers the new version if it passes quality gates, and deploys automatically. This is a best-practice closed-loop MLOps architecture.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 137,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "A company runs A/B tests comparing two ML models in production. After 2 weeks, model B shows 5% higher conversion rate. Before full deployment of model B, what statistical check is essential?",
+      "options": [
+        "Verify model B has lower latency",
+        "Confirm the result is statistically significant (p-value < 0.05) with sufficient sample size to ensure the difference is not due to random chance",
+        "Check that model B uses less memory",
+        "Verify model B has fewer parameters"
+      ],
+      "correct": 1,
+      "explanation": "Statistical significance testing (p-value < 0.05) ensures the observed difference is unlikely due to random chance. Without this, a 5% lift could be within normal variance. Sample size, effect size, and confidence intervals must all be considered before making a production decision based on A/B test results.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 138,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "A financial services company must ensure that no SageMaker training data or model artifacts leave the VPC, even to S3 via the public internet. Which configuration achieves this?",
+      "options": [
+        "Use IAM policies to restrict S3 access",
+        "Enable Network Isolation mode on the training job, combined with VPC endpoints for S3",
+        "Use client-side encryption on all data",
+        "Deploy SageMaker in a private subnet only"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker Network Isolation mode prevents any outbound network calls from the training container. Combined with S3 VPC gateway endpoints, all data access stays within the VPC and AWS network. The training container cannot call external APIs, download packages, or exfiltrate data, satisfying strict compliance requirements.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 139,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "A real-time inference endpoint needs to preprocess raw input (tokenization, feature extraction) before calling the model, and postprocess the output (threshold application, formatting). Where should this logic run?",
+      "options": [
+        "In the client application before and after API calls",
+        "In a SageMaker Inference Pipeline that chains preprocessing, model, and postprocessing containers",
+        "In a separate Lambda function that calls the endpoint",
+        "In the SageMaker training job"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker Inference Pipelines chain multiple containers (preprocessing, model inference, postprocessing) behind a single endpoint. This keeps the entire inference workflow self-contained, ensures consistency between training and serving transformations, and reduces latency compared to external orchestration.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 140,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "SageMaker Model Monitor detects that a key input feature's mean has shifted by 3 standard deviations from the training baseline. What type of monitoring violation is this?",
+      "options": [
+        "Model quality violation",
+        "Data quality violation (data drift)",
+        "Bias drift violation",
+        "Feature attribution drift"
+      ],
+      "correct": 1,
+      "explanation": "A significant shift in input feature distribution (3 standard deviations from baseline) is a data quality violation indicating data drift. Model Monitor's Data Quality monitoring compares incoming inference data statistics against the training baseline and flags violations when thresholds are exceeded.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 141,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "Which SageMaker capability enables logging all inference requests and responses for a deployed endpoint for compliance and debugging purposes?",
+      "options": [
+        "CloudTrail logging",
+        "Data Capture on the endpoint",
+        "SageMaker Debugger",
+        "S3 access logging"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker endpoint Data Capture logs a configurable percentage (up to 100%) of inference request inputs and prediction outputs to S3. This provides a complete audit trail for compliance, enables offline model evaluation, and supports Model Monitor baselines. CloudTrail logs API management calls but not inference payloads.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 142,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "Which SageMaker feature automatically builds, trains, and tunes multiple ML models, selecting the best one without requiring ML expertise?",
+      "options": [
+        "SageMaker Autopilot",
+        "SageMaker Debugger",
+        "SageMaker Model Monitor",
+        "SageMaker Ground Truth"
       ],
       "correct": 0,
-      "explanation": "Apply security practices to ML solutions is a key objective in Machine Learning Implementation and Operations. Understanding this concept is essential for the exam.",
-      "link": "start-here.html"
+      "explanation": "SageMaker Autopilot automatically explores different algorithms and hyperparameters, generating multiple candidate models. It produces a leaderboard ranking models by performance, along with generated notebooks showing the complete ML pipeline. This enables non-ML-experts to build production-quality models.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 143,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "What does SageMaker Experiments help ML teams manage?",
+      "options": [
+        "Model deployment and scaling",
+        "Tracking, organizing, and comparing multiple training runs and their parameters/metrics",
+        "Data labeling workflows",
+        "Network security configurations"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker Experiments organizes ML experiments by tracking training runs (trials), their hyperparameters, metrics, and artifacts. It allows data scientists to compare results across runs, reproduce experiments, and maintain an organized record of model development iterations.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 144,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "easy",
+      "question": "Which protocol does SageMaker use to encrypt data in transit between the client and inference endpoints?",
+      "options": [
+        "FTP",
+        "HTTPS (TLS/SSL)",
+        "SSH",
+        "HTTP with basic authentication"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker endpoints use HTTPS (TLS/SSL) to encrypt all data in transit between clients and the inference endpoint. This ensures that inference requests and responses cannot be intercepted or tampered with during transmission. TLS encryption is mandatory and cannot be disabled.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 145,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "An inference endpoint receives requests with varying payload sizes. Some requests take 5 seconds to process, causing timeouts. What feature allows asynchronous processing of long-running inference requests?",
+      "options": [
+        "Real-time inference with increased timeout",
+        "SageMaker Asynchronous Inference",
+        "Batch Transform",
+        "SageMaker Processing Jobs"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker Asynchronous Inference queues incoming requests and processes them asynchronously, supporting payloads up to 1 GB and processing times up to 15 minutes. It sends completion notifications via SNS and can scale to zero when idle, making it ideal for long-running or variable-length inference tasks.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 146,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "An ML team wants to use SageMaker Pipelines with a human-in-the-loop approval step before deploying a new model to production. How is this implemented?",
+      "options": [
+        "Use a Lambda step in the pipeline that sends an email",
+        "Register the model in Model Registry with 'PendingManualApproval' status; a manual or automated approval step changes status to 'Approved' before the deploy step executes",
+        "Use SageMaker Ground Truth for model approval",
+        "Configure an SNS topic that pauses the pipeline"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker Model Registry supports approval workflow statuses: PendingManualApproval, Approved, Rejected. A pipeline registers a new model version with pending status, then a condition step checks the approval status before proceeding to deployment. Approvers can approve via console, API, or automated quality gates.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 147,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "A SageMaker training job needs to access a private dataset in S3 and write model artifacts back to S3. Which IAM configuration is required?",
+      "options": [
+        "Attach the AdministratorAccess policy to the SageMaker role",
+        "Create a SageMaker execution role with s3:GetObject for the training data bucket and s3:PutObject for the model artifacts bucket",
+        "Use the root account credentials",
+        "Create an S3 bucket policy allowing public access"
+      ],
+      "correct": 1,
+      "explanation": "The SageMaker execution role should follow the principle of least privilege: s3:GetObject permission for the training data bucket and s3:PutObject permission for the model output bucket. Using AdministratorAccess or root credentials violates security best practices and broadens the blast radius if credentials are compromised.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 148,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "A deployed SageMaker endpoint occasionally returns errors during traffic spikes. CloudWatch shows the InvocationsPerInstance metric exceeding 1,000 during spikes. What is the most effective remediation?",
+      "options": [
+        "Increase the model's complexity",
+        "Configure application auto-scaling with a target tracking policy on InvocationsPerInstance, setting the target below 1,000",
+        "Switch to a smaller instance type to save costs",
+        "Enable data capture to record the errors"
+      ],
+      "correct": 1,
+      "explanation": "Application Auto Scaling with a target tracking policy automatically adjusts the number of instances to maintain a target InvocationsPerInstance metric. Setting the target below the failure threshold (e.g., 750) ensures SageMaker adds instances before the endpoint becomes overloaded during traffic spikes.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 149,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "What is the benefit of using SageMaker Inference Recommender before deploying a model to production?",
+      "options": [
+        "It automatically retrains the model",
+        "It benchmarks the model across different instance types to recommend the best price-performance configuration",
+        "It generates API documentation for the endpoint",
+        "It validates the model's accuracy on test data"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker Inference Recommender runs load tests on your model across different instance types and configurations. It provides latency, throughput, and cost metrics for each configuration, helping you select the optimal instance type that meets your latency requirements at the lowest cost.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 150,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "A regulated industry requires that all ML model predictions be explainable — each prediction must include which features contributed most to the decision. Which SageMaker feature provides this in production?",
+      "options": [
+        "SageMaker Debugger",
+        "SageMaker Clarify integrated with the endpoint for real-time SHAP-based feature attributions",
+        "SageMaker Model Monitor",
+        "SageMaker Experiments"
+      ],
+      "correct": 1,
+      "explanation": "SageMaker Clarify can be configured to run alongside inference endpoints, computing SHAP (SHapley Additive exPlanations) values for each prediction. SHAP values quantify each feature's contribution to a specific prediction, providing the per-prediction explainability required by regulated industries like healthcare and finance.",
+      "link": "cloud-security.html"
     }
   ]
 }

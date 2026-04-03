@@ -1,29 +1,29 @@
 {
   "metadata": {
     "title": "AWS Data Engineer DEA-C01 Practice Questions",
-    "version": "1.0",
-    "total_questions": 30,
+    "version": "2.0",
+    "total_questions": 150,
     "exam": "DEA-C01",
     "domains": {
       "1": {
         "name": "Data Ingestion and Transformation",
         "weight": 34,
-        "count": 10
+        "count": 51
       },
       "2": {
         "name": "Data Store Management",
         "weight": 26,
-        "count": 8
+        "count": 39
       },
       "3": {
         "name": "Data Operations and Support",
         "weight": 22,
-        "count": 7
+        "count": 33
       },
       "4": {
         "name": "Data Security and Governance",
         "weight": 18,
-        "count": 5
+        "count": 27
       }
     }
   },
@@ -33,480 +33,2400 @@
       "domain": 1,
       "objective": "1.1",
       "difficulty": "easy",
-      "question": "Which of the following is a key concept within Data Ingestion and Transformation (Domain 1)?",
+      "question": "Which AWS service is a fully managed real-time streaming service that can continuously capture gigabytes of data per second from hundreds of thousands of sources?",
       "options": [
-        "EMR (Spark, Hive, Presto)",
-        "Kinesis Data Streams vs Kinesis Data Firehose",
-        "Step Functions for Pipeline Orchestration",
-        "Glue Job Bookmarks"
+        "Amazon Kinesis Data Streams",
+        "Amazon SQS",
+        "Amazon SNS",
+        "AWS Batch"
       ],
       "correct": 0,
-      "explanation": "EMR (Spark, Hive, Presto) is a key concept in Data Ingestion and Transformation. This domain covers topics essential for the AWS Data Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "Amazon Kinesis Data Streams is a real-time data streaming service that can continuously capture gigabytes of data per second from hundreds of thousands of sources such as website clickstreams, IoT telemetry, and application logs.",
+      "link": "cloud-security.html"
     },
     {
       "id": 2,
       "domain": 1,
-      "objective": "1.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with design and implement data transformation solutions. What should be the first step?",
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "What is the primary difference between Kinesis Data Streams and Kinesis Data Firehose?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Data Streams requires you to manage consumers; Firehose automatically delivers data to destinations",
+        "Data Streams is serverless; Firehose requires provisioned capacity",
+        "Data Streams only supports S3; Firehose supports multiple destinations",
+        "Data Streams is for batch processing; Firehose is for real-time processing"
       ],
       "correct": 0,
-      "explanation": "The first step in any data ingestion and transformation task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "Kinesis Data Streams requires you to build and manage your own consumer applications, while Kinesis Data Firehose is a fully managed delivery service that automatically loads streaming data into destinations like S3, Redshift, OpenSearch, and Splunk.",
+      "link": "cloud-security.html"
     },
     {
       "id": 3,
       "domain": 1,
-      "objective": "1.3",
-      "difficulty": "medium",
-      "question": "Which concept in Data Ingestion and Transformation is most closely related to orchestrate data pipelines?",
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "A company needs to ingest clickstream data from its website and deliver it directly to Amazon S3 with minimal operational overhead. Which service should they use?",
       "options": [
-        "Data Ingestion and Transformation governance and oversight",
-        "Data Ingestion and Transformation implementation and operations",
-        "Data Ingestion and Transformation assessment and testing",
-        "Data Ingestion and Transformation risk management"
+        "Amazon Kinesis Data Firehose",
+        "Amazon Kinesis Data Streams with a custom consumer",
+        "Amazon EMR with Spark Streaming",
+        "AWS Database Migration Service"
       ],
-      "correct": 1,
-      "explanation": "Orchestrate data pipelines falls under the implementation and operations aspect of Data Ingestion and Transformation.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "Amazon Kinesis Data Firehose is the simplest way to load streaming data into S3 with near-zero administration. It automatically handles scaling, batching, compression, and encryption without requiring custom consumer code.",
+      "link": "cloud-security.html"
     },
     {
       "id": 4,
       "domain": 1,
-      "objective": "1.4",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Data Ingestion and Transformation (Domain 1)?",
+      "objective": "1.1",
+      "difficulty": "medium",
+      "question": "A data engineer needs to process streaming data where each record must be processed exactly once, and consumers need the ability to replay data. Which configuration should they choose?",
       "options": [
-        "Lambda for Event-Driven Ingestion",
-        "AWS Glue ETL Spark Jobs",
-        "Glue Job Bookmarks",
-        "Hive-Style Partitioning"
+        "Kinesis Data Streams with enhanced fan-out consumers",
+        "Kinesis Data Firehose with S3 destination",
+        "Amazon SQS FIFO queue",
+        "Amazon MSK with auto.offset.reset=latest"
       ],
       "correct": 0,
-      "explanation": "Lambda for Event-Driven Ingestion is a key concept in Data Ingestion and Transformation. This domain covers topics essential for the AWS Data Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "Kinesis Data Streams with enhanced fan-out provides dedicated throughput per consumer, supports data replay by reading from any position in the stream, and when combined with the Kinesis Client Library (KCL), can achieve exactly-once processing semantics.",
+      "link": "cloud-security.html"
     },
     {
       "id": 5,
       "domain": 1,
       "objective": "1.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with implement data ingestion patterns for batch and streaming data?",
+      "difficulty": "medium",
+      "question": "What is the maximum retention period for data in Amazon Kinesis Data Streams?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "365 days",
+        "7 days",
+        "30 days",
+        "90 days"
       ],
       "correct": 0,
-      "explanation": "When working with implement data ingestion patterns for batch and streaming data, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "explanation": "Amazon Kinesis Data Streams supports a data retention period from 24 hours (default) up to 365 days. Extended retention beyond 7 days incurs additional charges for long-term retention.",
+      "link": "cloud-security.html"
     },
     {
       "id": 6,
       "domain": 1,
-      "objective": "1.2",
+      "objective": "1.1",
       "difficulty": "medium",
-      "question": "Which of the following best describes the purpose of \"Design and implement data transformation solutions\" in Data Ingestion and Transformation?",
+      "question": "A company is migrating from Apache Kafka to a managed AWS service. They need topic-based publish-subscribe, exactly-once semantics, and compatibility with existing Kafka client libraries. Which service should they use?",
       "options": [
-        "To implement and manage design and implement data transformation solutions processes",
-        "To evaluate compliance with data ingestion and transformation standards",
-        "To document risk assessment procedures",
-        "To audit external vendor relationships"
+        "Amazon MSK (Managed Streaming for Apache Kafka)",
+        "Amazon Kinesis Data Streams",
+        "Amazon Kinesis Data Firehose",
+        "Amazon MQ"
       ],
       "correct": 0,
-      "explanation": "Design and implement data transformation solutions is a key objective in Data Ingestion and Transformation. Understanding this concept is essential for the exam.",
-      "link": "start-here.html"
+      "explanation": "Amazon MSK is a fully managed Apache Kafka service that makes it easy to run Kafka workloads on AWS. It is fully compatible with existing Kafka client libraries and supports features like topic-based pub/sub and exactly-once semantics.",
+      "link": "cloud-security.html"
     },
     {
       "id": 7,
       "domain": 1,
-      "objective": "1.3",
-      "difficulty": "medium",
-      "question": "Which of the following is a key concept within Data Ingestion and Transformation (Domain 1)?",
+      "objective": "1.1",
+      "difficulty": "hard",
+      "question": "A streaming pipeline uses Kinesis Data Streams with 4 shards. The data engineer notices that one shard is receiving significantly more traffic than others. What is the MOST likely cause and solution?",
       "options": [
-        "EMR (Spark, Hive, Presto)",
-        "Step Functions for Pipeline Orchestration",
-        "Glue DataBrew Visual Transformations",
-        "Amazon MSK (Managed Kafka)"
+        "Hot partition key; redesign the partition key strategy to distribute records more evenly",
+        "Insufficient shard count; double the number of shards",
+        "Consumer lag; increase the number of consumer instances",
+        "Retention period too short; extend the retention window"
       ],
       "correct": 0,
-      "explanation": "EMR (Spark, Hive, Presto) is a key concept in Data Ingestion and Transformation. This domain covers topics essential for the AWS Data Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "A hot shard occurs when the partition key strategy causes uneven data distribution. The solution is to redesign the partition key to ensure more uniform distribution across shards, such as using a random suffix or hash-based approach.",
+      "link": "cloud-security.html"
     },
     {
       "id": 8,
       "domain": 1,
-      "objective": "1.4",
+      "objective": "1.1",
       "difficulty": "hard",
-      "question": "Which concept in Data Ingestion and Transformation is most closely related to determine the appropriate data format and partitioning scheme?",
+      "question": "An application writes 5,000 records per second to Kinesis Data Streams, with each record averaging 50 KB. What is the minimum number of shards needed to handle this write throughput?",
       "options": [
-        "Data Ingestion and Transformation governance and oversight",
-        "Data Ingestion and Transformation implementation and operations",
-        "Data Ingestion and Transformation assessment and testing",
-        "Data Ingestion and Transformation risk management"
+        "250 shards",
+        "5 shards",
+        "50 shards",
+        "500 shards"
       ],
-      "correct": 1,
-      "explanation": "Determine the appropriate data format and partitioning scheme falls under the implementation and operations aspect of Data Ingestion and Transformation.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "Each Kinesis shard supports 1 MB/s or 1,000 records/s for writes. At 5,000 records/s and 50 KB each, the throughput is 250 MB/s. Since each shard handles 1 MB/s writes, you need 250 shards to handle the data volume. The record count (5,000/s) would only need 5 shards, but the byte throughput is the bottleneck.",
+      "link": "cloud-security.html"
     },
     {
       "id": 9,
       "domain": 1,
-      "objective": "1.1",
+      "objective": "1.2",
       "difficulty": "easy",
-      "question": "In the context of AWS Data Engineer, what is the primary goal of implement data ingestion patterns for batch and streaming data?",
+      "question": "Which AWS Glue feature automatically discovers and catalogs metadata about data stores?",
       "options": [
-        "To ensure proper data ingestion and transformation controls are in place",
-        "To reduce operational costs",
-        "To increase system performance",
-        "To simplify user interfaces"
+        "Glue Crawlers",
+        "Glue Job Bookmarks",
+        "Glue DataBrew",
+        "Glue Triggers"
       ],
       "correct": 0,
-      "explanation": "The primary goal of implement data ingestion patterns for batch and streaming data is to ensure proper controls and processes are in place within Data Ingestion and Transformation.",
-      "link": "start-here.html"
+      "explanation": "AWS Glue Crawlers connect to data stores, determine the schema and data format, then create metadata tables in the AWS Glue Data Catalog. They automatically discover and register data assets.",
+      "link": "cloud-security.html"
     },
     {
       "id": 10,
       "domain": 1,
       "objective": "1.2",
-      "difficulty": "medium",
-      "question": "Which of the following is a key concept within Data Ingestion and Transformation (Domain 1)?",
+      "difficulty": "easy",
+      "question": "What is the purpose of AWS Glue Job Bookmarks?",
       "options": [
-        "AWS Glue ETL Spark Jobs",
-        "Amazon MSK (Managed Kafka)",
-        "Lambda for Event-Driven Ingestion",
-        "Step Functions for Pipeline Orchestration"
+        "To track previously processed data and avoid reprocessing on subsequent job runs",
+        "To save frequently used Glue job configurations",
+        "To bookmark Glue jobs in the AWS Console for quick access",
+        "To create checkpoints for long-running Glue jobs"
       ],
       "correct": 0,
-      "explanation": "AWS Glue ETL Spark Jobs is a key concept in Data Ingestion and Transformation. This domain covers topics essential for the AWS Data Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "AWS Glue Job Bookmarks track data that has already been processed during previous runs of an ETL job. This prevents reprocessing of old data and enables incremental data loading.",
+      "link": "cloud-security.html"
     },
     {
       "id": 11,
-      "domain": 2,
-      "objective": "2.1",
+      "domain": 1,
+      "objective": "1.2",
       "difficulty": "easy",
-      "question": "Which of the following is a key concept within Data Store Management (Domain 2)?",
+      "question": "Which AWS Glue component provides a visual interface for building data transformation pipelines without writing code?",
       "options": [
-        "Schema Registry for Streaming",
-        "S3 Lifecycle Policies",
-        "Redshift Spectrum for S3 Queries",
-        "Glue Data Catalog and Crawlers"
+        "AWS Glue DataBrew",
+        "AWS Glue Studio",
+        "AWS Glue Crawlers",
+        "AWS Glue Data Catalog"
       ],
       "correct": 0,
-      "explanation": "Schema Registry for Streaming is a key concept in Data Store Management. This domain covers topics essential for the AWS Data Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "AWS Glue DataBrew is a visual data preparation tool that enables users to clean and normalize data without writing code. It provides over 250 built-in transformations and a visual interface for data profiling and transformation.",
+      "link": "cloud-security.html"
     },
     {
       "id": 12,
-      "domain": 2,
-      "objective": "2.2",
+      "domain": 1,
+      "objective": "1.2",
       "difficulty": "medium",
-      "question": "A professional is tasked with design and implement data warehouse solutions. What should be the first step?",
+      "question": "A data engineer is building an ETL job that reads from an S3 data lake partitioned by date. The job runs daily and should only process new data added since the last run. Which Glue feature should they enable?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Job Bookmarks",
+        "Glue Crawlers with a daily schedule",
+        "Push-down predicates",
+        "DynamicFrame partitioning"
       ],
       "correct": 0,
-      "explanation": "The first step in any data store management task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "AWS Glue Job Bookmarks maintain state information about previously processed data, enabling the job to only pick up new data on each run. This is ideal for incremental ETL jobs on partitioned datasets.",
+      "link": "cloud-security.html"
     },
     {
       "id": 13,
-      "domain": 2,
-      "objective": "2.3",
+      "domain": 1,
+      "objective": "1.2",
       "difficulty": "medium",
-      "question": "Which concept in Data Store Management is most closely related to manage the lifecycle of data in storage solutions?",
+      "question": "Which AWS Glue feature allows you to run transformations in Apache Spark without managing the underlying infrastructure?",
       "options": [
-        "Data Store Management governance and oversight",
-        "Data Store Management implementation and operations",
-        "Data Store Management assessment and testing",
-        "Data Store Management risk management"
+        "AWS Glue ETL Spark jobs",
+        "AWS Glue DataBrew recipes",
+        "AWS Glue Crawlers",
+        "AWS Glue Schema Registry"
       ],
-      "correct": 1,
-      "explanation": "Manage the lifecycle of data in storage solutions falls under the implementation and operations aspect of Data Store Management.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "AWS Glue ETL jobs run on a serverless Apache Spark environment. You write transformation logic in Python (PySpark) or Scala, and Glue handles provisioning, scaling, and managing the Spark infrastructure.",
+      "link": "cloud-security.html"
     },
     {
       "id": 14,
-      "domain": 2,
-      "objective": "2.4",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Data Store Management (Domain 2)?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "A Glue ETL job reads data from S3 where some files have inconsistent schemas. Which Glue feature helps handle this schema variation without causing job failures?",
       "options": [
-        "Redshift Spectrum for S3 Queries",
-        "S3 Lifecycle Policies",
-        "Redshift Distribution Styles (KEY, ALL, EVEN)",
-        "Apache Iceberg and Hudi on AWS"
+        "DynamicFrame with ResolveChoice",
+        "Glue Job Bookmarks",
+        "Push-down predicates",
+        "Glue Data Quality rules"
       ],
       "correct": 0,
-      "explanation": "Redshift Spectrum for S3 Queries is a key concept in Data Store Management. This domain covers topics essential for the AWS Data Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "DynamicFrames in AWS Glue handle schema inconsistencies by using a self-describing format. The ResolveChoice transformation lets you specify how to handle columns that have multiple data types across records.",
+      "link": "cloud-security.html"
     },
     {
       "id": 15,
-      "domain": 2,
-      "objective": "2.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with design and implement storage solutions for data lakes?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "A data engineer is optimizing a Glue ETL job that reads from a large partitioned table in S3. The job only needs data from the last 7 days but is currently scanning all partitions. Which approach will MOST reduce costs and execution time?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "Use push-down predicates to filter partitions at the Glue Data Catalog level before reading from S3",
+        "Add a filter transformation after reading all data into a DynamicFrame",
+        "Reduce the number of DPUs allocated to the job",
+        "Convert the job from Spark to Python Shell"
       ],
       "correct": 0,
-      "explanation": "When working with design and implement storage solutions for data lakes, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "explanation": "Push-down predicates in AWS Glue push partition filtering to the Data Catalog level, so only the S3 partitions matching the predicate are read. This eliminates unnecessary S3 reads and significantly reduces both cost and runtime.",
+      "link": "cloud-security.html"
     },
     {
       "id": 16,
-      "domain": 2,
-      "objective": "2.2",
-      "difficulty": "medium",
-      "question": "Which of the following best describes the purpose of \"Design and implement data warehouse solutions\" in Data Store Management?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "A Glue Spark ETL job is failing with out-of-memory errors when processing a 5 TB dataset. The data engineer has already increased DPUs to the maximum. What should they try NEXT?",
       "options": [
-        "To implement and manage design and implement data warehouse solutions processes",
-        "To evaluate compliance with data store management standards",
-        "To document risk assessment procedures",
-        "To audit external vendor relationships"
+        "Enable Glue Auto Scaling and repartition the data to avoid skewed partitions",
+        "Switch from a Glue Spark job to a Glue Python Shell job",
+        "Reduce the number of Glue workers",
+        "Increase the Glue job timeout value"
       ],
       "correct": 0,
-      "explanation": "Design and implement data warehouse solutions is a key objective in Data Store Management. Understanding this concept is essential for the exam.",
-      "link": "start-here.html"
+      "explanation": "Out-of-memory errors in Spark jobs are often caused by data skew where a few partitions are much larger than others. Repartitioning the data to distribute it evenly across workers, combined with Glue Auto Scaling, allows the cluster to dynamically adjust resources.",
+      "link": "cloud-security.html"
     },
     {
       "id": 17,
-      "domain": 2,
-      "objective": "2.3",
-      "difficulty": "medium",
-      "question": "Which of the following is a key concept within Data Store Management (Domain 2)?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "easy",
+      "question": "Which Amazon EMR processing framework is BEST suited for large-scale batch data transformations using distributed computing?",
       "options": [
-        "Redshift Distribution Styles (KEY, ALL, EVEN)",
-        "Apache Iceberg and Hudi on AWS",
-        "S3 Storage Classes (Intelligent-Tiering)",
-        "Glue Data Catalog and Crawlers"
+        "Apache Spark",
+        "Apache Hive",
+        "Presto",
+        "Apache HBase"
       ],
       "correct": 0,
-      "explanation": "Redshift Distribution Styles (KEY, ALL, EVEN) is a key concept in Data Store Management. This domain covers topics essential for the AWS Data Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "Apache Spark on EMR is the preferred framework for large-scale batch data transformations. It provides in-memory processing, supports multiple languages (Python, Scala, Java, R), and is significantly faster than MapReduce for most workloads.",
+      "link": "cloud-security.html"
     },
     {
       "id": 18,
-      "domain": 2,
-      "objective": "2.4",
-      "difficulty": "hard",
-      "question": "Which concept in Data Store Management is most closely related to design and implement data catalog and schema management?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "easy",
+      "question": "A data engineer needs to run ad hoc SQL queries on data stored in Amazon S3 without provisioning any infrastructure. Which service should they use?",
       "options": [
-        "Data Store Management governance and oversight",
-        "Data Store Management implementation and operations",
-        "Data Store Management assessment and testing",
-        "Data Store Management risk management"
+        "Amazon Athena",
+        "Amazon EMR",
+        "Amazon Redshift",
+        "AWS Glue ETL"
       ],
-      "correct": 1,
-      "explanation": "Design and implement data catalog and schema management falls under the implementation and operations aspect of Data Store Management.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "Amazon Athena is a serverless interactive query service that allows you to analyze data in S3 using standard SQL. There is no infrastructure to manage, and you pay only for the queries you run.",
+      "link": "cloud-security.html"
     },
     {
       "id": 19,
-      "domain": 3,
-      "objective": "3.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Data Operations and Support (Domain 3)?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "medium",
+      "question": "A company runs nightly ETL jobs on EMR that process terabytes of log data. They want to minimize costs while maintaining performance. Which EMR configuration should they use?",
       "options": [
-        "Glue Workflows and Triggers",
-        "Handling Schema Evolution",
-        "EventBridge for Pipeline Scheduling",
-        "Debugging Spark Jobs on EMR"
+        "On-demand instances for the master node and Spot Instances for core and task nodes",
+        "All Spot Instances for the entire cluster",
+        "Reserved Instances for all nodes",
+        "On-demand instances for all nodes with auto-termination disabled"
       ],
       "correct": 0,
-      "explanation": "Glue Workflows and Triggers is a key concept in Data Operations and Support. This domain covers topics essential for the AWS Data Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "The best practice is to use on-demand instances for the master node (to ensure cluster stability) and Spot Instances for core and task nodes (for up to 90% cost savings). Task nodes can tolerate interruptions since they don't store HDFS data.",
+      "link": "cloud-security.html"
     },
     {
       "id": 20,
-      "domain": 3,
-      "objective": "3.2",
+      "domain": 1,
+      "objective": "1.3",
       "difficulty": "medium",
-      "question": "A professional is tasked with implement data quality and validation mechanisms. What should be the first step?",
+      "question": "A Spark job on EMR is experiencing slow performance due to excessive shuffling. What transformation technique can reduce shuffle operations?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Use broadcast joins for small tables instead of sort-merge joins",
+        "Increase the number of Spark executors",
+        "Convert all data to CSV format before processing",
+        "Disable dynamic allocation"
       ],
       "correct": 0,
-      "explanation": "The first step in any data operations and support task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "Broadcast joins send a copy of the smaller table to all executors, eliminating the need for a shuffle operation. This is effective when one table is small enough to fit in memory on each executor (typically under a few hundred MB).",
+      "link": "cloud-security.html"
     },
     {
       "id": 21,
-      "domain": 3,
-      "objective": "3.3",
-      "difficulty": "medium",
-      "question": "Which concept in Data Operations and Support is most closely related to manage and monitor data pipelines?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "A data engineer discovers that a Spark job on EMR has uneven task execution times, with some tasks taking 10x longer than others. What is the MOST likely root cause?",
       "options": [
-        "Data Operations and Support governance and oversight",
-        "Data Operations and Support implementation and operations",
-        "Data Operations and Support assessment and testing",
-        "Data Operations and Support risk management"
+        "Data skew causing uneven partition sizes",
+        "Insufficient number of core nodes",
+        "S3 throttling on read requests",
+        "Master node running out of memory"
       ],
-      "correct": 1,
-      "explanation": "Manage and monitor data pipelines falls under the implementation and operations aspect of Data Operations and Support.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "Data skew occurs when some partitions contain significantly more data than others, causing certain tasks to take much longer. Solutions include salting join keys, repartitioning data, or using Spark's adaptive query execution (AQE) to handle skew.",
+      "link": "cloud-security.html"
     },
     {
       "id": 22,
-      "domain": 3,
-      "objective": "3.4",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Data Operations and Support (Domain 3)?",
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "easy",
+      "question": "Which data format provides both columnar storage and efficient compression, making it ideal for analytics workloads on AWS?",
       "options": [
-        "Handling Schema Evolution",
-        "Glue Workflows and Triggers",
-        "Debugging Spark Jobs on EMR",
-        "Glue Data Quality Rules"
+        "Apache Parquet",
+        "CSV",
+        "JSON",
+        "XML"
       ],
       "correct": 0,
-      "explanation": "Handling Schema Evolution is a key concept in Data Operations and Support. This domain covers topics essential for the AWS Data Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "Apache Parquet is a columnar storage format that provides efficient compression and encoding schemes. It is the preferred format for analytics on AWS because services like Athena, Redshift Spectrum, and EMR can skip irrelevant columns, reducing I/O and cost.",
+      "link": "cloud-security.html"
     },
     {
       "id": 23,
-      "domain": 3,
-      "objective": "3.1",
+      "domain": 1,
+      "objective": "1.4",
       "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with automate data processing by using aws services?",
+      "question": "What is hive-style partitioning in the context of S3 data lakes?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "Organizing data into directory paths using key=value pairs like year=2026/month=04/",
+        "Using Apache Hive as the query engine for S3 data",
+        "Splitting large files into equal-sized chunks in S3",
+        "Creating separate S3 buckets for each data partition"
       ],
       "correct": 0,
-      "explanation": "When working with automate data processing by using aws services, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "explanation": "Hive-style partitioning organizes data in S3 using directory paths with key=value naming conventions (e.g., s3://bucket/table/year=2026/month=04/). This enables partition pruning in Athena, Glue, and Redshift Spectrum, reducing the amount of data scanned.",
+      "link": "cloud-security.html"
     },
     {
       "id": 24,
-      "domain": 3,
-      "objective": "3.2",
+      "domain": 1,
+      "objective": "1.4",
       "difficulty": "medium",
-      "question": "Which of the following best describes the purpose of \"Implement data quality and validation mechanisms\" in Data Operations and Support?",
+      "question": "A data lake stores IoT sensor data partitioned by date. Queries typically filter on both date and device_id. The current partition scheme (date only) causes full partition scans. How should the data engineer improve query performance?",
       "options": [
-        "To implement and manage implement data quality and validation mechanisms processes",
-        "To evaluate compliance with data operations and support standards",
-        "To document risk assessment procedures",
-        "To audit external vendor relationships"
+        "Add device_id as a second level partition key (year/month/day/device_id=xxx/)",
+        "Remove partitioning and rely on file-level metadata",
+        "Switch from Parquet to CSV format",
+        "Create a separate S3 bucket for each device"
       ],
       "correct": 0,
-      "explanation": "Implement data quality and validation mechanisms is a key objective in Data Operations and Support. Understanding this concept is essential for the exam.",
-      "link": "start-here.html"
+      "explanation": "Adding device_id as a secondary partition key creates a more granular directory structure. Queries filtering on both date and device_id will only scan the relevant sub-partitions, significantly reducing data scanned and improving query performance.",
+      "link": "cloud-security.html"
     },
     {
       "id": 25,
-      "domain": 3,
-      "objective": "3.3",
+      "domain": 1,
+      "objective": "1.4",
       "difficulty": "medium",
-      "question": "Which of the following is a key concept within Data Operations and Support (Domain 3)?",
+      "question": "A data engineer is choosing between Parquet and ORC formats for a data lake used primarily with Amazon Athena. Which statement is correct?",
       "options": [
-        "MWAA (Managed Airflow) DAGs",
-        "Data Profiling and Validation",
-        "Dead Letter Queues for Failed Records",
-        "Debugging Spark Jobs on EMR"
+        "Parquet is the recommended default for Athena and integrates well with the broader AWS ecosystem",
+        "ORC always provides better compression than Parquet",
+        "Parquet does not support nested data types",
+        "ORC is required when using Glue Crawlers"
       ],
       "correct": 0,
-      "explanation": "MWAA (Managed Airflow) DAGs is a key concept in Data Operations and Support. This domain covers topics essential for the AWS Data Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "While both Parquet and ORC are columnar formats, Parquet is the recommended default for Athena and has broader ecosystem support across AWS services including Glue, EMR, and Redshift Spectrum.",
+      "link": "cloud-security.html"
     },
     {
       "id": 26,
-      "domain": 4,
-      "objective": "4.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Data Security and Governance (Domain 4)?",
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "hard",
+      "question": "A data lake receives millions of small files daily (each under 1 MB). Athena queries on this data are extremely slow. What is the BEST approach to fix this?",
       "options": [
-        "Macie for PII Detection",
-        "Cross-Account Data Sharing",
-        "Column-Level and Row-Level Security",
-        "KMS Encryption for S3/Redshift/Glue"
+        "Use a Glue ETL job to compact small files into larger Parquet files (128 MB-512 MB each)",
+        "Increase the number of Athena query concurrency limits",
+        "Switch from Parquet to JSON format",
+        "Add more partitions to the table"
       ],
       "correct": 0,
-      "explanation": "Macie for PII Detection is a key concept in Data Security and Governance. This domain covers topics essential for the AWS Data Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "The 'small files problem' is a common performance issue. Each small file requires a separate S3 GET request and task scheduling overhead. Compacting files into larger Parquet files (ideally 128 MB to 512 MB) dramatically reduces overhead and improves query performance.",
+      "link": "cloud-security.html"
     },
     {
       "id": 27,
-      "domain": 4,
-      "objective": "4.2",
+      "domain": 1,
+      "objective": "1.1",
       "difficulty": "medium",
-      "question": "A professional is tasked with apply data protection and encryption. What should be the first step?",
+      "question": "A company needs to replicate data from an on-premises MySQL database to Amazon S3 in near real-time for analytics. Which service is BEST suited for this?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "AWS Database Migration Service (DMS) with change data capture (CDC)",
+        "AWS DataSync",
+        "AWS Transfer Family",
+        "Amazon Kinesis Data Firehose"
       ],
       "correct": 0,
-      "explanation": "The first step in any data security and governance task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "AWS DMS with CDC (change data capture) can continuously replicate changes from the source MySQL database to S3 in near real-time. DMS handles the initial full load and then captures ongoing changes using the database's transaction log.",
+      "link": "cloud-security.html"
     },
     {
       "id": 28,
-      "domain": 4,
-      "objective": "4.3",
-      "difficulty": "medium",
-      "question": "Which concept in Data Security and Governance is most closely related to implement data governance strategies?",
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "hard",
+      "question": "An MSK cluster is receiving data at 500 MB/s across 20 topics. A consumer group is falling behind. Which action will MOST effectively increase consumer throughput?",
       "options": [
-        "Data Security and Governance governance and oversight",
-        "Data Security and Governance implementation and operations",
-        "Data Security and Governance assessment and testing",
-        "Data Security and Governance risk management"
+        "Increase the number of partitions per topic and add more consumers to the consumer group",
+        "Increase the MSK broker instance size",
+        "Reduce the retention period on the topics",
+        "Enable MSK Serverless mode"
       ],
-      "correct": 1,
-      "explanation": "Implement data governance strategies falls under the implementation and operations aspect of Data Security and Governance.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "In Kafka/MSK, consumer parallelism is limited by the number of partitions since each partition can only be consumed by one consumer per group. Increasing partitions and adding consumers allows more parallel consumption, directly increasing throughput.",
+      "link": "cloud-security.html"
     },
     {
       "id": 29,
-      "domain": 4,
-      "objective": "4.4",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Data Security and Governance (Domain 4)?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "Which AWS Glue feature validates data quality by allowing you to define rules like 'ColumnValues \"age\" between 0 and 150' during ETL execution?",
       "options": [
-        "S3 Bucket Policies and VPC Endpoints",
-        "Data Retention and Archiving Policies",
-        "Redshift Audit Logging",
-        "Tag-Based Access Control (TBAC)"
+        "AWS Glue Data Quality",
+        "AWS Glue Job Bookmarks",
+        "AWS Glue Schema Registry",
+        "AWS Glue DataBrew profiling"
       ],
       "correct": 0,
-      "explanation": "S3 Bucket Policies and VPC Endpoints is a key concept in Data Security and Governance. This domain covers topics essential for the AWS Data Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "AWS Glue Data Quality allows you to define DQDL (Data Quality Definition Language) rules that are evaluated during ETL job execution. You can set rules for completeness, uniqueness, ranges, and custom expressions, and choose to fail the job or route bad records.",
+      "link": "cloud-security.html"
     },
     {
       "id": 30,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "A data engineer needs to process a 10 TB dataset with complex multi-step transformations including joins, aggregations, and window functions. The pipeline must be cost-effective and complete within 2 hours. Which approach is BEST?",
+      "options": [
+        "Amazon EMR with Spark on a transient cluster using Spot Instances",
+        "AWS Glue Python Shell job",
+        "Amazon Athena CTAS (Create Table As Select) query",
+        "AWS Lambda with S3 event triggers"
+      ],
+      "correct": 0,
+      "explanation": "For complex transformations on a 10 TB dataset, EMR with Spark provides the best combination of performance and cost. A transient cluster that terminates after the job reduces costs, and Spot Instances provide up to 90% savings. Glue Python Shell lacks distributed processing, Athena has query size limits, and Lambda has a 15-minute timeout.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 31,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "Which service should a data engineer use to trigger an AWS Lambda function in response to new objects being uploaded to an S3 bucket?",
+      "options": [
+        "S3 Event Notifications",
+        "Amazon Kinesis Data Streams",
+        "AWS Step Functions",
+        "Amazon EventBridge Scheduler"
+      ],
+      "correct": 0,
+      "explanation": "S3 Event Notifications can directly trigger Lambda functions when objects are created, deleted, or modified in an S3 bucket. This is the simplest pattern for event-driven ingestion from S3.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 32,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "medium",
+      "question": "A company receives data files via SFTP from external partners. They need to automatically ingest these files into S3 for processing. Which AWS service provides managed SFTP capability?",
+      "options": [
+        "AWS Transfer Family",
+        "AWS DataSync",
+        "AWS Direct Connect",
+        "Amazon Kinesis Data Firehose"
+      ],
+      "correct": 0,
+      "explanation": "AWS Transfer Family provides fully managed SFTP, FTPS, and FTP endpoints that map directly to S3 (or EFS). External partners can continue using their existing SFTP workflows while data is automatically stored in S3.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 33,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "A Glue ETL job processes data from a JDBC source (RDS PostgreSQL). The job is very slow because it reads the entire table through a single connection. How should the data engineer parallelize the reads?",
+      "options": [
+        "Configure hashfield or hashexpression in the JDBC connection to enable parallel reads across multiple Spark partitions",
+        "Increase the DPU count for the Glue job",
+        "Enable Glue Job Bookmarks",
+        "Switch from a Spark job to a Python Shell job"
+      ],
+      "correct": 0,
+      "explanation": "By configuring hashfield (or hashexpression) on the JDBC connection, Glue distributes the table read across multiple Spark partitions based on a hash of the specified column. This parallelizes reads across multiple JDBC connections, significantly improving throughput.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 34,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "medium",
+      "question": "Which data format is self-describing, supports schema evolution, and is commonly used for streaming data with Kafka/MSK?",
+      "options": [
+        "Apache Avro",
+        "Apache Parquet",
+        "CSV",
+        "Apache ORC"
+      ],
+      "correct": 0,
+      "explanation": "Apache Avro is a row-based format with a compact binary encoding. It embeds the schema within the data, supports schema evolution (adding/removing fields), and is the default serialization format for Apache Kafka, making it ideal for streaming use cases.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 35,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "easy",
+      "question": "What is Amazon Kinesis Data Analytics primarily used for?",
+      "options": [
+        "Running real-time SQL queries or Apache Flink applications on streaming data",
+        "Storing streaming data in S3",
+        "Managing Kafka clusters",
+        "Orchestrating batch ETL jobs"
+      ],
+      "correct": 0,
+      "explanation": "Amazon Kinesis Data Analytics allows you to process and analyze streaming data in real-time using SQL or Apache Flink. It can read from Kinesis Data Streams or MSK and write results to various destinations.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 36,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "easy",
+      "question": "Which AWS Glue component provides a visual drag-and-drop interface for authoring, running, and monitoring ETL jobs?",
+      "options": [
+        "AWS Glue Studio",
+        "AWS Glue DataBrew",
+        "AWS Glue Data Catalog",
+        "AWS Glue Schema Registry"
+      ],
+      "correct": 0,
+      "explanation": "AWS Glue Studio provides a visual interface for creating, running, and monitoring Glue ETL jobs. Users can build data transformation pipelines using a drag-and-drop interface with visual nodes for sources, transforms, and targets.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 37,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "hard",
+      "question": "A real-time analytics pipeline uses Kinesis Data Streams. During a traffic spike, the PutRecord API returns ProvisionedThroughputExceededException errors. What should the data engineer do FIRST?",
+      "options": [
+        "Implement exponential backoff and retry logic in the producer, then consider resharding",
+        "Immediately double the number of shards",
+        "Switch to Kinesis Data Firehose",
+        "Increase the data retention period"
+      ],
+      "correct": 0,
+      "explanation": "The immediate fix is implementing exponential backoff and retry logic in the producer to handle transient throttling. Then evaluate whether resharding (splitting hot shards) is needed for sustained throughput. Doubling all shards is wasteful if only specific shards are hot.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 38,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "A data engineer needs to convert a data lake from JSON to Parquet format while the lake continues to receive new data. The conversion must be atomic — queries should never see partial results. Which approach is BEST?",
+      "options": [
+        "Use Athena CTAS to create new Parquet tables in a separate location, then update Glue Data Catalog pointers atomically",
+        "Overwrite JSON files with Parquet files in place",
+        "Create a Glue job that deletes JSON files after converting each one",
+        "Stop all ingestion, convert all files, then resume ingestion"
+      ],
+      "correct": 0,
+      "explanation": "Athena CTAS (Create Table As Select) creates new Parquet files in a separate S3 location. Once complete, you atomically update the Glue Data Catalog to point to the new location. This ensures queries always see complete, consistent data.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 39,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "medium",
+      "question": "Which EMR feature allows a cluster to automatically add or remove instances based on workload demand?",
+      "options": [
+        "EMR Managed Scaling",
+        "EMR Instance Fleets",
+        "EMR Step execution",
+        "EMR Notebooks"
+      ],
+      "correct": 0,
+      "explanation": "EMR Managed Scaling automatically adjusts the number of instances in core and task instance groups based on cluster metrics like YARN memory and HDFS utilization. This optimizes both performance and cost.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 40,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "medium",
+      "question": "A data engineer needs to ingest data from multiple SaaS applications (Salesforce, ServiceNow, Zendesk) into S3. Which AWS service provides pre-built connectors for this purpose?",
+      "options": [
+        "Amazon AppFlow",
+        "AWS Glue Crawlers",
+        "Amazon Kinesis Data Firehose",
+        "AWS Database Migration Service"
+      ],
+      "correct": 0,
+      "explanation": "Amazon AppFlow provides pre-built connectors to over 50 SaaS applications including Salesforce, ServiceNow, and Zendesk. It can transfer data on a schedule or in response to events, delivering to S3, Redshift, or other destinations.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 41,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "hard",
+      "question": "A data lake table is partitioned by date and currently has 50,000 partitions. Athena queries are slow due to partition metadata overhead. What should the data engineer do?",
+      "options": [
+        "Enable partition projection in Athena to eliminate metadata lookups from the Glue Data Catalog",
+        "Delete old partitions to reduce the total count",
+        "Increase the Athena query timeout",
+        "Switch from Athena to Redshift for all queries"
+      ],
+      "correct": 0,
+      "explanation": "Partition projection tells Athena how to compute partition values mathematically instead of looking them up in the Glue Data Catalog. For tables with many partitions, this eliminates the metadata retrieval bottleneck and significantly speeds up query planning.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 42,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "Which AWS Glue feature enforces and manages schemas for streaming data from Kinesis or MSK?",
+      "options": [
+        "AWS Glue Schema Registry",
+        "AWS Glue Data Catalog",
+        "AWS Glue Crawlers",
+        "AWS Glue DataBrew"
+      ],
+      "correct": 0,
+      "explanation": "AWS Glue Schema Registry provides schema management for streaming data. It validates schemas for Kinesis Data Streams and MSK, supports schema versioning, and ensures compatibility between producers and consumers.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 43,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "hard",
+      "question": "A company needs to perform real-time anomaly detection on streaming IoT data with sub-second latency. The solution must integrate with Kinesis Data Streams. Which approach is MOST appropriate?",
+      "options": [
+        "Amazon Kinesis Data Analytics with an Apache Flink application using tumbling windows",
+        "AWS Lambda triggered by Kinesis with a batch size of 1",
+        "Amazon EMR with Spark Structured Streaming reading from Kinesis",
+        "AWS Glue Streaming ETL job"
+      ],
+      "correct": 0,
+      "explanation": "Kinesis Data Analytics with Apache Flink provides sub-second processing with built-in windowing functions (tumbling, sliding, session windows) that are ideal for real-time anomaly detection. Flink's event-time processing and stateful operators make complex stream processing manageable.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 44,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "medium",
+      "question": "A data engineer wants to run SQL queries interactively on large datasets in S3 using EMR. Which EMR application is BEST for this use case?",
+      "options": [
+        "Presto (Trino)",
+        "Apache Spark",
+        "Apache Hive with Tez",
+        "Apache HBase"
+      ],
+      "correct": 0,
+      "explanation": "Presto (now Trino) on EMR is a distributed SQL query engine designed for interactive analytics. It is optimized for low-latency queries on large datasets in S3 and supports standard ANSI SQL, making it ideal for ad-hoc interactive analysis.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 45,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "easy",
+      "question": "In AWS Glue, what is a DynamicFrame?",
+      "options": [
+        "A distributed collection of data similar to a Spark DataFrame but with additional schema flexibility",
+        "A visual frame in Glue Studio for designing ETL pipelines",
+        "A metadata object stored in the Glue Data Catalog",
+        "A scheduling mechanism for Glue job triggers"
+      ],
+      "correct": 0,
+      "explanation": "A DynamicFrame is an AWS Glue extension of Apache Spark DataFrames that provides additional flexibility for ETL. Unlike DataFrames that require a fixed schema, DynamicFrames can handle records with different schemas in the same dataset.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 46,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "Which AWS service is used to migrate data from on-premises storage systems to AWS over the network at high speed?",
+      "options": [
+        "AWS DataSync",
+        "AWS Snowball",
+        "AWS Transfer Family",
+        "Amazon Kinesis Data Firehose"
+      ],
+      "correct": 0,
+      "explanation": "AWS DataSync is an online data transfer service that automates moving data between on-premises storage and AWS storage services (S3, EFS, FSx). It can fully utilize network bandwidth and provides built-in encryption and data validation.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 47,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "hard",
+      "question": "A data engineer discovers that Athena queries against a Parquet-formatted table are not achieving expected column pruning benefits. Queries reading a single column still scan nearly all data. What is the MOST likely cause?",
+      "options": [
+        "The Parquet files were written with a very large row group size, and each row group contains too much data per column chunk",
+        "Athena does not support column pruning for Parquet",
+        "The table is not registered in the Glue Data Catalog",
+        "The Parquet files are compressed with GZIP"
+      ],
+      "correct": 0,
+      "explanation": "If Parquet files have very large row groups or were written with inefficient settings, the column chunks within each row group can be large. Athena reads entire column chunks, so oversized row groups reduce the effectiveness of column pruning. Properly sized row groups (64-128 MB per file) optimize column pruning.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 48,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "A Spark job on EMR is writing output to S3 but frequently fails with HTTP 503 Slow Down errors. What is the MOST effective solution?",
+      "options": [
+        "Enable the EMRFS S3-optimized committer and configure output to use randomized prefixes",
+        "Reduce the number of Spark executors",
+        "Switch from S3 to HDFS for output",
+        "Increase the Spark driver memory"
+      ],
+      "correct": 0,
+      "explanation": "S3 503 errors occur when request rates exceed partition throughput limits. The EMRFS S3-optimized committer reduces the number of S3 API calls during writes, and randomized prefixes distribute requests across S3 partitions, avoiding hot spots.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 49,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "medium",
+      "question": "Kinesis Data Firehose supports data transformation before delivery. Which service does Firehose invoke for custom transformations?",
+      "options": [
+        "AWS Lambda",
+        "AWS Glue ETL",
+        "Amazon EMR",
+        "AWS Step Functions"
+      ],
+      "correct": 0,
+      "explanation": "Kinesis Data Firehose can invoke an AWS Lambda function to transform records before delivering them to the destination. The Lambda function receives a batch of records, processes them, and returns the transformed records back to Firehose.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 50,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "A Glue Crawler runs against an S3 path and creates a single table, but the path actually contains data from multiple logical sources. How should the data engineer configure the crawler to create separate tables?",
+      "options": [
+        "Set the crawler to create a table per S3 path and configure separate include paths for each source",
+        "Run multiple Glue ETL jobs instead of crawlers",
+        "Convert all data to a single format before crawling",
+        "Increase the crawler's DPU allocation"
+      ],
+      "correct": 0,
+      "explanation": "By configuring the crawler with separate include paths for each logical source and setting the table-level grouping behavior, the crawler will create distinct tables in the Data Catalog for each path rather than merging them into one.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 51,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "A data engineer needs to implement a streaming ETL pipeline that reads from MSK, performs stateful aggregations with exactly-once processing guarantees, and writes to S3 in Parquet format. Which solution provides the STRONGEST processing guarantees?",
+      "options": [
+        "Kinesis Data Analytics with Apache Flink using Kafka connector and checkpointing enabled",
+        "AWS Glue Streaming ETL with Job Bookmarks",
+        "Spark Structured Streaming on EMR with at-least-once semantics",
+        "Lambda function triggered by MSK event source mapping"
+      ],
+      "correct": 0,
+      "explanation": "Apache Flink on Kinesis Data Analytics provides exactly-once processing semantics through its distributed snapshot (checkpointing) mechanism. Combined with the Kafka connector's offset management and Flink's two-phase commit protocol, it provides end-to-end exactly-once guarantees.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 52,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "Which S3 storage class automatically moves objects between access tiers based on changing access patterns?",
+      "options": [
+        "S3 Intelligent-Tiering",
+        "S3 Standard",
+        "S3 Glacier Deep Archive",
+        "S3 One Zone-IA"
+      ],
+      "correct": 0,
+      "explanation": "S3 Intelligent-Tiering automatically moves objects between frequent access, infrequent access, and archive tiers based on changing access patterns. There are no retrieval fees when data moves between tiers, making it ideal when access patterns are unpredictable.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 53,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "What is the purpose of an S3 Lifecycle Policy?",
+      "options": [
+        "To automatically transition objects between storage classes or expire them based on age",
+        "To control who can access objects in an S3 bucket",
+        "To replicate objects across AWS regions",
+        "To encrypt objects at rest"
+      ],
+      "correct": 0,
+      "explanation": "S3 Lifecycle Policies automate the transition of objects between storage classes (e.g., Standard to IA to Glacier) and can delete objects after a specified number of days. This helps optimize storage costs over time.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 54,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "A company stores raw log data in S3 that is accessed frequently for the first 30 days, rarely after that, and never after 1 year. Which lifecycle configuration is MOST cost-effective?",
+      "options": [
+        "S3 Standard for 30 days, transition to S3 Standard-IA, then to S3 Glacier after 90 days, delete after 365 days",
+        "Keep everything in S3 Standard indefinitely",
+        "Use S3 Glacier from day one",
+        "Use S3 One Zone-IA from day one"
+      ],
+      "correct": 0,
+      "explanation": "This lifecycle policy matches the access patterns: S3 Standard for the first 30 days of frequent access, S3 Standard-IA for the infrequent access period, S3 Glacier for long-term archival, and automatic deletion after 1 year.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 55,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "easy",
+      "question": "Which Amazon Redshift feature allows you to query data stored in S3 without loading it into Redshift tables?",
+      "options": [
+        "Redshift Spectrum",
+        "Redshift Concurrency Scaling",
+        "Redshift Materialized Views",
+        "Redshift Workload Management"
+      ],
+      "correct": 0,
+      "explanation": "Redshift Spectrum allows you to run SQL queries directly against exabytes of data in S3 without loading it into Redshift. It uses external tables defined in the Glue Data Catalog and pushes compute down to a dedicated Spectrum layer.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 56,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "easy",
+      "question": "What are the three Redshift distribution styles?",
+      "options": [
+        "KEY, ALL, and EVEN",
+        "HASH, RANGE, and LIST",
+        "ROUND-ROBIN, RANDOM, and SORTED",
+        "PRIMARY, SECONDARY, and TERTIARY"
+      ],
+      "correct": 0,
+      "explanation": "Redshift offers three distribution styles: KEY (distributes rows based on a column value for co-located joins), ALL (copies the entire table to every node for small dimension tables), and EVEN (distributes rows round-robin for uniform distribution).",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 57,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "A Redshift data warehouse has a large fact table that is frequently joined with a small dimension table (10,000 rows). Which distribution style should be used for the dimension table?",
+      "options": [
+        "ALL distribution",
+        "KEY distribution on the join column",
+        "EVEN distribution",
+        "AUTO distribution"
+      ],
+      "correct": 0,
+      "explanation": "The ALL distribution style copies the entire table to every compute node. For small dimension tables, this eliminates the need for data redistribution during joins with large fact tables, significantly improving join performance.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 58,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "Which Redshift feature automatically adds temporary compute capacity to handle spikes in query concurrency?",
+      "options": [
+        "Concurrency Scaling",
+        "Elastic Resize",
+        "Redshift Spectrum",
+        "Workload Management (WLM) queues"
+      ],
+      "correct": 0,
+      "explanation": "Redshift Concurrency Scaling automatically adds additional cluster capacity when queries are queued due to high concurrency. It provides consistent query performance during peak demand and charges per-second only for the additional capacity used.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 59,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "What is the AWS Glue Data Catalog?",
+      "options": [
+        "A centralized metadata repository that stores table definitions, schemas, and locations for data assets",
+        "A data transformation engine that runs ETL jobs",
+        "A data visualization tool for creating dashboards",
+        "A machine learning model training service"
+      ],
+      "correct": 0,
+      "explanation": "The AWS Glue Data Catalog is a managed metadata repository compatible with the Apache Hive metastore. It stores table definitions, column schemas, partition information, and data locations, serving as a central catalog for Athena, Redshift Spectrum, EMR, and Glue ETL.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 60,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "A data engineer needs to store a data lake on S3 that supports ACID transactions, time travel queries, and efficient upserts. Which table format should they use?",
+      "options": [
+        "Apache Iceberg",
+        "Standard Hive-partitioned Parquet",
+        "CSV with Glue Crawlers",
+        "JSON with partition projection"
+      ],
+      "correct": 0,
+      "explanation": "Apache Iceberg is an open table format for data lakes that provides ACID transactions, time travel (querying historical snapshots), schema evolution, and efficient upserts/deletes. It is natively supported by Athena, EMR, and Glue.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 61,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "Which S3 feature should be enabled to protect against accidental deletion of critical data lake objects?",
+      "options": [
+        "S3 Versioning combined with MFA Delete",
+        "S3 Intelligent-Tiering",
+        "S3 Transfer Acceleration",
+        "S3 Select"
+      ],
+      "correct": 0,
+      "explanation": "S3 Versioning preserves every version of an object, protecting against accidental overwrites and deletions. MFA Delete adds an additional layer by requiring multi-factor authentication to permanently delete object versions or change versioning state.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 62,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "A Redshift cluster experiences slow query performance on a 2 billion row fact table. The most common query pattern filters on order_date and joins on customer_id. Which combination of sort key and distribution key is OPTIMAL?",
+      "options": [
+        "Sort key: order_date (for range-restricted scans), Distribution key: customer_id (to co-locate joins)",
+        "Sort key: customer_id, Distribution key: order_date",
+        "Sort key: INTERLEAVED on both columns, Distribution: EVEN",
+        "No sort key, Distribution: ALL"
+      ],
+      "correct": 0,
+      "explanation": "Setting order_date as the sort key enables Redshift to skip blocks that don't match date range filters (zone map optimization). Using customer_id as the distribution key co-locates rows that will be joined, minimizing data redistribution during joins.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 63,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "A data engineer wants to maintain data quality by preventing schema changes in an S3-based data lake from breaking downstream consumers. Which service provides schema versioning and compatibility checks for streaming data?",
+      "options": [
+        "AWS Glue Schema Registry",
+        "AWS Glue Data Quality",
+        "Amazon Macie",
+        "AWS Config"
+      ],
+      "correct": 0,
+      "explanation": "The AWS Glue Schema Registry provides schema versioning and compatibility modes (BACKWARD, FORWARD, FULL) that prevent incompatible schema changes from breaking consumers. It integrates with Kinesis Data Streams and Amazon MSK.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 64,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "A data lake on S3 uses Apache Iceberg tables. The data engineer notices that query performance degrades over time as the number of data files increases from frequent small writes. What maintenance operation should they perform?",
+      "options": [
+        "Run Iceberg table compaction to merge small files into larger, optimally sized files",
+        "Delete and recreate the Iceberg table",
+        "Increase the Athena query timeout",
+        "Switch from Iceberg to standard Parquet partitions"
+      ],
+      "correct": 0,
+      "explanation": "Iceberg table compaction (also called rewrite_data_files) merges many small files into fewer, larger files. This reduces metadata overhead and improves query performance by reducing the number of files that must be opened and read.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 65,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "A company needs to share a Redshift dataset with another AWS account without copying the data. Which feature should they use?",
+      "options": [
+        "Redshift Data Sharing",
+        "Redshift Cross-Region Snapshots",
+        "Redshift COPY command from S3",
+        "AWS Glue ETL job"
+      ],
+      "correct": 0,
+      "explanation": "Redshift Data Sharing allows you to share live data across Redshift clusters and AWS accounts without physically copying or moving data. Consumer clusters can query the shared data in real-time while the producer maintains a single source of truth.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 66,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "Which service acts as the Apache Hive metastore equivalent in the AWS ecosystem, providing table metadata for Athena, EMR, and Redshift Spectrum?",
+      "options": [
+        "AWS Glue Data Catalog",
+        "Amazon DynamoDB",
+        "AWS Systems Manager Parameter Store",
+        "Amazon RDS"
+      ],
+      "correct": 0,
+      "explanation": "The AWS Glue Data Catalog serves as the Hive-compatible metastore for the AWS analytics ecosystem. Athena, EMR, Redshift Spectrum, and Glue ETL all use it to discover table schemas, partition information, and data locations.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 67,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "A data engineer needs to organize a multi-tenant data lake where each tenant's data must be logically separated but queryable together for aggregate analytics. Which approach is BEST?",
+      "options": [
+        "Use a single S3 bucket with prefix-based partitioning by tenant_id and enforce access via IAM and Lake Formation",
+        "Create a separate S3 bucket for each tenant",
+        "Store all tenant data in a single unpartitioned file",
+        "Use separate AWS accounts for each tenant"
+      ],
+      "correct": 0,
+      "explanation": "Using a single bucket with prefix-based partitioning by tenant_id enables efficient cross-tenant analytics while maintaining logical separation. Lake Formation provides fine-grained column-level and row-level access controls to enforce tenant isolation.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 68,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "A Redshift data warehouse needs to perform a bulk load of 500 GB of data from S3. What is the MOST efficient approach?",
+      "options": [
+        "Use the COPY command with multiple compressed files sized to match the number of slices in the cluster",
+        "Use individual INSERT statements from a Glue ETL job",
+        "Use the UNLOAD command followed by COPY",
+        "Use a single large uncompressed file with the COPY command"
+      ],
+      "correct": 0,
+      "explanation": "The Redshift COPY command is optimized for parallel bulk loading. Using multiple compressed files (ideally matching or being a multiple of the number of cluster slices) allows Redshift to load data in parallel across all slices, maximizing throughput.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 69,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "A data engineer is designing a data catalog strategy. The data lake has tables in S3 discovered by Glue Crawlers, tables in Redshift, and data in RDS. How should they provide a unified catalog?",
+      "options": [
+        "Use the Glue Data Catalog as the central metadata repository with Glue connections for Redshift and RDS, and crawlers for S3",
+        "Create separate metadata stores for each data source",
+        "Use Amazon Athena as the unified catalog",
+        "Build a custom metadata database in DynamoDB"
+      ],
+      "correct": 0,
+      "explanation": "The Glue Data Catalog serves as a unified metadata repository. Glue Crawlers discover S3 schemas, Glue connections catalog Redshift and RDS tables, and all are queryable from Athena, EMR, and Redshift Spectrum through the same catalog.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 70,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "Which S3 storage class offers the lowest cost for data that is accessed less than once a year and has a retrieval time of up to 12 hours?",
+      "options": [
+        "S3 Glacier Deep Archive",
+        "S3 Glacier Flexible Retrieval",
+        "S3 Standard-IA",
+        "S3 One Zone-IA"
+      ],
+      "correct": 0,
+      "explanation": "S3 Glacier Deep Archive is the lowest-cost S3 storage class, designed for data that is retained for 7-10 years and accessed once or twice per year. Standard retrieval takes up to 12 hours, with bulk retrieval taking up to 48 hours.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 71,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "What is the primary benefit of using Redshift Materialized Views?",
+      "options": [
+        "They pre-compute and store query results, enabling faster subsequent queries on complex aggregations",
+        "They create virtual tables without storing data",
+        "They automatically scale the Redshift cluster",
+        "They enable cross-region replication of Redshift data"
+      ],
+      "correct": 0,
+      "explanation": "Redshift Materialized Views store pre-computed query results physically. When users query the materialized view, Redshift can return results directly from the stored data instead of re-executing the complex query, significantly improving performance for repeated analytical queries.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 72,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "A data engineer needs to choose between Apache Iceberg and Apache Hudi for a data lake. The primary requirements are CDC (change data capture) ingestion from databases and record-level upserts. Which format is BETTER suited and why?",
+      "options": [
+        "Apache Hudi, because it was specifically designed for CDC use cases and provides optimized record-level upserts with Merge-on-Read tables",
+        "Apache Iceberg, because it provides better query performance",
+        "Both are identical for CDC workloads",
+        "Neither supports record-level operations"
+      ],
+      "correct": 0,
+      "explanation": "Apache Hudi (Hadoop Upserts Deletes and Incrementals) was specifically designed for CDC and incremental data processing. Its Merge-on-Read table type is optimized for write-heavy workloads with frequent upserts, making it the better choice for CDC ingestion patterns.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 73,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "A Redshift cluster is experiencing high disk usage. The data engineer discovers that deleted rows are consuming significant space. What should they do?",
+      "options": [
+        "Run VACUUM DELETE to reclaim space from deleted rows, followed by ANALYZE to update statistics",
+        "Resize the cluster to add more storage",
+        "Drop and recreate the affected tables",
+        "Increase the Redshift snapshot retention period"
+      ],
+      "correct": 0,
+      "explanation": "Redshift uses a soft-delete model where deleted rows are marked but not immediately removed. VACUUM DELETE reclaims the space used by these deleted rows. ANALYZE should follow to update table statistics for the query optimizer.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 74,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "A Glue Crawler discovers a new column in the source data that was not in the original table schema. How should the crawler handle this?",
+      "options": [
+        "Configure the crawler's schema change policy to add new columns while keeping existing ones",
+        "Delete the existing table and let the crawler recreate it",
+        "Manually add the column to the Data Catalog",
+        "Ignore the new column by setting the crawler to read-only mode"
+      ],
+      "correct": 0,
+      "explanation": "Glue Crawlers have configurable schema change policies. Setting the policy to 'Add new columns only' allows the crawler to append new columns to the existing table definition without modifying or removing existing columns, preventing breaking changes.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 75,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "Which AWS service provides centralized governance for a data lake, including fine-grained access control at the database, table, column, and row level?",
+      "options": [
+        "AWS Lake Formation",
+        "AWS Glue Data Catalog",
+        "Amazon Macie",
+        "AWS IAM"
+      ],
+      "correct": 0,
+      "explanation": "AWS Lake Formation provides centralized governance for data lakes with fine-grained access controls. It offers column-level and row-level security, tag-based access control, and cross-account sharing, all managed from a central permissions model.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 76,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "easy",
+      "question": "What type of key does Redshift use to physically sort data within each slice to enable efficient range-restricted scans?",
+      "options": [
+        "Sort key",
+        "Distribution key",
+        "Primary key",
+        "Foreign key"
+      ],
+      "correct": 0,
+      "explanation": "Redshift sort keys determine the physical order of data on disk within each slice. When queries filter on sort key columns, Redshift uses zone maps to skip blocks that don't contain matching data, dramatically reducing I/O.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 77,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "A company's S3 data lake has grown to 500 TB. They need to optimize storage costs without impacting query performance for recent data. Objects older than 6 months are queried unpredictably. Which strategy is BEST?",
+      "options": [
+        "Use S3 Intelligent-Tiering for objects older than 6 months, keeping recent data in S3 Standard",
+        "Move all data to S3 Glacier after 6 months",
+        "Keep all data in S3 Standard",
+        "Use S3 One Zone-IA for all data"
+      ],
+      "correct": 0,
+      "explanation": "S3 Intelligent-Tiering is ideal for data with unpredictable access patterns. It automatically moves objects between frequent and infrequent access tiers without retrieval fees or performance impact. Keeping recent data in Standard ensures consistent performance for active workloads.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 78,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "A data engineer needs to implement data lineage tracking across their data lake. They want to track which Glue ETL jobs produced which tables and how data flows from source to destination. Which approach is MOST comprehensive?",
+      "options": [
+        "Use AWS Glue Data Catalog with Glue job metadata, combined with Amazon DataZone for cataloging and lineage visualization",
+        "Manually maintain a spreadsheet of data flows",
+        "Use CloudTrail logs to track S3 access patterns",
+        "Create custom tags on S3 objects"
+      ],
+      "correct": 0,
+      "explanation": "Amazon DataZone provides data cataloging, governance, and lineage tracking capabilities. Combined with Glue Data Catalog metadata and Glue job information, it creates a comprehensive data lineage view showing how data flows through ETL pipelines.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 79,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "A data warehouse team wants to run Redshift queries that combine local Redshift data with data in S3 in a single query. Which combination of features enables this?",
+      "options": [
+        "Redshift Spectrum with external tables pointing to S3 data registered in the Glue Data Catalog",
+        "Redshift COPY command to load S3 data first",
+        "Redshift Federated Query to Amazon S3",
+        "Redshift Data Sharing with an S3 endpoint"
+      ],
+      "correct": 0,
+      "explanation": "Redshift Spectrum enables querying S3 data through external tables defined in the Glue Data Catalog. These external tables can be joined with local Redshift tables in a single SQL query, providing a unified view across the data warehouse and data lake.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 80,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "A data engineer needs to store semi-structured data (JSON documents) with single-digit millisecond latency for key-value lookups. Which AWS service is BEST suited?",
+      "options": [
+        "Amazon DynamoDB",
+        "Amazon S3",
+        "Amazon Redshift",
+        "Amazon RDS PostgreSQL"
+      ],
+      "correct": 0,
+      "explanation": "Amazon DynamoDB is a fully managed NoSQL database that provides single-digit millisecond performance for key-value and document data. It scales automatically and is ideal for high-throughput, low-latency access patterns.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 81,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "A data engineer discovers that the Glue Data Catalog has stale partition metadata for an S3 table because new partitions are added by an external process. How should they keep the catalog in sync?",
+      "options": [
+        "Schedule a Glue Crawler to run periodically, or use MSCK REPAIR TABLE in Athena after new partitions are added",
+        "Manually add partitions through the AWS Console",
+        "Delete and recreate the table daily",
+        "Disable partitioning entirely"
+      ],
+      "correct": 0,
+      "explanation": "A scheduled Glue Crawler will discover new partitions and update the Data Catalog. Alternatively, running MSCK REPAIR TABLE in Athena scans for new Hive-compatible partitions in S3 and adds them to the catalog. For automation, the Glue Partition API (batch_create_partition) can be called directly.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 82,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "Redshift Serverless is being considered as an alternative to a provisioned cluster. Which scenario is the BEST fit for Redshift Serverless?",
+      "options": [
+        "Variable workloads with unpredictable query patterns and teams that want to avoid capacity planning",
+        "Steady-state workloads running 24/7 with predictable capacity needs",
+        "Workloads that require Reserved Instance pricing",
+        "Clusters that need specific node types for compliance"
+      ],
+      "correct": 0,
+      "explanation": "Redshift Serverless is ideal for variable workloads where capacity needs are unpredictable. It automatically provisions and scales compute resources, charges based on usage (RPUs), and eliminates the need for cluster management and capacity planning.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 83,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "What is the MINIMUM object size recommended for transitioning objects from S3 Standard to S3 Standard-IA to be cost-effective?",
+      "options": [
+        "128 KB",
+        "1 KB",
+        "1 MB",
+        "5 GB"
+      ],
+      "correct": 0,
+      "explanation": "S3 Standard-IA has a minimum billable object size of 128 KB. Objects smaller than 128 KB are charged as if they were 128 KB, making the transition cost-ineffective for small objects. Lifecycle policies should account for this minimum size.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 84,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "A Redshift user runs a complex query that takes 30 minutes. The same query will run daily with updated data. How can the data engineer speed up subsequent runs?",
+      "options": [
+        "Create a Materialized View and set it to auto-refresh",
+        "Increase the WLM query timeout",
+        "Disable result caching",
+        "Add more Redshift users to distribute the load"
+      ],
+      "correct": 0,
+      "explanation": "A Materialized View pre-computes and stores the query results. With auto-refresh enabled, Redshift automatically updates the materialized view when the underlying data changes, providing fast query responses for subsequent runs.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 85,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "A data engineer is building a lakehouse architecture. They need to support both batch analytics and real-time point lookups on the same dataset. Which combination is MOST appropriate?",
+      "options": [
+        "S3 data lake with Apache Iceberg for batch analytics, and DynamoDB for real-time point lookups, synchronized via a streaming pipeline",
+        "Store everything in Redshift and use Redshift Serverless for real-time queries",
+        "Use only DynamoDB for both batch analytics and point lookups",
+        "Use only S3 with Athena for both workloads"
+      ],
+      "correct": 0,
+      "explanation": "A lakehouse architecture can combine S3 with Iceberg for efficient batch analytics (Athena, EMR) and DynamoDB for single-digit millisecond point lookups. A streaming pipeline (e.g., Lambda processing DynamoDB Streams) keeps both stores synchronized.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 86,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "Which Glue Crawler configuration determines what happens when the crawler detects that a table's schema has changed?",
+      "options": [
+        "Schema change policy",
+        "Crawler schedule",
+        "Classifier priority",
+        "Recrawl policy"
+      ],
+      "correct": 0,
+      "explanation": "The schema change policy controls how the crawler handles schema differences. Options include updating the table definition in place, adding new columns only, or logging the change without updating. This protects downstream consumers from unexpected schema changes.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 87,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "A Redshift cluster uses Workload Management (WLM) with a single default queue. During peak hours, short dashboard queries are stuck behind long-running ETL queries. How should the data engineer configure WLM?",
+      "options": [
+        "Create separate WLM queues: a high-priority queue for short dashboard queries with query monitoring rules, and a lower-priority queue for ETL",
+        "Increase the cluster size to handle all queries simultaneously",
+        "Disable WLM entirely",
+        "Schedule ETL queries to run only off-peak hours"
+      ],
+      "correct": 0,
+      "explanation": "Creating separate WLM queues with different concurrency levels and priorities ensures that short dashboard queries get dedicated resources and are not blocked by long-running ETL. Query monitoring rules can automatically route or abort queries that exceed thresholds.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 88,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "S3 Object Lock provides which of the following capabilities?",
+      "options": [
+        "WORM (Write Once Read Many) protection that prevents objects from being deleted or overwritten for a specified retention period",
+        "Encryption of objects at rest using customer-managed keys",
+        "Replication of objects to another region",
+        "Automatic tier transitions based on access patterns"
+      ],
+      "correct": 0,
+      "explanation": "S3 Object Lock provides WORM protection, preventing objects from being deleted or overwritten for a defined retention period. It supports Governance mode (admin override) and Compliance mode (no one can override, including root), ensuring regulatory compliance.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 89,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "A data lake has tables cataloged in Glue that are consumed by Athena, EMR, and Redshift Spectrum. The data engineer needs to ensure all three services see consistent table definitions. How should they manage this?",
+      "options": [
+        "Use the Glue Data Catalog as the single source of truth with Lake Formation permissions controlling access for all three services",
+        "Maintain separate metadata stores for each service",
+        "Replicate the Glue Data Catalog across regions",
+        "Use Athena views to abstract the underlying tables"
+      ],
+      "correct": 0,
+      "explanation": "The Glue Data Catalog serves as the unified Hive metastore for Athena, EMR, and Redshift Spectrum. All three services read from the same catalog, ensuring consistent table definitions. Lake Formation provides centralized access control across all consumers.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 90,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "Which S3 feature allows you to retrieve a subset of data from an object using SQL expressions, reducing the amount of data transferred?",
+      "options": [
+        "S3 Select",
+        "S3 Transfer Acceleration",
+        "S3 Batch Operations",
+        "S3 Access Points"
+      ],
+      "correct": 0,
+      "explanation": "S3 Select allows you to use SQL expressions to retrieve only the subset of data you need from an S3 object. This reduces data transfer and processing time by filtering data at the storage layer instead of downloading the entire object.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 91,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "Which AWS service orchestrates multi-step data pipelines using visual workflows with built-in error handling and retry logic?",
+      "options": [
+        "AWS Step Functions",
+        "Amazon EventBridge",
+        "AWS Glue Triggers",
+        "Amazon SQS"
+      ],
+      "correct": 0,
+      "explanation": "AWS Step Functions is a serverless orchestration service that lets you build visual workflows (state machines) to coordinate multiple AWS services. It provides built-in error handling, retries, parallel execution, and conditional branching for data pipelines.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 92,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "What is Amazon MWAA (Managed Workflows for Apache Airflow) used for?",
+      "options": [
+        "Orchestrating complex data pipelines using Apache Airflow DAGs in a managed environment",
+        "Streaming data ingestion from IoT devices",
+        "Real-time data transformation",
+        "Machine learning model training"
+      ],
+      "correct": 0,
+      "explanation": "Amazon MWAA provides a fully managed Apache Airflow environment for authoring, scheduling, and monitoring data pipelines defined as Directed Acyclic Graphs (DAGs). It handles the infrastructure, scaling, and availability of the Airflow components.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 93,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "Which AWS service enables you to schedule events on a cron or rate-based schedule and trigger targets like Lambda, Step Functions, or Glue jobs?",
+      "options": [
+        "Amazon EventBridge",
+        "Amazon CloudWatch Alarms",
+        "AWS Config",
+        "Amazon SQS"
+      ],
+      "correct": 0,
+      "explanation": "Amazon EventBridge (formerly CloudWatch Events) supports cron and rate-based scheduling rules that can trigger over 20 AWS service targets including Lambda, Step Functions, Glue jobs, and ECS tasks. It is the recommended service for event-driven pipeline scheduling.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 94,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "A data pipeline must run three Glue ETL jobs in sequence: extract, transform, then load. If any job fails, the pipeline should stop and send a notification. Which orchestration approach is BEST?",
+      "options": [
+        "AWS Step Functions with sequential states for each Glue job, a Catch block for errors, and an SNS notification on failure",
+        "Three separate EventBridge cron schedules with staggered times",
+        "Glue Workflows with triggers chained sequentially",
+        "A Lambda function that starts each Glue job and polls for completion"
+      ],
+      "correct": 0,
+      "explanation": "Step Functions provides native error handling with Catch and Retry blocks, sequential state execution, and built-in integration with Glue and SNS. This gives complete visibility into pipeline state, automatic error handling, and notification without custom polling code.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 95,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "A data engineer is migrating Airflow DAGs from an on-premises server to AWS. The DAGs use custom Python packages and connect to S3, Redshift, and RDS. Which AWS service should they use?",
+      "options": [
+        "Amazon MWAA with custom plugins and requirements.txt",
+        "AWS Step Functions",
+        "Amazon ECS with a custom Airflow container",
+        "AWS Batch"
+      ],
+      "correct": 0,
+      "explanation": "Amazon MWAA supports custom plugins (plugins.zip) and Python packages (requirements.txt) that can be uploaded to S3. This allows migration of existing DAGs with their dependencies. MWAA also provides managed connections to S3, Redshift, and RDS.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 96,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "Which AWS service provides metrics, dashboards, alarms, and logs for monitoring data pipeline health?",
+      "options": [
+        "Amazon CloudWatch",
+        "AWS CloudTrail",
+        "Amazon Inspector",
+        "AWS Config"
+      ],
+      "correct": 0,
+      "explanation": "Amazon CloudWatch provides a unified monitoring solution with custom metrics, dashboards, alarms, and log aggregation. It integrates with Glue, EMR, Lambda, Kinesis, and other AWS services to provide comprehensive pipeline monitoring.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 97,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "A data engineer wants to be alerted when a Glue ETL job fails. Which CloudWatch feature should they configure?",
+      "options": [
+        "A CloudWatch Alarm on the glue.driver.aggregate.numFailedTasks metric with an SNS notification action",
+        "A CloudWatch Dashboard showing Glue job history",
+        "CloudWatch Logs Insights queries",
+        "CloudWatch Container Insights"
+      ],
+      "correct": 0,
+      "explanation": "CloudWatch Alarms can monitor Glue job metrics like numFailedTasks. When the metric exceeds the threshold (indicating a failure), the alarm triggers an SNS notification to alert the engineering team via email, Slack, or PagerDuty.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 98,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "How can a data engineer identify the root cause of a slow Spark job running on EMR?",
+      "options": [
+        "Use the Spark UI to analyze stage execution times, task distribution, and shuffle metrics",
+        "Increase the number of EMR core nodes and re-run",
+        "Check CloudTrail for API call latency",
+        "Review S3 access logs"
+      ],
+      "correct": 0,
+      "explanation": "The Spark UI (accessible via the EMR console) shows detailed execution information including DAG visualization, stage execution times, task-level metrics, shuffle read/write sizes, and memory usage. This helps pinpoint bottlenecks like data skew or excessive shuffling.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 99,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "easy",
+      "question": "What is schema evolution in the context of data pipelines?",
+      "options": [
+        "The ability to accommodate changes in data structure (added/removed/modified columns) over time without breaking existing pipelines",
+        "Converting data from one format to another",
+        "Versioning of database schemas using migration scripts",
+        "Encrypting schema metadata in the data catalog"
+      ],
+      "correct": 0,
+      "explanation": "Schema evolution refers to the ability of a data system to handle changes to the data schema over time, such as adding new columns, removing fields, or changing data types, without requiring all consumers and pipelines to be updated simultaneously.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 100,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "A data pipeline receives data where a column's type changed from integer to string in recent source files. The downstream Athena table expects an integer. How should the data engineer handle this?",
+      "options": [
+        "Use a Glue ETL job with DynamicFrame ResolveChoice to cast the column to the expected type and route incompatible records to an error path",
+        "Change the Athena table schema to string",
+        "Delete the incompatible files from S3",
+        "Ignore the type mismatch and let Athena return nulls"
+      ],
+      "correct": 0,
+      "explanation": "Glue DynamicFrame's ResolveChoice transformation handles type ambiguities by letting you cast to the expected type, keep both types, or route records to different paths. This preserves data quality while preventing pipeline failures from schema drift.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 101,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "A data engineer needs to implement data validation rules that check for null values, uniqueness constraints, and value ranges during ETL processing. Which AWS service provides this natively?",
+      "options": [
+        "AWS Glue Data Quality with DQDL rules",
+        "Amazon Athena with CHECK constraints",
+        "AWS Lambda with custom validation code",
+        "Amazon DynamoDB conditional writes"
+      ],
+      "correct": 0,
+      "explanation": "AWS Glue Data Quality uses the Data Quality Definition Language (DQDL) to define validation rules like IsComplete, IsUnique, ColumnValues, and CustomSql. These rules run within Glue ETL jobs and can route failing records to a quarantine path.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 102,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "A complex data pipeline has 15 interdependent Glue jobs, Lambda functions, and EMR steps. The data engineer needs observability into the entire pipeline execution including timing, dependencies, and failures. Which orchestration service provides the BEST visibility?",
+      "options": [
+        "AWS Step Functions with its visual execution graph showing the state of each step in real-time",
+        "Amazon MWAA with Airflow's Gantt chart view",
+        "Chaining Glue Workflows with triggers",
+        "EventBridge rules triggering each step independently"
+      ],
+      "correct": 0,
+      "explanation": "AWS Step Functions provides a visual execution graph that shows each step's status (running, succeeded, failed) in real-time. For complex pipelines with mixed service types (Glue, Lambda, EMR), Step Functions offers the most comprehensive view of the entire pipeline state.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 103,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "A Kinesis Data Streams consumer application is experiencing increasing IteratorAge (the age of the last record read). What does this indicate and how should it be resolved?",
+      "options": [
+        "The consumer is falling behind the producer; increase consumer parallelism by adding more KCL workers or enabling enhanced fan-out",
+        "The stream has too many shards; reduce the shard count",
+        "The data retention period is too long; shorten it",
+        "The producer is sending data too slowly; increase producer throughput"
+      ],
+      "correct": 0,
+      "explanation": "Increasing IteratorAge means the consumer is processing records slower than they are being produced. Solutions include adding more KCL worker instances, enabling enhanced fan-out for dedicated per-consumer throughput, or optimizing the consumer's record processing logic.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 104,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "A data engineer discovers that records failing ETL validation are being silently dropped. They need to implement a dead letter queue pattern for failed records. Which approach is BEST for a Glue ETL job?",
+      "options": [
+        "Use Glue Data Quality rules to route failing records to a separate S3 error path, then trigger an SNS notification",
+        "Log failed records to CloudWatch Logs",
+        "Stop the entire job when any record fails validation",
+        "Retry failed records indefinitely"
+      ],
+      "correct": 0,
+      "explanation": "Routing failing records to a separate S3 path creates a dead letter queue pattern where invalid data is preserved for inspection and reprocessing. Combining this with SNS notifications alerts the team to data quality issues without blocking the pipeline.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 105,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "easy",
+      "question": "What is data profiling in the context of data quality?",
+      "options": [
+        "Analyzing data to understand its structure, content, quality, and statistical properties",
+        "Encrypting data to protect sensitive information",
+        "Converting data between different formats",
+        "Compressing data to reduce storage costs"
+      ],
+      "correct": 0,
+      "explanation": "Data profiling examines data to understand its structure (schemas, types), content (value distributions, patterns), quality (completeness, accuracy), and statistical properties (min, max, mean, cardinality). AWS Glue DataBrew provides built-in data profiling capabilities.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 106,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "Which feature of AWS Step Functions allows multiple branches of a workflow to execute in parallel and wait for all to complete before proceeding?",
+      "options": [
+        "Parallel state",
+        "Choice state",
+        "Map state",
+        "Wait state"
+      ],
+      "correct": 0,
+      "explanation": "The Parallel state in Step Functions executes multiple branches concurrently. All branches must complete (or fail) before the workflow proceeds to the next state. This is useful for running independent ETL jobs simultaneously to reduce total pipeline duration.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 107,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "A data engineer needs to set up automated alerts when a Glue Crawler detects a schema change in a source table. Which approach works?",
+      "options": [
+        "Configure an EventBridge rule for Glue Crawler state change events and trigger an SNS notification",
+        "Check the Glue Data Catalog manually after each crawler run",
+        "Enable CloudWatch Container Insights for Glue",
+        "Use AWS Config rules to monitor Glue resources"
+      ],
+      "correct": 0,
+      "explanation": "Glue Crawlers emit events to EventBridge when they complete, including information about schema changes detected. An EventBridge rule can match these events and trigger an SNS notification, Lambda function, or other targets to alert the team.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 108,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "hard",
+      "question": "A data pipeline processes financial transactions and must ensure that no records are lost or duplicated end-to-end. Which combination of techniques provides the STRONGEST guarantee?",
+      "options": [
+        "Idempotent writes using unique transaction IDs, Glue Job Bookmarks for incremental reads, and reconciliation counts at each pipeline stage",
+        "At-least-once delivery with SQS and manual deduplication",
+        "Lambda with event source mapping and default retry behavior",
+        "Kinesis Data Firehose with S3 delivery"
+      ],
+      "correct": 0,
+      "explanation": "Idempotent writes (using unique IDs to prevent duplicates), Job Bookmarks (to prevent reprocessing), and reconciliation counts (to detect missing records) together provide end-to-end exactly-once processing semantics for critical financial data.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 109,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "An Airflow DAG on MWAA needs to trigger an EMR Spark job, wait for it to complete, then run a Redshift COPY command. Which Airflow operators should be used?",
+      "options": [
+        "EmrAddStepsOperator with EmrStepSensor, followed by RedshiftSQLOperator",
+        "BashOperator running AWS CLI commands for both steps",
+        "PythonOperator with boto3 calls and time.sleep() loops",
+        "S3KeySensor followed by a Lambda trigger"
+      ],
+      "correct": 0,
+      "explanation": "EmrAddStepsOperator submits the Spark step to EMR, EmrStepSensor waits for completion (without blocking the Airflow worker), and RedshiftSQLOperator executes the COPY command. This uses purpose-built operators for clean, maintainable DAGs.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 110,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "A data lake table needs to support adding new columns without breaking existing Athena queries. Which table format feature enables this?",
+      "options": [
+        "Schema evolution with backward compatibility (new columns have default null values)",
+        "Immutable schemas that prevent any changes",
+        "Full table scans on every query",
+        "Automatic schema inference from file headers"
+      ],
+      "correct": 0,
+      "explanation": "Schema evolution with backward compatibility allows adding new columns to a table definition. Existing queries continue to work because new columns default to null for older data files. Apache Iceberg, Hudi, and Delta Lake all support this pattern.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 111,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "Which AWS service records all API calls made in your AWS account, providing an audit trail of who did what and when?",
+      "options": [
+        "AWS CloudTrail",
+        "Amazon CloudWatch",
+        "AWS Config",
+        "Amazon GuardDuty"
+      ],
+      "correct": 0,
+      "explanation": "AWS CloudTrail records API calls made in your AWS account, including the identity of the caller, time, source IP, parameters, and response. This provides a complete audit trail for compliance and troubleshooting.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 112,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "A Glue ETL job processes customer records and must reject any record where the email field is null or does not match a valid email pattern. How should this be implemented?",
+      "options": [
+        "Define Glue Data Quality rules: IsComplete 'email' and Matches 'email' with a regex pattern, and route failures to a quarantine path",
+        "Use a Filter transformation that silently drops invalid records",
+        "Check emails only after loading into Redshift",
+        "Use AWS Lambda to validate each record individually"
+      ],
+      "correct": 0,
+      "explanation": "Glue Data Quality DQDL rules like IsComplete (null check) and Matches (regex validation) enforce data quality during ETL. Routing failures to quarantine preserves invalid records for review while ensuring only clean data proceeds to the destination.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 113,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "Which AWS Step Functions feature allows you to iterate over a collection and run a set of steps for each item?",
+      "options": [
+        "Map state",
+        "Parallel state",
+        "Choice state",
+        "Pass state"
+      ],
+      "correct": 0,
+      "explanation": "The Map state in Step Functions iterates over an input array and runs a set of steps for each element. It supports both inline mode (up to 40 concurrent iterations) and distributed mode (up to 10,000 parallel child executions) for large-scale processing.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 114,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "An EMR cluster running a critical Spark pipeline occasionally fails due to Spot Instance terminations. The data engineer needs to ensure pipeline resilience. What is the BEST approach?",
+      "options": [
+        "Use on-demand instances for core nodes (HDFS data), Spot for task nodes, and enable Spark checkpointing with S3 as the checkpoint location",
+        "Use only on-demand instances for all node types",
+        "Increase the Spot bid price to the on-demand price",
+        "Disable HDFS and write all intermediate data to S3"
+      ],
+      "correct": 0,
+      "explanation": "Core nodes store HDFS data and should use on-demand instances for stability. Task nodes only run compute and can tolerate Spot interruptions. Spark checkpointing to S3 ensures that lost task work can be recovered from the last checkpoint instead of restarting from scratch.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 115,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "A streaming pipeline consumes from Kinesis Data Streams and writes to an Iceberg table on S3. Occasionally, late-arriving data needs to be merged with previously written partitions. How should the data engineer handle this?",
+      "options": [
+        "Use Iceberg's MERGE INTO statement to upsert late-arriving records into existing partitions based on a primary key",
+        "Overwrite entire partitions whenever late data arrives",
+        "Drop late-arriving data to maintain partition consistency",
+        "Store late data in a separate table and join at query time"
+      ],
+      "correct": 0,
+      "explanation": "Apache Iceberg's MERGE INTO operation performs atomic upserts — inserting new records and updating existing ones based on a primary key match. This handles late-arriving data without overwriting entire partitions or requiring separate tables.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 116,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "easy",
+      "question": "Which AWS service can profile datasets and suggest over 250 built-in transformations through a visual interface without writing code?",
+      "options": [
+        "AWS Glue DataBrew",
+        "AWS Glue ETL",
+        "Amazon QuickSight",
+        "Amazon SageMaker Data Wrangler"
+      ],
+      "correct": 0,
+      "explanation": "AWS Glue DataBrew provides visual data profiling that automatically generates statistics, distributions, and quality assessments. It suggests relevant transformations from its library of 250+ built-in transforms, enabling no-code data preparation.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 117,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "A data engineer needs to set up monitoring for a data pipeline that runs on a schedule. They want to detect when the pipeline does NOT run (e.g., the scheduler fails silently). Which approach is BEST?",
+      "options": [
+        "Create a CloudWatch Alarm with a MISSING data treatment that triggers when the expected pipeline completion metric is not received within the expected window",
+        "Check the pipeline status manually each morning",
+        "Set up a CloudWatch Dashboard and review it periodically",
+        "Enable AWS Config rules for the pipeline resources"
+      ],
+      "correct": 0,
+      "explanation": "CloudWatch Alarms with 'treat missing data as breaching' (MISSING data treatment) will trigger when the expected metric (e.g., pipeline completion) is not received within the evaluation period. This detects silent failures where the pipeline never starts.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 118,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "A data pipeline must process 1,000 independent files in parallel, with each file requiring a Glue ETL job. The pipeline must handle up to 50 concurrent Glue jobs. Which Step Functions approach scales BEST?",
+      "options": [
+        "Distributed Map state with a MaxConcurrency of 50, processing the S3 file list as input",
+        "A Parallel state with 1,000 branches",
+        "A single Glue job that processes all 1,000 files sequentially",
+        "1,000 separate Step Functions executions triggered by EventBridge"
+      ],
+      "correct": 0,
+      "explanation": "The Step Functions Distributed Map state can process large-scale workloads by iterating over an S3 manifest or input array. MaxConcurrency controls how many child executions run simultaneously (50 in this case), and it can handle up to 10,000 parallel child executions.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 119,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "Which metric should a data engineer track to measure the freshness of data in a data warehouse?",
+      "options": [
+        "Data latency — the time between when data is generated at the source and when it becomes available for queries",
+        "Query execution time",
+        "Storage utilization",
+        "Number of tables in the data catalog"
+      ],
+      "correct": 0,
+      "explanation": "Data latency (or data freshness) measures the gap between event time and availability time. Tracking this metric ensures that the data warehouse serves sufficiently current data for business decisions and SLAs are met.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 120,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "A data engineer receives an error that a Glue ETL job cannot write to a Redshift table because a new column exists in the source that does not exist in the target. What is the BEST automated solution?",
+      "options": [
+        "Use Glue's DynamicFrame ApplyMapping to select only the columns that match the target schema, and log the unmapped columns for review",
+        "Manually alter the Redshift table to add the new column",
+        "Delete the source data that contains the new column",
+        "Disable schema validation in the Glue job"
+      ],
+      "correct": 0,
+      "explanation": "ApplyMapping in DynamicFrame lets you explicitly map source columns to target columns, effectively ignoring new source columns that don't have a target mapping. Logging unmapped columns alerts the team to schema drift for future review.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 121,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "A Glue Streaming ETL job processing from Kinesis Data Streams has a checkpoint interval of 60 seconds. If the job fails and restarts, what is the maximum amount of data that might be reprocessed?",
+      "options": [
+        "Up to 60 seconds of data since the last successful checkpoint",
+        "All data from the beginning of the stream",
+        "No data — Glue Streaming jobs never reprocess",
+        "Up to 24 hours of data"
+      ],
+      "correct": 0,
+      "explanation": "Glue Streaming ETL jobs checkpoint their position in the Kinesis stream at the configured interval. On restart, the job resumes from the last checkpoint, meaning up to one checkpoint interval of data may be reprocessed. This makes downstream writes need to be idempotent.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 122,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "hard",
+      "question": "A data warehouse receives data from 20 different source systems. The data engineer needs to implement automated data quality monitoring that tracks completeness, freshness, and schema conformity across all sources. Which comprehensive approach is BEST?",
+      "options": [
+        "Implement Glue Data Quality rules in each ETL job, publish quality metrics to CloudWatch, and create a unified dashboard with alarms for SLA breaches",
+        "Spot-check data manually each week",
+        "Rely on downstream users to report data issues",
+        "Run Athena queries to count rows in each table daily"
+      ],
+      "correct": 0,
+      "explanation": "Embedding Glue Data Quality rules in each ETL job creates automated quality gates. Publishing results to CloudWatch enables centralized monitoring, dashboards provide visibility, and alarms ensure that SLA breaches are detected and addressed promptly.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 123,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "Which Glue Workflow feature automatically starts a downstream Glue job when an upstream crawl or job completes successfully?",
+      "options": [
+        "Glue Triggers (conditional triggers based on job/crawler completion events)",
+        "Glue Job Bookmarks",
+        "Glue Classifiers",
+        "Glue Connections"
+      ],
+      "correct": 0,
+      "explanation": "Glue Triggers can be configured as conditional triggers that fire when a specific Glue job or crawler completes (succeeds, fails, or times out). These can be chained together in a Glue Workflow to create multi-step pipelines with automated dependencies.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 124,
       "domain": 4,
       "objective": "4.1",
       "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with apply authentication and authorization mechanisms?",
+      "question": "Which AWS service provides centralized access management for data lakes, allowing administrators to grant and revoke permissions at the database, table, and column level?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "AWS Lake Formation",
+        "AWS IAM",
+        "Amazon Macie",
+        "AWS KMS"
       ],
       "correct": 0,
-      "explanation": "When working with apply authentication and authorization mechanisms, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "explanation": "AWS Lake Formation provides centralized, fine-grained access control for data lakes. Administrators can grant permissions at the database, table, column, and row level using a centralized console, replacing the complex combination of IAM policies and S3 bucket policies.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 125,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "Which IAM feature allows you to grant temporary security credentials to users or services to access AWS resources?",
+      "options": [
+        "IAM Roles with temporary credentials via STS (Security Token Service)",
+        "IAM Access Keys",
+        "IAM User passwords",
+        "IAM Groups"
+      ],
+      "correct": 0,
+      "explanation": "IAM Roles provide temporary security credentials via AWS STS (Security Token Service). This is more secure than long-term access keys because credentials automatically expire and cannot be shared or leaked permanently.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 126,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "Which AWS service provides managed encryption key creation, storage, and management for encrypting data at rest?",
+      "options": [
+        "AWS Key Management Service (KMS)",
+        "AWS Certificate Manager",
+        "AWS Secrets Manager",
+        "AWS CloudHSM"
+      ],
+      "correct": 0,
+      "explanation": "AWS KMS is a managed service for creating and controlling encryption keys used to encrypt data across AWS services. It integrates natively with S3, Redshift, Glue, RDS, and many other services for encryption at rest.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 127,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "What is the difference between SSE-S3, SSE-KMS, and SSE-C encryption for S3?",
+      "options": [
+        "SSE-S3 uses S3-managed keys, SSE-KMS uses customer-managed KMS keys with audit trails, SSE-C uses customer-provided keys",
+        "They all use the same encryption but with different pricing",
+        "SSE-S3 is for small objects, SSE-KMS for medium, SSE-C for large",
+        "SSE-S3 encrypts in transit, SSE-KMS at rest, SSE-C both"
+      ],
+      "correct": 0,
+      "explanation": "SSE-S3 uses Amazon-managed keys (simplest), SSE-KMS uses AWS KMS keys (provides audit trails via CloudTrail and key rotation), and SSE-C requires you to manage and provide encryption keys with each request. SSE-KMS is recommended for most data engineering workloads.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 128,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "A data engineer needs to restrict access to specific columns in a Glue Data Catalog table so that analysts cannot see PII columns (SSN, email). Which service provides this capability?",
+      "options": [
+        "AWS Lake Formation column-level permissions",
+        "S3 bucket policies",
+        "IAM policies with S3 prefix conditions",
+        "Glue Data Catalog resource policies"
+      ],
+      "correct": 0,
+      "explanation": "AWS Lake Formation supports column-level permissions, allowing administrators to grant or revoke access to specific columns in a Data Catalog table. When analysts query through Athena or Redshift Spectrum, Lake Formation enforces these permissions and hides restricted columns.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 129,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "A company requires that all data in their Redshift cluster be encrypted at rest using a customer-managed encryption key. How should this be configured?",
+      "options": [
+        "Enable Redshift cluster encryption with an AWS KMS customer-managed key (CMK)",
+        "Encrypt data in the ETL pipeline before loading into Redshift",
+        "Use SSL connections to Redshift",
+        "Enable S3 encryption for Redshift snapshots only"
+      ],
+      "correct": 0,
+      "explanation": "Redshift supports cluster-level encryption at rest using AWS KMS customer-managed keys (CMKs). When enabled, all data blocks, system metadata, and snapshots are encrypted. The CMK can be rotated and its usage audited through CloudTrail.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 130,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "easy",
+      "question": "Which AWS service automatically discovers and classifies sensitive data like PII (personally identifiable information) in S3?",
+      "options": [
+        "Amazon Macie",
+        "Amazon GuardDuty",
+        "AWS Config",
+        "Amazon Inspector"
+      ],
+      "correct": 0,
+      "explanation": "Amazon Macie uses machine learning and pattern matching to automatically discover and classify sensitive data in S3, including PII (names, addresses, SSNs, credit card numbers), financial data, and credentials. It generates findings and alerts for data at risk.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 131,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "A data engineer needs to implement a data governance strategy that includes data classification, access policies, and audit logging across multiple AWS accounts. Which combination of services is MOST comprehensive?",
+      "options": [
+        "Lake Formation for access control, Macie for data classification, CloudTrail for audit logging, and AWS Organizations for multi-account governance",
+        "IAM policies alone for all governance needs",
+        "S3 bucket policies with CloudWatch",
+        "AWS Config rules only"
+      ],
+      "correct": 0,
+      "explanation": "A comprehensive governance strategy uses Lake Formation for fine-grained access control, Macie for automated data classification and PII detection, CloudTrail for complete API audit trails, and AWS Organizations with SCPs for multi-account policy enforcement.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 132,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "A data lake team needs to share specific tables across AWS accounts while maintaining centralized governance. The sharing must enforce column-level and row-level security. Which approach is BEST?",
+      "options": [
+        "AWS Lake Formation cross-account data sharing with LF-Tags for tag-based access control",
+        "Copy data to each account using S3 replication",
+        "Create IAM roles in each account with S3 bucket policy access",
+        "Use Redshift Data Sharing across accounts"
+      ],
+      "correct": 0,
+      "explanation": "Lake Formation cross-account sharing allows you to share Data Catalog tables with other AWS accounts while enforcing column-level and row-level permissions. LF-Tags provide attribute-based access control that scales better than per-table grants.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 133,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "A data engineer needs to ensure that data in transit between an EMR cluster and S3 is encrypted. How is this achieved?",
+      "options": [
+        "EMRFS automatically uses HTTPS (TLS) for all communication with S3",
+        "Configure a VPN between EMR and S3",
+        "Use AWS Direct Connect for EMR to S3 traffic",
+        "Enable S3 Transfer Acceleration"
+      ],
+      "correct": 0,
+      "explanation": "EMRFS (EMR File System) uses HTTPS (TLS 1.2+) by default for all communication with S3, providing encryption in transit. Additionally, S3 VPC endpoints can be used to keep traffic within the AWS network, and EMR security configurations can enforce additional TLS requirements.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 134,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "What is the principle of least privilege in the context of data engineering IAM policies?",
+      "options": [
+        "Granting only the minimum permissions necessary for a user or service to perform their specific tasks",
+        "Giving all data engineers full administrative access",
+        "Using the same IAM role for all data pipelines",
+        "Granting read access to all data stores by default"
+      ],
+      "correct": 0,
+      "explanation": "Least privilege means granting only the specific permissions required. For data engineering, this means a Glue job should only access the specific S3 paths, Data Catalog tables, and Redshift schemas it needs — not broad s3:* or glue:* permissions.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 135,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "A company must comply with GDPR and needs to implement the 'right to be forgotten' across their S3 data lake. The data lake uses Apache Iceberg tables. How should the data engineer implement this?",
+      "options": [
+        "Use Iceberg's DELETE statement to remove specific user records, which creates a new snapshot while maintaining audit history of what was deleted",
+        "Delete entire S3 partitions containing the user's data",
+        "Overwrite all Parquet files to remove the user's records",
+        "Move user data to Glacier so it is effectively inaccessible"
+      ],
+      "correct": 0,
+      "explanation": "Apache Iceberg supports row-level deletes that remove specific records while maintaining table history. For GDPR compliance, DELETE removes the user's data from queryable snapshots, and Iceberg's snapshot expiration (expire_snapshots) can remove old data files to ensure physical deletion.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 136,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "A data engineer needs to ensure that Glue ETL jobs accessing S3 data never traverse the public internet. Which networking configuration achieves this?",
+      "options": [
+        "Configure a VPC endpoint (gateway endpoint) for S3 and run Glue jobs within the VPC using Glue connections",
+        "Use AWS Direct Connect from the Glue service to S3",
+        "Enable S3 Transfer Acceleration",
+        "Configure S3 bucket policies to restrict by IP"
+      ],
+      "correct": 0,
+      "explanation": "An S3 VPC gateway endpoint allows Glue jobs running in a VPC to access S3 without traversing the public internet. The endpoint routes S3 traffic through the AWS private network, and endpoint policies can restrict which buckets are accessible.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 137,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "Which Lake Formation feature allows row-level filtering so that different users see different subsets of data in the same table?",
+      "options": [
+        "Row-level security (data filters)",
+        "Column-level permissions",
+        "Tag-based access control",
+        "Cross-account sharing"
+      ],
+      "correct": 0,
+      "explanation": "Lake Formation data filters (row-level security) allow administrators to define filter expressions that restrict which rows a user can see. For example, a regional analyst might only see rows where region = 'EMEA', while a global analyst sees all rows.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 138,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "An organization requires that KMS encryption keys used for data lake encryption are automatically rotated annually. How should this be configured?",
+      "options": [
+        "Enable automatic key rotation on the KMS customer-managed key, which rotates the backing key material annually",
+        "Manually create a new KMS key each year and re-encrypt all data",
+        "Use SSE-S3 instead since it handles rotation automatically",
+        "Create a Lambda function to rotate keys monthly"
+      ],
+      "correct": 0,
+      "explanation": "AWS KMS supports automatic annual key rotation for customer-managed keys. When enabled, KMS generates new backing key material annually while retaining old key material to decrypt previously encrypted data. The key ID remains the same, so no application changes are needed.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 139,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "Which AWS service allows you to define compliance policies and automatically evaluate whether AWS resources conform to those policies?",
+      "options": [
+        "AWS Config",
+        "Amazon Macie",
+        "AWS Trusted Advisor",
+        "Amazon GuardDuty"
+      ],
+      "correct": 0,
+      "explanation": "AWS Config provides managed and custom rules that continuously evaluate whether AWS resources comply with defined policies. For data engineering, Config rules can check if S3 buckets are encrypted, Redshift clusters use encryption, or resources are tagged correctly.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 140,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "A data engineering team manages 200 Glue Data Catalog tables across 5 departments. They need to implement scalable access control where permissions are based on data sensitivity and department rather than individual table grants. Which Lake Formation feature is BEST?",
+      "options": [
+        "LF-Tags (tag-based access control) where tables are tagged by sensitivity level and department, and permissions are granted on tag combinations",
+        "Individual GRANT statements for each user-table combination",
+        "IAM policies with resource-level permissions for each table",
+        "S3 bucket policies organized by department prefix"
+      ],
+      "correct": 0,
+      "explanation": "LF-Tags provide attribute-based access control in Lake Formation. Tables are tagged with attributes like sensitivity=high and department=finance, and permissions are granted based on tag expressions. This scales much better than individual grants for large catalogs.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 141,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "A Glue ETL job processes sensitive data and writes to an encrypted S3 bucket. The data engineer discovers that Glue temporary files (shuffle data) are written to an unencrypted location. How should they secure this?",
+      "options": [
+        "Configure Glue security configuration to enable encryption for job bookmarks, S3 targets, and CloudWatch logs with KMS keys",
+        "Disable Glue temporary files",
+        "Use only Python Shell jobs which don't create shuffle data",
+        "Encrypt the data after the Glue job completes"
+      ],
+      "correct": 0,
+      "explanation": "Glue Security Configurations allow you to enable encryption for all data at rest (S3 targets, job bookmarks, temporary directories) and CloudWatch logs using KMS keys. This ensures that all intermediate and output data is encrypted, not just the final output.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 142,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "A company's data retention policy requires that all data in S3 be retained for exactly 7 years and cannot be deleted by anyone, including administrators, during that period. Which S3 feature enforces this?",
+      "options": [
+        "S3 Object Lock in Compliance mode with a 7-year retention period",
+        "S3 Object Lock in Governance mode",
+        "S3 Lifecycle Policy set to Glacier after 7 years",
+        "S3 Versioning with MFA Delete"
+      ],
+      "correct": 0,
+      "explanation": "S3 Object Lock in Compliance mode provides WORM (Write Once Read Many) protection. In Compliance mode, no one (including the root account) can delete or overwrite the objects until the retention period expires. This meets strict regulatory requirements.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 143,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "A Redshift cluster should only be accessible from a specific application running in a VPC, not from the public internet. Which configuration is needed?",
+      "options": [
+        "Deploy Redshift in a private subnet, disable public accessibility, and use a VPC security group to allow access only from the application's security group",
+        "Use Redshift's built-in IP whitelist feature",
+        "Enable Redshift enhanced VPC routing only",
+        "Configure an S3 VPC endpoint"
+      ],
+      "correct": 0,
+      "explanation": "Deploying Redshift in a private subnet with public accessibility disabled ensures it has no public IP. The VPC security group should be configured to allow inbound connections only from the application's security group, creating a secure, private connection path.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 144,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "A data pipeline needs to encrypt data at rest in Glue, transit between services, and at rest in Redshift, all using the SAME KMS key for unified key management. Is this possible?",
+      "options": [
+        "Yes — a single KMS CMK can be specified in Glue security configuration and Redshift cluster encryption, and in-transit encryption uses TLS which is separate",
+        "No — each service requires a different KMS key",
+        "Only if using SSE-S3 encryption",
+        "Only if using CloudHSM"
+      ],
+      "correct": 0,
+      "explanation": "A single KMS customer-managed key (CMK) can be used across multiple services. The same key can encrypt Glue ETL output in S3, Glue temporary data, and Redshift cluster data at rest. In-transit encryption uses TLS/SSL certificates (separate from KMS), ensuring all data is protected.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 145,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "easy",
+      "question": "What type of logging does Redshift provide to track all SQL statements executed against the cluster for auditing purposes?",
+      "options": [
+        "Redshift Audit Logging (user activity logs, connection logs, user logs)",
+        "S3 server access logs",
+        "CloudWatch Application Logs",
+        "VPC Flow Logs"
+      ],
+      "correct": 0,
+      "explanation": "Redshift Audit Logging captures three types of logs: connection logs (authentication attempts), user logs (user definition changes), and user activity logs (all SQL queries executed). These can be stored in S3 for long-term retention and compliance auditing.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 146,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "A data engineer needs to implement tag-based access control (TBAC) where different teams can only access data tagged with their department. The solution must work across Athena, EMR, and Redshift Spectrum. Which implementation is correct?",
+      "options": [
+        "Define LF-Tags in Lake Formation, tag resources by department, and create permissions grants using tag expressions — Lake Formation enforces access across all three query engines",
+        "Use S3 object tagging and IAM condition keys",
+        "Create separate Glue databases per department",
+        "Use Redshift row-level security policies"
+      ],
+      "correct": 0,
+      "explanation": "Lake Formation LF-Tags provide attribute-based access control that is enforced consistently across Athena, EMR, and Redshift Spectrum. By tagging Data Catalog resources and granting permissions on tag expressions, the same access policy applies regardless of which query engine is used.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 147,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "Which Redshift feature ensures that all data traffic between the Redshift cluster and data sources (like S3) is routed through the VPC rather than the public internet?",
+      "options": [
+        "Enhanced VPC Routing",
+        "Redshift Spectrum",
+        "Concurrency Scaling",
+        "Workload Management"
+      ],
+      "correct": 0,
+      "explanation": "Enhanced VPC Routing forces all COPY and UNLOAD traffic between the Redshift cluster and S3 (or other data sources) to flow through the VPC. This allows you to use VPC features like security groups, NACLs, and VPC endpoints to control and monitor data traffic.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 148,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "A healthcare company needs to build a data lake that complies with HIPAA. Which combination of AWS services and configurations ensures compliance?",
+      "options": [
+        "SSE-KMS encryption on all S3 buckets, CloudTrail logging enabled, VPC endpoints for S3 access, Lake Formation access controls, Macie for PII detection, and a BAA (Business Associate Agreement) with AWS",
+        "SSE-S3 encryption only",
+        "Public S3 buckets with IAM authentication",
+        "Encryption in transit only"
+      ],
+      "correct": 0,
+      "explanation": "HIPAA compliance requires: encryption at rest (SSE-KMS), encryption in transit (TLS), access controls (Lake Formation), audit logging (CloudTrail), sensitive data detection (Macie), network isolation (VPC endpoints), and a signed BAA with AWS. All components are necessary — encryption alone is insufficient.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 149,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "A Glue ETL job needs to read from an RDS database in a private subnet. How should network access be configured?",
+      "options": [
+        "Create a Glue Connection with VPC, subnet, and security group settings that allow access to the RDS instance's security group",
+        "Make the RDS instance publicly accessible",
+        "Use AWS Direct Connect from Glue to RDS",
+        "Configure an internet gateway for the Glue job"
+      ],
+      "correct": 0,
+      "explanation": "A Glue Connection specifies the VPC, subnet, and security group for the Glue job. The job's security group must be allowed in the RDS instance's security group inbound rules. The subnet needs a NAT gateway for Glue to communicate with the Glue service endpoints.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 150,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "A data engineer needs to implement data masking so that analysts see hashed values for the SSN column while data scientists see the actual values. The solution must work without maintaining separate table copies. Which approach is BEST?",
+      "options": [
+        "Use Lake Formation row-level and column-level security combined with Glue Data Catalog views that apply masking transformations based on the querying user's permissions",
+        "Create two copies of the table with different column values",
+        "Use Redshift dynamic data masking policies",
+        "Apply masking in the ETL pipeline and store only masked data"
+      ],
+      "correct": 0,
+      "explanation": "Lake Formation combined with Data Catalog views enables dynamic data masking without data duplication. Column-level permissions control raw access, and views can apply conditional masking functions based on the user's identity. This maintains a single source of truth while serving different audiences.",
+      "link": "cloud-security.html"
     }
   ]
 }

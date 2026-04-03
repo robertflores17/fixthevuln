@@ -1,34 +1,34 @@
 {
   "metadata": {
-    "title": "Google Cloud Security Engineer PSE Practice Questions",
-    "version": "1.0",
-    "total_questions": 20,
+    "title": "Google Cloud Professional Security Engineer PSE Practice Questions",
+    "version": "2.0",
+    "total_questions": 150,
     "exam": "PSE",
     "domains": {
       "1": {
         "name": "Configuring Access",
         "weight": 20,
-        "count": 4
+        "count": 30
       },
       "2": {
         "name": "Managing Operations",
         "weight": 20,
-        "count": 4
+        "count": 30
       },
       "3": {
         "name": "Configuring Network Security",
         "weight": 20,
-        "count": 4
+        "count": 30
       },
       "4": {
         "name": "Ensuring Compliance",
         "weight": 20,
-        "count": 4
+        "count": 30
       },
       "5": {
         "name": "Securing Data",
         "weight": 20,
-        "count": 4
+        "count": 30
       }
     }
   },
@@ -38,320 +38,2400 @@
       "domain": 1,
       "objective": "1.1",
       "difficulty": "easy",
-      "question": "Which of the following is a key concept within Configuring Access (Domain 1)?",
+      "question": "What are the three types of IAM roles in Google Cloud?",
       "options": [
-        "Workload Identity Federation",
-        "IAM Roles (Primitive, Predefined, Custom)",
-        "Service Account Key Management",
-        "Access Context Manager"
+        "Basic (primitive), Predefined, and Custom",
+        "Admin, Editor, and Viewer",
+        "User, Service, and Machine",
+        "Global, Regional, and Zonal"
       ],
       "correct": 0,
-      "explanation": "Workload Identity Federation is a key concept in Configuring Access. This domain covers topics essential for the Google Cloud Security Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "Google Cloud IAM has three role types: Basic roles (Owner, Editor, Viewer — legacy, broad permissions), Predefined roles (fine-grained, managed by Google for each service), and Custom roles (user-defined with specific permissions for least privilege).",
+      "link": "cloud-security.html"
     },
     {
       "id": 2,
       "domain": 1,
-      "objective": "1.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with implement resource hierarchy and organization policies. What should be the first step?",
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "Why should Basic (primitive) IAM roles be avoided in production environments?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "They grant overly broad permissions across all services in a project, violating least privilege",
+        "They are more expensive than predefined roles",
+        "They cannot be assigned to service accounts",
+        "They do not work with organization policies"
       ],
       "correct": 0,
-      "explanation": "The first step in any configuring access task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "Basic roles (Owner, Editor, Viewer) grant broad permissions across every service in a project. For example, Editor can modify any resource. Predefined and custom roles should be used instead to grant only the specific permissions needed for each task.",
+      "link": "cloud-security.html"
     },
     {
       "id": 3,
       "domain": 1,
-      "objective": "1.3",
-      "difficulty": "medium",
-      "question": "Which concept in Configuring Access is most closely related to manage service accounts and workload identity?",
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "Which IAM concept defines a collection of permissions that can be granted to an identity?",
       "options": [
-        "Configuring Access governance and oversight",
-        "Configuring Access implementation and operations",
-        "Configuring Access assessment and testing",
-        "Configuring Access risk management"
+        "Role",
+        "Policy",
+        "Binding",
+        "Principal"
       ],
-      "correct": 1,
-      "explanation": "Manage service accounts and workload identity falls under the implementation and operations aspect of Configuring Access.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "An IAM role is a collection of permissions. Permissions determine what operations are allowed on a resource. Roles are granted to principals (users, groups, service accounts) through IAM policy bindings on resources.",
+      "link": "cloud-security.html"
     },
     {
       "id": 4,
       "domain": 1,
-      "objective": "1.4",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Configuring Access (Domain 1)?",
+      "objective": "1.2",
+      "difficulty": "easy",
+      "question": "In the Google Cloud resource hierarchy, what is the correct order from top to bottom?",
       "options": [
-        "Organization Policy Constraints",
-        "Cloud Identity and Directory Sync",
-        "Access Context Manager",
-        "BeyondCorp Zero-Trust Model"
+        "Organization > Folders > Projects > Resources",
+        "Projects > Folders > Organization > Resources",
+        "Resources > Projects > Folders > Organization",
+        "Organization > Projects > Folders > Resources"
       ],
       "correct": 0,
-      "explanation": "Organization Policy Constraints is a key concept in Configuring Access. This domain covers topics essential for the Google Cloud Security Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "The Google Cloud resource hierarchy flows: Organization (top-level, tied to Cloud Identity domain) > Folders (grouping mechanism) > Projects (isolation boundary for resources) > Resources (Compute, Storage, etc.). IAM policies inherit downward through this hierarchy.",
+      "link": "cloud-security.html"
     },
     {
       "id": 5,
-      "domain": 2,
-      "objective": "2.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Managing Operations (Domain 2)?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "A company wants to enforce that no project in the organization can create external IP addresses. Which mechanism should they use?",
       "options": [
-        "Security Health Analytics",
-        "Forseti Security (Open Source)",
-        "Log-Based Metrics and Alerts",
-        "Web Security Scanner"
+        "Organization Policy with the compute.vmExternalIpAccess constraint",
+        "IAM policy denying compute.instances.create",
+        "VPC firewall rules blocking outbound traffic",
+        "Cloud NAT configuration"
       ],
       "correct": 0,
-      "explanation": "Security Health Analytics is a key concept in Managing Operations. This domain covers topics essential for the Google Cloud Security Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "Organization Policies enforce constraints across the resource hierarchy. The compute.vmExternalIpAccess constraint can be set to deny all external IPs at the organization level. Unlike IAM (which controls who), Organization Policies control what configurations are allowed.",
+      "link": "cloud-security.html"
     },
     {
       "id": 6,
-      "domain": 2,
-      "objective": "2.2",
+      "domain": 1,
+      "objective": "1.3",
       "difficulty": "medium",
-      "question": "A professional is tasked with manage security monitoring and incident response. What should be the first step?",
+      "question": "A GKE workload running in a pod needs to access a Cloud Storage bucket. What is the recommended approach for authenticating the workload?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Use Workload Identity to bind a Kubernetes service account to a Google Cloud service account",
+        "Store a service account key JSON file as a Kubernetes secret",
+        "Use the default Compute Engine service account",
+        "Pass credentials as environment variables"
       ],
       "correct": 0,
-      "explanation": "The first step in any managing operations task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "Workload Identity is the recommended way to authenticate GKE workloads to Google Cloud services. It creates a binding between a Kubernetes service account and a Google Cloud service account, eliminating the need to manage and store service account keys.",
+      "link": "cloud-security.html"
     },
     {
       "id": 7,
-      "domain": 2,
-      "objective": "2.3",
+      "domain": 1,
+      "objective": "1.3",
       "difficulty": "medium",
-      "question": "Which concept in Managing Operations is most closely related to design and implement logging and monitoring solutions?",
+      "question": "Why is it a security best practice to avoid creating and downloading service account keys?",
       "options": [
-        "Managing Operations governance and oversight",
-        "Managing Operations implementation and operations",
-        "Managing Operations assessment and testing",
-        "Managing Operations risk management"
+        "Keys are long-lived credentials that can be leaked, are difficult to track, and do not expire automatically",
+        "Keys are slower than other authentication methods",
+        "Keys are limited to a single project",
+        "Keys cannot be used with Cloud IAM"
       ],
-      "correct": 1,
-      "explanation": "Design and implement logging and monitoring solutions falls under the implementation and operations aspect of Managing Operations.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "Service account keys are long-lived credentials (no automatic expiration) that pose security risks: they can be leaked through code repositories, logs, or insider threats. Alternatives like Workload Identity, attached service accounts, and Workload Identity Federation avoid this risk.",
+      "link": "cloud-security.html"
     },
     {
       "id": 8,
-      "domain": 2,
-      "objective": "2.4",
+      "domain": 1,
+      "objective": "1.3",
       "difficulty": "hard",
-      "question": "Which of the following is a key concept within Managing Operations (Domain 2)?",
+      "question": "An application running on AWS needs to access Google Cloud resources without storing Google Cloud credentials. Which mechanism enables this?",
       "options": [
-        "Log-Based Metrics and Alerts",
-        "Forseti Security (Open Source)",
-        "Event Threat Detection",
-        "Chronicle SIEM and SOAR"
+        "Workload Identity Federation with an AWS identity provider configured as a workload identity pool provider",
+        "Creating a Google Cloud service account key and storing it in AWS Secrets Manager",
+        "Using an API key for authentication",
+        "Setting up a VPN between AWS and Google Cloud"
       ],
       "correct": 0,
-      "explanation": "Log-Based Metrics and Alerts is a key concept in Managing Operations. This domain covers topics essential for the Google Cloud Security Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "Workload Identity Federation allows external workloads (AWS, Azure, on-premises) to exchange their native identity tokens for short-lived Google Cloud access tokens without needing service account keys. The AWS IAM role's credentials are exchanged via an OIDC/SAML trust relationship.",
+      "link": "cloud-security.html"
     },
     {
       "id": 9,
-      "domain": 3,
-      "objective": "3.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Configuring Network Security (Domain 3)?",
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "medium",
+      "question": "A security team wants to temporarily grant a developer the roles/storage.admin role for a specific Cloud Storage bucket, and have it automatically revoked after 2 hours. How should this be configured?",
       "options": [
-        "Hierarchical Firewall Policies",
-        "Identity-Aware Proxy (IAP)",
-        "Cloud NAT Configuration",
-        "SSL/TLS Policies for Load Balancers"
+        "Use IAM Conditions with a time-based condition expression that expires after 2 hours",
+        "Manually add and remove the role after 2 hours",
+        "Create a custom role that auto-expires",
+        "Use Access Context Manager levels"
       ],
       "correct": 0,
-      "explanation": "Hierarchical Firewall Policies is a key concept in Configuring Network Security. This domain covers topics essential for the Google Cloud Security Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "IAM Conditions support time-based expressions using request.time attribute. You can create a conditional role binding that grants access only until a specific timestamp, after which the permission is automatically no longer effective.",
+      "link": "cloud-security.html"
     },
     {
       "id": 10,
-      "domain": 3,
-      "objective": "3.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with configure network security controls. What should be the first step?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "An organization has a folder for each department. The security team needs to ensure that the engineering folder can create GKE clusters but the finance folder cannot. How should this be implemented?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Set an Organization Policy at the finance folder that restricts the container.googleapis.com service using the serviceuser.services constraint",
+        "Remove IAM permissions for GKE from all finance users",
+        "Delete all GKE API enablement in finance projects",
+        "Use VPC firewall rules to block GKE API calls"
       ],
       "correct": 0,
-      "explanation": "The first step in any configuring network security task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "Organization Policies can be applied at different levels of the hierarchy. Setting a service restriction constraint at the finance folder level prevents any project within it from using GKE, while allowing the engineering folder to operate unrestricted.",
+      "link": "cloud-security.html"
     },
     {
       "id": 11,
-      "domain": 3,
-      "objective": "3.3",
-      "difficulty": "medium",
-      "question": "Which concept in Configuring Network Security is most closely related to configure perimeter security?",
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "hard",
+      "question": "A data analyst needs read access to BigQuery datasets across 50 projects. Instead of granting roles in each project, what is the MOST scalable approach?",
       "options": [
-        "Configuring Network Security governance and oversight",
-        "Configuring Network Security implementation and operations",
-        "Configuring Network Security assessment and testing",
-        "Configuring Network Security risk management"
+        "Grant the roles/bigquery.dataViewer role at the organization or folder level, and use IAM deny policies to restrict access to sensitive projects",
+        "Create a service account with access to all 50 projects",
+        "Share BigQuery datasets individually",
+        "Use API keys for cross-project access"
       ],
-      "correct": 1,
-      "explanation": "Configure perimeter security falls under the implementation and operations aspect of Configuring Network Security.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "Granting the role at a higher level (organization or folder) leverages IAM inheritance. IAM deny policies (a newer feature) can then explicitly block access to specific sensitive projects, providing broad access with targeted exceptions.",
+      "link": "cloud-security.html"
     },
     {
       "id": 12,
-      "domain": 3,
-      "objective": "3.4",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Configuring Network Security (Domain 3)?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "easy",
+      "question": "What is the recommended maximum number of service account keys per service account?",
       "options": [
-        "Identity-Aware Proxy (IAP)",
-        "Hierarchical Firewall Policies",
-        "SSL/TLS Policies for Load Balancers",
-        "VPC Service Controls Perimeters"
+        "Zero — avoid creating keys entirely and use alternative authentication methods",
+        "One active key at all times",
+        "Five keys for redundancy",
+        "Ten keys rotated monthly"
       ],
       "correct": 0,
-      "explanation": "Identity-Aware Proxy (IAP) is a key concept in Configuring Network Security. This domain covers topics essential for the Google Cloud Security Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "Google Cloud best practice is to avoid creating service account keys entirely. Instead, use attached service accounts (for GCE/GKE), Workload Identity (for GKE), or Workload Identity Federation (for external workloads). These provide short-lived credentials automatically.",
+      "link": "cloud-security.html"
     },
     {
       "id": 13,
-      "domain": 4,
-      "objective": "4.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Ensuring Compliance (Domain 4)?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "Which Organization Policy constraint prevents users from making Cloud Storage buckets publicly accessible?",
       "options": [
-        "Compliance Reports Manager",
-        "Data Residency and Sovereignty",
-        "Organization Policy Service",
-        "Access Transparency Logs"
+        "constraints/iam.allowedPolicyMemberDomains (restricting the allUsers and allAuthenticatedUsers principals)",
+        "constraints/compute.vmExternalIpAccess",
+        "constraints/storage.uniformBucketLevelAccess",
+        "constraints/storage.retentionPolicySeconds"
       ],
       "correct": 0,
-      "explanation": "Compliance Reports Manager is a key concept in Ensuring Compliance. This domain covers topics essential for the Google Cloud Security Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "The iam.allowedPolicyMemberDomains constraint restricts which domains can be added to IAM policies. By only allowing your organization's domain, it prevents granting access to allUsers or allAuthenticatedUsers, which would make resources publicly accessible.",
+      "link": "cloud-security.html"
     },
     {
       "id": 14,
-      "domain": 4,
-      "objective": "4.2",
+      "domain": 1,
+      "objective": "1.1",
       "difficulty": "medium",
-      "question": "A professional is tasked with implement organization-level security policies. What should be the first step?",
+      "question": "What is the difference between an IAM allow policy and an IAM deny policy?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Allow policies grant access to principals; Deny policies explicitly block specific permissions and take precedence over allow policies",
+        "They are the same thing with different names",
+        "Allow policies apply to users; Deny policies apply to service accounts",
+        "Deny policies only work at the organization level"
       ],
       "correct": 0,
-      "explanation": "The first step in any ensuring compliance task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "IAM allow policies grant permissions to principals. IAM deny policies explicitly block specific permissions and always take precedence over allow policies. Deny policies are useful for setting guardrails that cannot be overridden by allow policies lower in the hierarchy.",
+      "link": "cloud-security.html"
     },
     {
       "id": 15,
-      "domain": 4,
-      "objective": "4.3",
-      "difficulty": "medium",
-      "question": "Which concept in Ensuring Compliance is most closely related to configure data governance controls?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "A Compute Engine instance running a web application needs to impersonate a service account to access BigQuery, but should only be able to do so from a specific network. How should this be secured?",
       "options": [
-        "Ensuring Compliance governance and oversight",
-        "Ensuring Compliance implementation and operations",
-        "Ensuring Compliance assessment and testing",
-        "Ensuring Compliance risk management"
+        "Use IAM Conditions with a network-based condition (destination.ip or resource attribute) on the service account impersonation binding",
+        "Restrict the service account's permissions to BigQuery only",
+        "Use a firewall rule to block BigQuery API access from other networks",
+        "Store BigQuery credentials in the VM metadata"
       ],
-      "correct": 1,
-      "explanation": "Configure data governance controls falls under the implementation and operations aspect of Ensuring Compliance.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "IAM Conditions can include network-based attributes to restrict when a principal can impersonate a service account. This ensures that even if the VM is compromised from another network context, it cannot exercise the impersonation privilege.",
+      "link": "cloud-security.html"
     },
     {
       "id": 16,
-      "domain": 4,
-      "objective": "4.1",
+      "domain": 1,
+      "objective": "1.2",
       "difficulty": "hard",
-      "question": "Which of the following is a key concept within Ensuring Compliance (Domain 4)?",
+      "question": "An organization needs to enforce that all Cloud SQL instances across every project use private IP only and never public IP. Which approach is MOST effective?",
       "options": [
-        "Access Approval Workflow",
-        "Data Classification and Labeling",
-        "HIPAA, PCI DSS, SOC2 on GCP",
-        "Retention Policies and Legal Holds"
+        "Set an Organization Policy with the sql.restrictPublicIp constraint enforced at the organization level",
+        "Create IAM policies that deny cloudsql.instances.create",
+        "Configure VPC firewall rules for each project",
+        "Use Cloud Audit Logs to detect and alert on public IP usage"
       ],
       "correct": 0,
-      "explanation": "Access Approval Workflow is a key concept in Ensuring Compliance. This domain covers topics essential for the Google Cloud Security Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "The sql.restrictPublicIp Organization Policy constraint prevents Cloud SQL instances from being configured with public IP addresses across the entire organization. This is a preventive control that blocks the configuration at creation time, which is stronger than detective controls.",
+      "link": "cloud-security.html"
     },
     {
       "id": 17,
-      "domain": 5,
-      "objective": "5.1",
+      "domain": 1,
+      "objective": "1.1",
       "difficulty": "easy",
-      "question": "Which of the following is a key concept within Securing Data (Domain 5)?",
+      "question": "Which Google Cloud service provides single sign-on (SSO) and user lifecycle management for Google Cloud access?",
       "options": [
-        "Confidential Computing and Confidential VMs",
-        "Secret Manager Versioning and Rotation",
-        "Cloud KMS (Symmetric/Asymmetric Keys)",
-        "CMEK (Customer-Managed Encryption Keys)"
+        "Cloud Identity",
+        "Cloud IAM",
+        "Access Context Manager",
+        "Identity-Aware Proxy"
       ],
       "correct": 0,
-      "explanation": "Confidential Computing and Confidential VMs is a key concept in Securing Data. This domain covers topics essential for the Google Cloud Security Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "Cloud Identity is Google's identity-as-a-service (IDaaS) that provides SSO, user/group management, device management, and directory sync. It serves as the identity provider for Google Cloud IAM, connecting enterprise directories to Google Cloud.",
+      "link": "cloud-security.html"
     },
     {
       "id": 18,
-      "domain": 5,
-      "objective": "5.2",
+      "domain": 1,
+      "objective": "1.3",
       "difficulty": "medium",
-      "question": "A professional is tasked with manage secrets and credentials. What should be the first step?",
+      "question": "Which of the following is a valid use case for service account impersonation?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Allowing a developer to temporarily assume a service account's permissions without creating a service account key",
+        "Permanently granting a user all service account permissions",
+        "Bypassing organization policy constraints",
+        "Authenticating to external (non-Google) systems"
       ],
       "correct": 0,
-      "explanation": "The first step in any securing data task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "Service account impersonation allows a user to generate short-lived credentials for a service account without needing its key. This is useful for testing, deployment pipelines, and granting temporary elevated access while maintaining an audit trail of who impersonated which account.",
+      "link": "cloud-security.html"
     },
     {
       "id": 19,
-      "domain": 5,
-      "objective": "5.3",
+      "domain": 1,
+      "objective": "1.2",
       "difficulty": "medium",
-      "question": "Which concept in Securing Data is most closely related to protect sensitive data?",
+      "question": "A company acquires another company and needs to integrate their Google Cloud environment. Both companies have separate organizations. How should access be managed?",
       "options": [
-        "Securing Data governance and oversight",
-        "Securing Data implementation and operations",
-        "Securing Data assessment and testing",
-        "Securing Data risk management"
+        "Use cross-organization IAM bindings to grant specific roles to the acquired company's identities, or consolidate under a single organization over time",
+        "Share service account keys between organizations",
+        "Create duplicate user accounts in both organizations",
+        "Use API keys for cross-organization access"
       ],
-      "correct": 1,
-      "explanation": "Protect sensitive data falls under the implementation and operations aspect of Securing Data.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "Cross-organization IAM bindings allow you to grant roles to principals from another organization using their identity domain. For a permanent solution, organizations can be consolidated. Sharing keys or duplicating accounts creates security and management risks.",
+      "link": "cloud-security.html"
     },
     {
       "id": 20,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "hard",
+      "question": "A security team needs to implement privileged access management (PAM) for Google Cloud. Which combination of features provides the MOST secure just-in-time access?",
+      "options": [
+        "IAM Conditions with time-based expiration, combined with Privileged Access Manager (PAM) for approval workflows and audit logging",
+        "Permanent Owner role with strong passwords",
+        "Service account keys with 24-hour rotation",
+        "VPN-only access to the Google Cloud Console"
+      ],
+      "correct": 0,
+      "explanation": "Google Cloud's Privileged Access Manager (PAM) provides just-in-time, time-bound, approval-based access to sensitive roles. Combined with IAM Conditions for automatic expiration and Cloud Audit Logs for tracking, this implements zero-standing-privilege access management.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 21,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "medium",
+      "question": "What is the principle behind Workload Identity Federation, and how does it differ from using service account keys?",
+      "options": [
+        "It exchanges external identity tokens for short-lived Google Cloud tokens, eliminating persistent credentials",
+        "It creates permanent service account keys stored in an external provider",
+        "It syncs user accounts between clouds",
+        "It establishes VPN tunnels for authentication"
+      ],
+      "correct": 0,
+      "explanation": "Workload Identity Federation uses token exchange: an external identity provider (AWS IAM, Azure AD, OIDC) issues a token, which Google Cloud STS exchanges for a short-lived Google Cloud access token. No persistent credentials are stored anywhere.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 22,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "easy",
+      "question": "Where should Organization Policies be applied to enforce constraints across ALL projects in an organization?",
+      "options": [
+        "At the Organization node",
+        "At each individual project",
+        "At the billing account level",
+        "At the resource level"
+      ],
+      "correct": 0,
+      "explanation": "Organization Policies applied at the Organization node inherit downward to all folders, projects, and resources. This ensures universal enforcement without needing to configure each project individually.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 23,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "hard",
+      "question": "An application uses Application Default Credentials (ADC). What is the order in which ADC searches for credentials?",
+      "options": [
+        "GOOGLE_APPLICATION_CREDENTIALS environment variable, then gcloud auth application-default credentials, then attached service account metadata",
+        "Attached service account first, then environment variable, then gcloud",
+        "Only the GOOGLE_APPLICATION_CREDENTIALS environment variable",
+        "Only the attached service account"
+      ],
+      "correct": 0,
+      "explanation": "ADC follows this credential search order: (1) GOOGLE_APPLICATION_CREDENTIALS environment variable pointing to a key file, (2) user credentials set by gcloud auth application-default login, (3) attached service account from the compute metadata server (GCE, GKE, Cloud Run, etc.).",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 24,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "A CI/CD pipeline on GitHub Actions needs to deploy to Google Cloud. What is the MOST secure authentication method?",
+      "options": [
+        "Workload Identity Federation with GitHub's OIDC provider, so GitHub Actions tokens are exchanged for short-lived Google Cloud credentials",
+        "Store a service account key as a GitHub secret",
+        "Use a long-lived API key in the pipeline configuration",
+        "Use a shared service account with a key rotated weekly"
+      ],
+      "correct": 0,
+      "explanation": "GitHub Actions supports OIDC tokens that can be federated with Google Cloud via Workload Identity Federation. Each pipeline run gets a short-lived token, eliminating the need to store any Google Cloud credentials in GitHub. This is the most secure approach.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 25,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "medium",
+      "question": "What is the purpose of an IAM recommender in Google Cloud?",
+      "options": [
+        "It analyzes permission usage and recommends removing unused permissions to enforce least privilege",
+        "It recommends which Google Cloud services to use",
+        "It suggests cost optimization strategies",
+        "It recommends network security configurations"
+      ],
+      "correct": 0,
+      "explanation": "The IAM Recommender uses machine learning to analyze 90 days of permission usage and recommends right-sizing roles. If a user has Editor but only uses read operations, the recommender suggests a more restrictive role, helping enforce least privilege.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 26,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "An organization wants to restrict which regions can be used for deploying resources across all projects. Which Organization Policy constraint achieves this?",
+      "options": [
+        "constraints/gcp.resourceLocations",
+        "constraints/compute.vmExternalIpAccess",
+        "constraints/iam.allowedPolicyMemberDomains",
+        "constraints/storage.uniformBucketLevelAccess"
+      ],
+      "correct": 0,
+      "explanation": "The gcp.resourceLocations constraint restricts which regions and zones can be used for deploying resources. Setting this at the organization level ensures all projects comply with data residency requirements by preventing resource creation in unauthorized locations.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 27,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "easy",
+      "question": "What is the recommended way for a Cloud Function to authenticate to other Google Cloud services?",
+      "options": [
+        "Attach a dedicated service account to the Cloud Function with only the necessary permissions",
+        "Store a service account key as an environment variable",
+        "Use the default App Engine service account",
+        "Use API keys embedded in the function code"
+      ],
+      "correct": 0,
+      "explanation": "Cloud Functions should have a dedicated service account attached with only the permissions needed (least privilege). The function automatically receives credentials via the metadata server without needing keys. Using the default service account risks over-permissioning.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 28,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "hard",
+      "question": "A user has roles/bigquery.dataEditor at the folder level but a deny policy blocks bigquery.tables.delete at the same folder. Can the user delete BigQuery tables in projects under that folder?",
+      "options": [
+        "No — deny policies always take precedence over allow policies",
+        "Yes — allow policies take precedence over deny policies",
+        "Only if the user also has the Owner role",
+        "It depends on the project-level IAM policy"
+      ],
+      "correct": 0,
+      "explanation": "IAM deny policies always take precedence over allow policies at any level of the hierarchy. Even though the user is granted dataEditor (which includes tables.delete), the deny policy explicitly blocks that specific permission, so the delete operation is denied.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 29,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "A company's security policy requires that no Google Cloud project can have the Editor basic role granted to any user. How should this be enforced?",
+      "options": [
+        "Create an Organization Policy using a custom constraint that restricts the roles/editor role in IAM bindings, or use IAM deny policies to deny editor permissions",
+        "Audit IAM policies manually every quarter",
+        "Disable the Editor role at the project level",
+        "Use VPC Service Controls to block editor access"
+      ],
+      "correct": 0,
+      "explanation": "Custom Organization Policy constraints or IAM deny policies can be used to enforce this requirement. A deny policy at the organization level blocking all permissions included in roles/editor effectively neutralizes the role even if it's granted, providing a strong preventive control.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 30,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "medium",
+      "question": "A service account has the roles/iam.serviceAccountTokenCreator role on another service account. What does this allow?",
+      "options": [
+        "It allows the first service account to impersonate the second by generating access tokens, ID tokens, and signing blobs on its behalf",
+        "It allows creating new service account keys",
+        "It allows deleting the target service account",
+        "It allows modifying the target service account's IAM policy"
+      ],
+      "correct": 0,
+      "explanation": "The serviceAccountTokenCreator role allows impersonating a service account by generating short-lived access tokens, OpenID Connect ID tokens, and signing JWTs/blobs. This is the foundation of the service account impersonation pattern used for secure delegation.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 31,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "What is Security Command Center (SCC) in Google Cloud?",
+      "options": [
+        "A centralized security and risk management platform that identifies vulnerabilities, threats, and misconfigurations across Google Cloud resources",
+        "A firewall management console",
+        "A key management service",
+        "A network monitoring tool"
+      ],
+      "correct": 0,
+      "explanation": "Security Command Center (SCC) is Google Cloud's built-in security posture management platform. It provides asset inventory, vulnerability scanning (Security Health Analytics), threat detection (Event Threat Detection), and compliance monitoring across the organization.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 32,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "Which SCC feature continuously scans Google Cloud resources for common misconfigurations such as public buckets, open firewall rules, and unencrypted disks?",
+      "options": [
+        "Security Health Analytics",
+        "Event Threat Detection",
+        "Container Threat Detection",
+        "Web Security Scanner"
+      ],
+      "correct": 0,
+      "explanation": "Security Health Analytics is an SCC built-in service that continuously monitors Google Cloud resources for security misconfigurations. It detects issues like publicly accessible Cloud Storage buckets, overly permissive firewall rules, and unencrypted disks.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 33,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "Which SCC feature detects threats by analyzing Cloud Audit Logs, VPC Flow Logs, and DNS logs in real-time?",
+      "options": [
+        "Event Threat Detection",
+        "Security Health Analytics",
+        "Web Security Scanner",
+        "Container Threat Detection"
+      ],
+      "correct": 0,
+      "explanation": "Event Threat Detection (ETD) analyzes Cloud Audit Logs, VPC Flow Logs, and DNS logs to detect threats such as cryptocurrency mining, data exfiltration, brute-force SSH attempts, and suspicious IAM grants in real-time.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 34,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "easy",
+      "question": "Which Google Cloud service records all API activity (who did what, when, and where) for auditing purposes?",
+      "options": [
+        "Cloud Audit Logs",
+        "Cloud Logging",
+        "Cloud Monitoring",
+        "Access Transparency"
+      ],
+      "correct": 0,
+      "explanation": "Cloud Audit Logs automatically record API activity across Google Cloud services. They include Admin Activity logs (always on, free), Data Access logs (configurable), System Event logs, and Policy Denied logs, providing a comprehensive audit trail.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 35,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "Which type of Cloud Audit Log records operations that read or modify user data, such as BigQuery table reads or Cloud Storage object access?",
+      "options": [
+        "Data Access audit logs",
+        "Admin Activity audit logs",
+        "System Event audit logs",
+        "Policy Denied audit logs"
+      ],
+      "correct": 0,
+      "explanation": "Data Access audit logs record operations that read user data (e.g., BigQuery table queries, Cloud Storage object reads) or modify user data. They are disabled by default due to volume and must be explicitly enabled. They are essential for compliance and forensics.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 36,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "A company needs to detect when a service account key is created anywhere in the organization. Which approach is MOST effective?",
+      "options": [
+        "Create a log-based metric in Cloud Logging for iam.serviceAccountKeys.create events and set up a Cloud Monitoring alert",
+        "Manually review IAM policies weekly",
+        "Use Security Command Center vulnerability scanning",
+        "Enable VPC Flow Logs"
+      ],
+      "correct": 0,
+      "explanation": "Cloud Audit Logs automatically capture service account key creation events. A log-based metric filtered on the iam.serviceAccountKeys.create method, combined with a Cloud Monitoring alerting policy, provides real-time notification when keys are created.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 37,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "What is VPC Service Controls?",
+      "options": [
+        "A security perimeter that restricts data movement across Google Cloud services to prevent data exfiltration",
+        "A firewall for VPC networks",
+        "A VPN service for connecting to on-premises networks",
+        "A network address translation service"
+      ],
+      "correct": 0,
+      "explanation": "VPC Service Controls creates security perimeters around Google Cloud resources to mitigate data exfiltration risks. Resources inside a perimeter can communicate with each other, but data cannot be copied or accessed from outside the perimeter, even by authorized users.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 38,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "A company stores sensitive data in BigQuery and Cloud Storage. They need to prevent authorized users from copying data to personal projects outside the organization. Which service achieves this?",
+      "options": [
+        "VPC Service Controls with a service perimeter that includes the BigQuery and Cloud Storage projects",
+        "IAM policies restricting BigQuery export",
+        "Cloud Armor rate limiting",
+        "Cloud NAT egress rules"
+      ],
+      "correct": 0,
+      "explanation": "VPC Service Controls creates a perimeter that prevents data from being accessed or copied outside the defined boundary. Even users with IAM permissions cannot copy BigQuery results or Cloud Storage objects to projects outside the perimeter, preventing data exfiltration.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 39,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "Security Command Center Premium detects a 'Persistence: New Geography' finding. What does this indicate?",
+      "options": [
+        "A service account or user is accessing resources from a geographic location not previously observed, which may indicate credential compromise",
+        "A new storage bucket was created in a new region",
+        "A VPC was extended to a new geographic zone",
+        "A new user was created in a different country"
+      ],
+      "correct": 0,
+      "explanation": "The 'Persistence: New Geography' finding from SCC's Event Threat Detection indicates that a principal is accessing Google Cloud from an unusual geographic location. This anomaly may indicate stolen credentials being used from a different location.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 40,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "A forensics team needs to investigate an incident where data may have been exfiltrated. They need to determine exactly which BigQuery tables were accessed and what queries were run in the past 30 days. Where should they look?",
+      "options": [
+        "Data Access audit logs for BigQuery, specifically the BigQueryAudit methodName entries containing jobservice.query and tableservice.list",
+        "Admin Activity audit logs",
+        "VPC Flow Logs",
+        "Cloud Monitoring metrics"
+      ],
+      "correct": 0,
+      "explanation": "BigQuery Data Access audit logs record every query execution (jobservice.query), table read, and data access operation. These logs include the full SQL query text, the user who ran it, timestamps, and bytes processed — essential for data exfiltration forensics.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 41,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "A VPC Service Controls perimeter blocks a legitimate integration between an internal project and a third-party SaaS that uses a Google Cloud project. How should the security engineer allow this specific integration without weakening the perimeter?",
+      "options": [
+        "Configure an ingress rule on the perimeter that allows the specific third-party project and service, constrained by the method and identity",
+        "Remove the perimeter entirely",
+        "Add the third-party project to the perimeter",
+        "Use a VPN to bypass the perimeter"
+      ],
+      "correct": 0,
+      "explanation": "VPC Service Controls ingress rules allow specific exceptions to the perimeter policy. By specifying the exact source (third-party project), identity, service, and method, you can allow the necessary integration while keeping the perimeter secure for everything else.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 42,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "Which SCC feature specifically monitors GKE containers for suspicious activity such as added binary execution, library loading, or reverse shell creation?",
+      "options": [
+        "Container Threat Detection",
+        "Security Health Analytics",
+        "Event Threat Detection",
+        "Web Security Scanner"
+      ],
+      "correct": 0,
+      "explanation": "Container Threat Detection monitors GKE container workloads for suspicious runtime behavior including unexpected binary execution, library loading from suspicious paths, reverse shell creation, and cryptocurrency mining, all without requiring agents in the containers.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 43,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "How long are Admin Activity audit logs retained in Google Cloud by default?",
+      "options": [
+        "400 days",
+        "30 days",
+        "90 days",
+        "7 days"
+      ],
+      "correct": 0,
+      "explanation": "Admin Activity audit logs are retained for 400 days by default and cannot be disabled or configured. They are available at no cost. Data Access logs have a 30-day default retention but can be routed to Cloud Storage or BigQuery for longer retention.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 44,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "What is a VPC Service Controls 'bridge' used for?",
+      "options": [
+        "To enable bidirectional communication between two separate service perimeters",
+        "To connect VPC networks across regions",
+        "To bridge on-premises and cloud networks",
+        "To create a DMZ between perimeters"
+      ],
+      "correct": 0,
+      "explanation": "A VPC Service Controls bridge allows resources in two separate service perimeters to communicate with each other. Without a bridge, perimeters are isolated. Bridges enable specific cross-perimeter access while maintaining each perimeter's external boundary.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 45,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "A security engineer needs to integrate SCC findings with their existing SIEM system (Splunk) for centralized security monitoring. What is the recommended approach?",
+      "options": [
+        "Export SCC findings to a Pub/Sub topic and configure a Dataflow or Cloud Function to forward them to Splunk via the HEC endpoint",
+        "Manually export findings as CSV files daily",
+        "Use Cloud Logging export only",
+        "Configure SCC to write directly to Splunk"
+      ],
+      "correct": 0,
+      "explanation": "SCC supports Pub/Sub notification exports for real-time finding delivery. A Dataflow pipeline or Cloud Function subscribes to the Pub/Sub topic and forwards findings to Splunk's HTTP Event Collector (HEC) endpoint. Google also offers the SCC Splunk App for pre-built integration.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 46,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "An organization needs to retain all Data Access audit logs for 7 years for compliance. Cloud Logging only retains them for 30 days by default. What should the security engineer configure?",
+      "options": [
+        "Create a log sink (export) to a Cloud Storage bucket with a retention policy, or to BigQuery for queryable long-term storage",
+        "Increase the Cloud Logging retention period to 7 years",
+        "Export logs to a local file server",
+        "Enable Admin Activity logs with extended retention"
+      ],
+      "correct": 0,
+      "explanation": "Log sinks export log entries to Cloud Storage (cheapest for archival with retention policies), BigQuery (for queryable analysis), or Pub/Sub (for real-time processing). A Cloud Storage sink with a 7-year retention policy and locked bucket ensures compliance requirements are met.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 47,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "What does Security Command Center's Web Security Scanner do?",
+      "options": [
+        "Scans deployed web applications for common vulnerabilities like XSS, SQL injection, and mixed content",
+        "Monitors VPC network traffic for threats",
+        "Scans container images for known CVEs",
+        "Monitors Cloud Audit Logs for suspicious activity"
+      ],
+      "correct": 0,
+      "explanation": "Web Security Scanner is an SCC feature that crawls and scans publicly accessible web applications deployed on App Engine, GKE, or Compute Engine for common vulnerabilities including cross-site scripting (XSS), SQL injection, and mixed content.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 48,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "A data science team needs to access BigQuery datasets inside a VPC Service Controls perimeter from their local workstations. How should the security engineer configure access?",
+      "options": [
+        "Create an Access Context Manager access level based on corporate IP ranges and device trust, and add it as an ingress rule on the perimeter",
+        "Remove BigQuery from the perimeter",
+        "Create a VPN tunnel to the VPC",
+        "Grant the data scientists the Organization Admin role"
+      ],
+      "correct": 0,
+      "explanation": "Access Context Manager defines access levels based on attributes like IP range, device security posture, and identity. Adding this access level to the VPC Service Controls perimeter's ingress rules allows the data science team to access BigQuery from trusted corporate networks and devices.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 49,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "easy",
+      "question": "What is the difference between Cloud Logging and Cloud Audit Logs?",
+      "options": [
+        "Cloud Audit Logs is a specific subset of Cloud Logging that focuses on API activity for audit and compliance purposes",
+        "They are completely separate systems",
+        "Cloud Audit Logs is for network traffic; Cloud Logging is for application logs",
+        "Cloud Logging is deprecated in favor of Cloud Audit Logs"
+      ],
+      "correct": 0,
+      "explanation": "Cloud Audit Logs are a specialized type of logs within the Cloud Logging service. They specifically capture API activity (Admin Activity, Data Access, System Event, Policy Denied) for compliance and security auditing, while Cloud Logging handles all types of logs including application, infrastructure, and audit logs.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 50,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "How does Chronicle SIEM integrate with Google Cloud for security operations?",
+      "options": [
+        "Chronicle ingests Cloud Audit Logs, VPC Flow Logs, and SCC findings to provide advanced threat detection, investigation, and response capabilities using Google's threat intelligence",
+        "Chronicle replaces Cloud Logging entirely",
+        "Chronicle is only for on-premises security monitoring",
+        "Chronicle only works with third-party cloud providers"
+      ],
+      "correct": 0,
+      "explanation": "Chronicle SIEM is Google's cloud-native security operations platform. It integrates with Google Cloud by ingesting Cloud Audit Logs, VPC Flow Logs, SCC findings, and other telemetry. It provides advanced threat detection using Google's threat intelligence and supports automated response via Chronicle SOAR.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 51,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "When should VPC Service Controls dry-run mode be used?",
+      "options": [
+        "To test and validate perimeter configurations by logging violations without actually blocking requests",
+        "To enable the perimeter in a reduced functionality mode",
+        "To temporarily disable all perimeter protections",
+        "To run the perimeter only during business hours"
+      ],
+      "correct": 0,
+      "explanation": "Dry-run mode logs all requests that would be blocked by the perimeter without actually enforcing it. This allows security engineers to identify legitimate traffic that would be impacted, refine access levels and ingress/egress rules, and ensure no business disruption before enforcement.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 52,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "A security engineer needs to create an alert when anyone disables VPC Flow Logs on any subnet in the organization. Which approach works?",
+      "options": [
+        "Create an aggregated organization-level log sink, filter for SetIamPolicy or compute.subnetworks.patch events that disable flow logs, and set up a Monitoring alert",
+        "Manually check each subnet configuration daily",
+        "Use Security Health Analytics to detect this",
+        "Enable Cloud Armor logging"
+      ],
+      "correct": 0,
+      "explanation": "Organization-level log sinks capture audit logs from all projects. Filtering for compute.subnetworks.patch API calls where the flowLogConfig is being disabled or removed, combined with a Cloud Monitoring alerting policy, provides real-time detection of this security-impacting change.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 53,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "What is Access Transparency in Google Cloud?",
+      "options": [
+        "A feature that provides logs of Google personnel accessing your data for support operations, enabling oversight of Google's access",
+        "A tool for making IAM policies transparent to users",
+        "A feature that shows all users who access a resource",
+        "A compliance dashboard for tracking data access"
+      ],
+      "correct": 0,
+      "explanation": "Access Transparency provides near-real-time logs when Google Cloud support or engineering personnel access your data for legitimate business reasons (e.g., responding to a support ticket). This gives customers visibility and assurance that Google's access is justified and auditable.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 54,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "An organization has two VPC Service Controls perimeters: one for production data and one for analytics. The analytics team needs read-only access to specific BigQuery datasets in the production perimeter. How should this be configured?",
+      "options": [
+        "Configure an egress rule on the production perimeter allowing BigQuery read methods to the analytics perimeter's projects, and a matching ingress rule on the analytics perimeter",
+        "Create a bridge between the two perimeters",
+        "Move the BigQuery datasets to the analytics perimeter",
+        "Remove the production perimeter"
+      ],
+      "correct": 0,
+      "explanation": "Egress rules on the source perimeter and ingress rules on the destination perimeter provide fine-grained cross-perimeter access. By specifying only BigQuery read methods (bigquery.tables.getData, bigquery.jobs.create), you limit the analytics team to read-only access.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 55,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "A security team wants to be notified immediately when a new SCC finding with CRITICAL severity is detected. What should they configure?",
+      "options": [
+        "SCC notification config with a Pub/Sub topic, filtered by severity = CRITICAL, triggering a Cloud Function that sends alerts to the team",
+        "Check the SCC dashboard manually every hour",
+        "Export all findings to BigQuery and run scheduled queries",
+        "Configure Cloud Monitoring uptime checks"
+      ],
+      "correct": 0,
+      "explanation": "SCC supports Pub/Sub notification configurations with filter expressions. By filtering for severity = CRITICAL, only high-priority findings trigger notifications. A Cloud Function subscriber can then format and send alerts via email, Slack, PagerDuty, or any other channel.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 56,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "Which Security Command Center tier includes Event Threat Detection, Container Threat Detection, and compliance monitoring?",
+      "options": [
+        "SCC Premium (or Enterprise) tier",
+        "SCC Standard tier",
+        "SCC Basic tier",
+        "SCC Free tier"
+      ],
+      "correct": 0,
+      "explanation": "SCC Premium includes advanced features like Event Threat Detection, Container Threat Detection, Virtual Machine Threat Detection, compliance monitoring, and custom modules. The Standard tier provides Security Health Analytics and Web Security Scanner with limited functionality.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 57,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "What is the purpose of log-based metrics in Cloud Logging?",
+      "options": [
+        "To extract metric data from log entries so they can be used in Cloud Monitoring dashboards and alerting policies",
+        "To measure the volume of logs generated",
+        "To automatically compress and archive logs",
+        "To convert logs into audit reports"
+      ],
+      "correct": 0,
+      "explanation": "Log-based metrics extract numerical data from log entries and make them available in Cloud Monitoring. For example, you can create a metric that counts the number of failed authentication attempts per minute and create an alert when it exceeds a threshold.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 58,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "A developer accidentally introduces a VPC Service Controls violation that blocks a critical production workflow. How can the issue be quickly diagnosed?",
+      "options": [
+        "Check the VPC Service Controls audit logs in Cloud Logging, which show the denied request details including the source, target, and violated perimeter",
+        "Disable VPC Service Controls entirely and re-enable later",
+        "Check VPC Flow Logs for dropped packets",
+        "Review the Cloud NAT configuration"
+      ],
+      "correct": 0,
+      "explanation": "VPC Service Controls generates detailed audit log entries for every denied request, including the perimeter that blocked it, the source identity, the target resource, and the API method attempted. These logs in Cloud Logging enable quick diagnosis of the specific violation.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 59,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "An organization wants to implement a security operations center (SOC) using Google Cloud-native tools. What is the recommended architecture?",
+      "options": [
+        "SCC Premium for posture management and vulnerability detection, Chronicle SIEM for log aggregation and threat detection, Chronicle SOAR for automated response playbooks",
+        "Cloud Logging with BigQuery for all security operations",
+        "Third-party SIEM with no Google Cloud integration",
+        "Manual log review with spreadsheet tracking"
+      ],
+      "correct": 0,
+      "explanation": "The recommended Google Cloud SOC architecture uses SCC Premium for security posture management, Chronicle SIEM for advanced log analytics and threat detection using Google's threat intelligence, and Chronicle SOAR for automated incident response playbooks and orchestration.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 60,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "An organization needs to ensure that no one can modify or delete Cloud Audit Logs after they are written. How should this be implemented?",
+      "options": [
+        "Export logs to a Cloud Storage bucket with a locked retention policy (bucket lock) that prevents deletion or modification",
+        "Admin Activity logs are already immutable by default and need no additional protection",
+        "Store logs in BigQuery with no delete permissions",
+        "Export logs to an on-premises write-once storage system"
+      ],
+      "correct": 0,
+      "explanation": "While Admin Activity logs within Cloud Logging are immutable, exporting to a Cloud Storage bucket with a locked retention policy provides additional tamper-proof protection. Bucket lock creates a retention period that cannot be shortened or removed, even by administrators.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 61,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "What is a VPC (Virtual Private Cloud) in Google Cloud?",
+      "options": [
+        "A global virtual network that provides connectivity for Google Cloud resources with subnets, firewall rules, and routing",
+        "A physical data center dedicated to a single customer",
+        "A VPN connection to on-premises networks",
+        "A container orchestration platform"
+      ],
+      "correct": 0,
+      "explanation": "A VPC in Google Cloud is a global virtual network resource. Unlike AWS VPCs which are regional, Google Cloud VPCs are global with regional subnets. VPCs provide network isolation, custom IP ranges, firewall rules, and routing for cloud resources.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 62,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "Which type of firewall rule in Google Cloud takes priority: a hierarchical firewall policy rule or a VPC firewall rule?",
+      "options": [
+        "Hierarchical firewall policy rules are evaluated first and take priority",
+        "VPC firewall rules always take priority",
+        "They are evaluated simultaneously with VPC rules winning ties",
+        "The rule with the lowest priority number wins regardless of type"
+      ],
+      "correct": 0,
+      "explanation": "Hierarchical firewall policies are evaluated before VPC firewall rules. The evaluation order is: Organization-level hierarchical policies > Folder-level hierarchical policies > VPC network firewall policies > VPC firewall rules. A hierarchical policy can delegate to the next level using 'goto_next'.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 63,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "An organization has 50 projects with VPCs. They need to enforce a global rule that blocks incoming traffic on port 22 (SSH) from the internet across all projects. What is the MOST scalable approach?",
+      "options": [
+        "Create a hierarchical firewall policy at the organization level with a deny rule for ingress TCP port 22 from 0.0.0.0/0",
+        "Add a VPC firewall rule to each of the 50 project VPCs",
+        "Use Cloud Armor to block port 22",
+        "Configure IAP tunneling instead of SSH"
+      ],
+      "correct": 0,
+      "explanation": "Hierarchical firewall policies at the organization level automatically apply to all VPCs in all projects. A single deny rule for SSH from 0.0.0.0/0 enforces the policy organization-wide without needing to configure rules in each project individually.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 64,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "What is Google Cloud Armor used for?",
+      "options": [
+        "DDoS protection and web application firewall (WAF) capabilities for applications behind external load balancers",
+        "Encrypting data at rest",
+        "Managing IAM policies",
+        "VPN tunnel management"
+      ],
+      "correct": 0,
+      "explanation": "Cloud Armor provides DDoS protection and WAF capabilities. It uses security policies with rules to filter traffic to applications behind external HTTP(S) load balancers. It supports IP allowlisting/denylisting, geo-based filtering, rate limiting, and pre-configured WAF rules (OWASP Top 10).",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 65,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "A web application is experiencing a Layer 7 DDoS attack with HTTP flood requests. Which Cloud Armor feature is MOST effective for mitigating this?",
+      "options": [
+        "Adaptive Protection, which uses ML to detect and suggest rules for application-layer DDoS attacks",
+        "IP denylisting",
+        "Geo-based blocking",
+        "SSL policy enforcement"
+      ],
+      "correct": 0,
+      "explanation": "Cloud Armor Adaptive Protection uses machine learning to analyze traffic patterns, detect application-layer DDoS attacks, and automatically suggest custom filtering rules. It can distinguish between legitimate traffic spikes and malicious flood attacks at Layer 7.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 66,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "easy",
+      "question": "What is Cloud NAT used for in Google Cloud?",
+      "options": [
+        "Allowing instances without external IPs to access the internet for outbound connections while preventing inbound connections",
+        "Assigning public IP addresses to all instances",
+        "Load balancing traffic across instances",
+        "DNS resolution for VPC networks"
+      ],
+      "correct": 0,
+      "explanation": "Cloud NAT (Network Address Translation) enables instances in a VPC subnet that only have internal IPs to access the internet for outbound connections (e.g., downloading patches, calling external APIs) without exposing them to inbound internet traffic.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 67,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "A company wants to connect to Google Cloud APIs (BigQuery, Cloud Storage) from on-premises without traversing the public internet. Which Google Cloud feature enables this?",
+      "options": [
+        "Private Google Access over Cloud Interconnect or Cloud VPN with restricted.googleapis.com VIPs",
+        "Cloud NAT",
+        "Cloud Armor",
+        "External HTTP(S) load balancer"
+      ],
+      "correct": 0,
+      "explanation": "Private Google Access allows on-premises networks connected via Cloud Interconnect or Cloud VPN to reach Google Cloud APIs using the restricted.googleapis.com virtual IP range (199.36.153.4/30). This keeps all API traffic on the private network, never traversing the public internet.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 68,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "What is the difference between VPC firewall rules and network firewall policies in Google Cloud?",
+      "options": [
+        "VPC firewall rules apply to a single VPC; Network firewall policies can be applied to multiple VPCs and support IAM-governed administration",
+        "They are identical features with different names",
+        "VPC firewall rules are for egress; network firewall policies are for ingress",
+        "Network firewall policies are deprecated"
+      ],
+      "correct": 0,
+      "explanation": "VPC firewall rules are per-VPC and cannot be shared. Network firewall policies (global and regional) can be associated with multiple VPCs, support IAM-based access control for rule management, and provide more advanced features like FQDN objects and threat intelligence integration.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 69,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "What is Private Service Connect in Google Cloud?",
+      "options": [
+        "A feature that enables private connectivity to Google APIs and services, or to third-party services, using internal IP addresses in your VPC",
+        "A public-facing load balancer service",
+        "A DNS management tool",
+        "A monitoring service for network connections"
+      ],
+      "correct": 0,
+      "explanation": "Private Service Connect creates private endpoints in your VPC that connect to Google APIs, Google-managed services, or third-party producer services using internal IP addresses. Traffic never traverses the public internet, providing secure, private network paths.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 70,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "A Cloud Armor security policy needs to block SQL injection attacks. Which Cloud Armor feature provides this capability?",
+      "options": [
+        "Pre-configured WAF rules (owasp-crs-v030301-id942110-sqli and related rules) that detect SQL injection patterns",
+        "IP-based allowlisting",
+        "Rate limiting only",
+        "SSL certificate enforcement"
+      ],
+      "correct": 0,
+      "explanation": "Cloud Armor provides pre-configured WAF rules based on the OWASP ModSecurity Core Rule Set that detect SQL injection, XSS, remote code execution, and other attack patterns. These rules can be added to security policies to protect applications behind load balancers.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 71,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "easy",
+      "question": "What is Identity-Aware Proxy (IAP) used for?",
+      "options": [
+        "Controlling access to web applications and VMs based on user identity and context without requiring a VPN",
+        "Caching web content at the edge",
+        "Translating network addresses",
+        "Balancing load across multiple backends"
+      ],
+      "correct": 0,
+      "explanation": "Identity-Aware Proxy (IAP) establishes a central authorization layer for applications accessed by HTTPS. Users authenticate with their Google identity, and IAP verifies authorization before allowing access. For SSH/TCP, IAP tunneling replaces the need for bastion hosts or VPNs.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 72,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "A security engineer wants to eliminate bastion hosts used for SSH access to VMs. Which Google Cloud approach is recommended?",
+      "options": [
+        "IAP TCP forwarding, which tunnels SSH through IAP with identity-based access control",
+        "Assigning external IPs to all VMs",
+        "Using Cloud VPN for SSH access",
+        "Opening port 22 in the firewall for corporate IP ranges"
+      ],
+      "correct": 0,
+      "explanation": "IAP TCP forwarding creates an encrypted tunnel from the user's machine through IAP to the target VM, using the user's Google identity for authentication and IAM for authorization. VMs don't need external IPs or open SSH ports, and all access is logged in Cloud Audit Logs.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 73,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "An organization has multiple teams that each manage their own VPC. They need centralized security policy enforcement across all VPCs without impacting each team's ability to manage their own firewall rules. Which approach is BEST?",
+      "options": [
+        "Use hierarchical firewall policies at the organization/folder level for global security rules, with 'goto_next' for team-managed rules at the VPC level",
+        "Grant each team full firewall admin on all VPCs",
+        "Merge all VPCs into a single shared VPC",
+        "Use Cloud Armor for all firewall management"
+      ],
+      "correct": 0,
+      "explanation": "Hierarchical firewall policies enforce organization-wide security rules (e.g., deny SSH from internet) while the 'goto_next' action delegates to lower-level rules for traffic that doesn't match. This allows teams to manage their own VPC firewall rules within the guardrails set by the security team.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 74,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "A company wants to limit API request rates to a backend service behind a Cloud Load Balancer to prevent abuse. Which Cloud Armor feature should they use?",
+      "options": [
+        "Rate limiting rules that throttle or deny requests exceeding a configured threshold per client IP",
+        "IP allowlisting",
+        "Geo-based restrictions",
+        "Pre-configured WAF rules"
+      ],
+      "correct": 0,
+      "explanation": "Cloud Armor rate limiting rules allow you to configure request rate thresholds (e.g., 100 requests per minute per IP). Requests exceeding the threshold can be throttled (rate-limited with 429 responses) or denied, preventing API abuse and brute-force attacks.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 75,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "A security engineer needs to detect and respond to network-based threats like intrusion attempts and malware communication within a VPC. Which Google Cloud service provides this?",
+      "options": [
+        "Cloud IDS (Intrusion Detection System), which uses Palo Alto Networks threat detection engine to analyze mirrored traffic",
+        "Cloud Armor",
+        "VPC Flow Logs",
+        "Cloud NAT"
+      ],
+      "correct": 0,
+      "explanation": "Cloud IDS creates IDS endpoints that analyze mirrored VPC traffic using Palo Alto Networks' threat detection technology. It detects malware, spyware, command-and-control attacks, and other network threats, generating alerts that integrate with SCC and Cloud Logging.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 76,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "In Google Cloud VPC firewall rules, what is the default behavior for ingress (incoming) traffic?",
+      "options": [
+        "All ingress traffic is denied by default (implicit deny rule at lowest priority)",
+        "All ingress traffic is allowed by default",
+        "Only HTTP/HTTPS ingress is allowed by default",
+        "Ingress is allowed only from the same VPC"
+      ],
+      "correct": 0,
+      "explanation": "Google Cloud VPC networks have two implied firewall rules: deny all ingress (lowest priority, 65535) and allow all egress. This means all incoming traffic is blocked unless explicitly allowed by a higher-priority firewall rule.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 77,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "A company needs to connect their on-premises data center to Google Cloud with encrypted, high-bandwidth connectivity. Which option provides the HIGHEST bandwidth?",
+      "options": [
+        "Dedicated Interconnect with IPsec encryption (up to 200 Gbps per connection)",
+        "Cloud VPN (up to 3 Gbps per tunnel)",
+        "Partner Interconnect (up to 50 Gbps)",
+        "Direct peering"
+      ],
+      "correct": 0,
+      "explanation": "Dedicated Interconnect provides the highest bandwidth (10 Gbps or 100 Gbps per link, up to 200 Gbps with link aggregation). When paired with HA VPN for encryption (MACsec is also available), it provides both high bandwidth and encrypted connectivity.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 78,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "hard",
+      "question": "An organization uses Shared VPC to centralize network management. The security team needs to ensure that service projects cannot create firewall rules that override the host project's security policies. How should this be configured?",
+      "options": [
+        "Firewall rules are managed in the host project only; service projects cannot create firewall rules in the shared VPC. Use hierarchical firewall policies for additional enforcement.",
+        "Grant service projects firewall admin roles",
+        "Create separate VPCs for each service project",
+        "Use Cloud Armor instead of firewall rules"
+      ],
+      "correct": 0,
+      "explanation": "In Shared VPC, firewall rules for the shared network are managed exclusively in the host project. Service project admins can create instances but cannot modify firewall rules. Hierarchical firewall policies add organization-level enforcement that even host project admins must comply with.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 79,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "A Cloud Armor policy needs to allow traffic only from specific countries while also blocking known malicious IPs. What is the correct rule configuration?",
+      "options": [
+        "A high-priority rule allowing traffic from allowed country codes using origin.region_code, followed by a high-priority rule denying IPs from a threat intelligence feed, with a default deny-all rule",
+        "A single rule combining geo and IP restrictions",
+        "Configure Cloud NAT to filter by country",
+        "Use VPC firewall rules with geo-location tags"
+      ],
+      "correct": 0,
+      "explanation": "Cloud Armor evaluates rules by priority (lower number = higher priority). The deny rule for known malicious IPs should have the highest priority (evaluated first), followed by allow rules for specific countries, and a default deny-all at the lowest priority. This ensures malicious IPs from allowed countries are still blocked.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 80,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "What is the purpose of VPC Flow Logs?",
+      "options": [
+        "To capture metadata about network traffic flowing to and from VPC network interfaces for monitoring, forensics, and security analysis",
+        "To block unauthorized network traffic",
+        "To encrypt network traffic within the VPC",
+        "To route traffic between VPCs"
+      ],
+      "correct": 0,
+      "explanation": "VPC Flow Logs capture a sample of network flows sent to and from VM network interfaces. Each log entry includes source/destination IPs, ports, protocol, bytes, and action (allowed/denied). They are essential for network monitoring, forensics, and detecting anomalous traffic patterns.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 81,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "easy",
+      "question": "Which Google Cloud feature allows instances with only internal IP addresses to access Google APIs and services?",
+      "options": [
+        "Private Google Access",
+        "Cloud NAT",
+        "Cloud VPN",
+        "External IP address"
+      ],
+      "correct": 0,
+      "explanation": "Private Google Access enables VM instances with only internal IPs to reach Google APIs and services (Cloud Storage, BigQuery, etc.) without needing an external IP address. It is enabled at the subnet level and routes API traffic through Google's internal network.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 82,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "A web application behind a Cloud Load Balancer needs end-to-end encryption. SSL must terminate at the load balancer, and traffic between the load balancer and backends must also be encrypted. How should this be configured?",
+      "options": [
+        "Configure SSL termination at the HTTPS load balancer with a managed SSL certificate, and enable SSL/TLS between the load balancer and backends using backend service protocol set to HTTPS",
+        "Use TCP proxy load balancer for pass-through SSL",
+        "Configure Cloud Armor SSL policies only",
+        "Use Cloud NAT for encrypted traffic"
+      ],
+      "correct": 0,
+      "explanation": "End-to-end encryption requires SSL termination at the load balancer (for client-to-LB) and re-encryption to backends (LB-to-backend). Setting the backend service protocol to HTTPS ensures the load balancer establishes TLS connections to backend instances, providing encryption for both segments.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 83,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "A security engineer needs to inspect all egress traffic from a VPC for data loss prevention. Which architecture enables this?",
+      "options": [
+        "Route egress traffic through a centralized inspection VPC using VPC Network Peering or a Cloud IDS endpoint for packet inspection",
+        "Enable VPC Flow Logs only",
+        "Use Cloud NAT logging",
+        "Configure Cloud Armor egress rules"
+      ],
+      "correct": 0,
+      "explanation": "A centralized inspection architecture routes all egress traffic through an inspection VPC containing security appliances (Cloud IDS, third-party firewalls, or custom DLP solutions). VPC Network Peering or custom routes direct traffic through the inspection point before leaving the network.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 84,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "A firewall rule using service account-based targeting should allow communication between a web server and an application server. How should this be configured?",
+      "options": [
+        "Create a firewall rule with the target set to the app server's service account and the source set to the web server's service account",
+        "Use IP-based firewall rules with the instances' internal IPs",
+        "Use network tags on both instances",
+        "Create a shared service account for both servers"
+      ],
+      "correct": 0,
+      "explanation": "Service account-based firewall targeting is more secure than network tags because service accounts are managed through IAM and cannot be arbitrarily assigned. The rule targets the app server's service account and allows traffic sourced from the web server's service account.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 85,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "An organization needs to implement a hub-and-spoke network topology with centralized security controls. Which Google Cloud architecture supports this?",
+      "options": [
+        "A hub VPC with security appliances connected to spoke VPCs via VPC Peering, with custom routes directing traffic through the hub for inspection",
+        "A single flat VPC for all workloads",
+        "Separate VPCs with no connectivity",
+        "Cloud Interconnect between all VPCs"
+      ],
+      "correct": 0,
+      "explanation": "Hub-and-spoke topology uses a central hub VPC containing security appliances (firewalls, IDS, proxies) connected to spoke VPCs via VPC Peering. Custom routes in spoke VPCs direct traffic through the hub for centralized security inspection before reaching other spokes or the internet.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 86,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "What is the minimum TLS version recommended for Cloud Load Balancer SSL policies?",
+      "options": [
+        "TLS 1.2",
+        "TLS 1.0",
+        "TLS 1.1",
+        "SSL 3.0"
+      ],
+      "correct": 0,
+      "explanation": "TLS 1.2 is the minimum recommended version for Cloud Load Balancer SSL policies. TLS 1.0 and 1.1 have known vulnerabilities and are deprecated. Cloud Load Balancer SSL policies can be configured with MODERN, RESTRICTED, or CUSTOM profiles to enforce minimum TLS versions.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 87,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "What is Shared VPC, and why is it a security best practice?",
+      "options": [
+        "A feature that allows multiple projects to share a common VPC network managed by a central host project, enabling centralized network security management",
+        "A VPC that is publicly shared on the internet",
+        "A VPC that is shared between Google Cloud accounts",
+        "A virtual network for shared storage"
+      ],
+      "correct": 0,
+      "explanation": "Shared VPC separates network administration (host project) from workload deployment (service projects). The security team manages the network, firewall rules, and subnets centrally, while development teams deploy resources in service projects without modifying network security policies.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 88,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "A VPC firewall rule has a priority of 1000 and allows SSH. Another rule has a priority of 500 and denies SSH. What happens when SSH traffic arrives?",
+      "options": [
+        "SSH is denied because the deny rule has a lower priority number (500), which means higher precedence",
+        "SSH is allowed because the allow rule was created first",
+        "Both rules apply simultaneously",
+        "The most recently modified rule takes effect"
+      ],
+      "correct": 0,
+      "explanation": "In Google Cloud firewall rules, lower priority numbers have higher precedence. The deny rule at priority 500 is evaluated before the allow rule at priority 1000, so SSH traffic is denied. Priority values range from 0 (highest) to 65535 (lowest, implied rules).",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 89,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "A company requires that all DNS queries from their VPC are resolved through Cloud DNS with logging enabled, and that no DNS queries can be sent to external DNS servers. How should this be configured?",
+      "options": [
+        "Use Cloud DNS as the VPC's DNS resolver with DNS query logging enabled, and create a firewall rule blocking egress UDP/TCP port 53 to external destinations",
+        "Enable VPC Flow Logs for DNS traffic",
+        "Use Cloud NAT for DNS resolution",
+        "Configure custom routes for DNS traffic"
+      ],
+      "correct": 0,
+      "explanation": "Cloud DNS serves as the VPC DNS resolver by default. Enabling DNS query logging captures all DNS queries for security analysis. A firewall rule blocking egress to port 53 (except to Cloud DNS IPs) prevents instances from using unauthorized DNS servers that could bypass security controls.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 90,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "hard",
+      "question": "An organization needs to deploy a zero-trust network access model for internal web applications. Which Google Cloud solution implements BeyondCorp principles?",
+      "options": [
+        "Identity-Aware Proxy (IAP) combined with Access Context Manager for device posture and network location checks",
+        "Traditional VPN with network-based access control",
+        "Cloud VPN with IP allowlisting",
+        "Cloud Armor with geo-restrictions"
+      ],
+      "correct": 0,
+      "explanation": "IAP implements BeyondCorp zero-trust principles: access decisions are based on user identity, device trust status, and context (via Access Context Manager) rather than network location. Users can access internal applications from any network without a VPN, provided they meet the access policy requirements.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 91,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "What is the Cloud Data Loss Prevention (DLP) API used for?",
+      "options": [
+        "Discovering, classifying, and protecting sensitive data like PII, financial data, and credentials across Google Cloud services",
+        "Preventing data deletion",
+        "Backing up data to prevent loss",
+        "Encrypting all data in transit"
+      ],
+      "correct": 0,
+      "explanation": "The Cloud DLP API inspects, classifies, and de-identifies sensitive data. It supports over 150 built-in infoTypes (SSN, credit card, email) and can scan Cloud Storage, BigQuery, Datastore, and text/images. De-identification methods include masking, tokenization, and format-preserving encryption.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 92,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "Which Cloud DLP de-identification technique replaces sensitive data with a surrogate value while preserving its format?",
+      "options": [
+        "Format-preserving encryption (FPE) using CryptoReplaceFfxFpeConfig",
+        "Simple masking with asterisks",
+        "Deletion of the entire field",
+        "Bucketing into ranges"
+      ],
+      "correct": 0,
+      "explanation": "Format-preserving encryption (FPE) in Cloud DLP replaces sensitive data with an encrypted value that preserves the original format. For example, a 16-digit credit card number is replaced with another 16-digit value, maintaining downstream format validation while protecting the data.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 93,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "What is the difference between CMEK and CSEK in Google Cloud?",
+      "options": [
+        "CMEK uses customer-managed keys stored in Cloud KMS; CSEK uses customer-supplied keys that are not stored in Google Cloud",
+        "CMEK is more expensive than CSEK",
+        "CSEK provides stronger encryption than CMEK",
+        "They are different names for the same feature"
+      ],
+      "correct": 0,
+      "explanation": "CMEK (Customer-Managed Encryption Keys) are managed in Cloud KMS where Google stores and manages the key material. CSEK (Customer-Supplied Encryption Keys) are provided by the customer with each API request and are never stored by Google, giving the customer full control but more operational burden.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 94,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "A company requires that all Cloud Storage data be encrypted with keys they control and can rotate on their schedule. Which encryption option should they choose?",
+      "options": [
+        "Customer-Managed Encryption Keys (CMEK) using Cloud KMS",
+        "Google default encryption (Google-managed keys)",
+        "Client-side encryption only",
+        "Customer-Supplied Encryption Keys (CSEK)"
+      ],
+      "correct": 0,
+      "explanation": "CMEK using Cloud KMS provides customer control over encryption keys while leveraging Google's managed infrastructure. You control key creation, rotation schedule, and access policies. CMEK is preferred over CSEK because Cloud KMS handles key storage and availability.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 95,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "easy",
+      "question": "What is Assured Workloads in Google Cloud?",
+      "options": [
+        "A service that helps create and manage compliant environments by enforcing data residency, personnel access, and encryption controls for regulatory frameworks",
+        "A workload monitoring service",
+        "A container deployment platform",
+        "A performance testing tool"
+      ],
+      "correct": 0,
+      "explanation": "Assured Workloads automates compliance configuration for regulatory frameworks like FedRAMP, HIPAA, CJIS, and regional data residency requirements. It enforces controls including data location restrictions, key management policies, and personnel access restrictions.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 96,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "A European company must ensure that customer data never leaves the EU. Which Google Cloud mechanisms enforce data residency?",
+      "options": [
+        "Organization Policy with gcp.resourceLocations constraint limiting to EU regions, combined with Assured Workloads for EU data residency",
+        "Manually selecting EU regions when creating resources",
+        "Using Cloud Armor to block non-EU traffic",
+        "Creating IAM policies that reference EU regions"
+      ],
+      "correct": 0,
+      "explanation": "The gcp.resourceLocations Organization Policy constraint prevents resource creation outside specified regions, enforced across all projects. Assured Workloads provides additional controls specific to EU data residency requirements, including personnel access restrictions.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 97,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "A BigQuery dataset contains PII in the 'email' and 'phone_number' columns. The security team needs to automatically redact these fields when certain users query the data. Which approach is MOST appropriate?",
+      "options": [
+        "Use BigQuery column-level security with data masking policies that automatically mask PII columns based on the querying user's IAM permissions",
+        "Create a separate dataset without PII columns",
+        "Use Cloud DLP to scan and delete PII from the dataset",
+        "Restrict all users from querying the table"
+      ],
+      "correct": 0,
+      "explanation": "BigQuery column-level security with data masking policies applies dynamic masking to specific columns. Users without the unmasked reader role see masked/redacted values, while authorized users see the original data. This avoids maintaining separate datasets.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 98,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "A data pipeline ingests customer data from external sources. Before storing it in BigQuery, the data must be scanned for sensitive data types and any discovered PII must be tokenized. Which architecture implements this?",
+      "options": [
+        "Use Dataflow with Cloud DLP API integration to scan streaming data and apply deterministic tokenization (CryptoDeterministicConfig) before writing to BigQuery",
+        "Store data in BigQuery first, then scan with DLP",
+        "Manually review data files before loading",
+        "Use Cloud Armor to filter out PII from incoming data"
+      ],
+      "correct": 0,
+      "explanation": "Dataflow can call the Cloud DLP API inline during pipeline execution to inspect and tokenize data before it reaches BigQuery. Deterministic tokenization ensures the same input always produces the same token, preserving referential integrity for joins and analytics.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 99,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "A regulated company requires hardware-backed key management with FIPS 140-2 Level 3 compliance. Google Cloud KMS HSM keys are used, but the company needs to verify that keys were generated on an HSM. How can this be validated?",
+      "options": [
+        "Request the key attestation from Cloud KMS, which provides a cryptographic proof that the key was created and is protected by a Google-owned HSM",
+        "Trust Google's compliance documentation without verification",
+        "Use CSEK instead of KMS HSM keys",
+        "Deploy a third-party HSM in Google Cloud"
+      ],
+      "correct": 0,
+      "explanation": "Cloud KMS HSM keys support key attestation — a cryptographic proof that the key was generated on a FIPS 140-2 Level 3 certified HSM. The attestation can be verified using the attestation verification tool, providing auditable evidence for compliance requirements.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 100,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "Which Google Cloud service provides pre-built compliance reports and audit artifacts for frameworks like SOC 2, ISO 27001, and PCI DSS?",
+      "options": [
+        "Compliance Reports Manager in the Google Cloud Console",
+        "Security Command Center",
+        "Cloud Audit Logs",
+        "Access Transparency"
+      ],
+      "correct": 0,
+      "explanation": "Compliance Reports Manager provides self-service access to Google Cloud's compliance reports and certifications including SOC 1/2/3, ISO 27001/27017/27018, PCI DSS, HIPAA, and FedRAMP. These reports can be shared with auditors to demonstrate Google Cloud's compliance posture.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 101,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "A company needs to classify all data in their Cloud Storage buckets by sensitivity level (public, internal, confidential, restricted). Which approach scales BEST?",
+      "options": [
+        "Use Cloud DLP inspection jobs to scan buckets and automatically classify data based on discovered infoTypes, then label resources accordingly",
+        "Manually review each file and assign labels",
+        "Use file naming conventions to indicate sensitivity",
+        "Create separate buckets per sensitivity level without scanning"
+      ],
+      "correct": 0,
+      "explanation": "Cloud DLP inspection jobs can scan entire Cloud Storage buckets and identify over 150 built-in sensitive data types. Results can be used to automatically apply labels, trigger workflows, and maintain a data classification inventory that scales with data growth.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 102,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "An application needs to encrypt data before sending it to Google Cloud, ensuring Google never has access to the plaintext. Which approach should they use?",
+      "options": [
+        "Client-side encryption where the application encrypts data using local keys before uploading to Cloud Storage or BigQuery",
+        "CMEK with Cloud KMS",
+        "Google default encryption",
+        "CSEK for Cloud Storage"
+      ],
+      "correct": 0,
+      "explanation": "Client-side encryption ensures data is encrypted before it leaves the application, so Google Cloud never sees plaintext. The application manages its own encryption keys and performs encrypt/decrypt operations locally. This provides the strongest confidentiality guarantee but adds application complexity.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 103,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "A financial services company must demonstrate compliance with PCI DSS for cardholder data processed in Google Cloud. What shared responsibility obligations fall on the company (not Google)?",
+      "options": [
+        "Securing their own applications, managing access controls, encrypting cardholder data, maintaining network segmentation, and monitoring/logging application-level activity",
+        "Only physical security of data centers",
+        "Nothing — Google Cloud handles all PCI DSS compliance",
+        "Only infrastructure-level encryption"
+      ],
+      "correct": 0,
+      "explanation": "Under the shared responsibility model, Google provides a PCI DSS-compliant infrastructure, but the customer is responsible for application security, access control, cardholder data encryption, network segmentation, vulnerability management, logging, and monitoring at the application and platform level.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 104,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "Cloud DLP discovers sensitive data in a BigQuery dataset that cannot be deleted due to regulatory requirements. The data must be retained but rendered useless if exfiltrated. Which de-identification approach is BEST?",
+      "options": [
+        "Apply deterministic tokenization using CryptoDeterministicConfig with a wrapped key from Cloud KMS, allowing authorized re-identification while making exfiltrated data useless without the key",
+        "Delete the sensitive columns entirely",
+        "Apply simple character masking (e.g., ***)",
+        "Move the data to a separate dataset"
+      ],
+      "correct": 0,
+      "explanation": "Deterministic tokenization replaces sensitive values with tokens that are consistent (same input = same token) and reversible only with the Cloud KMS key. If data is exfiltrated, tokens cannot be reversed without access to the KMS key. Authorized users can re-identify data when needed.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 105,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "What happens to data encrypted with a CMEK key if the key is destroyed in Cloud KMS?",
+      "options": [
+        "The data becomes permanently inaccessible because it can no longer be decrypted",
+        "The data is automatically re-encrypted with a Google-managed key",
+        "The data remains accessible using a backup key",
+        "Google Cloud support can recover the data"
+      ],
+      "correct": 0,
+      "explanation": "If a CMEK key is destroyed, all data encrypted with that key becomes permanently inaccessible. Cloud KMS provides a 24-hour scheduled destruction period (configurable up to 120 days) during which the destruction can be cancelled. After destruction, recovery is impossible.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 106,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "An organization needs to set retention policies on Cloud Storage buckets to comply with legal hold requirements. Which Cloud Storage feature prevents deletion of objects during a legal hold?",
+      "options": [
+        "Retention policies with a bucket lock, plus event-based holds or temporary holds on specific objects",
+        "Object versioning only",
+        "IAM policies denying delete operations",
+        "Lifecycle policies with no delete actions"
+      ],
+      "correct": 0,
+      "explanation": "Cloud Storage retention policies set a minimum retention period, and bucket lock makes the policy permanent. Event-based holds and temporary holds placed on specific objects prevent deletion regardless of the retention policy, supporting legal hold scenarios where objects must be preserved indefinitely.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 107,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "A healthcare company needs to process medical images that may contain patient names embedded in DICOM metadata. Which Cloud DLP feature can detect PII in image files?",
+      "options": [
+        "Cloud DLP image inspection (content.inspect with byteItem for image data) which uses OCR to detect text in images and then applies infoType detection",
+        "Cloud DLP text inspection only",
+        "Cloud Vision API object detection",
+        "Security Command Center image scanning"
+      ],
+      "correct": 0,
+      "explanation": "Cloud DLP can inspect images by performing OCR (optical character recognition) to extract text, then applying its infoType detectors to identify sensitive data. This works for DICOM images, screenshots, scanned documents, and photos that may contain PII.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 108,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "A company uses External Key Manager (EKM) to keep encryption keys on-premises. If the connection between Google Cloud and the on-premises key manager is interrupted, what happens?",
+      "options": [
+        "Encrypted data becomes temporarily inaccessible until the connection is restored, because Google Cloud must contact the external key manager for each decrypt operation",
+        "Data remains accessible using cached keys",
+        "Google Cloud falls back to Google-managed keys",
+        "Data is automatically decrypted and stored in plaintext"
+      ],
+      "correct": 0,
+      "explanation": "With External Key Manager (EKM), Google Cloud does not store the key material. Each cryptographic operation requires real-time communication with the external key manager. If the connection is interrupted, decrypt operations fail and data is inaccessible until connectivity is restored.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 109,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "An organization uses Assured Workloads for FedRAMP High compliance. Which additional controls does Assured Workloads enforce beyond standard Google Cloud configurations?",
+      "options": [
+        "Restricted personnel access (US-only support), mandatory CMEK encryption, restricted resource locations, and organizational policy constraints for FedRAMP-compliant services only",
+        "Only data location restrictions",
+        "Only encryption requirements",
+        "No additional controls beyond standard configurations"
+      ],
+      "correct": 0,
+      "explanation": "Assured Workloads for FedRAMP High enforces multiple controls: restricting Google support access to US-based personnel with security clearances, mandatory CMEK encryption, limiting resource creation to approved US regions, and constraining which Google Cloud services can be used to only those with FedRAMP authorization.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 110,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "What is the purpose of the Cloud DLP 'risk analysis' feature?",
+      "options": [
+        "To quantify the re-identification risk of a dataset by computing statistical metrics like k-anonymity, l-diversity, and k-map",
+        "To analyze the risk of data loss from hardware failures",
+        "To assess network security risks",
+        "To evaluate the risk of exceeding API quotas"
+      ],
+      "correct": 0,
+      "explanation": "Cloud DLP risk analysis computes privacy metrics that quantify how easily individuals in a dataset could be re-identified. k-anonymity measures whether each person is indistinguishable from k-1 others, l-diversity measures the diversity of sensitive values in each equivalence class.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 111,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "Which Cloud KMS key purpose should be used for encrypting data at rest?",
+      "options": [
+        "ENCRYPT_DECRYPT (symmetric encryption)",
+        "ASYMMETRIC_SIGN",
+        "ASYMMETRIC_DECRYPT",
+        "MAC"
+      ],
+      "correct": 0,
+      "explanation": "The ENCRYPT_DECRYPT purpose creates symmetric encryption keys used for encrypting and decrypting data at rest. Symmetric keys are faster and more efficient for bulk data encryption compared to asymmetric keys, which are used for digital signatures and key exchange.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 112,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "easy",
+      "question": "What is the Access Approval feature in Google Cloud?",
+      "options": [
+        "A feature that requires explicit customer approval before Google support personnel can access customer data",
+        "A feature for approving IAM role requests",
+        "A feature for approving resource creation",
+        "A feature for approving budget increases"
+      ],
+      "correct": 0,
+      "explanation": "Access Approval requires Google Cloud support personnel to request and receive explicit customer approval before accessing customer content or resources. This provides an additional control layer beyond Access Transparency, giving customers veto power over Google's access.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 113,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "Which Cloud DLP infoType would detect Social Security Numbers in a dataset?",
+      "options": [
+        "US_SOCIAL_SECURITY_NUMBER",
+        "CREDIT_CARD_NUMBER",
+        "EMAIL_ADDRESS",
+        "PHONE_NUMBER"
+      ],
+      "correct": 0,
+      "explanation": "Cloud DLP provides built-in infoTypes for specific data types. US_SOCIAL_SECURITY_NUMBER detects SSN patterns in text and structured data. Cloud DLP has over 150 built-in infoTypes covering PII, financial data, credentials, and identifiers for many countries.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 114,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "A company needs to manage their own hardware security modules (HSMs) for regulatory reasons but wants to use Google Cloud. Which Cloud KMS option provides this?",
+      "options": [
+        "Cloud External Key Manager (EKM) which integrates with the customer's own external key management system",
+        "Cloud KMS with HSM key protection level",
+        "Cloud KMS with software key protection level",
+        "CSEK with customer-stored keys"
+      ],
+      "correct": 0,
+      "explanation": "Cloud External Key Manager (EKM) allows customers to use encryption keys stored in a supported external key management system (e.g., Fortanix, Thales, Equinix). The keys never leave the customer's infrastructure, giving them complete control over key lifecycle and hardware.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 115,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "How does Google Cloud's Key Access Justifications (KAJ) work with External Key Manager?",
+      "options": [
+        "KAJ provides a justification code with each key access request, and the external key manager can allow or deny the request based on the justification",
+        "KAJ encrypts key access logs",
+        "KAJ prevents all external access to keys",
+        "KAJ rotates keys automatically"
+      ],
+      "correct": 0,
+      "explanation": "Key Access Justifications sends a justification code with each cryptographic request to the external key manager, explaining why the key is being accessed (e.g., customer-initiated operation, Google-initiated access for system reliability). The EKM can be configured to deny requests with certain justification codes.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 116,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "A security engineer needs to create a custom infoType in Cloud DLP to detect their company's internal employee ID format (three letters followed by six digits). How should this be configured?",
+      "options": [
+        "Create a custom infoType using a regular expression (regex) pattern: [A-Z]{3}[0-9]{6}",
+        "Modify an existing built-in infoType",
+        "Submit a request to Google to add the infoType",
+        "Use the GENERIC_ID built-in infoType"
+      ],
+      "correct": 0,
+      "explanation": "Cloud DLP supports custom infoTypes defined by regular expressions, word lists, or stored dictionaries. A regex pattern custom infoType with the pattern [A-Z]{3}[0-9]{6} would detect the company's employee ID format in any scanned data source.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 117,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "Which Cloud KMS feature allows you to import your own key material generated outside of Google Cloud?",
+      "options": [
+        "Cloud KMS import job, which securely transfers externally generated key material into a Cloud KMS key version",
+        "CSEK upload",
+        "EKM sync",
+        "Key export/import via Cloud Storage"
+      ],
+      "correct": 0,
+      "explanation": "Cloud KMS import jobs allow you to bring your own key (BYOK) by securely wrapping externally generated key material with a wrapping key and importing it into a KMS key version. The imported key can then be used like any KMS-generated key while maintaining the key's provenance.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 118,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "An organization's compliance framework requires that all encryption keys used in production must be rotated at least every 90 days. How can this be enforced and monitored across the organization?",
+      "options": [
+        "Set automatic rotation periods on Cloud KMS keys, use Cloud Asset Inventory to discover all keys, and create a Cloud Monitoring alert for keys that exceed the rotation threshold",
+        "Manually check each key's rotation date monthly",
+        "Use only Google-managed encryption (no rotation needed)",
+        "Rotate keys annually and document exceptions"
+      ],
+      "correct": 0,
+      "explanation": "Cloud KMS automatic rotation creates new key versions on schedule. Cloud Asset Inventory provides an organization-wide view of all KMS keys and their properties. A Cloud Monitoring alerting policy on key rotation metrics ensures non-compliant keys are detected and flagged.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 119,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "A company needs to implement data loss prevention across Cloud Storage, BigQuery, and Datastore simultaneously with consistent policies. Which Cloud DLP feature enables this?",
+      "options": [
+        "DLP job triggers that can be configured to automatically scan multiple data repositories on a schedule using the same inspection templates",
+        "Manual inspection of each repository separately",
+        "VPC Service Controls for DLP",
+        "Organization Policy constraints for DLP"
+      ],
+      "correct": 0,
+      "explanation": "DLP job triggers automate scanning across Cloud Storage, BigQuery, and Datastore. Inspection templates define the infoTypes and rules to apply, and can be shared across multiple triggers ensuring consistent detection policies. Results are stored centrally for unified reporting.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 120,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "By default, all data at rest in Google Cloud is encrypted. What type of encryption does Google use by default?",
+      "options": [
+        "Google-managed encryption keys (server-side encryption with AES-256)",
+        "No encryption by default",
+        "Customer-managed encryption keys",
+        "Client-side encryption"
+      ],
+      "correct": 0,
+      "explanation": "Google Cloud automatically encrypts all data at rest using AES-256 with Google-managed encryption keys. This is applied to all services without any configuration needed. Customers can optionally use CMEK, CSEK, or EKM for additional key control.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 121,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "What is Cloud KMS used for?",
+      "options": [
+        "Creating, managing, and using cryptographic keys for encrypting and signing data",
+        "Managing Kubernetes clusters",
+        "Monitoring service health",
+        "Deploying applications"
+      ],
+      "correct": 0,
+      "explanation": "Cloud Key Management Service (Cloud KMS) is a managed service for creating, importing, and managing cryptographic keys. It supports symmetric and asymmetric keys for encryption, decryption, signing, and verification, with multiple protection levels (software, HSM, external).",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 122,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "What are the three key protection levels available in Cloud KMS?",
+      "options": [
+        "SOFTWARE, HSM, and EXTERNAL",
+        "LOW, MEDIUM, and HIGH",
+        "BASIC, STANDARD, and PREMIUM",
+        "AES, RSA, and ECC"
+      ],
+      "correct": 0,
+      "explanation": "Cloud KMS offers three protection levels: SOFTWARE (keys protected by software), HSM (keys stored in FIPS 140-2 Level 3 certified hardware security modules), and EXTERNAL (keys stored in a customer-managed external key management system via EKM).",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 123,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "easy",
+      "question": "What is Google Cloud Secret Manager used for?",
+      "options": [
+        "Storing, managing, and accessing sensitive data like API keys, passwords, and certificates",
+        "Encrypting data at rest",
+        "Managing IAM policies",
+        "Monitoring application performance"
+      ],
+      "correct": 0,
+      "explanation": "Secret Manager is a managed service for securely storing and accessing secrets such as API keys, database passwords, TLS certificates, and other sensitive configuration. It provides versioning, automatic rotation, and IAM-based access control.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 124,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "A microservices application has 20 services that each need database credentials. How should the credentials be managed securely?",
+      "options": [
+        "Store credentials in Secret Manager and grant each service's service account the secretmanager.secretAccessor role on only the secrets it needs",
+        "Hard-code credentials in each service's configuration file",
+        "Store credentials in environment variables on each VM",
+        "Use a shared database account for all services"
+      ],
+      "correct": 0,
+      "explanation": "Secret Manager with per-secret IAM access control ensures each service can only access its own credentials. Combined with dedicated service accounts per service, this implements least privilege. Secret Manager also supports automatic rotation and version pinning.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 125,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "easy",
+      "question": "Which Google Cloud feature allows you to encrypt data in use, not just at rest and in transit?",
+      "options": [
+        "Confidential Computing (Confidential VMs and Confidential GKE Nodes)",
+        "Cloud KMS encryption",
+        "Cloud Armor",
+        "VPC Service Controls"
+      ],
+      "correct": 0,
+      "explanation": "Confidential Computing encrypts data in use (while being processed in memory) using hardware-based trusted execution environments (AMD SEV or Intel TDX). Confidential VMs encrypt VM memory so even Google's infrastructure operators cannot access data being processed.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 126,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "A company processes sensitive financial data and needs assurance that the data is encrypted even in RAM during processing. Which compute option should they use?",
+      "options": [
+        "Confidential VMs, which use AMD SEV or Intel TDX to encrypt VM memory with a per-VM key",
+        "Standard Compute Engine instances with disk encryption",
+        "Cloud Functions with CMEK",
+        "App Engine with client-side encryption"
+      ],
+      "correct": 0,
+      "explanation": "Confidential VMs use hardware-based memory encryption (AMD SEV, Intel TDX) to encrypt the VM's memory with a per-VM key that is not accessible to the hypervisor or other VMs. This protects data in use — the third pillar of data protection alongside at-rest and in-transit.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 127,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "easy",
+      "question": "What is Binary Authorization in Google Cloud?",
+      "options": [
+        "A deploy-time security control that ensures only trusted container images are deployed to GKE or Cloud Run",
+        "A tool for compiling binary code",
+        "An authentication mechanism for binary protocols",
+        "A storage format for encrypted binaries"
+      ],
+      "correct": 0,
+      "explanation": "Binary Authorization enforces deploy-time policies that require container images to be signed by trusted authorities (attestors) before they can be deployed to GKE or Cloud Run. This ensures only verified, approved images from trusted registries run in production.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 128,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "medium",
+      "question": "A company wants to ensure that only container images that have passed vulnerability scanning are deployed to their GKE cluster. Which combination of services achieves this?",
+      "options": [
+        "Artifact Registry with vulnerability scanning, Binary Authorization with attestation based on scan results, and a GKE admission policy requiring attestation",
+        "Manual image review before deployment",
+        "Cloud Armor WAF rules for containers",
+        "IAM policies restricting image pulls"
+      ],
+      "correct": 0,
+      "explanation": "Artifact Registry scans images for vulnerabilities, and results can trigger a Binary Authorization attestation if no critical vulnerabilities are found. GKE's Binary Authorization admission controller then only allows deployment of attested images, creating an automated security gate.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 129,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "How does Secret Manager handle secret rotation?",
+      "options": [
+        "It supports versioning and can trigger a Pub/Sub notification or Cloud Function to perform automatic rotation of the secret value",
+        "It automatically changes all secret values every 90 days",
+        "It only supports manual rotation",
+        "It delegates rotation to Cloud KMS"
+      ],
+      "correct": 0,
+      "explanation": "Secret Manager supports automatic rotation through Pub/Sub notifications or Cloud Function triggers. When a rotation is due, a notification is sent that triggers a function to generate a new secret value, update the external system, and add the new value as a new version.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 130,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "A Cloud KMS key has multiple versions. How does key rotation work with CMEK-encrypted data?",
+      "options": [
+        "New encryption operations use the primary (latest) key version, while previously encrypted data remains encrypted with its original key version and can still be decrypted",
+        "All previously encrypted data is automatically re-encrypted with the new version",
+        "Old key versions are immediately destroyed after rotation",
+        "Key rotation requires manually re-encrypting all data"
+      ],
+      "correct": 0,
+      "explanation": "Cloud KMS key rotation creates a new primary version for new encrypt operations. Previously encrypted data retains its original key version reference and can be decrypted without re-encryption. Old key versions remain active for decryption. This is called 'envelope encryption with key versioning'.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 131,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "easy",
+      "question": "What is Certificate Authority Service (CAS) in Google Cloud?",
+      "options": [
+        "A managed service for creating and managing private certificate authorities (CAs) and issuing TLS/SSL certificates",
+        "A service for purchasing public SSL certificates",
+        "A certificate pinning service",
+        "A DNS validation service for Let's Encrypt"
+      ],
+      "correct": 0,
+      "explanation": "Certificate Authority Service (CAS) is a managed private CA that enables you to create root and subordinate CAs, issue X.509 certificates for TLS/mTLS, and manage certificate lifecycle. It is used for service-to-service authentication, device identity, and internal PKI.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 132,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "medium",
+      "question": "A microservices architecture requires mutual TLS (mTLS) between all services. Which Google Cloud service issues the internal certificates?",
+      "options": [
+        "Certificate Authority Service (CAS) for issuing internal certificates, or GKE Workload Certificates for mesh-based mTLS",
+        "Certificate Manager (for external certificates only)",
+        "Cloud Armor SSL policies",
+        "Cloud Load Balancer managed certificates"
+      ],
+      "correct": 0,
+      "explanation": "CAS provides a private CA for issuing internal certificates used in mTLS. For GKE-based microservices, GKE Workload Certificates or Anthos Service Mesh can automatically provision and rotate mTLS certificates for pod-to-pod communication.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 133,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "hard",
+      "question": "A company uses Cloud KMS to encrypt data in multiple services (Cloud Storage, BigQuery, Compute Engine). They need to audit all KMS key usage across the organization. Which approach provides this?",
+      "options": [
+        "Cloud Audit Logs for Cloud KMS capture every encrypt, decrypt, and administrative operation with the caller identity, key, and timestamp",
+        "Cloud Monitoring KMS metrics only",
+        "Cloud Asset Inventory key listing",
+        "Manual review of each service's encryption settings"
+      ],
+      "correct": 0,
+      "explanation": "Cloud Audit Logs automatically capture all Cloud KMS API calls including encrypt, decrypt, createCryptoKey, and administrative operations. Each log entry includes the caller identity, key resource name, operation, and timestamp, providing a complete audit trail of all key usage.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 134,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "hard",
+      "question": "A Secret Manager secret is accessed by 50 Cloud Functions. The security team needs to rotate the database password without any downtime. How should this be implemented?",
+      "options": [
+        "Create the new password as a new secret version, update the database to accept both old and new passwords, update the Cloud Functions to reference the 'latest' version alias, then disable the old version",
+        "Delete the old secret and create a new one",
+        "Change the password and redeploy all functions simultaneously",
+        "Keep using the same password to avoid disruption"
+      ],
+      "correct": 0,
+      "explanation": "Zero-downtime rotation uses a dual-password strategy: the new version is added while the old remains active. Functions using the 'latest' alias automatically get the new version on their next Secret Manager call. After all functions have picked up the new version, the old version is disabled.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 135,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "What attestation report does a Confidential VM provide, and what does it prove?",
+      "options": [
+        "A hardware-signed attestation report from the AMD SEV firmware proving the VM is running in an encrypted memory environment with the expected launch measurement",
+        "A Google-signed certificate of encryption",
+        "A Cloud Audit Log entry confirming VM creation",
+        "An IAM policy attestation"
+      ],
+      "correct": 0,
+      "explanation": "Confidential VMs generate a hardware-signed attestation report from the AMD SEV (or Intel TDX) firmware. This report proves that the VM is running in a trusted execution environment with encrypted memory and that the firmware/configuration matches the expected values (launch measurement).",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 136,
       "domain": 5,
       "objective": "5.4",
       "difficulty": "hard",
-      "question": "Which of the following is a key concept within Securing Data (Domain 5)?",
+      "question": "A CI/CD pipeline builds container images and pushes them to Artifact Registry. The security team wants Binary Authorization to automatically attest images that pass both vulnerability scanning AND unit tests. How should this be architected?",
       "options": [
-        "Confidential Computing and Confidential VMs",
-        "Secret Manager Versioning and Rotation",
-        "Cloud KMS (Symmetric/Asymmetric Keys)",
-        "Binary Authorization for Containers"
+        "Create two attestors (one for vulnerability scan results, one for test results), and configure the Binary Authorization policy to require both attestations before allowing deployment",
+        "Use a single attestor that combines both checks",
+        "Rely on manual approval for each deployment",
+        "Skip attestation and use image digest pinning only"
       ],
       "correct": 0,
-      "explanation": "Confidential Computing and Confidential VMs is a key concept in Securing Data. This domain covers topics essential for the Google Cloud Security Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "Multiple attestors provide defense in depth. The vulnerability scan attestor signs images with no critical CVEs, and the test attestor signs images that pass all tests. The Binary Authorization policy requires BOTH attestations, ensuring no image is deployed without meeting both security gates.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 137,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "What is envelope encryption, and how does Cloud KMS use it?",
+      "options": [
+        "Data is encrypted with a local Data Encryption Key (DEK), and the DEK is encrypted with a Key Encryption Key (KEK) stored in Cloud KMS",
+        "Data is encrypted twice with two different KMS keys",
+        "Data is encrypted and placed inside an encrypted envelope file",
+        "Cloud KMS sends the encryption key to the application for local encryption"
+      ],
+      "correct": 0,
+      "explanation": "Envelope encryption uses a two-tier key hierarchy: a local DEK encrypts the data (fast, can handle large volumes), and Cloud KMS encrypts the DEK with a KEK (only the small DEK needs to be sent to KMS). This combines KMS security with high-performance local encryption.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 138,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "easy",
+      "question": "What advantage does Secret Manager have over storing secrets in environment variables?",
+      "options": [
+        "Secret Manager provides versioning, access control, audit logging, and automatic rotation — none of which are available with plain environment variables",
+        "Secret Manager is faster to read",
+        "Secret Manager is less expensive",
+        "Environment variables are more secure"
+      ],
+      "correct": 0,
+      "explanation": "Secret Manager provides centralized management with fine-grained IAM access control (who can read which secrets), version management (rollback capability), audit logging (who accessed what), automatic rotation, and encryption at rest — none of which environment variables offer.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 139,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "Which Google Cloud service scans container images stored in Artifact Registry for known vulnerabilities?",
+      "options": [
+        "Artifact Analysis (Container Scanning), which automatically scans images for OS and language package vulnerabilities",
+        "Cloud Armor",
+        "Security Command Center Web Scanner",
+        "Cloud DLP"
+      ],
+      "correct": 0,
+      "explanation": "Artifact Analysis (formerly Container Analysis) automatically scans container images pushed to Artifact Registry for known vulnerabilities in OS packages and language packages. Results include CVE IDs, severity, and fixed-in versions, and integrate with Binary Authorization and SCC.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 140,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "medium",
+      "question": "What is the break-glass mechanism in Binary Authorization?",
+      "options": [
+        "A policy override that allows deploying an unattested image in emergency situations, while creating an audit log entry for review",
+        "A way to permanently disable Binary Authorization",
+        "A mechanism to bypass all security controls",
+        "An emergency deletion of all attestations"
+      ],
+      "correct": 0,
+      "explanation": "Break-glass is an escape hatch in Binary Authorization that allows deploying images that don't meet the attestation policy during emergencies. It creates a detailed audit log entry and can trigger an alert. This ensures urgent deployments aren't blocked while maintaining accountability.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 141,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "hard",
+      "question": "A company needs to ensure that a Cloud KMS key can ONLY be used for encrypting data in a specific Cloud Storage bucket, not for any other purpose. How can this be enforced?",
+      "options": [
+        "Use IAM conditions on the Cloud KMS key's encrypt permission that restrict usage to requests originating from the specific Cloud Storage bucket's resource name",
+        "Create a dedicated KMS keyring for the bucket",
+        "Use a CSEK instead of CMEK",
+        "Restrict the key to a single algorithm"
+      ],
+      "correct": 0,
+      "explanation": "IAM conditions on the KMS CryptoKey Encrypter role can include resource-based conditions that restrict which resources can use the key. By specifying the Cloud Storage bucket's resource name as a condition, encrypt operations from other resources are denied.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 142,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "hard",
+      "question": "An organization is implementing a zero-trust service mesh. They need automated certificate issuance, mTLS enforcement, and certificate rotation for 500+ microservices. Which architecture is recommended?",
+      "options": [
+        "Certificate Authority Service as the root CA, with Anthos Service Mesh handling automatic mTLS certificate issuance, enforcement, and rotation for all service-to-service communication",
+        "Manually generate and distribute certificates to each service",
+        "Use self-signed certificates with long expiration",
+        "Use Cloud Load Balancer for all service communication"
+      ],
+      "correct": 0,
+      "explanation": "CAS provides the root CA for the trust hierarchy. Anthos Service Mesh (or Istio) automatically requests short-lived certificates from CAS for each service, enforces mTLS for all inter-service traffic, and rotates certificates before expiration — all without application code changes.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 143,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "What is the difference between Confidential VMs and Shielded VMs?",
+      "options": [
+        "Shielded VMs protect against boot-level tampering (Secure Boot, vTPM, Integrity Monitoring); Confidential VMs additionally encrypt memory to protect data during processing",
+        "They are the same feature",
+        "Shielded VMs encrypt memory; Confidential VMs protect boot integrity",
+        "Shielded VMs are for GKE; Confidential VMs are for Compute Engine only"
+      ],
+      "correct": 0,
+      "explanation": "Shielded VMs protect the boot process (Secure Boot, vTPM for measured boot, Integrity Monitoring) to prevent rootkits and bootkits. Confidential VMs build on this by adding hardware-based memory encryption (AMD SEV/Intel TDX), protecting data even while it is being processed in RAM.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 144,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "hard",
+      "question": "A security audit reveals that some Secret Manager secrets have not been accessed in over 6 months, potentially indicating orphaned credentials. How can the security engineer identify and remediate these?",
+      "options": [
+        "Query Cloud Audit Logs for Secret Manager access events, identify secrets with no recent accessSecretVersion calls, and investigate whether they can be disabled or deleted",
+        "Delete all secrets older than 6 months",
+        "Rotate all secrets simultaneously",
+        "Disable Secret Manager access logging"
+      ],
+      "correct": 0,
+      "explanation": "Cloud Audit Logs record every secret access (secretmanager.versions.access). Querying for secrets with no recent access calls reveals potentially orphaned credentials. These should be investigated — if no longer needed, the secret versions should be disabled (not immediately destroyed) to allow recovery if needed.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 145,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "easy",
+      "question": "What is Artifact Registry in Google Cloud?",
+      "options": [
+        "A managed service for storing, managing, and securing container images, language packages, and OS packages",
+        "A code repository service",
+        "A CI/CD pipeline service",
+        "A deployment management tool"
+      ],
+      "correct": 0,
+      "explanation": "Artifact Registry is Google Cloud's universal package manager that stores container images (Docker, OCI), language packages (npm, Maven, Python), and OS packages (apt, yum). It provides vulnerability scanning, access control, and integration with Binary Authorization and Cloud Build.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 146,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "How does Cloud KMS encrypt data in transit between the client and the KMS service?",
+      "options": [
+        "All communication with Cloud KMS uses TLS (HTTPS) for encryption in transit, and KMS operations use authenticated encryption",
+        "Data is sent unencrypted and encrypted at the KMS service",
+        "A VPN tunnel is required for KMS access",
+        "Client-side encryption is required before sending to KMS"
+      ],
+      "correct": 0,
+      "explanation": "All Cloud KMS API calls use TLS (HTTPS), ensuring data is encrypted in transit. The encrypt/decrypt operations themselves use authenticated encryption (AES-GCM), which provides both confidentiality and integrity. For additional protection, VPC Service Controls can restrict KMS access to private networks.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 147,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "medium",
+      "question": "A company uses Certificate Manager (not CAS) for their external-facing load balancers. What is Certificate Manager's primary function?",
+      "options": [
+        "Provisioning, managing, and auto-renewing public TLS certificates for Google Cloud load balancers",
+        "Managing private CA hierarchies",
+        "Issuing mTLS certificates for internal services",
+        "Storing SSH keys for VM access"
+      ],
+      "correct": 0,
+      "explanation": "Certificate Manager handles public TLS certificate lifecycle for external load balancers. It supports Google-managed certificates (automatic provisioning and renewal), self-managed certificates (user-uploaded), and DNS authorization for wildcard certificates. It differs from CAS which handles private/internal PKI.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 148,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "Which GKE security feature ensures that only verified, unmodified node images are used when nodes boot?",
+      "options": [
+        "Shielded GKE Nodes with Secure Boot and Integrity Monitoring",
+        "Binary Authorization",
+        "Workload Identity",
+        "Network Policy"
+      ],
+      "correct": 0,
+      "explanation": "Shielded GKE Nodes use Secure Boot to verify the node's boot components are signed and unmodified, vTPM for measured boot, and Integrity Monitoring to detect boot-time tampering. This protects the node infrastructure from rootkits and firmware-level attacks.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 149,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "hard",
+      "question": "An organization wants to implement a software supply chain security framework for their Google Cloud workloads. Which combination of services provides end-to-end supply chain security?",
+      "options": [
+        "Cloud Build for verified builds, Artifact Registry for secure storage with vulnerability scanning, Binary Authorization for deploy-time verification, and Software Delivery Shield for overall visibility",
+        "GitHub Actions with manual image review",
+        "Cloud Build with no additional security controls",
+        "Third-party CI/CD with self-signed attestations"
+      ],
+      "correct": 0,
+      "explanation": "End-to-end supply chain security requires: verified builds (Cloud Build with SLSA provenance), secure artifact storage (Artifact Registry with vulnerability scanning), deploy-time verification (Binary Authorization requiring attestations), and Software Delivery Shield for unified supply chain security posture management.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 150,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "hard",
+      "question": "A company has a regulatory requirement that their Cloud KMS keys must never be used outside of a specific VPC. How can this be enforced?",
+      "options": [
+        "Use VPC Service Controls to create a perimeter around the Cloud KMS project, restricting key operations to originate only from within the allowed VPC",
+        "Use IAM Conditions based on IP address",
+        "Create a firewall rule blocking KMS API access",
+        "Use Cloud NAT for KMS access"
+      ],
+      "correct": 0,
+      "explanation": "VPC Service Controls can include Cloud KMS within a service perimeter, restricting all KMS operations (encrypt, decrypt, sign) to originate from within the perimeter boundary. Combined with Access Context Manager levels, this ensures keys can only be used from authorized network locations.",
+      "link": "cloud-security.html"
     }
   ]
 }

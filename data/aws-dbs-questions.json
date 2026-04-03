@@ -1,34 +1,34 @@
 {
   "metadata": {
     "title": "AWS Database Specialty DBS-C01 Practice Questions",
-    "version": "1.0",
-    "total_questions": 29,
+    "version": "2.0",
+    "total_questions": 150,
     "exam": "DBS-C01",
     "domains": {
       "1": {
         "name": "Workload-Specific Database Design",
         "weight": 26,
-        "count": 8
+        "count": 39
       },
       "2": {
         "name": "Deployment and Migration",
         "weight": 20,
-        "count": 6
+        "count": 30
       },
       "3": {
         "name": "Management and Operations",
         "weight": 18,
-        "count": 5
+        "count": 27
       },
       "4": {
         "name": "Monitoring and Troubleshooting",
         "weight": 18,
-        "count": 5
+        "count": 27
       },
       "5": {
         "name": "Database Security",
         "weight": 18,
-        "count": 5
+        "count": 27
       }
     }
   },
@@ -38,464 +38,2400 @@
       "domain": 1,
       "objective": "1.1",
       "difficulty": "easy",
-      "question": "Which of the following is a key concept within Workload-Specific Database Design (Domain 1)?",
+      "question": "A company needs a managed relational database for an OLTP application with high read traffic. The application requires MySQL compatibility and the ability to scale reads horizontally. Which database solution is MOST appropriate?",
       "options": [
-        "Neptune Graph Queries (Gremlin/SPARQL)",
-        "Aurora Serverless v2",
-        "DocumentDB MongoDB Compatibility",
-        "DynamoDB DAX Caching"
+        "Amazon Aurora MySQL with read replicas",
+        "Amazon RDS MySQL Single-AZ",
+        "Amazon DynamoDB",
+        "Amazon Redshift"
       ],
       "correct": 0,
-      "explanation": "Neptune Graph Queries (Gremlin/SPARQL) is a key concept in Workload-Specific Database Design. This domain covers topics essential for the AWS Database Specialty exam.",
-      "link": "start-here.html"
+      "explanation": "Amazon Aurora MySQL is optimized for OLTP workloads with up to 15 read replicas for horizontal read scaling. Aurora provides up to 5x better performance than standard MySQL on RDS. DynamoDB is a NoSQL database not suitable for relational workloads. Redshift is a data warehouse for OLAP, not OLTP.",
+      "link": "cloud-security.html"
     },
     {
       "id": 2,
       "domain": 1,
-      "objective": "1.2",
+      "objective": "1.1",
       "difficulty": "medium",
-      "question": "A professional is tasked with determine strategies for disaster recovery and high availability. What should be the first step?",
+      "question": "A social media application needs to store and query highly connected data such as user relationships, friend-of-friend recommendations, and social graphs. Which AWS database service is the BEST fit?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Amazon Neptune",
+        "Amazon DynamoDB",
+        "Amazon RDS PostgreSQL",
+        "Amazon DocumentDB"
       ],
       "correct": 0,
-      "explanation": "The first step in any workload-specific database design task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "Amazon Neptune is a fully managed graph database service optimized for storing and querying highly connected data. It supports Gremlin and SPARQL query languages for traversing relationships efficiently. Graph databases excel at relationship-heavy queries like social networks, recommendation engines, and fraud detection. Relational databases require expensive JOIN operations for graph traversal.",
+      "link": "cloud-security.html"
     },
     {
       "id": 3,
       "domain": 1,
-      "objective": "1.3",
-      "difficulty": "medium",
-      "question": "Which concept in Workload-Specific Database Design is most closely related to design database solutions for performance, compliance, and scalability?",
+      "objective": "1.2",
+      "difficulty": "easy",
+      "question": "A company needs a database for a web application that handles variable workloads with unpredictable traffic spikes. They want to avoid capacity planning. Which solution automatically scales compute capacity based on demand?",
       "options": [
-        "Workload-Specific Database Design governance and oversight",
-        "Workload-Specific Database Design implementation and operations",
-        "Workload-Specific Database Design assessment and testing",
-        "Workload-Specific Database Design risk management"
+        "Aurora Serverless v2",
+        "RDS with a reserved instance",
+        "DynamoDB with provisioned capacity",
+        "ElastiCache with cluster mode enabled"
       ],
-      "correct": 1,
-      "explanation": "Design database solutions for performance, compliance, and scalability falls under the implementation and operations aspect of Workload-Specific Database Design.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "Aurora Serverless v2 automatically scales compute capacity up and down based on application demand, measured in Aurora Capacity Units (ACUs). It can scale to zero when idle (v1) or to a minimum ACU (v2). This eliminates capacity planning for unpredictable workloads. RDS requires choosing a fixed instance size. DynamoDB provisioned capacity requires manual capacity planning.",
+      "link": "cloud-security.html"
     },
     {
       "id": 4,
       "domain": 1,
-      "objective": "1.4",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Workload-Specific Database Design (Domain 1)?",
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "An e-commerce application needs a database that provides single-digit millisecond reads for product catalog data accessed by millions of users. The data model is key-value based with predictable access patterns. Which database and feature combination provides the BEST read performance?",
       "options": [
-        "Amazon Keyspaces (Cassandra)",
-        "RDS Multi-AZ vs Read Replicas",
-        "DynamoDB DAX Caching",
-        "Timestream Time-Series Data"
+        "DynamoDB with DAX (DynamoDB Accelerator)",
+        "RDS MySQL with ElastiCache Redis",
+        "Aurora PostgreSQL with read replicas",
+        "DynamoDB with provisioned capacity and auto scaling"
       ],
       "correct": 0,
-      "explanation": "Amazon Keyspaces (Cassandra) is a key concept in Workload-Specific Database Design. This domain covers topics essential for the AWS Database Specialty exam.",
-      "link": "start-here.html"
+      "explanation": "DynamoDB with DAX provides microsecond-level read latency for eventually consistent reads through an in-memory cache. DAX is a fully managed, DynamoDB-compatible caching layer that requires no application code changes. For key-value access patterns with high read throughput, DynamoDB + DAX is the optimal combination. ElastiCache with RDS requires application-level caching logic.",
+      "link": "cloud-security.html"
     },
     {
       "id": 5,
       "domain": 1,
-      "objective": "1.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with select appropriate database services for specific types of data and workloads?",
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "A DynamoDB table stores user session data with userId as the partition key. The application needs to query sessions by userId and also query all sessions created within a specific time range across all users. How should the table be designed?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "Add a Global Secondary Index (GSI) with a composite key using a time-bucket as partition key and createdAt as sort key",
+        "Change the table's partition key to createdAt",
+        "Add a Local Secondary Index (LSI) with createdAt as the sort key",
+        "Scan the table with a filter expression on createdAt"
       ],
       "correct": 0,
-      "explanation": "When working with select appropriate database services for specific types of data and workloads, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "explanation": "A GSI allows querying data using a different partition key than the base table. Using a time-bucket (e.g., date) as the GSI partition key and createdAt as the sort key enables efficient time-range queries across all users. An LSI shares the same partition key as the base table (userId), so it cannot query across all users. Scanning the entire table is inefficient and expensive. Changing the partition key would break userId-based queries.",
+      "link": "cloud-security.html"
     },
     {
       "id": 6,
       "domain": 1,
-      "objective": "1.2",
-      "difficulty": "medium",
-      "question": "Which of the following best describes the purpose of \"Determine strategies for disaster recovery and high availability\" in Workload-Specific Database Design?",
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "A company needs to migrate a MongoDB application to AWS with minimal code changes. Which AWS database service provides MongoDB compatibility?",
       "options": [
-        "To implement and manage determine strategies for disaster recovery and high availability processes",
-        "To evaluate compliance with workload-specific database design standards",
-        "To document risk assessment procedures",
-        "To audit external vendor relationships"
+        "Amazon DocumentDB",
+        "Amazon DynamoDB",
+        "Amazon Neptune",
+        "Amazon Keyspaces"
       ],
       "correct": 0,
-      "explanation": "Determine strategies for disaster recovery and high availability is a key objective in Workload-Specific Database Design. Understanding this concept is essential for the exam.",
-      "link": "start-here.html"
+      "explanation": "Amazon DocumentDB (with MongoDB compatibility) is a fully managed document database that supports MongoDB workloads. Applications using MongoDB drivers and tools can connect to DocumentDB with minimal code changes. DynamoDB is a key-value/document store but uses a different API. Neptune is a graph database. Keyspaces is Cassandra-compatible.",
+      "link": "cloud-security.html"
     },
     {
       "id": 7,
       "domain": 1,
       "objective": "1.3",
       "difficulty": "medium",
-      "question": "Which of the following is a key concept within Workload-Specific Database Design (Domain 1)?",
+      "question": "A DynamoDB table uses userId as the partition key. The application experiences hot partition issues because a small number of popular users generate 80% of the traffic. How should this be resolved?",
       "options": [
-        "Neptune Graph Queries (Gremlin/SPARQL)",
-        "DocumentDB MongoDB Compatibility",
-        "ElastiCache Redis Cluster Mode",
-        "DynamoDB Global Tables"
+        "Add a random suffix to the partition key to distribute writes across more partitions, and use scatter-gather for reads",
+        "Increase the provisioned write capacity to handle the hot partitions",
+        "Switch to on-demand capacity mode",
+        "Add a Global Secondary Index to offload reads from the base table"
       ],
       "correct": 0,
-      "explanation": "Neptune Graph Queries (Gremlin/SPARQL) is a key concept in Workload-Specific Database Design. This domain covers topics essential for the AWS Database Specialty exam.",
-      "link": "start-here.html"
+      "explanation": "Adding a random suffix (e.g., userId#1 through userId#10) distributes a single logical partition key across multiple physical partitions. Reads use a scatter-gather pattern to query all suffixed keys and merge results. This is the standard DynamoDB pattern for handling hot keys. Increasing capacity does not fix uneven distribution. On-demand mode has adaptive capacity but may not fully resolve extreme hot keys. GSIs inherit the same hot key problem.",
+      "link": "cloud-security.html"
     },
     {
       "id": 8,
       "domain": 1,
       "objective": "1.4",
       "difficulty": "hard",
-      "question": "Which concept in Workload-Specific Database Design is most closely related to compare the costs of database solutions?",
+      "question": "A company needs a database for a financial ledger application that requires an immutable, cryptographically verifiable transaction log. No user (including administrators) should be able to modify or delete historical entries. Which AWS database service meets this requirement?",
       "options": [
-        "Workload-Specific Database Design governance and oversight",
-        "Workload-Specific Database Design implementation and operations",
-        "Workload-Specific Database Design assessment and testing",
-        "Workload-Specific Database Design risk management"
+        "Amazon QLDB (Quantum Ledger Database)",
+        "Amazon DynamoDB with deletion protection",
+        "Amazon Aurora with audit logging",
+        "Amazon RDS with read-only replicas"
       ],
-      "correct": 1,
-      "explanation": "Compare the costs of database solutions falls under the implementation and operations aspect of Workload-Specific Database Design.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "Amazon QLDB provides an immutable, transparent, and cryptographically verifiable transaction log. It uses a journal that is append-only — no record can be updated or deleted. QLDB provides built-in SHA-256 cryptographic hashing to verify data integrity. DynamoDB deletion protection prevents table deletion but not record modification. Aurora audit logging records changes but does not prevent them.",
+      "link": "cloud-security.html"
     },
     {
       "id": 9,
-      "domain": 2,
-      "objective": "2.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Deployment and Migration (Domain 2)?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "An application requires a caching layer for session management that supports data persistence, automatic failover, and complex data structures (sorted sets, hashes, lists). Which ElastiCache option should be selected?",
       "options": [
-        "Snowball for Large Dataset Migration",
-        "DynamoDB Import/Export to S3",
-        "Homogeneous vs Heterogeneous Migration",
-        "Schema Conversion Tool (SCT)"
+        "ElastiCache for Redis with cluster mode enabled",
+        "ElastiCache for Memcached with multiple nodes",
+        "ElastiCache for Redis with cluster mode disabled",
+        "ElastiCache for Memcached with Auto Discovery"
       ],
       "correct": 0,
-      "explanation": "Snowball for Large Dataset Migration is a key concept in Deployment and Migration. This domain covers topics essential for the AWS Database Specialty exam.",
-      "link": "start-here.html"
+      "explanation": "ElastiCache for Redis supports complex data structures (sorted sets, hashes, lists, streams), data persistence (RDB/AOF), and automatic failover with Multi-AZ replication. Cluster mode enabled provides horizontal scaling across multiple shards. Memcached is simpler but does not support persistence, complex data structures, or native replication. Redis cluster mode disabled supports replication but not horizontal sharding.",
+      "link": "cloud-security.html"
     },
     {
       "id": 10,
-      "domain": 2,
-      "objective": "2.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with determine data migration and replication approaches. What should be the first step?",
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "A company needs to run complex analytical queries against petabytes of structured data. The queries involve large aggregations and joins across multiple tables. Which AWS database service is designed for this workload?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Amazon Redshift",
+        "Amazon Aurora",
+        "Amazon DynamoDB",
+        "Amazon ElastiCache"
       ],
       "correct": 0,
-      "explanation": "The first step in any deployment and migration task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "Amazon Redshift is a fully managed data warehouse designed for online analytical processing (OLAP) workloads. It uses columnar storage, massively parallel processing (MPP), and result caching to handle complex queries on petabyte-scale data. Aurora is designed for OLTP, not analytics. DynamoDB is a NoSQL database not suited for complex joins. ElastiCache is an in-memory cache, not an analytical database.",
+      "link": "cloud-security.html"
     },
     {
       "id": 11,
-      "domain": 2,
-      "objective": "2.3",
-      "difficulty": "medium",
-      "question": "Which concept in Deployment and Migration is most closely related to deploy database solutions?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "A Redshift data warehouse needs to optimize query performance for a fact table with 10 billion rows. Most queries filter by customer_id and join with a dimension table on region_id. The dimension table has 50 rows. What distribution and sort key strategy should be used?",
       "options": [
-        "Deployment and Migration governance and oversight",
-        "Deployment and Migration implementation and operations",
-        "Deployment and Migration assessment and testing",
-        "Deployment and Migration risk management"
+        "KEY distribution on customer_id for the fact table, ALL distribution for the dimension table, and COMPOUND sort key on the most common filter columns",
+        "EVEN distribution for both tables with no sort keys",
+        "ALL distribution for the fact table and KEY distribution for the dimension table",
+        "KEY distribution on region_id for both tables"
       ],
-      "correct": 1,
-      "explanation": "Deploy database solutions falls under the implementation and operations aspect of Deployment and Migration.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "KEY distribution on customer_id co-locates rows with the same customer_id on the same node, reducing data movement for customer-filtered queries. ALL distribution replicates the small 50-row dimension table to every node, eliminating shuffles during joins. A COMPOUND sort key on frequently filtered columns enables zone map filtering and reduces scanned data. EVEN distribution would cause unnecessary data shuffling during queries.",
+      "link": "cloud-security.html"
     },
     {
       "id": 12,
-      "domain": 2,
-      "objective": "2.1",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Deployment and Migration (Domain 2)?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "A gaming company needs a database that can handle millions of concurrent players with single-digit millisecond latency for both reads and writes. The data model is simple key-value lookups for player state. Cost optimization is important. Which solution is BEST?",
       "options": [
-        "Homogeneous vs Heterogeneous Migration",
-        "Blue/Green Deployments for RDS",
-        "DynamoDB Import/Export to S3",
-        "Cross-Region Replication"
+        "DynamoDB with on-demand capacity mode",
+        "Aurora MySQL with multiple read replicas",
+        "ElastiCache Redis cluster",
+        "RDS PostgreSQL with provisioned IOPS"
       ],
       "correct": 0,
-      "explanation": "Homogeneous vs Heterogeneous Migration is a key concept in Deployment and Migration. This domain covers topics essential for the AWS Database Specialty exam.",
-      "link": "start-here.html"
+      "explanation": "DynamoDB with on-demand capacity automatically scales to handle millions of requests per second with single-digit millisecond latency. On-demand mode is ideal when traffic is unpredictable (gaming traffic spikes). It charges per request, avoiding over-provisioning costs during low activity. ElastiCache Redis is fast but volatile and requires capacity planning. Aurora and RDS have connection limits that may not support millions of concurrent users.",
+      "link": "cloud-security.html"
     },
     {
       "id": 13,
-      "domain": 2,
-      "objective": "2.2",
+      "domain": 1,
+      "objective": "1.4",
       "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with determine data migration and replication approaches?",
+      "question": "A company wants to migrate their Apache Cassandra workload to AWS with minimal operational overhead. Which AWS service provides Cassandra compatibility?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "Amazon Keyspaces (for Apache Cassandra)",
+        "Amazon DynamoDB",
+        "Amazon DocumentDB",
+        "Amazon Neptune"
       ],
       "correct": 0,
-      "explanation": "When working with determine data migration and replication approaches, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "explanation": "Amazon Keyspaces is a scalable, serverless, highly available Cassandra-compatible database service. It uses the Cassandra Query Language (CQL) API, so existing Cassandra applications can migrate with minimal changes. Keyspaces is serverless, eliminating the need to provision and manage Cassandra clusters. DynamoDB has different APIs and data models.",
+      "link": "cloud-security.html"
     },
     {
       "id": 14,
-      "domain": 2,
-      "objective": "2.3",
-      "difficulty": "medium",
-      "question": "Which of the following best describes the purpose of \"Deploy database solutions\" in Deployment and Migration?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "A DynamoDB table stores order data with orderId as the partition key and orderDate as the sort key. The application frequently queries orders by customerId across all dates. Adding a GSI on customerId causes the GSI to be throttled despite the base table having sufficient capacity. What is the MOST likely cause?",
       "options": [
-        "To implement and manage deploy database solutions processes",
-        "To evaluate compliance with deployment and migration standards",
-        "To document risk assessment procedures",
-        "To audit external vendor relationships"
+        "The GSI has a hot partition because some customers have significantly more orders, and the GSI's provisioned capacity is independent of the base table",
+        "GSIs do not support the query operation, only scan",
+        "The GSI is sharing capacity with the base table and is being throttled by other operations",
+        "The sort key on the GSI must match the base table's sort key"
       ],
       "correct": 0,
-      "explanation": "Deploy database solutions is a key objective in Deployment and Migration. Understanding this concept is essential for the exam.",
-      "link": "start-here.html"
+      "explanation": "GSIs have their own provisioned throughput settings separate from the base table. If the GSI capacity is not sufficient for the query pattern, it will be throttled. Additionally, if customerId creates hot partitions (popular customers with many orders), the GSI experiences the same hot partition issues as any DynamoDB table. The solution is to ensure adequate GSI capacity and consider write sharding if hot keys persist. GSI throttling can also cause back-pressure on base table writes.",
+      "link": "cloud-security.html"
     },
     {
       "id": 15,
-      "domain": 3,
-      "objective": "3.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Management and Operations (Domain 3)?",
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "medium",
+      "question": "A company needs to store and query time-series data from IoT sensors. The data arrives at high volume (millions of records per minute) and queries typically filter by device ID and time range. Which AWS database service is purpose-built for this workload?",
       "options": [
-        "Point-in-Time Recovery (PITR)",
-        "AWS Backup for Databases",
-        "Parameter Groups and Option Groups",
-        "Lambda-Based Automation"
+        "Amazon Timestream",
+        "Amazon DynamoDB",
+        "Amazon RDS MySQL",
+        "Amazon Redshift"
       ],
       "correct": 0,
-      "explanation": "Point-in-Time Recovery (PITR) is a key concept in Management and Operations. This domain covers topics essential for the AWS Database Specialty exam.",
-      "link": "start-here.html"
+      "explanation": "Amazon Timestream is a fully managed time-series database optimized for IoT and operational data. It automatically tiers data between in-memory and magnetic storage, supports built-in time-series functions (interpolation, smoothing, aggregation), and provides high write throughput. DynamoDB can handle time-series data but requires manual partition key design. Timestream's query engine is optimized for time-based queries.",
+      "link": "cloud-security.html"
     },
     {
       "id": 16,
-      "domain": 3,
-      "objective": "3.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with determine backup and restore strategies. What should be the first step?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "easy",
+      "question": "What is the primary difference between an RDS Multi-AZ deployment and an RDS read replica?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Multi-AZ provides synchronous replication for high availability; read replicas provide asynchronous replication for read scaling",
+        "Multi-AZ provides read scaling; read replicas provide high availability",
+        "Multi-AZ uses asynchronous replication; read replicas use synchronous replication",
+        "Multi-AZ is available in all regions; read replicas are limited to the same region"
       ],
       "correct": 0,
-      "explanation": "The first step in any management and operations task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "Multi-AZ uses synchronous replication to a standby instance in another AZ for automatic failover (high availability). The standby is not accessible for reads. Read replicas use asynchronous replication and are accessible for read queries (read scaling). Read replicas can be cross-region. They serve different purposes: Multi-AZ for availability, read replicas for performance.",
+      "link": "cloud-security.html"
     },
     {
       "id": 17,
-      "domain": 3,
-      "objective": "3.3",
+      "domain": 1,
+      "objective": "1.3",
       "difficulty": "medium",
-      "question": "Which concept in Management and Operations is most closely related to manage operational activities of database environments?",
+      "question": "An application uses DynamoDB with a table that has orderId as the partition key. The application needs to query orders by customerId AND filter by status. Which index design is MOST efficient?",
       "options": [
-        "Management and Operations governance and oversight",
-        "Management and Operations implementation and operations",
-        "Management and Operations assessment and testing",
-        "Management and Operations risk management"
+        "A GSI with customerId as the partition key and status as the sort key",
+        "A GSI with status as the partition key and customerId as the sort key",
+        "A scan operation with filter expressions for both customerId and status",
+        "A LSI with customerId as an alternate sort key"
       ],
-      "correct": 1,
-      "explanation": "Manage operational activities of database environments falls under the implementation and operations aspect of Management and Operations.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "A GSI with customerId as partition key and status as sort key enables efficient Query operations that retrieve all orders for a specific customer, optionally filtered by status using key conditions. Using status as the partition key would create hot partitions (few distinct values). Scan operations read the entire table and are expensive. LSI requires the same partition key as the base table (orderId), so it cannot enable customerId queries.",
+      "link": "cloud-security.html"
     },
     {
       "id": 18,
-      "domain": 3,
-      "objective": "3.4",
+      "domain": 1,
+      "objective": "1.4",
       "difficulty": "hard",
-      "question": "Which of the following is a key concept within Management and Operations (Domain 3)?",
+      "question": "A company runs a Redshift cluster and needs to query data stored in S3 without loading it into Redshift tables. The data is in Parquet format and partitioned by date. Which Redshift feature should be used?",
       "options": [
-        "Parameter Groups and Option Groups",
-        "AWS Backup for Databases",
-        "Lambda-Based Automation",
-        "RDS Maintenance Windows"
+        "Redshift Spectrum with external tables defined in the Glue Data Catalog",
+        "COPY command with manifest files",
+        "Redshift Federated Query",
+        "Redshift materialized views"
       ],
       "correct": 0,
-      "explanation": "Parameter Groups and Option Groups is a key concept in Management and Operations. This domain covers topics essential for the AWS Database Specialty exam.",
-      "link": "start-here.html"
+      "explanation": "Redshift Spectrum enables querying data directly in S3 using external tables. When combined with the Glue Data Catalog (which stores the table schema and partition information), Spectrum can efficiently query partitioned Parquet files without loading data into Redshift. The COPY command loads data INTO Redshift tables. Federated Query connects to other databases (RDS/Aurora), not S3. Materialized views are for pre-computed query results.",
+      "link": "cloud-security.html"
     },
     {
       "id": 19,
-      "domain": 3,
-      "objective": "3.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with determine maintenance tasks and processes?",
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "medium",
+      "question": "A company needs to choose between ElastiCache Redis and Memcached. The application requires multi-threaded performance, simple key-value caching, and does not need persistence. Which option is recommended?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "ElastiCache for Memcached",
+        "ElastiCache for Redis with cluster mode disabled",
+        "ElastiCache for Redis with cluster mode enabled",
+        "DynamoDB DAX"
       ],
       "correct": 0,
-      "explanation": "When working with determine maintenance tasks and processes, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "explanation": "Memcached is designed for simple key-value caching with multi-threaded architecture that utilizes multiple cores effectively. It is the better choice when persistence, complex data types, and replication are not needed. Redis is single-threaded per shard (though Redis 6+ uses I/O threads), provides richer features (persistence, replication, complex data types) but adds overhead not needed for simple caching. DAX is DynamoDB-specific.",
+      "link": "cloud-security.html"
     },
     {
       "id": 20,
-      "domain": 4,
-      "objective": "4.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Monitoring and Troubleshooting (Domain 4)?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "A DynamoDB table stores 50GB of data with a composite key: tenantId (partition key) and timestamp (sort key). The application needs to retrieve the most recent 100 items for a specific tenant efficiently. Which query approach is optimal?",
       "options": [
-        "DynamoDB Contributor Insights",
-        "CloudWatch Database Metrics",
-        "Enhanced Monitoring (OS Metrics)",
-        "Slow Query Logs and General Logs"
+        "Query with tenantId as the partition key, ScanIndexForward set to false, and Limit set to 100",
+        "Scan the entire table with a filter expression on tenantId",
+        "Query with tenantId and use a FilterExpression to limit results to 100",
+        "Create a GSI with timestamp as the partition key and query it"
       ],
       "correct": 0,
-      "explanation": "DynamoDB Contributor Insights is a key concept in Monitoring and Troubleshooting. This domain covers topics essential for the AWS Database Specialty exam.",
-      "link": "start-here.html"
+      "explanation": "Querying by tenantId (partition key) with ScanIndexForward=false returns items in reverse chronological order (newest first) since the sort key is timestamp. Setting Limit=100 returns only the first 100 items from the sorted results, consuming minimal read capacity. FilterExpression applies AFTER reading, so it would still read all items. Scanning is extremely inefficient. A GSI with timestamp as partition key would create a hot key for current timestamps.",
+      "link": "cloud-security.html"
     },
     {
       "id": 21,
-      "domain": 4,
-      "objective": "4.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with troubleshoot and resolve common database issues. What should be the first step?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "easy",
+      "question": "A company needs their Aurora database to be accessible for reads in multiple AWS regions with low latency. Which feature should be used?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Aurora Global Database",
+        "Aurora Multi-AZ",
+        "Aurora read replicas",
+        "Aurora Serverless v2"
       ],
       "correct": 0,
-      "explanation": "The first step in any monitoring and troubleshooting task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "Aurora Global Database replicates data to up to five secondary regions with typical replication lag under 1 second. Each secondary region can have up to 16 read replicas for low-latency local reads. Standard Aurora read replicas are within the same region. Multi-AZ provides HA within a region, not cross-region reads. Aurora Serverless scales compute but does not provide cross-region replication.",
+      "link": "cloud-security.html"
     },
     {
       "id": 22,
-      "domain": 4,
-      "objective": "4.3",
+      "domain": 1,
+      "objective": "1.4",
       "difficulty": "medium",
-      "question": "Which concept in Monitoring and Troubleshooting is most closely related to optimize database performance?",
+      "question": "A Redshift cluster experiences performance degradation during peak hours when multiple teams run analytical queries simultaneously. Which Redshift feature allows scaling query processing capacity without resizing the main cluster?",
       "options": [
-        "Monitoring and Troubleshooting governance and oversight",
-        "Monitoring and Troubleshooting implementation and operations",
-        "Monitoring and Troubleshooting assessment and testing",
-        "Monitoring and Troubleshooting risk management"
+        "Redshift Concurrency Scaling",
+        "Redshift elastic resize",
+        "Redshift Spectrum",
+        "Redshift WLM (Workload Management)"
       ],
-      "correct": 1,
-      "explanation": "Optimize database performance falls under the implementation and operations aspect of Monitoring and Troubleshooting.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "Concurrency Scaling automatically adds transient cluster capacity when query queues build up, handling burst concurrent workloads without impacting main cluster performance. You are charged per second of concurrency scaling cluster usage, with one hour of free credits daily. Elastic resize changes the node count but takes minutes. WLM prioritizes queries but does not add capacity. Spectrum queries S3 data, not Redshift tables.",
+      "link": "cloud-security.html"
     },
     {
       "id": 23,
-      "domain": 4,
-      "objective": "4.1",
+      "domain": 1,
+      "objective": "1.1",
       "difficulty": "hard",
-      "question": "Which of the following is a key concept within Monitoring and Troubleshooting (Domain 4)?",
+      "question": "A company needs a globally distributed database for a multiplayer game. Players in different regions need to read and write to their local region with single-digit millisecond latency. Data must be eventually consistent across all regions. Which solution provides this?",
       "options": [
-        "RDS Event Notifications",
-        "Replication Lag Diagnosis",
-        "Aurora Query Plan Management",
-        "Connection Pooling (RDS Proxy)"
+        "DynamoDB Global Tables",
+        "Aurora Global Database",
+        "RDS with cross-region read replicas",
+        "ElastiCache Global Datastore"
       ],
       "correct": 0,
-      "explanation": "RDS Event Notifications is a key concept in Monitoring and Troubleshooting. This domain covers topics essential for the AWS Database Specialty exam.",
-      "link": "start-here.html"
+      "explanation": "DynamoDB Global Tables provide fully managed, multi-active replication across multiple AWS regions. Each region can serve both reads and writes with single-digit millisecond latency, and changes are replicated to all other regions (typically under 1 second). Aurora Global Database has a single write region. RDS cross-region replicas are read-only. ElastiCache Global Datastore provides cross-region replication but is for caching, not primary data storage.",
+      "link": "cloud-security.html"
     },
     {
       "id": 24,
-      "domain": 4,
-      "objective": "4.2",
-      "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with troubleshoot and resolve common database issues?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "medium",
+      "question": "A DynamoDB table is experiencing ProvisionedThroughputExceededException errors despite having what appears to be sufficient total capacity. The table uses customerId as the partition key. What is the MOST likely cause?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "Uneven data distribution across partitions due to a small number of very active customerIds (hot partitions)",
+        "The table has too many GSIs consuming write capacity",
+        "The DynamoDB table has reached its maximum storage limit",
+        "The AWS region has reached its DynamoDB service quota"
       ],
       "correct": 0,
-      "explanation": "When working with troubleshoot and resolve common database issues, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "explanation": "ProvisionedThroughputExceededException with seemingly sufficient capacity usually indicates hot partition issues. DynamoDB distributes capacity evenly across partitions, but if a small number of customerIds receive disproportionate traffic, those partitions exhaust their allocated capacity while others sit idle. Solutions include write sharding, using DynamoDB adaptive capacity, or switching to on-demand mode which better handles hot keys.",
+      "link": "cloud-security.html"
     },
     {
       "id": 25,
-      "domain": 5,
-      "objective": "5.1",
+      "domain": 1,
+      "objective": "1.2",
       "difficulty": "easy",
-      "question": "Which of the following is a key concept within Database Security (Domain 5)?",
+      "question": "A company needs a database that supports both relational queries (SQL) and document-style access. They want a single engine that handles both. Which RDS engine supports this?",
       "options": [
-        "VPC Security Groups for Databases",
-        "RDS Proxy for Credential Management",
-        "KMS Encryption for RDS/Aurora/DynamoDB",
-        "TDE (Transparent Data Encryption)"
+        "Amazon RDS for PostgreSQL with JSONB support",
+        "Amazon DynamoDB",
+        "Amazon DocumentDB",
+        "Amazon Neptune"
       ],
       "correct": 0,
-      "explanation": "VPC Security Groups for Databases is a key concept in Database Security. This domain covers topics essential for the AWS Database Specialty exam.",
-      "link": "start-here.html"
+      "explanation": "PostgreSQL's JSONB data type enables storing, indexing, and querying JSON documents within a relational database. This supports both traditional SQL queries and document-style access patterns in a single engine. DynamoDB is NoSQL-only. DocumentDB is MongoDB-compatible but does not support relational SQL. Neptune is for graph data.",
+      "link": "cloud-security.html"
     },
     {
       "id": 26,
-      "domain": 5,
-      "objective": "5.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with evaluate auditing solutions. What should be the first step?",
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "hard",
+      "question": "A company needs to implement a write-heavy DynamoDB workload that captures 50,000 events per second. Each event is 2KB. The table uses eventType as the partition key. There are only 5 distinct event types. What is the primary concern with this design?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Five partition keys cannot distribute 50K writes/second evenly; write sharding or a high-cardinality partition key is needed",
+        "The item size of 2KB exceeds the DynamoDB maximum item size",
+        "DynamoDB cannot handle 50,000 writes per second",
+        "The provisioned capacity cost would exceed on-demand mode"
       ],
       "correct": 0,
-      "explanation": "The first step in any database security task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "With only 5 distinct partition keys, writes are concentrated on 5 physical partitions. Each partition supports up to 1,000 WCU (write capacity units), so 5 partitions support about 5,000 WCU. At 2KB per item, each write consumes 2 WCU, requiring 100,000 WCU total but limited by partition throughput. The solution is to use a high-cardinality partition key (e.g., eventType#randomSuffix) or use eventId as the partition key. DynamoDB max item size is 400KB, and it can handle millions of writes/second with proper key design.",
+      "link": "cloud-security.html"
     },
     {
       "id": 27,
-      "domain": 5,
-      "objective": "5.3",
+      "domain": 1,
+      "objective": "1.1",
       "difficulty": "medium",
-      "question": "Which concept in Database Security is most closely related to determine access control mechanisms?",
+      "question": "A company needs to run ad-hoc analytical queries on operational data stored in Aurora PostgreSQL without impacting production performance. Which Aurora feature should be used?",
       "options": [
-        "Database Security governance and oversight",
-        "Database Security implementation and operations",
-        "Database Security assessment and testing",
-        "Database Security risk management"
+        "Aurora parallel query or a dedicated Aurora read replica for analytics",
+        "Aurora Serverless v2 for the analytical workload",
+        "Aurora Global Database secondary region",
+        "Export data to S3 and query with Athena"
       ],
-      "correct": 1,
-      "explanation": "Determine access control mechanisms falls under the implementation and operations aspect of Database Security.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "Aurora parallel query pushes analytical query processing down to the Aurora storage layer, distributing the compute across storage nodes without impacting the database engine's resources. Alternatively, a dedicated read replica can handle analytical queries with complete isolation from the primary instance. Exporting to S3 adds latency and data freshness issues.",
+      "link": "cloud-security.html"
     },
     {
       "id": 28,
-      "domain": 5,
-      "objective": "5.4",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Database Security (Domain 5)?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "easy",
+      "question": "What is the maximum item size in DynamoDB?",
       "options": [
-        "VPC Security Groups for Databases",
-        "RDS Proxy for Credential Management",
-        "KMS Encryption for RDS/Aurora/DynamoDB",
-        "Network Isolation with VPC Endpoints"
+        "400 KB",
+        "64 KB",
+        "1 MB",
+        "16 MB"
       ],
       "correct": 0,
-      "explanation": "VPC Security Groups for Databases is a key concept in Database Security. This domain covers topics essential for the AWS Database Specialty exam.",
-      "link": "start-here.html"
+      "explanation": "The maximum item size in DynamoDB is 400 KB, including attribute names and values. This includes all attributes in the item. For larger objects, the recommended pattern is to store the large data in S3 and keep only a reference (S3 key) in the DynamoDB item. This limit applies to both base table items and items projected into GSIs/LSIs.",
+      "link": "cloud-security.html"
     },
     {
       "id": 29,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "A company is designing a multi-tenant SaaS application. Each tenant's data must be isolated, but the company wants to use a single Aurora cluster to minimize costs. How should data isolation be achieved?",
+      "options": [
+        "Use a tenantId column in each table with row-level security policies in PostgreSQL",
+        "Create a separate Aurora cluster for each tenant",
+        "Use separate databases within the Aurora cluster with different IAM authentication per tenant",
+        "Store each tenant's data in a separate S3 bucket and use Aurora for metadata only"
+      ],
+      "correct": 0,
+      "explanation": "PostgreSQL row-level security (RLS) policies enforce data isolation at the database level. Each query is automatically filtered by tenantId, preventing cross-tenant data access without application-level filtering. This is the most cost-effective approach using a single cluster. Separate clusters per tenant are expensive. Separate databases within a cluster work but add management overhead. RLS provides transparent, enforced isolation.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 30,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "medium",
+      "question": "A Redshift cluster needs to query data from both Redshift local tables and an operational Aurora PostgreSQL database in real-time. Which feature enables this without ETL?",
+      "options": [
+        "Redshift Federated Query",
+        "Redshift Spectrum",
+        "AWS Glue ETL",
+        "Amazon DMS with CDC"
+      ],
+      "correct": 0,
+      "explanation": "Redshift Federated Query allows querying live data in Amazon RDS and Aurora PostgreSQL databases directly from Redshift using standard SQL. This eliminates the need to ETL data into Redshift first. Queries can join Redshift local tables with external database tables. Spectrum queries S3 data, not other databases. Glue ETL would load data into Redshift with latency. DMS with CDC replicates data but requires a destination table.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 31,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "A company needs a managed database for storing and retrieving JSON documents with flexible schemas. Documents vary significantly in structure. Which AWS service is MOST appropriate?",
+      "options": [
+        "Amazon DocumentDB",
+        "Amazon RDS MySQL",
+        "Amazon Redshift",
+        "Amazon Neptune"
+      ],
+      "correct": 0,
+      "explanation": "Amazon DocumentDB is a fully managed document database designed for storing, querying, and indexing JSON documents with flexible schemas. It provides MongoDB compatibility and is ideal when documents have varying structures. RDS MySQL requires predefined schemas. Redshift is for analytics. Neptune is for graph data.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 32,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "medium",
+      "question": "A DynamoDB table uses orderId as the partition key and productId as the sort key. The application needs to query all orders containing a specific productId across all orderIds. What should be done?",
+      "options": [
+        "Create a GSI with productId as the partition key",
+        "Use a Scan with a FilterExpression on productId",
+        "Create an LSI with productId as an alternate sort key",
+        "Change the base table partition key to productId"
+      ],
+      "correct": 0,
+      "explanation": "A GSI with productId as the partition key enables efficient Query operations to find all orders containing a specific product. Without a GSI, the only option is a full table Scan (expensive and slow). An LSI cannot help because it shares the same partition key (orderId). Changing the base table partition key would break orderId-based queries.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 33,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "hard",
+      "question": "A company uses Redshift for their data warehouse. They notice that a particular query joining two large tables takes 30 minutes. EXPLAIN shows significant data redistribution across nodes. What is the MOST likely cause and solution?",
+      "options": [
+        "The join columns are not the distribution keys; changing both tables to KEY distribution on the join column eliminates redistribution",
+        "The cluster needs more nodes to handle the query",
+        "The tables need to be converted to columnar storage format",
+        "The query needs to use Redshift Spectrum instead of local tables"
+      ],
+      "correct": 0,
+      "explanation": "When joining tables, Redshift must redistribute data so that matching join keys are on the same node. If the distribution keys do not match the join columns, massive network data transfer occurs (DS_DIST_ALL or DS_DIST_BOTH in the explain plan). Setting both tables to KEY distribution on the join column co-locates matching rows on the same nodes, eliminating redistribution. Redshift already uses columnar storage natively.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 34,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "A company needs to choose between DynamoDB on-demand and provisioned capacity modes. The application has highly predictable traffic patterns during business hours (9 AM - 5 PM) and near-zero traffic otherwise. Which mode is MORE cost-effective?",
+      "options": [
+        "Provisioned capacity with Auto Scaling configured for business hours",
+        "On-demand capacity mode",
+        "Provisioned capacity at peak capacity 24/7",
+        "Reserved capacity for base load with on-demand for peaks"
+      ],
+      "correct": 0,
+      "explanation": "For predictable traffic patterns, provisioned capacity with Auto Scaling is more cost-effective than on-demand. On-demand charges per request (about 5x more per unit than provisioned). Auto Scaling adjusts capacity based on utilization, scaling down during off-hours. Provisioned at peak 24/7 wastes money during idle hours. Reserved capacity provides discounts for a 1-year or 3-year commitment on base load.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 35,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "hard",
+      "question": "A financial services company needs strong consistency for all database reads, support for ACID transactions across multiple items, and single-digit millisecond latency. The data model is key-value based. Which database and configuration meets ALL requirements?",
+      "options": [
+        "DynamoDB with strongly consistent reads and DynamoDB Transactions",
+        "Aurora PostgreSQL with synchronous replication",
+        "ElastiCache Redis with AOF persistence",
+        "DocumentDB with read concern majority"
+      ],
+      "correct": 0,
+      "explanation": "DynamoDB supports strongly consistent reads (returning the most up-to-date data) and ACID transactions (TransactWriteItems and TransactGetItems) across multiple items and tables. Single-digit millisecond latency is a core DynamoDB characteristic. Aurora provides ACID but at higher latency for simple key-value lookups. ElastiCache does not provide ACID transactions. DynamoDB Transactions support up to 100 items per transaction.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 36,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "easy",
+      "question": "What is the difference between a DynamoDB Local Secondary Index (LSI) and a Global Secondary Index (GSI)?",
+      "options": [
+        "LSI shares the base table's partition key with a different sort key; GSI can have a completely different partition key and sort key",
+        "LSI can be created at any time; GSI must be created at table creation",
+        "LSI has its own provisioned throughput; GSI shares the base table's throughput",
+        "LSI supports eventual consistency only; GSI supports strong consistency"
+      ],
+      "correct": 0,
+      "explanation": "An LSI has the same partition key as the base table but a different sort key, enabling alternative query patterns within the same partition. A GSI has its own partition key and optional sort key, enabling entirely different access patterns. LSIs must be created at table creation time and are limited to 5. GSIs can be added at any time (up to 20) and have their own provisioned throughput. GSIs support only eventual consistency; LSIs support both.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 37,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "medium",
+      "question": "A company needs to compare the costs of running a PostgreSQL database as RDS vs Aurora. The workload is I/O-intensive with high read throughput. Which statement about Aurora pricing is accurate?",
+      "options": [
+        "Aurora charges for I/O operations separately but eliminates the need for provisioned IOPS, and Aurora read replicas share the same storage volume",
+        "Aurora is always cheaper than RDS for all workload types",
+        "Aurora charges the same as RDS but provides more features at no extra cost",
+        "Aurora requires provisioned IOPS similar to RDS for high-performance workloads"
+      ],
+      "correct": 0,
+      "explanation": "Aurora has a different pricing model than RDS. Aurora charges for I/O operations (per million I/Os) instead of provisioned IOPS, which can be more cost-effective for variable I/O workloads. Aurora's shared storage architecture means read replicas do not need separate storage, reducing costs. However, for I/O-heavy workloads, Aurora I/O Optimized configuration eliminates per-I/O charges for a higher instance price. Aurora is not always cheaper — it depends on the workload profile.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 38,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "An application uses DynamoDB Streams to process changes to a table in near real-time. The stream consumer falls behind during traffic spikes, and records are being lost after 24 hours. How should this be resolved?",
+      "options": [
+        "Increase the number of Lambda concurrent executions and implement error handling with a dead-letter queue; DynamoDB Streams retain records for 24 hours",
+        "Increase the DynamoDB table's read capacity",
+        "Switch from DynamoDB Streams to DynamoDB on-demand backups",
+        "Enable DynamoDB auto scaling for the stream"
+      ],
+      "correct": 0,
+      "explanation": "DynamoDB Streams retain records for 24 hours. If the consumer cannot keep up, records expire and are lost. Increasing Lambda concurrency (parallelization factor) processes more shards concurrently. A dead-letter queue captures records that fail processing. For sustained high throughput, consider using Kinesis Data Streams for DynamoDB which offers longer retention (up to 365 days) and more consumer capacity.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 39,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "medium",
+      "question": "A company needs to detect fraud in real-time by analyzing relationships between transactions, accounts, and IP addresses. Which AWS database is optimized for detecting fraud patterns through relationship traversal?",
+      "options": [
+        "Amazon Neptune with Gremlin queries for path traversal",
+        "Amazon Redshift with complex JOIN queries",
+        "Amazon DynamoDB with composite keys",
+        "Amazon RDS with stored procedures"
+      ],
+      "correct": 0,
+      "explanation": "Neptune's graph model excels at traversing relationships to detect fraud patterns. Gremlin queries can efficiently traverse paths between transactions, accounts, and IP addresses to identify suspicious patterns (circular money transfers, shared IP addresses across accounts, etc.) in real-time. Relational databases require expensive multi-table JOINs for relationship traversal that degrade with depth.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 40,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "A company needs to migrate a 500GB Oracle database to Amazon Aurora PostgreSQL. The schemas are different between Oracle and PostgreSQL. Which AWS tool should be used FIRST to convert the database schema?",
+      "options": [
+        "AWS Schema Conversion Tool (SCT)",
+        "AWS Database Migration Service (DMS)",
+        "AWS DataSync",
+        "pg_dump and pg_restore"
+      ],
+      "correct": 0,
+      "explanation": "AWS Schema Conversion Tool converts database schemas from one engine to another (heterogeneous migration). For Oracle to PostgreSQL, SCT converts tables, views, stored procedures, and functions to PostgreSQL-compatible syntax. SCT should be run first to create the target schema before using DMS to migrate the data. DMS migrates data but does not convert schemas. pg_dump is PostgreSQL-native and cannot read Oracle schemas.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 41,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "A company is migrating a MySQL database to Aurora MySQL using DMS. They need to migrate with minimal downtime. The application must continue running during migration. Which DMS migration type should be used?",
+      "options": [
+        "Full load plus Change Data Capture (CDC) for ongoing replication",
+        "Full load only",
+        "CDC only without full load",
+        "Schema conversion only"
+      ],
+      "correct": 0,
+      "explanation": "Full load plus CDC first copies all existing data (full load) then continuously replicates ongoing changes (CDC) from the source to the target. This allows the application to continue writing to the source during migration. When ready, the application is cut over to Aurora with minimal downtime. Full load only would miss changes during the migration period. CDC only requires the data to already exist in the target.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 42,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "easy",
+      "question": "A company is migrating a MySQL 5.7 database running on-premises to Amazon RDS MySQL 5.7. Both source and target use the same database engine and version. What type of migration is this?",
+      "options": [
+        "Homogeneous migration",
+        "Heterogeneous migration",
+        "Cross-platform migration",
+        "Application-level migration"
+      ],
+      "correct": 0,
+      "explanation": "A homogeneous migration involves migrating between the same database engine (MySQL to MySQL). It is simpler because no schema conversion is needed. Tools like mysqldump, native replication, or DMS can be used. Heterogeneous migration involves different engines (e.g., Oracle to PostgreSQL) and requires schema conversion. Homogeneous migrations typically have lower risk and shorter timelines.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 43,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "A company is migrating a 10TB Oracle database to Aurora PostgreSQL. The DMS full load task is running extremely slowly and is estimated to take 2 weeks. What strategies can accelerate the migration?",
+      "options": [
+        "Use multiple DMS tasks in parallel with table mappings to split the workload, increase the replication instance size, and tune task settings (parallel load, batch apply)",
+        "Increase the source Oracle database instance size",
+        "Use a single DMS task with the largest available replication instance",
+        "Export to CSV and import using COPY command"
+      ],
+      "correct": 0,
+      "explanation": "Parallel DMS tasks with table mapping rules split the workload across multiple replication instances, dramatically increasing throughput. Larger replication instances provide more CPU and memory for transformation. Task settings like ParallelLoadThreads and BatchApplyEnabled improve throughput. Additionally, removing secondary indexes before full load and recreating them after speeds up inserts. A single task cannot parallelize across tables effectively.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 44,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "A company needs to deploy an RDS PostgreSQL instance with the ability to switch to a new version with near-zero downtime. Which deployment strategy should be used?",
+      "options": [
+        "RDS Blue/Green Deployments",
+        "RDS Multi-AZ with in-place upgrade",
+        "Create a read replica, upgrade it, and manually promote",
+        "Stop the instance, create a snapshot, restore to new version"
+      ],
+      "correct": 0,
+      "explanation": "RDS Blue/Green Deployments create a staging environment (green) that mirrors the production environment (blue). The green environment can be upgraded, tested, and then switched over using a managed switchover that typically completes in under a minute. The blue environment is kept as a fallback. In-place upgrades cause downtime. Manual read replica promotion requires more steps and longer switchover time.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 45,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "A company needs to deploy an Aurora MySQL cluster with automatic failover. What is the minimum configuration required for automatic failover?",
+      "options": [
+        "One primary instance and at least one Aurora Replica in a different Availability Zone",
+        "One primary instance in a single Availability Zone",
+        "Two primary instances in different Availability Zones",
+        "Three instances across three Availability Zones"
+      ],
+      "correct": 0,
+      "explanation": "Aurora automatic failover requires at least one Aurora Replica in a different AZ from the primary. If the primary fails, Aurora automatically promotes a replica to primary (typically under 30 seconds). Without a replica, Aurora attempts to create a new primary in a different AZ, which takes longer. Aurora does not support multiple primary instances (unlike Global Database write forwarding).",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 46,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "During a DMS migration from Oracle to Aurora PostgreSQL, certain Oracle-specific features (materialized views, Oracle-specific PL/SQL) are flagged as not automatically convertible by SCT. What should be done with these items?",
+      "options": [
+        "Manually rewrite the flagged items in PostgreSQL-compatible syntax using SCT's assessment report as a guide",
+        "Skip these items as they are not needed in PostgreSQL",
+        "Use DMS to migrate them without conversion",
+        "Keep the Oracle database running alongside Aurora for these features"
+      ],
+      "correct": 0,
+      "explanation": "SCT generates an assessment report identifying items that cannot be automatically converted, including the percentage of code that requires manual conversion. Oracle-specific features like materialized views and PL/SQL packages must be manually rewritten in PostgreSQL-compatible syntax (e.g., PL/pgSQL). The assessment report provides recommendations and effort estimates. These features cannot be skipped if the application depends on them.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 47,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "A company needs to migrate a 50TB MySQL database to Aurora MySQL. Network bandwidth between on-premises and AWS is limited to 100 Mbps. Using DMS over this link would take over 45 days. What is the fastest migration approach?",
+      "options": [
+        "Use AWS Snowball Edge to physically transport the data, then use DMS CDC to replicate changes that occurred during transit",
+        "Request a Direct Connect link to increase bandwidth",
+        "Compress the database backup and transfer via S3 Transfer Acceleration",
+        "Use multiple VPN tunnels to aggregate bandwidth"
+      ],
+      "correct": 0,
+      "explanation": "For large datasets with limited bandwidth, AWS Snowball Edge physically transports data to AWS (typically 1-2 weeks including shipping). Start CDC replication via DMS before shipping Snowball to capture changes during transit. After Snowball data is loaded into S3 and then into Aurora, DMS applies the accumulated CDC changes to synchronize. Direct Connect takes weeks to provision and does not solve the immediate timeline issue.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 48,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "A company needs to deploy DynamoDB tables across multiple AWS accounts using infrastructure as code. Which approach is recommended?",
+      "options": [
+        "AWS CloudFormation with StackSets to deploy DynamoDB tables across accounts",
+        "Manually create tables in each account using the console",
+        "Use DMS to replicate tables to other accounts",
+        "Use DynamoDB Global Tables for cross-account deployment"
+      ],
+      "correct": 0,
+      "explanation": "CloudFormation StackSets enable deploying the same template (including DynamoDB table definitions) across multiple accounts and regions. This provides consistent, repeatable deployments with version-controlled infrastructure. DMS replicates data, not table structures. Global Tables replicate data across regions, not accounts. Manual creation is error-prone and not scalable.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 49,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "A company is migrating from DynamoDB to Aurora PostgreSQL. They need to preserve all existing DynamoDB data including the NoSQL structure. What approach should be used?",
+      "options": [
+        "Export DynamoDB data to S3, transform the JSON data using Glue ETL to match the relational schema, then load into Aurora",
+        "Use DMS to directly replicate DynamoDB to Aurora PostgreSQL",
+        "Use the AWS Schema Conversion Tool to convert DynamoDB schema to PostgreSQL",
+        "Copy DynamoDB JSON items directly into PostgreSQL JSONB columns"
+      ],
+      "correct": 0,
+      "explanation": "DynamoDB's NoSQL structure needs transformation to fit a relational model. Exporting to S3 (DynamoDB export feature) preserves all data. Glue ETL transforms the nested JSON into flat relational rows matching the Aurora PostgreSQL schema. DMS can replicate DynamoDB data but the NoSQL-to-relational mapping requires data transformation. SCT does not support DynamoDB as a source. Direct JSON storage in JSONB may not leverage relational benefits.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 50,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "A company needs to upgrade an Aurora PostgreSQL cluster from version 12 to version 15. The database has 2TB of data and the application cannot tolerate more than 5 minutes of downtime. What is the BEST approach?",
+      "options": [
+        "Use Aurora Blue/Green Deployments to create a green environment on version 15, test it, then perform a managed switchover",
+        "Perform an in-place major version upgrade during a maintenance window",
+        "Create a clone, upgrade the clone, then manually switch the application",
+        "Create a snapshot, restore to version 15, then update DNS"
+      ],
+      "correct": 0,
+      "explanation": "Aurora Blue/Green Deployments create a staging (green) environment that replicates from the production (blue) environment using logical replication. The green environment can be upgraded to version 15 and tested while production continues running. Managed switchover completes in typically under a minute by switching the cluster endpoint. In-place upgrades can take significantly longer for major versions and cause extended downtime.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 51,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "A company wants to deploy an RDS instance using CloudFormation. They need to set the master user password securely without hardcoding it in the template. What is the recommended approach?",
+      "options": [
+        "Use the ManageMasterUserPassword property to let RDS manage the password in Secrets Manager automatically",
+        "Pass the password as a CloudFormation parameter with NoEcho set to true",
+        "Store the password in an S3 bucket and reference it using a custom resource",
+        "Use a Lambda-backed custom resource to generate and set the password"
+      ],
+      "correct": 0,
+      "explanation": "RDS ManageMasterUserPassword enables RDS to automatically generate and store the master password in AWS Secrets Manager, with automatic rotation. This is the most secure approach as the password is never exposed in the template, parameters, or CloudFormation outputs. NoEcho parameters are slightly better than plaintext but are still visible in the CloudFormation console's events. Secrets Manager integration provides automatic rotation.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 52,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "A company wants to migrate their self-managed PostgreSQL database to RDS PostgreSQL with minimal downtime. The database is 100GB. Which is the simplest approach?",
+      "options": [
+        "Use DMS with full load plus CDC for continuous replication until cutover",
+        "Use pg_dump to export and pg_restore to import, then switch the application",
+        "Create an RDS read replica of the self-managed PostgreSQL instance",
+        "Use AWS DataSync to copy the PostgreSQL data files to RDS"
+      ],
+      "correct": 0,
+      "explanation": "DMS with full load plus CDC provides the simplest minimal-downtime migration path. It handles initial data copy and continuous replication of changes. pg_dump/pg_restore works for small databases but causes downtime during the export-import window. You cannot create an RDS read replica of a self-managed database directly. DataSync copies files but RDS does not support direct data file import.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 53,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "A DMS replication task is reporting high latency (source latency > 10 minutes). The source is an Oracle database with large LOB columns. What is the MOST likely cause?",
+      "options": [
+        "LOB columns are being migrated in full LOB mode, which slows down replication; switching to limited LOB mode improves performance",
+        "The DMS replication instance is undersized",
+        "The target database is experiencing lock contention",
+        "The source database supplemental logging is not enabled"
+      ],
+      "correct": 0,
+      "explanation": "DMS full LOB mode reads LOB columns one row at a time using a lookup back to the source, significantly slowing replication. Limited LOB mode truncates LOBs to a specified maximum size and processes them inline with the row data, dramatically improving throughput. If LOB data exceeds the limit, it is truncated. For most migrations, setting an appropriate LobMaxSize in limited LOB mode provides the best balance of performance and data fidelity.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 54,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "A company needs to deploy a multi-region DynamoDB Global Table for disaster recovery. Which considerations are critical for the deployment?",
+      "options": [
+        "All replica tables must have the same partition key schema, DynamoDB Streams must be enabled, and the table must use on-demand or have appropriate auto-scaling in all regions",
+        "Each region can have a different table schema for flexibility",
+        "Global Tables require provisioned capacity mode in all regions",
+        "DynamoDB Global Tables support only two regions maximum"
+      ],
+      "correct": 0,
+      "explanation": "DynamoDB Global Tables require identical table schemas (partition key, sort key) across all replicas. DynamoDB Streams must be enabled for replication. Each region's table should have adequate capacity (on-demand or provisioned with auto-scaling) to handle both local traffic and replicated writes. Global Tables support up to 5 replicas (current limits). Both on-demand and provisioned capacity modes are supported, but the mode must match across replicas.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 55,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "A company is using DMS to migrate a SQL Server database to Aurora PostgreSQL. They notice that stored procedures and triggers are not being migrated by DMS. Why is this?",
+      "options": [
+        "DMS migrates data only, not database code objects; AWS SCT must be used to convert stored procedures, triggers, and functions",
+        "DMS does not support SQL Server as a source",
+        "DMS only supports homogeneous migrations",
+        "The DMS replication instance needs a larger size to handle code objects"
+      ],
+      "correct": 0,
+      "explanation": "DMS is a data migration service — it migrates table data, not database code objects (stored procedures, triggers, functions, views). For heterogeneous migrations (SQL Server to PostgreSQL), AWS SCT must be used first to convert the database schema and code objects. SCT handles the translation of SQL Server T-SQL to PostgreSQL PL/pgSQL. DMS and SCT are complementary tools used together for heterogeneous migrations.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 56,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "easy",
+      "question": "A company needs to create a copy of their Aurora MySQL cluster for development testing. The copy should be created quickly without impacting production performance. Which feature is BEST?",
+      "options": [
+        "Aurora cloning",
+        "Aurora snapshot restore",
+        "Aurora read replica",
+        "DMS replication task"
+      ],
+      "correct": 0,
+      "explanation": "Aurora cloning creates a copy of the database cluster using a copy-on-write protocol. The clone is created almost instantly regardless of database size and does not impact the source cluster's performance. The clone initially shares the same storage as the source, with new data written to separate storage. Snapshot restore requires copying the entire dataset and takes longer. Read replicas serve reads, not independent testing.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 57,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "A company is deploying an ElastiCache Redis cluster for production use. They need automatic failover and data persistence. What is the recommended deployment configuration?",
+      "options": [
+        "Redis cluster with Multi-AZ enabled, automatic failover, and AOF (Append Only File) persistence",
+        "Redis single node with RDB snapshots",
+        "Memcached cluster with multiple nodes",
+        "Redis cluster mode disabled with no persistence"
+      ],
+      "correct": 0,
+      "explanation": "For production Redis, Multi-AZ with automatic failover ensures high availability. A replica in another AZ is promoted if the primary fails. AOF persistence logs every write operation, minimizing data loss during failures. RDB snapshots are periodic and may lose recent data. Memcached does not support persistence or replication. Cluster mode disabled still supports replication and failover but limits horizontal scaling.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 58,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "A company needs to validate that a DMS migration from Oracle to Aurora PostgreSQL has completed accurately. 500 tables were migrated. What is the MOST thorough validation approach?",
+      "options": [
+        "Enable DMS data validation which automatically compares source and target row counts and column values, then review the validation status per table",
+        "Compare total row counts between source and target for all tables",
+        "Run a few sample queries on both databases and compare results",
+        "Check the DMS task status shows 100% complete"
+      ],
+      "correct": 0,
+      "explanation": "DMS data validation performs row-by-row comparison between source and target, checking row counts AND column values. It reports mismatched, missing, or extra rows per table. This is more thorough than simple row count comparison (which misses data corruption) or sample queries (which miss edge cases). Task completion status only confirms the load finished, not that data is accurate. Validation can run during full load and CDC.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 59,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "A company needs to import a large dataset (5TB) from S3 into an existing Aurora MySQL cluster. The data is in CSV format. What is the fastest approach?",
+      "options": [
+        "Use Aurora's LOAD DATA FROM S3 command which leverages the Aurora storage engine for parallel loading",
+        "Use DMS with S3 as the source",
+        "Use a MySQL client to run LOAD DATA INFILE from a local file",
+        "Write a Lambda function to read S3 and execute INSERT statements"
+      ],
+      "correct": 0,
+      "explanation": "Aurora's native LOAD DATA FROM S3 command loads data directly from S3 into Aurora tables using the high-bandwidth Aurora storage engine. This is significantly faster than loading through the database's SQL interface. DMS with S3 source works but has higher overhead. LOAD DATA INFILE requires downloading data to a local filesystem first. Lambda-based INSERT statements are extremely slow for 5TB.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 60,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "When deploying an RDS instance using CloudFormation, what happens if the stack is deleted? How can the database be preserved?",
+      "options": [
+        "Add DeletionPolicy: Snapshot to the RDS resource, which creates a final snapshot before deletion",
+        "RDS instances are automatically preserved when a stack is deleted",
+        "Add DeletionPolicy: Retain to keep the instance running without a snapshot",
+        "RDS instances cannot be deployed through CloudFormation"
+      ],
+      "correct": 0,
+      "explanation": "DeletionPolicy: Snapshot on an RDS resource causes CloudFormation to create a final DB snapshot before deleting the instance when the stack is deleted. This preserves the data for recovery. Without a DeletionPolicy, the default behavior is Delete, which deletes the instance and all automated backups. DeletionPolicy: Retain keeps the instance running but removes it from CloudFormation management.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 61,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "A DMS CDC replication task from Oracle to Aurora PostgreSQL stops with errors related to Oracle supplemental logging. What must be configured on the Oracle source to enable CDC?",
+      "options": [
+        "Enable supplemental logging at the database level (minimum) and at the table level for all columns on replicated tables",
+        "Enable Oracle GoldenGate on the source database",
+        "Create Oracle LogMiner views for all replicated tables",
+        "Enable Oracle Data Guard for real-time log access"
+      ],
+      "correct": 0,
+      "explanation": "DMS CDC for Oracle requires supplemental logging to capture before-image data in redo logs. At minimum, database-level supplemental logging must be enabled (ALTER DATABASE ADD SUPPLEMENTAL LOG DATA). For DMS to capture all column changes, table-level supplemental logging for all columns is recommended (ALTER TABLE ADD SUPPLEMENTAL LOG DATA (ALL) COLUMNS). Without supplemental logging, DMS cannot reliably detect changes.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 62,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "A company needs to migrate an ElastiCache Redis cluster to a larger node type with minimal downtime. What is the recommended approach?",
+      "options": [
+        "Use ElastiCache online scaling to change the node type while the cluster remains available",
+        "Create a new cluster with the larger node type and manually migrate data using redis-cli",
+        "Create a snapshot, delete the cluster, and restore from snapshot with the new node type",
+        "Add new larger nodes, use replication to sync, then remove old nodes"
+      ],
+      "correct": 0,
+      "explanation": "ElastiCache supports online scaling (vertical) for Redis clusters, allowing node type changes while the cluster remains operational. For Redis with replication, scaling replaces nodes one at a time, maintaining availability. The process involves creating new nodes with the larger type, replicating data, and then failing over. Snapshot-based approaches require downtime during the restore period.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 63,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "A company needs to deploy an RDS MySQL Multi-AZ instance. Which statement about Multi-AZ deployment is correct?",
+      "options": [
+        "The standby instance in Multi-AZ is not accessible for read operations",
+        "The standby instance can be used as a read replica",
+        "Multi-AZ uses asynchronous replication",
+        "Multi-AZ requires manual failover configuration"
+      ],
+      "correct": 0,
+      "explanation": "In RDS Multi-AZ deployment, the standby instance is a synchronous replica that is NOT accessible for any read or write operations. It exists solely for automatic failover. To scale reads, you need separate read replicas in addition to Multi-AZ. The standby uses synchronous replication to ensure zero data loss on failover. Failover is automatic (no manual configuration needed) and typically completes within 60-120 seconds.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 64,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "A company is migrating data from a MongoDB cluster to DynamoDB. The MongoDB documents have nested objects and arrays. How should the data transformation be handled?",
+      "options": [
+        "Flatten nested structures into DynamoDB attribute maps and lists, redesigning access patterns around DynamoDB's key-value model",
+        "Store MongoDB documents as-is in DynamoDB using the document data type",
+        "Use DMS to directly replicate MongoDB to DynamoDB without changes",
+        "Convert all nested objects to JSON strings stored as DynamoDB string attributes"
+      ],
+      "correct": 0,
+      "explanation": "Migrating from MongoDB to DynamoDB requires redesigning the data model around DynamoDB's access patterns. DynamoDB supports maps (M) and lists (L) for nested data, but the key design must be based on access patterns rather than MongoDB's flexible querying. Some denormalization and pre-computation of query results may be needed. Direct storage of MongoDB documents misses DynamoDB optimization opportunities. JSON strings lose queryability.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 65,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "hard",
+      "question": "A company needs to perform a cross-region migration of an Aurora cluster from us-east-1 to eu-west-1 with minimal downtime. What is the recommended approach?",
+      "options": [
+        "Create an Aurora Global Database with a secondary cluster in eu-west-1, then perform a managed planned failover to promote eu-west-1 to primary",
+        "Create a snapshot in us-east-1, copy it to eu-west-1, and restore",
+        "Use DMS to replicate from Aurora in us-east-1 to Aurora in eu-west-1",
+        "Export data to S3, replicate S3 to eu-west-1, then import into a new Aurora cluster"
+      ],
+      "correct": 0,
+      "explanation": "Aurora Global Database provides the lowest-downtime approach for cross-region migration. Creating a secondary cluster in eu-west-1 establishes automatic replication. The managed planned failover (or detach and promote for permanent migration) switches the primary to eu-west-1 with minimal downtime (typically under a minute). Snapshot-based approaches require copying time plus restore time. DMS adds more complexity than native Aurora features.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 66,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "A company deploys DynamoDB tables using CloudFormation. They want to ensure that if the table is accidentally deleted through the console, the data is preserved. What should be configured in the CloudFormation template?",
+      "options": [
+        "DeletionPolicy: Retain on the DynamoDB table resource and enable DynamoDB deletion protection",
+        "DeletionPolicy: Snapshot on the DynamoDB table resource",
+        "Enable DynamoDB PITR as a backup mechanism",
+        "Use a Lambda-backed custom resource to prevent deletion"
+      ],
+      "correct": 0,
+      "explanation": "DeletionPolicy: Retain in CloudFormation prevents the table from being deleted when the stack is deleted. Additionally, DynamoDB deletion protection (enabled via the DeletionProtectionEnabled property) prevents the table from being deleted through the console, CLI, or API. Together, these protect against both CloudFormation stack deletion and direct table deletion. Note: DynamoDB does not support DeletionPolicy: Snapshot (unlike RDS).",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 67,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "A company needs to migrate a Cassandra cluster to AWS. They want to continue using CQL and minimize application changes. What is the recommended target?",
+      "options": [
+        "Amazon Keyspaces (for Apache Cassandra)",
+        "Amazon DynamoDB",
+        "Amazon RDS for PostgreSQL",
+        "Self-managed Cassandra on EC2"
+      ],
+      "correct": 0,
+      "explanation": "Amazon Keyspaces is serverless and CQL-compatible, allowing existing Cassandra applications to migrate with minimal code changes (primarily connection configuration). It eliminates the operational overhead of managing Cassandra clusters. DynamoDB has a different data model and API. Self-managed Cassandra on EC2 provides full compatibility but retains operational overhead that the migration should eliminate.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 68,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "A company uses RDS PostgreSQL and needs to perform a minor version upgrade (e.g., 14.7 to 14.10). How can this be done with minimal downtime?",
+      "options": [
+        "Apply the minor version upgrade during the next maintenance window or immediately; minor upgrades involve a brief outage of typically a few minutes",
+        "Create a Blue/Green deployment for the minor version upgrade",
+        "Create a new instance with the new version and migrate data using DMS",
+        "Minor version upgrades cannot be performed on existing instances"
+      ],
+      "correct": 0,
+      "explanation": "RDS minor version upgrades can be applied immediately or during a scheduled maintenance window. They typically involve a brief outage (a few minutes) as the database engine is restarted with the new version. For Multi-AZ deployments, the upgrade is applied to the standby first, then a failover occurs, minimizing downtime further. Blue/Green deployments are also supported but add more complexity than needed for minor upgrades.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 69,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "A company needs to deploy a Neptune graph database cluster with specific requirements: data must be encrypted at rest, the cluster must be in a private subnet, and connections must use SSL/TLS. How should this be deployed?",
+      "options": [
+        "Create the Neptune cluster with StorageEncrypted enabled (KMS key), deploy in a VPC private subnet group, and Neptune enforces SSL/TLS by default",
+        "Deploy Neptune in a public subnet with IAM authentication",
+        "Create the Neptune cluster without encryption and add it later",
+        "Deploy Neptune with client-side encryption managed by the application"
+      ],
+      "correct": 0,
+      "explanation": "Neptune supports encryption at rest using KMS (must be enabled at creation time, cannot be added later). Neptune must be deployed within a VPC and supports DB subnet groups for placement in private subnets. Neptune enforces SSL/TLS for all connections by default. Neptune's security model combines VPC isolation, encryption at rest, encryption in transit (mandatory SSL), and IAM authentication.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 70,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to restore an RDS database to a specific point in time 2 hours ago. Which feature enables this?",
+      "options": [
+        "RDS Point-in-Time Recovery (PITR) using automated backups and transaction logs",
+        "RDS manual snapshots",
+        "RDS read replica promotion",
+        "RDS Multi-AZ failover"
+      ],
+      "correct": 0,
+      "explanation": "RDS PITR allows restoring a database to any second within the backup retention period (up to 35 days). It uses automated backups and transaction logs to reconstruct the database state at the specified time. PITR creates a NEW database instance. Manual snapshots capture a point-in-time but only when taken. Read replicas provide copies but cannot be restored to a specific past time. Multi-AZ failover is for high availability, not point-in-time recovery.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 71,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "An RDS MySQL instance is experiencing performance degradation. The administrator finds that the database is using default parameter group settings. Which RDS feature should be used to tune the database configuration?",
+      "options": [
+        "Create a custom DB parameter group with optimized settings and associate it with the RDS instance",
+        "Modify the default parameter group directly",
+        "SSH into the RDS instance and edit the my.cnf file",
+        "Use the AWS CLI to run MySQL SET GLOBAL commands directly"
+      ],
+      "correct": 0,
+      "explanation": "RDS uses parameter groups to manage database engine configuration. The default parameter group cannot be modified. A custom parameter group must be created with the desired settings (buffer pool size, max connections, query cache, etc.) and associated with the instance. You cannot SSH into RDS instances. While SET GLOBAL changes some runtime parameters, they are not persistent across restarts. Custom parameter groups persist settings.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 72,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "A company needs to apply security patches to an RDS instance. When are patches typically applied?",
+      "options": [
+        "During the configured maintenance window, or immediately if manually triggered",
+        "Automatically at midnight UTC every day",
+        "Only when the administrator manually applies them",
+        "Patches are applied when the instance is stopped and restarted"
+      ],
+      "correct": 0,
+      "explanation": "RDS applies patches during the configured maintenance window (a 30-minute weekly window defined by the administrator). Patches can also be applied immediately by selecting 'Apply Immediately' in the console or CLI. Some required security patches may be applied outside the maintenance window if they are critical. The administrator can customize the maintenance window to minimize impact on operations.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 73,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "A company uses Aurora PostgreSQL and needs to perform a failover test. How can a failover be triggered, and what is the expected behavior?",
+      "options": [
+        "Use the 'Failover' action in the console or CLI; Aurora promotes a replica to primary (typically under 30 seconds) and the cluster endpoint automatically points to the new primary",
+        "Stop the primary instance; Aurora will automatically start a new instance in another AZ",
+        "Delete the primary instance; Aurora will create a replacement",
+        "Modify the cluster to remove the primary and add a new primary"
+      ],
+      "correct": 0,
+      "explanation": "Aurora failover can be triggered manually through the console or the failover-db-cluster CLI command. Aurora promotes the replica with the highest failover priority (tier 0 is highest) to primary. The cluster endpoint automatically updates to point to the new primary. Failover typically completes in under 30 seconds. The old primary becomes a replica. This is a non-destructive way to test failover.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 74,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "A DynamoDB table is experiencing increased read latency. The table uses provisioned capacity and auto-scaling is configured. CloudWatch shows that consumed RCUs are well below provisioned capacity. What should be investigated?",
+      "options": [
+        "Hot partition access pattern — a small number of items receiving disproportionate traffic, causing partition-level throttling despite table-level capacity being available",
+        "The auto-scaling policy is scaling down too aggressively",
+        "The table needs more GSIs to distribute reads",
+        "DynamoDB service degradation in the region"
+      ],
+      "correct": 0,
+      "explanation": "When consumed capacity is below provisioned but latency increases, the likely cause is hot partitions. DynamoDB distributes provisioned capacity evenly across partitions. If certain items receive much more traffic than others, those partitions can be throttled even when overall table capacity is sufficient. DynamoDB adaptive capacity helps but cannot fully resolve extreme imbalances. Solutions include key redesign, caching hot items with DAX, or spreading reads across replicas.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 75,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "A company needs to scale their Aurora MySQL cluster's storage. Currently at 2TB, they need 5TB. What action is required?",
+      "options": [
+        "No action is required; Aurora storage automatically scales up to 128TB as data grows",
+        "Modify the cluster to increase the storage allocation",
+        "Create a new cluster with more storage and migrate data",
+        "Add additional Aurora instances to increase storage capacity"
+      ],
+      "correct": 0,
+      "explanation": "Aurora storage is fully managed and automatically scales up in 10GB increments up to 128TB. There is no need to pre-provision storage or manually increase allocations. The storage is shared across all instances in the cluster. You only pay for the storage actually used. This is a key differentiator from standard RDS which requires specifying and managing storage allocation.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 76,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "A company's DynamoDB table currently uses provisioned capacity but is experiencing unpredictable traffic patterns. They want to switch to on-demand capacity. How often can this switch be made?",
+      "options": [
+        "Once every 24 hours from provisioned to on-demand; from on-demand to provisioned can be done at any time",
+        "Only once per month",
+        "At any time with no restrictions",
+        "Cannot switch once created; must create a new table"
+      ],
+      "correct": 0,
+      "explanation": "DynamoDB allows switching between provisioned and on-demand capacity modes. Switching from provisioned to on-demand can be done once every 24 hours. Switching from on-demand to provisioned can be done at any time without a waiting period. The table remains available during the switch. This allows testing different modes to find the optimal cost-performance balance for the workload.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 77,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "An Aurora PostgreSQL cluster is experiencing connection exhaustion. The application uses a Lambda function that opens database connections. During traffic spikes, the max_connections limit is reached. What is the BEST solution?",
+      "options": [
+        "Use Amazon RDS Proxy to pool and share database connections across Lambda invocations",
+        "Increase the max_connections parameter to a higher value",
+        "Use a larger Aurora instance type to support more connections",
+        "Add more Aurora read replicas to distribute connections"
+      ],
+      "correct": 0,
+      "explanation": "RDS Proxy maintains a pool of database connections and shares them across Lambda invocations. Since Lambda functions create new connections per invocation and scale to hundreds of concurrent executions, they quickly exhaust database connections. RDS Proxy multiplexes thousands of application connections onto a smaller number of database connections. Increasing max_connections adds memory pressure. Read replicas only help if read traffic can be separated from writes.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 78,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "A company needs to create a copy of their production Aurora MySQL cluster for testing, but the test environment should only contain the last 3 months of data (not the full dataset). What approach minimizes effort and time?",
+      "options": [
+        "Clone the Aurora cluster, then delete old data from the clone since cloning is instant and non-disruptive",
+        "Create a snapshot, restore it, then delete old data",
+        "Use DMS to selectively replicate recent data to a new cluster",
+        "Export recent data to S3 and import into a new cluster"
+      ],
+      "correct": 0,
+      "explanation": "Aurora cloning creates an instant copy using copy-on-write, so the clone appears immediately regardless of database size. Deleting old data from the clone is the simplest approach since you only need to run DELETE queries on the clone. This has zero impact on production and is faster than snapshot restore (which copies all data). DMS with filtering works but requires more setup.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 79,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "A company uses RDS MySQL with option groups. They need to enable the MariaDB Audit Plugin for compliance auditing. Where should this be configured?",
+      "options": [
+        "In a custom DB option group associated with the RDS instance",
+        "In a custom DB parameter group",
+        "In the RDS instance's security group",
+        "In the AWS Config compliance settings"
+      ],
+      "correct": 0,
+      "explanation": "RDS option groups enable and configure additional database engine features like the MariaDB Audit Plugin, Oracle Enterprise Manager, SQL Server TDE, etc. A custom option group must be created (the default cannot be modified), the audit plugin added to it, and then associated with the RDS instance. Parameter groups control engine configuration parameters (like max_connections), not optional features/plugins.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 80,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "A Redshift cluster's disk usage is at 85% and growing. The admin needs to reclaim space without adding nodes. What should be done?",
+      "options": [
+        "Run VACUUM to reclaim space from deleted rows and re-sort data, and implement a data retention policy to archive old data to S3",
+        "Increase the cluster's storage allocation",
+        "Convert all tables to use EVEN distribution style",
+        "Enable Redshift Spectrum to automatically offload data to S3"
+      ],
+      "correct": 0,
+      "explanation": "Redshift does not automatically reclaim space from deleted or updated rows (similar to PostgreSQL's MVCC). VACUUM reclaims this space and re-sorts rows. Additionally, implementing data retention by archiving old data to S3 (queryable via Spectrum) reduces local storage. DEEP COPY (recreating tables) is faster than VACUUM DELETE for heavily modified tables. Redshift storage cannot be independently increased — it is tied to node count and type.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 81,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "What is the default backup retention period for automated RDS backups, and what is the maximum?",
+      "options": [
+        "Default: 7 days; Maximum: 35 days",
+        "Default: 1 day; Maximum: 7 days",
+        "Default: 14 days; Maximum: 90 days",
+        "Default: 30 days; Maximum: 365 days"
+      ],
+      "correct": 0,
+      "explanation": "RDS automated backups have a default retention period of 7 days and can be configured up to 35 days. Setting retention to 0 disables automated backups (not recommended for production). Backups include daily automated snapshots and transaction logs. Point-in-time recovery is available within the retention period.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 82,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "A company needs to automate the process of taking daily DynamoDB backups and retaining them for 90 days. Which service should be used?",
+      "options": [
+        "AWS Backup with a backup plan targeting the DynamoDB table",
+        "DynamoDB on-demand backup triggered by a Lambda function on a schedule",
+        "DynamoDB export to S3 on a daily schedule",
+        "DynamoDB PITR covers 35 days; no additional backup needed"
+      ],
+      "correct": 0,
+      "explanation": "AWS Backup provides centralized, policy-based backup management for DynamoDB with configurable schedules, retention periods, and lifecycle rules. A backup plan with a daily rule and 90-day retention automates the process. DynamoDB PITR only covers 35 days, falling short of the 90-day requirement. Lambda with on-demand backups works but requires custom code and scheduling. S3 export provides data but not native DynamoDB restore capability.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 83,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "An RDS instance's storage is filling up rapidly. The administrator discovers that binary logs (binlogs) are consuming significant space. How can binlog space be managed?",
+      "options": [
+        "Reduce the binlog retention hours using the mysql.rds_set_configuration procedure",
+        "Delete binlog files manually by SSHing into the RDS instance",
+        "Increase the storage allocation to accommodate binlogs",
+        "Disable binary logging entirely"
+      ],
+      "correct": 0,
+      "explanation": "RDS MySQL retains binary logs for replication and point-in-time recovery. The retention period can be adjusted using the mysql.rds_set_configuration stored procedure (e.g., CALL mysql.rds_set_configuration('binlog retention hours', 24)). Reducing retention frees space. You cannot SSH into RDS instances. Disabling binlogs would break read replicas and PITR. Increasing storage is a temporary fix that does not address the root cause.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 84,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "A company uses DynamoDB with Time to Live (TTL) enabled to automatically delete expired items. They need to capture and process these deleted items for archival before they are permanently removed. How should this be implemented?",
+      "options": [
+        "Enable DynamoDB Streams on the table and use a Lambda function to process TTL deletion events, archiving them to S3",
+        "Run a scheduled scan to find items before they expire",
+        "Use CloudWatch Events to trigger archival before TTL expiration",
+        "Configure TTL to move items to S3 instead of deleting them"
+      ],
+      "correct": 0,
+      "explanation": "DynamoDB Streams captures all modifications including TTL-triggered deletions. The stream record includes the full item data (if StreamViewType is NEW_AND_OLD_IMAGES) and a userIdentity field indicating the deletion was by the TTL service. A Lambda function processes these stream records and archives the items to S3 or another data store. TTL does not natively support moving items; it only deletes them. Scanning is inefficient and may miss items.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 85,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "A company needs to resize their Redshift cluster from 3 dc2.large nodes to 5 dc2.large nodes. Which operation should be performed?",
+      "options": [
+        "Elastic resize to add nodes while keeping the cluster mostly available",
+        "Classic resize which creates a new cluster and migrates data",
+        "Snapshot the cluster, delete it, and restore with 5 nodes",
+        "Add individual nodes one at a time using the modify-cluster command"
+      ],
+      "correct": 0,
+      "explanation": "Elastic resize changes the number of nodes (and optionally node type) with minimal downtime — typically a few minutes. It redistributes data across the new nodes automatically. The cluster is read-only briefly during the operation. Classic resize is slower (hours) and should be used when changing node types that do not support elastic resize. Nodes cannot be added individually.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 86,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "An Aurora MySQL cluster's reader endpoint is distributing connections unevenly — one replica handles most reads while others are idle. How can this be resolved?",
+      "options": [
+        "Use the reader endpoint which provides built-in load balancing, and ensure the application uses DNS-based connection pooling that respects TTL",
+        "Manually distribute reads across replica endpoints in the application code",
+        "Create a separate ALB to load balance database connections",
+        "Use Route 53 weighted routing to distribute connections"
+      ],
+      "correct": 0,
+      "explanation": "The Aurora reader endpoint performs DNS-level round-robin load balancing across replicas. However, if the application uses connection pooling that caches DNS resolutions beyond the TTL, connections are not redistributed. The fix is ensuring the connection pool respects the DNS TTL (60 seconds for Aurora reader endpoints). Some connection pools need configuration to periodically refresh DNS. ALBs operate at HTTP/HTTPS level, not TCP database connections.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 87,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "A company needs to schedule automatic scaling of an Aurora Serverless v2 cluster. They want minimum capacity of 0.5 ACUs during off-hours and 8 ACUs during business hours. Can this be achieved?",
+      "options": [
+        "Aurora Serverless v2 auto-scales based on demand within the configured min/max ACU range; scheduled scaling of the min/max values can be automated using Lambda with EventBridge",
+        "Aurora Serverless v2 supports built-in scheduled scaling policies",
+        "Aurora Serverless v2 can only be configured with static min/max ACU values",
+        "Aurora Serverless v2 does not support minimum capacity configuration"
+      ],
+      "correct": 0,
+      "explanation": "Aurora Serverless v2 auto-scales within configured min/max ACU bounds. While it does not have built-in scheduled scaling, you can automate min/max ACU adjustments using Lambda functions triggered by EventBridge scheduled rules. The Lambda function calls ModifyDBCluster to change the ServerlessV2ScalingConfiguration. This effectively creates scheduled scaling. During off-hours, lowering the minimum ACU reduces costs when the database is idle.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 88,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "A company uses Redshift and needs to implement Workload Management (WLM) to prevent long-running analytical queries from blocking short transactional queries. What should be configured?",
+      "options": [
+        "Create separate WLM queues with different memory allocation and concurrency settings; assign short queries to a fast queue with lower timeout and analytical queries to a longer queue",
+        "Increase the cluster size to handle all queries equally",
+        "Use FIFO queuing and increase the maximum concurrency",
+        "Disable WLM and let Redshift auto-manage query scheduling"
+      ],
+      "correct": 0,
+      "explanation": "Redshift WLM allows creating multiple query queues with different configurations: memory percentage, concurrency slots, and timeout values. Short queries can be routed to a fast queue with high concurrency and low memory per query. Long analytical queries go to a separate queue with more memory per query but lower concurrency. Query routing rules assign queries based on user groups or query groups. This prevents resource contention between workload types.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 89,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "easy",
+      "question": "How does Aurora handle storage across read replicas differently from standard RDS?",
+      "options": [
+        "Aurora replicas share the same underlying storage volume as the primary, so no data replication is needed",
+        "Aurora replicates data to each replica asynchronously like standard RDS",
+        "Aurora replicas each have independent storage that is synchronously replicated",
+        "Aurora replicas do not have storage; they query the primary's storage remotely"
+      ],
+      "correct": 0,
+      "explanation": "Aurora's shared storage architecture is a key differentiator. All Aurora instances (primary and replicas) in a cluster access the same shared storage volume, which is distributed across three AZs with 6 copies. Replicas read directly from this shared storage, eliminating replication lag (typically under 20ms). This also means adding replicas does not increase storage costs. Standard RDS replicates data to each replica independently.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 90,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "A company needs to export their entire DynamoDB table (500GB) to S3 for analytical processing without impacting the table's read capacity. Which feature should be used?",
+      "options": [
+        "DynamoDB Export to S3 feature which reads from table backups without consuming table RCUs",
+        "DynamoDB Scan with parallel segments writing to S3",
+        "DynamoDB Streams with a Lambda function writing to S3",
+        "AWS Data Pipeline with a DynamoDB import/export template"
+      ],
+      "correct": 0,
+      "explanation": "DynamoDB Export to S3 reads from a point-in-time backup of the table, not from the live table. This means it does not consume any read capacity units from the table, ensuring zero impact on production. The export is in DynamoDB JSON or Amazon Ion format. Scanning the table would consume RCUs. Streams only capture changes, not the full table. Data Pipeline is a legacy service that uses Scan internally.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 91,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "An RDS PostgreSQL Multi-AZ instance experiences a failover. After failover, the application reports increased latency for a few minutes. What is the MOST likely cause?",
+      "options": [
+        "The new primary (former standby) has a cold buffer pool/cache that needs to warm up with frequently accessed data",
+        "The application is still connecting to the old primary's IP address",
+        "The standby instance has less CPU and memory than the primary",
+        "DNS propagation for the RDS endpoint takes several minutes"
+      ],
+      "correct": 0,
+      "explanation": "After failover, the new primary (previously the standby) has a cold buffer pool because the standby did not serve read traffic. Frequently accessed data pages need to be read from disk into memory, causing increased latency until the cache warms up. The RDS endpoint DNS record updates quickly (low TTL). Multi-AZ standby has the same instance class as the primary. Applications using the RDS endpoint do not need IP changes.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 92,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "A company needs to implement auto-scaling for DynamoDB tables that have predictable hourly access patterns. The current auto-scaling response is too slow, causing throttling during rapid traffic increases. What should be configured?",
+      "options": [
+        "Use DynamoDB Application Auto Scaling with scheduled scaling to pre-scale capacity before predicted traffic increases",
+        "Switch to on-demand capacity mode permanently",
+        "Increase the auto-scaling target utilization threshold",
+        "Increase the auto-scaling minimum capacity significantly"
+      ],
+      "correct": 0,
+      "explanation": "DynamoDB scheduled scaling (through Application Auto Scaling) allows pre-configuring capacity increases before predicted traffic spikes. By scheduling a capacity increase before the expected peak (e.g., 5 minutes before), the table has sufficient capacity when traffic arrives. Reactive auto-scaling has a delay (1-2 minutes) that causes throttling during rapid increases. Scheduled scaling eliminates this gap for predictable patterns.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 93,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "What happens when you delete an RDS instance that has automated backups enabled and the backup retention period is 7 days?",
+      "options": [
+        "Automated backups are deleted but you can choose to create a final snapshot before deletion",
+        "All automated backups are retained for the full retention period",
+        "Automated backups are automatically converted to manual snapshots",
+        "The instance cannot be deleted while automated backups exist"
+      ],
+      "correct": 0,
+      "explanation": "When an RDS instance is deleted, automated backups are deleted (by default). You are given the option to create a final snapshot before deletion, which is a manual snapshot that persists until you explicitly delete it. If skip-final-snapshot is specified, no final snapshot is created and all automated backups are lost. Always create a final snapshot for production databases unless you are certain the data is no longer needed.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 94,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "A company uses ElastiCache Redis cluster mode enabled with 10 shards. They need to add 5 more shards to handle increased traffic. How should online resharding be performed?",
+      "options": [
+        "Use the ModifyReplicationGroupShardConfiguration API to add shards; Redis automatically migrates hash slots to new shards with no downtime",
+        "Create a new cluster with 15 shards and migrate data using redis-cli",
+        "Take a backup, delete the cluster, and restore with 15 shards",
+        "Redis cluster mode does not support online resharding"
+      ],
+      "correct": 0,
+      "explanation": "ElastiCache Redis cluster mode supports online resharding, which adds or removes shards while the cluster remains available. Redis uses hash slots (16,384 total) distributed across shards. When adding shards, hash slots are automatically migrated from existing shards to new ones. The cluster continues serving requests during resharding with minimal impact. The operation can be performed via console, CLI, or API.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 95,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "A company's Aurora PostgreSQL cluster is running low on CPU. The current instance type is db.r6g.xlarge. They need more compute capacity but want to minimize downtime during the change. What approach is recommended?",
+      "options": [
+        "Add a new larger replica (db.r6g.2xlarge), then perform a failover to promote it to primary",
+        "Modify the primary instance type directly (causes downtime during restart)",
+        "Create a new cluster with a larger instance type and migrate",
+        "Enable Aurora auto-scaling to add more replicas"
+      ],
+      "correct": 0,
+      "explanation": "Adding a new, larger replica and then performing a failover to make it primary provides the fastest instance type change with minimal downtime. The failover takes seconds while the instance replacement itself happens on the new replica without affecting the current primary. Directly modifying the primary instance type causes downtime during the restart. Aurora auto-scaling adds identical-sized replicas, not larger ones.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 96,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "Which storage types are available for RDS instances, and which is recommended for production OLTP workloads?",
+      "options": [
+        "General Purpose SSD (gp3), Provisioned IOPS SSD (io1/io2), and Magnetic; Provisioned IOPS is recommended for production OLTP",
+        "Only General Purpose SSD is available for RDS",
+        "SSD, HDD, and NVMe; NVMe is recommended for production",
+        "All RDS instances use Aurora shared storage"
+      ],
+      "correct": 0,
+      "explanation": "RDS offers three storage types: General Purpose SSD (gp2/gp3) for most workloads, Provisioned IOPS SSD (io1/io2) for I/O-intensive production OLTP workloads requiring consistent high performance, and Magnetic (legacy, not recommended). Provisioned IOPS allows specifying an exact IOPS level (up to 256,000 on io2) for predictable, high-performance database operations. gp3 offers a good baseline with configurable IOPS at lower cost.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 97,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "Which CloudWatch metric should a database administrator monitor to detect if an RDS instance is running out of storage?",
+      "options": [
+        "FreeStorageSpace",
+        "DatabaseConnections",
+        "ReadIOPS",
+        "CPUUtilization"
+      ],
+      "correct": 0,
+      "explanation": "FreeStorageSpace shows the amount of available storage in bytes. Monitoring this metric with CloudWatch alarms helps prevent the database from running out of disk space, which would cause writes to fail. Set an alarm to trigger when free space drops below a threshold (e.g., 20% of total). RDS also supports storage auto-scaling which automatically increases storage when free space is low.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 98,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "A database administrator needs to identify the specific SQL queries causing high CPU utilization on an RDS PostgreSQL instance. Which tool provides per-query performance analysis?",
+      "options": [
+        "Amazon RDS Performance Insights with the Top SQL tab",
+        "CloudWatch CPUUtilization metric",
+        "Enhanced Monitoring OS-level metrics",
+        "CloudTrail API call logs"
+      ],
+      "correct": 0,
+      "explanation": "RDS Performance Insights provides a dashboard showing database load broken down by wait events, SQL statements, hosts, and users. The Top SQL tab identifies the specific queries consuming the most resources (CPU, I/O, lock waits). It uses the Performance Schema (MySQL) or pg_stat_statements (PostgreSQL) for detailed per-query metrics. CloudWatch shows aggregate CPU but not per-query breakdown. Enhanced Monitoring shows OS metrics, not query metrics.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 99,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "An RDS MySQL instance has a max_connections parameter set to 150. During peak hours, the application receives 'Too many connections' errors. What is the simplest fix?",
+      "options": [
+        "Increase the max_connections value in the custom parameter group associated with the instance",
+        "Restart the RDS instance to clear existing connections",
+        "Add a read replica to handle excess connections",
+        "Increase the instance's CPU to handle more connections"
+      ],
+      "correct": 0,
+      "explanation": "The 'Too many connections' error means max_connections has been reached. Increasing this value in the parameter group (requires a custom parameter group, not the default) allows more concurrent connections. The maximum supportable connections depends on the instance's available memory (each connection uses ~10MB). For a more sustainable solution, implement connection pooling (RDS Proxy) to reuse connections. Read replicas only help if the application can route reads separately.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 100,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "A DynamoDB table shows high ReadThrottleEvents in CloudWatch despite auto-scaling being enabled. The throttling occurs in short bursts lasting 1-2 minutes. What is the MOST likely cause?",
+      "options": [
+        "Auto-scaling response time is too slow for burst traffic; the table needs burst capacity or the application should implement exponential backoff with retries",
+        "The table has reached the DynamoDB service limits for the account",
+        "Auto-scaling is not configured correctly and is not scaling at all",
+        "The CloudWatch metric is a false positive"
+      ],
+      "correct": 0,
+      "explanation": "DynamoDB auto-scaling monitors utilization and adjusts capacity, but it takes 1-2 minutes to respond to traffic changes. Short burst traffic can cause throttling before auto-scaling kicks in. DynamoDB provides some burst capacity (unused capacity from previous periods) but it is limited. Solutions include: implementing exponential backoff with retries in the application, pre-scaling capacity before known peaks, or switching to on-demand mode which handles bursts better.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 101,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "An Aurora PostgreSQL database experiences periodic performance degradation every few hours. Performance Insights shows high 'IO:DataFileRead' wait events during these periods. What should the administrator investigate?",
+      "options": [
+        "The buffer pool is too small, causing frequent disk reads; increase the db.r instance size to get more memory for the buffer pool/shared_buffers",
+        "The Aurora storage layer is experiencing outages",
+        "The database needs more read replicas",
+        "The network between the application and database is congested"
+      ],
+      "correct": 0,
+      "explanation": "High IO:DataFileRead wait events indicate the database is reading data from storage because the requested pages are not in the buffer pool (shared_buffers in PostgreSQL). This occurs when the working set exceeds available memory. Periodic degradation suggests certain operations (like scheduled reports) access cold data not in cache. Increasing the instance size provides more memory for the buffer pool, reducing disk reads. Alternatively, optimizing queries to access less data helps.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 102,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "A database administrator needs to monitor RDS instances at the operating system level, including CPU distribution across processes, memory breakdown, and file system utilization. Which feature provides these OS-level metrics?",
+      "options": [
+        "RDS Enhanced Monitoring",
+        "CloudWatch standard metrics",
+        "RDS Performance Insights",
+        "CloudTrail data events"
+      ],
+      "correct": 0,
+      "explanation": "Enhanced Monitoring provides OS-level metrics for RDS instances including CPU breakdown (user, system, wait, idle), memory usage (free, cached, buffered), swap utilization, disk I/O details, and process-level metrics. Data is collected every 1-60 seconds. Standard CloudWatch metrics provide aggregate database-level metrics. Performance Insights focuses on database query performance, not OS metrics.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 103,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "A Redshift cluster is experiencing very slow queries. The EXPLAIN plan shows 'DS_DIST_ALL' steps for a join between a 5-billion row fact table and a 10-million row dimension table. How should this be fixed?",
+      "options": [
+        "Change the dimension table's distribution to ALL (since it is small enough to replicate to all nodes) to eliminate redistribution during joins",
+        "Change both tables to EVEN distribution",
+        "Add more nodes to the Redshift cluster",
+        "Use Redshift Spectrum to query the tables from S3"
+      ],
+      "correct": 0,
+      "explanation": "DS_DIST_ALL means one entire table is being broadcast to all nodes during the join, which is very expensive for large tables. For a 10M-row dimension table joining with a 5B-row fact table, ALL distribution on the dimension table replicates it to every node at load time (10M rows per node is acceptable). This eliminates runtime redistribution. The fact table should use KEY distribution on the join column. EVEN distribution would cause both tables to be redistributed.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 104,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "Which CloudWatch metrics should be monitored to detect DynamoDB performance issues? (Select the MOST important pair.)",
+      "options": [
+        "ConsumedReadCapacityUnits and ConsumedWriteCapacityUnits (to detect approaching provisioned limits)",
+        "NumberOfDecryptionFailures and UserErrors",
+        "ReturnedItemCount and ScannedCount",
+        "AccountProvisionedReadCapacityUtilization and AccountMaxTableLevelReads"
+      ],
+      "correct": 0,
+      "explanation": "ConsumedReadCapacityUnits and ConsumedWriteCapacityUnits are the primary metrics for monitoring DynamoDB table performance. Comparing consumed to provisioned capacity reveals how close the table is to throttling. Additional important metrics include ThrottledRequests, SuccessfulRequestLatency, and SystemErrors. Setting CloudWatch alarms at 80% utilization provides early warning.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 105,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "An Aurora MySQL cluster has a read replica with increasing ReplicaLag. The lag grows during peak write hours and recovers during off-peak hours. What is the MOST likely cause?",
+      "options": [
+        "The read replica instance is undersized and cannot keep up with applying changes during peak write volume",
+        "The Aurora storage layer is experiencing network issues",
+        "The read replica is in a different AZ, causing network latency",
+        "The primary instance has too many connections"
+      ],
+      "correct": 0,
+      "explanation": "Aurora replicas read from shared storage, so storage-level replication is not the bottleneck. However, the replica must apply redo logs to its buffer pool to serve consistent reads. If the replica's compute resources (CPU/memory) are insufficient to process the redo volume during peak writes, the replica falls behind. Scaling up the replica instance type provides more CPU for redo log application. Aurora replica lag is typically under 20ms but can increase under extreme write loads.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 106,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "An RDS PostgreSQL instance intermittently experiences query timeouts. Performance Insights shows high 'Lock:transactionid' wait events during these periods. What does this indicate and how should it be resolved?",
+      "options": [
+        "Transactions are blocking each other due to row-level lock contention; identify long-running transactions and optimize them to reduce lock hold times",
+        "The database storage is full, causing transaction failures",
+        "The instance needs more IOPS provisioned",
+        "The max_connections limit is being reached"
+      ],
+      "correct": 0,
+      "explanation": "Lock:transactionid wait events indicate transactions are waiting for other transactions to complete, typically due to row-level locks. This happens when multiple transactions update the same rows or long-running transactions hold locks. Solutions include: identifying and terminating long-running transactions, optimizing query patterns to reduce lock scope, using SKIP LOCKED for queue-like patterns, and reducing transaction duration. Performance Insights Top SQL shows the blocking queries.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 107,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "A database administrator needs to set up alerts for when an RDS instance's CPU utilization exceeds 80% for more than 5 minutes. What should be configured?",
+      "options": [
+        "A CloudWatch alarm on the CPUUtilization metric with a 5-minute evaluation period and 80% threshold, with an SNS notification action",
+        "An RDS event notification for CPU threshold breach",
+        "A Performance Insights alert for CPU utilization",
+        "Enhanced Monitoring with a custom alert threshold"
+      ],
+      "correct": 0,
+      "explanation": "CloudWatch alarms are the standard mechanism for monitoring RDS metrics and triggering notifications. Configure the alarm on the CPUUtilization metric with a threshold of 80%, period of 300 seconds (5 minutes), and 1 evaluation period. Attach an SNS topic action for email/SMS notifications. RDS event notifications are for operational events (failover, maintenance), not metric thresholds. Performance Insights does not have built-in alerting.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 108,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "A DynamoDB table is experiencing high SuccessfulRequestLatency. The table uses provisioned capacity and is not being throttled. What should the administrator check?",
+      "options": [
+        "Item sizes — large items increase read/write latency; check if items are close to the 400KB limit",
+        "The number of GSIs on the table",
+        "The AWS region's service health dashboard",
+        "The table's encryption settings"
+      ],
+      "correct": 0,
+      "explanation": "Large items increase DynamoDB latency because more data must be read from or written to storage. Items approaching the 400KB limit significantly impact latency. Other causes include hot partitions (though these usually cause throttling), complex filter expressions scanning many items, and eventually consistent reads being slower than expected. Check item sizes, query patterns, and whether queries are returning more data than necessary.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 109,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "A Redshift query that previously completed in 2 minutes now takes 20 minutes. The administrator checks and finds no changes to the query or data volume. What should be investigated first?",
+      "options": [
+        "Check if the table statistics are stale (STL_ALERT_EVENT_LOG) and run ANALYZE on the affected tables",
+        "Check if the cluster has been resized recently",
+        "Check if other users are running conflicting queries",
+        "Restart the Redshift cluster to clear cache"
+      ],
+      "correct": 0,
+      "explanation": "Stale table statistics cause the query optimizer to choose suboptimal execution plans. Redshift uses table statistics (row counts, column statistics, sort order) to plan query execution. When statistics are outdated (after significant data changes), the optimizer may choose full table scans instead of optimized joins. Running ANALYZE updates statistics. STL_ALERT_EVENT_LOG shows alerts about stale statistics and other optimization issues.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 110,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "A company uses DynamoDB Contributor Insights. The dashboard shows that 5% of partition keys account for 85% of throttled requests. What should be done?",
+      "options": [
+        "Redesign the partition key to distribute traffic more evenly, implement DAX for caching hot items, or use write sharding for the hot keys",
+        "Increase the table's provisioned write capacity proportionally",
+        "Switch all operations to eventually consistent reads",
+        "Add more GSIs to offload the traffic"
+      ],
+      "correct": 0,
+      "explanation": "DynamoDB Contributor Insights identifies the specific partition keys causing throttling. When 5% of keys cause 85% of throttling, this is a classic hot partition problem. Solutions include: redesigning keys for better distribution, using DAX to cache frequently read hot items, implementing write sharding (appending random suffixes), or using a combination approach. Simply increasing capacity does not fix distribution issues — DynamoDB divides capacity evenly across partitions.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 111,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "An RDS MySQL instance shows high disk queue depth and increasing read latency. The current storage is General Purpose SSD (gp2) with baseline IOPS. What is the MOST effective fix?",
+      "options": [
+        "Migrate the storage to Provisioned IOPS SSD (io1/io2) for consistent, high-performance I/O",
+        "Increase the instance's CPU capacity",
+        "Add a read replica to offload reads",
+        "Enable Enhanced Monitoring for better visibility"
+      ],
+      "correct": 0,
+      "explanation": "High disk queue depth with gp2 indicates the storage is I/O bottlenecked — the workload exceeds the gp2 baseline IOPS (3 IOPS per GB). Provisioned IOPS SSD (io1/io2) provides dedicated, consistent IOPS up to 256,000 IOPS. Alternatively, increasing gp2 volume size increases baseline IOPS (up to 16,000 at 5.3TB+). Upgrading to gp3 is also an option as it allows configuring IOPS independently of size. CPU is not the bottleneck here.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 112,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "An Aurora MySQL cluster experiences sudden performance degradation. The administrator observes that the Aurora storage volume's VolumeReadIOPs metric has spiked dramatically. The database size has not changed. What could cause this?",
+      "options": [
+        "The Aurora buffer pool was cleared (perhaps due to a restart or OOM event), causing all queries to read from storage instead of cache",
+        "Aurora storage is being replicated to a new Availability Zone",
+        "A read replica was added, doubling storage I/O",
+        "The Aurora storage encryption is being rekeyed"
+      ],
+      "correct": 0,
+      "explanation": "A sudden spike in VolumeReadIOPs with no data growth typically indicates buffer pool invalidation. After a restart (maintenance, failover, or OOM kill), the buffer pool is empty and all queries must read from storage, causing a dramatic I/O spike. As the cache warms up, I/O normalizes. In Aurora, the buffer pool warmup can be accelerated using the buffer pool prefetch feature. Read replicas share the same storage and do not cause additional storage I/O.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 113,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "What does the SwapUsage CloudWatch metric indicate for an RDS instance, and why should it be monitored?",
+      "options": [
+        "It shows the amount of swap space used; high swap usage indicates the instance is running out of memory and may perform poorly due to disk-based memory paging",
+        "It shows the frequency of storage I/O swaps between SSD and HDD",
+        "It shows the Multi-AZ failover swap count",
+        "It shows the number of parameter group changes applied"
+      ],
+      "correct": 0,
+      "explanation": "SwapUsage indicates how much swap space the RDS instance is using. High swap usage means the instance's physical memory (RAM) is exhausted, forcing the OS to page memory to disk, which dramatically degrades performance. Common causes include too many connections (each uses ~10MB), large buffer pools, or memory-intensive queries. The fix is to increase the instance size or optimize memory usage. Set a CloudWatch alarm for swap usage above zero.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 114,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "A company uses an ElastiCache Redis cluster. They notice that the EngineCPUUtilization metric is consistently high (above 80%) on one shard while others are low. What should be investigated?",
+      "options": [
+        "Hot key access pattern — one shard handles a disproportionate number of requests due to uneven key distribution",
+        "The shard has a hardware issue",
+        "Redis does not support horizontal scaling",
+        "The Redis version is too old and needs upgrading"
+      ],
+      "correct": 0,
+      "explanation": "In Redis cluster mode, keys are distributed across shards using hash slots. If certain keys (hot keys) are heavily accessed and happen to reside on the same shard, that shard's CPU spikes while others remain idle. Identifying hot keys using CloudWatch metrics and Redis SLOWLOG helps. Solutions include redesigning key patterns, adding read replicas for the hot shard, or using application-level caching for the hottest keys.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 115,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "An RDS Oracle instance experiences performance issues. The administrator runs an AWR (Automatic Workload Repository) report and finds that the 'db file sequential read' event is the top wait event, accounting for 70% of database time. What does this indicate?",
+      "options": [
+        "The database is doing excessive single-block reads (index lookups) and the buffer cache is too small or queries are not using indexes efficiently",
+        "The database is experiencing lock contention",
+        "The network between the application and database is slow",
+        "The redo log configuration is suboptimal"
+      ],
+      "correct": 0,
+      "explanation": "The 'db file sequential read' wait event indicates single-block reads, typically from index-based access paths. High occurrence means either the buffer cache (SGA) is undersized causing frequent disk reads, queries are using inefficient indexes causing excessive I/O, or the storage I/O subsystem is slow. Solutions include increasing the buffer cache (db_cache_size parameter), optimizing queries and indexes, upgrading to Provisioned IOPS storage, or increasing the RDS instance size for more memory.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 116,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "A database administrator needs to track all DDL changes (CREATE, ALTER, DROP) to an Aurora PostgreSQL database for audit purposes. Which approach is recommended?",
+      "options": [
+        "Enable the pgaudit extension and configure it to log DDL statements to CloudWatch Logs",
+        "Monitor CloudTrail for database API calls",
+        "Use AWS Config to track database configuration changes",
+        "Query the pg_stat_activity view on a schedule"
+      ],
+      "correct": 0,
+      "explanation": "The pgaudit extension for PostgreSQL provides detailed audit logging of database activities including DDL, DML, and role-based statements. When combined with publishing PostgreSQL logs to CloudWatch Logs, it creates a persistent, searchable audit trail. CloudTrail tracks AWS API calls (CreateDBInstance, ModifyDBCluster) but not SQL-level DDL statements. AWS Config tracks RDS resource configurations, not database schema changes.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 117,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "What CloudWatch metric should be monitored to detect replication lag on an RDS read replica?",
+      "options": [
+        "ReplicaLag",
+        "ReadLatency",
+        "NetworkReceiveThroughput",
+        "BinLogDiskUsage"
+      ],
+      "correct": 0,
+      "explanation": "ReplicaLag measures the time (in seconds) that the read replica is behind the primary instance. High replica lag means reads from the replica may return stale data. Common causes include heavy write loads on the primary, undersized replica instances, or long-running queries on the replica that block replication. Set a CloudWatch alarm to alert when lag exceeds an acceptable threshold (e.g., 60 seconds for most applications).",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 118,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "A Redshift cluster's queries are slow. The administrator checks SVL_QUERY_SUMMARY and finds that many queries have high 'bytes_distributed' relative to 'bytes_returned'. What does this indicate?",
+      "options": [
+        "Excessive data redistribution across nodes during query execution, likely due to suboptimal table distribution keys",
+        "The queries are returning too much data to the client",
+        "The Redshift cluster has too many nodes",
+        "The queries need more concurrency slots"
+      ],
+      "correct": 0,
+      "explanation": "High bytes_distributed relative to bytes_returned indicates that large amounts of data are being shuffled between nodes during query execution (typically during joins or aggregations). This is caused by tables having distribution keys that do not match join keys, forcing Redshift to redistribute data at query time. The fix is to align table distribution keys with frequently joined columns. Reviewing the EXPLAIN plan identifies which steps involve redistribution.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 119,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "A company needs to proactively identify slow queries on an Aurora MySQL cluster before users report issues. They want automated alerting when any query takes longer than 5 seconds. What should be configured?",
+      "options": [
+        "Set the slow_query_log parameter to 1 and long_query_time to 5, publish logs to CloudWatch Logs, and create a metric filter alarm for slow query patterns",
+        "Enable Performance Insights and check it manually daily",
+        "Set up a CloudWatch alarm on the DatabaseConnections metric",
+        "Enable Enhanced Monitoring at 1-second granularity"
+      ],
+      "correct": 0,
+      "explanation": "Enabling the MySQL slow query log (slow_query_log=1, long_query_time=5) captures all queries exceeding 5 seconds. Publishing these logs to CloudWatch Logs allows creating metric filters that count slow query occurrences. A CloudWatch alarm on this custom metric triggers SNS notifications when slow queries exceed a threshold. This provides automated, proactive alerting. Performance Insights provides historical analysis but not real-time alerting.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 120,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "An Aurora PostgreSQL database has a query that reads 100 million rows but only returns 50 rows. CloudWatch shows high VolumeReadIOPs. What optimization should be applied?",
+      "options": [
+        "Add an appropriate index to reduce the number of rows scanned, and use EXPLAIN ANALYZE to verify the index is being used",
+        "Increase the Aurora instance size for more I/O capacity",
+        "Enable Aurora Serverless v2 for automatic scaling",
+        "Increase the shared_buffers parameter"
+      ],
+      "correct": 0,
+      "explanation": "Reading 100M rows to return 50 indicates a full table scan or inefficient index usage. Adding an index on the filtered columns allows the query to directly access relevant rows without scanning the entire table. EXPLAIN ANALYZE confirms the execution plan uses the index. Increasing instance size does not reduce unnecessary I/O. Increasing shared_buffers may cache more data but does not solve the underlying scan efficiency problem.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 121,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "easy",
+      "question": "A database administrator enables RDS event notifications. Which type of events can be captured?",
+      "options": [
+        "Operational events such as failover, backup, maintenance, and configuration changes",
+        "Individual SQL query execution events",
+        "CloudWatch metric threshold breaches",
+        "Application-level errors"
+      ],
+      "correct": 0,
+      "explanation": "RDS event notifications inform you about operational events on your database instances: failover completed, backup started/completed, maintenance applied, configuration change, read replica created/deleted, etc. Events are published to SNS topics. SQL-level events require database-native logging (slow query log, pgaudit). CloudWatch alarms handle metric thresholds. Application errors are captured in application logs.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 122,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "A DynamoDB table with 500GB of data has queries that consistently return SuccessfulRequestLatency above 10ms (normally under 5ms). The table is not throttled. After investigation, the admin discovers the queries use FilterExpression extensively. Why does this cause high latency?",
+      "options": [
+        "FilterExpression is applied AFTER data is read from storage; DynamoDB reads all items matching the key condition, then filters, consuming read capacity for discarded items",
+        "FilterExpression forces DynamoDB to use a different storage engine",
+        "FilterExpression disables DynamoDB caching",
+        "FilterExpression causes DynamoDB to lock the partition during reads"
+      ],
+      "correct": 0,
+      "explanation": "FilterExpression in DynamoDB is applied after data is read from storage, not before. If a Query returns 10,000 items from storage but the filter reduces it to 50, you still pay for and wait for 10,000 items to be read. This causes high latency and wasted read capacity. The solution is to redesign the data model (using GSIs or composite sort keys) so the key conditions directly retrieve the needed items without post-read filtering.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 123,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "A Redshift cluster is running out of disk space. The administrator notices the STL_DELETE table shows many delete operations but VACUUM has not been run. Why is space not being reclaimed?",
+      "options": [
+        "Redshift uses MVCC (Multi-Version Concurrency Control); deleted rows are marked as deleted but not physically removed until VACUUM is run",
+        "Redshift automatically reclaims space from deleted rows",
+        "The delete operations are only soft deletes at the application level",
+        "Redshift requires a cluster restart to reclaim deleted space"
+      ],
+      "correct": 0,
+      "explanation": "Redshift uses MVCC, where deleted and updated rows create 'ghost rows' that are not physically removed from disk. These ghost rows accumulate and waste storage (and degrade query performance as they must be skipped). VACUUM DELETE reclaims space by physically removing ghost rows. VACUUM SORT also re-sorts data for optimal query performance. Automatic vacuum runs during idle periods but may not keep up with heavy deletion workloads.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 124,
       "domain": 5,
       "objective": "5.1",
       "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with encrypt data at rest and in transit?",
+      "question": "A company needs to encrypt an Amazon RDS database at rest. When must encryption be configured?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "At the time the RDS instance is created; encryption cannot be enabled on an existing unencrypted instance",
+        "At any time after the instance is created",
+        "Encryption is enabled by default and cannot be disabled",
+        "Encryption can only be configured through the CLI, not the console"
       ],
       "correct": 0,
-      "explanation": "When working with encrypt data at rest and in transit, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "explanation": "RDS encryption at rest must be enabled at instance creation time. You cannot directly enable encryption on an existing unencrypted RDS instance. To encrypt an existing unencrypted database, you must create an encrypted snapshot (by copying an unencrypted snapshot with encryption enabled) and then restore from the encrypted snapshot to a new encrypted instance. This applies to RDS, not Aurora (which also requires encryption at creation).",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 125,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "A company wants to enable IAM-based authentication for their Aurora MySQL cluster so that applications do not need to store database passwords. How is this configured?",
+      "options": [
+        "Enable IAM database authentication on the cluster, create a database user mapped to an IAM role, and use the aws rds generate-db-auth-token CLI to get temporary tokens",
+        "Attach an IAM role directly to the Aurora cluster",
+        "Configure IAM policies with MySQL statement-level permissions",
+        "Use AWS SSO with SAML federation for database access"
+      ],
+      "correct": 0,
+      "explanation": "Aurora IAM database authentication generates temporary authentication tokens using IAM credentials instead of passwords. Enable IAM authentication on the cluster, create a MySQL user identified with the AWSAuthenticationPlugin, and map it to an IAM role/user. Applications use generate-db-auth-token to get a temporary (15-minute) token used as the password. This eliminates the need to store database passwords. Network traffic must use SSL/TLS.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 126,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "easy",
+      "question": "An RDS database must be accessible only from EC2 instances within the same VPC. Which security control should be configured?",
+      "options": [
+        "Place the RDS instance in a private subnet and configure the security group to allow inbound traffic only from the EC2 instances' security group",
+        "Enable RDS public accessibility and use NACLs to restrict access",
+        "Use IAM policies to restrict API access to the VPC",
+        "Configure Route 53 to resolve the RDS endpoint only within the VPC"
+      ],
+      "correct": 0,
+      "explanation": "Security groups are the primary network access control for RDS. Placing the RDS instance in a private subnet (no internet gateway route) and configuring its security group to allow inbound on the database port (e.g., 3306) only from the EC2 security group ID provides tight access control. This is more secure than IP-based rules since security group references dynamically include all instances in the referenced group. Public accessibility should be disabled.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 127,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "A company needs to encrypt data in transit between their application and an RDS MySQL database. How can this be enforced?",
+      "options": [
+        "Require SSL/TLS connections by setting the rds.force_ssl parameter to 1 in the parameter group",
+        "Enable encryption at rest on the RDS instance",
+        "Configure a VPN between the application server and the RDS instance",
+        "Use a private subnet for the RDS instance"
+      ],
+      "correct": 0,
+      "explanation": "Setting rds.force_ssl=1 in the MySQL parameter group forces all connections to use SSL/TLS. Without this setting, applications can connect without encryption. RDS provides SSL certificates that applications use to establish encrypted connections. For PostgreSQL, the rds.force_ssl parameter similarly enforces SSL. Encryption at rest protects stored data, not data in transit. Private subnets provide network isolation but do not encrypt traffic.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 128,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "A company needs to implement database activity auditing for their Aurora PostgreSQL cluster to meet PCI DSS compliance requirements. All database activities (DDL, DML, connections) must be logged and stored securely for 1 year. What should be configured?",
+      "options": [
+        "Enable the pgaudit extension for comprehensive SQL auditing, publish logs to CloudWatch Logs with 1-year retention, and export to S3 for long-term archival",
+        "Enable CloudTrail data events for RDS",
+        "Use AWS Config rules to monitor database configurations",
+        "Enable Enhanced Monitoring to capture all database activities"
+      ],
+      "correct": 0,
+      "explanation": "The pgaudit extension provides detailed SQL-level audit logging for PostgreSQL including DDL (CREATE/ALTER/DROP), DML (SELECT/INSERT/UPDATE/DELETE), and session events (connections/disconnections). Publishing to CloudWatch Logs with retention policies maintains the audit trail. For the 1-year requirement, configure CloudWatch Logs retention to 13 months or archive to S3 with lifecycle policies. CloudTrail captures AWS API calls, not SQL activities.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 129,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "A company uses DynamoDB and needs to ensure all data is encrypted at rest. What encryption options are available?",
+      "options": [
+        "AWS owned key (default, free), AWS managed key (aws/dynamodb), or customer-managed KMS key (CMK)",
+        "DynamoDB does not support encryption at rest",
+        "Only customer-managed KMS keys are supported",
+        "Encryption is optional and must be enabled separately"
+      ],
+      "correct": 0,
+      "explanation": "DynamoDB encrypts all data at rest by default (cannot be disabled). Three key options are available: AWS owned key (default, free, AWS manages everything), AWS managed key (aws/dynamodb, provides CloudTrail auditing of key usage), or customer-managed KMS key (full control over key policies, rotation, and grants). The choice affects cost and control level. Customer-managed keys have per-request KMS charges.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 130,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "easy",
+      "question": "A company needs to prevent accidental or malicious deletion of an RDS database instance. Which feature should be enabled?",
+      "options": [
+        "RDS deletion protection",
+        "RDS Multi-AZ deployment",
+        "RDS automated backups with maximum retention",
+        "RDS read replicas"
+      ],
+      "correct": 0,
+      "explanation": "RDS deletion protection prevents the database instance from being deleted through the console, CLI, or API. When enabled, any attempt to delete the instance fails until deletion protection is explicitly disabled. This protects against both accidental deletion by administrators and malicious deletion by compromised credentials. Multi-AZ provides failover, not deletion protection. Automated backups preserve data but do not prevent deletion.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 131,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "hard",
+      "question": "A company runs a multi-tenant SaaS application on Aurora PostgreSQL. Each tenant's data must be isolated, and tenants should only be able to access their own data even if they have database credentials. What database-level security should be implemented?",
+      "options": [
+        "PostgreSQL Row-Level Security (RLS) policies that filter rows by tenant_id based on the current database role or session variable",
+        "Separate database schemas for each tenant with schema-level permissions",
+        "Application-level filtering with tenant_id in every WHERE clause",
+        "Separate database instances for each tenant"
+      ],
+      "correct": 0,
+      "explanation": "PostgreSQL Row-Level Security (RLS) enforces data isolation at the database engine level, independent of the application. RLS policies automatically filter rows based on the current role or session variable (e.g., SET app.tenant_id = 'xxx'), ensuring tenants can only see their own data even with direct SQL access. Application-level filtering depends on developer discipline and can be bypassed. Separate schemas add management overhead. Separate instances are the most expensive.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 132,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "A company needs to rotate the master user password for an RDS instance automatically without application downtime. Which service facilitates this?",
+      "options": [
+        "AWS Secrets Manager with automatic rotation configured for the RDS master password",
+        "IAM password policies",
+        "AWS Systems Manager Parameter Store with SecureString",
+        "AWS Config rules monitoring password age"
+      ],
+      "correct": 0,
+      "explanation": "AWS Secrets Manager provides built-in support for automatic RDS password rotation. It creates a Lambda rotation function that generates a new password, updates the secret in Secrets Manager, and modifies the RDS instance to use the new password. Applications retrieve the current password from Secrets Manager, so rotation is transparent. Parameter Store stores secrets but does not provide automatic rotation. IAM password policies apply to IAM users, not database users.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 133,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "A database administrator needs to restrict DynamoDB table access so that a specific IAM role can only read items where the partition key matches the role's session tag. Which IAM feature enables this?",
+      "options": [
+        "IAM policy condition keys using dynamodb:LeadingKeys to restrict access to items matching the session tag",
+        "DynamoDB resource-based policies",
+        "VPC endpoints with endpoint policies",
+        "DynamoDB encryption with separate keys per role"
+      ],
+      "correct": 0,
+      "explanation": "The dynamodb:LeadingKeys condition key in IAM policies restricts a principal's access to items whose partition key values match specified values. Combined with session tags or principal tags, this enables fine-grained access control where each role can only access items with a partition key matching its identity. DynamoDB does not have resource-based policies. This is a powerful ABAC pattern for multi-tenant DynamoDB access.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 134,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "easy",
+      "question": "A company wants to use VPC endpoints to access DynamoDB from instances in a private subnet without internet access. What type of VPC endpoint should be created?",
+      "options": [
+        "Gateway endpoint for DynamoDB",
+        "Interface endpoint for DynamoDB",
+        "Both gateway and interface endpoints",
+        "DynamoDB does not support VPC endpoints"
+      ],
+      "correct": 0,
+      "explanation": "DynamoDB supports VPC gateway endpoints, which are free and route traffic through the AWS private network. A gateway endpoint is added to the VPC route table with a prefix list for DynamoDB. This allows instances in private subnets to access DynamoDB without a NAT gateway or internet access. While DynamoDB also supports interface endpoints, gateway endpoints are free and the recommended approach.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 135,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "A company stores sensitive customer data in an Aurora PostgreSQL database. They need to implement column-level encryption for credit card numbers so that even database administrators with SELECT access cannot read the raw values. What approach should be used?",
+      "options": [
+        "Application-level encryption using AWS KMS to encrypt credit card values before storing them; only the application with KMS decrypt permissions can read the data",
+        "Aurora encryption at rest with a customer-managed KMS key",
+        "PostgreSQL native pgcrypto extension with database-stored keys",
+        "SSL/TLS encryption for all database connections"
+      ],
+      "correct": 0,
+      "explanation": "Application-level encryption (client-side encryption) encrypts sensitive values before they reach the database. Even database administrators with full SELECT access see only encrypted ciphertext. The KMS key policy restricts decrypt permissions to the application's IAM role, not the DBA role. Aurora encryption at rest protects the entire database from storage-level access but does not prevent DBAs from reading data. pgcrypto with database-stored keys allows DBAs to decrypt.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 136,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "A company needs to share an Aurora MySQL cluster snapshot with another AWS account for testing. The snapshot is encrypted with a customer-managed KMS key. What steps are required?",
+      "options": [
+        "Share the snapshot with the target account AND grant the target account access to the KMS key used to encrypt the snapshot",
+        "Share the snapshot only; the target account can access it automatically",
+        "Copy the snapshot to the target account using cross-account S3 replication",
+        "Re-encrypt the snapshot with an AWS-managed key before sharing"
+      ],
+      "correct": 0,
+      "explanation": "When sharing an encrypted snapshot, both the snapshot and the KMS key must be accessible to the target account. Share the snapshot via the RDS console/CLI (ModifyDBSnapshotAttribute) AND update the KMS key policy to grant the target account kms:Decrypt and kms:CreateGrant permissions. Without KMS access, the target account cannot restore from the encrypted snapshot. Snapshots encrypted with the default AWS-managed key cannot be shared.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 137,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "hard",
+      "question": "A company needs to implement Transparent Data Encryption (TDE) for an RDS Oracle database. TDE provides an additional encryption layer beyond RDS encryption at rest. How should this be configured?",
+      "options": [
+        "Add the TDE option to the RDS instance's option group and configure the TDE tablespace encryption",
+        "Enable RDS encryption at rest, which automatically includes TDE",
+        "Install TDE on the RDS instance by SSHing into the server",
+        "Use AWS KMS directly as the TDE keystore"
+      ],
+      "correct": 0,
+      "explanation": "Oracle TDE on RDS is configured through option groups. Add the Oracle TDE option to a custom option group and associate it with the RDS instance. TDE encrypts data at the tablespace level using Oracle's native encryption. This provides defense-in-depth when used with RDS encryption at rest: TDE protects against logical access (database dump/export), while RDS encryption protects storage-level access. You cannot SSH into RDS instances. RDS encryption and TDE are separate features.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 138,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "A company needs to ensure that their DynamoDB table can only be accessed from within their VPC and not from the public internet. How should this be enforced?",
+      "options": [
+        "Use a DynamoDB VPC gateway endpoint with an endpoint policy restricting access to the specific table, and use an IAM policy condition key aws:sourceVpce to restrict table access",
+        "Place the DynamoDB table in a private subnet",
+        "Disable public access on the DynamoDB table",
+        "Use security groups to restrict DynamoDB access"
+      ],
+      "correct": 0,
+      "explanation": "DynamoDB is a public service and cannot be placed in a VPC. To restrict access to VPC-only, create a gateway endpoint with an endpoint policy restricting the allowed tables. Additionally, add an IAM policy condition (aws:sourceVpce) on the DynamoDB table that denies access unless the request comes through the specified VPC endpoint. This ensures that even IAM principals with DynamoDB permissions cannot access the table from outside the VPC.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 139,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "Which AWS service should be used to manage and automatically rotate database credentials for an RDS instance?",
+      "options": [
+        "AWS Secrets Manager",
+        "AWS Systems Manager Parameter Store",
+        "AWS Key Management Service (KMS)",
+        "AWS IAM"
+      ],
+      "correct": 0,
+      "explanation": "AWS Secrets Manager provides built-in integration with RDS for storing and automatically rotating database credentials. It includes predefined rotation Lambda functions for RDS databases (MySQL, PostgreSQL, Oracle, SQL Server, MariaDB). Automatic rotation can be configured for every 30-365 days. Applications use the Secrets Manager API to retrieve current credentials. Parameter Store can store secrets but lacks built-in rotation. KMS manages encryption keys, not credentials.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 140,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "A company uses Amazon Redshift and needs to implement column-level access control so that analysts can query all columns except salary_amount. How should this be configured?",
+      "options": [
+        "Create a Redshift view excluding the salary_amount column and grant analysts access to the view instead of the base table",
+        "Use Redshift column-level GRANT and REVOKE statements",
+        "Implement a Redshift data sharing policy",
+        "Use IAM policies with condition keys for column access"
+      ],
+      "correct": 1,
+      "explanation": "Redshift supports native column-level access control using GRANT and REVOKE SQL statements. You can GRANT SELECT on specific columns (all except salary_amount) to an analyst role, then REVOKE any existing table-level access. Alternatively, views can provide column filtering. Column-level GRANT is the most direct approach. IAM policies do not control column-level database access. Data sharing is for cross-cluster access.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 141,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "A company needs to implement cross-account access to an Aurora PostgreSQL cluster. Account A owns the database, and Account B needs read-only access. The connection should use IAM authentication. What is the correct setup?",
+      "options": [
+        "In Account A: enable IAM authentication on Aurora and create a database user with SELECT privileges. In Account B: create an IAM role that can assume a role in Account A that has rds-db:connect permission for the specific database user",
+        "Share the Aurora cluster snapshot with Account B",
+        "Use VPC peering and allow Account B's security group in Account A's RDS security group",
+        "Create a read replica in Account B"
+      ],
+      "correct": 0,
+      "explanation": "Cross-account IAM database authentication requires: (1) Aurora in Account A with IAM authentication enabled and a database user with appropriate privileges, (2) an IAM role in Account A with rds-db:connect permission for the specific database user, (3) a trust policy allowing Account B to assume the role, (4) VPC connectivity between accounts (peering or Transit Gateway). Account B assumes the cross-account role and generates an auth token for the database connection.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 142,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "A company needs to ensure that their RDS snapshots are encrypted even though the original RDS instance is unencrypted. How can this be achieved?",
+      "options": [
+        "Copy the unencrypted snapshot and enable encryption during the copy operation, specifying a KMS key",
+        "Enable encryption on the existing snapshot",
+        "Create a new encrypted instance and DMS the data",
+        "Modify the original instance to enable encryption"
+      ],
+      "correct": 0,
+      "explanation": "You can encrypt an unencrypted RDS snapshot by creating an encrypted copy. During the copy operation, specify a KMS key (AWS managed or customer managed) to encrypt the new snapshot. The original snapshot remains unencrypted. You can then restore an encrypted RDS instance from the encrypted snapshot copy. This is also the migration path for encrypting an existing unencrypted RDS instance.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 143,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "easy",
+      "question": "Which security feature should be used to restrict which IP addresses can connect to an RDS database instance?",
+      "options": [
+        "VPC Security Groups associated with the RDS instance",
+        "IAM policies with IP address conditions",
+        "RDS database-level firewall rules",
+        "AWS WAF with IP-based rules"
+      ],
+      "correct": 0,
+      "explanation": "VPC Security Groups control network access to RDS instances by specifying allowed inbound sources (IP ranges, CIDR blocks, or other security groups) and ports. Security groups are the primary mechanism for restricting which clients can connect to the database at the network level. IAM policies control API access (CreateDBInstance, etc.), not database connection access. RDS does not have a built-in database-level firewall. WAF does not support RDS.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 144,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "A company stores sensitive health records in DynamoDB. They need to implement fine-grained access control where a doctor can only read records for patients assigned to them. Patient-doctor assignments are stored in a separate table. What is the BEST approach?",
+      "options": [
+        "Implement application-layer authorization that queries the assignment table and constructs DynamoDB queries scoped to the doctor's patients, combined with IAM conditions on dynamodb:LeadingKeys",
+        "Create a separate DynamoDB table for each doctor",
+        "Use DynamoDB Streams to copy each doctor's patient records to a dedicated table",
+        "Grant full table access and rely on the application to filter results"
+      ],
+      "correct": 0,
+      "explanation": "The best approach combines application-layer authorization (verifying the doctor-patient relationship) with IAM-level enforcement (dynamodb:LeadingKeys condition restricting access to specific partition keys). The application queries the assignment table to determine which patientIds the doctor can access, then constructs scoped DynamoDB queries. The IAM condition provides defense-in-depth. Separate tables per doctor do not scale. Full table access with application filtering is vulnerable to bugs.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 145,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "A company uses ElastiCache Redis and needs to ensure data in the cache is encrypted both at rest and in transit. Which configuration is required?",
+      "options": [
+        "Enable encryption at rest (KMS) and encryption in transit (TLS) when creating the Redis replication group",
+        "ElastiCache Redis does not support encryption",
+        "Enable encryption at rest only; in-transit encryption is automatic",
+        "Install SSL certificates on each Redis node manually"
+      ],
+      "correct": 0,
+      "explanation": "ElastiCache Redis supports both encryption at rest (using KMS) and encryption in transit (TLS). Both must be enabled at creation time — they cannot be added to an existing cluster. Encryption in transit requires clients to use TLS connections. Encryption at rest encrypts the data stored on disk, backups, and snapshots. These settings cannot be changed after cluster creation; a new cluster must be created with encryption enabled.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 146,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "hard",
+      "question": "A company needs to implement database connection security for an Aurora MySQL cluster accessed by Lambda functions. They want to avoid managing database passwords in Lambda environment variables. What is the BEST solution?",
+      "options": [
+        "Use RDS Proxy with IAM authentication; Lambda assumes an IAM role to connect through the proxy without database passwords",
+        "Store the password in Secrets Manager and retrieve it in the Lambda function",
+        "Hardcode the password in the Lambda deployment package",
+        "Use Lambda environment variables with KMS encryption"
+      ],
+      "correct": 0,
+      "explanation": "RDS Proxy with IAM authentication is the ideal solution for Lambda. Lambda's execution role includes rds-db:connect permission, and RDS Proxy handles the IAM-to-database authentication mapping. This eliminates password management entirely. RDS Proxy also solves the connection pooling problem inherent with Lambda (each invocation normally opens a new connection). Secrets Manager works but still involves password management and rotation complexity.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 147,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "A company needs to audit all API calls made to their RDS instances (CreateDBInstance, ModifyDBInstance, DeleteDBInstance, etc.). Which service provides this audit trail?",
+      "options": [
+        "AWS CloudTrail management events",
+        "RDS Performance Insights",
+        "RDS Enhanced Monitoring",
+        "Amazon CloudWatch Logs"
+      ],
+      "correct": 0,
+      "explanation": "AWS CloudTrail records all API calls made to AWS services, including RDS management API calls. It captures who made the call, when, from where (IP address), and what parameters were used. This provides a complete audit trail of infrastructure changes. CloudTrail management events are enabled by default. For SQL-level auditing within the database, use database-native auditing (pgaudit for PostgreSQL, MariaDB Audit Plugin for MySQL).",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 148,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "A company wants to use a customer-managed KMS key for encrypting their Aurora cluster. What does the KMS key encrypt?",
+      "options": [
+        "The underlying storage volume, automated backups, snapshots, and read replicas",
+        "Only the storage volume, not backups or snapshots",
+        "Only specific tables marked for encryption",
+        "Only data in transit between the application and Aurora"
+      ],
+      "correct": 0,
+      "explanation": "When Aurora encryption at rest is enabled, the KMS key encrypts the underlying storage volume, all automated backups, manual snapshots, and read replicas created from the cluster. This is transparent to the database engine and applications. The encryption is AES-256 and handled by the storage layer. Data in transit is protected separately by SSL/TLS, not by the KMS key.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 149,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "A company uses AWS Lake Formation to manage access to their data lake. They need to grant a data analyst access to specific columns in a Glue Data Catalog table that points to S3. Which Lake Formation feature provides this?",
+      "options": [
+        "Lake Formation column-level permissions with data filters",
+        "S3 bucket policies with column-level conditions",
+        "IAM policies with Glue column-level condition keys",
+        "Glue Data Catalog resource policies"
+      ],
+      "correct": 0,
+      "explanation": "Lake Formation provides fine-grained access control including column-level, row-level, and cell-level permissions for data in the Data Catalog. Data filters define which columns and rows a principal can access. When the analyst queries the table through Athena or Redshift Spectrum, Lake Formation enforces the column restrictions automatically. S3 bucket policies operate at the object level and cannot enforce column-level access. IAM does not have Glue column-level condition keys.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 150,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "A company needs to implement a data classification and access control strategy for an Aurora PostgreSQL database containing PII, financial data, and public data. Different teams should only access data categories relevant to their role. What is the comprehensive approach?",
+      "options": [
+        "Use Amazon Macie to classify data, implement PostgreSQL row-level security policies based on data sensitivity tags, and use IAM database authentication with role-based access mapping",
+        "Create separate Aurora clusters for each data classification level",
+        "Use S3 to store sensitive data outside the database",
+        "Encrypt sensitive columns and distribute decryption keys by role"
+      ],
+      "correct": 0,
+      "explanation": "A comprehensive approach combines: (1) Amazon Macie for automated data discovery and classification of PII and sensitive data, (2) PostgreSQL RLS policies that enforce row-level access based on data classification tags and the user's role, (3) IAM database authentication that maps team roles to database users with appropriate RLS policies. This provides automated classification, database-level enforcement, and centralized identity management. Separate clusters are expensive and operationally complex.",
+      "link": "cloud-security.html"
     }
   ]
 }

@@ -1,34 +1,34 @@
 {
   "metadata": {
-    "title": "AWS CloudOps Engineer SOA-C03 Practice Questions",
-    "version": "1.0",
-    "total_questions": 31,
-    "exam": "SOA-C03",
+    "title": "AWS SysOps Administrator SOA-C02 Practice Questions",
+    "version": "2.0",
+    "total_questions": 150,
+    "exam": "SOA-C02",
     "domains": {
       "1": {
         "name": "Monitoring, Logging, and Remediation",
-        "weight": 22,
-        "count": 7
+        "weight": 20,
+        "count": 30
       },
       "2": {
         "name": "Reliability and Business Continuity",
-        "weight": 22,
-        "count": 7
+        "weight": 16,
+        "count": 24
       },
       "3": {
         "name": "Deployment, Provisioning, and Automation",
-        "weight": 22,
-        "count": 7
+        "weight": 18,
+        "count": 27
       },
       "4": {
         "name": "Security and Compliance",
         "weight": 16,
-        "count": 5
+        "count": 24
       },
       "5": {
         "name": "Networking and Content Delivery",
         "weight": 18,
-        "count": 5
+        "count": 45
       }
     }
   },
@@ -38,496 +38,2400 @@
       "domain": 1,
       "objective": "1.1",
       "difficulty": "easy",
-      "question": "Which of the following is a key concept within Monitoring, Logging, and Remediation (Domain 1)?",
+      "question": "A SysOps administrator needs to receive an email notification when CPU utilization on an EC2 instance exceeds 80% for 5 consecutive minutes. Which combination of AWS services should be used?",
       "options": [
-        "SNS Notifications for Alarms",
-        "CloudWatch Alarms and Composite Alarms",
-        "Trusted Advisor Checks",
-        "Auto-Remediation with Lambda"
+        "CloudWatch alarm with an SNS topic subscription",
+        "CloudTrail log with a Lambda function",
+        "AWS Config rule with an SES notification",
+        "Trusted Advisor check with an EventBridge rule"
       ],
       "correct": 0,
-      "explanation": "SNS Notifications for Alarms is a key concept in Monitoring, Logging, and Remediation. This domain covers topics essential for the AWS CloudOps Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "CloudWatch alarms monitor metrics like CPU utilization and can trigger actions when thresholds are breached. An SNS topic with an email subscription delivers the notification. CloudTrail logs API calls, not metrics. AWS Config evaluates resource configurations, not performance metrics.",
+      "link": "cloud-security.html"
     },
     {
       "id": 2,
       "domain": 1,
-      "objective": "1.2",
+      "objective": "1.1",
       "difficulty": "medium",
-      "question": "A professional is tasked with remediate issues based on monitoring data. What should be the first step?",
+      "question": "A company wants to trigger an alarm only when BOTH CPU utilization exceeds 80% AND memory usage exceeds 70% on an EC2 instance simultaneously. What should the SysOps administrator configure?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "A CloudWatch composite alarm combining two metric alarms",
+        "Two separate CloudWatch alarms with the same SNS topic",
+        "A single CloudWatch alarm with multiple metric math expressions",
+        "An EventBridge rule with two CloudWatch metric conditions"
       ],
       "correct": 0,
-      "explanation": "The first step in any monitoring, logging, and remediation task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "CloudWatch composite alarms combine multiple metric alarms using AND/OR logic. This ensures the alarm only triggers when both conditions are true simultaneously. Two separate alarms would trigger independently, not in combination. Note that memory is a custom metric requiring the CloudWatch agent.",
+      "link": "cloud-security.html"
     },
     {
       "id": 3,
       "domain": 1,
-      "objective": "1.3",
-      "difficulty": "medium",
-      "question": "Which concept in Monitoring, Logging, and Remediation is most closely related to optimize performance and cost?",
+      "objective": "1.1",
+      "difficulty": "hard",
+      "question": "An application running on EC2 instances behind an ALB experiences intermittent 5xx errors. The SysOps administrator needs to identify which specific backend instances are generating the errors. Which CloudWatch metric and dimension should be used?",
       "options": [
-        "Monitoring, Logging, and Remediation governance and oversight",
-        "Monitoring, Logging, and Remediation implementation and operations",
-        "Monitoring, Logging, and Remediation assessment and testing",
-        "Monitoring, Logging, and Remediation risk management"
+        "HTTPCode_Target_5XX_Count metric with the TargetGroup dimension",
+        "HTTPCode_ELB_5XX_Count metric with the LoadBalancer dimension",
+        "UnHealthyHostCount metric with the AvailabilityZone dimension",
+        "RequestCount metric with the TargetGroup dimension"
       ],
-      "correct": 1,
-      "explanation": "Optimize performance and cost falls under the implementation and operations aspect of Monitoring, Logging, and Remediation.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "HTTPCode_Target_5XX_Count tracks 5xx errors generated by backend targets (EC2 instances), while HTTPCode_ELB_5XX_Count tracks errors generated by the load balancer itself. The TargetGroup dimension helps identify which target group (and its registered instances) is producing the errors. UnHealthyHostCount only shows health check failures, not HTTP errors.",
+      "link": "cloud-security.html"
     },
     {
       "id": 4,
       "domain": 1,
-      "objective": "1.1",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Monitoring, Logging, and Remediation (Domain 1)?",
+      "objective": "1.2",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to monitor API calls made to AWS services across all regions in an AWS account. Which service should be enabled?",
       "options": [
-        "Cost Explorer and Budgets",
-        "CloudWatch Dashboards",
-        "Auto-Remediation with Lambda",
-        "Log Insights Queries"
+        "AWS CloudTrail with a multi-region trail",
+        "Amazon CloudWatch Logs with cross-region replication",
+        "AWS Config with multi-region aggregation",
+        "VPC Flow Logs with cross-region delivery"
       ],
       "correct": 0,
-      "explanation": "Cost Explorer and Budgets is a key concept in Monitoring, Logging, and Remediation. This domain covers topics essential for the AWS CloudOps Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "AWS CloudTrail records API calls made to AWS services. A multi-region trail captures events from all AWS regions and delivers them to a single S3 bucket. CloudWatch Logs stores log data but does not inherently track API calls. AWS Config tracks resource configurations, not API activity.",
+      "link": "cloud-security.html"
     },
     {
       "id": 5,
       "domain": 1,
       "objective": "1.2",
-      "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with remediate issues based on monitoring data?",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to find all EC2 instances that were terminated in the past 7 days, including who terminated them. Which approach is MOST efficient?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "Query CloudTrail event history filtering for TerminateInstances events",
+        "Search CloudWatch Logs for EC2 termination log entries",
+        "Use AWS Config to view configuration timeline of terminated instances",
+        "Check the EC2 console's recent activity dashboard"
       ],
       "correct": 0,
-      "explanation": "When working with remediate issues based on monitoring data, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "explanation": "CloudTrail records all API calls including TerminateInstances events with the identity of the caller (IAM user/role), timestamp, and source IP. CloudTrail event history provides 90 days of management events that can be filtered by event name. AWS Config tracks configuration changes but does not capture who made the API call.",
+      "link": "cloud-security.html"
     },
     {
       "id": 6,
       "domain": 1,
-      "objective": "1.3",
-      "difficulty": "medium",
-      "question": "Which of the following best describes the purpose of \"Optimize performance and cost\" in Monitoring, Logging, and Remediation?",
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "A company requires that all CloudTrail log files are validated for integrity to detect any tampering. The logs must also be searchable within 5 minutes of the API call occurring. What configuration achieves both requirements?",
       "options": [
-        "To implement and manage optimize performance and cost processes",
-        "To evaluate compliance with monitoring, logging, and remediation standards",
-        "To document risk assessment procedures",
-        "To audit external vendor relationships"
+        "Enable CloudTrail log file validation and configure CloudTrail to deliver logs to CloudWatch Logs",
+        "Enable CloudTrail log file validation and enable S3 server access logging on the trail bucket",
+        "Enable CloudTrail Insights and configure an S3 event notification to trigger Lambda",
+        "Enable CloudTrail log file validation and configure S3 Object Lock on the trail bucket"
       ],
       "correct": 0,
-      "explanation": "Optimize performance and cost is a key objective in Monitoring, Logging, and Remediation. Understanding this concept is essential for the exam.",
-      "link": "start-here.html"
+      "explanation": "CloudTrail log file validation creates a digest file with hashes that can be used to verify log integrity. Delivering logs to CloudWatch Logs enables near real-time searching via Logs Insights (typically within 5 minutes). S3 Object Lock prevents deletion but does not enable searching. CloudTrail Insights detects unusual API activity patterns but does not provide searchability.",
+      "link": "cloud-security.html"
     },
     {
       "id": 7,
       "domain": 1,
-      "objective": "1.1",
-      "difficulty": "medium",
-      "question": "Which of the following is a key concept within Monitoring, Logging, and Remediation (Domain 1)?",
+      "objective": "1.3",
+      "difficulty": "easy",
+      "question": "A SysOps administrator wants to create a centralized view of key metrics from multiple AWS accounts and regions in a single dashboard. Which service provides this capability?",
       "options": [
-        "SNS Notifications for Alarms",
-        "Trusted Advisor Checks",
-        "EventBridge Rules and Targets",
-        "CloudWatch Logs and Metric Filters"
+        "Amazon CloudWatch cross-account dashboards",
+        "AWS Systems Manager OpsCenter",
+        "AWS Config aggregator",
+        "Amazon Managed Grafana"
       ],
       "correct": 0,
-      "explanation": "SNS Notifications for Alarms is a key concept in Monitoring, Logging, and Remediation. This domain covers topics essential for the AWS CloudOps Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "CloudWatch supports cross-account and cross-region dashboards that allow you to create a single view of metrics from multiple accounts and regions. While Amazon Managed Grafana can also provide cross-account dashboards, CloudWatch dashboards are the native AWS solution specifically designed for this purpose.",
+      "link": "cloud-security.html"
     },
     {
       "id": 8,
-      "domain": 2,
-      "objective": "2.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Reliability and Business Continuity (Domain 2)?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to query application logs stored in CloudWatch Logs to find the top 10 most frequent error messages in the past 24 hours. Which tool should be used?",
       "options": [
-        "Elastic IP Failover",
-        "EBS Snapshots and AMI Management",
-        "S3 Versioning and Replication",
-        "Route 53 Health Checks"
+        "CloudWatch Logs Insights with a stats query",
+        "CloudWatch metric filters with a top-N aggregation",
+        "Athena with a query on exported CloudWatch Logs in S3",
+        "CloudWatch Contributor Insights with a rule for error patterns"
       ],
       "correct": 0,
-      "explanation": "Elastic IP Failover is a key concept in Reliability and Business Continuity. This domain covers topics essential for the AWS CloudOps Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "CloudWatch Logs Insights allows ad-hoc querying of log data with SQL-like syntax including aggregation functions like stats count(*) by errorMessage | sort count desc | limit 10. Metric filters create numeric metrics from log patterns but do not support ad-hoc top-N queries. Athena could work but requires exporting logs to S3 first, adding latency.",
+      "link": "cloud-security.html"
     },
     {
       "id": 9,
-      "domain": 2,
-      "objective": "2.2",
+      "domain": 1,
+      "objective": "1.1",
       "difficulty": "medium",
-      "question": "A professional is tasked with implement high availability and resilient environments. What should be the first step?",
+      "question": "An EC2 instance is reporting high CPU utilization in CloudWatch, but the application team says the instance is idle. The SysOps administrator discovers the CloudWatch agent is not installed. What is the MOST likely explanation?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "The default CloudWatch metrics report steal time from the hypervisor as CPU utilization",
+        "A background process or malware is consuming CPU that the application team is not aware of",
+        "CloudWatch basic monitoring samples CPU every 5 minutes, causing inaccurate readings",
+        "The instance type has burstable CPU credits that are being consumed by T-series baseline"
       ],
-      "correct": 0,
-      "explanation": "The first step in any reliability and business continuity task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "If CloudWatch reports high CPU but the application appears idle, a background process, system process, or potentially malware could be consuming CPU resources. The default EC2 CloudWatch metrics accurately report total CPU utilization at the hypervisor level. Installing the CloudWatch agent would provide OS-level metrics to identify which processes are consuming CPU.",
+      "link": "cloud-security.html"
     },
     {
       "id": 10,
-      "domain": 2,
-      "objective": "2.3",
-      "difficulty": "medium",
-      "question": "Which concept in Reliability and Business Continuity is most closely related to implement backup and restore strategies?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "A SysOps administrator needs to automatically remediate EC2 instances that fail status checks. The remediation should recover the instance while preserving the instance ID, private IP, Elastic IP, and instance metadata. What is the BEST approach?",
       "options": [
-        "Reliability and Business Continuity governance and oversight",
-        "Reliability and Business Continuity implementation and operations",
-        "Reliability and Business Continuity assessment and testing",
-        "Reliability and Business Continuity risk management"
+        "Create a CloudWatch alarm on StatusCheckFailed_System with an EC2 recover action",
+        "Create a CloudWatch alarm that triggers a Lambda function to stop and start the instance",
+        "Configure an Auto Scaling group with a health check that replaces unhealthy instances",
+        "Use Systems Manager Automation to run the AWS-RestartEC2Instance runbook"
       ],
-      "correct": 1,
-      "explanation": "Implement backup and restore strategies falls under the implementation and operations aspect of Reliability and Business Continuity.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "The EC2 recover action on a CloudWatch alarm preserves the instance ID, private IP, Elastic IP, instance metadata, and placement group. It migrates the instance to new hardware. Stop/start also migrates hardware but changes the public IP (unless Elastic IP). Auto Scaling replacement creates a new instance with a new ID. The recover action specifically handles system status check failures.",
+      "link": "cloud-security.html"
     },
     {
       "id": 11,
-      "domain": 2,
-      "objective": "2.1",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Reliability and Business Continuity (Domain 2)?",
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "Which CloudWatch feature allows a SysOps administrator to create a custom metric from log data by counting the number of times a specific error string appears?",
       "options": [
-        "S3 Versioning and Replication",
-        "EBS Snapshots and AMI Management",
-        "AWS Backup Plans and Vaults",
-        "Multi-AZ RDS and Aurora Failover"
+        "Metric filters",
+        "Logs Insights queries",
+        "CloudWatch Alarms",
+        "CloudWatch Anomaly Detection"
       ],
       "correct": 0,
-      "explanation": "S3 Versioning and Replication is a key concept in Reliability and Business Continuity. This domain covers topics essential for the AWS CloudOps Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "CloudWatch metric filters extract metric observations from log data by matching patterns. For example, a filter can count occurrences of 'ERROR' in a log group and publish it as a custom metric. Logs Insights performs ad-hoc queries but does not create persistent metrics. Alarms act on existing metrics, they do not create them.",
+      "link": "cloud-security.html"
     },
     {
       "id": 12,
-      "domain": 2,
-      "objective": "2.2",
-      "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with implement high availability and resilient environments?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "A company uses AWS Config to evaluate compliance of its resources. A new rule requires that all EBS volumes must be encrypted. The administrator needs to identify existing non-compliant volumes and prevent future non-compliant ones. What should be configured?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "An AWS Config managed rule for encrypted-volumes with automatic remediation using SSM Automation",
+        "A CloudTrail event rule that triggers Lambda to encrypt volumes on creation",
+        "An IAM policy that denies ec2:CreateVolume without encryption parameters",
+        "A custom Config rule using Lambda that encrypts non-compliant volumes directly"
       ],
       "correct": 0,
-      "explanation": "When working with implement high availability and resilient environments, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "explanation": "AWS Config managed rule 'encrypted-volumes' evaluates whether EBS volumes are encrypted. Combined with automatic remediation using SSM Automation, it can identify non-compliant resources and take corrective action. An IAM policy with a condition key (ec2:Encrypted) could prevent future unencrypted volumes but would not identify existing ones. AWS Config provides both detection and remediation.",
+      "link": "cloud-security.html"
     },
     {
       "id": 13,
-      "domain": 2,
-      "objective": "2.3",
-      "difficulty": "medium",
-      "question": "Which of the following best describes the purpose of \"Implement backup and restore strategies\" in Reliability and Business Continuity?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "A SysOps administrator needs to set up an automated workflow that: (1) detects when an IAM access key has not been rotated in 90 days, (2) sends a notification to the key owner, and (3) disables the key if not rotated within 7 days of notification. Which architecture achieves this with the LEAST operational overhead?",
       "options": [
-        "To implement and manage implement backup and restore strategies processes",
-        "To evaluate compliance with reliability and business continuity standards",
-        "To document risk assessment procedures",
-        "To audit external vendor relationships"
+        "AWS Config rule for access-keys-rotated triggering EventBridge to invoke a Step Functions workflow",
+        "CloudWatch Events scheduled rule triggering Lambda to check IAM credential reports daily",
+        "IAM Access Analyzer findings triggering SNS notifications with a separate Lambda for key rotation",
+        "Trusted Advisor check for IAM key rotation with CloudWatch alarm triggering Lambda"
       ],
       "correct": 0,
-      "explanation": "Implement backup and restore strategies is a key objective in Reliability and Business Continuity. Understanding this concept is essential for the exam.",
-      "link": "start-here.html"
+      "explanation": "AWS Config rule 'access-keys-rotated' continuously evaluates IAM access key age. When non-compliant, EventBridge captures the Config compliance change event and triggers a Step Functions workflow that orchestrates the notification and delayed disabling logic. Step Functions provides built-in wait states and retry logic with minimal custom code. A standalone Lambda approach requires managing state and scheduling separately.",
+      "link": "cloud-security.html"
     },
     {
       "id": 14,
-      "domain": 2,
-      "objective": "2.1",
-      "difficulty": "medium",
-      "question": "Which of the following is a key concept within Reliability and Business Continuity (Domain 2)?",
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "A SysOps administrator notices that detailed monitoring is not enabled on several EC2 instances. What is the difference between basic and detailed monitoring in CloudWatch?",
       "options": [
-        "AWS Backup Plans and Vaults",
-        "Multi-AZ RDS and Aurora Failover",
-        "DR Strategies and RTO/RPO",
-        "Route 53 Health Checks"
+        "Basic monitoring collects metrics every 5 minutes; detailed monitoring collects every 1 minute",
+        "Basic monitoring collects CPU only; detailed monitoring collects CPU, memory, and disk",
+        "Basic monitoring is free for 7 days; detailed monitoring retains data for 15 months",
+        "Basic monitoring uses the CloudWatch agent; detailed monitoring uses the hypervisor"
       ],
       "correct": 0,
-      "explanation": "AWS Backup Plans and Vaults is a key concept in Reliability and Business Continuity. This domain covers topics essential for the AWS CloudOps Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "Basic monitoring sends metrics to CloudWatch every 5 minutes at no additional cost. Detailed monitoring sends metrics every 1 minute for an additional charge. Both use the same hypervisor-level metrics (CPU, network, disk I/O, status checks). Memory and disk space metrics require the CloudWatch agent regardless of monitoring level.",
+      "link": "cloud-security.html"
     },
     {
       "id": 15,
-      "domain": 3,
-      "objective": "3.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Deployment, Provisioning, and Automation (Domain 3)?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "An EventBridge rule needs to capture all S3 bucket policy changes and trigger a Lambda function for compliance review. Which event source and detail type should be configured?",
       "options": [
-        "Systems Manager Run Command",
-        "OpsWorks Stacks and Layers",
-        "Systems Manager State Manager",
-        "Service Catalog Portfolios"
+        "Source: aws.s3, detail-type: AWS API Call via CloudTrail, with detail filtering for PutBucketPolicy",
+        "Source: aws.s3, detail-type: S3 Bucket Policy Change",
+        "Source: aws.config, detail-type: Config Rules Compliance Change",
+        "Source: aws.cloudtrail, detail-type: CloudTrail API Call"
       ],
       "correct": 0,
-      "explanation": "Systems Manager Run Command is a key concept in Deployment, Provisioning, and Automation. This domain covers topics essential for the AWS CloudOps Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "EventBridge receives S3 API calls via CloudTrail integration. The correct pattern uses source 'aws.s3' with detail-type 'AWS API Call via CloudTrail' and filters on the specific API call (PutBucketPolicy) in the detail section. CloudTrail must be enabled for this to work. There is no native 'S3 Bucket Policy Change' event type.",
+      "link": "cloud-security.html"
     },
     {
       "id": 16,
-      "domain": 3,
-      "objective": "3.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with automate manual or repeatable processes. What should be the first step?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "A SysOps administrator needs to detect anomalous API call patterns that might indicate a compromised IAM credential. The solution should automatically identify unusual activity without manually defining thresholds. Which feature should be configured?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "CloudTrail Insights events",
+        "CloudWatch Anomaly Detection on CloudTrail metrics",
+        "GuardDuty with CloudTrail data source enabled",
+        "AWS Config custom rule with Lambda-based analysis"
       ],
-      "correct": 0,
-      "explanation": "The first step in any deployment, provisioning, and automation task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "Amazon GuardDuty analyzes CloudTrail management events, VPC Flow Logs, and DNS logs using machine learning to detect anomalous activity such as unusual API calls from compromised credentials, cryptocurrency mining, and unauthorized infrastructure deployments. CloudTrail Insights detects unusual API volume but is less comprehensive for security threats. GuardDuty is specifically designed for threat detection.",
+      "link": "cloud-security.html"
     },
     {
       "id": 17,
-      "domain": 3,
-      "objective": "3.3",
+      "domain": 1,
+      "objective": "1.1",
       "difficulty": "medium",
-      "question": "Which concept in Deployment, Provisioning, and Automation is most closely related to manage changes and deployments?",
+      "question": "A SysOps administrator needs to collect memory utilization and disk space metrics from Linux EC2 instances. Which approach is correct?",
       "options": [
-        "Deployment, Provisioning, and Automation governance and oversight",
-        "Deployment, Provisioning, and Automation implementation and operations",
-        "Deployment, Provisioning, and Automation assessment and testing",
-        "Deployment, Provisioning, and Automation risk management"
+        "Install and configure the CloudWatch agent with a configuration file specifying mem and disk metrics",
+        "Enable detailed monitoring on the EC2 instances to include OS-level metrics",
+        "Create custom metrics using the AWS CLI put-metric-data command in a cron job",
+        "Enable EC2 instance connect and use Systems Manager to push metrics"
       ],
-      "correct": 1,
-      "explanation": "Manage changes and deployments falls under the implementation and operations aspect of Deployment, Provisioning, and Automation.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "The CloudWatch agent must be installed on EC2 instances to collect OS-level metrics like memory utilization and disk space. The agent configuration file specifies which metrics to collect. Default EC2 metrics (basic or detailed) only include hypervisor-level metrics like CPU, network, and disk I/O. While custom metrics via put-metric-data could work, the CloudWatch agent is the recommended and most efficient approach.",
+      "link": "cloud-security.html"
     },
     {
       "id": 18,
-      "domain": 3,
-      "objective": "3.1",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Deployment, Provisioning, and Automation (Domain 3)?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "easy",
+      "question": "A company wants to receive a notification when their estimated AWS monthly charges exceed $500. Which service should the SysOps administrator configure?",
       "options": [
-        "OpsWorks Stacks and Layers",
-        "Systems Manager Run Command",
-        "Service Catalog Portfolios",
-        "Systems Manager Automation Runbooks"
+        "CloudWatch billing alarm with an SNS notification",
+        "AWS Budgets with an email alert",
+        "Cost Explorer with a scheduled report",
+        "Trusted Advisor cost optimization check"
       ],
       "correct": 0,
-      "explanation": "OpsWorks Stacks and Layers is a key concept in Deployment, Provisioning, and Automation. This domain covers topics essential for the AWS CloudOps Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "A CloudWatch billing alarm monitors the EstimatedCharges metric and triggers when it exceeds the specified threshold. An SNS topic with email subscription delivers the notification. AWS Budgets is also valid for this purpose and offers more features like forecasted alerts, but a CloudWatch billing alarm is the simplest approach for a single threshold notification.",
+      "link": "cloud-security.html"
     },
     {
       "id": 19,
-      "domain": 3,
-      "objective": "3.2",
-      "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with automate manual or repeatable processes?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "A SysOps administrator needs to centralize CloudTrail logs from 15 AWS accounts in an organization into a single S3 bucket in a dedicated logging account. The logs must be encrypted with a customer-managed KMS key. What is the correct configuration?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "Create an organization trail from the management account, specify the logging account's S3 bucket, and update the KMS key policy to allow cloudtrail.amazonaws.com and all member accounts",
+        "Create individual trails in each account pointing to the logging account's S3 bucket with cross-account S3 bucket policies",
+        "Enable CloudTrail Lake in the management account and configure ingestion from all member accounts",
+        "Use AWS Control Tower to automatically configure trails with centralized logging"
       ],
       "correct": 0,
-      "explanation": "When working with automate manual or repeatable processes, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "explanation": "An organization trail created from the management account automatically logs events from all accounts in the organization. The S3 bucket policy must allow CloudTrail to write from the organization, and the KMS key policy must grant encrypt permissions to cloudtrail.amazonaws.com and decrypt permissions to accounts that need to read the logs. Individual trails per account add unnecessary management overhead.",
+      "link": "cloud-security.html"
     },
     {
       "id": 20,
-      "domain": 3,
-      "objective": "3.3",
+      "domain": 1,
+      "objective": "1.1",
       "difficulty": "medium",
-      "question": "Which of the following best describes the purpose of \"Manage changes and deployments\" in Deployment, Provisioning, and Automation?",
+      "question": "An Auto Scaling group has a CloudWatch alarm configured to scale out when average CPU exceeds 70%. During a traffic spike, the alarm triggers but new instances take 10 minutes to fully initialize. During this time, the alarm triggers additional scale-out actions. How should the administrator prevent excessive scaling?",
       "options": [
-        "To implement and manage manage changes and deployments processes",
-        "To evaluate compliance with deployment, provisioning, and automation standards",
-        "To document risk assessment procedures",
-        "To audit external vendor relationships"
+        "Configure a scaling cooldown period of at least 10 minutes",
+        "Change the alarm evaluation period to 15 minutes",
+        "Use step scaling instead of simple scaling",
+        "Increase the instance warmup time in the scaling policy"
       ],
       "correct": 0,
-      "explanation": "Manage changes and deployments is a key objective in Deployment, Provisioning, and Automation. Understanding this concept is essential for the exam.",
-      "link": "start-here.html"
+      "explanation": "A scaling cooldown period prevents the Auto Scaling group from launching additional instances until the cooldown expires, allowing recently launched instances to stabilize and handle load. The default cooldown is 300 seconds. Setting it to match the initialization time prevents over-scaling. Step scaling with instance warmup is also valid, but cooldown is the most direct solution for simple scaling policies.",
+      "link": "cloud-security.html"
     },
     {
       "id": 21,
-      "domain": 3,
-      "objective": "3.1",
-      "difficulty": "medium",
-      "question": "Which of the following is a key concept within Deployment, Provisioning, and Automation (Domain 3)?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to view the compliance status of AWS Config rules across multiple accounts and regions from a single dashboard. Which feature should be used?",
       "options": [
-        "CloudFormation Stack Operations",
-        "Elastic Beanstalk Environments",
-        "AWS Config for Drift Detection",
-        "Service Catalog Portfolios"
+        "AWS Config aggregator",
+        "CloudWatch cross-account dashboard",
+        "AWS Organizations consolidated view",
+        "AWS Security Hub multi-account findings"
       ],
       "correct": 0,
-      "explanation": "CloudFormation Stack Operations is a key concept in Deployment, Provisioning, and Automation. This domain covers topics essential for the AWS CloudOps Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "An AWS Config aggregator collects configuration and compliance data from multiple accounts and regions, providing a centralized view. You can create an aggregator in a central account and authorize source accounts. While Security Hub also aggregates findings, AWS Config aggregator is specifically designed for Config rule compliance data.",
+      "link": "cloud-security.html"
     },
     {
       "id": 22,
-      "domain": 4,
-      "objective": "4.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Security and Compliance (Domain 4)?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to detect when an EC2 security group is modified to allow inbound SSH (port 22) from 0.0.0.0/0. The detection must be near real-time. Which solution requires the LEAST effort?",
       "options": [
-        "KMS Key Rotation",
-        "GuardDuty Threat Detection",
-        "Security Hub Findings",
-        "IAM Access Analyzer"
+        "AWS Config managed rule restricted-ssh with auto-remediation",
+        "EventBridge rule matching AuthorizeSecurityGroupIngress API calls via CloudTrail",
+        "VPC Flow Logs analyzed by a Lambda function for SSH traffic patterns",
+        "GuardDuty finding for unauthorized access with SNS notification"
       ],
       "correct": 0,
-      "explanation": "KMS Key Rotation is a key concept in Security and Compliance. This domain covers topics essential for the AWS CloudOps Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "AWS Config managed rule 'restricted-ssh' specifically checks whether security groups allow unrestricted SSH access (0.0.0.0/0 on port 22). It evaluates on every configuration change and can trigger automatic remediation to remove the offending rule. This is a turnkey solution with no custom code. EventBridge with CloudTrail would work but requires more configuration to parse the specific ingress rule details.",
+      "link": "cloud-security.html"
     },
     {
       "id": 23,
-      "domain": 4,
-      "objective": "4.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with implement data and infrastructure protection strategies. What should be the first step?",
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "hard",
+      "question": "A SysOps administrator is troubleshooting an application that intermittently returns errors. Application logs are in CloudWatch Logs. The administrator needs to correlate errors with deployment events and infrastructure changes. Which approach provides the BEST visibility?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Create a CloudWatch dashboard combining Logs Insights query widgets, metric widgets for deployment markers, and AWS Config configuration timeline data",
+        "Export all logs to S3 and use Athena for correlation queries",
+        "Use X-Ray to trace requests and correlate with CloudTrail events",
+        "Configure CloudWatch Contributor Insights to identify top error contributors"
       ],
       "correct": 0,
-      "explanation": "The first step in any security and compliance task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "A CloudWatch dashboard can combine multiple data sources: Logs Insights widgets for log analysis, metric widgets showing deployment annotations and infrastructure metrics, and embed links to Config timeline data. This provides a single-pane view correlating errors with changes. X-Ray is for distributed tracing, not log-infrastructure correlation. Athena requires data export and is not real-time.",
+      "link": "cloud-security.html"
     },
     {
       "id": 24,
-      "domain": 4,
-      "objective": "4.1",
+      "domain": 1,
+      "objective": "1.3",
       "difficulty": "medium",
-      "question": "Which concept in Security and Compliance is most closely related to implement and manage security and compliance policies?",
+      "question": "AWS Trusted Advisor has flagged several EC2 instances as underutilized (CPU below 10% for 14 days). What is the recommended first remediation step?",
       "options": [
-        "Security and Compliance governance and oversight",
-        "Security and Compliance implementation and operations",
-        "Security and Compliance assessment and testing",
-        "Security and Compliance risk management"
+        "Right-size the instances to a smaller instance type based on actual utilization patterns",
+        "Immediately terminate all underutilized instances to save costs",
+        "Convert all flagged instances to Spot Instances",
+        "Enable Auto Scaling to automatically adjust instance sizes"
       ],
-      "correct": 1,
-      "explanation": "Implement and manage security and compliance policies falls under the implementation and operations aspect of Security and Compliance.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "Right-sizing involves changing to a smaller instance type that matches actual usage. This is the recommended approach for underutilized instances. Terminating immediately may disrupt workloads. Spot Instances are for fault-tolerant workloads and may not be appropriate. Auto Scaling adjusts the number of instances, not individual instance sizes. Always validate utilization data before making changes.",
+      "link": "cloud-security.html"
     },
     {
       "id": 25,
-      "domain": 4,
-      "objective": "4.2",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Security and Compliance (Domain 4)?",
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "Which CloudWatch metric should a SysOps administrator monitor to detect when an SQS queue has a growing backlog of unprocessed messages?",
       "options": [
-        "CloudTrail Log Integrity",
-        "AWS Organizations SCPs",
-        "EBS/RDS Encryption",
-        "Compliance Reports (Artifact)"
+        "ApproximateNumberOfMessagesVisible",
+        "NumberOfMessagesSent",
+        "NumberOfMessagesReceived",
+        "ApproximateAgeOfOldestMessage"
       ],
       "correct": 0,
-      "explanation": "CloudTrail Log Integrity is a key concept in Security and Compliance. This domain covers topics essential for the AWS CloudOps Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "ApproximateNumberOfMessagesVisible shows the number of messages available for retrieval from the queue. A growing number indicates consumers are not processing messages fast enough. ApproximateAgeOfOldestMessage is also useful as it indicates how long messages have been waiting, but NumberOfMessagesVisible is the primary backlog indicator.",
+      "link": "cloud-security.html"
     },
     {
       "id": 26,
-      "domain": 4,
-      "objective": "4.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with implement and manage security and compliance policies?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "A company has configured CloudWatch alarms for all production EC2 instances. During a large-scale event, the operations team receives hundreds of individual alarm notifications, making it difficult to identify the root cause. How should the administrator redesign the alerting strategy?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "Implement composite alarms that group related alarms and suppress child alarm actions when the parent triggers",
+        "Increase alarm evaluation periods to reduce notification frequency",
+        "Route all alarms to a single SNS topic with a Lambda function that aggregates notifications",
+        "Disable individual instance alarms and create aggregate metric alarms only"
       ],
       "correct": 0,
-      "explanation": "When working with implement and manage security and compliance policies, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "explanation": "Composite alarms combine multiple alarms using Boolean logic and can suppress child alarm notifications when the parent composite alarm triggers. This reduces notification noise during widespread events while maintaining individual alarm visibility. The ActionsSuppressor feature specifically prevents cascading notifications. Increasing evaluation periods just delays notifications without solving the noise problem.",
+      "link": "cloud-security.html"
     },
     {
       "id": 27,
-      "domain": 5,
-      "objective": "5.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Networking and Content Delivery (Domain 5)?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to automatically start an EC2 instance every weekday at 8 AM and stop it at 6 PM to save costs. Which approach is MOST operationally efficient?",
       "options": [
-        "NAT Gateway Configuration",
-        "VPN and Direct Connect",
-        "VPC Subnets (Public/Private)",
-        "Security Groups vs NACLs"
+        "Create EventBridge scheduled rules that trigger Systems Manager Automation documents to start and stop the instance",
+        "Write a Lambda function with two CloudWatch Events cron rules",
+        "Use AWS Instance Scheduler solution from the Solutions Library",
+        "Configure the instance's user data script to run a shutdown cron job"
       ],
       "correct": 0,
-      "explanation": "NAT Gateway Configuration is a key concept in Networking and Content Delivery. This domain covers topics essential for the AWS CloudOps Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "EventBridge scheduled rules with Systems Manager Automation documents (AWS-StartEC2Instance and AWS-StopEC2Instance) provide a fully managed, serverless solution without custom code. While Lambda with CloudWatch Events also works, SSM Automation is preferred because it requires no code and handles API calls natively. AWS Instance Scheduler is a third-party solution that adds complexity.",
+      "link": "cloud-security.html"
     },
     {
       "id": 28,
-      "domain": 5,
-      "objective": "5.2",
+      "domain": 1,
+      "objective": "1.1",
       "difficulty": "medium",
-      "question": "A professional is tasked with configure domains, dns, and content delivery. What should be the first step?",
+      "question": "A SysOps administrator needs to publish a custom CloudWatch metric for the number of active user sessions tracked by an application. The metric should have dimensions for environment (prod/dev) and region. What is the correct approach?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Use the CloudWatch PutMetricData API with namespace, metric name, value, and dimension parameters",
+        "Configure a CloudWatch metric filter on application logs to extract the session count",
+        "Install the CloudWatch agent and configure a custom metric in the agent configuration",
+        "Create a CloudWatch dashboard with a custom widget that queries the application API"
       ],
       "correct": 0,
-      "explanation": "The first step in any networking and content delivery task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "explanation": "The PutMetricData API allows publishing custom metrics with custom namespaces, metric names, values, units, and dimensions. The application can call this API directly or through the AWS SDK. Metric filters extract metrics from log data but cannot directly access application state. The CloudWatch agent collects OS-level metrics, not application-specific custom metrics.",
+      "link": "cloud-security.html"
     },
     {
       "id": 29,
-      "domain": 5,
-      "objective": "5.3",
-      "difficulty": "medium",
-      "question": "Which concept in Networking and Content Delivery is most closely related to troubleshoot network connectivity issues?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "easy",
+      "question": "A SysOps administrator wants to visualize the relationship between EC2 CPU utilization and the number of requests hitting an ALB on the same time axis. Which CloudWatch dashboard widget should be used?",
       "options": [
-        "Networking and Content Delivery governance and oversight",
-        "Networking and Content Delivery implementation and operations",
-        "Networking and Content Delivery assessment and testing",
-        "Networking and Content Delivery risk management"
+        "A single line widget with both metrics plotted on the same graph",
+        "Two separate number widgets showing current values",
+        "A stacked area widget combining both metrics",
+        "An alarm status widget for both metrics"
       ],
-      "correct": 1,
-      "explanation": "Troubleshoot network connectivity issues falls under the implementation and operations aspect of Networking and Content Delivery.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "A line widget can display multiple metrics from different namespaces on the same time-series graph, making it easy to visually correlate patterns. This allows the administrator to see if CPU spikes correspond with request count increases. Number widgets show point-in-time values without trends. Alarm status widgets only show alarm states, not metric values.",
+      "link": "cloud-security.html"
     },
     {
       "id": 30,
-      "domain": 5,
-      "objective": "5.1",
+      "domain": 1,
+      "objective": "1.2",
       "difficulty": "hard",
-      "question": "Which of the following is a key concept within Networking and Content Delivery (Domain 5)?",
+      "question": "A SysOps administrator discovers that CloudWatch Logs for an application log group are consuming significant storage. The administrator needs to reduce costs while retaining the ability to analyze logs from the past 30 days. Logs older than 30 days must be archived for compliance. What is the BEST approach?",
       "options": [
-        "NAT Gateway Configuration",
-        "VPN and Direct Connect",
-        "VPC Subnets (Public/Private)",
-        "Elastic Network Interfaces (ENIs)"
+        "Set the log group retention policy to 30 days and create a subscription filter to export logs to S3 with lifecycle policies for archiving",
+        "Set the log group retention policy to never expire and use Logs Insights to query only recent data",
+        "Export all logs to S3 daily using CreateExportTask and delete the CloudWatch log group",
+        "Compress log entries before sending them to CloudWatch Logs"
       ],
       "correct": 0,
-      "explanation": "NAT Gateway Configuration is a key concept in Networking and Content Delivery. This domain covers topics essential for the AWS CloudOps Engineer exam.",
-      "link": "start-here.html"
+      "explanation": "Setting retention to 30 days automatically deletes logs older than 30 days from CloudWatch Logs, reducing storage costs. A subscription filter streams logs in near real-time to S3 (via Kinesis Firehose) where lifecycle policies can transition them to cheaper storage classes (Glacier) for long-term compliance archiving. This provides both cost optimization and compliance retention.",
+      "link": "cloud-security.html"
     },
     {
       "id": 31,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "A company needs to ensure that its RDS MySQL database remains available if the primary Availability Zone experiences an outage. Which configuration provides automatic failover?",
+      "options": [
+        "RDS Multi-AZ deployment",
+        "RDS read replica in another AZ",
+        "RDS automated backups with point-in-time recovery",
+        "RDS cross-region read replica"
+      ],
+      "correct": 0,
+      "explanation": "RDS Multi-AZ deployment maintains a synchronous standby replica in a different Availability Zone. If the primary AZ fails, RDS automatically fails over to the standby (typically within 60-120 seconds). Read replicas use asynchronous replication and do not provide automatic failover. Automated backups enable recovery but require manual restoration.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 32,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "An Auto Scaling group spans three Availability Zones with a minimum of 6 instances. Currently there are 2 instances in each AZ. If one AZ experiences a complete failure, what does Auto Scaling do?",
+      "options": [
+        "Launches 2 new instances distributed across the remaining 2 AZs to maintain 6 total instances",
+        "Launches 2 new instances in one of the remaining AZs only",
+        "Reduces the desired capacity to 4 to match available AZs",
+        "Waits for the failed AZ to recover before taking action"
+      ],
+      "correct": 0,
+      "explanation": "Auto Scaling detects the AZ failure and replaces unhealthy instances. It distributes new instances across the remaining healthy AZs to maintain the minimum capacity of 6 instances. Auto Scaling uses AZ rebalancing to keep instances as evenly distributed as possible. It does not reduce desired capacity due to an AZ failure.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 33,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to create a backup strategy for an Amazon EFS file system. Which AWS service provides automated, policy-based backups for EFS?",
+      "options": [
+        "AWS Backup",
+        "EFS lifecycle management",
+        "S3 Cross-Region Replication",
+        "DataSync scheduled transfers"
+      ],
+      "correct": 0,
+      "explanation": "AWS Backup supports Amazon EFS and provides automated, policy-based backup scheduling with retention management. Backup plans can define frequency, retention period, and lifecycle rules (transition to cold storage). EFS lifecycle management moves infrequently accessed files between storage classes but does not create backups. DataSync transfers data but is not a backup service.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 34,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "A company has an RPO of 1 hour and an RTO of 15 minutes for its production database. Which RDS backup and recovery strategy meets these requirements?",
+      "options": [
+        "Multi-AZ deployment with automated backups and transaction log backups every 5 minutes",
+        "Single-AZ with daily automated snapshots and manual snapshots before deployments",
+        "Read replica in another region with manual promotion",
+        "Multi-AZ with manual snapshots taken every hour"
+      ],
+      "correct": 0,
+      "explanation": "RDS Multi-AZ with automated backups provides continuous transaction log backups (every 5 minutes), achieving an RPO well under 1 hour via point-in-time recovery. Multi-AZ automatic failover completes in 60-120 seconds, meeting the 15-minute RTO. Daily snapshots provide only 24-hour RPO. Manual snapshots require human intervention, increasing RTO.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 35,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "A company requires a disaster recovery solution for a web application that provides an RTO of under 1 minute and RPO of near zero. The application uses an ALB, EC2 Auto Scaling, and RDS. Which DR strategy should the SysOps administrator implement?",
+      "options": [
+        "Multi-site active/active with Route 53 health checks and Aurora Global Database",
+        "Warm standby with Route 53 failover and RDS cross-region read replica",
+        "Pilot light with minimal infrastructure in the DR region and RDS snapshots",
+        "Backup and restore with automated AMI copying and RDS automated backups"
+      ],
+      "correct": 0,
+      "explanation": "Multi-site active/active runs full production infrastructure in multiple regions simultaneously. Route 53 health checks automatically route traffic away from an unhealthy region (sub-minute RTO). Aurora Global Database provides cross-region replication with typically under 1 second of lag (near-zero RPO). Warm standby requires scaling up, increasing RTO. Pilot light requires provisioning resources, increasing both RTO and RPO.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 36,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to configure Route 53 to automatically direct traffic away from an unhealthy primary endpoint to a backup endpoint. Which routing policy should be used?",
+      "options": [
+        "Failover routing policy with health checks",
+        "Weighted routing policy with equal weights",
+        "Latency-based routing policy",
+        "Simple routing policy with multiple values"
+      ],
+      "correct": 0,
+      "explanation": "Route 53 failover routing policy directs traffic to a primary resource when healthy and automatically routes to a secondary (standby) resource when the primary fails its health check. Weighted routing distributes traffic based on weights but does not provide automatic failover. Latency routing directs to the lowest-latency endpoint regardless of health.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 37,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to protect an S3 bucket containing critical data from accidental deletion. Objects must be recoverable even if someone deletes them. Which combination of features should be enabled?",
+      "options": [
+        "S3 versioning and MFA Delete",
+        "S3 Object Lock in compliance mode",
+        "S3 Cross-Region Replication",
+        "S3 lifecycle policy with transition to Glacier"
+      ],
+      "correct": 0,
+      "explanation": "S3 versioning preserves all versions of objects, so deleted objects can be recovered by removing the delete marker. MFA Delete requires multi-factor authentication to permanently delete object versions or disable versioning, preventing accidental or malicious permanent deletion. Object Lock prevents deletion but is typically used for regulatory compliance rather than accidental deletion protection.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 38,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "A SysOps administrator is designing a highly available architecture for a stateful application. The application stores session data locally on the EC2 instance. When instances are replaced by Auto Scaling, users lose their sessions. How should this be resolved?",
+      "options": [
+        "Store session data in Amazon ElastiCache Redis and configure the application to use it as an external session store",
+        "Enable sticky sessions on the ALB to route users to the same instance",
+        "Use EBS volumes attached to each instance and copy data between instances",
+        "Increase the health check grace period to prevent premature instance replacement"
+      ],
+      "correct": 0,
+      "explanation": "Externalizing session data to ElastiCache Redis makes the application stateless from the EC2 perspective. Any instance can serve any user because session data is stored externally. This allows Auto Scaling to freely replace instances without session loss. Sticky sessions only work while the original instance is alive. EBS volumes are tied to single instances and AZs.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 39,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "A company uses an ALB with target groups for its application. The health check is configured to use HTTP on port 80 with path /health. Instances are being marked unhealthy even though the application is running. What is the MOST likely cause?",
+      "options": [
+        "The application's /health endpoint is returning a non-2xx status code",
+        "The security group does not allow inbound traffic on port 443",
+        "The instance is in a private subnet without internet access",
+        "The ALB listener is configured for HTTPS but the health check uses HTTP"
+      ],
+      "correct": 0,
+      "explanation": "ALB health checks expect a 200 status code by default (configurable range 200-499). If the /health endpoint returns a 3xx redirect, 4xx error, or 5xx error, the target is marked unhealthy. Common causes include the application not listening on port 80, the /health path not existing (404), or the application returning an error. The ALB health check connects directly to the target, so it uses the health check port and protocol, not the listener port.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 40,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to create a consistent, point-in-time backup of multiple EBS volumes attached to a single EC2 instance. Which approach ensures data consistency across all volumes?",
+      "options": [
+        "Create an EBS-backed AMI of the instance, which creates snapshots of all attached volumes atomically",
+        "Create individual EBS snapshots of each volume simultaneously using the AWS CLI",
+        "Stop the instance, create snapshots of all volumes, then start the instance",
+        "Use AWS Backup to create a backup of the instance"
+      ],
+      "correct": 0,
+      "explanation": "Creating an AMI from a running instance triggers crash-consistent snapshots of all attached EBS volumes at the same point in time. This ensures cross-volume consistency. Individual snapshots may not be perfectly synchronized. Stopping the instance ensures consistency but causes downtime. AWS Backup also creates consistent snapshots but an AMI additionally captures the instance configuration.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 41,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "An application uses an Auto Scaling group with an ALB. During a deployment, new instances pass the EC2 status checks but fail the ALB health checks. Users receive 502 errors. What should the administrator investigate?",
+      "options": [
+        "The application takes longer to start than the ALB health check grace period allows",
+        "The Auto Scaling group is using the wrong launch template version",
+        "The NAT gateway in the private subnet has reached its bandwidth limit",
+        "The ALB listener rule is routing traffic to the wrong target group"
+      ],
+      "correct": 0,
+      "explanation": "If instances pass EC2 status checks (hardware/OS healthy) but fail ALB health checks (application not responding correctly), the application likely has not finished starting up. The health check grace period should be set long enough for the application to fully initialize. If it is too short, Auto Scaling considers the instance unhealthy and terminates it, creating a loop of launch-terminate cycles.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 42,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "A multi-tier application has a web tier in a public subnet and a database tier in a private subnet. The database tier must be highly available across AZs. During an AZ failure, the database must automatically become available in another AZ with no data loss. Which architecture meets these requirements?",
+      "options": [
+        "RDS Multi-AZ with synchronous replication to a standby in another AZ",
+        "RDS with automated backups and point-in-time recovery",
+        "DynamoDB with global tables across AZs",
+        "EC2-hosted database with EBS Multi-Attach in two AZs"
+      ],
+      "correct": 0,
+      "explanation": "RDS Multi-AZ uses synchronous replication to maintain an identical standby in a different AZ. If the primary AZ fails, automatic failover promotes the standby with zero data loss (synchronous replication ensures all committed transactions are replicated). Point-in-time recovery has data loss up to the last backup interval. DynamoDB Global Tables are cross-region, not cross-AZ. EBS Multi-Attach is for within-AZ, not across AZs.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 43,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to implement a backup strategy for a DynamoDB table that supports point-in-time recovery to any second in the past 35 days. Which feature should be enabled?",
+      "options": [
+        "DynamoDB Point-in-Time Recovery (PITR)",
+        "DynamoDB on-demand backup",
+        "AWS Backup with a DynamoDB backup plan",
+        "DynamoDB Streams with a Lambda archiver"
+      ],
+      "correct": 0,
+      "explanation": "DynamoDB PITR provides continuous backups and allows restoration to any point in time within the last 35 days, with per-second granularity. On-demand backups create full snapshots at a specific point in time but do not support per-second recovery. AWS Backup can manage DynamoDB backups but PITR provides the granularity specified. DynamoDB Streams capture changes but require custom code to rebuild state.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 44,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to ensure that an EC2 Auto Scaling group replaces instances that fail ELB health checks. What must be configured on the Auto Scaling group?",
+      "options": [
+        "Set the health check type to ELB instead of EC2",
+        "Enable detailed monitoring on all instances",
+        "Configure a CloudWatch alarm for UnHealthyHostCount",
+        "Attach a lifecycle hook for instance termination"
+      ],
+      "correct": 0,
+      "explanation": "By default, Auto Scaling groups use EC2 status checks for health evaluation. To also consider ELB health checks, the health check type must be set to ELB. When set to ELB, an instance is marked unhealthy if it fails either EC2 status checks or ELB health checks, and Auto Scaling replaces it. Without this setting, instances that fail ELB health checks but pass EC2 status checks remain in the group.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 45,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "A company needs to implement a pilot light DR strategy for a critical application. The primary region is us-east-1 and the DR region is us-west-2. The application uses RDS PostgreSQL, EC2 instances, and S3 for static assets. What components should be pre-provisioned in the DR region?",
+      "options": [
+        "RDS cross-region read replica, AMIs copied to us-west-2, and S3 Cross-Region Replication enabled",
+        "Full copy of all EC2 instances in stopped state, RDS snapshot copied daily, and S3 lifecycle policy",
+        "CloudFormation stack ready to deploy, daily RDS snapshots in us-west-2, and S3 versioning",
+        "Route 53 health checks, Global Accelerator endpoint, and DynamoDB Global Tables"
+      ],
+      "correct": 0,
+      "explanation": "A pilot light strategy pre-provisions the minimum core infrastructure needed for quick recovery. An RDS cross-region read replica provides near real-time data replication and can be promoted to primary quickly. AMIs in the DR region allow rapid EC2 deployment. S3 CRR keeps static assets synchronized. During failover, the read replica is promoted, EC2 instances are launched from AMIs, and Route 53 routes traffic to the DR region.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 46,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "A SysOps administrator notices that an Auto Scaling group is oscillating between scaling out and scaling in every few minutes, creating instability. What is the MOST likely cause and solution?",
+      "options": [
+        "The scaling threshold is too close to current utilization; add a gap between scale-out and scale-in thresholds",
+        "The minimum and maximum capacity settings are incorrect",
+        "The launch template specifies an instance type with insufficient capacity",
+        "The CloudWatch alarm evaluation period is too long"
+      ],
+      "correct": 0,
+      "explanation": "Oscillation (thrashing) occurs when the scale-out threshold is close to the scale-in threshold. After scaling out, the added capacity drops utilization below the scale-in threshold, triggering scale-in. Removing instances increases utilization above the scale-out threshold again. The solution is to create a gap (dead band) between the thresholds, for example scale out at 70% and scale in at 40%.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 47,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "easy",
+      "question": "Which AWS service allows a SysOps administrator to create centralized backup policies that automatically protect resources across multiple AWS accounts in an organization?",
+      "options": [
+        "AWS Backup with organization-wide backup policies",
+        "AWS Systems Manager State Manager",
+        "Amazon Data Lifecycle Manager",
+        "AWS CloudFormation StackSets"
+      ],
+      "correct": 0,
+      "explanation": "AWS Backup supports organization-wide backup policies that can be applied across accounts in AWS Organizations. Backup policies define backup plans, vault assignments, and resource selections that are automatically enforced in member accounts. Data Lifecycle Manager handles EBS snapshot and AMI lifecycle but is limited to a single account.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 48,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "A Route 53 failover configuration is not routing traffic to the secondary endpoint even though the primary endpoint is down. Health checks show the primary as healthy. What is the MOST likely issue?",
+      "options": [
+        "The Route 53 health check is not configured to check the correct port or path of the primary endpoint",
+        "The secondary endpoint does not have a health check configured",
+        "The TTL on the DNS record is set too high",
+        "The Route 53 hosted zone is not associated with the correct VPC"
+      ],
+      "correct": 0,
+      "explanation": "If the health check shows the primary as healthy despite being down, the health check is likely misconfigured. Common issues include checking the wrong port, the wrong path (e.g., / instead of /health), or checking a load balancer that returns 200 even when backend instances are down. The health check must accurately reflect the application's availability. Always verify the health check endpoint matches the actual application health.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 49,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "A company has a strict requirement that no more than one instance in an Auto Scaling group can be unavailable during instance refresh operations. The group has 4 instances across 2 AZs. Which instance refresh configuration satisfies this requirement?",
+      "options": [
+        "Set MaxHealthyPercentage to 125% and MinHealthyPercentage to 75%",
+        "Set MaxHealthyPercentage to 100% and MinHealthyPercentage to 100%",
+        "Set MaxHealthyPercentage to 200% and MinHealthyPercentage to 50%",
+        "Set MaxHealthyPercentage to 150% and MinHealthyPercentage to 100%"
+      ],
+      "correct": 0,
+      "explanation": "With 4 instances, MinHealthyPercentage of 75% means at least 3 instances (75% of 4 = 3) must be healthy at all times, ensuring no more than 1 is unavailable. MaxHealthyPercentage of 125% allows launching up to 5 instances (125% of 4 = 5) temporarily during the refresh. This enables launching a replacement before terminating the old instance, reducing the blast radius of the refresh operation.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 50,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to automate the creation and retention of EBS snapshots on a schedule. Snapshots older than 30 days should be automatically deleted. Which service should be used?",
+      "options": [
+        "Amazon Data Lifecycle Manager (DLM)",
+        "AWS Backup",
+        "CloudWatch Events with Lambda",
+        "Systems Manager Automation"
+      ],
+      "correct": 0,
+      "explanation": "Amazon Data Lifecycle Manager automates the creation, retention, and deletion of EBS snapshots based on policies. You can define the schedule, retention rules (by count or age), and tag-based targeting. AWS Backup also provides this capability but DLM is the purpose-built service for EBS snapshot lifecycle management with simpler configuration.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 51,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "During a planned maintenance window, a SysOps administrator needs to update the AMI used by an Auto Scaling group with zero downtime. What is the recommended approach?",
+      "options": [
+        "Create a new launch template version with the updated AMI and perform an instance refresh",
+        "Modify the existing launch template to reference the new AMI ID",
+        "Terminate all existing instances and let Auto Scaling launch new ones with the updated AMI",
+        "Detach instances from the Auto Scaling group, update the AMI, and reattach"
+      ],
+      "correct": 0,
+      "explanation": "Creating a new launch template version and performing an instance refresh is the recommended zero-downtime approach. Instance refresh gradually replaces instances by launching new ones with the updated AMI and terminating old ones, respecting the MinHealthyPercentage. You cannot detach instances and reattach with a different AMI. Terminating all instances causes complete downtime.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 52,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "A SysOps administrator manages an Aurora MySQL cluster that serves a global application. The company requires that the database can serve read traffic in Europe with low latency and can be promoted to primary in the EU region within 1 minute if the US region fails. Which feature should be used?",
+      "options": [
+        "Aurora Global Database with a secondary cluster in the EU region",
+        "Aurora read replicas deployed in the EU region",
+        "RDS cross-region read replica with manual promotion",
+        "Aurora Serverless v2 with multi-region configuration"
+      ],
+      "correct": 0,
+      "explanation": "Aurora Global Database replicates data from the primary region to up to five secondary regions with typical latency under 1 second. Each secondary region has a full copy of the data that can serve read traffic locally. During failover, a secondary cluster can be promoted to primary in typically under 1 minute. Standard Aurora read replicas are within a single region. RDS cross-region replicas have higher replication lag and slower promotion.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 53,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to ensure that all EC2 instances, RDS databases, and EFS file systems in a production account are backed up daily with a 30-day retention period. The solution must be centrally managed. What is the MOST efficient approach?",
+      "options": [
+        "Create an AWS Backup plan with a daily rule, 30-day retention, and resource assignment by tag",
+        "Create separate DLM policies for EBS snapshots, RDS automated backups, and EFS lifecycle policies",
+        "Write a Lambda function triggered by CloudWatch Events that creates backups for each service",
+        "Use CloudFormation to deploy backup resources for each service individually"
+      ],
+      "correct": 0,
+      "explanation": "AWS Backup provides a centralized, unified backup solution that supports EC2, RDS, EFS, and many other AWS services. A single backup plan with resource assignment by tag (e.g., Backup: true) applies the policy to all matching resources regardless of service type. This is more efficient than managing separate backup mechanisms for each service. AWS Backup also provides centralized monitoring and reporting.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 54,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "A SysOps administrator configures an ALB health check with an interval of 30 seconds, a healthy threshold of 3, and an unhealthy threshold of 2. How long will it take for a healthy instance that starts failing health checks to be marked unhealthy?",
+      "options": [
+        "60 seconds (2 consecutive failed checks at 30-second intervals)",
+        "90 seconds (3 consecutive failed checks at 30-second intervals)",
+        "30 seconds (1 failed check)",
+        "150 seconds (5 consecutive failed checks at 30-second intervals)"
+      ],
+      "correct": 0,
+      "explanation": "With an unhealthy threshold of 2 and an interval of 30 seconds, it takes 2 consecutive failed health checks to mark the target unhealthy: 2 x 30 seconds = 60 seconds. The healthy threshold (3) is used to determine when an unhealthy instance is considered healthy again (3 x 30 = 90 seconds of consecutive successful checks).",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 55,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to run a shell command on 50 EC2 instances simultaneously without SSH access. Which AWS service and feature should be used?",
+      "options": [
+        "AWS Systems Manager Run Command",
+        "AWS Systems Manager Session Manager",
+        "AWS Systems Manager Patch Manager",
+        "AWS Systems Manager Automation"
+      ],
+      "correct": 0,
+      "explanation": "Systems Manager Run Command allows executing commands on managed instances at scale without needing SSH/RDP access. It uses the SSM Agent installed on instances and supports running shell scripts, PowerShell commands, and predefined documents. Session Manager provides interactive shell sessions but is for individual instances. Patch Manager handles patching, not arbitrary commands.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 56,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to store database connection strings that include passwords for use by EC2 applications. The values must be encrypted at rest, versioned, and accessible via IAM policies. Which service should be used?",
+      "options": [
+        "AWS Systems Manager Parameter Store with SecureString parameters",
+        "AWS Secrets Manager",
+        "AWS Systems Manager Session Manager",
+        "Amazon S3 with server-side encryption"
+      ],
+      "correct": 0,
+      "explanation": "Systems Manager Parameter Store SecureString parameters encrypt values using KMS, support versioning, and access is controlled via IAM policies. This is ideal for configuration data including connection strings. AWS Secrets Manager is also valid and adds automatic rotation, but Parameter Store is sufficient for storage and retrieval. Secrets Manager has a per-secret charge while Parameter Store standard tier is free.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 57,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to detect if the actual configuration of a CloudFormation stack has drifted from its template. Which feature should be used?",
+      "options": [
+        "CloudFormation drift detection",
+        "CloudFormation change sets",
+        "AWS Config configuration recorder",
+        "CloudFormation stack policy"
+      ],
+      "correct": 0,
+      "explanation": "CloudFormation drift detection compares the actual configuration of stack resources against the expected configuration defined in the template. It identifies resources that have been modified outside of CloudFormation. Change sets preview changes before execution but do not detect drift. Stack policies protect resources from being updated during stack updates but do not detect drift.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 58,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "A SysOps administrator wants to preview the impact of a CloudFormation template update before applying it to a production stack. Which feature provides this capability?",
+      "options": [
+        "CloudFormation change sets",
+        "CloudFormation drift detection",
+        "CloudFormation stack policies",
+        "CloudFormation rollback triggers"
+      ],
+      "correct": 0,
+      "explanation": "Change sets show you the proposed changes CloudFormation will make to your stack before execution. They detail which resources will be added, modified, or replaced, and whether the changes are disruptive (replacement). This allows review and approval before applying changes. Drift detection shows current vs expected state, not planned changes. Stack policies prevent accidental updates to specific resources.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 59,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "A SysOps administrator needs to ensure all EC2 instances in the organization are patched within 48 hours of a critical patch release. The solution must support multiple operating systems and provide compliance reporting. What is the BEST approach?",
+      "options": [
+        "Systems Manager Patch Manager with patch baselines, maintenance windows, and compliance reporting",
+        "Custom Lambda function that SSHs into each instance and runs package updates",
+        "AWS Config rule checking for instance patch levels with manual remediation",
+        "User data scripts that run yum update on instance boot"
+      ],
+      "correct": 0,
+      "explanation": "Systems Manager Patch Manager provides a fully managed patching solution. Patch baselines define which patches to approve and when (auto-approval after X days for critical patches). Maintenance windows schedule when patching occurs. Compliance reporting shows which instances are compliant. It supports Linux and Windows. Custom SSH approaches do not scale and lack compliance tracking. User data only runs at launch.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 60,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "A company wants to deploy the same CloudFormation stack to 20 AWS accounts across 4 regions in their organization. What is the MOST efficient approach?",
+      "options": [
+        "CloudFormation StackSets with organization-based deployment targeting",
+        "Deploy the stack manually in each account and region",
+        "Use a CI/CD pipeline that assumes roles in each account and deploys the stack",
+        "Create an AWS Service Catalog product and share it with all accounts"
+      ],
+      "correct": 0,
+      "explanation": "CloudFormation StackSets allow deploying stacks across multiple accounts and regions from a single template. With AWS Organizations integration, StackSets can automatically deploy to accounts based on OU membership. Service-managed permissions simplify the setup. This is far more efficient than manual deployment or custom pipelines for organization-wide infrastructure.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 61,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to install and configure a web server on an EC2 instance during launch. Which launch configuration feature allows running setup scripts automatically?",
+      "options": [
+        "User data script",
+        "Instance metadata",
+        "Launch template tags",
+        "Instance profile"
+      ],
+      "correct": 0,
+      "explanation": "EC2 user data allows specifying scripts (bash for Linux, PowerShell for Windows) that run automatically when the instance first launches. This is commonly used to install software, configure services, and download application code. Instance metadata provides information about the instance but does not execute scripts. Instance profiles assign IAM roles.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 62,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "A SysOps administrator is using CloudFormation to deploy an application stack. If the stack creation fails, the administrator wants to retain the resources that were successfully created for debugging. What should be configured?",
+      "options": [
+        "Set the stack's OnFailure action to DO_NOTHING (or --disable-rollback via CLI)",
+        "Set the stack's OnFailure action to ROLLBACK and review CloudTrail logs",
+        "Enable termination protection on the stack",
+        "Add DeletionPolicy: Retain to all resources in the template"
+      ],
+      "correct": 0,
+      "explanation": "Setting OnFailure to DO_NOTHING (or using --disable-rollback) prevents CloudFormation from rolling back on creation failure, leaving successfully created resources intact for debugging. The default behavior is ROLLBACK, which deletes all created resources on failure. Termination protection prevents the entire stack from being deleted but does not affect rollback behavior. DeletionPolicy: Retain prevents deletion when the stack is intentionally deleted.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 63,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "A SysOps administrator needs to maintain consistent OS configurations across 200 EC2 instances. Configurations include installed packages, file contents, service states, and registry settings (Windows). Changes must be automatically reapplied if instances drift from the desired state. Which solution is BEST?",
+      "options": [
+        "Systems Manager State Manager with association documents applied on a schedule",
+        "Systems Manager Run Command with a cron-scheduled Lambda trigger",
+        "AWS Config rules with auto-remediation for each configuration item",
+        "OpsWorks Stacks with Chef recipes applied to all instances"
+      ],
+      "correct": 0,
+      "explanation": "Systems Manager State Manager ensures instances maintain a defined configuration by applying association documents on a schedule. If an instance drifts from the desired state, State Manager automatically reapplies the configuration at the next scheduled run. This handles packages, files, services, and Windows registry settings. Run Command is one-time execution without drift correction. AWS Config evaluates resource configurations but not OS-level settings.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 64,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "A SysOps administrator wants to protect a specific RDS instance in a CloudFormation stack from being accidentally replaced during a stack update. Which feature should be used?",
+      "options": [
+        "CloudFormation stack policy that denies Update:Replace on the RDS resource",
+        "CloudFormation DeletionPolicy: Retain on the RDS resource",
+        "RDS deletion protection enabled on the instance",
+        "CloudFormation termination protection on the stack"
+      ],
+      "correct": 0,
+      "explanation": "A stack policy is a JSON document that defines which update actions are allowed on specific resources during stack updates. Setting Deny for Update:Replace on the RDS resource prevents CloudFormation from replacing it during updates. DeletionPolicy: Retain keeps the resource when the stack is deleted but does not prevent replacement. RDS deletion protection prevents direct deletion but not CloudFormation replacement.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 65,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to automate the creation of a golden AMI that includes the latest OS patches, required software packages, and security hardening. The AMI should be rebuilt monthly. Which service is BEST suited for this?",
+      "options": [
+        "EC2 Image Builder with an automated pipeline",
+        "Systems Manager Automation with a custom runbook",
+        "Lambda function that launches an instance, configures it, and creates an AMI",
+        "Packer with a cron job running on a build server"
+      ],
+      "correct": 0,
+      "explanation": "EC2 Image Builder provides a fully managed service for building, testing, and distributing AMIs. You define a pipeline with build components (install packages, apply patches, run hardening scripts), test components (validate the image), and distribution settings (copy to regions/accounts). Pipelines can run on a schedule. Systems Manager Automation can build AMIs but requires more custom configuration.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 66,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "A SysOps administrator needs to securely provide EC2 instances in a private subnet with access to Systems Manager without internet access. What is the MINIMUM set of VPC endpoints required?",
+      "options": [
+        "com.amazonaws.region.ssm, com.amazonaws.region.ssmmessages, and com.amazonaws.region.ec2messages",
+        "com.amazonaws.region.ssm only",
+        "com.amazonaws.region.ssm and com.amazonaws.region.ssmmessages",
+        "A NAT gateway in a public subnet"
+      ],
+      "correct": 0,
+      "explanation": "Three VPC endpoints are required for full Systems Manager functionality in a private subnet without internet access: ssm (for SSM API calls), ssmmessages (for Session Manager communication), and ec2messages (for Run Command and SSM Agent communication). Missing any one of these endpoints will cause certain SSM features to fail. A NAT gateway works but provides broader internet access than necessary.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 67,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "A CloudFormation stack update fails and automatically rolls back. The SysOps administrator needs to understand what went wrong. Where should they look FIRST?",
+      "options": [
+        "CloudFormation stack events tab showing the resource that failed and the error message",
+        "CloudTrail logs for CloudFormation API calls",
+        "CloudWatch Logs for CloudFormation activity",
+        "AWS Config configuration timeline for affected resources"
+      ],
+      "correct": 0,
+      "explanation": "The CloudFormation stack events tab provides a chronological list of all actions during the stack update, including which resource failed and the specific error message (e.g., 'Resource limit exceeded', 'Access denied'). This is the fastest way to identify the failure cause. CloudTrail shows API calls but not the internal CloudFormation failure details. CloudFormation does not natively log to CloudWatch Logs.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 68,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to provide a self-service catalog of pre-approved CloudFormation templates to developers. Developers should be able to launch products without having direct CloudFormation or resource-creation permissions. Which service enables this?",
+      "options": [
+        "AWS Service Catalog",
+        "AWS CloudFormation StackSets",
+        "AWS Systems Manager Automation",
+        "AWS CodePipeline"
+      ],
+      "correct": 0,
+      "explanation": "AWS Service Catalog allows administrators to create portfolios of approved products (CloudFormation templates) that users can launch via a self-service portal. Service Catalog uses launch constraints with IAM roles, so end users do not need direct permissions to create resources. StackSets deploy across accounts/regions but are not a self-service catalog. CodePipeline is for CI/CD.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 69,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to securely connect to an EC2 instance in a private subnet for troubleshooting. The company policy prohibits opening SSH ports in security groups and using bastion hosts. Which approach should be used?",
+      "options": [
+        "AWS Systems Manager Session Manager",
+        "EC2 Instance Connect",
+        "AWS Direct Connect with a VPN",
+        "EC2 Serial Console"
+      ],
+      "correct": 0,
+      "explanation": "Systems Manager Session Manager provides a secure, browser-based or CLI-based shell to EC2 instances without opening inbound ports, managing SSH keys, or using bastion hosts. It uses the SSM Agent and IAM for authentication. All sessions are logged to CloudTrail and can be logged to S3/CloudWatch Logs. EC2 Instance Connect still requires port 22 to be open in the security group.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 70,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "A SysOps administrator needs to deploy a CloudFormation stack that creates IAM roles with custom policies. The stack deployment fails with 'Requires capabilities: CAPABILITY_NAMED_IAM'. What does this error mean and how should it be resolved?",
+      "options": [
+        "The template creates IAM resources with custom names; acknowledge by adding CAPABILITY_NAMED_IAM when deploying",
+        "The IAM user deploying the stack lacks permissions to create IAM resources",
+        "The template references IAM resources that do not exist yet",
+        "CloudFormation cannot create IAM resources in the current region"
+      ],
+      "correct": 0,
+      "explanation": "When a CloudFormation template creates IAM resources with custom names (specified Name properties), AWS requires explicit acknowledgment via the CAPABILITY_NAMED_IAM capability. This is a safety measure because custom-named IAM resources could be used for privilege escalation. CAPABILITY_IAM is required for unnamed IAM resources. The capability can be specified in the CLI with --capabilities or in the console checkbox.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 71,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to deploy an application using a rolling deployment strategy that replaces instances in batches. The deployment must automatically roll back if CloudWatch alarms indicate increased error rates. Which service provides this capability?",
+      "options": [
+        "AWS CodeDeploy with a deployment group configured for rolling deployment and automatic rollback on alarm",
+        "AWS Elastic Beanstalk with rolling updates",
+        "CloudFormation with AutoScalingRollingUpdate update policy",
+        "AWS CodePipeline with a manual approval stage"
+      ],
+      "correct": 0,
+      "explanation": "AWS CodeDeploy supports in-place rolling deployments with configurable batch sizes and automatic rollback triggered by CloudWatch alarms. When an alarm breaches during deployment, CodeDeploy automatically reverts to the previous application revision. Elastic Beanstalk rolling updates do not support alarm-triggered rollbacks natively. CloudFormation rolling updates replace instances but lack alarm-based rollback.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 72,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to execute a multi-step automated workflow that includes stopping an EC2 instance, creating a snapshot, updating a tag, and starting the instance. Which Systems Manager feature should be used?",
+      "options": [
+        "Systems Manager Automation with a runbook",
+        "Systems Manager Run Command with multiple documents",
+        "Systems Manager State Manager with an association",
+        "Systems Manager Maintenance Windows with a task"
+      ],
+      "correct": 0,
+      "explanation": "Systems Manager Automation executes multi-step workflows defined in automation runbooks (documents). Steps can include API calls, Run Command execution, approval gates, and conditional branching. AWS provides pre-built runbooks for common tasks, and custom runbooks can be created. Run Command executes single commands on instances but does not orchestrate multi-step workflows across AWS services.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 73,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "A SysOps administrator has a CloudFormation template that provisions an RDS database. During an update that changes the engine version, CloudFormation wants to replace the database (delete and recreate). How can the administrator update the engine version without losing data?",
+      "options": [
+        "Add UpdateReplacePolicy: Snapshot to the RDS resource so CloudFormation creates a snapshot before replacement",
+        "Use the AWS CLI to modify the RDS instance engine version directly, then update the template to match",
+        "Add DeletionPolicy: Retain to keep the old database, then manually migrate data",
+        "Perform a blue/green deployment by creating a new stack with the updated engine version"
+      ],
+      "correct": 0,
+      "explanation": "UpdateReplacePolicy: Snapshot tells CloudFormation to create a snapshot of the RDS instance before deleting it during replacement. The new instance can then be restored from this snapshot. This preserves data during replacement operations. Modifying outside CloudFormation causes drift. DeletionPolicy: Retain keeps the old database but the new one would be empty.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 74,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to schedule Systems Manager Patch Manager to patch EC2 instances every Sunday at 2 AM with a maximum duration of 4 hours. Which feature facilitates this scheduling?",
+      "options": [
+        "Systems Manager Maintenance Windows",
+        "EventBridge scheduled rules",
+        "CloudWatch alarm-triggered actions",
+        "Auto Scaling scheduled actions"
+      ],
+      "correct": 0,
+      "explanation": "Systems Manager Maintenance Windows define a recurring schedule and duration for performing administrative tasks such as patching. You register targets (instances by tag or ID) and tasks (Patch Manager patching), and set the schedule using cron expressions. Maintenance Windows ensure patches are only applied during approved time periods and stop if the window expires.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 75,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to view a complete inventory of all software installed on managed EC2 instances across the account. Which Systems Manager feature provides this?",
+      "options": [
+        "Systems Manager Inventory",
+        "Systems Manager Compliance",
+        "Systems Manager Explorer",
+        "AWS Config resource inventory"
+      ],
+      "correct": 0,
+      "explanation": "Systems Manager Inventory collects metadata from managed instances including installed applications, OS patches, running services, Windows roles, network configurations, and more. This data can be queried and visualized. Compliance shows compliance status against baselines. Explorer provides an aggregated operational view. AWS Config tracks AWS resource configurations, not instance software inventory.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 76,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to import an existing VPC that was created manually into a CloudFormation stack for future management. Which CloudFormation feature enables this?",
+      "options": [
+        "CloudFormation resource import",
+        "CloudFormation drift detection",
+        "CloudFormation change sets",
+        "CloudFormation custom resources"
+      ],
+      "correct": 0,
+      "explanation": "CloudFormation resource import allows bringing existing resources into CloudFormation management without recreating them. You provide the resource identifier (VPC ID) and a template that describes the resource. After import, CloudFormation manages the resource as part of the stack. Drift detection checks for differences but does not import resources. This feature avoids the need to tear down and recreate existing infrastructure.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 77,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "A SysOps administrator needs to implement a blue/green deployment for an application running on EC2 instances behind an ALB. The solution must allow testing the new version before switching traffic and enable instant rollback. Which approach is BEST?",
+      "options": [
+        "Create a new target group with instances running the new version, use ALB weighted target group routing to shift traffic gradually",
+        "Deploy a second Auto Scaling group, manually update the ALB listener to point to the new target group",
+        "Use Route 53 weighted routing to split traffic between two ALBs",
+        "Deploy new instances in the existing Auto Scaling group and remove old instances one by one"
+      ],
+      "correct": 0,
+      "explanation": "ALB supports weighted target group routing in listener rules, allowing you to send a percentage of traffic to a new target group (green) while the existing target group (blue) handles the rest. You can test with 1% traffic, gradually increase, and instantly roll back by setting the blue target group weight back to 100%. Route 53-based routing adds DNS propagation delays. Manually updating listeners is not instant.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 78,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to distribute a configuration file to 100 EC2 instances and ensure the file remains consistent over time. If any instance's file changes, it should be automatically reverted. Which approach is MOST reliable?",
+      "options": [
+        "Systems Manager State Manager association using an AWS-RunDocument that applies the configuration on a schedule",
+        "Systems Manager Run Command to distribute the file once",
+        "S3 bucket with the configuration file and a cron job on each instance to download it",
+        "CloudFormation cfn-init with a template that specifies the file contents"
+      ],
+      "correct": 0,
+      "explanation": "State Manager associations apply configurations on a recurring schedule. If an instance's file is manually changed, State Manager automatically reapplies the correct configuration at the next scheduled run, enforcing consistency. Run Command is one-time and does not auto-correct drift. S3 with cron requires custom tooling on each instance. cfn-init only runs during stack operations, not continuously.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 79,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "A SysOps administrator has a CloudFormation template that references a Lambda function code zip in S3. The code changes frequently but the S3 object key stays the same. After updating the code in S3, updating the stack does not deploy the new code. Why?",
+      "options": [
+        "CloudFormation detects no change in the template because the S3 key has not changed",
+        "Lambda functions cannot be updated through CloudFormation",
+        "The Lambda function's execution role lacks S3 access",
+        "CloudFormation caches Lambda code and does not re-download it"
+      ],
+      "correct": 0,
+      "explanation": "CloudFormation only detects changes by comparing template properties. If the S3 bucket and key remain the same, CloudFormation sees no change and does not update the Lambda function. The solution is to include an S3ObjectVersion property or change the S3 key (e.g., include a version hash in the filename). This forces CloudFormation to detect a change and update the function code.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 80,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "A company is migrating from on-premises Chef-managed infrastructure to AWS. They want to continue using existing Chef cookbooks for configuration management. Which AWS service should the SysOps administrator recommend?",
+      "options": [
+        "AWS OpsWorks for Chef Automate",
+        "AWS Systems Manager with custom documents",
+        "AWS CloudFormation with cfn-init",
+        "Amazon EC2 with Chef client installed manually"
+      ],
+      "correct": 0,
+      "explanation": "AWS OpsWorks for Chef Automate provides a fully managed Chef server. Existing Chef cookbooks can be used without modification. It handles server maintenance, backups, and software updates. Systems Manager could replicate some functionality but would require rewriting cookbooks as SSM documents. Manual Chef installation requires managing the Chef server infrastructure. OpsWorks is the natural migration path for existing Chef users.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 81,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to ensure that only approved AMIs can be used to launch EC2 instances in the organization. Which approach enforces this across all accounts?",
+      "options": [
+        "A Service Control Policy (SCP) that denies ec2:RunInstances unless the AMI matches approved image IDs",
+        "An AWS Config rule that checks running instances against approved AMIs",
+        "An IAM policy attached to all users that restricts AMI usage",
+        "EC2 Image Builder with distribution settings limited to approved accounts"
+      ],
+      "correct": 0,
+      "explanation": "An SCP with a condition key (ec2:ImageId) can deny ec2:RunInstances unless the AMI is in an approved list. SCPs apply to all accounts in the organization, enforcing the policy centrally. AWS Config can detect non-compliant instances after launch but does not prevent launch. IAM policies would need to be applied to every principal in every account. Image Builder creates AMIs but does not control which AMIs can be used.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 82,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to grant an EC2 instance permission to access an S3 bucket without storing AWS credentials on the instance. What should be configured?",
+      "options": [
+        "An IAM role attached to the instance via an instance profile",
+        "An IAM user with access keys stored in environment variables",
+        "An S3 bucket policy that allows access from the instance's IP address",
+        "AWS STS temporary credentials stored in the application configuration"
+      ],
+      "correct": 0,
+      "explanation": "An IAM role attached via an instance profile provides temporary credentials that are automatically rotated. Applications using the AWS SDK automatically retrieve credentials from the instance metadata service. This is the recommended approach as it avoids storing long-term credentials. Access keys are long-term and pose a security risk if exposed. S3 bucket policies based on IP are fragile when IPs change.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 83,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "A SysOps administrator discovers that an IAM user has both an inline policy allowing s3:* on all resources and a managed policy denying s3:DeleteBucket. The user attempts to delete an S3 bucket. What is the result?",
+      "options": [
+        "The request is denied because an explicit deny always overrides an allow",
+        "The request is allowed because the inline policy takes precedence over managed policies",
+        "The request is allowed because the allow policy is more specific",
+        "The request results in an error because of conflicting policies"
+      ],
+      "correct": 0,
+      "explanation": "In IAM policy evaluation, an explicit Deny ALWAYS overrides any Allow, regardless of whether the policies are inline or managed. This is a fundamental IAM principle. If any policy attached to the principal contains an explicit Deny for the action, the request is denied. The evaluation order is: explicit deny > explicit allow > implicit deny (default).",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 84,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to ensure all data stored on EBS volumes is encrypted. What is the SIMPLEST way to enforce this across all new EBS volumes in a region?",
+      "options": [
+        "Enable EBS encryption by default in the EC2 settings for the region",
+        "Create a custom AWS Config rule to check for unencrypted volumes",
+        "Add a condition key to the IAM policy denying unencrypted volume creation",
+        "Use a Lambda function triggered by CloudTrail to encrypt new volumes"
+      ],
+      "correct": 0,
+      "explanation": "Enabling EBS encryption by default in the AWS account settings (per region) ensures all new EBS volumes and snapshots are automatically encrypted without requiring users to specify encryption at creation time. This is the simplest approach as it requires no policy management. AWS Config can detect but not prevent. IAM conditions work but require policy management across all principals.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 85,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to rotate a KMS customer-managed key used to encrypt S3 objects. What happens to existing encrypted objects when automatic key rotation is enabled?",
+      "options": [
+        "Existing objects remain encrypted with the old key material; KMS transparently decrypts them using the original key material stored in the key's history",
+        "All existing objects are automatically re-encrypted with the new key material",
+        "Existing objects become inaccessible until manually re-encrypted",
+        "S3 automatically creates new copies of objects with the new key material"
+      ],
+      "correct": 0,
+      "explanation": "When KMS automatic key rotation is enabled, new key material is generated annually. The CMK ID remains the same, and KMS retains all previous key material versions. Existing objects remain encrypted with their original key material. When accessed, KMS transparently uses the correct key material version for decryption. No re-encryption is needed. The rotation is transparent to applications.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 86,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "A SysOps administrator needs to grant a third-party AWS account temporary access to an S3 bucket in the company's account. The access should be limited to 1 hour and should not require creating IAM users in either account. What is the BEST approach?",
+      "options": [
+        "Create an IAM role with a trust policy allowing the third-party account to assume it, with a maximum session duration of 1 hour",
+        "Generate a pre-signed URL for the S3 objects with a 1-hour expiration",
+        "Add the third-party account ID to the S3 bucket policy",
+        "Create an IAM user with temporary access keys that expire after 1 hour"
+      ],
+      "correct": 0,
+      "explanation": "An IAM cross-account role with a trust policy is the recommended approach for granting temporary cross-account access. The third-party account assumes the role and receives temporary credentials limited by the session duration. Pre-signed URLs work for individual objects but not for general bucket access. Bucket policies with account IDs provide permanent access, not temporary. IAM access keys do not have built-in expiration.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 87,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to ensure that all S3 buckets in the organization have server-side encryption enabled and that public access is blocked. Which approach provides continuous enforcement with the LEAST effort?",
+      "options": [
+        "AWS Config managed rules s3-bucket-server-side-encryption-enabled and s3-bucket-public-read-prohibited with auto-remediation",
+        "S3 Storage Lens with recommendations dashboard",
+        "Manual quarterly audits using the S3 console",
+        "Lambda function triggered by S3 CreateBucket events"
+      ],
+      "correct": 0,
+      "explanation": "AWS Config managed rules continuously evaluate S3 bucket configurations. s3-bucket-server-side-encryption-enabled checks encryption and s3-bucket-public-read-prohibited checks public access. Auto-remediation using SSM Automation can automatically fix non-compliant buckets. This provides continuous, automated compliance enforcement. S3 Storage Lens provides metrics but not enforcement. Lambda on CreateBucket misses configuration changes to existing buckets.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 88,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to restrict all IAM users and roles in child accounts from creating resources outside of the us-east-1 and eu-west-1 regions. What should be used?",
+      "options": [
+        "A Service Control Policy (SCP) with a region restriction condition",
+        "IAM policies attached to all users denying non-approved regions",
+        "AWS Config rules checking resource region compliance",
+        "VPC configurations limited to approved regions"
+      ],
+      "correct": 0,
+      "explanation": "SCPs set the maximum permissions boundary for all principals in an account. An SCP with an aws:RequestedRegion condition key can deny all actions except in approved regions. This applies organization-wide without modifying individual IAM policies. IAM policies would need to be attached to every principal in every account. AWS Config detects but does not prevent resource creation.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 89,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "A SysOps administrator discovers that Security Hub has flagged several findings related to public S3 buckets, unencrypted RDS instances, and overly permissive security groups. The administrator needs to prioritize remediation. According to Security Hub, how are findings prioritized?",
+      "options": [
+        "Findings are assigned a severity label (CRITICAL, HIGH, MEDIUM, LOW, INFORMATIONAL) and a normalized severity score",
+        "Findings are ranked by AWS account number and resource type",
+        "Findings are prioritized based on the compliance standard they violate",
+        "All findings have equal priority and must be addressed simultaneously"
+      ],
+      "correct": 0,
+      "explanation": "Security Hub assigns severity labels and normalized scores (0-100) to findings based on the potential security impact. CRITICAL findings (score 90-100) should be addressed first (e.g., public S3 buckets with sensitive data), followed by HIGH (70-89), MEDIUM (40-69), LOW (1-39), and INFORMATIONAL (0). This helps administrators prioritize remediation based on risk.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 90,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to identify IAM resources (roles, users, policies) that grant access to resources outside the organization. Which AWS service provides this analysis?",
+      "options": [
+        "IAM Access Analyzer",
+        "IAM Policy Simulator",
+        "AWS Trusted Advisor",
+        "AWS CloudTrail"
+      ],
+      "correct": 0,
+      "explanation": "IAM Access Analyzer identifies resources shared with external entities by analyzing resource-based policies on S3 buckets, IAM roles, KMS keys, Lambda functions, and SQS queues. It generates findings when a policy grants access to a principal outside your zone of trust (account or organization). Policy Simulator tests policies but does not analyze cross-account access. Trusted Advisor checks for security best practices but not cross-account access.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 91,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "A company needs to download compliance reports (SOC 2, PCI DSS, ISO 27001) for AWS services. Where should the SysOps administrator obtain these reports?",
+      "options": [
+        "AWS Artifact",
+        "AWS Security Hub",
+        "AWS Trusted Advisor",
+        "AWS Config compliance dashboard"
+      ],
+      "correct": 0,
+      "explanation": "AWS Artifact is the central resource for AWS compliance-related information. It provides on-demand access to AWS security and compliance reports (SOC reports, PCI DSS, ISO certifications) and select online agreements. Security Hub provides security findings, not compliance reports. Trusted Advisor provides best practice recommendations. AWS Config shows resource-level compliance, not AWS service compliance documentation.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 92,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "A SysOps administrator needs to implement a permissions boundary that limits the maximum permissions developers can grant to IAM roles they create. Developers should be able to create roles but not escalate privileges beyond what their team needs. What should be configured?",
+      "options": [
+        "An IAM permissions boundary policy attached as a condition when developers create roles",
+        "A restrictive IAM policy attached to all developer-created roles",
+        "An SCP limiting the permissions of developer accounts",
+        "AWS Organizations tag policies limiting role capabilities"
+      ],
+      "correct": 0,
+      "explanation": "IAM permissions boundaries set the maximum permissions that an IAM entity can have. By requiring developers to attach a specific permissions boundary when creating roles (enforced via an IAM policy condition: iam:PermissionsBoundary), you prevent privilege escalation. Even if a developer creates a role with AdministratorAccess, the effective permissions are the intersection of the role policy and the permissions boundary.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 93,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to enable GuardDuty across all accounts in an AWS Organization. What is the MOST efficient way to accomplish this?",
+      "options": [
+        "Designate a delegated administrator account and enable GuardDuty with auto-enable for organization members",
+        "Enable GuardDuty individually in each account and send findings to a central S3 bucket",
+        "Use CloudFormation StackSets to deploy GuardDuty configuration in each account",
+        "Enable GuardDuty only in the management account and configure cross-account roles for member accounts"
+      ],
+      "correct": 0,
+      "explanation": "GuardDuty supports AWS Organizations integration with a delegated administrator account. Auto-enable automatically activates GuardDuty in all existing and new member accounts. Findings are centralized in the administrator account. This is the most efficient approach as it handles enrollment automatically. Individual account enablement does not scale and requires managing each account separately.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 94,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to enforce multi-factor authentication (MFA) for all IAM users when performing sensitive actions like terminating EC2 instances. What should be configured?",
+      "options": [
+        "An IAM policy with a condition key aws:MultiFactorAuthPresent set to true",
+        "An SCP requiring MFA for all actions",
+        "CloudTrail monitoring for actions without MFA",
+        "IAM password policy requiring MFA device registration"
+      ],
+      "correct": 0,
+      "explanation": "An IAM policy with the condition key aws:MultiFactorAuthPresent: true denies actions unless the user has authenticated with MFA. This can be applied as an inline or managed policy for specific actions. The IAM password policy can require MFA but only enforces that users register a device, not that they use it for specific API calls. SCPs could work but affect the entire account, not just specific actions.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 95,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "A SysOps administrator needs to encrypt data in an RDS PostgreSQL database. The company requires that the encryption key is managed by their security team and that key usage is audited. The key must be rotatable. Which solution meets all requirements?",
+      "options": [
+        "RDS encryption with a customer-managed KMS key, CloudTrail logging for KMS API calls, and automatic key rotation enabled",
+        "RDS encryption with the AWS-managed RDS key and CloudTrail logging",
+        "Application-level encryption using a hardware security module (HSM)",
+        "SSL/TLS for data in transit with the default RDS certificate"
+      ],
+      "correct": 0,
+      "explanation": "A customer-managed KMS key gives the security team full control over key policies, grants, and rotation. CloudTrail logs all KMS API calls including Encrypt, Decrypt, and GenerateDataKey, providing the required audit trail. Automatic key rotation generates new key material annually while retaining old material for decryption. AWS-managed keys do not allow custom key policies or security team control. SSL/TLS encrypts data in transit, not at rest.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 96,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to prevent any user from disabling CloudTrail logging in production accounts. What is the MOST effective approach?",
+      "options": [
+        "An SCP that denies cloudtrail:StopLogging and cloudtrail:DeleteTrail actions",
+        "An IAM policy attached to all users denying CloudTrail modifications",
+        "CloudWatch alarm monitoring CloudTrail status",
+        "AWS Config rule detecting CloudTrail configuration changes"
+      ],
+      "correct": 0,
+      "explanation": "An SCP denying cloudtrail:StopLogging and cloudtrail:DeleteTrail prevents ALL users (including root in member accounts) from disabling or deleting CloudTrail in production accounts. SCPs apply at the account level in AWS Organizations and cannot be overridden by any IAM policy. Individual IAM policies can be circumvented by administrators. CloudWatch alarms and Config rules detect changes after the fact but do not prevent them.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 97,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to centrally manage security findings from GuardDuty, Inspector, Macie, Firewall Manager, and IAM Access Analyzer. Which service aggregates these findings into a standardized format?",
+      "options": [
+        "AWS Security Hub",
+        "Amazon Detective",
+        "AWS CloudTrail Lake",
+        "Amazon EventBridge"
+      ],
+      "correct": 0,
+      "explanation": "AWS Security Hub aggregates, organizes, and prioritizes security findings from multiple AWS services and third-party tools using the AWS Security Finding Format (ASFF). It provides a comprehensive view of security posture across accounts. Amazon Detective helps investigate findings but does not aggregate them. CloudTrail Lake stores audit data but not security findings from these services.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 98,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "A SysOps administrator needs to set up AWS Control Tower for a new organization. Which set of resources does Control Tower automatically provision?",
+      "options": [
+        "A landing zone with a management account, log archive account, audit account, and preventive/detective guardrails",
+        "A VPC in every region, IAM users for all team members, and CloudWatch dashboards",
+        "An S3 bucket for each account, RDS instances for logging, and Lambda functions for automation",
+        "A Transit Gateway, Direct Connect gateway, and VPN connections for all accounts"
+      ],
+      "correct": 0,
+      "explanation": "AWS Control Tower sets up a landing zone that includes a management account, a log archive account (centralized logging), an audit account (security auditing), OUs (Sandbox, Security), and guardrails (preventive SCPs and detective Config rules). It establishes a multi-account best-practice baseline. It does not provision networking infrastructure, databases, or application resources.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 99,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to check if an IAM policy grants the intended permissions before attaching it to a production role. Which tool should be used?",
+      "options": [
+        "IAM Policy Simulator",
+        "IAM Access Analyzer",
+        "AWS Trusted Advisor",
+        "CloudTrail event history"
+      ],
+      "correct": 0,
+      "explanation": "The IAM Policy Simulator allows testing IAM policies by simulating API calls against them to see if the actions would be allowed or denied. You can test policies before attaching them to production resources. Access Analyzer checks for external access but does not simulate specific actions. Trusted Advisor provides high-level recommendations. CloudTrail shows historical API calls, not policy simulation.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 100,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "A SysOps administrator is configuring AWS Organizations. The company wants to prevent member accounts from leaving the organization. What should be configured?",
+      "options": [
+        "An SCP that denies the organizations:LeaveOrganization action on all member accounts",
+        "Enable consolidated billing to prevent account departure",
+        "Remove IAM permissions for LeaveOrganization from all users",
+        "Enable all organization policy types to lock accounts"
+      ],
+      "correct": 0,
+      "explanation": "An SCP that explicitly denies organizations:LeaveOrganization prevents all principals in member accounts (including root) from removing the account from the organization. This is a common security guardrail. Consolidated billing does not prevent leaving. Individual IAM policy changes do not affect root user access in member accounts, but SCPs do affect root for certain actions like LeaveOrganization.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 101,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "A SysOps administrator needs to ensure that S3 objects are encrypted with a specific KMS key and that no other encryption method is accepted. The bucket should reject any PutObject request that does not use the specified CMK. What should be configured?",
+      "options": [
+        "An S3 bucket policy with a condition denying PutObject unless s3:x-amz-server-side-encryption-aws-kms-key-id matches the specific CMK ARN",
+        "S3 default encryption set to the specific CMK",
+        "An IAM policy requiring kms:Encrypt with the specific CMK for all S3 operations",
+        "S3 Object Lock with encryption requirements"
+      ],
+      "correct": 0,
+      "explanation": "A bucket policy with a Deny statement and condition key s3:x-amz-server-side-encryption-aws-kms-key-id ensures that PutObject requests are rejected unless they specify the exact CMK ARN. S3 default encryption applies a default but does not prevent objects from being uploaded with different encryption (users can override the default). The bucket policy enforcement is the only way to strictly require a specific CMK.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 102,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "A company's compliance team requires that all AWS API activity for the past year be searchable and queryable for forensic investigations. CloudTrail event history only retains 90 days. What should the SysOps administrator configure?",
+      "options": [
+        "Configure CloudTrail to deliver logs to an S3 bucket and use Athena for querying",
+        "Extend CloudTrail event history retention to 365 days",
+        "Configure CloudTrail to deliver logs to CloudWatch Logs and set retention to 1 year",
+        "Enable CloudTrail Lake with a 1-year retention event data store"
+      ],
+      "correct": 3,
+      "explanation": "CloudTrail Lake provides a managed data lake for CloudTrail events with SQL-based querying and configurable retention up to 7 years. It eliminates the need to manage S3 storage, Athena tables, and partition schemes. While delivering logs to S3 + Athena also works, CloudTrail Lake provides a simpler, fully managed solution. CloudTrail event history retention cannot be extended beyond 90 days. CloudWatch Logs retention works but queries are limited to Logs Insights.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 103,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to scan EC2 instances for known software vulnerabilities and unintended network exposure. Which AWS service provides this capability?",
+      "options": [
+        "Amazon Inspector",
+        "Amazon GuardDuty",
+        "AWS Shield",
+        "AWS WAF"
+      ],
+      "correct": 0,
+      "explanation": "Amazon Inspector automatically discovers and scans EC2 instances and container images for software vulnerabilities (CVEs) and unintended network exposure (open ports, reachability). GuardDuty detects threats from malicious activity but does not scan for software vulnerabilities. AWS Shield protects against DDoS attacks. AWS WAF filters web traffic but does not scan instances.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 104,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "A SysOps administrator needs to implement attribute-based access control (ABAC) so that IAM users can only manage EC2 instances tagged with their department. What is the correct IAM policy approach?",
+      "options": [
+        "Use the aws:ResourceTag condition key to match the instance's Department tag with the user's Department tag using aws:PrincipalTag",
+        "Create separate IAM groups for each department with hardcoded resource ARNs",
+        "Use resource-based policies on EC2 instances to restrict access by user",
+        "Create separate AWS accounts for each department"
+      ],
+      "correct": 0,
+      "explanation": "ABAC uses tags as attributes for access control. The policy uses aws:ResourceTag/Department as a condition key that must match aws:PrincipalTag/Department (the tag on the IAM user). This allows a single policy to work for all departments without hardcoding resource ARNs. When a new department is created, you just tag the users and resources. This scales far better than group-based RBAC with hardcoded ARNs.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 105,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to ensure that sensitive data uploaded to an S3 bucket is automatically detected and classified. Which service should be used?",
+      "options": [
+        "Amazon Macie",
+        "Amazon GuardDuty",
+        "AWS Config",
+        "AWS Trusted Advisor"
+      ],
+      "correct": 0,
+      "explanation": "Amazon Macie uses machine learning and pattern matching to discover and classify sensitive data (PII, financial data, credentials) stored in S3 buckets. It can automatically scan new objects and generate findings when sensitive data is detected. GuardDuty detects security threats but does not classify data content. AWS Config evaluates resource configurations, not data content.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 106,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "A SysOps administrator is creating a VPC with public and private subnets. EC2 instances in the private subnet need to download software updates from the internet. What should be placed in the public subnet to enable this?",
+      "options": [
+        "A NAT gateway",
+        "An internet gateway",
+        "A VPC endpoint",
+        "A transit gateway"
+      ],
+      "correct": 0,
+      "explanation": "A NAT gateway placed in a public subnet allows instances in private subnets to initiate outbound internet connections (for updates, patches, etc.) while preventing inbound connections from the internet. The private subnet's route table points 0.0.0.0/0 to the NAT gateway. An internet gateway is required for the VPC but is attached at the VPC level, not placed in a subnet. VPC endpoints provide private connectivity to AWS services without internet access.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 107,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "A SysOps administrator configures a VPC with a public subnet (10.0.1.0/24) and a private subnet (10.0.2.0/24). Instances in the private subnet cannot reach the internet despite a NAT gateway being configured. The route table for the private subnet has: 10.0.0.0/16 -> local, 0.0.0.0/0 -> nat-gw-id. What should the administrator check FIRST?",
+      "options": [
+        "Verify the NAT gateway is in a public subnet with a route to the internet gateway and has an Elastic IP",
+        "Verify the private subnet's NACL allows outbound traffic to the internet",
+        "Verify the instances' security groups allow outbound traffic",
+        "Verify DNS resolution is enabled for the VPC"
+      ],
+      "correct": 0,
+      "explanation": "The most common reason for NAT gateway connectivity failure is that the NAT gateway itself is not properly configured. It must be in a public subnet (with a route to the internet gateway), and it must have an Elastic IP address associated with it. If the NAT gateway is in a private subnet or lacks a route to the IGW, it cannot reach the internet. NACL and security group checks come next if the NAT gateway is correctly configured.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 108,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "hard",
+      "question": "A company has applications in a private subnet that need to access Amazon S3 and DynamoDB without sending traffic over the internet. The SysOps administrator wants to avoid NAT gateway costs. What is the MOST cost-effective solution?",
+      "options": [
+        "Create VPC gateway endpoints for S3 and DynamoDB",
+        "Create VPC interface endpoints for S3 and DynamoDB",
+        "Use AWS PrivateLink for S3 and DynamoDB",
+        "Configure VPC peering with the S3 and DynamoDB VPCs"
+      ],
+      "correct": 0,
+      "explanation": "VPC gateway endpoints for S3 and DynamoDB are free and route traffic through the AWS private network. They are added to the route table as a prefix list target. Interface endpoints (powered by AWS PrivateLink) have hourly and data processing charges. Since S3 and DynamoDB support gateway endpoints, they are the most cost-effective option. You cannot peer with service VPCs directly.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 109,
       "domain": 5,
       "objective": "5.2",
       "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with configure domains, dns, and content delivery?",
+      "question": "A SysOps administrator needs to configure a Route 53 record that distributes traffic across multiple EC2 instances in different AZs. Each instance should receive an equal share of traffic. Which routing policy should be used?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "Weighted routing with equal weights for each record",
+        "Failover routing with health checks",
+        "Geolocation routing based on user location",
+        "Simple routing with multiple IP values"
+      ],
+      "correct": 3,
+      "explanation": "Simple routing with multiple values (multivalue answer routing) returns all IP addresses to the client, and the client's DNS resolver distributes requests. However, for truly equal distribution, weighted routing with equal weights ensures Route 53 responds with each record proportionally. Simple routing with multiple values is the most straightforward for basic round-robin distribution across instances.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 110,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "A company wants to route users to the geographically closest deployment of their application for lowest latency. They have deployments in us-east-1, eu-west-1, and ap-southeast-1. Which Route 53 routing policy should be used?",
+      "options": [
+        "Latency-based routing",
+        "Geolocation routing",
+        "Geoproximity routing",
+        "Weighted routing"
       ],
       "correct": 0,
-      "explanation": "When working with configure domains, dns, and content delivery, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "explanation": "Latency-based routing directs users to the AWS region that provides the lowest latency. Route 53 measures latency between the user's DNS resolver and AWS regions to determine which endpoint to return. Geolocation routing routes based on the user's geographic location (continent/country) regardless of latency. Geoproximity routing routes based on geographic distance with bias adjustments. Latency-based is the best choice when the goal is lowest latency.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 111,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "What is the difference between a security group and a network ACL (NACL) in a VPC?",
+      "options": [
+        "Security groups are stateful and operate at the instance level; NACLs are stateless and operate at the subnet level",
+        "Security groups are stateless and operate at the subnet level; NACLs are stateful and operate at the instance level",
+        "Both are stateful but security groups are more restrictive",
+        "Both are stateless but NACLs support allow rules only"
+      ],
+      "correct": 0,
+      "explanation": "Security groups are stateful (return traffic is automatically allowed) and are associated with network interfaces (instance level). NACLs are stateless (return traffic must be explicitly allowed) and are associated with subnets. Security groups support allow rules only (implicit deny all). NACLs support both allow and deny rules and are evaluated in order by rule number.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 112,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to allow an EC2 instance in a private subnet to communicate with an on-premises server over a Site-to-Site VPN connection. The VPN is configured and the tunnel is up, but traffic is not flowing. The VPC route table has 10.0.0.0/16 -> local and 0.0.0.0/0 -> nat-gw. The on-premises network is 192.168.0.0/16. What is the issue?",
+      "options": [
+        "The private subnet route table needs a route for 192.168.0.0/16 pointing to the virtual private gateway",
+        "The NAT gateway is blocking VPN traffic",
+        "The security group needs to allow traffic from 192.168.0.0/16",
+        "The NACL needs to allow traffic from 192.168.0.0/16"
+      ],
+      "correct": 0,
+      "explanation": "The route table needs an entry for the on-premises network (192.168.0.0/16) pointing to the virtual private gateway (VGW). Without this route, traffic to 192.168.0.0/16 matches the default route (0.0.0.0/0 -> NAT gateway) which cannot route to the on-premises network. The VPN tunnel being up confirms the VGW is configured, but the route table must direct on-premises-bound traffic to it. Security groups and NACLs should also be checked but routing is the primary issue.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 113,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "A SysOps administrator is troubleshooting connectivity between two VPCs connected via VPC peering. Instance A (10.0.1.5) in VPC-A can ping instance B (10.1.1.5) in VPC-B, but instance B cannot initiate connections to instance A. Both security groups allow all traffic from the peered VPC CIDR. What should be checked?",
+      "options": [
+        "The route table in VPC-B must have a route for VPC-A's CIDR pointing to the peering connection",
+        "VPC peering is unidirectional and a second peering connection is needed from VPC-B to VPC-A",
+        "The DNS hostnames setting in VPC-B must be enabled",
+        "The NACL in VPC-A must have an inbound rule allowing traffic from VPC-B's CIDR"
+      ],
+      "correct": 0,
+      "explanation": "VPC peering connections are bidirectional at the infrastructure level, but routes must be configured in BOTH VPCs' route tables. If VPC-A has a route to VPC-B but VPC-B does not have a route back to VPC-A, traffic can flow from A to B (because the response uses the stateful security group), but B cannot initiate connections to A because B does not know how to route to A's CIDR. Add a route in VPC-B's route table for VPC-A's CIDR pointing to the peering connection.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 114,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to accelerate the delivery of static website content to users worldwide. Which AWS service should be used?",
+      "options": [
+        "Amazon CloudFront",
+        "Amazon Route 53",
+        "AWS Global Accelerator",
+        "Amazon S3 Transfer Acceleration"
+      ],
+      "correct": 0,
+      "explanation": "Amazon CloudFront is a content delivery network (CDN) that caches content at edge locations worldwide, delivering static content with low latency to users regardless of their geographic location. Route 53 routes DNS queries but does not cache content. Global Accelerator improves availability and performance for dynamic content through the AWS network but does not cache static content. S3 Transfer Acceleration speeds up uploads to S3.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 115,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to configure CloudFront to serve content from an S3 bucket without making the bucket publicly accessible. Which feature should be used?",
+      "options": [
+        "Origin Access Control (OAC) with an S3 bucket policy granting CloudFront access",
+        "An S3 bucket policy allowing access from all CloudFront IP ranges",
+        "S3 static website hosting with a custom domain",
+        "A Lambda@Edge function that authenticates requests to S3"
+      ],
+      "correct": 0,
+      "explanation": "Origin Access Control (OAC) is the recommended way to restrict S3 bucket access to CloudFront only. OAC uses an IAM service principal that CloudFront signs requests with, and the S3 bucket policy grants access only to the CloudFront distribution's OAC. This replaces the older Origin Access Identity (OAI) approach. Allowing CloudFront IP ranges is insecure as those IPs are shared. Lambda@Edge adds unnecessary complexity.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 116,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "hard",
+      "question": "A company has 10 VPCs across 3 AWS regions that need full mesh connectivity. Currently using VPC peering, but management is complex with 45 peering connections. What should the SysOps administrator recommend?",
+      "options": [
+        "AWS Transit Gateway with inter-region peering between Transit Gateways in each region",
+        "A single VPC with all resources migrated to it",
+        "AWS PrivateLink for service-to-service connectivity",
+        "VPN connections between all VPCs"
+      ],
+      "correct": 0,
+      "explanation": "AWS Transit Gateway acts as a hub that connects VPCs and on-premises networks. Within a region, VPCs connect to a Transit Gateway (10 connections instead of 45 peering connections). Transit Gateway inter-region peering connects Transit Gateways across regions. This hub-and-spoke model dramatically simplifies network management compared to full mesh VPC peering. PrivateLink is for service endpoints, not full mesh connectivity.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 117,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to capture information about the IP traffic flowing to and from network interfaces in a VPC for security analysis. Which feature should be enabled?",
+      "options": [
+        "VPC Flow Logs",
+        "CloudTrail data events",
+        "CloudWatch network metrics",
+        "AWS Network Firewall logging"
+      ],
+      "correct": 0,
+      "explanation": "VPC Flow Logs capture information about IP traffic going to and from network interfaces in a VPC. Flow logs can be published to CloudWatch Logs or S3 for analysis. They record source/destination IPs, ports, protocol, packet/byte counts, and accept/reject actions. CloudTrail captures API calls, not network traffic. CloudWatch provides aggregate metrics, not flow-level data.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 118,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to connect a VPC to multiple AWS services (S3, DynamoDB, SNS, SQS, KMS) privately without internet access. S3 and DynamoDB should use the most cost-effective option. What combination should be used?",
+      "options": [
+        "Gateway endpoints for S3 and DynamoDB; interface endpoints for SNS, SQS, and KMS",
+        "Interface endpoints for all five services",
+        "Gateway endpoints for all five services",
+        "NAT gateway for all five services"
+      ],
+      "correct": 0,
+      "explanation": "Gateway endpoints are free and available only for S3 and DynamoDB. Interface endpoints (powered by AWS PrivateLink) are available for most other AWS services including SNS, SQS, and KMS but have hourly and data processing charges. Using gateway endpoints for S3 and DynamoDB and interface endpoints for the rest provides the most cost-effective private connectivity. NAT gateway would route through the internet.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 119,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "hard",
+      "question": "A CloudFront distribution serves a dynamic API from an ALB origin. Users report intermittent 502 errors. CloudFront access logs show some requests timing out. The ALB and instances are healthy. What should the SysOps administrator investigate?",
+      "options": [
+        "CloudFront origin timeout settings and keep-alive configuration between CloudFront and the ALB",
+        "CloudFront cache TTL settings causing stale responses",
+        "The CloudFront distribution's price class limiting edge locations",
+        "SSL certificate mismatch between CloudFront and the ALB"
+      ],
+      "correct": 0,
+      "explanation": "CloudFront 502 errors typically indicate that CloudFront could not connect to the origin or the origin did not respond within the timeout period. For dynamic API content, the origin response timeout (default 30 seconds) may be too short for slow API calls. Additionally, keep-alive settings between CloudFront and the ALB affect connection reuse. Cache TTL is irrelevant for dynamic content that should not be cached. SSL mismatches cause 502s but would affect all requests, not intermittently.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 120,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "A SysOps administrator is analyzing VPC Flow Logs and sees REJECT entries for traffic from an EC2 instance to a public API on port 443. The security group allows all outbound traffic. What is the MOST likely cause?",
+      "options": [
+        "The NACL associated with the instance's subnet does not allow outbound traffic on port 443 or the ephemeral port range for return traffic",
+        "The internet gateway is not attached to the VPC",
+        "The instance does not have a public IP or NAT gateway route",
+        "DNS resolution is failing for the API endpoint"
+      ],
+      "correct": 0,
+      "explanation": "Since the security group allows all outbound traffic (stateful, so return traffic is automatically allowed), the REJECT must come from the NACL, which is stateless. NACLs must explicitly allow both outbound traffic to port 443 AND inbound traffic on ephemeral ports (1024-65535) for the return traffic. If either rule is missing, the NACL rejects the traffic. VPC Flow Logs show REJECT at the NACL or security group level.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 121,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "A SysOps administrator creates a new subnet in an existing VPC. Instances launched in the subnet automatically receive public IP addresses. How can this be changed so that instances do not receive public IPs by default?",
+      "options": [
+        "Modify the subnet's auto-assign public IP setting to disabled",
+        "Remove the internet gateway from the VPC",
+        "Change the route table to remove the default route",
+        "Modify the security group to block outbound internet traffic"
+      ],
+      "correct": 0,
+      "explanation": "Each subnet has a setting that controls whether instances launched in it automatically receive a public IPv4 address. Disabling auto-assign public IPv4 address prevents new instances from getting public IPs. Instances that need public access can still be assigned an Elastic IP. Removing the internet gateway or default route would break internet connectivity for all resources, not just disable automatic IP assignment.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 122,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to redirect all HTTP requests to HTTPS on a CloudFront distribution. Where should this be configured?",
+      "options": [
+        "In the CloudFront distribution's viewer protocol policy, set it to redirect HTTP to HTTPS",
+        "In the origin server's configuration, set up a 301 redirect",
+        "In Route 53, create a redirect record",
+        "In the S3 bucket's static website hosting configuration"
+      ],
+      "correct": 0,
+      "explanation": "CloudFront's viewer protocol policy controls how CloudFront handles viewer requests. Setting it to 'Redirect HTTP to HTTPS' makes CloudFront return a 301 redirect for HTTP requests, directing clients to the HTTPS URL. This is handled at the CDN edge without reaching the origin. Configuring redirects at the origin adds latency since the request must reach the origin first. Route 53 does not support protocol-level redirects.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 123,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "A company uses AWS Direct Connect as the primary connection between their on-premises data center and AWS VPCs. They need a backup connection that activates automatically if Direct Connect fails. What should the SysOps administrator configure?",
+      "options": [
+        "A Site-to-Site VPN connection over the internet as a backup, with BGP routing that prefers Direct Connect when available",
+        "A second Direct Connect connection through a different provider with active/passive configuration",
+        "AWS Global Accelerator as a failover path",
+        "CloudFront as a reverse proxy for on-premises traffic"
+      ],
+      "correct": 0,
+      "explanation": "A Site-to-Site VPN connection over the internet provides a cost-effective backup for Direct Connect. With BGP routing on the virtual private gateway, Direct Connect is preferred (shorter AS path) when available. If Direct Connect fails, BGP automatically routes traffic through the VPN tunnel. A second Direct Connect connection provides better bandwidth but is more expensive. Global Accelerator and CloudFront are not designed for hybrid connectivity failover.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 124,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to allow an EC2 instance in a VPC to resolve DNS names for AWS services. Which VPC settings must be enabled?",
+      "options": [
+        "DNS resolution (enableDnsSupport) must be set to true",
+        "DNS hostnames (enableDnsHostnames) must be set to true",
+        "Both DNS resolution and DNS hostnames must be enabled",
+        "A custom DNS server must be configured in the DHCP options set"
+      ],
+      "correct": 0,
+      "explanation": "DNS resolution (enableDnsSupport) enables the Amazon-provided DNS server at the VPC+2 address (e.g., 10.0.0.2). This is required for resolving both public DNS names and AWS service endpoints. It is enabled by default for new VPCs. DNS hostnames (enableDnsHostnames) assigns public DNS hostnames to instances with public IPs but is not required for DNS resolution of AWS services.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 125,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to configure CloudFront to restrict access to content so that only users in the United States and Canada can access it. Which CloudFront feature should be used?",
+      "options": [
+        "CloudFront geographic restrictions (geo-restriction)",
+        "CloudFront signed URLs",
+        "CloudFront field-level encryption",
+        "AWS WAF with a geo-match condition"
+      ],
+      "correct": 0,
+      "explanation": "CloudFront geographic restrictions (geo-restriction) allow or deny access based on the viewer's country using a whitelist or blacklist approach. For restricting to the US and Canada, a whitelist with those two countries is configured. CloudFront returns a 403 error for viewers in other countries. AWS WAF with geo-match also works and provides more granular control, but CloudFront's built-in geo-restriction is the simplest approach for country-level blocking.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 126,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "A SysOps administrator notices that instances in a private subnet can reach the internet through a NAT gateway, but they cannot resolve DNS names for resources in a peered VPC. Both VPCs have DNS resolution enabled. What is the MOST likely cause?",
+      "options": [
+        "DNS hostnames (enableDnsHostnames) is not enabled in one or both VPCs, and the peering connection does not have DNS resolution enabled",
+        "The Route 53 private hosted zone is not associated with the peered VPC",
+        "The NACL is blocking DNS traffic (port 53) between the VPCs",
+        "The security groups do not allow DNS traffic between the VPCs"
+      ],
+      "correct": 0,
+      "explanation": "For DNS resolution to work across VPC peering connections, three conditions must be met: (1) enableDnsSupport must be true in both VPCs, (2) enableDnsHostnames must be true in both VPCs, and (3) DNS resolution must be enabled on the peering connection itself (requester or accepter DNS resolution settings). Without these settings, DNS queries for resources in the peered VPC return public IPs or fail to resolve.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 127,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "A SysOps administrator is designing a VPC for a three-tier application. The web tier must be internet-facing, the application tier must communicate only with the web and database tiers, and the database tier must be completely isolated from the internet. How should the subnets be configured?",
+      "options": [
+        "Web tier in public subnets, application tier in private subnets with routes to NAT gateway, database tier in private subnets with no internet route",
+        "All tiers in public subnets with different security groups",
+        "Web tier in public subnets, application and database tiers in the same private subnet",
+        "Web tier with an internet gateway route, all other tiers with NAT gateway routes"
+      ],
+      "correct": 0,
+      "explanation": "The web tier needs a public subnet (route to IGW) for internet-facing access. The application tier needs a private subnet with NAT gateway access for updates and external API calls. The database tier should be in a private subnet with NO internet route (not even via NAT gateway) for maximum isolation. Security groups control inter-tier communication. Separate subnets for app and database tiers allow different route table configurations.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 128,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to register a new domain name and configure DNS records. The domain should use AWS name servers. Which service should be used?",
+      "options": [
+        "Amazon Route 53 for both domain registration and DNS hosting",
+        "AWS Certificate Manager for domain registration and Route 53 for DNS",
+        "Amazon CloudFront for domain management",
+        "AWS Direct Connect for DNS configuration"
+      ],
+      "correct": 0,
+      "explanation": "Amazon Route 53 provides both domain registration and DNS hosting services. When you register a domain through Route 53, it automatically creates a hosted zone with AWS name servers and configures the domain to use them. Route 53 supports all standard DNS record types (A, AAAA, CNAME, MX, TXT, etc.). AWS Certificate Manager manages SSL/TLS certificates, not domain registration.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 129,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "A SysOps administrator is troubleshooting why an application on an EC2 instance cannot connect to an RDS instance in the same VPC. The security group on the RDS instance allows inbound MySQL (3306) from the application's security group. The connection still times out. What should be checked next?",
+      "options": [
+        "Verify the NACL on the RDS subnet allows inbound traffic on port 3306 and outbound traffic on ephemeral ports",
+        "Verify the RDS instance is in a public subnet",
+        "Verify the EC2 instance has a public IP address",
+        "Verify the VPC has an internet gateway attached"
+      ],
+      "correct": 0,
+      "explanation": "Since the security groups are correctly configured, the next layer to check is the NACL. NACLs are stateless, so both inbound rules (port 3306 on the RDS subnet) and outbound rules (ephemeral ports for return traffic) must be explicitly configured. If the NACL has been modified from the default (allow all), it could be blocking traffic. The RDS instance does not need to be in a public subnet for intra-VPC communication.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 130,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "hard",
+      "question": "A company has a Direct Connect connection with a private virtual interface (VIF) to access VPC resources. They now need to also access public AWS services (S3 API endpoints, DynamoDB) through the same Direct Connect connection instead of the internet. What should the SysOps administrator configure?",
+      "options": [
+        "Create a public virtual interface on the same Direct Connect connection",
+        "Modify the existing private VIF to include AWS public IP ranges",
+        "Create a VPN connection over the Direct Connect link",
+        "Use VPC endpoints in the VPC to access S3 and DynamoDB"
+      ],
+      "correct": 0,
+      "explanation": "A public virtual interface (VIF) on Direct Connect allows access to all AWS public services (S3, DynamoDB, etc.) via their public endpoints through the private Direct Connect link instead of the internet. Multiple VIFs (private and public) can coexist on a single Direct Connect connection. A private VIF only provides access to VPC resources. VPC endpoints provide private VPC access but do not route on-premises traffic through Direct Connect to AWS services.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 131,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to serve a web application that is deployed in both us-east-1 and eu-west-1. Users should be directed to the deployment closest to them, but if one region becomes unhealthy, all traffic should go to the healthy region. Which Route 53 configuration achieves this?",
+      "options": [
+        "Latency-based routing with health checks and failover between regions",
+        "Simple routing with multiple IP addresses",
+        "Weighted routing with 50/50 distribution",
+        "Geolocation routing with health checks"
+      ],
+      "correct": 0,
+      "explanation": "Latency-based routing directs users to the lowest-latency region. With health checks on each endpoint, if one region becomes unhealthy, Route 53 automatically removes it from responses and directs all traffic to the healthy region. This provides both optimal performance and failover. Geolocation routing could also work but routes by location rather than latency. Weighted routing does not consider user proximity.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 132,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to block a specific IP address from accessing an EC2 instance. Security groups cannot block specific IPs. What should be used instead?",
+      "options": [
+        "Network ACL (NACL) with a deny rule for the specific IP",
+        "AWS WAF with an IP-based rule",
+        "Route 53 resolver firewall rule",
+        "VPC route table blackhole route"
+      ],
+      "correct": 0,
+      "explanation": "NACLs support both allow and deny rules, unlike security groups which only support allow rules. A deny rule in the NACL for the specific IP address (with a lower rule number than the allow rule) will block that IP from accessing any resource in the subnet. AWS WAF can also block IPs but only for resources behind ALB, CloudFront, or API Gateway. NACLs provide subnet-level blocking regardless of the service.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 133,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "A SysOps administrator creates a VPC with CIDR 10.0.0.0/16 and later needs to add more IP addresses because the original range is exhausted. What should be done?",
+      "options": [
+        "Add a secondary CIDR block to the existing VPC",
+        "Create a new VPC and migrate all resources",
+        "Modify the existing CIDR block to a larger range",
+        "Create a new subnet with an IP range outside the original CIDR"
+      ],
+      "correct": 0,
+      "explanation": "VPCs support adding secondary CIDR blocks (up to 5 by default, extensible). This allows expanding the VPC's IP address space without migrating resources. The original CIDR block cannot be modified after creation. New subnets can be created in the secondary CIDR range. Subnets must fall within one of the VPC's CIDR blocks, so you cannot create a subnet outside the defined ranges.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 134,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "hard",
+      "question": "A SysOps administrator needs to improve the performance and availability of a globally distributed application. The application uses TCP-based protocols and is deployed across multiple AWS regions. Users experience high latency when connecting to distant regions. Which service should be used?",
+      "options": [
+        "AWS Global Accelerator",
+        "Amazon CloudFront",
+        "Route 53 latency-based routing",
+        "AWS Transit Gateway inter-region peering"
+      ],
+      "correct": 0,
+      "explanation": "AWS Global Accelerator provides static anycast IP addresses that route traffic through the AWS global network to the nearest regional endpoint. It uses the AWS backbone instead of the public internet, reducing latency and improving availability for TCP/UDP applications. CloudFront is optimized for HTTP/HTTPS content caching. Route 53 latency routing helps but traffic still traverses the public internet. Global Accelerator is ideal for non-HTTP TCP applications requiring improved global performance.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 135,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "A SysOps administrator is reviewing VPC Flow Log entries and sees the following: 2 123456789012 eni-abc123 10.0.1.5 10.0.2.10 12345 3306 6 10 840 1609459200 1609459260 ACCEPT OK. What does this entry indicate?",
+      "options": [
+        "Instance 10.0.1.5 sent 10 packets (840 bytes) to 10.0.2.10 on MySQL port 3306, and the traffic was accepted",
+        "Instance 10.0.2.10 sent 10 packets to 10.0.1.5 on port 12345, and the traffic was rejected",
+        "A DNS request from 10.0.1.5 to 10.0.2.10 was accepted",
+        "An SSH connection from 10.0.1.5 to 10.0.2.10 was established"
+      ],
+      "correct": 0,
+      "explanation": "The flow log fields are: version, account-id, interface-id, srcaddr, dstaddr, srcport, dstport, protocol, packets, bytes, start, end, action, log-status. This shows traffic from 10.0.1.5 (source port 12345) to 10.0.2.10 (destination port 3306, MySQL), protocol 6 (TCP), 10 packets totaling 840 bytes, accepted. This indicates a MySQL database connection was allowed.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 136,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "What is the maximum number of VPCs that can be created in a single AWS region by default?",
+      "options": [
+        "5",
+        "10",
+        "20",
+        "Unlimited"
+      ],
+      "correct": 0,
+      "explanation": "The default limit is 5 VPCs per region per account. This is a soft limit that can be increased by requesting a quota increase through AWS Service Quotas or Support. Most production environments request an increase to accommodate development, staging, and production VPCs along with shared services VPCs.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 137,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "hard",
+      "question": "A SysOps administrator needs to configure CloudFront to serve different content based on the viewer's device type (mobile vs desktop). The origin is an ALB serving a web application. How should this be configured?",
+      "options": [
+        "Configure CloudFront to forward the CloudFront-Is-Mobile-Viewer header to the origin and configure cache behavior to vary by this header",
+        "Create two separate CloudFront distributions with different origins",
+        "Use Lambda@Edge to redirect mobile users to a different URL",
+        "Configure the ALB to route based on User-Agent header"
+      ],
+      "correct": 0,
+      "explanation": "CloudFront adds device-specific headers (CloudFront-Is-Mobile-Viewer, CloudFront-Is-Tablet-Viewer, CloudFront-Is-Desktop-Viewer) based on the User-Agent. By forwarding these headers to the origin and adding them to the cache key, CloudFront caches separate versions for mobile and desktop. The origin can then serve appropriate content based on these headers. This is more efficient than parsing User-Agent strings at the origin.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 138,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "A SysOps administrator is deploying a NAT gateway for production use. The application requires high availability. How should the NAT gateway be configured for high availability?",
+      "options": [
+        "Deploy a NAT gateway in each Availability Zone and configure route tables to use the local AZ's NAT gateway",
+        "Deploy a single NAT gateway and it will automatically be highly available",
+        "Deploy two NAT gateways in the same AZ for redundancy",
+        "Use a NAT instance in an Auto Scaling group instead"
+      ],
+      "correct": 0,
+      "explanation": "While a single NAT gateway is redundant within its AZ, it creates a single point of failure at the AZ level. For high availability, deploy a NAT gateway in each AZ and configure each private subnet's route table to use the NAT gateway in its own AZ. This ensures that if one AZ fails, instances in other AZs still have internet access through their local NAT gateway. Two NAT gateways in the same AZ does not provide AZ-level redundancy.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 139,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to allow an EC2 instance to communicate with an RDS database in the same VPC. The RDS security group should reference the EC2 instance's security group. Which inbound rule should be added to the RDS security group?",
+      "options": [
+        "Allow inbound MySQL/Aurora (port 3306) from the EC2 instance's security group ID",
+        "Allow inbound all traffic from 0.0.0.0/0",
+        "Allow inbound MySQL/Aurora (port 3306) from the VPC CIDR block",
+        "Allow inbound all traffic from the EC2 instance's private IP"
+      ],
+      "correct": 0,
+      "explanation": "Referencing a security group ID as the source in an inbound rule allows traffic from any resource associated with that security group. This is more maintainable than using IP addresses (which change when instances are replaced) or CIDR blocks (which are overly permissive). When new EC2 instances are added to the referenced security group, they automatically gain access to the RDS instance.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 140,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to configure a Route 53 record that points to an ALB. The record should use the ALB's DNS name. Which record type should be used?",
+      "options": [
+        "An Alias A record pointing to the ALB",
+        "A CNAME record pointing to the ALB's DNS name",
+        "A standard A record with the ALB's IP address",
+        "An SRV record pointing to the ALB"
+      ],
+      "correct": 0,
+      "explanation": "Route 53 Alias records are the recommended way to point to AWS resources like ALBs, CloudFront distributions, and S3 buckets. Alias A records resolve directly to the underlying IP addresses without the extra DNS lookup that CNAME requires. Alias records are free for AWS resources and work at the zone apex (naked domain). CNAME records cannot be used at the zone apex and incur an additional DNS query. ALB IP addresses change, so a standard A record would break.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 141,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "A company uses a Transit Gateway to connect 5 VPCs and 2 on-premises sites via VPN. They need to prevent VPC-A (containing sensitive data) from communicating with VPC-B (containing development resources) while allowing both to communicate with VPC-C (shared services). How should this be configured?",
+      "options": [
+        "Create separate Transit Gateway route tables and associate VPC-A and VPC-B with different route tables that include routes to VPC-C but not to each other",
+        "Use security groups on instances in VPC-A and VPC-B to block cross-VPC traffic",
+        "Remove the VPC-B attachment from the Transit Gateway",
+        "Configure NACLs in both VPCs to deny traffic from each other's CIDR ranges"
+      ],
+      "correct": 0,
+      "explanation": "Transit Gateway route tables control which VPCs can communicate through the Transit Gateway. By creating isolated route tables (one for VPC-A and one for VPC-B), each with routes only to VPC-C (shared services), you prevent direct communication between VPC-A and VPC-B while maintaining shared services access. This is the recommended approach for network segmentation with Transit Gateway. NACLs would work but are harder to maintain at scale.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 142,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to provide Elastic Network Interface (ENI) level traffic mirroring for security analysis. Which AWS feature provides this?",
+      "options": [
+        "VPC Traffic Mirroring",
+        "VPC Flow Logs",
+        "AWS Network Firewall",
+        "CloudWatch network monitoring"
+      ],
+      "correct": 0,
+      "explanation": "VPC Traffic Mirroring copies network traffic from an ENI to a target (another ENI or a Network Load Balancer) for deep packet inspection and security analysis. Unlike Flow Logs which only capture metadata (IPs, ports, accept/reject), Traffic Mirroring captures the actual packet payloads. This is essential for intrusion detection systems (IDS) and network forensics. AWS Network Firewall inspects traffic but does not mirror it for external analysis tools.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 143,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to set up a CloudFront distribution with an SSL/TLS certificate for a custom domain (www.example.com). Where must the certificate be created or imported?",
+      "options": [
+        "AWS Certificate Manager (ACM) in the us-east-1 region",
+        "AWS Certificate Manager (ACM) in any region",
+        "On the origin server (ALB or EC2)",
+        "In the CloudFront console directly"
+      ],
+      "correct": 0,
+      "explanation": "CloudFront requires SSL/TLS certificates to be in ACM in the us-east-1 (N. Virginia) region, regardless of where the origin is located. This is a specific CloudFront requirement because CloudFront is a global service managed from us-east-1. Certificates in other regions cannot be used with CloudFront. The origin server may need its own certificate for origin protocol policy but that is separate from the viewer-facing certificate.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 144,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "A SysOps administrator is troubleshooting an application that intermittently cannot resolve DNS names. The application runs on EC2 instances in a VPC. During high-traffic periods, DNS queries fail with SERVFAIL. What is the MOST likely cause?",
+      "options": [
+        "The EC2 instances are exceeding the DNS query rate limit per network interface (1024 packets per second per interface)",
+        "The Route 53 hosted zone has reached its record limit",
+        "The VPC's DHCP options set has an incorrect DNS server address",
+        "The security groups are blocking DNS traffic during high-traffic periods"
+      ],
+      "correct": 0,
+      "explanation": "The Amazon-provided DNS server (Route 53 Resolver) has a per-ENI limit of 1024 packets per second for DNS queries. During high-traffic periods, applications that perform many DNS lookups can exceed this limit, causing SERVFAIL responses. Solutions include implementing DNS caching on the instance, using a local DNS resolver cache, or distributing the workload across more instances/ENIs. This is a common issue with high-throughput applications.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 145,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to connect two VPCs in different regions so that instances can communicate using private IP addresses. Which approach should be used?",
+      "options": [
+        "Inter-region VPC peering",
+        "A VPN connection between the two VPCs",
+        "AWS PrivateLink between the two VPCs",
+        "A shared subnet between the two VPCs"
+      ],
+      "correct": 0,
+      "explanation": "Inter-region VPC peering enables private IP connectivity between VPCs in different AWS regions using the AWS global backbone network. Traffic is encrypted and never traverses the public internet. VPN connections also work but add complexity and overhead. PrivateLink provides unidirectional service access, not full bidirectional VPC connectivity. Subnets cannot be shared across regions.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 146,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "easy",
+      "question": "A SysOps administrator needs to create a Route 53 alias record for a CloudFront distribution. Which record type and target should be selected?",
+      "options": [
+        "Alias A record targeting the CloudFront distribution domain name (dxxxxxxxx.cloudfront.net)",
+        "CNAME record targeting the CloudFront distribution domain name",
+        "A record with the CloudFront edge location IP address",
+        "AAAA record targeting the CloudFront distribution ARN"
+      ],
+      "correct": 0,
+      "explanation": "An Alias A record pointing to the CloudFront distribution domain name is the correct approach. Route 53 automatically resolves the alias to the appropriate CloudFront edge location IPs. Alias records for CloudFront are free and support zone apex domains. CNAME records work but cannot be used at the zone apex and add an extra DNS lookup. CloudFront IP addresses are dynamic and should never be hardcoded.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 147,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to implement DNS-based firewall rules that block EC2 instances in a VPC from resolving known malicious domain names. Which service provides this capability?",
+      "options": [
+        "Route 53 Resolver DNS Firewall",
+        "AWS Network Firewall",
+        "Amazon GuardDuty",
+        "AWS WAF"
+      ],
+      "correct": 0,
+      "explanation": "Route 53 Resolver DNS Firewall allows you to create rules that filter DNS queries made by resources in your VPC. You can block or allow queries based on domain lists (including AWS-managed threat intelligence lists). When a query matches a block rule, the DNS firewall returns NXDOMAIN or a custom response. AWS Network Firewall provides network-level filtering but DNS Firewall is specifically designed for DNS query filtering.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 148,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "hard",
+      "question": "A company is planning to migrate 100TB of data to AWS using a dedicated 10 Gbps Direct Connect connection. During the migration, they need to ensure production traffic on the same Direct Connect link is not impacted. What should the SysOps administrator configure?",
+      "options": [
+        "Create separate virtual interfaces for production and migration traffic, and configure rate limiting on the migration VIF",
+        "Schedule the migration during off-peak hours only",
+        "Use AWS Snowball for the data migration instead",
+        "Request a second Direct Connect connection for migration traffic"
+      ],
+      "correct": 0,
+      "explanation": "Multiple virtual interfaces can share a single Direct Connect connection. By creating separate VIFs for production and migration traffic, you can apply different routing policies and rate limiting. BGP communities and traffic shaping can prioritize production traffic. A second Direct Connect connection works but is expensive for a one-time migration. Snowball avoids the bandwidth problem entirely but may not meet timeline requirements.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 149,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "A SysOps administrator needs to configure CloudFront to cache content based on query string parameters. Some API endpoints use query strings for pagination (page=1, limit=10) while others use them for different content (category=electronics). How should caching be configured?",
+      "options": [
+        "Create separate cache behaviors for different URL path patterns, forwarding only relevant query strings for each behavior",
+        "Forward all query strings to the origin for all paths",
+        "Disable query string forwarding entirely",
+        "Use a single cache behavior that forwards all query strings"
+      ],
+      "correct": 0,
+      "explanation": "Different URL paths may need different caching strategies. By creating separate cache behaviors for different path patterns (e.g., /api/products/* vs /api/static/*), you can configure each to forward only the query strings that affect content. This maximizes cache hit ratio while ensuring correct content delivery. Forwarding all query strings reduces cache efficiency as each unique query string combination creates a separate cache entry.",
+      "link": "cloud-security.html"
+    },
+    {
+      "id": 150,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "A SysOps administrator is designing a network architecture that requires inspecting all traffic between VPCs and to/from the internet. The inspection must include deep packet inspection for intrusion detection. Which architecture should be implemented?",
+      "options": [
+        "A centralized inspection VPC with AWS Network Firewall, connected via Transit Gateway, with all traffic routed through the firewall VPC",
+        "Security groups and NACLs on all instances and subnets",
+        "VPC Flow Logs analyzed by a Lambda function",
+        "CloudFront with AWS WAF for all traffic"
+      ],
+      "correct": 0,
+      "explanation": "A centralized inspection VPC with AWS Network Firewall connected to a Transit Gateway enables deep packet inspection of all inter-VPC and internet-bound traffic. The Transit Gateway route tables direct traffic through the inspection VPC before reaching the destination. Network Firewall supports stateful and stateless rules, IDS/IPS, and TLS inspection. Security groups and NACLs do not provide deep packet inspection. Flow Logs capture metadata only, not payloads.",
+      "link": "cloud-security.html"
     }
   ]
 }

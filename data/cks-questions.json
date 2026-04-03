@@ -1,39 +1,39 @@
 {
   "metadata": {
-    "title": "Kubernetes CKS CKS Practice Questions",
-    "version": "1.0",
-    "total_questions": 29,
+    "title": "Kubernetes CKS Practice Questions",
+    "version": "2.0",
+    "total_questions": 150,
     "exam": "CKS",
     "domains": {
       "1": {
         "name": "Cluster Setup",
         "weight": 10,
-        "count": 3
+        "count": 15
       },
       "2": {
         "name": "Cluster Hardening",
         "weight": 15,
-        "count": 4
+        "count": 22
       },
       "3": {
         "name": "System Hardening",
         "weight": 15,
-        "count": 4
+        "count": 22
       },
       "4": {
         "name": "Minimize Microservice Vulnerabilities",
         "weight": 20,
-        "count": 6
+        "count": 30
       },
       "5": {
         "name": "Supply Chain Security",
         "weight": 20,
-        "count": 6
+        "count": 30
       },
       "6": {
         "name": "Monitoring, Logging & Runtime Security",
         "weight": 20,
-        "count": 6
+        "count": 31
       }
     }
   },
@@ -43,464 +43,2400 @@
       "domain": 1,
       "objective": "1.1",
       "difficulty": "easy",
-      "question": "Which of the following is a key concept within Cluster Setup (Domain 1)?",
+      "question": "What is the purpose of the CIS Kubernetes Benchmark?",
       "options": [
-        "Kubernetes Dashboard Security",
-        "CIS Kubernetes Benchmark (kube-bench)",
-        "Node Port Restrictions",
-        "Network Segmentation"
+        "To define minimum hardware requirements for Kubernetes clusters",
+        "To provide security configuration guidelines for hardening Kubernetes components",
+        "To benchmark cluster performance under load",
+        "To certify Kubernetes distributions for production use"
       ],
-      "correct": 0,
-      "explanation": "Kubernetes Dashboard Security is a key concept in Cluster Setup. This domain covers topics essential for the Kubernetes CKS exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "The CIS (Center for Internet Security) Kubernetes Benchmark provides prescriptive security configuration guidelines for hardening Kubernetes components including the API server, etcd, controller manager, scheduler, and worker nodes. It defines specific settings and their expected values for a secure configuration.",
+      "link": "container-security.html"
     },
     {
       "id": 2,
       "domain": 1,
-      "objective": "1.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with use cis benchmark to review the security configuration of kubernetes components. What should be the first step?",
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "Which tool automates CIS Kubernetes Benchmark checks against a running cluster?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "kubectl audit",
+        "kube-bench",
+        "kube-hunter",
+        "kubelet"
       ],
-      "correct": 0,
-      "explanation": "The first step in any cluster setup task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "kube-bench is an open-source tool that runs the CIS Kubernetes Benchmark checks against a cluster. It tests the configuration of the API server, etcd, kubelet, and other components, reporting which checks pass, fail, or require manual review.",
+      "link": "container-security.html"
     },
     {
       "id": 3,
       "domain": 1,
-      "objective": "1.3",
+      "objective": "1.2",
       "difficulty": "medium",
-      "question": "Which concept in Cluster Setup is most closely related to properly set up ingress objects with security control?",
+      "question": "A kube-bench scan reports that the API server has --anonymous-auth=true. What is the security concern?",
       "options": [
-        "Cluster Setup governance and oversight",
-        "Cluster Setup implementation and operations",
-        "Cluster Setup assessment and testing",
-        "Cluster Setup risk management"
+        "Anonymous users can modify cluster resources",
+        "Unauthenticated requests are accepted by the API server, potentially exposing cluster information",
+        "All API requests bypass RBAC authorization",
+        "Anonymous auth enables automatic secret decryption"
       ],
       "correct": 1,
-      "explanation": "Properly set up Ingress objects with security control falls under the implementation and operations aspect of Cluster Setup.",
-      "link": "start-here.html"
+      "explanation": "With anonymous-auth enabled, the API server accepts unauthenticated requests as the 'system:anonymous' user. While RBAC still applies, default ClusterRoles might grant read access to certain resources. CIS recommends disabling anonymous auth or ensuring no RBAC rules grant permissions to anonymous users.",
+      "link": "container-security.html"
     },
     {
       "id": 4,
-      "domain": 2,
-      "objective": "2.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Cluster Hardening (Domain 2)?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "medium",
+      "question": "Which API server flag ensures that all incoming connections use TLS encryption?",
       "options": [
-        "API Server Authorization Modes (RBAC, Node, Webhook)",
-        "Audit Policy Configuration",
-        "Service Account Secret Restrictions",
-        "Service Account Token Auto-Mount Disabling"
+        "--enable-admission-plugins",
+        "--tls-cert-file and --tls-private-key-file",
+        "--authorization-mode=RBAC",
+        "--audit-log-path"
       ],
-      "correct": 0,
-      "explanation": "API Server Authorization Modes (RBAC, Node, Webhook) is a key concept in Cluster Hardening. This domain covers topics essential for the Kubernetes CKS exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "The --tls-cert-file and --tls-private-key-file flags configure the API server to serve HTTPS using the specified certificate and key. Without TLS, API communication is transmitted in plaintext, exposing tokens, secrets, and configuration data to network-level attacks.",
+      "link": "container-security.html"
     },
     {
       "id": 5,
-      "domain": 2,
-      "objective": "2.2",
+      "domain": 1,
+      "objective": "1.3",
       "difficulty": "medium",
-      "question": "A professional is tasked with use role-based access controls to minimize exposure. What should be the first step?",
+      "question": "How should the Kubernetes Dashboard be secured in a production environment?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Expose it via a NodePort Service for easy access",
+        "Grant it cluster-admin privileges so administrators can manage everything",
+        "Use token-based authentication, restrict RBAC permissions, and never expose it publicly",
+        "Disable HTTPS to simplify the configuration"
       ],
-      "correct": 0,
-      "explanation": "The first step in any cluster hardening task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "correct": 2,
+      "explanation": "The Kubernetes Dashboard should use token-based authentication (not skip login), have minimal RBAC permissions (not cluster-admin), and should never be exposed to the internet. Access should be through kubectl proxy or a VPN. Compromised dashboards with excessive permissions have led to cryptojacking incidents.",
+      "link": "container-security.html"
     },
     {
       "id": 6,
-      "domain": 2,
-      "objective": "2.3",
-      "difficulty": "medium",
-      "question": "Which concept in Cluster Hardening is most closely related to exercise caution in using service accounts?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "hard",
+      "question": "An Ingress resource exposes an application at 'app.example.com'. Which security controls should be configured on the Ingress?",
       "options": [
-        "Cluster Hardening governance and oversight",
-        "Cluster Hardening implementation and operations",
-        "Cluster Hardening assessment and testing",
-        "Cluster Hardening risk management"
+        "TLS termination with a valid certificate, rate limiting, and web application firewall rules",
+        "Only a NodePort backend; TLS is unnecessary for internal apps",
+        "Anonymous authentication to simplify user access",
+        "Disable HTTP to HTTPS redirects for backward compatibility"
       ],
-      "correct": 1,
-      "explanation": "Exercise caution in using service accounts falls under the implementation and operations aspect of Cluster Hardening.",
-      "link": "start-here.html"
+      "correct": 0,
+      "explanation": "Production Ingress resources should terminate TLS with valid certificates, enforce HTTPS redirects (no plaintext HTTP), and leverage Ingress controller features like rate limiting and WAF rules. Annotations vary by controller (e.g., NGINX Ingress supports ssl-redirect, rate-limit, and ModSecurity WAF).",
+      "link": "container-security.html"
     },
     {
       "id": 7,
-      "domain": 2,
-      "objective": "2.4",
+      "domain": 1,
+      "objective": "1.4",
       "difficulty": "hard",
-      "question": "Which of the following is a key concept within Cluster Hardening (Domain 2)?",
+      "question": "A NetworkPolicy is applied to restrict traffic between namespaces. However, DNS resolution stops working for affected Pods. What is the likely cause?",
       "options": [
-        "Service Account Secret Restrictions",
-        "Anonymous Authentication Disabling",
-        "Audit Policy Configuration",
-        "kubectl Impersonation for Testing"
+        "NetworkPolicies always block DNS traffic",
+        "The egress policy does not include a rule allowing traffic to the kube-dns/CoreDNS Pods on port 53",
+        "DNS does not work with NetworkPolicies enabled",
+        "The Pods need a special DNS annotation to work with NetworkPolicies"
       ],
-      "correct": 0,
-      "explanation": "Service Account Secret Restrictions is a key concept in Cluster Hardening. This domain covers topics essential for the Kubernetes CKS exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "When a NetworkPolicy restricts egress traffic, DNS queries to CoreDNS (typically in the kube-system namespace on UDP/TCP port 53) are also blocked unless explicitly allowed. Egress rules must include a namespaceSelector or podSelector allowing traffic to the DNS service Pods on port 53.",
+      "link": "container-security.html"
     },
     {
       "id": 8,
-      "domain": 3,
-      "objective": "3.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within System Hardening (Domain 3)?",
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "hard",
+      "question": "kube-bench reports that the etcd server does not have --client-cert-auth=true. What is the risk?",
       "options": [
-        "Seccomp Profiles (RuntimeDefault, Custom)",
-        "Linux Capabilities (drop ALL, add specific)",
-        "Disable Unnecessary Services",
-        "Read-Only Root Filesystem"
+        "etcd data is not encrypted at rest",
+        "Clients can connect to etcd without presenting a valid client certificate, potentially accessing all cluster secrets",
+        "etcd cannot replicate data to other nodes",
+        "The API server cannot write to etcd"
       ],
-      "correct": 0,
-      "explanation": "Seccomp Profiles (RuntimeDefault, Custom) is a key concept in System Hardening. This domain covers topics essential for the Kubernetes CKS exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "Without --client-cert-auth=true, etcd accepts connections from any client, even without a valid certificate. Since etcd stores all Kubernetes state including Secrets, an attacker with network access to etcd port 2379 could read or modify any cluster data. Client certificate authentication ensures only authorized clients (like the API server) can connect.",
+      "link": "container-security.html"
     },
     {
       "id": 9,
-      "domain": 3,
-      "objective": "3.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with minimize iam roles. What should be the first step?",
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "easy",
+      "question": "What is the purpose of a default-deny NetworkPolicy?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "To block all traffic to and from the Kubernetes API server",
+        "To deny all ingress and/or egress traffic to Pods unless explicitly allowed by other policies",
+        "To prevent new Pods from being created in the namespace",
+        "To disable the CNI plugin for the namespace"
       ],
-      "correct": 0,
-      "explanation": "The first step in any system hardening task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "A default-deny NetworkPolicy blocks all ingress, egress, or both for all Pods in a namespace. Additional NetworkPolicies then selectively allow only the required traffic. This follows the zero-trust principle where no traffic is permitted by default and must be explicitly authorized.",
+      "link": "container-security.html"
     },
     {
       "id": 10,
-      "domain": 3,
-      "objective": "3.3",
+      "domain": 1,
+      "objective": "1.2",
       "difficulty": "medium",
-      "question": "Which concept in System Hardening is most closely related to minimize external access to the network?",
+      "question": "The CIS Benchmark recommends setting --profiling=false on the API server. Why?",
       "options": [
-        "System Hardening governance and oversight",
-        "System Hardening implementation and operations",
-        "System Hardening assessment and testing",
-        "System Hardening risk management"
+        "Profiling reduces API server performance",
+        "Profiling endpoints can expose sensitive internal details about the API server to attackers",
+        "Profiling is incompatible with RBAC",
+        "Profiling data is written to etcd, consuming storage"
       ],
       "correct": 1,
-      "explanation": "Minimize external access to the network falls under the implementation and operations aspect of System Hardening.",
-      "link": "start-here.html"
+      "explanation": "Profiling endpoints expose internal performance data and code paths of the API server. An attacker could use this information to identify performance bottlenecks to exploit for denial of service or to understand internal architecture for targeted attacks. Disabling profiling reduces the attack surface.",
+      "link": "container-security.html"
     },
     {
       "id": 11,
-      "domain": 3,
-      "objective": "3.4",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within System Hardening (Domain 3)?",
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "easy",
+      "question": "Which verification endpoint is commonly used to check the health of the Kubernetes API server?",
       "options": [
-        "Disable Unnecessary Services",
-        "Linux Capabilities (drop ALL, add specific)",
-        "Read-Only Root Filesystem",
-        "Syscall Filtering and Restriction"
+        "/api/v1/status",
+        "/healthz",
+        "/readyz",
+        "Both /healthz and /readyz"
       ],
-      "correct": 0,
-      "explanation": "Disable Unnecessary Services is a key concept in System Hardening. This domain covers topics essential for the Kubernetes CKS exam.",
-      "link": "start-here.html"
+      "correct": 3,
+      "explanation": "/healthz checks general API server health, while /readyz checks if the server is ready to serve traffic. Both endpoints should return 200 OK. /livez was added for liveness checks. These endpoints should not require authentication in production but should not be exposed publicly.",
+      "link": "container-security.html"
     },
     {
       "id": 12,
-      "domain": 4,
-      "objective": "4.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Minimize Microservice Vulnerabilities (Domain 4)?",
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "hard",
+      "question": "You need to restrict egress traffic from Pods in the 'web' namespace to only allow HTTPS (port 443) and DNS (port 53). Which NetworkPolicy achieves this?",
       "options": [
-        "Secrets Encryption at Rest (EncryptionConfiguration)",
-        "OPA Gatekeeper Constraints",
-        "Pod Security Admission Controller",
-        "SecurityContext Configuration"
+        "A policy with egress rules for port 443 TCP and port 53 UDP/TCP, with podSelector: {}",
+        "A policy with ingress rules for ports 443 and 53",
+        "A policy with egress rules for all ports to 0.0.0.0/0",
+        "A policy blocking all ingress and allowing all egress"
       ],
       "correct": 0,
-      "explanation": "Secrets Encryption at Rest (EncryptionConfiguration) is a key concept in Minimize Microservice Vulnerabilities. This domain covers topics essential for the Kubernetes CKS exam.",
-      "link": "start-here.html"
+      "explanation": "An empty podSelector selects all Pods in the namespace. Egress rules specifying port 443 (TCP) and port 53 (both UDP and TCP for DNS) with policyTypes: ['Egress'] restrict outbound traffic to only HTTPS and DNS. All other egress traffic (SSH, HTTP, etc.) is denied.",
+      "link": "container-security.html"
     },
     {
       "id": 13,
-      "domain": 4,
-      "objective": "4.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with manage kubernetes secrets. What should be the first step?",
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "hard",
+      "question": "Which API server flag controls the authorization mode and should include RBAC for production clusters?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "--enable-admission-plugins",
+        "--authorization-mode",
+        "--authentication-mode",
+        "--client-ca-file"
       ],
-      "correct": 0,
-      "explanation": "The first step in any minimize microservice vulnerabilities task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "The --authorization-mode flag specifies which authorization modules are used (e.g., RBAC, Node, Webhook, ABAC). Production clusters should use --authorization-mode=Node,RBAC. The Node authorizer handles kubelet requests, and RBAC provides fine-grained access control for users and service accounts.",
+      "link": "container-security.html"
     },
     {
       "id": 14,
-      "domain": 4,
-      "objective": "4.3",
+      "domain": 1,
+      "objective": "1.3",
       "difficulty": "medium",
-      "question": "Which concept in Minimize Microservice Vulnerabilities is most closely related to use container runtime sandboxes in multi-tenant environments?",
+      "question": "What is the security risk of exposing the kubelet read-only port (10255)?",
       "options": [
-        "Minimize Microservice Vulnerabilities governance and oversight",
-        "Minimize Microservice Vulnerabilities implementation and operations",
-        "Minimize Microservice Vulnerabilities assessment and testing",
-        "Minimize Microservice Vulnerabilities risk management"
+        "It allows writing arbitrary files to the node filesystem",
+        "It exposes Pod specs, container info, and node metrics without authentication",
+        "It enables remote code execution on the node",
+        "It allows modifying kubelet configuration"
       ],
       "correct": 1,
-      "explanation": "Use container runtime sandboxes in multi-tenant environments falls under the implementation and operations aspect of Minimize Microservice Vulnerabilities.",
-      "link": "start-here.html"
+      "explanation": "The kubelet read-only port (10255) serves metrics and Pod information without any authentication. An attacker with network access can enumerate running Pods, read container specs (including environment variables), and gather node metrics. CIS recommends setting --read-only-port=0 to disable it.",
+      "link": "container-security.html"
     },
     {
       "id": 15,
-      "domain": 4,
-      "objective": "4.4",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Minimize Microservice Vulnerabilities (Domain 4)?",
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "How often should CIS Benchmark checks be run against a Kubernetes cluster?",
       "options": [
-        "Container Runtime Sandboxing (gVisor, Kata Containers)",
-        "RuntimeClass for Sandbox Selection",
-        "mTLS with Service Mesh (Istio, Linkerd)",
-        "Vault CSI Provider"
+        "Only during initial cluster setup",
+        "Regularly (e.g., after upgrades, configuration changes, and on a periodic schedule)",
+        "Only when a security incident occurs",
+        "Once per year during the annual audit"
       ],
-      "correct": 0,
-      "explanation": "Container Runtime Sandboxing (gVisor, Kata Containers) is a key concept in Minimize Microservice Vulnerabilities. This domain covers topics essential for the Kubernetes CKS exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "CIS Benchmark checks should be run regularly, not just during initial setup. Configuration drift, upgrades, and operational changes can introduce security regressions. Automated scheduled scans (e.g., via CI/CD or cron jobs running kube-bench) catch misconfigurations before they are exploited.",
+      "link": "container-security.html"
     },
     {
       "id": 16,
-      "domain": 4,
-      "objective": "4.5",
+      "domain": 2,
+      "objective": "2.1",
       "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with use pod security standards and admission controllers?",
+      "question": "What is the purpose of RBAC in Kubernetes?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "To encrypt communication between Pods",
+        "To control who can perform what actions on which resources in the cluster",
+        "To manage container image repositories",
+        "To schedule Pods on specific nodes"
       ],
-      "correct": 0,
-      "explanation": "When working with use pod security standards and admission controllers, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "RBAC (Role-Based Access Control) regulates access to Kubernetes resources based on the roles assigned to users, groups, or ServiceAccounts. It defines what verbs (get, list, create, delete, etc.) a subject can perform on which API resources (pods, secrets, deployments, etc.).",
+      "link": "container-security.html"
     },
     {
       "id": 17,
-      "domain": 4,
-      "objective": "4.1",
+      "domain": 2,
+      "objective": "2.1",
       "difficulty": "medium",
-      "question": "Which of the following best describes the purpose of \"Set up appropriate OS-level security domains\" in Minimize Microservice Vulnerabilities?",
+      "question": "What is the difference between a Role and a ClusterRole in RBAC?",
       "options": [
-        "To implement and manage set up appropriate os-level security domains processes",
-        "To evaluate compliance with minimize microservice vulnerabilities standards",
-        "To document risk assessment procedures",
-        "To audit external vendor relationships"
+        "Roles are for users; ClusterRoles are for ServiceAccounts",
+        "Roles grant permissions within a single namespace; ClusterRoles grant permissions cluster-wide or across namespaces",
+        "Roles are more secure than ClusterRoles",
+        "There is no functional difference; they are interchangeable"
       ],
-      "correct": 0,
-      "explanation": "Set up appropriate OS-level security domains is a key objective in Minimize Microservice Vulnerabilities. Understanding this concept is essential for the exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "A Role defines permissions within a specific namespace. A ClusterRole defines permissions cluster-wide and can access non-namespaced resources (nodes, PersistentVolumes) or be used across multiple namespaces via RoleBindings. ClusterRoles should be granted sparingly because they affect the entire cluster.",
+      "link": "container-security.html"
     },
     {
       "id": 18,
-      "domain": 5,
-      "objective": "5.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Supply Chain Security (Domain 5)?",
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "A developer needs read-only access to Pods in the 'staging' namespace only. Which combination of RBAC resources should be created?",
       "options": [
-        "Static Manifest Analysis (Kubesec, Conftest)",
-        "Private Registry Allowlisting",
-        "Minimal Base Images (distroless, Alpine)",
-        "Multi-Stage Dockerfile Builds"
+        "ClusterRole with get/list on Pods + ClusterRoleBinding",
+        "Role with get/list on Pods in 'staging' namespace + RoleBinding in 'staging' namespace",
+        "ClusterRole with get/list on Pods + RoleBinding in 'staging' namespace",
+        "Both B and C are correct approaches"
       ],
-      "correct": 0,
-      "explanation": "Static Manifest Analysis (Kubesec, Conftest) is a key concept in Supply Chain Security. This domain covers topics essential for the Kubernetes CKS exam.",
-      "link": "start-here.html"
+      "correct": 3,
+      "explanation": "Both approaches work. You can create a namespace-scoped Role with a RoleBinding (option B), or reference a ClusterRole in a namespace-scoped RoleBinding (option C). The latter is useful when the same permissions are needed across multiple namespaces -- define the ClusterRole once and create RoleBindings in each namespace.",
+      "link": "container-security.html"
     },
     {
       "id": 19,
-      "domain": 5,
-      "objective": "5.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with secure your supply chain (allowlist registries, sign and validate images). What should be the first step?",
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "An RBAC audit reveals a ClusterRoleBinding granting 'cluster-admin' to a ServiceAccount in the 'default' namespace. Why is this a critical security risk?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "The default namespace should not have ServiceAccounts",
+        "cluster-admin grants unrestricted access to all resources; any Pod using this ServiceAccount has full cluster control",
+        "ClusterRoleBindings cannot reference ServiceAccounts",
+        "The cluster-admin role is deprecated"
       ],
-      "correct": 0,
-      "explanation": "The first step in any supply chain security task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "cluster-admin grants unrestricted access to all Kubernetes resources. If a Pod uses this ServiceAccount (either explicitly or by being in the default namespace where this SA is auto-mounted), a container escape or pod compromise gives the attacker complete cluster control -- including creating privileged pods on any node.",
+      "link": "container-security.html"
     },
     {
       "id": 20,
-      "domain": 5,
-      "objective": "5.3",
-      "difficulty": "medium",
-      "question": "Which concept in Supply Chain Security is most closely related to use static analysis of user workloads (kubesec, opa conftest)?",
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "easy",
+      "question": "Why should you set 'automountServiceAccountToken: false' on ServiceAccounts that do not need API access?",
       "options": [
-        "Supply Chain Security governance and oversight",
-        "Supply Chain Security implementation and operations",
-        "Supply Chain Security assessment and testing",
-        "Supply Chain Security risk management"
+        "To improve Pod startup performance",
+        "To prevent the ServiceAccount token from being available inside the container, reducing the impact of container compromise",
+        "To disable network access for the Pod",
+        "To prevent the Pod from using persistent volumes"
       ],
       "correct": 1,
-      "explanation": "Use static analysis of user workloads (Kubesec, OPA Conftest) falls under the implementation and operations aspect of Supply Chain Security.",
-      "link": "start-here.html"
+      "explanation": "When a ServiceAccount token is mounted in a Pod, a compromised container can use it to authenticate with the Kubernetes API. Setting automountServiceAccountToken: false prevents this, reducing the blast radius of a container compromise to only the container itself, not the Kubernetes API.",
+      "link": "container-security.html"
     },
     {
       "id": 21,
-      "domain": 5,
-      "objective": "5.4",
-      "difficulty": "hard",
-      "question": "Which of the following is a key concept within Supply Chain Security (Domain 5)?",
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "What is a bound ServiceAccount token and how does it improve security over legacy tokens?",
       "options": [
-        "Static Manifest Analysis (Kubesec, Conftest)",
-        "Minimal Base Images (distroless, Alpine)",
-        "Private Registry Allowlisting",
-        "ImagePolicyWebhook Admission Controller"
+        "It is encrypted with the cluster's CA key",
+        "It is audience-bound, time-limited, and Pod-bound, reducing the window of exploitation if leaked",
+        "It uses a longer key length for stronger authentication",
+        "It is stored in an external secret manager instead of etcd"
       ],
-      "correct": 0,
-      "explanation": "Static Manifest Analysis (Kubesec, Conftest) is a key concept in Supply Chain Security. This domain covers topics essential for the Kubernetes CKS exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "Bound ServiceAccount tokens (introduced in Kubernetes 1.20+) are projected tokens that are audience-bound (only valid for a specific API server), time-limited (auto-expire), and object-bound (invalidated when the Pod is deleted). Legacy tokens were long-lived and remained valid even after the Pod was deleted.",
+      "link": "container-security.html"
     },
     {
       "id": 22,
-      "domain": 5,
-      "objective": "5.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with minimize base image footprint?",
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "medium",
+      "question": "How do you restrict which nodes a kubelet can access using the Node authorization mode?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "The Node authorizer automatically restricts kubelets to only access resources related to Pods scheduled on their node",
+        "You must manually configure a NetworkPolicy for each node",
+        "The kubelet is restricted by its ServiceAccount's RBAC Role",
+        "Node authorization is not related to kubelet access control"
       ],
       "correct": 0,
-      "explanation": "When working with minimize base image footprint, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "explanation": "The Node authorization mode (--authorization-mode=Node) restricts kubelet API access to only the resources needed for Pods running on that specific node. A kubelet can only read Secrets, ConfigMaps, and PersistentVolumeClaims referenced by Pods on its node, preventing a compromised kubelet from accessing resources on other nodes.",
+      "link": "container-security.html"
     },
     {
       "id": 23,
-      "domain": 5,
-      "objective": "5.2",
-      "difficulty": "medium",
-      "question": "Which of the following best describes the purpose of \"Secure your supply chain (allowlist registries, sign and validate images)\" in Supply Chain Security?",
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "An attacker compromises a Pod and retrieves the auto-mounted ServiceAccount token. The token has permissions to create Pods. How can the attacker escalate privileges?",
       "options": [
-        "To implement and manage secure your supply chain (allowlist registries, sign and validate images) processes",
-        "To evaluate compliance with supply chain security standards",
-        "To document risk assessment procedures",
-        "To audit external vendor relationships"
+        "The attacker cannot escalate because Pods are isolated",
+        "The attacker can create a privileged Pod that mounts the host filesystem and access node-level resources",
+        "The attacker can only read logs from other Pods",
+        "The token is useless outside the original Pod"
       ],
-      "correct": 0,
-      "explanation": "Secure your supply chain (allowlist registries, sign and validate images) is a key objective in Supply Chain Security. Understanding this concept is essential for the exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "With Pod creation permissions, an attacker can create a privileged Pod with hostPID, hostNetwork, and hostPath volumes, effectively gaining root access to the underlying node. This is why Pod creation should be tightly controlled, and admission controllers should prevent privileged Pods.",
+      "link": "container-security.html"
     },
     {
       "id": 24,
-      "domain": 6,
-      "objective": "6.1",
-      "difficulty": "easy",
-      "question": "Which of the following is a key concept within Monitoring, Logging & Runtime Security (Domain 6)?",
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "medium",
+      "question": "What is the purpose of the NodeRestriction admission controller?",
       "options": [
-        "Sysdig for Forensic Analysis",
-        "Kubernetes Audit Logging (Policy Stages)",
-        "Read-Only Root Filesystem Enforcement",
-        "Falco Runtime Threat Detection"
+        "To prevent kubelets from modifying their own node labels with specific prefixes reserved for administrators",
+        "To restrict the number of Pods per node",
+        "To prevent nodes from joining the cluster without approval",
+        "To limit CPU usage per node"
       ],
       "correct": 0,
-      "explanation": "Sysdig for Forensic Analysis is a key concept in Monitoring, Logging & Runtime Security. This domain covers topics essential for the Kubernetes CKS exam.",
-      "link": "start-here.html"
+      "explanation": "The NodeRestriction admission controller prevents kubelets from modifying node labels with the node-restriction.kubernetes.io/ prefix and certain other labels reserved for administrators. It also limits kubelets to only modify their own Node object and the Pods bound to their node, preventing a compromised node from affecting the broader cluster.",
+      "link": "container-security.html"
     },
     {
       "id": 25,
-      "domain": 6,
-      "objective": "6.2",
-      "difficulty": "medium",
-      "question": "A professional is tasked with detect threats within physical infrastructure, apps, networks, data, users. What should be the first step?",
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "hard",
+      "question": "You discover a RoleBinding that grants the 'edit' ClusterRole to the 'system:authenticated' group in a namespace. What is the risk?",
       "options": [
-        "Assess the current state and identify requirements",
-        "Implement the solution immediately",
-        "Document the findings in a report",
-        "Escalate to senior management"
+        "Only cluster administrators can use the edit role",
+        "Any authenticated user (including all ServiceAccounts) can create, modify, and delete most resources in that namespace",
+        "The edit role only allows read access",
+        "The system:authenticated group includes only human users"
       ],
-      "correct": 0,
-      "explanation": "The first step in any monitoring, logging & runtime security task is to assess the current state before implementing changes.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "The system:authenticated group includes ALL authenticated users AND all ServiceAccounts. The 'edit' ClusterRole grants create, update, delete on most namespace resources. This means any Pod's ServiceAccount in any namespace can modify resources in this namespace -- a massive exposure.",
+      "link": "container-security.html"
     },
     {
       "id": 26,
-      "domain": 6,
-      "objective": "6.3",
-      "difficulty": "medium",
-      "question": "Which concept in Monitoring, Logging & Runtime Security is most closely related to detect all phases of attack regardless of where it occurs?",
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "easy",
+      "question": "What is the recommended approach for upgrading a Kubernetes cluster securely?",
       "options": [
-        "Monitoring, Logging & Runtime Security governance and oversight",
-        "Monitoring, Logging & Runtime Security implementation and operations",
-        "Monitoring, Logging & Runtime Security assessment and testing",
-        "Monitoring, Logging & Runtime Security risk management"
+        "Skip minor versions to save time",
+        "Upgrade one minor version at a time, review release notes for security fixes and deprecations",
+        "Only upgrade when a critical CVE is announced",
+        "Upgrade all components simultaneously to minimize downtime"
       ],
       "correct": 1,
-      "explanation": "Detect all phases of attack regardless of where it occurs falls under the implementation and operations aspect of Monitoring, Logging & Runtime Security.",
-      "link": "start-here.html"
+      "explanation": "Kubernetes supports upgrading one minor version at a time (e.g., 1.28 to 1.29). Skipping versions is not supported and may break the cluster. Release notes should be reviewed for security fixes, deprecated APIs, and changed defaults that could affect security posture.",
+      "link": "container-security.html"
     },
     {
       "id": 27,
-      "domain": 6,
-      "objective": "6.4",
+      "domain": 2,
+      "objective": "2.2",
       "difficulty": "hard",
-      "question": "Which of the following is a key concept within Monitoring, Logging & Runtime Security (Domain 6)?",
+      "question": "A security audit finds ServiceAccounts with Secrets still using legacy (non-expiring) tokens. What remediation is recommended?",
       "options": [
-        "Falco Rules and Custom Rules",
-        "Sysdig for Forensic Analysis",
-        "Read-Only Root Filesystem Enforcement",
-        "Behavioral Anomaly Detection"
+        "Delete all ServiceAccounts and recreate them",
+        "Migrate to projected bound tokens, delete unused legacy token Secrets, and ensure no applications depend on the old token format",
+        "Rotate the cluster CA certificate",
+        "Disable all ServiceAccount authentication"
       ],
-      "correct": 0,
-      "explanation": "Falco Rules and Custom Rules is a key concept in Monitoring, Logging & Runtime Security. This domain covers topics essential for the Kubernetes CKS exam.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "Legacy ServiceAccount tokens are stored as Secrets and never expire, posing a risk if leaked. Migration involves ensuring applications use projected (bound) tokens instead, then deleting the legacy Secret-based tokens. The bound tokens auto-expire and are invalidated when their Pod is deleted.",
+      "link": "container-security.html"
     },
     {
       "id": 28,
-      "domain": 6,
-      "objective": "6.5",
-      "difficulty": "easy",
-      "question": "Which of the following is a key consideration when working with ensure immutability of containers at runtime?",
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "What does the RBAC verb 'escalate' allow, and why is it dangerous?",
       "options": [
-        "Following industry best practices and standards",
-        "Minimizing documentation requirements",
-        "Reducing the number of team members involved",
-        "Avoiding automated tools"
+        "It allows scaling Deployments to more replicas",
+        "It allows a user to grant permissions they do not have themselves, bypassing RBAC's normal escalation prevention",
+        "It allows elevating Pod priority",
+        "It allows promoting a user from developer to administrator"
       ],
-      "correct": 0,
-      "explanation": "When working with ensure immutability of containers at runtime, following industry best practices ensures consistent and reliable results.",
-      "link": "start-here.html"
+      "correct": 1,
+      "explanation": "The 'escalate' verb on Roles/ClusterRoles allows a user to create or modify roles with permissions they do not hold themselves. Normally, RBAC prevents privilege escalation by blocking users from granting permissions they lack. The 'escalate' verb bypasses this protection and should be granted extremely carefully.",
+      "link": "container-security.html"
     },
     {
       "id": 29,
-      "domain": 6,
-      "objective": "6.6",
-      "difficulty": "medium",
-      "question": "Which of the following best describes the purpose of \"Use Audit Logs to monitor access\" in Monitoring, Logging & Runtime Security?",
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "Which API server flag restricts API access to only allow specific authentication methods?",
       "options": [
-        "To implement and manage use audit logs to monitor access processes",
-        "To evaluate compliance with monitoring, logging & runtime security standards",
-        "To document risk assessment procedures",
-        "To audit external vendor relationships"
+        "--anonymous-auth=false",
+        "--enable-admission-plugins",
+        "--authorization-mode",
+        "--client-ca-file (to require client certificate authentication)"
       ],
       "correct": 0,
-      "explanation": "Use Audit Logs to monitor access is a key objective in Monitoring, Logging & Runtime Security. Understanding this concept is essential for the exam.",
-      "link": "start-here.html"
+      "explanation": "Setting --anonymous-auth=false ensures that all API requests must be authenticated. Combined with configuring specific authentication methods (--client-ca-file for certificates, --oidc-issuer-url for OIDC, etc.), this ensures only verified identities can access the API.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 30,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "hard",
+      "question": "You need to test whether a ServiceAccount has specific permissions without actually performing the action. Which kubectl command helps?",
+      "options": [
+        "kubectl describe sa <name>",
+        "kubectl auth can-i <verb> <resource> --as=system:serviceaccount:<namespace>:<name>",
+        "kubectl get rolebinding -o yaml",
+        "kubectl api-resources --namespaced"
+      ],
+      "correct": 1,
+      "explanation": "kubectl auth can-i with --as flag impersonates a ServiceAccount to check whether it has a specific permission. For example, 'kubectl auth can-i create pods --as=system:serviceaccount:default:my-sa' returns yes/no without actually creating a Pod. This is essential for RBAC auditing.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 31,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "What are the security implications of a ServiceAccount that can 'get' Secrets in its namespace?",
+      "options": [
+        "No security implications; reading Secrets is a normal operation",
+        "The ServiceAccount can read all Secret data in the namespace, including tokens, passwords, and certificates used by other applications",
+        "The ServiceAccount can only read its own token Secret",
+        "Get on Secrets only returns Secret metadata, not the data"
+      ],
+      "correct": 1,
+      "explanation": "The 'get' verb on Secrets allows reading the full Secret data (including base64-decoded values) for ALL Secrets in the namespace. This includes database passwords, API keys, TLS certificates, and other ServiceAccount tokens. Secret access should be scoped to specific Secret names using resourceNames when possible.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 32,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "What is the principle of least privilege in the context of Kubernetes RBAC?",
+      "options": [
+        "Grant every user cluster-admin access for convenience",
+        "Grant only the minimum permissions required for a user or ServiceAccount to perform their specific function",
+        "Use only ClusterRoles instead of namespace-scoped Roles",
+        "Disable RBAC and use ABAC instead"
+      ],
+      "correct": 1,
+      "explanation": "Least privilege means granting only the minimum set of permissions needed. For example, a deployment pipeline ServiceAccount might need create/update on Deployments but not delete, and should be scoped to specific namespaces rather than cluster-wide.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 33,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "How does the 'bind' RBAC verb differ from 'escalate', and when is it needed?",
+      "options": [
+        "They are identical in function",
+        "'bind' allows creating RoleBindings/ClusterRoleBindings that reference a specific Role; it is needed when users must bind Roles they do not fully hold",
+        "'bind' is used for Pod-to-Service binding",
+        "'bind' allows binding PersistentVolumes to PersistentVolumeClaims"
+      ],
+      "correct": 1,
+      "explanation": "The 'bind' verb on Roles/ClusterRoles allows creating RoleBindings that reference a specific Role. Unlike 'escalate' (which lets you modify Role rules), 'bind' only lets you assign an existing Role to subjects. This is a narrower permission -- users can bind a pre-defined Role but cannot change what the Role allows.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 34,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "medium",
+      "question": "What should you verify about RBAC after a Kubernetes version upgrade?",
+      "options": [
+        "That all Pods have been restarted",
+        "That default ClusterRoles and ClusterRoleBindings have not been modified in ways that expand permissions",
+        "That the RBAC API version is still supported",
+        "That all users have changed their passwords"
+      ],
+      "correct": 1,
+      "explanation": "Kubernetes upgrades can modify default ClusterRoles (like system:discovery, system:basic-user). After an upgrade, verify that these default roles have not gained new permissions that conflict with your security policy. Also check that deprecated RBAC patterns are updated.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 35,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "medium",
+      "question": "Why should Pods in the kube-system namespace have carefully scoped ServiceAccount permissions?",
+      "options": [
+        "kube-system Pods have no access to the API server",
+        "kube-system Pods often run with elevated privileges; a compromised kube-system Pod could affect cluster-wide components",
+        "kube-system Pods are not affected by RBAC",
+        "kube-system namespace has its own authentication system"
+      ],
+      "correct": 1,
+      "explanation": "kube-system Pods run critical cluster components (CoreDNS, kube-proxy, controllers). They often have elevated RBAC permissions. A compromised kube-system Pod could modify DNS resolution, network rules, or other cluster-wide settings. Each component should have a dedicated ServiceAccount with only the permissions it needs.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 36,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "hard",
+      "question": "An organization uses an external OIDC provider for Kubernetes authentication. What additional security measure should be configured?",
+      "options": [
+        "Disable all other authentication methods",
+        "Configure --oidc-required-claim to restrict access to users with specific claims (e.g., group membership)",
+        "Allow all OIDC users cluster-admin access",
+        "Store OIDC tokens as Kubernetes Secrets"
+      ],
+      "correct": 1,
+      "explanation": "--oidc-required-claim ensures only OIDC tokens with specific claims are accepted. For example, requiring a 'department=engineering' claim restricts API access to users who belong to the engineering department, even if they have valid OIDC tokens. This provides an additional layer beyond RBAC.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 37,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "medium",
+      "question": "What is the danger of granting 'create' permission on Pods to a ServiceAccount without admission controller restrictions?",
+      "options": [
+        "The ServiceAccount can only create Pods in its own namespace",
+        "The ServiceAccount can create privileged Pods, mount host filesystems, or use host networking to escape the container boundary",
+        "Pod creation is always safe regardless of RBAC",
+        "Pods created by ServiceAccounts cannot access the network"
+      ],
+      "correct": 1,
+      "explanation": "Pod creation with RBAC alone does not restrict the Pod's security context. Without admission controllers (like PodSecurity), a ServiceAccount with Pod creation rights can specify privileged: true, hostNetwork: true, and hostPath volumes, effectively gaining root access to the node.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 38,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "What is AppArmor in the context of Kubernetes security?",
+      "options": [
+        "A Kubernetes admission controller",
+        "A Linux kernel security module that restricts programs to a limited set of resources using profiles",
+        "A container image scanning tool",
+        "A network encryption protocol"
+      ],
+      "correct": 1,
+      "explanation": "AppArmor is a Linux kernel security module that confines programs to a limited set of resources. In Kubernetes, AppArmor profiles can be applied to containers to restrict file access, network operations, and system capabilities beyond what SecurityContext provides.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 39,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "medium",
+      "question": "How is an AppArmor profile applied to a container in Kubernetes?",
+      "options": [
+        "By adding an annotation: container.apparmor.security.beta.kubernetes.io/<container-name>: localhost/<profile-name>",
+        "By setting appArmor: true in the SecurityContext",
+        "By creating a ConfigMap with the AppArmor profile",
+        "By installing AppArmor on the Kubernetes control plane"
+      ],
+      "correct": 0,
+      "explanation": "AppArmor profiles are applied via Pod annotations in the format container.apparmor.security.beta.kubernetes.io/<container-name>: localhost/<profile-name>. The profile must be pre-loaded on the node where the Pod runs. Newer Kubernetes versions also support securityContext.appArmorProfile.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 40,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "What is a seccomp profile?",
+      "options": [
+        "A security configuration for the Kubernetes scheduler",
+        "A Linux kernel feature that filters which system calls a process can make",
+        "A network security policy for container communication",
+        "A tool for encrypting container images"
+      ],
+      "correct": 1,
+      "explanation": "Seccomp (Secure Computing Mode) is a Linux kernel feature that restricts the system calls a process can make. In Kubernetes, seccomp profiles whitelist which syscalls are allowed, blocking potentially dangerous calls like mount, ptrace, or reboot. This significantly reduces the kernel attack surface.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 41,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "What is the 'RuntimeDefault' seccomp profile?",
+      "options": [
+        "A profile that blocks all system calls",
+        "The container runtime's default seccomp profile that blocks known dangerous syscalls while allowing common ones",
+        "A profile that allows all system calls",
+        "A profile specific to each Kubernetes version"
+      ],
+      "correct": 1,
+      "explanation": "RuntimeDefault uses the container runtime's built-in seccomp profile (e.g., Docker's default). It blocks dangerous syscalls like clock_settime, reboot, and mount while allowing the ~300+ syscalls that most applications need. It is a good starting point before creating custom profiles.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 42,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "A custom seccomp profile uses 'defaultAction: SCMP_ACT_ERRNO' and includes a whitelist of allowed syscalls. What happens when the process makes a syscall not on the whitelist?",
+      "options": [
+        "The syscall succeeds but is logged",
+        "The process is immediately killed",
+        "The syscall returns an error (EPERM) to the calling process",
+        "The syscall is forwarded to the host kernel unfiltered"
+      ],
+      "correct": 2,
+      "explanation": "SCMP_ACT_ERRNO is the default action for syscalls not in the whitelist. It returns a permission error to the process rather than killing it. SCMP_ACT_KILL_PROCESS would kill the process, and SCMP_ACT_LOG would allow but log the syscall. Using ERRNO allows applications to handle the denial gracefully.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 43,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "easy",
+      "question": "What does 'drop: [ALL]' in a container's SecurityContext capabilities section do?",
+      "options": [
+        "Drops all containers from the Pod",
+        "Removes all Linux capabilities from the container process",
+        "Deletes all files in the container filesystem",
+        "Disconnects the container from all networks"
+      ],
+      "correct": 1,
+      "explanation": "Dropping ALL capabilities removes every Linux capability from the container process, including common ones like NET_RAW and SYS_CHROOT. Specific capabilities can then be added back selectively. This follows the principle of least privilege by starting with zero capabilities and adding only what is needed.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 44,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "Which Linux capability must be explicitly added back if you drop ALL capabilities and need the container to bind to ports below 1024?",
+      "options": [
+        "SYS_ADMIN",
+        "NET_BIND_SERVICE",
+        "NET_RAW",
+        "DAC_OVERRIDE"
+      ],
+      "correct": 1,
+      "explanation": "NET_BIND_SERVICE allows a process to bind to privileged ports (below 1024) without running as root. After dropping ALL capabilities, you must add it back if the application needs to listen on ports like 80 or 443. SYS_ADMIN should almost never be added as it grants near-root privileges.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 45,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "Why should you disable unused kernel modules on Kubernetes worker nodes?",
+      "options": [
+        "To free up disk space",
+        "To reduce the kernel attack surface by removing code that could contain exploitable vulnerabilities",
+        "To improve Pod scheduling performance",
+        "To enable container image scanning"
+      ],
+      "correct": 1,
+      "explanation": "Unused kernel modules (like USB drivers or uncommon filesystem types) expand the kernel attack surface. Container escape exploits often target kernel vulnerabilities. Disabling unneeded modules with modprobe blacklisting or removing them reduces the attack surface available to compromised containers.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 46,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "easy",
+      "question": "What is the security benefit of running a read-only root filesystem in a container?",
+      "options": [
+        "It improves container startup time",
+        "It prevents attackers from writing malicious scripts, backdoors, or modifying existing binaries in the container",
+        "It encrypts the filesystem contents",
+        "It prevents the container from reading sensitive files"
+      ],
+      "correct": 1,
+      "explanation": "A read-only root filesystem prevents any writes to the container's filesystem. Attackers cannot write malware, modify configuration files, or create reverse shell scripts. Applications that need writable directories (like /tmp) can use emptyDir volumes mounted at those paths.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 47,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "medium",
+      "question": "Why should SSH be disabled on Kubernetes worker nodes?",
+      "options": [
+        "SSH consumes too much CPU",
+        "SSH provides an alternative entry point that bypasses Kubernetes RBAC and audit logging",
+        "SSH is incompatible with container runtimes",
+        "SSH prevents Pod scheduling"
+      ],
+      "correct": 1,
+      "explanation": "SSH on worker nodes provides direct host access that bypasses Kubernetes access controls and audit logging. An attacker with SSH access can manipulate containers, read secrets from the kubelet, and modify node configuration. Node access should be through kubectl debug or a bastion host with proper audit trails.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 48,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "hard",
+      "question": "An organization minimizes the host OS footprint on worker nodes. Which approach best achieves this?",
+      "options": [
+        "Install a full Ubuntu Server with all development tools for debugging",
+        "Use a minimal, container-optimized OS (like Bottlerocket, Talos, or Flatcar) with an immutable filesystem",
+        "Use a standard Linux distribution but disable the firewall for performance",
+        "Install only Kubernetes components on a Windows Server"
+      ],
+      "correct": 1,
+      "explanation": "Container-optimized OSes like Bottlerocket, Talos, and Flatcar are purpose-built for running containers. They have minimal packages (no SSH, no package manager), immutable filesystems, automatic updates, and reduced attack surface. This minimizes the host OS footprint significantly compared to general-purpose Linux distributions.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 49,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "hard",
+      "question": "A container needs the SYS_PTRACE capability. Why is this a security concern, and when might it be justified?",
+      "options": [
+        "SYS_PTRACE allows network packet capture",
+        "SYS_PTRACE allows tracing and debugging other processes, potentially enabling container escape or credential theft from other processes in the same PID namespace",
+        "SYS_PTRACE allows mounting external filesystems",
+        "SYS_PTRACE has no security implications"
+      ],
+      "correct": 1,
+      "explanation": "SYS_PTRACE allows a process to attach to and debug other processes using ptrace(). In shared PID namespaces, this could enable reading memory of other containers' processes (stealing credentials, encryption keys). It is justified for debugging sidecars or profiling tools but should be used sparingly with tight RBAC controls.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 50,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "hard",
+      "question": "How do you create a custom AppArmor profile for a container that only needs to read files from /data and write to /tmp?",
+      "options": [
+        "Use a predefined profile; custom profiles are not supported",
+        "Write a profile that denies all file access except read on /data/** and read-write on /tmp/**, load it on the node, then reference it in the Pod annotation",
+        "Set readOnlyRootFilesystem: true; that is equivalent to AppArmor",
+        "Configure a NetworkPolicy to restrict file access"
+      ],
+      "correct": 1,
+      "explanation": "Custom AppArmor profiles define fine-grained file, network, and capability restrictions. You write a profile with specific path rules (e.g., '/data/** r,' and '/tmp/** rw,'), load it on all nodes where the Pod may run using apparmor_parser, then reference it via the Pod annotation. This is more granular than SecurityContext alone.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 51,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "medium",
+      "question": "How do you apply a seccomp profile to a Pod in Kubernetes?",
+      "options": [
+        "Using the securityContext.seccompProfile field in the Pod or container spec",
+        "Using a ConfigMap mounted at /etc/seccomp",
+        "Using a Kubernetes annotation: seccomp.kubernetes.io/pod",
+        "Using an environment variable: SECCOMP_PROFILE"
+      ],
+      "correct": 0,
+      "explanation": "The securityContext.seccompProfile field (GA since Kubernetes 1.19) sets the seccomp profile. type: RuntimeDefault uses the runtime's default, type: Localhost with localhostProfile: <path> uses a custom profile from the node's seccomp profile directory (usually /var/lib/kubelet/seccomp/).",
+      "link": "container-security.html"
+    },
+    {
+      "id": 52,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "easy",
+      "question": "Why should the container runtime version be kept up to date on worker nodes?",
+      "options": [
+        "To support the latest Kubernetes Dashboard features",
+        "To patch container escape vulnerabilities and privilege escalation bugs in the runtime",
+        "To improve container image download speeds",
+        "To enable IPv6 support"
+      ],
+      "correct": 1,
+      "explanation": "Container runtime vulnerabilities (like CVE-2019-5736 in runc or CVE-2024-21626) can enable container escape to the host. Keeping the runtime (containerd, CRI-O) and its dependencies (runc) updated patches these critical security vulnerabilities. Runtime updates should be tested and applied promptly.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 53,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "medium",
+      "question": "What is the security purpose of using a minimal base image (like distroless or Alpine) for containers?",
+      "options": [
+        "Minimal images are automatically encrypted",
+        "They reduce the number of exploitable packages, tools, and shells available to an attacker after a container compromise",
+        "They provide built-in malware scanning",
+        "They enforce network isolation between containers"
+      ],
+      "correct": 1,
+      "explanation": "Minimal base images remove package managers, shells (bash, sh), debugging tools, and unnecessary libraries. If an attacker gains code execution in the container, they have fewer tools available for lateral movement, data exfiltration, or further exploitation. Distroless images do not even include a shell.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 54,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "What does the SYS_ADMIN capability allow, and why is it considered almost equivalent to root?",
+      "options": [
+        "It allows administering user accounts only",
+        "It grants a wide range of privileged operations including mount, unmount, setting hostname, and configuring kernel parameters",
+        "It allows managing Kubernetes RBAC roles",
+        "It only allows administering the container's own processes"
+      ],
+      "correct": 1,
+      "explanation": "SYS_ADMIN is a catch-all capability that grants numerous privileged operations: mounting filesystems, using unshare() for namespace creation, performing BPF operations, and more. It is frequently used in container escape exploits. The CIS Benchmark and Restricted Pod Security Standard both prohibit it.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 55,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "hard",
+      "question": "A node's /etc/fstab mounts the kubelet data directory with default options. What security improvement can be made?",
+      "options": [
+        "Mount with nosuid and noexec options to prevent setuid binaries and script execution from volume data",
+        "Change the kubelet data directory to /tmp",
+        "Remove the fstab entry entirely",
+        "Mount with read-only options"
+      ],
+      "correct": 0,
+      "explanation": "Mounting the kubelet data directory (where container volumes are stored) with nosuid and noexec prevents setuid binaries from escalating privileges and prevents direct execution of files from volumes. This is a defense-in-depth measure against attacks that write and execute malicious binaries via mounted volumes.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 56,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "What are the three AppArmor profile modes?",
+      "options": [
+        "Allow, Deny, Audit",
+        "Enforce, Complain, Unconfined",
+        "Strict, Moderate, Permissive",
+        "Block, Warn, Ignore"
+      ],
+      "correct": 1,
+      "explanation": "AppArmor profiles operate in three modes: Enforce (violations are blocked and logged), Complain (violations are logged but allowed -- useful for profile development), and Unconfined (no restrictions). Production containers should use Enforce mode, while Complain mode helps develop and test profiles before enforcement.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 57,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "hard",
+      "question": "How does minimizing IAM roles for Kubernetes nodes improve cluster security?",
+      "options": [
+        "It reduces the number of nodes in the cluster",
+        "It limits the blast radius if a node is compromised, preventing access to cloud resources beyond what the node needs",
+        "It improves node boot time",
+        "It disables RBAC on the node"
+      ],
+      "correct": 1,
+      "explanation": "Cloud IAM roles assigned to nodes determine what cloud resources (S3 buckets, databases, other services) the node can access. Over-permissive IAM roles mean a compromised container (via instance metadata service) can access cloud resources it should not. Roles should follow least privilege, granting only necessary permissions.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 58,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "hard",
+      "question": "You want to generate a custom seccomp profile based on an application's actual syscall usage. Which approach is recommended?",
+      "options": [
+        "Manually write the profile by reading the application's source code",
+        "Run the application with seccomp in log mode (SCMP_ACT_LOG) or use tools like 'strace' or the Security Profiles Operator to record actual syscalls, then create a whitelist-based profile",
+        "Copy the RuntimeDefault profile and use it as-is",
+        "Disable seccomp and rely on AppArmor instead"
+      ],
+      "correct": 1,
+      "explanation": "The best approach is empirical: run the application and record the actual syscalls it makes. Tools like the Security Profiles Operator (SPO) can record and generate profiles. Running with SCMP_ACT_LOG or using strace captures the syscall list. This ensures the profile allows all needed syscalls while blocking everything else.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 59,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "medium",
+      "question": "What is the security risk of running containers with 'hostPID: true'?",
+      "options": [
+        "The container can see other containers' network traffic",
+        "The container shares the host's PID namespace, allowing it to see and potentially interact with all processes on the node including other containers",
+        "The container's processes get the highest scheduling priority",
+        "The container can modify the host's DNS settings"
+      ],
+      "correct": 1,
+      "explanation": "hostPID: true shares the host's process namespace with the container. The container can see all processes running on the node, including other containers' processes. Combined with SYS_PTRACE capability, an attacker could read memory of other processes, inject code, or steal credentials.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 60,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "What is the Pod Security Admission controller?",
+      "options": [
+        "A tool for scanning container images",
+        "A built-in admission controller that enforces Pod Security Standards at the namespace level",
+        "A network firewall for Pod traffic",
+        "A scheduler plugin for Pod placement"
+      ],
+      "correct": 1,
+      "explanation": "The Pod Security Admission (PSA) controller is built into Kubernetes (replacing PodSecurityPolicy) and enforces Pod Security Standards (Privileged, Baseline, Restricted) at the namespace level. It validates Pod specs against the configured standard and can enforce (reject), audit (log), or warn (show warnings).",
+      "link": "container-security.html"
+    },
+    {
+      "id": 61,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "What are the three enforcement modes for Pod Security Admission?",
+      "options": [
+        "Allow, Deny, Log",
+        "Enforce, Audit, Warn",
+        "Block, Monitor, Ignore",
+        "Strict, Standard, Permissive"
+      ],
+      "correct": 1,
+      "explanation": "Pod Security Admission has three modes: Enforce (reject Pods that violate the standard), Audit (allow but log violations in the audit log), and Warn (allow but display a warning to the user). These can be set independently, allowing gradual migration -- e.g., warn on Restricted while enforcing Baseline.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 62,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "A namespace has the label 'pod-security.kubernetes.io/enforce: restricted'. A developer tries to create a Pod without 'runAsNonRoot: true'. What happens?",
+      "options": [
+        "The Pod is created with a warning",
+        "The Pod is created but logged in the audit log",
+        "The Pod creation is rejected by the admission controller",
+        "The Pod is created but cannot be scheduled"
+      ],
+      "correct": 2,
+      "explanation": "With enforce mode set to 'restricted', Pods that do not comply with the Restricted standard are rejected. The Restricted standard requires runAsNonRoot: true, dropping ALL capabilities, a seccomp profile, and no privilege escalation. The developer must fix the Pod spec before it can be created.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 63,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "What is OPA Gatekeeper in the context of Kubernetes?",
+      "options": [
+        "A network gateway for inter-cluster communication",
+        "A policy engine that uses custom constraint templates to enforce policies on Kubernetes resources via admission control",
+        "A Kubernetes authentication provider",
+        "A container image registry"
+      ],
+      "correct": 1,
+      "explanation": "OPA Gatekeeper is a validating admission webhook that uses the Open Policy Agent (OPA) engine. It allows writing custom ConstraintTemplates in Rego to enforce organization-specific policies -- like requiring resource limits, specific labels, trusted image registries, or blocking privileged containers.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 64,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "How does OPA Gatekeeper differ from Pod Security Admission?",
+      "options": [
+        "They are identical in functionality",
+        "Gatekeeper supports custom policies on any Kubernetes resource, while PSA only enforces predefined Pod Security Standards on Pods",
+        "PSA is more customizable than Gatekeeper",
+        "Gatekeeper only works with container images, not Pods"
+      ],
+      "correct": 1,
+      "explanation": "Pod Security Admission is limited to enforcing the three predefined Pod Security Standards on Pod resources. Gatekeeper can enforce custom policies on any Kubernetes resource type (Deployments, Services, Ingresses, etc.) using Rego policies. Gatekeeper is more flexible but requires maintaining custom policy code.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 65,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "You need to enforce that all Pods must have resource limits defined. Which approach is most robust?",
+      "options": [
+        "Create a LimitRange with defaults in every namespace",
+        "Use a Gatekeeper ConstraintTemplate that rejects Pods without resource limits, combined with a LimitRange as a fallback",
+        "Add a comment in the deployment documentation requesting developers to add limits",
+        "Run a weekly audit script that reports non-compliant Pods"
+      ],
+      "correct": 1,
+      "explanation": "A layered approach is most robust: Gatekeeper rejects Pods without explicit resource limits (enforcement), while LimitRange provides defaults as a safety net if Gatekeeper is bypassed. Documentation and auditing are useful but do not prevent non-compliant resources from being created.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 66,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "easy",
+      "question": "How are Kubernetes Secrets stored in etcd by default?",
+      "options": [
+        "Encrypted with AES-256-GCM",
+        "Encrypted with the cluster's TLS certificate",
+        "Base64-encoded but NOT encrypted",
+        "Stored as plaintext"
+      ],
+      "correct": 2,
+      "explanation": "By default, Kubernetes Secrets are stored in etcd as base64-encoded data, which is NOT encryption. Anyone with access to etcd (either through the API or direct etcd access) can read Secret values. Encryption at rest must be explicitly configured using EncryptionConfiguration.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 67,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "How do you enable encryption at rest for Kubernetes Secrets in etcd?",
+      "options": [
+        "Set --encrypt-secrets=true on the API server",
+        "Create an EncryptionConfiguration file specifying encryption providers and configure the API server with --encryption-provider-config",
+        "Enable TLS on etcd",
+        "Use a third-party secrets manager instead of Kubernetes Secrets"
+      ],
+      "correct": 1,
+      "explanation": "Encryption at rest requires creating an EncryptionConfiguration YAML file that specifies which resources to encrypt and which encryption provider to use (aescbc, aesgcm, secretbox, or kms). The API server is configured with --encryption-provider-config pointing to this file. Existing Secrets must be re-encrypted after enabling.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 68,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "After enabling encryption at rest, existing Secrets are still stored unencrypted. How do you encrypt them?",
+      "options": [
+        "Restart the API server; it re-encrypts automatically",
+        "Run 'kubectl get secrets --all-namespaces -o json | kubectl replace -f -' to trigger re-encryption on write",
+        "Delete and recreate all Secrets",
+        "Run 'etcdctl encrypt --all'"
+      ],
+      "correct": 1,
+      "explanation": "Existing Secrets remain in their original format until they are rewritten. Reading all Secrets and replacing them triggers the API server to re-encrypt them with the new provider on write. This is the standard approach documented by Kubernetes for encrypting pre-existing data.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 69,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "easy",
+      "question": "What is a container runtime sandbox?",
+      "options": [
+        "A staging environment for testing container images",
+        "An additional isolation layer between the container and the host kernel, providing stronger security boundaries",
+        "A development tool for writing Dockerfiles",
+        "A network sandbox that isolates container DNS"
+      ],
+      "correct": 1,
+      "explanation": "Container runtime sandboxes (like gVisor and Kata Containers) add an extra isolation layer between the container and the host kernel. gVisor intercepts syscalls in user space, while Kata Containers run each Pod in a lightweight VM. Both reduce the risk of container escape exploits targeting kernel vulnerabilities.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 70,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "medium",
+      "question": "How does gVisor provide container isolation?",
+      "options": [
+        "By running containers in virtual machines",
+        "By intercepting container syscalls in a user-space kernel (Sentry) that implements a subset of Linux syscalls without passing them to the host kernel",
+        "By encrypting all container network traffic",
+        "By restricting container CPU usage"
+      ],
+      "correct": 1,
+      "explanation": "gVisor runs a user-space kernel called Sentry that intercepts syscalls from the container application. The Sentry implements Linux syscalls independently without forwarding them to the host kernel (except for a small set handled by Gofer for filesystem operations). This dramatically reduces the host kernel attack surface.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 71,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "hard",
+      "question": "How do you configure a Pod to use a specific container runtime sandbox like gVisor?",
+      "options": [
+        "Set 'sandbox: gvisor' in the SecurityContext",
+        "Create a RuntimeClass resource and reference it in the Pod's runtimeClassName field",
+        "Install gVisor inside the container image",
+        "Set the container runtime to gVisor in the kubelet configuration for all Pods"
+      ],
+      "correct": 1,
+      "explanation": "RuntimeClass is a Kubernetes resource that maps a name to a specific container runtime handler (e.g., runsc for gVisor, kata for Kata Containers). You create a RuntimeClass pointing to the handler, then set spec.runtimeClassName in the Pod spec. This allows per-Pod runtime selection.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 72,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "medium",
+      "question": "What is the role of mTLS (mutual TLS) in a service mesh like Istio?",
+      "options": [
+        "It encrypts data at rest in etcd",
+        "It provides mutual authentication and encryption between services, ensuring both client and server verify each other's identity",
+        "It authenticates users to the Kubernetes Dashboard",
+        "It encrypts container images during pull"
+      ],
+      "correct": 1,
+      "explanation": "mTLS in a service mesh encrypts all service-to-service traffic and provides mutual authentication -- both the client and server present certificates and verify each other's identity. This prevents eavesdropping, man-in-the-middle attacks, and unauthorized service communication within the cluster.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 73,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "hard",
+      "question": "An organization enables Istio strict mTLS mode. What happens to a Pod that is not part of the service mesh trying to communicate with a mesh-enabled Service?",
+      "options": [
+        "The communication succeeds because Istio is transparent",
+        "The connection is rejected because the non-mesh Pod cannot present a valid mTLS certificate",
+        "The traffic is automatically encrypted by the CNI plugin",
+        "The Pod is automatically injected with the Istio sidecar"
+      ],
+      "correct": 1,
+      "explanation": "In strict mTLS mode, Istio requires all incoming connections to present valid mTLS certificates issued by the mesh's CA. A Pod outside the mesh does not have the Istio sidecar proxy and cannot present a valid certificate, so its connections are rejected. Permissive mode would allow both mTLS and plaintext.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 74,
+      "domain": 4,
+      "objective": "4.6",
+      "difficulty": "medium",
+      "question": "What is the Vault CSI Provider used for in Kubernetes?",
+      "options": [
+        "To store container images in HashiCorp Vault",
+        "To inject secrets from HashiCorp Vault into Pods as mounted files using the CSI Secrets Store Driver",
+        "To encrypt Kubernetes Secrets using Vault's transit engine",
+        "To authenticate Kubernetes users against Vault policies"
+      ],
+      "correct": 1,
+      "explanation": "The Vault CSI Provider works with the Secrets Store CSI Driver to mount secrets from HashiCorp Vault directly into Pods as files. This avoids storing sensitive data in Kubernetes Secrets and leverages Vault's access policies, audit logging, and dynamic secret generation.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 75,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "medium",
+      "question": "Which Pod Security Standard level should be used for system-level workloads like CNI plugins or monitoring agents that require host-level access?",
+      "options": [
+        "Restricted",
+        "Baseline",
+        "Privileged",
+        "Custom"
+      ],
+      "correct": 2,
+      "explanation": "The Privileged standard is completely unrestricted and is intended for system-level workloads that genuinely require host-level access (CNI plugins, storage drivers, monitoring agents). These workloads typically need hostNetwork, hostPID, privileged containers, or hostPath volumes. Privileged should only be used for infrastructure namespaces.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 76,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "What encryption provider is recommended for production Kubernetes Secret encryption at rest?",
+      "options": [
+        "identity (no encryption)",
+        "aescbc with a static key",
+        "KMS (Key Management Service) provider using a cloud KMS",
+        "Base64 encoding"
+      ],
+      "correct": 2,
+      "explanation": "The KMS provider is recommended for production because it uses a cloud-managed KMS (AWS KMS, GCP KMS, Azure Key Vault) for key management. The encryption key is never stored on disk in the API server. aescbc works but the key is stored locally in the EncryptionConfiguration file, which must be separately secured.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 77,
+      "domain": 4,
+      "objective": "4.6",
+      "difficulty": "easy",
+      "question": "Why should sensitive configuration values be stored in Secrets rather than ConfigMaps?",
+      "options": [
+        "Secrets are automatically encrypted in transit",
+        "Secrets have additional access controls, can be encrypted at rest, and tools understand to treat them as sensitive data",
+        "ConfigMaps cannot store string values",
+        "Secrets are stored on disk while ConfigMaps are in memory"
+      ],
+      "correct": 1,
+      "explanation": "While Secrets and ConfigMaps are structurally similar, Secrets have additional security features: they can be encrypted at rest, RBAC can be configured to restrict Secret access separately from ConfigMaps, and Kubernetes tools treat them as sensitive (e.g., kubectl get secret does not display data by default).",
+      "link": "container-security.html"
+    },
+    {
+      "id": 78,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "hard",
+      "question": "A Gatekeeper ConstraintTemplate uses the Rego rule: 'violation[{\"msg\": msg}] { not input.review.object.spec.template.spec.securityContext.runAsNonRoot; msg := \"Pods must run as non-root\" }'. What does this enforce?",
+      "options": [
+        "All Services must have a non-root selector",
+        "All Pod templates must have runAsNonRoot set to true in the Pod-level SecurityContext",
+        "All nodes must run non-root processes",
+        "All container images must be built with a non-root USER"
+      ],
+      "correct": 1,
+      "explanation": "This Rego rule checks if the Pod template's securityContext has runAsNonRoot set. If it is not set (or false), a violation is generated with the message 'Pods must run as non-root'. Gatekeeper rejects the resource creation if any violations exist. Note this checks the spec template, so it catches Deployments, not just bare Pods.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 79,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "medium",
+      "question": "How does a service mesh help detect and prevent unauthorized service-to-service communication?",
+      "options": [
+        "By encrypting DNS queries",
+        "By enforcing authorization policies that define which services can communicate with each other, beyond what NetworkPolicies offer",
+        "By scanning container images for malware",
+        "By monitoring CPU usage of each service"
+      ],
+      "correct": 1,
+      "explanation": "Service meshes enforce L7 authorization policies (e.g., Istio AuthorizationPolicy) that control which services can call which endpoints, including HTTP method and path restrictions. This is more granular than NetworkPolicies (L3/L4). Combined with mTLS identity, it prevents impersonation and unauthorized access.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 80,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "medium",
+      "question": "What is the trade-off of using gVisor for container sandboxing?",
+      "options": [
+        "No trade-offs; gVisor is always better than standard runc",
+        "Stronger isolation at the cost of performance overhead and potential incompatibility with some syscalls",
+        "Better performance but weaker isolation",
+        "gVisor requires more memory but has no CPU overhead"
+      ],
+      "correct": 1,
+      "explanation": "gVisor provides stronger isolation by intercepting syscalls in user space, but this adds performance overhead (especially for I/O-intensive and syscall-heavy workloads). Some applications may encounter incompatibilities because gVisor does not implement every Linux syscall. It is best suited for untrusted or multi-tenant workloads where security outweighs performance.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 81,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "Which Pod Security Standard prohibits containers from running as root?",
+      "options": [
+        "Privileged",
+        "Baseline",
+        "Restricted",
+        "Both Baseline and Restricted"
+      ],
+      "correct": 2,
+      "explanation": "Only the Restricted standard requires runAsNonRoot: true. The Baseline standard prevents known privilege escalations (privileged containers, hostPath, etc.) but does not require running as non-root. Privileged has no restrictions at all.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 82,
+      "domain": 4,
+      "objective": "4.6",
+      "difficulty": "hard",
+      "question": "An application needs database credentials that rotate every 24 hours. What is the most secure approach in Kubernetes?",
+      "options": [
+        "Store the credentials in a ConfigMap and update it daily",
+        "Use a dynamic secret engine (like Vault's database engine) that generates short-lived credentials on demand for each Pod",
+        "Store the credentials in a Kubernetes Secret and manually update it daily",
+        "Hardcode the credentials in the container image and rebuild daily"
+      ],
+      "correct": 1,
+      "explanation": "Dynamic secret engines generate unique, short-lived credentials for each consumer. Each Pod gets its own database credentials that auto-expire. This eliminates shared credentials, enables audit trails per consumer, and automatic revocation when Pods are deleted. This is significantly more secure than rotating static credentials.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 83,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "hard",
+      "question": "The EncryptionConfiguration lists two providers: 'aescbc' first, then 'identity'. What does this configuration mean?",
+      "options": [
+        "All operations use aescbc encryption; identity is ignored",
+        "New Secrets are written using aescbc (first provider), but existing Secrets can be read with either provider (used during migration)",
+        "Reads use aescbc; writes use identity",
+        "The configuration is invalid; only one provider is allowed"
+      ],
+      "correct": 1,
+      "explanation": "The first provider in the list is used for encryption on writes. All listed providers are tried in order for decryption on reads. Listing 'identity' (no encryption) as a read provider allows the API server to read old unencrypted Secrets while writing new ones encrypted with aescbc. This is the standard migration pattern.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 84,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "easy",
+      "question": "What is the primary security benefit of a service mesh in a Kubernetes cluster?",
+      "options": [
+        "Faster container image pulls",
+        "Automatic encryption and authentication of all service-to-service traffic without application code changes",
+        "Reduced cluster resource usage",
+        "Automatic vulnerability scanning of running containers"
+      ],
+      "correct": 1,
+      "explanation": "A service mesh provides transparent mTLS encryption and mutual authentication for all service-to-service communication. This is injected via sidecar proxies without requiring application code changes, ensuring that even legacy applications benefit from encrypted, authenticated communication.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 85,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "medium",
+      "question": "What is a ValidatingWebhookConfiguration in Kubernetes?",
+      "options": [
+        "A webhook that modifies incoming API requests",
+        "A webhook that validates incoming API requests and can accept or reject them based on custom logic",
+        "A webhook that authenticates users",
+        "A webhook that monitors Pod health"
+      ],
+      "correct": 1,
+      "explanation": "ValidatingWebhookConfiguration defines a webhook server that validates API requests. When a resource is created or modified, the API server sends the request to the webhook, which returns an allow or deny decision. OPA Gatekeeper uses this mechanism. MutatingWebhookConfiguration modifies requests instead of just validating them.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 86,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "hard",
+      "question": "A team wants to gradually adopt the Restricted Pod Security Standard. What is the recommended migration approach?",
+      "options": [
+        "Enable enforce: restricted immediately and fix all failures",
+        "Set warn: restricted and audit: restricted first to identify non-compliant Pods, then fix violations before enabling enforce: restricted",
+        "Only apply Restricted to new namespaces, never to existing ones",
+        "Run kube-bench to check compliance"
+      ],
+      "correct": 1,
+      "explanation": "The recommended migration is gradual: first set warn and audit modes to Restricted to identify all non-compliant Pods without blocking them. Fix violations across workloads, then enable enforce mode. This prevents production disruptions while systematically improving security posture.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 87,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "hard",
+      "question": "Kata Containers provide isolation by running Pods inside lightweight VMs. What is the key advantage over gVisor?",
+      "options": [
+        "Kata is faster than gVisor for all workloads",
+        "Kata provides hardware-level isolation with a separate kernel per Pod, offering stronger isolation for workloads requiring full kernel compatibility",
+        "Kata does not require any special node configuration",
+        "Kata supports more container orchestrators than gVisor"
+      ],
+      "correct": 1,
+      "explanation": "Kata Containers run each Pod in a lightweight VM with its own kernel, providing hardware-level isolation. This is stronger than gVisor's user-space kernel approach and offers full Linux kernel compatibility (all syscalls work). The trade-off is higher resource overhead (each Pod needs VM resources) and slightly longer startup time.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 88,
+      "domain": 4,
+      "objective": "4.6",
+      "difficulty": "medium",
+      "question": "Why should Kubernetes Secrets not be used in environment variables for sensitive data?",
+      "options": [
+        "Environment variables cannot hold Secret data",
+        "Environment variables may appear in logs, crash dumps, and are visible via the Kubernetes API and container inspection, increasing exposure risk",
+        "Environment variables are slower than volume mounts",
+        "Environment variables cannot be updated after Pod creation"
+      ],
+      "correct": 1,
+      "explanation": "Environment variables with Secret values can appear in application logs (accidental logging), crash dumps, and are visible via 'kubectl describe pod' and the API. Volume-mounted Secrets are more secure because they are files on disk (not in the process environment) and can be restricted with filesystem permissions.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 89,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "What is the risk of using etcd without encryption at rest in a Kubernetes cluster?",
+      "options": [
+        "etcd performance degrades without encryption",
+        "An attacker with access to etcd storage (disk or backup) can read all cluster Secrets, tokens, and configuration data in plaintext",
+        "etcd cannot replicate without encryption",
+        "Pods cannot start without etcd encryption"
+      ],
+      "correct": 1,
+      "explanation": "Without encryption at rest, all Kubernetes data in etcd (including Secrets, ServiceAccount tokens, and configuration) is stored in plaintext (or base64). An attacker who gains access to etcd backups, disk snapshots, or the etcd data directory can read everything. This is especially dangerous in cloud environments where disk snapshots may be accessible.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 90,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "Why should container images use minimal base images (like distroless) for production?",
+      "options": [
+        "To reduce image download time only",
+        "To minimize the attack surface by removing unnecessary packages, shells, and tools that attackers could exploit",
+        "To comply with Kubernetes version requirements",
+        "To enable multi-architecture builds"
+      ],
+      "correct": 1,
+      "explanation": "Minimal base images reduce the attack surface by removing shells (bash, sh), package managers (apt, apk), debugging tools, and unnecessary libraries. Fewer packages mean fewer potential CVEs and fewer tools available to an attacker after a container compromise. Google's distroless images contain only the application and its runtime dependencies.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 91,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "What is the difference between Alpine-based and distroless base images from a security perspective?",
+      "options": [
+        "They are equally secure",
+        "Alpine includes a package manager (apk) and shell (ash); distroless includes neither, providing a smaller attack surface",
+        "Distroless images are larger because they include more security tools",
+        "Alpine is more secure because it uses musl libc instead of glibc"
+      ],
+      "correct": 1,
+      "explanation": "Alpine includes apk (package manager), ash (shell), and basic utilities. While small, these tools could be used by an attacker. Distroless images contain ONLY the application runtime (Java, Python, Node, etc.) with no shell or package manager, making post-exploitation significantly harder.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 92,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "easy",
+      "question": "What is the purpose of container image scanning in a CI/CD pipeline?",
+      "options": [
+        "To optimize image size",
+        "To detect known vulnerabilities (CVEs) in image packages and dependencies before deployment",
+        "To verify the image runs correctly",
+        "To compress image layers"
+      ],
+      "correct": 1,
+      "explanation": "Image scanning tools (Trivy, Grype, Snyk) analyze container images for known CVEs in OS packages, application dependencies, and configuration issues. Integrating scanning into CI/CD catches vulnerabilities before images reach production, preventing deployment of images with critical security flaws.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 93,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "Which open-source tool is commonly used for container image vulnerability scanning in Kubernetes environments?",
+      "options": [
+        "kube-hunter",
+        "Trivy",
+        "kube-bench",
+        "Falco"
+      ],
+      "correct": 1,
+      "explanation": "Trivy is an open-source vulnerability scanner that scans container images, filesystems, and Kubernetes configurations for CVEs. It maintains an updated vulnerability database and can be integrated into CI/CD pipelines. It scans OS packages, language-specific dependencies, and IaC configurations.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 94,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "hard",
+      "question": "Trivy reports a HIGH severity CVE in a base image package. The package is not used by the application. What is the recommended approach?",
+      "options": [
+        "Ignore all HIGH CVEs that are in base image packages",
+        "Assess the CVE: if the package is truly unused and unexploitable, document the exception, but still update the base image or use a more minimal image to reduce future risk",
+        "Switch to a different scanner that does not report it",
+        "Mark all Trivy findings as false positives"
+      ],
+      "correct": 1,
+      "explanation": "Even if a CVE is in an unused package, it still increases attack surface. The recommended approach is: assess exploitability, document exceptions with justification, and plan remediation (update base image or switch to a minimal image). Never blindly ignore CVEs -- context-aware triage is essential.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 95,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "easy",
+      "question": "What is the purpose of restricting container registries using an admission controller?",
+      "options": [
+        "To speed up image pulls",
+        "To ensure only images from trusted, approved registries can be deployed in the cluster",
+        "To reduce storage costs",
+        "To enable image caching on nodes"
+      ],
+      "correct": 1,
+      "explanation": "Registry allowlisting ensures that only images from trusted registries (e.g., your private registry or verified public registries) can be deployed. This prevents the use of untrusted or potentially malicious images from arbitrary public registries. OPA Gatekeeper or custom admission webhooks commonly enforce this.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 96,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "How does image signing with Cosign improve supply chain security?",
+      "options": [
+        "It encrypts the image contents so only authorized users can pull them",
+        "It provides a cryptographic signature that verifies the image was built by a trusted party and has not been tampered with",
+        "It compresses the image to reduce attack surface",
+        "It automatically patches vulnerabilities in the image"
+      ],
+      "correct": 1,
+      "explanation": "Cosign creates cryptographic signatures for container images. When combined with a verification policy (e.g., Kyverno or Connaisseur admission controller), the cluster only accepts images with valid signatures from trusted keys. This prevents deploying tampered images even if the registry is compromised.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 97,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "What is the ImagePolicyWebhook admission controller used for?",
+      "options": [
+        "To set the default imagePullPolicy for all Pods",
+        "To call an external webhook that validates container images against custom policies (signing, scanning results) before allowing Pod creation",
+        "To cache container images on nodes",
+        "To convert image formats between Docker and OCI"
+      ],
+      "correct": 1,
+      "explanation": "ImagePolicyWebhook calls an external webhook service to validate container images before allowing Pods to be created. The webhook can check image signatures, vulnerability scan results, registry allowlists, or any custom policy. This enables integration with enterprise image governance workflows.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 98,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "easy",
+      "question": "What is the security benefit of using multi-stage Docker builds?",
+      "options": [
+        "Multi-stage builds run containers in multiple security zones",
+        "They exclude build tools, compilers, and source code from the final image, reducing attack surface and preventing source code exposure",
+        "They automatically scan for vulnerabilities between stages",
+        "They enable running multiple applications in one container"
+      ],
+      "correct": 1,
+      "explanation": "Multi-stage builds separate the build environment from the runtime environment. Build tools (gcc, npm, pip), source code, and intermediate files exist only in build stages. The final stage contains only the compiled binary and necessary runtime files, preventing exposure of source code and reducing the number of exploitable packages.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 99,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "medium",
+      "question": "Why should Dockerfiles avoid using 'latest' tags for base images?",
+      "options": [
+        "The 'latest' tag is reserved for Kubernetes system images",
+        "The 'latest' tag is mutable and can point to different images over time, breaking reproducibility and potentially introducing unexpected vulnerabilities",
+        "The 'latest' tag images are always larger",
+        "Kubernetes cannot pull images with the 'latest' tag"
+      ],
+      "correct": 1,
+      "explanation": "The 'latest' tag is a mutable pointer that can change at any time. An image that was safe today may be replaced with one containing vulnerabilities or even malicious code. Using specific version tags or image digests (sha256:...) ensures reproducible, auditable builds and prevents supply chain attacks via tag manipulation.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 100,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "medium",
+      "question": "What is static analysis of Kubernetes manifests and why is it important?",
+      "options": [
+        "Analyzing running Pods for performance issues",
+        "Scanning Kubernetes YAML/JSON manifests before deployment to detect security misconfigurations like missing security contexts, privileged containers, or exposed secrets",
+        "Monitoring cluster metrics in real time",
+        "Testing API server response times"
+      ],
+      "correct": 1,
+      "explanation": "Static analysis tools (Kubesec, Conftest, Checkov, Datree) scan Kubernetes manifests before they are applied to detect security issues: missing resource limits, privileged containers, host volume mounts, missing seccomp profiles, etc. This shifts security left, catching issues before deployment.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 101,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "hard",
+      "question": "How does Conftest differ from Kubesec for static analysis?",
+      "options": [
+        "They are identical tools with different names",
+        "Conftest allows writing custom policies in Rego (OPA) for any structured data format, while Kubesec uses predefined security scoring rules specific to Kubernetes",
+        "Kubesec supports custom policies while Conftest does not",
+        "Conftest only works with Helm charts"
+      ],
+      "correct": 1,
+      "explanation": "Conftest uses OPA's Rego language to define custom policies that can validate any structured data (YAML, JSON, HCL). It is highly flexible. Kubesec provides predefined security scoring specifically for Kubernetes resources with a simpler interface but less customization. Organizations often use both for comprehensive coverage.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 102,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "What is binary authorization and how does it work with container images?",
+      "options": [
+        "It restricts which binaries can run inside a container at runtime",
+        "It is a deploy-time security control that requires container images to have attestations (like vulnerability scan results and build provenance) before they can be deployed",
+        "It authorizes users to download container images",
+        "It converts container images to binary format for faster execution"
+      ],
+      "correct": 1,
+      "explanation": "Binary authorization (like Google Binary Authorization or Sigstore policy-controller) requires images to have attestations proving they went through required steps (vulnerability scanning, code review, CI pipeline). At deploy time, the admission controller verifies attestations exist and are signed by trusted authorities before allowing the image to run.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 103,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "hard",
+      "question": "An organization's Dockerfile installs packages using 'apt-get install -y curl wget netcat'. From a security perspective, what is the concern?",
+      "options": [
+        "These packages consume too much disk space",
+        "These networking tools give an attacker post-exploitation capabilities for data exfiltration, reverse shells, and lateral movement if the container is compromised",
+        "These packages conflict with Kubernetes networking",
+        "apt-get is slower than apk"
+      ],
+      "correct": 1,
+      "explanation": "Tools like curl, wget, and netcat are frequently used in post-exploitation: curl/wget for downloading additional malware, netcat for reverse shells and lateral movement. If these tools are not needed by the application at runtime, they should not be in the production image. Use multi-stage builds to keep them in build stages only.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 104,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "medium",
+      "question": "What is the security advantage of using image digests (sha256:...) instead of tags?",
+      "options": [
+        "Digests are shorter and easier to manage",
+        "Digests are immutable content-addressed references that cannot be changed without altering the image, preventing tag manipulation attacks",
+        "Digests enable faster image pulls",
+        "Digests automatically include vulnerability scan results"
+      ],
+      "correct": 1,
+      "explanation": "Image digests are SHA-256 hashes of the image manifest. Unlike tags (which are mutable pointers), digests uniquely identify exact image content. An attacker who compromises a registry cannot replace a digested image without changing the digest. This ensures you always deploy exactly the image you tested.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 105,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "medium",
+      "question": "A CI/CD pipeline scans images with Trivy. Which scan result should block deployment to production?",
+      "options": [
+        "Any vulnerability of any severity",
+        "CRITICAL and HIGH severity vulnerabilities with available fixes",
+        "Only CRITICAL vulnerabilities regardless of fix availability",
+        "No scan results should block deployment"
+      ],
+      "correct": 1,
+      "explanation": "A pragmatic policy blocks on CRITICAL and HIGH CVEs that have available fixes (meaning the vulnerability is patchable by updating a package). This balances security with practicality -- unfixable CVEs require a risk assessment rather than blocking. The specific threshold should be defined in the organization's security policy.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 106,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "easy",
+      "question": "What does Kubesec analyze when scoring a Kubernetes manifest?",
+      "options": [
+        "Container image layers",
+        "Network latency between Pods",
+        "Security-relevant fields in Pod specs (SecurityContext, capabilities, volume mounts, service accounts)",
+        "RBAC policies across the cluster"
+      ],
+      "correct": 2,
+      "explanation": "Kubesec scores Kubernetes manifests based on security-relevant fields: SecurityContext settings (runAsNonRoot, readOnlyRootFilesystem), capability drops, resource limits, ServiceAccount configuration, and volume types. It produces a numeric score and lists positive (hardened) and negative (risky) findings.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 107,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "What is Notary/TUF in the context of container image security?",
+      "options": [
+        "A container orchestration tool",
+        "A framework for securing software update systems using signed metadata that protects against compromised repositories",
+        "A Kubernetes ingress controller with TLS support",
+        "A container image compression algorithm"
+      ],
+      "correct": 1,
+      "explanation": "Notary implements The Update Framework (TUF) for container images. It uses signed metadata with role-based keys (root, targets, snapshot, timestamp) to protect against multiple attack vectors: compromised keys, replay attacks, and mix-and-match attacks. Docker Content Trust uses Notary for image signing.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 108,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "Why should Dockerfiles include a USER instruction for non-root execution?",
+      "options": [
+        "To improve image build speed",
+        "To ensure the application runs as a non-root user, limiting the impact of a container compromise",
+        "To enable multi-architecture support",
+        "To reduce the image size"
+      ],
+      "correct": 1,
+      "explanation": "Adding 'USER <non-root-user>' in the Dockerfile ensures the application process runs with limited privileges by default. If the container is compromised, the attacker operates as a non-root user with restricted filesystem and kernel access, making privilege escalation harder.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 109,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "hard",
+      "question": "What is the risk of using 'COPY . .' in a Dockerfile without a .dockerignore file?",
+      "options": [
+        "The build will fail",
+        "Sensitive files (.env, .git, SSH keys, certificates) may be copied into the image and become accessible to anyone who pulls it",
+        "The image will be too large to push",
+        "Docker will skip the COPY instruction"
+      ],
+      "correct": 1,
+      "explanation": "Without .dockerignore, 'COPY . .' includes everything in the build context: .env files with secrets, .git directory with commit history, SSH keys, certificates, and other sensitive files. These end up in the image layers and are accessible to anyone who pulls the image. A .dockerignore file should exclude sensitive files and unnecessary directories.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 110,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "hard",
+      "question": "How can you integrate vulnerability scanning into the Kubernetes admission control pipeline?",
+      "options": [
+        "Run Trivy on every node as a DaemonSet",
+        "Use an admission webhook that queries a scan results database and rejects images that do not meet the vulnerability threshold",
+        "Add a scanning step to the kubelet image pull process",
+        "Scan images only in the developer's local environment"
+      ],
+      "correct": 1,
+      "explanation": "An admission webhook (like those provided by Trivy Operator, Anchore, or Snyk) intercepts Pod creation requests and checks if the container images have been scanned and meet vulnerability policies. If an image has unresolved CRITICAL CVEs, the webhook rejects the Pod creation. This enforces scanning compliance at deploy time.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 111,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "medium",
+      "question": "What security issues can OPA Conftest detect in Kubernetes manifests that Kubesec cannot?",
+      "options": [
+        "Conftest cannot detect anything Kubesec cannot",
+        "Custom organization-specific policies like required labels, naming conventions, specific image registries, and team-specific security requirements",
+        "Conftest detects runtime vulnerabilities while Kubesec only does static analysis",
+        "Conftest detects network misconfigurations"
+      ],
+      "correct": 1,
+      "explanation": "Conftest's custom Rego policies can enforce any organization-specific rule: required labels (team, cost-center), naming conventions, specific registry requirements, banned sidecar images, maximum resource limits, required annotations, etc. Kubesec only checks predefined security best practices.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 112,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "hard",
+      "question": "An attacker pushes a modified image to a registry using the same tag as a trusted image. Which security control prevents this attack?",
+      "options": [
+        "Image scanning",
+        "Image signature verification combined with image digest pinning in deployment manifests",
+        "Rate limiting on the registry",
+        "RBAC on the Kubernetes API"
+      ],
+      "correct": 1,
+      "explanation": "Image signature verification ensures only images signed by trusted keys are deployed, catching unsigned or re-signed malicious images. Image digest pinning in manifests ensures the exact image content is deployed regardless of tag changes. Together, they prevent both tag manipulation and unsigned image deployment.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 113,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "medium",
+      "question": "What is the purpose of running 'RUN apt-get update && apt-get install -y package && rm -rf /var/lib/apt/lists/*' in a single Dockerfile layer?",
+      "options": [
+        "To ensure the package manager works correctly",
+        "To reduce the image size by removing the package lists in the same layer, and prevent using stale cached package lists",
+        "To install multiple packages simultaneously",
+        "To avoid network calls during build"
+      ],
+      "correct": 1,
+      "explanation": "Combining update, install, and cleanup in one RUN instruction creates a single layer. If cleanup were in a separate RUN, the package lists would still exist in the previous layer (Docker layers are additive). This also ensures apt-get update runs every time, preventing stale cache issues.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 114,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "medium",
+      "question": "What is the security benefit of using scratch as a base image?",
+      "options": [
+        "Scratch images have built-in security tools",
+        "Scratch is a completely empty base image with zero OS packages, providing the absolute minimum attack surface for statically compiled binaries",
+        "Scratch images are faster to build",
+        "Scratch automatically applies seccomp profiles"
+      ],
+      "correct": 1,
+      "explanation": "The 'scratch' image is completely empty -- no OS, no shell, no libraries, no package manager. It works only with statically compiled binaries (like Go applications). This provides the smallest possible attack surface: a compromised container has literally nothing to exploit beyond the application binary itself.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 115,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "easy",
+      "question": "When should container images be rescanned for vulnerabilities?",
+      "options": [
+        "Only when the image is first built",
+        "Regularly (on a schedule) and when new CVEs are published, because new vulnerabilities are discovered in existing packages",
+        "Only after a security incident",
+        "Never after the initial scan passes"
+      ],
+      "correct": 1,
+      "explanation": "Vulnerability databases are updated daily. An image that passed scanning last week may now have CRITICAL CVEs discovered in its packages. Regular rescanning (daily or on new CVE advisories) ensures that images running in production are checked against the latest vulnerability data.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 116,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "hard",
+      "question": "A Dockerfile contains 'RUN echo \"password123\" > /app/config.txt' in an early layer, followed by 'RUN rm /app/config.txt' in a later layer. Is the password secure?",
+      "options": [
+        "Yes, because the file was deleted",
+        "No, the password still exists in the earlier image layer and can be extracted by inspecting the image history or extracting layers",
+        "Yes, because Docker automatically redacts secrets from layers",
+        "It depends on the registry configuration"
+      ],
+      "correct": 1,
+      "explanation": "Docker image layers are additive and immutable. Deleting a file in a later layer does not remove it from the earlier layer where it was created. Anyone with access to the image can extract the earlier layer and read the password. Secrets should never be put in Dockerfiles -- use build secrets or multi-stage builds instead.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 117,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "medium",
+      "question": "Which tool can scan Kubernetes cluster configurations (not just manifests) for security issues?",
+      "options": [
+        "Trivy (with its Kubernetes operator mode)",
+        "Docker Compose",
+        "Helm lint",
+        "kubectl version"
+      ],
+      "correct": 0,
+      "explanation": "Trivy can run in Kubernetes operator mode (Trivy Operator) to continuously scan running workloads, images, and cluster configurations for vulnerabilities and misconfigurations. It checks actual running state, not just manifests, catching runtime drift from the intended configuration.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 118,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "What is the SLSA framework and how does it relate to container supply chain security?",
+      "options": [
+        "A Kubernetes scheduling algorithm",
+        "A framework for supply chain integrity that defines levels of build security, from basic source tracking to fully verified and reproducible builds",
+        "A container network policy language",
+        "A tool for scanning Dockerfiles"
+      ],
+      "correct": 1,
+      "explanation": "SLSA (Supply-chain Levels for Software Artifacts) defines four levels of build integrity. Level 1 requires build provenance documentation, Level 2 requires a hosted build service, Level 3 requires a hardened build platform, and Level 4 requires two-party review and reproducible builds. It provides a roadmap for improving build supply chain security.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 119,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "hard",
+      "question": "An organization's base image policy requires all images to be rebuilt monthly even if no code changes occurred. What is the security rationale?",
+      "options": [
+        "To keep image timestamps current for compliance",
+        "To incorporate the latest security patches for OS packages and runtime dependencies that may have received updates since the last build",
+        "To reduce image storage costs",
+        "To reset container runtime state"
+      ],
+      "correct": 1,
+      "explanation": "OS packages and runtime dependencies receive security patches regularly. Rebuilding images monthly ensures these patches are incorporated even when the application code has not changed. An image built 6 months ago may contain multiple unpatched CVEs in its base packages. Automated rebuild pipelines triggered by base image updates are even better.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 120,
+      "domain": 6,
+      "objective": "6.1",
+      "difficulty": "easy",
+      "question": "What is Falco in the context of Kubernetes security?",
+      "options": [
+        "A container image scanner",
+        "A Kubernetes network policy manager",
+        "A runtime security tool that detects anomalous behavior and threats in containers by monitoring system calls",
+        "A Kubernetes authentication provider"
+      ],
+      "correct": 2,
+      "explanation": "Falco is an open-source runtime security tool that monitors system calls made by containers using eBPF or a kernel module. It uses configurable rules to detect suspicious behavior like shell execution in containers, sensitive file reads, unexpected network connections, and privilege escalation attempts.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 121,
+      "domain": 6,
+      "objective": "6.1",
+      "difficulty": "medium",
+      "question": "Which Falco rule would detect an attacker spawning a shell inside a production container?",
+      "options": [
+        "A rule that monitors file writes to /tmp",
+        "A rule that detects when a shell binary (bash, sh, zsh) is executed inside a container",
+        "A rule that monitors DNS queries",
+        "A rule that checks container image signatures"
+      ],
+      "correct": 1,
+      "explanation": "Falco's 'Terminal shell in container' rule detects when a shell process is spawned inside a container. In production, containers should not need interactive shells. A shell execution is a strong indicator of compromise (attacker gained code execution) or unauthorized debugging. The rule can be tuned to exclude specific containers that legitimately need shells.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 122,
+      "domain": 6,
+      "objective": "6.1",
+      "difficulty": "hard",
+      "question": "A Falco rule triggers on 'evt.type = open and fd.name startswith /etc/shadow'. What threat does this detect?",
+      "options": [
+        "A container trying to modify network configuration",
+        "A process attempting to read the shadow password file, which could indicate credential harvesting or privilege escalation",
+        "A container mounting a new volume",
+        "A DNS resolution failure"
+      ],
+      "correct": 1,
+      "explanation": "/etc/shadow contains hashed passwords for system accounts. A process reading this file in a container is highly suspicious -- it may indicate an attacker attempting to crack passwords for privilege escalation or lateral movement. This file should never be accessed by application processes in containers.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 123,
+      "domain": 6,
+      "objective": "6.2",
+      "difficulty": "easy",
+      "question": "What is Kubernetes audit logging?",
+      "options": [
+        "Logging container stdout/stderr output",
+        "A feature that records all requests to the Kubernetes API server, capturing who did what to which resources and when",
+        "Monitoring node CPU and memory usage",
+        "Logging DNS queries within the cluster"
+      ],
+      "correct": 1,
+      "explanation": "Kubernetes audit logging records all API server requests: the user/ServiceAccount, the action (verb), the resource affected, the timestamp, and optionally the request/response bodies. This creates a comprehensive audit trail for security investigations, compliance, and detecting unauthorized access.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 124,
+      "domain": 6,
+      "objective": "6.2",
+      "difficulty": "medium",
+      "question": "What are the four audit log stages in Kubernetes?",
+      "options": [
+        "Create, Read, Update, Delete",
+        "RequestReceived, ResponseStarted, ResponseComplete, Panic",
+        "Init, Running, Completed, Failed",
+        "Authentication, Authorization, Admission, Execution"
+      ],
+      "correct": 1,
+      "explanation": "The four audit stages are: RequestReceived (logged when the request is first received), ResponseStarted (when response headers are sent for long-running requests like watch), ResponseComplete (when the response body is complete), and Panic (when the API server panics). Each stage captures different levels of request processing.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 125,
+      "domain": 6,
+      "objective": "6.2",
+      "difficulty": "hard",
+      "question": "An audit policy has level 'RequestResponse' for Secret resources and 'Metadata' for everything else. What is captured?",
+      "options": [
+        "Only the names of Secrets accessed",
+        "Full request and response bodies for Secret operations (showing what was read/written), and request metadata (user, timestamp, resource, verb) for all other resources",
+        "No Secret data is logged due to sensitivity",
+        "Only failed requests are logged"
+      ],
+      "correct": 1,
+      "explanation": "RequestResponse level logs both the request body (what was sent) and response body (what was returned) for Secret operations, capturing the actual Secret data being read or written. Metadata level logs only the request metadata (who, what, when) without bodies. Note: logging Secret bodies means audit logs themselves become sensitive.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 126,
+      "domain": 6,
+      "objective": "6.3",
+      "difficulty": "easy",
+      "question": "What does immutability of containers at runtime mean?",
+      "options": [
+        "Container images cannot be updated in the registry",
+        "Running containers cannot modify their root filesystem, preventing runtime tampering with application binaries and configuration",
+        "Container resource limits cannot be changed",
+        "Container logs cannot be modified"
+      ],
+      "correct": 1,
+      "explanation": "Runtime immutability means the container filesystem is read-only, preventing any modifications to binaries, libraries, or configuration files. This blocks common attack techniques like writing web shells, modifying scripts, or replacing system binaries. Writable data goes to explicitly mounted volumes.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 127,
+      "domain": 6,
+      "objective": "6.3",
+      "difficulty": "medium",
+      "question": "How do you enforce filesystem immutability for a container in Kubernetes?",
+      "options": [
+        "Use a read-only container image",
+        "Set 'readOnlyRootFilesystem: true' in the SecurityContext and mount writable volumes only where needed",
+        "Remove all write permissions from files in the Docker image",
+        "Use a NetworkPolicy to block write operations"
+      ],
+      "correct": 1,
+      "explanation": "readOnlyRootFilesystem: true in the SecurityContext mounts the container's root filesystem as read-only. Applications that need to write (logs, temp files, caches) use explicitly mounted emptyDir volumes at those specific paths. This is the standard Kubernetes approach to enforcing container immutability.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 128,
+      "domain": 6,
+      "objective": "6.4",
+      "difficulty": "medium",
+      "question": "How does Falco detect threats at the system call level?",
+      "options": [
+        "By scanning container images periodically",
+        "By intercepting system calls using an eBPF probe or kernel module and matching them against configurable rules",
+        "By monitoring Kubernetes API server logs",
+        "By analyzing network packet captures"
+      ],
+      "correct": 1,
+      "explanation": "Falco uses eBPF probes (preferred) or a kernel module to intercept system calls at the kernel level. Each syscall is evaluated against Falco rules that define suspicious patterns. When a rule matches, Falco generates an alert with context (container name, Pod, namespace, user, command, etc.).",
+      "link": "container-security.html"
+    },
+    {
+      "id": 129,
+      "domain": 6,
+      "objective": "6.4",
+      "difficulty": "hard",
+      "question": "A Falco rule detects outbound connections to IP addresses not in an approved list. Why is this detection important?",
+      "options": [
+        "It prevents containers from accessing the internet for updates",
+        "It can detect data exfiltration, command-and-control (C2) communication, and cryptocurrency mining activity from compromised containers",
+        "It monitors DNS performance",
+        "It validates TLS certificate chains"
+      ],
+      "correct": 1,
+      "explanation": "Unexpected outbound connections from containers are a strong indicator of compromise. Data exfiltration uses outbound HTTP/DNS/ICMP, C2 channels connect to attacker infrastructure, and cryptominers connect to mining pools. Detecting connections to non-approved IPs catches these activities early in the kill chain.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 130,
+      "domain": 6,
+      "objective": "6.5",
+      "difficulty": "easy",
+      "question": "What tool can be used for forensic analysis of container incidents?",
+      "options": [
+        "Helm",
+        "Sysdig (or sysdig-inspect)",
+        "kubectl apply",
+        "kube-bench"
+      ],
+      "correct": 1,
+      "explanation": "Sysdig captures system call data from containers that can be analyzed after an incident. sysdig-inspect provides a visual interface for exploring captured data -- system calls, file operations, network connections, and process trees. This enables post-mortem analysis of what happened during a security incident.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 131,
+      "domain": 6,
+      "objective": "6.5",
+      "difficulty": "medium",
+      "question": "During a container forensic investigation, you need to capture the state of a compromised container before it is terminated. What is the first step?",
+      "options": [
+        "Delete the container to prevent further damage",
+        "Capture the container's filesystem (checkpoint/snapshot), network connections, process list, and system call trace before any changes",
+        "Restart the container to see if the issue recurs",
+        "Update the container image to the latest version"
+      ],
+      "correct": 1,
+      "explanation": "Forensic evidence must be preserved before remediation. Capture the container filesystem (using container checkpoint or 'docker export'), active network connections (ss/netstat), running processes (ps), environment variables, and system call traces (sysdig/strace). Once captured, the container can be isolated or terminated.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 132,
+      "domain": 6,
+      "objective": "6.2",
+      "difficulty": "medium",
+      "question": "What are the audit log levels in Kubernetes audit policy, from least to most verbose?",
+      "options": [
+        "None, Metadata, Request, RequestResponse",
+        "Off, Low, Medium, High",
+        "Disabled, Summary, Detailed, Full",
+        "Silent, Warn, Error, Debug"
+      ],
+      "correct": 0,
+      "explanation": "The four audit levels are: None (do not log), Metadata (log request metadata only: user, timestamp, resource, verb), Request (log metadata and request body), RequestResponse (log metadata, request body, and response body). Higher levels provide more detail but generate more data and may log sensitive information.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 133,
+      "domain": 6,
+      "objective": "6.1",
+      "difficulty": "medium",
+      "question": "Which Falco rule detects when a container attempts to modify files in /etc/?",
+      "options": [
+        "Write below monitored dir",
+        "Terminal shell in container",
+        "Container drifted from image",
+        "Outbound connection to C2"
+      ],
+      "correct": 0,
+      "explanation": "Falco's 'Write below monitored dir' rule family detects file writes to sensitive directories like /etc, /usr/bin, /usr/sbin. In immutable containers, writes to these directories indicate potential tampering -- an attacker modifying configuration files, replacing binaries, or installing backdoors.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 134,
+      "domain": 6,
+      "objective": "6.3",
+      "difficulty": "hard",
+      "question": "A container that was originally deployed with a read-only filesystem now shows new files appearing. What security detection capability identifies this?",
+      "options": [
+        "Image scanning",
+        "Container drift detection -- comparing the current filesystem state against the original image to identify unauthorized modifications",
+        "RBAC audit",
+        "Network policy violation"
+      ],
+      "correct": 1,
+      "explanation": "Container drift detection compares the running container's filesystem against its original image. New or modified files that were not part of the original image indicate tampering -- possibly malware, web shells, or backdoors. Tools like Falco, Sysdig, and Aqua Security can detect drift in real time.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 135,
+      "domain": 6,
+      "objective": "6.4",
+      "difficulty": "easy",
+      "question": "What type of events does Falco primarily monitor?",
+      "options": [
+        "HTTP requests to applications",
+        "System calls made by container processes",
+        "Kubernetes API requests",
+        "Cloud provider billing events"
+      ],
+      "correct": 1,
+      "explanation": "Falco primarily monitors system calls (syscalls) made by processes running in containers. Syscalls are the interface between user-space applications and the kernel, making them the most fundamental level for detecting malicious behavior: file access, process creation, network connections, privilege changes, etc.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 136,
+      "domain": 6,
+      "objective": "6.2",
+      "difficulty": "hard",
+      "question": "An audit policy needs to log all Secret read operations at the RequestResponse level but exclude the kube-system namespace. How is this configured?",
+      "options": [
+        "Create a single rule at the Metadata level for all resources",
+        "Use an audit policy rule with resources: secrets, verbs: [get, list, watch], level: RequestResponse, and a preceding rule with namespaces: [kube-system], resources: secrets, level: None",
+        "Audit policies cannot filter by namespace",
+        "Set the audit level in each namespace's annotations"
+      ],
+      "correct": 1,
+      "explanation": "Audit policies are evaluated in order and the first matching rule wins. By placing a rule that matches kube-system namespace Secret operations with level: None before the general Secret logging rule, kube-system Secret reads are excluded while all other Secret reads are logged at RequestResponse level.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 137,
+      "domain": 6,
+      "objective": "6.5",
+      "difficulty": "hard",
+      "question": "After a container security incident, which command captures the process tree of a running container for forensic analysis?",
+      "options": [
+        "kubectl logs <pod>",
+        "kubectl exec <pod> -- ps auxf",
+        "kubectl describe pod <pod>",
+        "kubectl get events"
+      ],
+      "correct": 1,
+      "explanation": "kubectl exec <pod> -- ps auxf shows the full process tree (forest view) inside the container, revealing all running processes, their parent-child relationships, users, and command lines. During forensics, unexpected processes (reverse shells, miners, enumeration tools) become visible in the process tree.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 138,
+      "domain": 6,
+      "objective": "6.1",
+      "difficulty": "medium",
+      "question": "How do you write a custom Falco rule to detect package manager execution (apt, apk, yum) inside a container?",
+      "options": [
+        "Custom Falco rules are not supported",
+        "Define a rule matching on spawned_process with proc.name in (apt, apt-get, apk, yum, dnf) and container.id != host",
+        "Configure a NetworkPolicy to block package downloads",
+        "Use a Gatekeeper policy to block package managers"
+      ],
+      "correct": 1,
+      "explanation": "A Falco rule matching process execution (syscall=execve) where the process name matches package managers (apt, apk, yum, dnf) inside a container detects attempts to install packages at runtime. This is a strong indicator of compromise since production containers should not install packages. The rule can output the container, Pod, and namespace for investigation.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 139,
+      "domain": 6,
+      "objective": "6.3",
+      "difficulty": "medium",
+      "question": "What is the security benefit of combining readOnlyRootFilesystem with a seccomp profile?",
+      "options": [
+        "No additional benefit; they protect against the same threats",
+        "readOnlyRootFilesystem prevents filesystem modifications while seccomp restricts dangerous syscalls, creating defense-in-depth against different attack vectors",
+        "seccomp replaces the need for readOnlyRootFilesystem",
+        "They conflict and should not be used together"
+      ],
+      "correct": 1,
+      "explanation": "These controls address different attack vectors. readOnlyRootFilesystem prevents writing malware or modifying files. seccomp prevents dangerous syscalls (mount, ptrace, reboot, etc.). Together, they create defense-in-depth: even if an attacker finds a writable volume, dangerous syscalls are still blocked.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 140,
+      "domain": 6,
+      "objective": "6.4",
+      "difficulty": "hard",
+      "question": "A Falco alert fires: 'Sensitive mount by container' when a Pod with a hostPath volume starts. What is the significance?",
+      "options": [
+        "It is a normal event for all Pods",
+        "It indicates a container has mounted a sensitive host directory, which could allow reading host files, escaping the container, or accessing other containers' data",
+        "It means the container image is corrupted",
+        "It indicates a DNS configuration error"
+      ],
+      "correct": 1,
+      "explanation": "hostPath volumes mount directories from the host filesystem into the container. Mounting sensitive paths like /, /etc, /var/run/docker.sock, or /proc gives the container access to host-level resources. This is one of the most common container escape vectors. Falco's rule catches this at runtime, complementing admission control prevention.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 141,
+      "domain": 6,
+      "objective": "6.2",
+      "difficulty": "easy",
+      "question": "Why should audit logs be stored outside the Kubernetes cluster?",
+      "options": [
+        "To free up storage space on the API server",
+        "To ensure audit logs survive cluster compromise and cannot be tampered with by an attacker who gains cluster access",
+        "To improve API server performance",
+        "Kubernetes cannot store audit logs locally"
+      ],
+      "correct": 1,
+      "explanation": "If audit logs are stored within the cluster, an attacker who compromises the cluster can delete or modify them to cover their tracks. External log storage (SIEM, cloud logging, immutable storage) ensures audit logs are preserved even if the entire cluster is compromised, enabling post-incident forensics.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 142,
+      "domain": 6,
+      "objective": "6.5",
+      "difficulty": "medium",
+      "question": "Which Sysdig command captures all system call activity from a specific container for 60 seconds?",
+      "options": [
+        "sysdig -c container.name=<name> -w capture.scap -M 60",
+        "sysdig container.name=<name> -w capture.scap -G 60",
+        "sysdig -w capture.scap -pc container.name=<name>",
+        "sysdig capture --container <name> --duration 60s"
+      ],
+      "correct": 0,
+      "explanation": "sysdig with container.name filter captures syscalls only from the specified container. -w writes the capture to a file for later analysis, and -M limits the capture to 60 seconds. The resulting .scap file can be analyzed offline with sysdig-inspect for detailed forensic investigation.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 143,
+      "domain": 6,
+      "objective": "6.1",
+      "difficulty": "easy",
+      "question": "What is the difference between Falco and image scanning (like Trivy)?",
+      "options": [
+        "They do the same thing at different times",
+        "Falco detects threats at runtime by monitoring behavior; image scanning detects known vulnerabilities before deployment by analyzing image contents",
+        "Falco replaces the need for image scanning",
+        "Image scanning works at runtime; Falco works at build time"
+      ],
+      "correct": 1,
+      "explanation": "Image scanning and runtime security are complementary. Image scanning (Trivy) detects known CVEs in packages before deployment (shift-left). Falco detects malicious behavior at runtime -- actions that CVEs do not predict, like unexpected process execution, privilege escalation attempts, and data exfiltration. Both are needed for comprehensive security.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 144,
+      "domain": 6,
+      "objective": "6.3",
+      "difficulty": "hard",
+      "question": "An organization wants to detect if any running container has drifted from its original image (files added, modified, or deleted). Which approach achieves this?",
+      "options": [
+        "Run Trivy against running containers",
+        "Use a drift detection tool that continuously compares the container's filesystem against its image layers, alerting on any differences",
+        "Check kubectl get pods output for drift annotations",
+        "Run kube-bench against the cluster"
+      ],
+      "correct": 1,
+      "explanation": "Drift detection tools (available in Falco, Sysdig Secure, Aqua) continuously monitor container filesystems and compare them against the original image. Any new file (web shell, miner binary), modified binary (backdoored application), or deleted file (removed security controls) triggers an alert. This catches attacks that evade process-based detection.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 145,
+      "domain": 6,
+      "objective": "6.4",
+      "difficulty": "medium",
+      "question": "Falco uses priorities to classify alert severity. What are the Falco priority levels from lowest to highest?",
+      "options": [
+        "LOW, MEDIUM, HIGH, CRITICAL",
+        "DEBUG, INFORMATIONAL, NOTICE, WARNING, ERROR, CRITICAL, ALERT, EMERGENCY",
+        "1, 2, 3, 4, 5",
+        "Green, Yellow, Orange, Red"
+      ],
+      "correct": 1,
+      "explanation": "Falco uses syslog-compatible priority levels: DEBUG, INFORMATIONAL, NOTICE, WARNING, ERROR, CRITICAL, ALERT, EMERGENCY. Rules specify the priority, enabling organizations to route high-priority alerts (CRITICAL/ALERT/EMERGENCY) to immediate notification channels while lower priorities go to log aggregation.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 146,
+      "domain": 6,
+      "objective": "6.2",
+      "difficulty": "medium",
+      "question": "An audit log entry shows a user 'system:serviceaccount:default:my-app' performing 'list' on 'secrets' in namespace 'production'. What does this indicate?",
+      "options": [
+        "A normal Kubernetes system operation",
+        "A ServiceAccount named 'my-app' in the 'default' namespace listed all Secrets in the 'production' namespace, which may indicate unauthorized cross-namespace access",
+        "A user named 'my-app' logged in to the Kubernetes Dashboard",
+        "The audit log is recording DNS queries"
+      ],
+      "correct": 1,
+      "explanation": "This audit entry shows a ServiceAccount from the 'default' namespace listing Secrets in 'production'. Cross-namespace Secret access is a red flag -- it might indicate over-permissive RBAC (a ClusterRole allowing cross-namespace Secret access) or a compromised Pod attempting to harvest credentials from other namespaces.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 147,
+      "domain": 6,
+      "objective": "6.1",
+      "difficulty": "hard",
+      "question": "How can Falco rules be tuned to reduce false positives without missing real threats?",
+      "options": [
+        "Disable all rules and start from scratch",
+        "Use exception lists to exclude known-good patterns (specific containers, images, commands) while keeping the base detection rule active",
+        "Set all rules to DEBUG priority",
+        "Only enable rules for CRITICAL severity threats"
+      ],
+      "correct": 1,
+      "explanation": "Falco supports exceptions within rules to exclude known-good behavior. For example, if a monitoring agent legitimately reads /etc/hosts, add an exception for that specific container/image. The rule continues detecting the same behavior from other containers. This maintains detection coverage while reducing noise.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 148,
+      "domain": 6,
+      "objective": "6.5",
+      "difficulty": "hard",
+      "question": "During incident response, you discover a suspicious process running in a container. Which command captures the network connections established by that process?",
+      "options": [
+        "kubectl logs <pod>",
+        "kubectl exec <pod> -- ss -tnp | grep <pid>",
+        "kubectl describe pod <pod>",
+        "kubectl get endpoints"
+      ],
+      "correct": 1,
+      "explanation": "ss -tnp shows TCP connections with the associated process ID. Filtering by the suspicious PID reveals what network connections it has established -- potentially C2 servers, data exfiltration targets, or lateral movement attempts. This information is critical for understanding the scope of compromise.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 149,
+      "domain": 6,
+      "objective": "6.3",
+      "difficulty": "easy",
+      "question": "What is behavioral anomaly detection in the context of container runtime security?",
+      "options": [
+        "Scanning container images for known vulnerabilities",
+        "Detecting deviations from a container's normal behavior pattern (unexpected processes, network connections, file access) that may indicate compromise",
+        "Checking container resource usage against limits",
+        "Verifying container image signatures"
+      ],
+      "correct": 1,
+      "explanation": "Behavioral anomaly detection establishes a baseline of normal container behavior (expected processes, network patterns, file access) and alerts when deviations occur. A web server container suddenly running curl, connecting to unusual IPs, or accessing /etc/shadow deviates from its expected behavior profile, indicating potential compromise.",
+      "link": "container-security.html"
+    },
+    {
+      "id": 150,
+      "domain": 6,
+      "objective": "6.4",
+      "difficulty": "hard",
+      "question": "A Falco rule detects 'ptrace attach' attempts inside a container. What attack technique is being detected?",
+      "options": [
+        "DNS spoofing",
+        "Container image tampering",
+        "Process injection or debugging -- an attacker using ptrace to attach to another process to inject code, read memory, or steal credentials",
+        "Network port scanning"
+      ],
+      "correct": 2,
+      "explanation": "ptrace is used to attach to a running process for debugging, but attackers use it for process injection (injecting shellcode into another process), credential theft (reading process memory for tokens/passwords), and security tool evasion. In containers, ptrace is especially dangerous if hostPID is enabled, as it can target host processes.",
+      "link": "container-security.html"
     }
   ]
 }
