@@ -339,6 +339,29 @@ def scan_version_references(text, filename):
     return unique
 
 
+def check_kev_pipeline_health():
+    """Check if the KEV publish pipeline is stale (lastUpdated far behind lastChecked)."""
+    kev_file = REPO_ROOT / 'data' / 'kev-data.json'
+    if not kev_file.exists():
+        return None
+    with open(kev_file, 'r') as f:
+        data = json.load(f)
+    last_updated = data.get('lastUpdated')
+    last_checked = data.get('lastChecked')
+    if not last_updated or not last_checked:
+        return None
+    updated_date = datetime.strptime(last_updated, '%Y-%m-%d')
+    checked_date = datetime.strptime(last_checked, '%Y-%m-%d')
+    gap_days = (checked_date - updated_date).days
+    if gap_days > 7:
+        return {
+            'last_updated': last_updated,
+            'last_checked': last_checked,
+            'gap_days': gap_days,
+        }
+    return None
+
+
 # ══════════════════════════════════════════════════════════
 # Main Audit
 # ══════════════════════════════════════════════════════════
@@ -452,6 +475,8 @@ def run_audit(skip_links=False):
     pages_with_versions = [r for r in page_results if r.get('version_refs')]
     pages_with_errors = [r for r in page_results if r.get('error')]
 
+    kev_staleness = check_kev_pipeline_health()
+
     report = {
         'audit_date': datetime.now().strftime('%Y-%m-%d %H:%M'),
         'pages_audited': len(pages),
@@ -462,6 +487,7 @@ def run_audit(skip_links=False):
             'stale_pages': len(stale_pages),
             'version_references': sum(len(r['version_refs']) for r in pages_with_versions),
             'parse_errors': len(pages_with_errors),
+            'kev_pipeline_stale': kev_staleness is not None,
         },
         'broken_links': sorted(broken_links, key=lambda x: x['status_code']),
         'warning_links': sorted(warning_links, key=lambda x: x['url']),
@@ -475,6 +501,7 @@ def run_audit(skip_links=False):
             for r in pages_with_versions
         ],
         'errors': [{'file': r['file'], 'error': r['error']} for r in pages_with_errors],
+        'kev_staleness': kev_staleness,
     }
 
     return report
@@ -496,7 +523,7 @@ def format_markdown(report):
     lines.append('')
 
     # Quick summary
-    has_issues = (s['broken_links'] + s['stale_pages'] + s['parse_errors']) > 0
+    has_issues = (s['broken_links'] + s['stale_pages'] + s['parse_errors']) > 0 or s['kev_pipeline_stale']
 
     if not has_issues and s['warning_links'] == 0:
         lines.append('All pages passed audit checks.')
@@ -560,9 +587,25 @@ def format_markdown(report):
             lines.append(f"- `{entry['file']}`: {entry['error']}")
         lines.append('')
 
+    # KEV pipeline staleness
+    if report.get('kev_staleness'):
+        kev = report['kev_staleness']
+        lines.append('### ⚠️ KEV Pipeline Stale')
+        lines.append('')
+        lines.append(f"**Last published:** {kev['last_updated']} | "
+                     f"**Last checked:** {kev['last_checked']} | "
+                     f"**Gap:** {kev['gap_days']} days")
+        lines.append('')
+        lines.append('The CVE publish pipeline may be broken — new vulnerabilities '
+                     'are being fetched but not published. Check the AppSec CVE '
+                     'Reviewer trigger and `data/pending_review.json` on main.')
+        lines.append('')
+
     # Checklist
     lines.append('### Action Items')
     lines.append('')
+    if report.get('kev_staleness'):
+        lines.append('- [ ] **P1: Investigate KEV pipeline — CVEs not being published**')
     if report['broken_links']:
         lines.append('- [ ] Fix or remove broken links')
     if report['stale_pages']:
