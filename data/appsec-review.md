@@ -1,8 +1,9 @@
-# AppSec Review — CISA KEV Batch
+# AppSec Review — 2026-04-15
 
-**Date:** 2026-04-14
-**Reviewer:** Robert Flores, CISSP
-**CVE Count:** 7
+**Reviewer:** Robert Flores, CISSP  
+**Pipeline run:** 2026-04-15  
+**CVEs reviewed:** 2  
+**Total KEV database:** 82 vulnerabilities
 
 ---
 
@@ -10,47 +11,48 @@
 
 | Priority | Count | CVEs |
 |----------|-------|------|
-| Critical | 1 | CVE-2026-21643 |
-| High | 6 | CVE-2012-1854, CVE-2025-60710, CVE-2023-21529, CVE-2023-36424, CVE-2020-9715, CVE-2026-34621 |
-| Medium | 0 | — |
+| Critical | 0 | — |
+| High | 1 | CVE-2009-0238 |
+| Medium | 1 | CVE-2026-32201 |
 | Low | 0 | — |
 
 ---
 
 ## CVE Summary
 
-| CVE ID | Vendor | Priority | Vulnerability Class |
-|--------|--------|----------|---------------------|
-| CVE-2012-1854 | Microsoft | high | Insecure Library Loading / DLL Hijacking (RCE) |
-| CVE-2025-60710 | Microsoft | high | Link Following / Symlink Abuse (LPE) |
-| CVE-2023-21529 | Microsoft | high | Deserialization of Untrusted Data (Auth RCE) |
-| CVE-2023-36424 | Microsoft | high | Memory Corruption / Out-of-Bounds Read (LPE) |
-| CVE-2020-9715 | Adobe | high | Use-After-Free (RCE) |
-| CVE-2026-21643 | Fortinet | critical | SQL Injection (Unauth RCE) |
-| CVE-2026-34621 | Adobe | high | Prototype Pollution (RCE) |
+| CVE ID | Vendor | Product | Priority | Vulnerability Class |
+|--------|--------|---------|----------|---------------------|
+| CVE-2009-0238 | Microsoft | Office (Excel) | High | Remote Code Execution |
+| CVE-2026-32201 | Microsoft | SharePoint Server | Medium | Improper Input Validation / Spoofing |
+
+---
+
+## CVE Details
+
+**CVE-2009-0238** — Microsoft Office Excel RCE (CVSS 8.8, CWE-94: Code Injection)  
+Remote code execution via a malformed object embedded in a crafted Excel file. Exploitation requires user interaction (opening the file), making it a classic spear-phishing payload. Grants complete system control on success. Legacy 2009 CVE added to KEV in April 2026, signaling renewed active exploitation — likely targeting organizations running end-of-life Office deployments or relying on legacy macro workflows.
+
+**CVE-2026-32201** — Microsoft SharePoint Server Improper Input Validation (CVSS 6.5, CWE-20)  
+Improper input validation in SharePoint Server allows an unauthenticated network attacker to perform spoofing. SharePoint's enterprise ubiquity elevates the real-world risk beyond the CVSS score; spoofing primitives in identity-integrated platforms can facilitate credential theft, session hijacking, or lateral movement when chained with other vulnerabilities.
 
 ---
 
 ## Trend Analysis
 
-This batch is dominated by Microsoft products (4 of 7 CVEs), reflecting the continued targeting of the Windows ecosystem across both kernel-level privilege escalation (CLFS driver, link following) and application-layer attack surfaces (VBA, Exchange deserialization). The presence of legacy CVEs from 2012 and 2020 alongside 2025-2026 entries underscores a persistent pattern: threat actors revisit old vulnerabilities when large populations of unpatched systems remain reachable, particularly in environments running end-of-life Office or Acrobat versions. The single critical-rated entry — Fortinet FortiClient EMS SQL injection (CVE-2026-21643, CVSS 9.8) — demands immediate attention, as its unauthenticated remote exploitation profile mirrors the Fortinet SQLi wave of 2024 (CVE-2023-48788) that was weaponized globally within days of public disclosure.
-
-Adobe Acrobat appears twice in this batch (CVE-2020-9715, CVE-2026-34621), reinforcing that document-based delivery remains a primary initial access mechanism. The JavaScript engine prototype pollution in CVE-2026-34621 is particularly notable as it represents an emerging class of memory safety bypass in scripting runtimes embedded within productivity applications — a trend that will likely accelerate as memory-safe rewrites leave legacy JavaScript engines as the remaining high-value attack surface.
+This batch continues a pattern of Microsoft enterprise platform vulnerabilities reaching active exploitation status. The inclusion of CVE-2009-0238 — a 17-year-old Excel flaw — is notable: CISA's addition signals that threat actors are deliberately reaching back into legacy CVE catalogs to target unpatched or end-of-life environments, a tactic increasingly observed in ransomware pre-positioning and APT campaigns. Organizations that have not fully deprecated Office 2007/2010 deployments remain exposed. CVE-2026-32201 reinforces the ongoing pressure on SharePoint Server, which has been a recurring KEV contributor; the spoofing primitive in an identity-integrated platform represents a meaningful lateral movement stepping stone even at medium severity. Together, the batch underscores two enduring challenges: legacy software debt and the attack surface of core enterprise collaboration infrastructure.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"Fortinet FortiClient EMS SQL Injection (CVE-2026-21643): Anatomy of a Critical Perimeter Exploit"** — Deep dive into how unauthenticated SQLi on a network management product translates to full RCE, with detection and hunting guidance for enterprise defenders.
-
-2. **"The CLFS Driver Problem: Why Windows Kernel LPE Keeps Haunting Ransomware Investigations"** — Analysis of the recurring exploitation of the Common Log File System driver (CVE-2023-36424 and predecessors) as a post-exploitation LPE primitive by ransomware affiliates and APT groups.
-
-3. **"Old Dogs, New Tricks: Why CISA Added a 2012 Microsoft CVE to the KEV in 2026"** — Investigation into legacy CVE re-cataloguing, explaining why CVE-2012-1854 still matters and what it signals about long-tail patch compliance failures in enterprise Office deployments.
+1. **"Why CISA Is Adding 17-Year-Old CVEs to KEV in 2026"** — Explores the strategic rationale behind legacy CVE additions, what it signals about threat actor TTPs, and how organizations should audit for long-tail unpatched exposure.
+2. **"SharePoint Server as an Attack Surface: A Recurring KEV Theme"** — Reviews the history of SharePoint entries in KEV, maps the common vulnerability classes (injection, auth bypass, spoofing), and provides a hardening checklist.
+3. **"Excel as a Delivery Vehicle: The Enduring Risk of Office-Based RCE"** — Covers the phishing-to-RCE kill chain using malformed Office documents, why macro/object-based attacks persist, and modern mitigations (MOTW, attack surface reduction rules, ASR policies).
 
 ---
 
 ## Newsletter Snippet
 
-This week's CISA KEV update brings 7 confirmed actively-exploited vulnerabilities across Microsoft, Adobe, and Fortinet — and the headline is unambiguous: Fortinet FortiClient EMS (CVE-2026-21643) carries a CVSS 9.8 rating for unauthenticated SQL injection enabling remote code execution. If your organization runs FortiClient EMS and hasn't applied the patch yet, treat this as a fire drill — Fortinet perimeter products have been aggressively targeted since 2024, and similar vulnerabilities moved from disclosure to mass exploitation within 72 hours. Federal agencies face a CISA remediation deadline of April 16, just two days away.
+**CISA KEV Update — April 15, 2026:** Two new vulnerabilities were added to CISA's Known Exploited Vulnerabilities catalog this week, both affecting Microsoft products. CVE-2009-0238, a remote code execution flaw in Microsoft Office Excel, was added 17 years after its original disclosure — a stark reminder that threat actors are actively weaponizing legacy vulnerabilities against organizations running outdated software. CVE-2026-32201, an improper input validation vulnerability in Microsoft SharePoint Server, enables unauthenticated network spoofing and continues a troubling pattern of SharePoint being targeted in enterprise environments. All U.S. federal agencies under BOD 22-01 must remediate by April 28, 2026.
 
-Beyond Fortinet, this batch reveals two important trends worth tracking. First, legacy CVEs are back: both CVE-2012-1854 (Microsoft VBA insecure library loading) and CVE-2020-9715 (Adobe Acrobat use-after-free) are years-old vulnerabilities that CISA confirmed as actively exploited in 2026 — a reminder that threat actors don't abandon old techniques when unpatched systems remain accessible. Second, Adobe Acrobat appears twice this cycle, with a modern prototype pollution RCE (CVE-2026-34621) joining the legacy entry, reinforcing that PDF-based document attacks remain a durable initial access vector. Prioritize patching Fortinet immediately, then work through the Microsoft kernel LPE and Exchange deserialization entries before the April 27 deadline.
+For security teams, this week's additions carry a clear message: your patch management program must account for software that is no longer actively maintained or monitored. Both CVEs are straightforward to address — apply vendor patches or discontinue the affected product — but discovery risk is highest in organizations with shadow IT, decentralized patch governance, or large legacy estates. Review your Office and SharePoint Server inventory now, prioritize CVE-2009-0238 for any internet-connected or high-value workstations, and treat CVE-2026-32201 as a signal to audit SharePoint authentication and network segmentation controls.
