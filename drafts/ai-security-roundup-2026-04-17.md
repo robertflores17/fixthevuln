@@ -1,6 +1,6 @@
 # AI Security Trend Roundup — Apr 17, 2026
 
-*Covering Apr 10 → Apr 17, 2026. 52 new items from 8 tracked sources.*
+*Covering Apr 10 → Apr 17, 2026. 51 new items from 8 tracked sources.*
 
 > This digest credits every source by name and links directly to each original post. Editorial curation by FixTheVuln — all rights and attribution belong to the original authors.
 
@@ -136,16 +136,12 @@
   Source: [Simon Willison](https://simonwillison.net/) — Apr 11
   Tool: SQLite Query Result Formatter Demo See my notes on SQLite 3.53.0. This playground provides a UI for trying out the various rendering options for SQL result tables from the new Query Result Formatter library, compiled to WebAssembly. Tags: tools, sqlite
 
-- **[Kākāpō parrots](https://simonwillison.net/2026/Apr/10/kakapo/#atom-everything)**  
-  Source: [Simon Willison](https://simonwillison.net/) — Apr 10
-  Lenny posted another snippet from our 1 hour 40 minute podcast recording and it's about kākāpō parrots! Tags: kakapo
-
 
 ## Community Signal
 
 - **[Scan your website to see how ready it is for AI agents](https://isitagentready.com)**  
   Source: [Hacker News (AI Security)](https://news.ycombinator.com/) — Apr 17
-  Article URL: https://isitagentready.com Comments URL: https://news.ycombinator.com/item?id=47805998 Points: 77 # Comments: 132
+  Article URL: https://isitagentready.com Comments URL: https://news.ycombinator.com/item?id=47805998 Points: 77 # Comments: 135
 
 - **[AI companies are buying the Slack data of failed startups](https://twitter.com/_iainmartin/status/2044758204773486925)**  
   Source: [Hacker News (AI Security)](https://news.ycombinator.com/) — Apr 17
@@ -161,7 +157,7 @@
 
 - **[The beginning of scarcity in AI](https://tomtunguz.com/ai-compute-crisis-2026/)**  
   Source: [Hacker News (AI Security)](https://news.ycombinator.com/) — Apr 16
-  Article URL: https://tomtunguz.com/ai-compute-crisis-2026/ Comments URL: https://news.ycombinator.com/item?id=47799322 Points: 160 # Comments: 202
+  Article URL: https://tomtunguz.com/ai-compute-crisis-2026/ Comments URL: https://news.ycombinator.com/item?id=47799322 Points: 161 # Comments: 203
 
 - **[Five men control AI. Who should control them?](https://www.economist.com/insider/the-insider/five-men-control-ai-who-should-control-them)**  
   Source: [Hacker News (AI Security)](https://news.ycombinator.com/) — Apr 16
