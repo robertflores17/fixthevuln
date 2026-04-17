@@ -266,8 +266,22 @@ def build_digest(grouped: dict, cutoff_dt: datetime, today: datetime) -> str:
     week_start = (today - timedelta(days=7)).strftime('%b %d')
     week_end = today.strftime('%b %d, %Y')
     total = sum(len(v) for v in grouped.values())
+    iso_date = today.strftime('%Y-%m-%d')
+    slug = f'ai-security-roundup-{iso_date}'
 
     lines: list[str] = []
+    # Frontmatter — required by scripts/publish_editorial.py to convert to blog post.
+    lines.append('---')
+    lines.append(f'title: "AI Security Trend Roundup — {week_end}"')
+    lines.append(f'description: "{total} curated AI security updates from OWASP GenAI, arXiv, Simon Willison, CISA, and 4 more sources covering {week_start}–{today.strftime("%b %d")}. Every item credited to its original author."')
+    lines.append('keywords: "AI security, LLM security, prompt injection, agentic AI, GenAI threats, AI vulnerabilities, AI red team"')
+    lines.append(f'date: "{iso_date}"')
+    lines.append(f'slug: "{slug}"')
+    lines.append('author: "FixTheVuln Team"')
+    lines.append('sources: "OWASP GenAI Security Project, Simon Willison, arXiv cs.CR, Protect AI, Google Project Zero, CISA, NIST, Hacker News"')
+    lines.append('cta_section: "comptia"')
+    lines.append('---')
+    lines.append('')
     lines.append(f'# AI Security Trend Roundup — {week_end}')
     lines.append('')
     lines.append(f'*Covering {week_start} → {week_end}. {total} new items from {len(SOURCES)} tracked sources.*')
