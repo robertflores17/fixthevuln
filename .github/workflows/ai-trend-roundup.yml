@@ -1,0 +1,69 @@
+name: AI Security Trend Roundup
+
+on:
+  schedule:
+    # Every Friday at 6:00 AM PT (14:00 UTC) — separate from Tuesday blog cycle
+    - cron: '0 14 * * 5'
+  workflow_dispatch:
+    inputs:
+      days:
+        description: 'Lookback window in days'
+        required: false
+        default: '7'
+
+permissions:
+  contents: write
+
+jobs:
+  aggregate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Aggregate AI security news
+        run: |
+          python3 scripts/aggregate_ai_security_news.py \
+            --days "${{ github.event.inputs.days || '7' }}"
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if [[ -n $(git status --porcelain drafts/ data/ai-security-trends.json data/ai_news_seen.json) ]]; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit digest
+        if: steps.changes.outputs.changes == 'true'
+        run: |
+          git config user.name "FixTheVuln Bot"
+          git config user.email "bot@fixthevuln.com"
+          git add drafts/ai-security-roundup-*.md data/ai-security-trends.json data/ai_news_seen.json
+          git commit -m "AI security trend roundup $(date -u +%Y-%m-%d) [skip ci]"
+          git push
+
+      - name: Summary
+        if: steps.changes.outputs.changes == 'true'
+        run: |
+          echo "## AI Security Trend Roundup" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          DIGEST=$(ls -t drafts/ai-security-roundup-*.md 2>/dev/null | head -1)
+          if [ -n "$DIGEST" ]; then
+            echo "Draft: \`$DIGEST\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            head -30 "$DIGEST" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: No new items
+        if: steps.changes.outputs.changes == 'false'
+        run: echo "No new AI security items this week." >> $GITHUB_STEP_SUMMARY
