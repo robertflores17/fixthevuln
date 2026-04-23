@@ -1,31 +1,19 @@
-# Daily KEV Review — 2026-04-21
+# Daily KEV Review — 2026-04-23
 
-**New CVEs:** 8 | **Critical:** 1 | **High:** 4 | **Medium:** 3 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 1 | **Critical:** 0 | **High:** 1 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2025-32975 | Quest | KACE Systems Management Appliance (SMA) | 10.0 | Unknown | 2026-05-04 |
-| CVE-2023-27351 | PaperCut | NG/MF | 7.5 | Unknown | 2026-05-04 |
-| CVE-2026-20128 | Cisco | Catalyst SD-WAN Manager | 7.5 | Unknown | 2026-04-23 |
-| CVE-2024-27199 | JetBrains | TeamCity | 7.3 | Unknown | 2026-05-04 |
-| CVE-2025-2749 | Kentico | Kentico Xperience | 7.2 | Unknown | 2026-05-04 |
-| CVE-2026-20133 | Cisco | Catalyst SD-WAN Manager | 6.5 | Unknown | 2026-04-23 |
-| CVE-2025-48700 | Synacor | Zimbra Collaboration Suite (ZCS) | 6.1 | Unknown | 2026-04-23 |
-| CVE-2026-20122 | Cisco | Catalyst SD-WAN Manger | 5.4 | Unknown | 2026-04-23 |
+| CVE-2026-33825 | Microsoft | Defender | 7.8 | Unknown | 2026-05-06 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-04-23 (4 CVEs)
+- **Nearest due date:** 2026-05-06 (1 CVE)
 - **Overdue:** None
 
 ## Vendor Summary
-- Cisco: 3 CVEs
-- Kentico: 1 CVE
-- PaperCut: 1 CVE
-- Synacor: 1 CVE
-- Quest: 1 CVE
-- JetBrains: 1 CVE
+- Microsoft: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
