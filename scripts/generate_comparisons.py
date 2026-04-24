@@ -9,7 +9,6 @@ Usage:
 """
 
 import json
-import re
 import sys
 from datetime import date
 from pathlib import Path
@@ -23,8 +22,8 @@ from lib.constants import SITE_URL, COMPARISON_CSS_VERSION
 
 DATA_PATH = REPO_ROOT / 'data' / 'cert-comparisons.json'
 COMP_DIR = REPO_ROOT / 'comparisons'
-SITEMAP_PATH = REPO_ROOT / 'sitemap.xml'
 TODAY = date.today().isoformat()
+TODAY_DISPLAY = date.today().strftime('%B %-d, %Y')
 
 
 def escape_html(text):
@@ -206,7 +205,7 @@ def generate_comparison_page(comp, certs):
         <div class="container">
             <h1>{escape_html(title)}</h1>
             <p>Which certification should you get?</p>
-            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">Last updated: {TODAY}</p>
+            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">Last updated: {TODAY_DISPLAY}</p>
         </div>
     </header>
 
@@ -339,7 +338,7 @@ def generate_index_page(comparisons, certs):
         <div class="container">
             <h1>Certification Comparisons</h1>
             <p>Side-by-side guides to help you choose the right certification</p>
-            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">{len(comparisons)} comparisons &mdash; Updated {TODAY}</p>
+            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">{len(comparisons)} comparisons &mdash; Updated {TODAY_DISPLAY}</p>
         </div>
     </header>
 
@@ -375,36 +374,6 @@ def generate_index_page(comparisons, certs):
 </html>'''
 
 
-def update_sitemap(comparisons):
-    """Update sitemap.xml with comparison entries."""
-    sitemap_text = SITEMAP_PATH.read_text(encoding='utf-8')
-
-    # Remove any existing comparison entries
-    sitemap_text = re.sub(
-        r'\n  <!-- Comparison Pages -->.*?(?=\n  <!--|\n</urlset>)',
-        '',
-        sitemap_text,
-        flags=re.DOTALL,
-    )
-
-    # Build comparison entries
-    entries = f'\n  <!-- Comparison Pages -->\n  <url>\n    <loc>https://fixthevuln.com/comparisons/</loc>\n    <lastmod>{TODAY}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>'
-
-    for comp in comparisons:
-        entries += f'''
-  <url>
-    <loc>https://fixthevuln.com/comparisons/{comp["slug"]}.html</loc>
-    <lastmod>{TODAY}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>'''
-
-    # Insert before </urlset>
-    sitemap_text = sitemap_text.replace('</urlset>', entries + '\n</urlset>')
-    SITEMAP_PATH.write_text(sitemap_text, encoding='utf-8')
-    print(f'  SITEMAP updated with {len(comparisons) + 1} comparison entries.')
-
-
 def main():
     if not DATA_PATH.exists():
         print('  ERROR: data/cert-comparisons.json not found.')
@@ -420,10 +389,15 @@ def main():
 
     COMP_DIR.mkdir(exist_ok=True)
 
+    _SLUG_CHARS = set('abcdefghijklmnopqrstuvwxyz0123456789-')
+
     # Generate individual comparison pages
     for comp in comparisons:
+        slug = comp['slug']
+        if not slug or set(slug) - _SLUG_CHARS:
+            raise ValueError(f'Invalid comparison slug {slug!r}: must be [a-z0-9-]+')
         html = generate_comparison_page(comp, certs)
-        out_path = COMP_DIR / f"{comp['slug']}.html"
+        out_path = COMP_DIR / f"{slug}.html"
         out_path.write_text(html, encoding='utf-8')
 
     print(f'  GENERATED {len(comparisons)} comparison pages.')
@@ -433,8 +407,8 @@ def main():
     (COMP_DIR / 'index.html').write_text(index_html, encoding='utf-8')
     print('  GENERATED comparisons/index.html')
 
-    # Update sitemap
-    update_sitemap(comparisons)
+    # Sitemap is managed by scripts/generate_sitemap.py — run it after adding new comparisons.
+    print('  NOTE: run `python3 scripts/generate_sitemap.py` to refresh sitemap.xml.')
 
     print(f'\n  Done. {len(comparisons) + 1} files in comparisons/.')
 

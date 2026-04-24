@@ -167,7 +167,8 @@ def html_head(title, description, canonical, *,
     schema_tags = ''
     if schema_blocks:
         for schema in schema_blocks:
-            schema_tags += f'\n    <script type="application/ld+json">\n{schema}\n    </script>'
+            safe_schema = schema.replace('</', '<\\/')
+            schema_tags += f'\n    <script type="application/ld+json">\n{safe_schema}\n    </script>'
 
     rss_tag = f'\n    <link rel="alternate" type="application/rss+xml" title="{SITE_NAME} Blog" href="{prefix}blog/feed.xml">' if rss else ''
 
