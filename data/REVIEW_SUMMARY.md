@@ -1,19 +1,19 @@
-# Daily KEV Review — 2026-04-23
+# Daily KEV Review — 2026-04-24
 
-**New CVEs:** 1 | **Critical:** 0 | **High:** 1 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 1 | **Critical:** 1 | **High:** 0 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-33825 | Microsoft | Defender | 7.8 | Unknown | 2026-05-06 |
+| CVE-2026-39987 | Marimo | Marimo | 9.8 | Unknown | 2026-05-07 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-05-06 (1 CVE)
+- **Nearest due date:** 2026-05-07 (1 CVE)
 - **Overdue:** None
 
 ## Vendor Summary
-- Microsoft: 1 CVE
+- Marimo: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
