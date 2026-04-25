@@ -1,20 +1,20 @@
-# AppSec Review — 2026-04-24
+# AppSec Review — 2026-04-25
 
 **Reviewer:** Robert Flores, CISSP  
-**Pipeline run:** 2026-04-24  
-**CVEs reviewed:** 1  
+**Review Date:** 2026-04-25  
+**CVEs Reviewed:** 4  
+**Source:** CISA Known Exploited Vulnerabilities (KEV) Catalog
 
 ---
 
 ## Severity Breakdown
 
-| Priority | Count |
-|----------|-------|
-| Critical | 1     |
-| High     | 0     |
-| Medium   | 0     |
-| Low      | 0     |
-| **Total**| **1** |
+| Priority | Count | CVEs |
+|----------|-------|------|
+| Critical | 2 | CVE-2024-7399, CVE-2024-57726 |
+| High     | 2 | CVE-2025-29635, CVE-2024-57728 |
+| Medium   | 0 | — |
+| Low      | 0 | — |
 
 ---
 
@@ -22,26 +22,31 @@
 
 | CVE ID | Vendor | Priority | Vulnerability Class |
 |--------|--------|----------|---------------------|
-| CVE-2026-39987 | Marimo | critical | Pre-auth RCE (CWE-306: Missing Authentication) |
+| CVE-2025-29635 | D-Link | high | Command Injection (CWE-77) |
+| CVE-2024-7399 | Samsung | critical | Path Traversal / Arbitrary File Write (CWE-22, CWE-434) |
+| CVE-2024-57728 | SimpleHelp | high | Path Traversal / Zip Slip RCE (CWE-22, CWE-59) |
+| CVE-2024-57726 | SimpleHelp | critical | Missing Authorization / Privilege Escalation (CWE-862) |
 
 ---
 
 ## Trend Analysis
 
-This batch adds a single critical pre-authentication remote code execution vulnerability in Marimo (CVE-2026-39987, CVSS 9.8). CISA's addition reflects a continued and expanding focus on developer tooling and data-science infrastructure as high-value attack surfaces. Marimo — an open-source reactive Python notebook — exposes an unauthenticated HTTP endpoint that grants OS-level shell access with zero credentials required, rooted in CWE-306 (Missing Authentication for Critical Function). The targeting of notebook and IDE-adjacent frameworks is consistent with a broader threat trend where adversaries pivot from end-user applications toward developer infrastructure, effectively using the developer's trusted execution environment as a beachhead into CI/CD pipelines, cloud credentials, and source repositories. Organizations should treat any internet-accessible Marimo instance as critically exposed and apply vendor mitigations before the BOD 22-01 deadline of 2026-05-07.
+This batch reflects two converging threat patterns active in mid-2026. First, end-of-life network devices (D-Link DIR-823X) continue to surface in KEV — attackers increasingly target EoL SOHO and SMB equipment where no patch will ever exist, making CISA's "discontinue use" guidance the only viable remediation. Second, remote-access and digital-signage management platforms are drawing sustained attention: both SimpleHelp vulnerabilities (CVE-2024-57726 and CVE-2024-57728) were disclosed in late 2024 but CISA's 2026 KEV addition signals active in-the-wild exploitation, consistent with threat actors targeting MSP tooling to achieve broad downstream access. The Samsung MagicINFO path traversal follows the same delayed-exploitation pattern — a 2024 CVE now actively leveraged, likely against unpatched enterprise digital signage deployments. Defenders should treat any 2024 CVE appearing in a 2026 KEV batch as a signal of ongoing exploitation campaigns, not historical remediation debt.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"Why Your Python Notebook Is an Attack Surface"** — Explore how tools like Marimo, Jupyter, and similar notebook frameworks expose unauthenticated HTTP endpoints and what defenders can do (network segmentation, auth proxies, bind-address hardening).
-2. **"CWE-306 in the Wild: When Missing Authentication Hits CISA KEV"** — A technical deep-dive into how CWE-306 manifests in developer tools and the recurring pattern of no-auth-required RCE in rapidly adopted open-source projects.
-3. **"Securing the Developer Workstation: CISA KEV Vulnerabilities Targeting Dev Tools"** — Broader roundup of KEV entries affecting developer tooling and frameworks, with a checklist for AppSec teams running secure software development environments.
+1. **"Zip Slip Is Back: SimpleHelp CVE-2024-57728 and the Enduring Danger of Archive Path Traversal"** — Deep-dive on how zip-slip attacks work, why archive upload features are a persistent RCE vector, and how to test for them in your own applications.
+
+2. **"The MSP Kill Chain: Chaining SimpleHelp CVE-2024-57726 + CVE-2024-57728 for Full Compromise"** — Walk through how a low-privilege technician account can escalate to admin (CVE-2024-57726) and then achieve host-level code execution via zip slip (CVE-2024-57728), illustrating why MSP-platform vulnerabilities carry outsized blast radius.
+
+3. **"End-of-Life Doesn't Mean End of Exploitation: D-Link DIR-823X and the EoL Device Problem"** — Examines why EoL devices like the DIR-823X are a long-tail risk, how organizations can inventory and prioritize decommissioning, and the policy implications of CISA issuing KEV alerts for devices with no available patch.
 
 ---
 
 ## Newsletter Snippet
 
-**CISA adds Marimo pre-auth RCE to Known Exploited Vulnerabilities catalog.** CVE-2026-39987, a critical (CVSS 9.8) remote code execution vulnerability in the Marimo Python notebook framework, was added to the KEV catalog on April 23, 2026 with a patch deadline of May 7, 2026. The flaw — rooted in missing authentication for a critical function (CWE-306) — allows an unauthenticated attacker to gain shell access and execute arbitrary system commands with no credentials required. Any organization running Marimo in an internet-accessible or multi-tenant environment should treat remediation as urgent.
+**New KEV Additions — April 25, 2026:** CISA added four new vulnerabilities to the Known Exploited Vulnerabilities catalog this week, spanning D-Link, Samsung, and SimpleHelp. Two stand out as critical: Samsung MagicINFO 9 Server (CVE-2024-7399, CVSS 8.8) allows an attacker to write arbitrary files as SYSTEM — effectively unauthenticated remote code execution on enterprise digital-signage infrastructure — and SimpleHelp's missing authorization flaw (CVE-2024-57726, CVSS 9.9) lets any technician-level user forge admin API keys, paving the way for full server takeover. If you run MagicINFO or SimpleHelp in your environment, patch immediately; CISA's remediation deadline is May 8, 2026.
 
-CISA's pattern of adding developer tooling to the KEV catalog is an important signal for AppSec teams: the attack surface is no longer limited to production web applications and network devices. Notebook frameworks, local AI tools, and developer utilities are increasingly reachable from enterprise networks and cloud environments, often with weaker security posture than customer-facing systems. Teams should audit for exposed development tooling, enforce authentication at the network perimeter, and subscribe to KEV feeds as part of their vulnerability management program.
+The remaining two CVEs continue a troubling pattern: the D-Link DIR-823X (CVE-2025-29635) is end-of-life with no patch available, and SimpleHelp's zip-slip RCE (CVE-2024-57728) was disclosed in 2024 but is only now confirmed actively exploited. Both illustrate a broader trend worth watching — attackers are increasingly mining older, unpatched CVEs in widely-deployed management tooling and legacy networking equipment. Organizations relying on EoL devices or slow patch cycles should treat this KEV batch as a forcing function to accelerate decommissioning and upgrade timelines.
