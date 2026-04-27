@@ -1,3 +1,53 @@
+## 2026-04-27 — Weekly Tech-Debt Audit
+
+**Headline:** Pipeline healthy and CVE automation current; 20 evergreen quiz pages still carry banned "Last updated" timestamps, `CLAUDE.md` remains absent, and `generate_guides.py` grew from 2,896 → 5,189 LOC since last audit — the refactor case is now urgent.
+
+**Pipeline pulse:**
+- Daily CVE trigger last output (`data/appsec-review.md`): 2026-04-26 17:15 UTC (1 day old — healthy)
+- Friday AI trend roundup last file (`drafts/ai-security-roundup-2026-04-24.md`): 2026-04-24 — draft exists but **not yet published** (no `.published` suffix; prior week's `ai-security-roundup-2026-04-17.md.published` published correctly)
+- `data/pending_review.json` pending count: 0 (all CVEs processed as of Apr 26)
+
+**New this week:**
+
+- P1 content — `*.html` (20 quiz pages, repo-wide) — Evergreen quiz pages still contain hardcoded "Last updated: March 30, 2026" timestamps; reduced from ~92 last audit but not zero; CLAUDE.md rule: evergreen pages must carry no `Last updated` date — Strip timestamp injection from quiz generators; confirm `generate_quiz_pages.py` no longer emits the block — S
+- P2 generator — `scripts/generate_guides.py:1` — **Grew from 2,896 → 5,189 LOC** since last audit (+2,293 lines in one week); now ~10× the 500-LOC threshold with distinct entry paths for AI Security, GRC, and Blue Team content — Split into per-domain modules sharing a common `scripts/lib/html_builder.py` — L
+- P2 generator — `scripts/generate_sprint_kit.py:1` — 2,115 LOC (~4× threshold); mixes PDF generation, CISA KEV enrichment, and template rendering — Extract KEV enrichment into a shared library callable by other generators — M
+- P2 generator — `scripts/generate_cert_pages.py:1` — 1,224 LOC; data loading and HTML rendering interleaved — Separate data layer from rendering layer — S
+- P2 generator — `scripts/entity_extractor.py:1` (849 LOC) and `scripts/audit_pages.py:1` (768 LOC) — Both parse CVE/page structures and likely share utility logic — Extract shared CVE-parsing helpers into `scripts/lib/` — S
+- P2 pipeline — `scripts/generate_sitemap.py` + `scripts/update_sitemap.py` — Two scripts with overlapping sitemap-mutation logic and nearly identical imports; consolidation candidate — Merge into a single `sitemap.py` with `--build` and `--update` modes — S
+- P2 pipeline — `drafts/ai-security-roundup-2026-04-24.md` — Friday Apr 24 roundup draft exists but lacks `.published` suffix; `publish-blog.yml` may not have triggered or the file was not staged — Verify `publish-blog.yml` is wired to consume roundup drafts automatically on Fridays — XS
+- P2 hygiene — repo-wide — `requirements.txt` still absent (carried from prior audit); Pillow/PIL confirmed in `create_hero.py` and `generate_linkedin_posts.py`; `security-audit.yml` runs `pip-audit -r requirements.txt` which silently no-ops — Create `requirements.txt` with pinned versions; add install step to CI — XS
+- P2 hygiene — `scripts/` (8 instances) — Broad `except Exception:` handlers without structured logging in `fetch_kev.py:63`, `generate_sitemap.py:86`, `update_sitemap.py:29`, `audit_pages.py:250`, `audit_pages.py:382`, `inject_error_reporter.py:46`, `generate_linkedin_posts.py:72`, `create_hero.py:51` (reduced from 14 last audit but not zero) — Add `logging.exception()` before silencing — S
+- P2 content — `sitemap.xml` — `lastmod` dates for non-CVE pages frozen at 2026-03-22; `update_sitemap.py` is not wired into auto-publish workflows — Add `update_sitemap.py` invocation to `auto-publish-cve.yml` and `publish-blog.yml` — S
+- P3 hygiene — repo root — `CLAUDE.md` still absent (carried from prior audit); editorial rules are uncodified in-repo — Create `CLAUDE.md` documenting the evergreen-page rule, cache-bust policy, and pipeline health thresholds — XS
+- P3 SEO — `404.html`, `analytics.html`, `kev_cards.html`, `store/success.html` — Four utility pages missing OG, Twitter Card, and canonical meta tags — Add minimal tags if any indexing risk exists — XS
+- P3 data — `data/kev.json` — 1.1 MB full CISA KEV catalog mirror loaded by scripts querying only a small field subset — Add a filtered loader in `scripts/lib/` to avoid full-file reads on each run — M
+- P3 store — `store/cloudflare-worker.js` vs `store/store.js` — Server-side PRICING (standard $29, adhd $39, dark $39, adhd_dark $49) verified in worker; client prices served dynamically (not statically duplicated) — no mismatch; verify both files updated atomically on next pricing change — XS
+
+**Still open from prior audits:** 6
+1. P1 — Evergreen quiz pages with timestamps (20 remain; was ~92)
+2. P2 — Script size refactoring (`generate_guides.py` worsened significantly)
+3. P2 — `requirements.txt` absent
+4. P2 — Sitemap `lastmod` not wired into publish workflows
+5. P3 — Broad `except Exception:` without logging (8 blocks; was 14)
+6. P3 — No `CLAUDE.md` in repository root
+
+**Resolved since last audit:**
+- P0 pipeline — `data/appsec-review.md` stall — resolved; file updated 2026-04-26, pipeline running on schedule
+- P2 llms.txt/sitemap gap — resolved; reconciliation closed the ~129-file gap; sitemap now matches all 546 HTML pages; llms-full.txt regenerated 2026-04-27
+- P2 store worker webhook verification — confirmed present; constant-time HMAC comparison verified in `store/cloudflare-worker.js`
+
+**Metrics tracked:**
+- Total generated pages (cve-*, cert-*, comparisons/*): 299 (191 CVE + 66 cert + 42 comparison)
+- Evergreen pages with timestamps (should be 0): 20 (was ~92)
+- Pages missing from llms.txt: 0 (was ~129)
+- Cache-bust drift count: 0 (style.min.css v=8 ×532, quiz.css v=3 ×68, comparison.css v=3 ×42, store.css v=12 ×12, practice-tests.css v=1 ×14 — all consistent)
+- Scripts >500 LOC: ≥10 (top 5 confirmed: generate_guides.py 5,189 · generate_sprint_kit.py 2,115 · generate_cert_pages.py 1,224 · entity_extractor.py 849 · audit_pages.py 768; prior audit enumerated 10 total)
+- Store worker LOC: 1,151 (unchanged)
+- Python scripts with bare `except:`: 0 / broad `except Exception:` without logging: 8 (was 14)
+
+---
+
 ## 2026-04-20 — Weekly Tech-Debt Audit
 
 **Headline:** Daily CVE pipeline skips writing `appsec-review.md` on zero-KEV days, breaking the primary health signal; 92 evergreen pages carry illegal "Last updated" timestamps.
