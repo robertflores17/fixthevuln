@@ -1,24 +1,21 @@
-# Daily KEV Review — 2026-04-25
+# Daily KEV Review — 2026-04-29
 
-**New CVEs:** 4 | **Critical:** 1 | **High:** 3 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 2 | **Critical:** 0 | **High:** 1 | **Medium:** 1 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2024-57726 | SimpleHelp  | SimpleHelp | 9.9 | Unknown | 2026-05-08 |
-| CVE-2024-7399 | Samsung | MagicINFO 9 Server | 8.8 | Unknown | 2026-05-08 |
-| CVE-2025-29635 | D-Link | DIR-823X | 7.2 | Unknown | 2026-05-08 |
-| CVE-2024-57728 | SimpleHelp  | SimpleHelp | 7.2 | Unknown | 2026-05-08 |
+| CVE-2024-1708 | ConnectWise | ScreenConnect | 8.4 | Unknown | 2026-05-12 |
+| CVE-2026-32202 | Microsoft | Windows | 4.3 | Unknown | 2026-05-12 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-05-08 (4 CVEs)
+- **Nearest due date:** 2026-05-12 (2 CVEs)
 - **Overdue:** None
 
 ## Vendor Summary
-- SimpleHelp : 2 CVEs
-- D-Link: 1 CVE
-- Samsung: 1 CVE
+- ConnectWise: 1 CVE
+- Microsoft: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
