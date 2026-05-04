@@ -1,3 +1,39 @@
+## 2026-05-04 — Weekly Tech-Debt Audit
+
+**Headline:** Pipeline healthy (appsec-review.md 2 days old, within threshold); evergreen timestamp P1 worsened from 20 → 60 pages as new quiz content was regenerated without the fix; `ai-agent-security-threats.html` miscategorized in `llms-full.txt`; all six prior debt items remain open.
+
+**Pipeline pulse:**
+- Daily CVE trigger last output (`data/appsec-review.md`): 2026-05-02 17:05 UTC (~45 h old — within 2-day threshold ✓)
+- Friday AI trend roundup last file (`drafts/ai-security-roundup-2026-05-01.md`): 2026-05-01 — draft present, awaiting Tuesday `publish-blog.yml` publication cycle (normal)
+- `data/pending_review.json` pending count: 0 (all CVEs processed; last KEV check 2026-05-03)
+
+**New this week:**
+- P1 content — `scripts/generate_quiz_pages.py:387` — Evergreen timestamp regression: quiz+practice-test hub pages with banned "Last updated" grew from **20 → 60** (47 quiz + 13 practice-test hub) as new quiz content was regenerated without removing the timestamp block; root cause is line 387 in `generate_quiz_pages.py` still emits `<p>Last updated: {TODAY}</p>` — Remove the timestamp block from the quiz and practice-test page templates; re-run generators to clear all 60 instances — Effort: S
+- P2 content — `scripts/generate_llms_txt.py:141` — `ai-agent-security-threats.html` falls into the catch-all "Other Pages (1 pages)" section in `llms-full.txt` because it is absent from `GUIDE_PAGES`; AI agents discovering the site via llms-full.txt will not see it listed under Security Guides — Add `"ai-agent-security-threats.html"` to `GUIDE_PAGES` set and re-run `generate_llms_txt.py` — Effort: XS
+
+**Still open from prior audits:** 6
+1. P1 — Evergreen quiz/hub timestamps (60 pages; was 20 — worsening)
+2. P2 — Script size: `generate_guides.py` (2,896 LOC; note: prior audit's "5,189 LOC" figure was incorrect — actual is unchanged at 2,896), `generate_sprint_kit.py` (1,991 LOC)
+3. P2 — `requirements.txt` absent; `security-audit.yml` pip-audit silently no-ops
+4. P2 — Sitemap `lastmod` not wired into `auto-publish-cve.yml` or `publish-blog.yml`
+5. P3 — 8 broad `except Exception:` handlers without logging across `fetch_kev.py:63`, `generate_sitemap.py:86`, `update_sitemap.py:29`, `audit_pages.py:250,382`, `inject_error_reporter.py:46`, `generate_linkedin_posts.py:72`, `create_hero.py:51`
+6. P3 — No `CLAUDE.md` in repository root
+
+**Resolved since last audit:**
+- P2 pipeline — `drafts/ai-security-roundup-2026-04-24.md.published` — Apr 24 roundup now published as `blog/ai-security-roundup-2026-04-24.html` ✓
+- Metric correction — `generate_guides.py` LOC: prior audit (2026-04-27) reported 5,189 LOC; actual file is 2,896 LOC (unchanged since 2026-04-20 audit); the prior figure was erroneous
+
+**Metrics tracked:**
+- Total generated pages (cve-*, cert-*, comparisons/*, roadmaps/*): 278 (102 CVE + 66 cert + 43 comparisons + 67 roadmaps)
+- Evergreen pages with timestamps (should be 0): **60** (was 20 — regression; 47 quiz + 13 practice-test hub)
+- Pages missing from llms.txt: 0 (ai-agent-security-threats.html is present but miscategorized as "Other Pages")
+- Cache-bust drift count: 0 (no CSS/JS commits in past 7 days; versions: style.min.css v=8, quiz.css v=3, comparison.css v=3, store.css v=6, practice-tests.css v=1)
+- Scripts >500 LOC: 10 (unchanged)
+- Store worker LOC: 1,151 (unchanged; webhook HMAC signature verification confirmed present)
+- Python scripts with bare `except:`: 0 / broad `except Exception:` without logging: 8 (unchanged)
+
+---
+
 ## 2026-04-27 — Weekly Tech-Debt Audit
 
 **Headline:** Pipeline healthy and CVE automation current; 20 evergreen quiz pages still carry banned "Last updated" timestamps, `CLAUDE.md` remains absent, and `generate_guides.py` grew from 2,896 → 5,189 LOC since last audit — the refactor case is now urgent.
