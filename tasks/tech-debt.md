@@ -1,3 +1,37 @@
+## 2026-05-11 — Weekly Tech-Debt Audit
+
+**Headline:** P0 regression: sitemap.xml has 91 orphaned CVE entries after the 104-CVE batch publish; llms-full.txt inherits 92 dead CVE links via generate_llms_txt.py; AI crawlers receive 404s for 88% of listed CVE URLs — GitHub issue #83 filed; pipeline and roundup are healthy; 7 prior items remain open.
+
+**Pipeline pulse:**
+- Daily CVE trigger last output (`data/appsec-review.md`): 2026-05-11 (today — healthy ✓)
+- Friday AI trend roundup last file (`drafts/ai-security-roundup-2026-05-08.md`): 2026-05-08 — draft present, awaiting Tuesday `publish-blog.yml` cycle (normal for Monday)
+- `data/pending_review.json` pending count: 0 (last KEV check 2026-05-10)
+
+**New this week:**
+- P0 pipeline/llms — `sitemap.xml` + `llms-full.txt` + `llms.txt` — CVE orphan drift: `sitemap.xml` lists 195 CVE URLs but only 104 CVE pages exist on disk (91 orphaned `<url>` elements); `generate_llms_txt.py:188` reads from sitemap rather than scanning disk, so `llms-full.txt` inherits 92 orphaned CVE links + 1 duplicate entry; `llms.txt` reports "197 CVE pages" vs 104 on disk; AI crawlers following llms-full.txt get 404s for 88% of listed CVE URLs; additionally `CVE-2026-42208` exists on disk but is missing from llms-full.txt — Root cause: `auto-publish-cve.yml`/`publish-blog.yml` append CVE URLs via `update_sitemap.py` without purging removed pages after batch replaces — Fix: run `python3 scripts/generate_sitemap.py` to rebuild from disk, then `generate_llms_txt.py`; wire `generate_sitemap.py` into `auto-publish-cve.yml` after any CVE add/delete — Effort: XS — GitHub issue: #83
+
+**Still open from prior audits:** 7
+1. P1 — Evergreen quiz/hub timestamps (61 pages; was 60 — flat; 48 quiz root + 13 practice-test hub); root cause: `scripts/generate_quiz_pages.py` and `scripts/generate_practice_test_pages.py` still emit timestamp blocks
+2. P2 — `ai-agent-security-threats.html` absent from `GUIDE_PAGES` in `scripts/generate_llms_txt.py:141–157`; falls into "Other Pages" in llms-full.txt (from 2026-05-04 audit, unfixed)
+3. P2 — Script size: 14 scripts >500 LOC (generate_guides.py 2,896 · generate_sprint_kit.py 1,991 · fetch_kev.py 865 · etsy_to_pinterest.py 829 · entity_extractor.py 765 · generate_linkedin_posts.py 716 · publish_editorial.py 707 · audit_pages.py 661 · generate_quiz_pages.py 630 · generate_cert_pages.py 595 · inject_store_ctas.py 588 · generate_practice_test_pages.py 572 · generate_roadmaps.py 517 · generate_cve_pages.py 504)
+4. P2 — `requirements.txt` absent; `security-audit.yml` pip-audit silently no-ops
+5. P2 — `generate_sitemap.py` + `update_sitemap.py` overlapping sitemap-mutation logic; no reconciliation step in publish workflows (root cause of P0 above)
+6. P3 — 8 broad `except Exception:` handlers without logging: `fetch_kev.py:63`, `generate_sitemap.py:86`, `update_sitemap.py:29`, `audit_pages.py:250,382`, `inject_error_reporter.py:46`, `generate_linkedin_posts.py:72`, `create_hero.py:51`
+7. P3 — No `CLAUDE.md` in repository root
+
+**Resolved since last audit:** None. `ai-security-roundup-2026-05-01.md` published as expected (normal Tuesday pipeline, not a tracked finding).
+
+**Metrics tracked:**
+- Total generated pages (cve-*, cert-*, comparisons/*, roadmaps/*): 280 (104 CVE + 66 cert + 43 comparisons + 67 roadmaps)
+- Evergreen pages with timestamps (should be 0): 61 (was 60 — flat; 48 quiz root + 13 practice-test hub)
+- Pages missing from llms.txt: 1 (`CVE-2026-42208` on disk, absent from llms-full.txt); 91 orphaned CVE entries in sitemap → 92 dead links in llms-full.txt (P0)
+- Cache-bust drift count: 0 (no CSS/JS commits in past 7 days; versions: style.min.css v=8, quiz.css v=3, comparison.css v=3, store.css v=6, practice-tests.css v=1)
+- Scripts >500 LOC: 14 (up from 10 confirmed last audit; full enumeration above)
+- Store worker LOC: 1,151 (unchanged; Stripe webhook HMAC verification confirmed at line 703)
+- Python scripts with bare `except:`: 0 / broad `except Exception:` without logging: 8 (unchanged)
+
+---
+
 ## 2026-05-04 — Weekly Tech-Debt Audit
 
 **Headline:** Pipeline healthy (appsec-review.md 2 days old, within threshold); evergreen timestamp P1 worsened from 20 → 60 pages as new quiz content was regenerated without the fix; `ai-agent-security-threats.html` miscategorized in `llms-full.txt`; all six prior debt items remain open.
