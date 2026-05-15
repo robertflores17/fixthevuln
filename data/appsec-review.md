@@ -1,8 +1,8 @@
-# AppSec Review — 2026-05-09
+# AppSec Review — 2026-05-15
 
-**Reviewer:** Robert Flores, CISSP  
-**Review Date:** 2026-05-09  
-**CVEs Reviewed:** 1  
+**Reviewer:** Robert Flores, CISSP
+**Review Date:** 2026-05-15
+**CVEs Reviewed:** 1
 **Source:** CISA Known Exploited Vulnerabilities (KEV) Catalog
 
 ---
@@ -11,7 +11,7 @@
 
 | Priority | Count | CVEs |
 |----------|-------|------|
-| Critical | 1 | CVE-2026-42208 |
+| Critical | 1 | CVE-2026-20182 |
 | High     | 0 | — |
 | Medium   | 0 | — |
 | Low      | 0 | — |
@@ -20,37 +20,39 @@
 
 ## CVE Summary
 
-| CVE ID | Vendor | Priority | Vulnerability Class |
-|--------|--------|----------|---------------------|
-| CVE-2026-42208 | BerriAI (LiteLLM) | critical | SQL Injection (CWE-89) |
+| CVE ID | Vendor | Product | Priority | Vulnerability Class |
+|--------|--------|---------|----------|---------------------|
+| CVE-2026-20182 | Cisco | Catalyst SD-WAN | critical | Authentication Bypass (CWE-287) |
 
 ---
 
 ## CVE Analysis
 
-**CVE-2026-42208 — BerriAI LiteLLM SQL Injection (CVSS 9.8)**  
-Unauthenticated SQL injection (CWE-89) in LiteLLM's proxy layer allows an attacker to read and modify the proxy's backing database without credentials. Because LiteLLM acts as a centralized AI API gateway, successful exploitation exposes all downstream API keys (OpenAI, Anthropic, Azure, Gemini, etc.) stored in the database — effectively a credential-theft multiplier across every AI provider the proxy manages. CISA's compressed 3-day remediation window (dateAdded 2026-05-08, due 2026-05-11) reflects confirmed active exploitation likely tied to automated credential-harvesting campaigns targeting AI infrastructure.
+**CVE-2026-20182 — Cisco Catalyst SD-WAN Controller Authentication Bypass (CVSS 10.0)**
+Unauthenticated authentication bypass (CWE-287) in Cisco Catalyst SD-WAN Controller and Manager allows a remote, unauthenticated attacker to bypass all authentication checks and obtain full administrative privileges on the affected system. An attacker with admin access to the SD-WAN orchestration layer can silently reroute enterprise traffic, exfiltrate device configurations and credentials, pivot laterally into managed branch networks, or disrupt WAN connectivity at scale. CISA issued Emergency Directive 26-03 alongside dedicated hunt and hardening supplemental guidance, signaling confirmed active exploitation in federal environments and the highest possible response urgency.
 
 ---
 
 ## Trend Analysis
 
-This week's addition marks a significant shift in the KEV threat landscape: for the first time, CISA has catalogued an actively exploited vulnerability targeting AI/ML API proxy infrastructure. LiteLLM is widely deployed in enterprise AI platforms, developer toolchains, and internal LLM gateways — making it a high-value, high-blast-radius target. Unlike traditional application vulnerabilities where the primary risk is data exfiltration from a single system, a SQL injection in an AI proxy layer results in credential compromise across an entire portfolio of AI providers simultaneously. This mirrors the pattern seen with identity providers and secrets management systems becoming preferred initial-access targets: attack the aggregator, compromise everything downstream. Security teams should treat LiteLLM and similar AI orchestration components (LangChain serve, OpenRouter, LiteLLM-derived forks) as Tier-1 infrastructure requiring the same access controls, network segmentation, and patch urgency applied to IAM systems and API gateways. The entry of AI-native tooling into the KEV catalog is a landmark signal that adversaries have moved beyond reconnaissance of AI systems into active exploitation campaigns.
+This batch reinforces the sustained adversary focus on network infrastructure control planes — specifically SD-WAN orchestration layers that govern routing policy, segmentation, and WAN connectivity for entire enterprise and government networks. An unauthenticated authentication bypass achieving full administrative access on Cisco Catalyst SD-WAN Controller/Manager (CVSS 10.0) represents a worst-case scenario: attackers gain infrastructure-level persistence that bypasses endpoint detection, host-based controls, and most SIEM alerting tuned for application-layer threats. CISA's issuance of Emergency Directive 26-03 with a 3-day remediation window — coupled with supplemental hunt-and-hardening guidance published simultaneously — indicates active exploitation observed in high-value federal targets, consistent with recent nation-state campaigns targeting perimeter and WAN infrastructure for persistent, hard-to-detect footholds. Security teams should treat SD-WAN orchestrators and management planes with the same urgency and segmentation applied to IAM systems: they are credential-multipliers and lateral-movement enablers whose compromise can cascade across every connected site.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"Your AI Gateway Is Your Attack Surface: The LiteLLM SQL Injection and What It Means for Enterprise AI Security"** — Deep dive on why API proxy layers (LiteLLM, LangChain serve, OpenRouter) are becoming prime credential-theft targets, with remediation steps and detection guidance for defenders.
+1. **"CVSS 10.0 in the Wild: Breaking Down the Cisco SD-WAN Auth Bypass (CVE-2026-20182)"** — Technical deep-dive into CWE-287 in SD-WAN control planes, what attackers can do once authenticated as admin, and why ED-26-03 mandates a hunt not just a patch.
 
-2. **"CISA's 3-Day Patch Window: When KEV Urgency Signals Active Exploitation Campaigns"** — Analysis of compressed CISA due dates as a threat-intel signal, using LiteLLM as the case study for operationalizing emergency response.
+2. **"SD-WAN Security 101: Why Your WAN Controller Is a High-Value Target"** — Practitioner guide explaining the attack surface of SD-WAN orchestrators, common misconfigurations, and zero-trust network segmentation strategies to limit blast radius when a control plane is compromised.
 
-3. **"Protecting the Keys to the Kingdom: Securing AI API Credential Stores Against SQL Injection"** — Practical guide covering parameterized queries, secrets management (Vault, AWS Secrets Manager), database access controls, and credential rotation for teams building or self-hosting AI proxy infrastructure.
+3. **"Emergency Directives and You: What CISA ED-26-03 Means for Federal and Enterprise Networks"** — Policy-focused piece on what an Emergency Directive compels federal agencies to do, enforcement timelines, and how private-sector organizations should mirror the response for Cisco SD-WAN deployments.
 
 ---
 
 ## Newsletter Snippet
 
-**This week CISA added a critical SQL injection vulnerability (CVE-2026-42208, CVSS 9.8) in BerriAI's LiteLLM to the Known Exploited Vulnerabilities catalog, setting an unusually tight 3-day remediation deadline of May 11, 2026.** LiteLLM is an open-source proxy that unifies access to dozens of AI providers under a single API — meaning a single unauthenticated database query can drain your entire portfolio of AI API keys in one shot. This marks the first KEV entry explicitly targeting AI/ML API gateway infrastructure, and represents a significant escalation in adversaries' targeting of the AI supply chain. If your organization self-hosts LiteLLM or uses it in an internal developer platform or AI pipeline, treat this as an emergency patch.
+**Headline: Critical Cisco SD-WAN Auth Bypass Added to CISA KEV — CVSS 10.0, Patch or Isolate Now**
 
-For defenders: upgrade to the patched LiteLLM release immediately, rotate all API credentials stored in the proxy database as a precaution, and verify that the proxy's database port is not reachable from untrusted network segments. This vulnerability is a landmark signal that as AI infrastructure matures, it inherits all of classical web application security debt — SQL injection included — and threat actors are actively exploiting it. The broader lesson: every AI orchestration component in your stack that touches credentials or sensitive data should be on your highest-priority asset list, subject to the same rigorous patch management you apply to IAM systems and perimeter devices.
+CISA added CVE-2026-20182 to the Known Exploited Vulnerabilities catalog this week: a complete authentication bypass in Cisco Catalyst SD-WAN Controller and Manager that hands unauthenticated remote attackers full administrative control. With a CVSS score of 10.0 and active exploitation confirmed in federal environments, CISA issued Emergency Directive 26-03 ordering federal agencies to patch or disconnect affected systems by 2026-05-17 — one of the tightest remediation windows in recent memory. If your organization runs Cisco SD-WAN, treat this as a fire drill: consult the Cisco advisory (cisco-sa-sdwan-rpa2-v69WY2SW), review CISA's hunt and hardening guidance, and verify no unauthorized admin sessions exist in your SD-WAN management plane before or during the patching process.
+
+For defenders who cannot patch immediately, CISA's supplemental direction provides detection logic and hardening steps to reduce exposure. This vulnerability class — improper authentication on network management planes — continues to be a preferred entry point for sophisticated threat actors because it bypasses endpoint controls entirely and provides infrastructure-level persistence that is extremely difficult to detect post-compromise. Expect related TTPs including configuration exfiltration, route manipulation, and traffic interception to surface in threat intelligence feeds as exploitation details become public; begin hunting for anomalous admin logins and configuration changes in your SD-WAN logs now.
