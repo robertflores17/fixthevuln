@@ -1,19 +1,19 @@
-# Daily KEV Review — 2026-05-15
+# Daily KEV Review — 2026-05-16
 
-**New CVEs:** 1 | **Critical:** 1 | **High:** 0 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 1 | **Critical:** 0 | **High:** 1 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-20182 | Cisco | Catalyst SD-WAN | 10.0 | Unknown | 2026-05-17 |
+| CVE-2026-42897 | Microsoft | Microsoft | 8.1 | Unknown | 2026-05-29 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-05-17 (1 CVE)
+- **Nearest due date:** 2026-05-29 (1 CVE)
 - **Overdue:** None
 
 ## Vendor Summary
-- Cisco: 1 CVE
+- Microsoft: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
