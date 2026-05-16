@@ -1,7 +1,7 @@
-# AppSec Review — 2026-05-15
+# AppSec Review — 2026-05-16
 
 **Reviewer:** Robert Flores, CISSP
-**Review Date:** 2026-05-15
+**Review Date:** 2026-05-16
 **CVEs Reviewed:** 1
 **Source:** CISA Known Exploited Vulnerabilities (KEV) Catalog
 
@@ -11,8 +11,8 @@
 
 | Priority | Count | CVEs |
 |----------|-------|------|
-| Critical | 1 | CVE-2026-20182 |
-| High     | 0 | — |
+| Critical | 0 | — |
+| High     | 1 | CVE-2026-42897 |
 | Medium   | 0 | — |
 | Low      | 0 | — |
 
@@ -22,37 +22,35 @@
 
 | CVE ID | Vendor | Product | Priority | Vulnerability Class |
 |--------|--------|---------|----------|---------------------|
-| CVE-2026-20182 | Cisco | Catalyst SD-WAN | critical | Authentication Bypass (CWE-287) |
+| CVE-2026-42897 | Microsoft | Exchange Server | high | Cross-Site Scripting (CWE-79) |
 
 ---
 
 ## CVE Analysis
 
-**CVE-2026-20182 — Cisco Catalyst SD-WAN Controller Authentication Bypass (CVSS 10.0)**
-Unauthenticated authentication bypass (CWE-287) in Cisco Catalyst SD-WAN Controller and Manager allows a remote, unauthenticated attacker to bypass all authentication checks and obtain full administrative privileges on the affected system. An attacker with admin access to the SD-WAN orchestration layer can silently reroute enterprise traffic, exfiltrate device configurations and credentials, pivot laterally into managed branch networks, or disrupt WAN connectivity at scale. CISA issued Emergency Directive 26-03 alongside dedicated hunt and hardening supplemental guidance, signaling confirmed active exploitation in federal environments and the highest possible response urgency.
+**CVE-2026-42897 — Microsoft Exchange Server OWA Cross-Site Scripting (CVSS 8.1)**
+Stored/reflected XSS (CWE-79) in Microsoft Exchange Server's Outlook Web Access (OWA) component allows arbitrary JavaScript execution in a victim's browser context when certain interaction conditions are met during web page generation. Exploitation enables session hijacking, credential theft, and internal phishing campaigns — particularly dangerous given OWA's privileged position in enterprise email workflows and its exposure on internet-facing perimeters. CISA's 14-day remediation deadline (2026-05-29) reflects confirmed active exploitation; apply Microsoft's patch or engage Exchange Emergency Mitigation Service (EEMS) mitigations immediately.
 
 ---
 
 ## Trend Analysis
 
-This batch reinforces the sustained adversary focus on network infrastructure control planes — specifically SD-WAN orchestration layers that govern routing policy, segmentation, and WAN connectivity for entire enterprise and government networks. An unauthenticated authentication bypass achieving full administrative access on Cisco Catalyst SD-WAN Controller/Manager (CVSS 10.0) represents a worst-case scenario: attackers gain infrastructure-level persistence that bypasses endpoint detection, host-based controls, and most SIEM alerting tuned for application-layer threats. CISA's issuance of Emergency Directive 26-03 with a 3-day remediation window — coupled with supplemental hunt-and-hardening guidance published simultaneously — indicates active exploitation observed in high-value federal targets, consistent with recent nation-state campaigns targeting perimeter and WAN infrastructure for persistent, hard-to-detect footholds. Security teams should treat SD-WAN orchestrators and management planes with the same urgency and segmentation applied to IAM systems: they are credential-multipliers and lateral-movement enablers whose compromise can cascade across every connected site.
+This batch continues the pattern of Microsoft Exchange Server vulnerabilities appearing in the CISA KEV catalog — a product line that has generated a disproportionate share of actively exploited CVEs over the past several years due to its internet-facing exposure, privileged access to organizational email, and complex attack surface. While a CVSS 8.1 XSS may appear less alarming than the critical RCE and auth bypass entries that dominate KEV, Exchange OWA XSS carries outsized real-world impact: it operates in a high-trust context (authenticated corporate webmail), enables session token theft that bypasses password controls, and provides a reliable beachhead for internal spear-phishing against targets who implicitly trust email from their own domain. Security teams should prioritize patching Exchange environments and evaluate whether Content Security Policy headers and EEMS configurations are deployed as compensating controls.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"CVSS 10.0 in the Wild: Breaking Down the Cisco SD-WAN Auth Bypass (CVE-2026-20182)"** — Technical deep-dive into CWE-287 in SD-WAN control planes, what attackers can do once authenticated as admin, and why ED-26-03 mandates a hunt not just a patch.
+1. **"Why Exchange Server XSS Is More Dangerous Than It Sounds"** — Deep dive on the OWA attack surface, session hijacking chains enabled by CWE-79 in a high-trust webmail context, and why CISA keeps adding Exchange CVEs to the KEV catalog.
 
-2. **"SD-WAN Security 101: Why Your WAN Controller Is a High-Value Target"** — Practitioner guide explaining the attack surface of SD-WAN orchestrators, common misconfigurations, and zero-trust network segmentation strategies to limit blast radius when a control plane is compromised.
+2. **"Defending Microsoft Exchange in 2026: OWA Hardening and the Emergency Mitigation Service"** — Practitioner walkthrough of Microsoft's Exchange Emergency Mitigation Service (EEMS) and CSP header configurations that reduce XSS exploit surface as compensating controls.
 
-3. **"Emergency Directives and You: What CISA ED-26-03 Means for Federal and Enterprise Networks"** — Policy-focused piece on what an Emergency Directive compels federal agencies to do, enforcement timelines, and how private-sector organizations should mirror the response for Cisco SD-WAN deployments.
+3. **"CISA KEV Prioritization for Blue Teams: How to Triage High vs. Critical When You Can't Patch Everything"** — Framework for practitioners on using KEV severity, product exposure, and exploitation likelihood to sequence remediation when patch windows are constrained.
 
 ---
 
 ## Newsletter Snippet
 
-**Headline: Critical Cisco SD-WAN Auth Bypass Added to CISA KEV — CVSS 10.0, Patch or Isolate Now**
+**This week CISA added CVE-2026-42897 to the Known Exploited Vulnerabilities catalog** — a cross-site scripting flaw in Microsoft Exchange Server's Outlook Web Access (OWA) component. With a CVSS score of 8.1, this vulnerability allows attackers to inject and execute arbitrary JavaScript in a victim's browser session through OWA during web page generation, enabling session hijacking, credential theft, and internal phishing campaigns. CISA's remediation due date for federal agencies is **2026-05-29** — organizations running on-premises Exchange should treat this as a high-priority patch item this sprint.
 
-CISA added CVE-2026-20182 to the Known Exploited Vulnerabilities catalog this week: a complete authentication bypass in Cisco Catalyst SD-WAN Controller and Manager that hands unauthenticated remote attackers full administrative control. With a CVSS score of 10.0 and active exploitation confirmed in federal environments, CISA issued Emergency Directive 26-03 ordering federal agencies to patch or disconnect affected systems by 2026-05-17 — one of the tightest remediation windows in recent memory. If your organization runs Cisco SD-WAN, treat this as a fire drill: consult the Cisco advisory (cisco-sa-sdwan-rpa2-v69WY2SW), review CISA's hunt and hardening guidance, and verify no unauthorized admin sessions exist in your SD-WAN management plane before or during the patching process.
-
-For defenders who cannot patch immediately, CISA's supplemental direction provides detection logic and hardening steps to reduce exposure. This vulnerability class — improper authentication on network management planes — continues to be a preferred entry point for sophisticated threat actors because it bypasses endpoint controls entirely and provides infrastructure-level persistence that is extremely difficult to detect post-compromise. Expect related TTPs including configuration exfiltration, route manipulation, and traffic interception to surface in threat intelligence feeds as exploitation details become public; begin hunting for anomalous admin logins and configuration changes in your SD-WAN logs now.
+If immediate patching is not possible, Microsoft's Exchange Emergency Mitigation Service (EEMS) can automatically apply mitigations, and enforcing a strict Content Security Policy (CSP) on OWA significantly reduces XSS exploit surface. As a compensating control, require MFA on all OWA sessions — while XSS can still steal session tokens, MFA-enforced boundaries make stolen tokens dramatically less reusable for lateral movement. Monitor OWA access logs for anomalous JavaScript injection patterns and unexpected redirects, and review Microsoft's MSRC advisory (CVE-2026-42897) for the full list of affected Exchange Server builds and patch guidance.
