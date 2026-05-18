@@ -1,3 +1,38 @@
+## 2026-05-18 — Weekly Tech-Debt Audit
+
+**Headline:** All-clear week — last week's P0 (91 orphaned CVE entries in sitemap/llms-full.txt) is resolved; 107 CVE pages perfectly synced across sitemap, llms-full.txt, and disk; daily KEV pipeline healthy; 7 prior debt items remain open with no new findings.
+
+**Pipeline pulse:**
+- Daily CVE trigger last output (`data/appsec-review.md`): 2026-05-16 (2 days — at threshold; daily fetch confirmed run 2026-05-17 via `last_checked` field with 0 new KEV entries — pipeline healthy ✓)
+- Friday AI trend roundup last file (`drafts/ai-security-roundup-2026-05-15.md`): 2026-05-15 (Friday — draft present, not yet published; normal pre-Tuesday cadence ✓)
+- `data/pending_review.json` pending count: 0 (last_checked: 2026-05-17T15:49:51 UTC — KEV fetch ran yesterday ✓)
+
+**New this week:**
+- None. No new P0/P1/P2/P3 findings.
+
+**Still open from prior audits:** 7
+1. P1 — Evergreen quiz/hub timestamps (60 pages; was 61 — down 1; 47 quiz root + 13 practice-test hub); root cause: `scripts/generate_quiz_pages.py:387` emits `<p>Last updated: {TODAY}</p>` on every regeneration
+2. P2 — `ai-agent-security-threats.html` absent from `GUIDE_PAGES` in `scripts/generate_llms_txt.py:154`; page present on disk, AI crawlers see it in "Other Pages" not "Security Guides"
+3. P2 — Script size: 14 scripts >500 LOC (generate_guides.py 2,896 · generate_sprint_kit.py 1,991 · fetch_kev.py 865 · etsy_to_pinterest.py 829 · entity_extractor.py 765 · generate_linkedin_posts.py 716 · publish_editorial.py 707 · audit_pages.py 661 · generate_quiz_pages.py 630 · generate_cert_pages.py 595 · inject_store_ctas.py 588 · generate_practice_test_pages.py 572 · generate_roadmaps.py 517 · generate_cve_pages.py 504)
+4. P2 — `requirements.txt` absent; `security-audit.yml` pip-audit silently no-ops; Pillow (`create_hero.py:4`, `generate_linkedin_posts.py:12`) and reportlab (`generate_sprint_kit.py:33–45`) are undeclared external deps
+5. P2 — `generate_sitemap.py` + `update_sitemap.py` overlapping sitemap-mutation logic; no reconciliation guard in publish workflows
+6. P3 — 8 broad `except Exception:` handlers without logging: `fetch_kev.py:63`, `generate_sitemap.py:86`, `update_sitemap.py:29`, `audit_pages.py:250,382`, `inject_error_reporter.py:46`, `generate_linkedin_posts.py:72`, `create_hero.py:51`
+7. P3 — No `CLAUDE.md` in repository root
+
+**Resolved since last audit:**
+- **P0** pipeline/llms — CVE orphan drift resolved: `sitemap.xml` rebuilt from disk (617 URLs; 0 orphaned CVEs; 0 CVEs on disk missing from sitemap); `llms-full.txt` regenerated and synced (all 107 CVE pages present, 0 orphaned entries); GitHub issue #83 closed. Pipeline commits this week: `ebf0e14` (1 CVE published), `a6377dd`/`660a08d` (KEV auto-fetch 2026-05-15/16), `2282866` (KEV timestamp update 2026-05-17).
+
+**Metrics tracked:**
+- Total generated pages (cve-*, cert-*, comparisons/*, roadmaps/*): 283 (107 CVE + 66 cert + 43 comparisons + 67 roadmaps) — +3 CVE vs last week
+- Evergreen pages with timestamps (should be 0): 60 (was 61 — down 1; 47 quiz root + 13 practice-test hub)
+- Pages missing from llms.txt: 0 (llms-full.txt and disk in perfect sync ✓)
+- Cache-bust drift count: 0 (no CSS/JS commits in past 7 days; versions: style.min.css v=8, quiz.css v=3, comparison.css v=3, store.css v=6, practice-tests.css v=1)
+- Scripts >500 LOC: 14 (unchanged)
+- Store worker LOC: 1,151 (unchanged; Stripe webhook HMAC verification confirmed present)
+- Python scripts with bare `except:`: 0 / broad `except Exception:` without logging: 8 (unchanged)
+
+---
+
 ## 2026-05-11 — Weekly Tech-Debt Audit
 
 **Headline:** P0 regression: sitemap.xml has 91 orphaned CVE entries after the 104-CVE batch publish; llms-full.txt inherits 92 dead CVE links via generate_llms_txt.py; AI crawlers receive 404s for 88% of listed CVE URLs — GitHub issue #83 filed; pipeline and roundup are healthy; 7 prior items remain open.
