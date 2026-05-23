@@ -1,9 +1,9 @@
-# AppSec Review — 2026-05-22
+# AppSec Review — 2026-05-23
 
-**Reviewer:** Robert Flores, CISSP  
-**Review Date:** 2026-05-22  
-**CVEs Reviewed:** 2  
-**Source:** CISA Known Exploited Vulnerabilities (KEV) Catalog  
+**Reviewer:** Robert Flores, CISSP
+**Review Date:** 2026-05-23
+**CVEs Reviewed:** 1
+**Source:** CISA Known Exploited Vulnerabilities (KEV) Catalog
 **Pipeline Status:** All scripts completed (IndexNow 403 — host allowlist, non-blocking)
 
 ---
@@ -13,47 +13,43 @@
 | Priority | Count | CVEs |
 |----------|-------|------|
 | Critical | 0     | —    |
-| High     | 1     | CVE-2025-34291 |
-| Medium   | 1     | CVE-2026-34926 |
+| High     | 0     | —    |
+| Medium   | 1     | CVE-2026-9082 |
 | Low      | 0     | —    |
 
 ---
 
 ## CVE Summary
 
-| CVE ID | Vendor | Priority | Vulnerability Class |
-|--------|--------|----------|---------------------|
-| CVE-2025-34291 | Langflow | high | CORS Origin Validation / Credential Theft → RCE |
-| CVE-2026-34926 | Trend Micro | medium | Directory Traversal / Code Injection |
+| CVE ID | Vendor | Product | Priority | Vulnerability Class |
+|--------|--------|---------|----------|---------------------|
+| CVE-2026-9082 | Drupal | Core | medium | SQL Injection (CWE-89) → Privilege Escalation / RCE |
 
 ---
 
 ## CVE Analysis
 
-**CVE-2025-34291 — Langflow Origin Validation Error (CVSS 8.8, High)**  
-Overly permissive CORS policy combined with a SameSite=None refresh token cookie lets a malicious web page silently exfiltrate authenticated session tokens cross-origin. Captured tokens grant access to Langflow's code-execution endpoints, enabling full system compromise. Widely adopted in enterprise AI pipelines, making this a high-value target for supply-chain-adjacent attacks; patch to v1.9.3 or later immediately.
-
-**CVE-2026-34926 — Trend Micro Apex One Directory Traversal (CVSS 6.7, Medium)**  
-A relative path traversal in Apex One's on-premise server allows a local pre-authenticated attacker to overwrite a key configuration table, injecting malicious code that propagates to every managed endpoint agent. The local attack vector constrains initial access, but the blast radius — code execution across an entire managed-endpoint fleet — makes patching urgent for any enterprise running Apex One on-prem; apply Trend Micro patch KA-0023430 immediately.
+**CVE-2026-9082 — Drupal Core SQL Injection (CVSS 6.5, Medium)**
+SQL injection via Drupal's database abstraction API enables privilege escalation and potential RCE through specially crafted requests. The CVSS score of 6.5 indicates that authentication or other preconditions are likely required to trigger the vulnerability, placing it in the medium tier despite the RCE chain possibility. CISA's aggressive 5-day federal remediation deadline signals confirmed active exploitation; Drupal's large CMS market share makes this a broad-impact target for initial-access campaigns.
 
 ---
 
 ## Trend Analysis
 
-This batch highlights two converging trends in 2026 KEV additions. First, AI/ML infrastructure (Langflow) is increasingly treated as a high-value exploit target: CORS misconfigurations that were once dismissed as low-severity nuisances are now chained directly to RCE in platforms where code execution is a first-class feature. Second, security tooling itself continues to surface as an attacker priority — Trend Micro Apex One follows a well-worn pattern of endpoint security products being leveraged to pivot laterally, because compromise of the management plane equals compromise of the entire agent fleet. Defenders should treat security-tool patching cadence with at least the same urgency as OS-level patches, and organizations adopting AI-builder platforms should audit CORS policies and cookie security attributes before any public or internal deployment.
+This batch continues a pattern of SQL injection vulnerabilities surfacing in mature, widely-deployed open-source CMS platforms — a class that defenders often assume is well-hardened after decades of attention. Drupal's database abstraction layer was designed to simplify query construction, not to serve as a security boundary, and this CVE demonstrates that abstraction does not equal sanitization when untrusted input reaches query-building code before validation. CISA's 5-day remediation window is among the most aggressive in the KEV catalog, consistent with threat actor activity targeting CMS infrastructure for initial access, credential harvesting, and lateral movement — tactics frequently observed in campaigns against government, education, and nonprofit sectors running legacy Drupal deployments. Organizations should treat any CMS framework's query helpers as convenience tools, not security controls, and validate input at every system boundary regardless of what the ORM or abstraction layer promises.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"CORS Is Not a Low-Severity Issue Anymore: How CVE-2025-34291 Turns Langflow Into an RCE Gateway"** — Deep dive into how CORS + SameSite=None token cookies form an attack chain in AI-builder platforms; includes remediation checklist for similar architectures.
-2. **"Attacking the Attacker's Tools: Why Endpoint Security Platforms Are Prime KEV Targets"** — Analysis of the recurring pattern of security product vulnerabilities (Apex One, SentinelOne, CrowdStrike) in the KEV catalog and what it means for enterprise patch prioritization.
-3. **"AI Pipeline Security in 2026: KEV Entries You Can't Ignore"** — Broader look at how LLM/AI tooling (Langflow, Ollama, etc.) is accumulating CVEs and how organizations can build secure-by-default AI infrastructure.
+1. **"SQL Injection Isn't Dead: How CVE-2026-9082 Broke Drupal's Database Abstraction Layer"** — Code-level analysis of how attackers bypass ORM/abstraction-layer protections, with a historical look at Drupalgeddon 1, 2, and 3 and what the pattern tells us about CMS security architecture.
+2. **"CISA KEV 5-Day Due Dates: What They Signal About Active Exploitation Urgency"** — Analysis of remediation timelines in the KEV catalog as exploitation-urgency indicators, using this batch as a case study alongside historical examples.
+3. **"Drupal Hardening Checklist for 2026: Lessons from Recent KEV Additions"** — Practical blue-team guide covering WAF rules for SQLi bypass patterns, module auditing, database user privilege minimization, and monitoring for post-exploitation indicators.
 
 ---
 
 ## Newsletter Snippet
 
-**This week CISA added two new entries to the Known Exploited Vulnerabilities catalog that demand immediate attention.** CVE-2025-34291 affects Langflow — the popular open-source AI application builder — where a CORS misconfiguration paired with an insecure SameSite=None cookie configuration allows any malicious website to silently steal authenticated session tokens and use them to execute arbitrary code on the server. With Langflow widely deployed in enterprise AI pipelines, this is an urgent patch: upgrade to v1.9.3 or later and audit your CORS policies across all AI tooling today.
+CISA added CVE-2026-9082 to the Known Exploited Vulnerabilities catalog this week — a SQL injection flaw in Drupal Core (CVSS 6.5) that enables privilege escalation and remote code execution via Drupal's own database abstraction API. Despite a moderate CVSS score, CISA's unusually short 5-day federal remediation deadline makes clear this vulnerability is being actively weaponized in the wild. Organizations running Drupal should apply the vendor patch from SA-CORE-2026-004 immediately and audit web application firewall rules for SQL injection bypass patterns targeting the database query layer.
 
-**The second entry, CVE-2026-34926, targets Trend Micro Apex One on-premise deployments.** A directory traversal flaw lets a local attacker inject malicious code into the server's agent-deployment table, effectively weaponizing your endpoint security platform to push malware fleet-wide. While local access is required to trigger the vulnerability, it represents a critical lateral-movement escalator in any environment where an attacker has already gained a foothold — and given Apex One's role as a trusted distribution channel to every managed endpoint, the downstream blast radius is severe. Apply Trend Micro's patch (KA-0023430) immediately and verify agent integrity across your fleet.
+For security teams, this is a reminder that abstraction layers are not sanitization layers. Drupal's database API simplifies query building — it does not guarantee input validation — and threat actors targeting CMS platforms know exactly where the trust boundaries break down. Prioritize patch deployment for all internet-facing Drupal instances, review privilege grants for database service accounts to limit the blast radius of any successful injection, and check your SIEM for anomalous database query volumes or unexpected privilege changes that could indicate prior compromise before the patch was applied.
