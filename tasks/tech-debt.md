@@ -1,3 +1,38 @@
+## 2026-05-25 — Weekly Tech-Debt Audit
+
+**Headline:** Sitemap duplicate-CVE drift recurred (92 duplicate entries, 1 blank; 627 total vs 535 unique URLs) — `update_sitemap.py` re-appended without dedup on post-rebuild publishes; llms-full.txt overstates CVE count at 210 vs 117 unique pages; pipeline healthy; 7 prior items all still open.
+
+**Pipeline pulse:**
+- Daily CVE trigger last output (`data/appsec-review.md`): 2026-05-23 (content date; pipeline confirmed run 2026-05-24T15:54 UTC via `pending_review.json` `last_checked` with 0 new KEV entries — pipeline healthy ✓)
+- Friday AI trend roundup last file (`drafts/ai-security-roundup-2026-05-22.md`): 2026-05-22 (Friday — draft present, not yet published; awaiting Tuesday `publish-blog.yml` cycle — normal ✓)
+- `data/pending_review.json` pending count: 0 (last_checked: 2026-05-24T15:54:13 UTC ✓)
+
+**New this week:**
+- P1 pipeline/sitemap — `sitemap.xml` + `llms-full.txt` — CVE sitemap duplicate drift: `sitemap.xml` has 627 total URLs but only 535 unique (92 duplicate CVE entries + 1 blank `/cve/` entry); `update_sitemap.py` re-appended CVE URLs on post-rebuild publish cycles without checking for existing entries; all 117 CVE pages exist on disk (0 true orphans, 0 404s) but `generate_llms_txt.py` sources counts from sitemap, so `llms-full.txt` overstates CVE count as 210 vs 117 real pages and lists each of 92 CVEs twice; same root cause as 2026-05-11 P0 (P2 item #5 unfixed) — Fix: run `python3 scripts/generate_sitemap.py` to rebuild sitemap from disk; add dedup guard to `update_sitemap.py` before appending new URLs; wire sitemap rebuild into `auto-publish-cve.yml` — Effort: XS
+
+**Still open from prior audits:** 7
+1. P1 — Evergreen quiz/hub timestamps (60 pages; 47 quiz root + 13 practice-test hub); root cause: `scripts/generate_quiz_pages.py:387` emits `<p>Last updated: {TODAY}</p>` on every regeneration
+2. P2 — `ai-agent-security-threats.html` absent from `GUIDE_PAGES` in `scripts/generate_llms_txt.py:154`; page present on disk, AI crawlers see it in "Other Pages" not "Security Guides"
+3. P2 — Script size: 14 scripts >500 LOC (generate_guides.py 2,896 · generate_sprint_kit.py 1,991 · fetch_kev.py 865 · etsy_to_pinterest.py 829 · entity_extractor.py 765 · generate_linkedin_posts.py 716 · publish_editorial.py 707 · audit_pages.py 661 · generate_quiz_pages.py 630 · generate_cert_pages.py 595 · inject_store_ctas.py 588 · generate_practice_test_pages.py 572 · generate_roadmaps.py 517 · generate_cve_pages.py 504)
+4. P2 — `requirements.txt` absent; Pillow (`create_hero.py:4`, `generate_linkedin_posts.py:12`) and reportlab (`generate_sprint_kit.py:33–45`) are undeclared external deps; `security-audit.yml` pip-audit silently no-ops
+5. P2 — `generate_sitemap.py` + `update_sitemap.py` overlapping sitemap-mutation logic; no dedup guard in publish workflows (direct root cause of new P1 above; now third consecutive audit with this symptom)
+6. P3 — 8 broad `except Exception:` handlers without logging: `fetch_kev.py:63`, `generate_sitemap.py:86`, `update_sitemap.py:29`, `audit_pages.py:250,382`, `inject_error_reporter.py:46`, `generate_linkedin_posts.py:72`, `create_hero.py:51`
+7. P3 — No `CLAUDE.md` in repository root
+
+**Resolved since last audit:** None.
+
+**Metrics tracked:**
+- Total generated pages (cve-*, cert-*, comparisons/*, roadmaps/*): 293 (117 CVE + 66 cert + 43 comparisons + 67 roadmaps) — +10 CVE vs last week
+- Evergreen pages with timestamps (should be 0): 60 (unchanged; root cause script not yet fixed)
+- Sitemap duplicate entries: 92 CVE dupes + 1 blank `/cve/` entry (627 total → 535 unique)
+- Pages missing from llms.txt: 0 (all 117 CVE pages exist on disk; 0 true 404s)
+- Cache-bust drift count: 0 (no CSS/JS commits in past 7 days; versions: style.min.css v=8, quiz.css v=3, comparison.css v=3, store.css v=6, practice-tests.css v=1)
+- Scripts >500 LOC: 14 (unchanged)
+- Store worker LOC: 1,151 (unchanged; Stripe webhook HMAC verification confirmed at lines 521–529)
+- Python scripts with bare `except:`: 0 / broad `except Exception:` without logging: 8 (unchanged)
+
+---
+
 ## 2026-05-18 — Weekly Tech-Debt Audit
 
 **Headline:** All-clear week — last week's P0 (91 orphaned CVE entries in sitemap/llms-full.txt) is resolved; 107 CVE pages perfectly synced across sitemap, llms-full.txt, and disk; daily KEV pipeline healthy; 7 prior debt items remain open with no new findings.
