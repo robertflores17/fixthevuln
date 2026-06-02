@@ -1,7 +1,7 @@
-# AppSec Review — 2026-05-30
+# AppSec Review — 2026-06-02
 
 **Reviewer:** Robert Flores, CISSP
-**Review Date:** 2026-05-30
+**Review Date:** 2026-06-02
 **CVEs Reviewed:** 1
 **Source:** CISA Known Exploited Vulnerabilities (KEV) Catalog
 **Pipeline Status:** All scripts completed (IndexNow 403 — host allowlist, non-blocking)
@@ -12,8 +12,8 @@
 
 | Priority | Count | CVEs |
 |----------|-------|------|
-| Critical | 1     | CVE-2026-0257 |
-| High     | 0     | — |
+| Critical | 0     | — |
+| High     | 1     | CVE-2024-21182 |
 | Medium   | 0     | — |
 | Low      | 0     | — |
 
@@ -21,37 +21,37 @@
 
 ## CVE Summary
 
-| CVE ID         | Vendor                 | Product | Priority | Vulnerability Class     |
-|----------------|------------------------|---------|----------|-------------------------|
-| CVE-2026-0257  | Palo Alto Networks     | PAN-OS  | critical | Authentication Bypass (CWE-565) |
+| CVE ID | Vendor | Product | Priority | Vulnerability Class |
+|--------|--------|---------|----------|---------------------|
+| CVE-2024-21182 | Oracle | WebLogic Server | high | Unauthenticated remote information disclosure / unauthorized data access (T3/IIOP) |
 
 ---
 
 ## CVE Analysis
 
-**CVE-2026-0257 — Palo Alto Networks PAN-OS Authentication Bypass (CVSS 9.1, Critical)**
-An unauthenticated authentication bypass vulnerability (CWE-565: Reliance on Cookies without Validation and/or Integrity Checking) in PAN-OS allows remote attackers to bypass security restrictions and establish unauthorized VPN connections without valid credentials. PAN-OS firewalls are ubiquitous enterprise perimeter and VPN gateway devices, meaning successful exploitation grants attackers direct access to protected internal network segments while bypassing all downstream security controls. CISA's 3-day remediation window (due 2026-06-01) reflects active exploitation and the critical nature of perimeter firewall compromise.
+**CVE-2024-21182 — Oracle WebLogic Server Unspecified Vulnerability (CVSS 7.5, High)**
+An unspecified vulnerability in Oracle WebLogic Server allows an unauthenticated attacker with network access via T3 or IIOP protocols to compromise the server, resulting in unauthorized access to critical data or complete access to all WebLogic-accessible data. Originally disclosed in Oracle's July 2024 Critical Patch Update, this CVE reached CISA's KEV on 2026-06-01 — nearly two years after initial disclosure — confirming that threat actors are actively exploiting it against unpatched enterprise deployments. The T3/IIOP attack vector is particularly dangerous because these protocols are often left exposed on internal networks under the assumption that perimeter controls are sufficient, which active exploitation cases continue to disprove.
 
 ---
 
 ## Trend Analysis
 
-This batch continues a persistent pattern of authentication bypass vulnerabilities in network security appliances reaching active exploitation in the wild. CVE-2026-0257 joins a long roster of perimeter device vulnerabilities — Fortinet FortiOS, Ivanti Connect Secure, Cisco ASA, and now PAN-OS — that threat actors specifically target because a successful bypass eliminates the organization's primary defensive boundary at a single stroke. The CWE-565 root cause (improper cookie validation in session management logic) is particularly ironic: a device whose core purpose is access enforcement fails through insecure access control in its own authentication stack. Organizations should treat internet-exposed PAN-OS management interfaces and GlobalProtect portals as critical-priority patching targets, enforce network-level access restrictions on management planes, and hunt for evidence of unauthorized VPN sessions that may indicate pre-patch exploitation activity.
+This batch adds a single high-severity Oracle WebLogic Server vulnerability (CVE-2024-21182) confirmed actively exploited roughly two years after its original July 2024 disclosure. The delay between NVD publication and CISA KEV addition reflects a recurring pattern: enterprise middleware like WebLogic is a high-value target for sophisticated threat actors who quietly exploit known weaknesses long after patches are available, banking on slow patch cycles in large organizations. The T3/IIOP attack vector is notable — these protocols are often left exposed on internal networks or cloud VPCs with the assumption that network segmentation provides sufficient protection, which active exploitation cases continue to disprove.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"The Perimeter Is the Target: Why Network Security Appliances Keep Getting Owned"** — Examines the recurring pattern of auth bypass CVEs in Palo Alto, Fortinet, Ivanti, and Cisco edge devices, and what organizations should do differently at an architectural level to reduce blast radius when the perimeter device itself is compromised.
+1. **"Why Oracle WebLogic Keeps Showing Up in CISA's KEV"** — Deep dive into the recurring T3/IIOP attack surface, why WebLogic patches lag in enterprise environments, and hardening steps beyond just patching (protocol restriction, firewall rules, monitoring).
 
-2. **"CWE-565 Explained: When Cookies Become the Attacker's Key"** — Deep dive into cookie-based authentication bypass vulnerabilities, how improper validation arises in session management code, and secure-by-design alternatives for authentication in network appliances.
+2. **"The Two-Year Gap: When Old CVEs Hit the KEV"** — Analysis of CISA KEV entries where active exploitation was confirmed years after initial disclosure, and what that means for vulnerability prioritization programs that rely solely on recency or CVSS score.
 
-3. **"3-Day Patch Windows: Meeting CISA BOD 22-01 Timelines for Network Infrastructure"** — Practical guidance for network security teams on building the operational muscle to patch critical perimeter devices within CISA's aggressive KEV remediation windows without sacrificing uptime.
+3. **"Unauthenticated Network Access: The Highest-Risk Vulnerability Pattern"** — Survey of unauth remote CVEs in CISA's catalog and why they demand zero-delay patching regardless of whether CVSS lands at 7.5 or 10.0.
 
 ---
 
 ## Newsletter Snippet
 
-This week's CISA KEV addition is a critical authentication bypass in Palo Alto Networks PAN-OS (CVE-2026-0257, CVSS 9.1) — the firewall and VPN platform protecting countless enterprise networks. The flaw allows unauthenticated remote attackers to establish unauthorized VPN connections, effectively bypassing the perimeter security control that organizations depend on to separate trusted and untrusted networks. CISA has set a remediation deadline of June 1, 2026, making this a drop-everything patching event for any organization running PAN-OS with internet-exposed GlobalProtect or management interfaces.
+This week's CISA KEV addition brings Oracle WebLogic Server (CVE-2024-21182) into confirmed active exploitation — a high-severity flaw allowing an unauthenticated remote attacker with T3 or IIOP network access to read critical data or gain complete access to all WebLogic-accessible data. Originally disclosed in Oracle's July 2024 Critical Patch Update with a CVSS of 7.5, the two-year gap before KEV inclusion is a stark reminder that threat actors operate on their own timelines. Federal agencies have until June 4, 2026 to apply mitigations under BOD 22-01.
 
-For security and network teams, the response should be three-pronged: first, apply the vendor patch immediately and verify successful installation; second, restrict management plane access to known management IP ranges to reduce exposure; and third, review VPN connection logs for anomalous sessions that may indicate exploitation occurred before patching. This CVE fits the now-familiar pattern of high-CVSS auth bypass flaws in network security appliances reaching active exploitation — a pattern that argues for defense-in-depth architectures where perimeter device compromise does not automatically mean full network access. The FixTheVuln CVE page for CVE-2026-0257 includes the vendor advisory, GreyNoise telemetry, AttackerKB analysis, and curated researcher references to support your response.
+If your organization runs Oracle WebLogic, treat this as a drop-everything patch. WebLogic's T3 and IIOP protocols are commonly exposed on internal network segments or cloud environments under the assumption that perimeter controls are sufficient — active exploitation proves otherwise. Verify T3/IIOP is firewalled from untrusted hosts, apply Oracle's July 2024 CPU patches if not already done, and check your asset inventory for any shadow WebLogic instances that may have been missed in previous patch cycles.
