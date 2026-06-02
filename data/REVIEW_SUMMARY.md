@@ -1,19 +1,21 @@
-# Daily KEV Review — 2026-06-01
+# Daily KEV Review — 2026-06-02
 
-**New CVEs:** 1 | **Critical:** 0 | **High:** 1 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 2 | **Critical:** 0 | **High:** 2 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2024-21182 | Oracle | WebLogic Server | 7.5 | Unknown | 2026-06-04 |
+| CVE-2025-48595 | Android | Framework | 8.4 | Unknown | 2026-06-05 |
+| CVE-2022-0492 | Linux | Kernel | 7.8 | Unknown | 2026-06-05 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-06-04 (1 CVE)
+- **Nearest due date:** 2026-06-05 (2 CVEs)
 - **Overdue:** None
 
 ## Vendor Summary
-- Oracle: 1 CVE
+- Linux: 1 CVE
+- Android: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
