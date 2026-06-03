@@ -1,21 +1,19 @@
-# Daily KEV Review — 2026-06-02
+# Daily KEV Review — 2026-06-03
 
-**New CVEs:** 2 | **Critical:** 0 | **High:** 2 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 1 | **Critical:** 1 | **High:** 0 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2025-48595 | Android | Framework | 8.4 | Unknown | 2026-06-05 |
-| CVE-2022-0492 | Linux | Kernel | 7.8 | Unknown | 2026-06-05 |
+| CVE-2026-45247 | Mirasvit | Mirasvit Full Page Cache Warmer | 9.8 | Unknown | 2026-06-06 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-06-05 (2 CVEs)
+- **Nearest due date:** 2026-06-06 (1 CVE)
 - **Overdue:** None
 
 ## Vendor Summary
-- Linux: 1 CVE
-- Android: 1 CVE
+- Mirasvit: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
