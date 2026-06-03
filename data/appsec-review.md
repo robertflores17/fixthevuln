@@ -1,8 +1,8 @@
-# AppSec Review — 2026-06-02
+# AppSec Review — 2026-06-03
 
 **Reviewer:** Robert Flores, CISSP
-**Review Date:** 2026-06-02
-**CVEs Reviewed:** 1
+**Review Date:** 2026-06-03
+**CVEs Reviewed:** 2
 **Source:** CISA Known Exploited Vulnerabilities (KEV) Catalog
 **Pipeline Status:** All scripts completed (IndexNow 403 — host allowlist, non-blocking)
 
@@ -13,7 +13,7 @@
 | Priority | Count | CVEs |
 |----------|-------|------|
 | Critical | 0     | — |
-| High     | 1     | CVE-2024-21182 |
+| High     | 2     | CVE-2022-0492, CVE-2025-48595 |
 | Medium   | 0     | — |
 | Low      | 0     | — |
 
@@ -23,35 +23,39 @@
 
 | CVE ID | Vendor | Product | Priority | Vulnerability Class |
 |--------|--------|---------|----------|---------------------|
-| CVE-2024-21182 | Oracle | WebLogic Server | high | Unauthenticated remote information disclosure / unauthorized data access (T3/IIOP) |
+| CVE-2022-0492 | Linux | Kernel | high | Privilege Escalation / Improper Authentication (cgroups v1 release_agent) |
+| CVE-2025-48595 | Android | Framework | high | Integer Overflow → Local Code Execution / Privilege Escalation |
 
 ---
 
 ## CVE Analysis
 
-**CVE-2024-21182 — Oracle WebLogic Server Unspecified Vulnerability (CVSS 7.5, High)**
-An unspecified vulnerability in Oracle WebLogic Server allows an unauthenticated attacker with network access via T3 or IIOP protocols to compromise the server, resulting in unauthorized access to critical data or complete access to all WebLogic-accessible data. Originally disclosed in Oracle's July 2024 Critical Patch Update, this CVE reached CISA's KEV on 2026-06-01 — nearly two years after initial disclosure — confirming that threat actors are actively exploiting it against unpatched enterprise deployments. The T3/IIOP attack vector is particularly dangerous because these protocols are often left exposed on internal networks under the assumption that perimeter controls are sufficient, which active exploitation cases continue to disprove.
+**CVE-2022-0492 — Linux Kernel Improper Authentication Vulnerability (CVSS 7.8, High)**
+A CWE-287/CWE-862 improper authentication flaw in the Linux Kernel's cgroups v1 `release_agent` feature allows a local attacker to escalate privileges. This has become a well-known container escape primitive, widely exploited against Kubernetes nodes and containerized workloads running on kernels that haven't applied the fix (commit 24f6008564183aa120d07c03d9289519c2fe02af). Originally disclosed in 2022, its addition to the KEV catalog in June 2026 reflects continued active exploitation—particularly as containerized deployments have grown and patching of underlying host kernels has lagged.
+
+**CVE-2025-48595 — Android Framework Integer Overflow Vulnerability (CVSS 8.4, High)**
+A CWE-190 integer overflow in the Android Framework allows a local attacker to execute arbitrary code and escalate privileges. Inclusion in the June 2026 Android security bulletin alongside a same-day KEV listing confirms in-the-wild exploitation, likely targeting specific OEM device lines. The combination of integer overflow leading to controlled code execution is a high-reliability exploit primitive, and KEV listing means confirmed active abuse in the wild rather than theoretical risk.
 
 ---
 
 ## Trend Analysis
 
-This batch adds a single high-severity Oracle WebLogic Server vulnerability (CVE-2024-21182) confirmed actively exploited roughly two years after its original July 2024 disclosure. The delay between NVD publication and CISA KEV addition reflects a recurring pattern: enterprise middleware like WebLogic is a high-value target for sophisticated threat actors who quietly exploit known weaknesses long after patches are available, banking on slow patch cycles in large organizations. The T3/IIOP attack vector is notable — these protocols are often left exposed on internal networks or cloud VPCs with the assumption that network segmentation provides sufficient protection, which active exploitation cases continue to disprove.
+This batch reflects two persistent attacker priorities: kernel-level privilege escalation and mobile OS exploitation. The Linux cgroups flaw (CVE-2022-0492) illustrates a recurring pattern where years-old kernel bugs resurface as exploitation toolkits mature—particularly in containerized and cloud-native environments where cgroups is foundational. The Android Framework integer overflow (CVE-2025-48595) continues a steady drumbeat of mobile OS privilege escalation CVEs reaching the KEV catalog, underscoring that threat actors remain highly motivated to gain persistent, elevated access on Android devices, whether for surveillance, financial fraud, or lateral movement into enterprise MDM-managed fleets.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"Why Oracle WebLogic Keeps Showing Up in CISA's KEV"** — Deep dive into the recurring T3/IIOP attack surface, why WebLogic patches lag in enterprise environments, and hardening steps beyond just patching (protocol restriction, firewall rules, monitoring).
+1. **"Container Escape Playbook: CVE-2022-0492 and the cgroups v1 Attack Surface"** — Deep-dive on how cgroups v1 `release_agent` abuse works, why containerized environments remain exposed years after patch availability, and hardening steps (AppArmor/seccomp profiles, disabling cgroupsv1, upgrading to cgroupsv2).
 
-2. **"The Two-Year Gap: When Old CVEs Hit the KEV"** — Analysis of CISA KEV entries where active exploitation was confirmed years after initial disclosure, and what that means for vulnerability prioritization programs that rely solely on recency or CVSS score.
+2. **"Android KEV Watch: What CVE-2025-48595 Tells Us About Mobile Threat Priorities"** — Analysis of the growing Android presence in the KEV catalog, how integer overflows in framework code become exploitation primitives, and enterprise MDM response playbooks.
 
-3. **"Unauthenticated Network Access: The Highest-Risk Vulnerability Pattern"** — Survey of unauth remote CVEs in CISA's catalog and why they demand zero-delay patching regardless of whether CVSS lands at 7.5 or 10.0.
+3. **"Legacy CVEs in the KEV: Why Old Bugs Keep Coming Back"** — Trend piece on CISA adding pre-2024 CVEs to the catalog in 2025-2026, covering patching debt, supply chain exposure, and how to audit environments for known-old-but-exploited flaws.
 
 ---
 
 ## Newsletter Snippet
 
-This week's CISA KEV addition brings Oracle WebLogic Server (CVE-2024-21182) into confirmed active exploitation — a high-severity flaw allowing an unauthenticated remote attacker with T3 or IIOP network access to read critical data or gain complete access to all WebLogic-accessible data. Originally disclosed in Oracle's July 2024 Critical Patch Update with a CVSS of 7.5, the two-year gap before KEV inclusion is a stark reminder that threat actors operate on their own timelines. Federal agencies have until June 4, 2026 to apply mitigations under BOD 22-01.
+This week CISA added two high-severity vulnerabilities to the Known Exploited Vulnerabilities catalog. CVE-2022-0492 (Linux Kernel, CVSS 7.8) is a privilege escalation flaw in the cgroups v1 `release_agent` feature that has been actively weaponized for container escapes — if your organization runs Kubernetes or any containerized workload on older kernel versions, patching should be treated as urgent. CVE-2025-48595 (Android Framework, CVSS 8.4) is an integer overflow enabling local code execution on Android devices, confirmed exploited in the wild per the June 2026 Android security bulletin.
 
-If your organization runs Oracle WebLogic, treat this as a drop-everything patch. WebLogic's T3 and IIOP protocols are commonly exposed on internal network segments or cloud environments under the assumption that perimeter controls are sufficient — active exploitation proves otherwise. Verify T3/IIOP is firewalled from untrusted hosts, apply Oracle's July 2024 CPU patches if not already done, and check your asset inventory for any shadow WebLogic instances that may have been missed in previous patch cycles.
+Remediation deadlines under BOD 22-01 are tight (due 2026-06-05 for both), so federal agencies and organizations following KEV guidance should prioritize patching Linux kernels to the fixed commit and applying the June 2026 Android security update across managed device fleets. For organizations unable to patch immediately, mitigating controls include disabling cgroupsv1 where feasible and enforcing strict MDM policies to limit sideloading and untrusted app execution on Android endpoints.
