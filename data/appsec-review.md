@@ -1,7 +1,7 @@
-# AppSec Review — 2026-06-04
+# AppSec Review — 2026-06-06
 
 **Reviewer:** Robert Flores, CISSP  
-**Review Date:** 2026-06-04  
+**Review Date:** 2026-06-06  
 **CVEs Reviewed:** 1  
 **Source:** CISA Known Exploited Vulnerabilities (KEV) Catalog  
 **Pipeline Status:** All scripts completed (IndexNow 403 — host allowlist, non-blocking)
@@ -12,8 +12,8 @@
 
 | Priority | Count | CVEs |
 |----------|-------|------|
-| Critical | 1     | CVE-2026-45247 |
-| High     | 0     | — |
+| Critical | 0     | — |
+| High     | 1     | CVE-2026-28318 |
 | Medium   | 0     | — |
 | Low      | 0     | — |
 
@@ -23,33 +23,33 @@
 
 | CVE ID | Vendor | Product | Priority | Vulnerability Class |
 |--------|--------|---------|----------|---------------------|
-| CVE-2026-45247 | Mirasvit | Full Page Cache Warmer | critical | PHP Deserialization → Unauthenticated RCE |
+| CVE-2026-28318 | SolarWinds | Serv-U | high | Uncontrolled Resource Consumption (Unauthenticated DoS) |
 
 ---
 
 ## CVE Analysis
 
-**CVE-2026-45247 — Mirasvit Full Page Cache Warmer Deserialization Vulnerability (CVSS 9.8, Critical)**  
-A CWE-502 deserialization of untrusted data flaw in the Mirasvit Full Page Cache Warmer extension for Magento/Adobe Commerce allows unauthenticated attackers to achieve remote code execution by supplying a crafted serialized PHP object in the `CacheWarmer` HTTP cookie. The cookie-based attack surface requires no authentication or user interaction, making mass exploitation trivial once a working gadget chain is available — and PHP/Magento deserialization gadget chains are well-documented in public exploit databases. CISA's 3-day remediation window (added 2026-06-03, due 2026-06-06) signals confirmed active exploitation targeting Magento storefronts, with likely goals including webshell deployment, payment skimmer injection, and customer data exfiltration.
+**CVE-2026-28318 — SolarWinds Serv-U Uncontrolled Resource Consumption (CVSS 7.5, High)**  
+A CWE-400 uncontrolled resource consumption flaw in SolarWinds Serv-U allows unauthenticated attackers to crash the Serv-U service by sending specially crafted POST requests with a `Content-Encoding: deflate` header. No credentials are required, making exploitation straightforward for any network-adjacent attacker. While classified as DoS rather than RCE, the wide deployment of Serv-U in federal and enterprise environments — combined with CISA's confirmed active exploitation finding — makes this a high-priority remediation. The patch is available in Serv-U 15.5.4 Hotfix 1; BOD 22-01 due date is 2026-06-19.
 
 ---
 
 ## Trend Analysis
 
-This week's addition reinforces a persistent and growing trend: unauthenticated RCE vulnerabilities in third-party Magento/Adobe Commerce extensions being actively exploited in the wild. E-commerce plugin ecosystems present an attractive attack surface because extensions are often installed by merchants who lack the security review processes of the core platform vendor, patching cadences are slow, and the business value of the underlying stores (payment card data, customer PII) makes them high-reward targets. CVE-2026-45247 follows the same pattern as prior Magento-ecosystem KEV entries — a deserialization flaw in a broadly-deployed plugin, weaponized quickly after public disclosure (or potentially before it). The extremely short CISA due date is a strong indicator that exploitation is already widespread and opportunistic rather than targeted.
+This batch reflects continued adversary interest in managed file transfer (MFT) and enterprise file-sharing products as a high-value attack surface. SolarWinds Serv-U has appeared in CISA KEV previously, and the HTTP header manipulation vector used here (`Content-Encoding: deflate`) is consistent with a broader trend of attackers probing input-parsing and decompression logic in network-facing services. While this vulnerability produces denial-of-service rather than code execution, unauthenticated service crashes in MFT products can serve as a precursor or cover for parallel exploitation activity — disrupting logging, triggering failover to less-secure configurations, or simply impacting availability for ransom leverage. Organizations running Serv-U should apply Hotfix 1 immediately and treat the June 19 BOD deadline as a ceiling, not a target.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"PHP Deserialization in Magento Extensions: Why Your Cache Plugin Could Be Your Biggest Risk"** — Deep-dive on CWE-502 in the Magento/Adobe Commerce plugin ecosystem, gadget chain mechanics, and how to audit third-party modules before deploying to production.
-2. **"CISA KEV Tight Deadlines: What a 3-Day Remediation Window Tells Us About Active Exploitation"** — Analysis of how CISA's due-date cadence correlates with in-the-wild exploitation intensity, using CVE-2026-45247 as a case study.
-3. **"Securing Your Magento Store: A Practitioner's Checklist for Third-Party Extension Risk"** — Practical guide covering extension vetting, WAF rules for cookie-based deserialization attacks, and incident response steps if compromise is suspected.
+1. **"CVE-2026-28318: SolarWinds Serv-U DoS and What Unauthenticated Crashes Mean for Federal Agencies"** — Break down the deflate header crash vector, explain BOD 22-01 compliance obligations, and provide detection/mitigation guidance.
+2. **"MFT Products Under Fire: Why File-Transfer Software Keeps Dominating CISA KEV"** — Trend piece covering Serv-U, MOVEit, GoAnywhere, and Accellion — common architectural flaws in MFT products and compensating controls.
+3. **"CWE-400 as a Weapon: How Uncontrolled Resource Consumption Vulnerabilities Are Being Weaponized"** — Educational deep-dive on resource exhaustion attacks, real-world KEV examples, and effective detection and mitigation strategies.
 
 ---
 
 ## Newsletter Snippet
 
-**CISA KEV Alert — Week of June 3, 2026:** This week CISA added one critical vulnerability to the Known Exploited Vulnerabilities catalog: CVE-2026-45247, a PHP deserialization flaw in the Mirasvit Full Page Cache Warmer extension for Magento/Adobe Commerce. With a CVSS score of 9.8, the vulnerability allows unauthenticated attackers to execute arbitrary code by supplying a crafted serialized PHP object in a standard HTTP cookie — no login, no user interaction required. Federal agencies face a June 6 remediation deadline, and any organization running Mirasvit Cache Warmer in a production environment should treat this as an emergency patch.
+**This week on CISA KEV:** One new actively exploited vulnerability was added — CVE-2026-28318 in SolarWinds Serv-U, rated **High** (CVSS 7.5). The flaw allows unauthenticated attackers to crash the Serv-U service by sending a specially crafted POST request with a `Content-Encoding: deflate` header, exploiting CWE-400 (Uncontrolled Resource Consumption). A patch is available in Serv-U 15.5.4 Hotfix 1, and federal agencies subject to BOD 22-01 must remediate by **June 19, 2026**.
 
-If you're an e-commerce operator or manage Magento infrastructure for clients, this one demands immediate attention. Patch to the fixed version per Mirasvit's changelog, verify no unauthorized files were written to your webroot, and review web server logs for anomalous cookie payloads dating back at least 30 days. If a WAF sits in front of your store, deploy a temporary rule blocking oversized or binary-looking `CacheWarmer` cookie values while patching is underway. The short CISA due date is a strong signal this is already being actively exploited in the wild — treat it accordingly.
+SolarWinds Serv-U is a recurring fixture in the threat landscape, and this latest addition continues a pattern of MFT products being targeted via input-handling weaknesses. If your organization runs Serv-U, apply the hotfix immediately and verify network-layer controls that restrict unauthenticated access to the Serv-U service interface. Consider this a timely reminder to audit all MFT deployments for recent CVEs — attackers are clearly prioritizing this attack surface, and unauthenticated DoS can be the opening move in a larger operation.
