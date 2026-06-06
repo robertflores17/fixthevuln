@@ -1,19 +1,19 @@
-# Daily KEV Review — 2026-06-03
+# Daily KEV Review — 2026-06-06
 
-**New CVEs:** 1 | **Critical:** 1 | **High:** 0 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 1 | **Critical:** 0 | **High:** 1 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-45247 | Mirasvit | Mirasvit Full Page Cache Warmer | 9.8 | Unknown | 2026-06-06 |
+| CVE-2026-28318 | SolarWinds | Serv-U | 7.5 | Unknown | 2026-06-19 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-06-06 (1 CVE)
+- **Nearest due date:** 2026-06-19 (1 CVE)
 - **Overdue:** None
 
 ## Vendor Summary
-- Mirasvit: 1 CVE
+- SolarWinds: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
