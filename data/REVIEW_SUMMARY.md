@@ -1,19 +1,21 @@
-# Daily KEV Review — 2026-06-06
+# Daily KEV Review — 2026-06-09
 
-**New CVEs:** 1 | **Critical:** 0 | **High:** 1 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 2 | **Critical:** 1 | **High:** 1 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 1
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-28318 | SolarWinds | Serv-U | 7.5 | Unknown | 2026-06-19 |
+| CVE-2026-50751 | Check Point | Security Gateway | 9.3 | Known | 2026-06-11 |
+| CVE-2026-42271 | BerriAI | LiteLLM | 8.8 | Unknown | 2026-06-22 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-06-19 (1 CVE)
+- **Nearest due date:** 2026-06-11 (1 CVE)
 - **Overdue:** None
 
 ## Vendor Summary
-- SolarWinds: 1 CVE
+- BerriAI: 1 CVE
+- Check Point: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
