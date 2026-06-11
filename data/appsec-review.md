@@ -1,35 +1,36 @@
 # AppSec Review
 
-**Date:** 2026-06-10
+**Date:** 2026-06-11
 **Reviewer:** Robert Flores, CISSP (FixTheVuln AppSec Reviewer)
-**CVE Count:** 2
+**CVE Count:** 3
 
 ## Severity Breakdown
 
 | Priority | Count |
 |----------|-------|
-| Critical | 1 |
-| High     | 1 |
-| Medium   | 0 |
+| Critical | 0 |
+| High     | 2 |
+| Medium   | 1 |
 | Low      | 0 |
 
 ## CVEs
 
-- **CVE-2026-42271** — BerriAI (LiteLLM) — High — Command Injection (CWE-77/78)
-- **CVE-2026-50751** — Check Point (Security Gateway) — Critical — Improper Authentication / Auth Bypass (CWE-287)
+- **CVE-2026-11645** — Google (Chromium V8) — High — Memory Corruption / OOB Read-Write (CWE-125/787)
+- **CVE-2026-7473** — Arista (EOS) — Medium — Improper Comparison / Logic Flaw in Packet Decapsulation (CWE-1023)
+- **CVE-2026-20245** — Cisco (Catalyst SD-WAN Manager) — High — Improper Output Encoding leading to Local Privilege Escalation (CWE-116)
 
 ## Trend Analysis
 
-This batch highlights two distinct but converging risk areas: AI/LLM infrastructure tooling and perimeter VPN gateways. The LiteLLM command injection (CVE-2026-42271) is notable because it allows even low-privilege authenticated API keys to achieve arbitrary command execution on the host — a reminder that as organizations rapidly adopt LLM gateway/proxy software, these components are becoming high-value targets with the same blast radius as traditional application servers, yet often receive less security scrutiny than core infrastructure. Meanwhile, the Check Point Security Gateway flaw (CVE-2026-50751) is a critical, unauthenticated IKEv1 VPN authentication bypass with confirmed ransomware association, underscoring that legacy VPN protocols (IKEv1) remain a persistent and actively exploited entry point for ransomware operators targeting enterprise remote-access infrastructure. Together, these CVEs reinforce that both emerging AI tooling and legacy network perimeter devices require equal prioritization in patch management programs.
+This batch spans the full stack — browser engine, network OS, and SD-WAN management plane — but shares a common thread: attackers chaining lower-severity primitives into full compromise. The Chromium V8 OOB read/write (CVE-2026-11645) is a classic sandbox-escape building block; on its own it grants sandboxed code execution via a malicious page, but combined with a sandbox-escape bug it becomes full host compromise, and its CVSS 8.8 reflects the broad reach across Chrome, Edge, and Opera. The Arista EOS issue (CVE-2026-7473) is a quieter but structurally interesting flaw — an incomplete comparison in tunnel decapsulation logic that lets unexpected tunneled traffic slip past intended IP-matching boundaries, a reminder that network OS packet-handling edge cases remain an underappreciated attack surface for traffic injection or filter bypass. The Cisco SD-WAN Manager bug (CVE-2026-20245) follows a now-familiar Cisco pattern: an authenticated, low-privilege foothold escalating to root via a crafted file due to improper output encoding, which is especially dangerous on SD-WAN management infrastructure that controls routing across an entire enterprise WAN. Together, these reinforce that defense-in-depth — patching browsers promptly, auditing tunnel/overlay configurations, and tightly restricting access to network management consoles — remains essential even when individual bugs look "only" exploitable with prerequisites.
 
 ## Blog Post Candidates
 
-1. "Why Your LLM Gateway Is Your Next Attack Surface: Lessons from CVE-2026-42271 (LiteLLM RCE)"
-2. "IKEv1 Is Still a Liability: Check Point's CVE-2026-50751 and the Ransomware Connection"
-3. "Authenticated Doesn't Mean Trusted: Command Injection Risks in Internal API Keys"
+1. "Inside a Chromium Sandbox Escape Chain: What CVE-2026-11645 Teaches About Browser Memory Safety"
+2. "When Tunnels Lie: How an Incomplete Comparison in Arista EOS Lets Unexpected Packets Through"
+3. "Authenticated Doesn't Mean Safe: Cisco SD-WAN Manager's Path from Local User to Root"
 
 ## Newsletter Snippet
 
-This week CISA added two significant vulnerabilities to its Known Exploited Vulnerabilities catalog. First, a command injection flaw in BerriAI's popular LiteLLM proxy (CVE-2026-42271, CVSS 8.8) lets any authenticated user — even one holding a low-privilege internal API key — execute arbitrary commands on the host server. Organizations running LiteLLM as an LLM gateway should patch to v1.83.7-stable immediately, as this exposes the underlying infrastructure powering AI applications to full compromise.
+CISA added three new vulnerabilities to its Known Exploited Vulnerabilities catalog this week, spanning browsers, network operating systems, and SD-WAN management platforms. The most far-reaching is CVE-2026-11645 (CVSS 8.8), an out-of-bounds read/write in Google Chromium's V8 JavaScript engine that lets attackers execute code inside the browser sandbox via a crafted webpage — affecting Chrome, Edge, Opera, and any other Chromium-based browser. Update your browsers immediately, as this is a prime ingredient in drive-by exploit chains.
 
-Second, and more urgently, Check Point disclosed an unauthenticated authentication bypass in Security Gateway's IKEv1 VPN implementation (CVE-2026-50751, CVSS 9.3) that allows attackers to establish remote access VPN sessions without valid credentials. CISA flagged this as actively exploited in ransomware campaigns, with a remediation deadline of June 11, 2026. If your organization runs Check Point VPN gateways with IKEv1 enabled, apply the vendor hotfix or disable the deprecated protocol immediately — this is a direct path into your internal network.
+On the network infrastructure side, Cisco disclosed CVE-2026-20245 (CVSS 7.8) in Catalyst SD-WAN Manager, where an authenticated local attacker can supply a crafted file to escalate to root — a serious risk for any organization where SD-WAN console access isn't tightly restricted. Arista also patched CVE-2026-7473 (CVSS 5.8), a logic flaw in EOS where switches can incorrectly decapsulate and forward unexpected tunneled traffic. All three carry a June 23, 2026 remediation deadline — prioritize the Chromium and Cisco fixes given their higher exploitability.
