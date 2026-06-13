@@ -1,36 +1,35 @@
 # AppSec Review
 
-**Date:** 2026-06-11
+**Date:** 2026-06-13
 **Reviewer:** Robert Flores, CISSP (FixTheVuln AppSec Reviewer)
-**CVE Count:** 3
+**CVE Count:** 2
 
 ## Severity Breakdown
 
 | Priority | Count |
 |----------|-------|
-| Critical | 0 |
-| High     | 2 |
-| Medium   | 1 |
+| Critical | 2 |
+| High     | 0 |
+| Medium   | 0 |
 | Low      | 0 |
 
 ## CVEs
 
-- **CVE-2026-11645** — Google (Chromium V8) — High — Memory Corruption / OOB Read-Write (CWE-125/787)
-- **CVE-2026-7473** — Arista (EOS) — Medium — Improper Comparison / Logic Flaw in Packet Decapsulation (CWE-1023)
-- **CVE-2026-20245** — Cisco (Catalyst SD-WAN Manager) — High — Improper Output Encoding leading to Local Privilege Escalation (CWE-116)
+- **CVE-2026-35273** — Oracle (PeopleSoft Enterprise PeopleTools) — Critical — Missing Authentication for Critical Function / Unauthenticated Takeover
+- **CVE-2026-10520** — Ivanti (Sentry) — Critical — OS Command Injection / Unauthenticated Root RCE
 
 ## Trend Analysis
 
-This batch spans the full stack — browser engine, network OS, and SD-WAN management plane — but shares a common thread: attackers chaining lower-severity primitives into full compromise. The Chromium V8 OOB read/write (CVE-2026-11645) is a classic sandbox-escape building block; on its own it grants sandboxed code execution via a malicious page, but combined with a sandbox-escape bug it becomes full host compromise, and its CVSS 8.8 reflects the broad reach across Chrome, Edge, and Opera. The Arista EOS issue (CVE-2026-7473) is a quieter but structurally interesting flaw — an incomplete comparison in tunnel decapsulation logic that lets unexpected tunneled traffic slip past intended IP-matching boundaries, a reminder that network OS packet-handling edge cases remain an underappreciated attack surface for traffic injection or filter bypass. The Cisco SD-WAN Manager bug (CVE-2026-20245) follows a now-familiar Cisco pattern: an authenticated, low-privilege foothold escalating to root via a crafted file due to improper output encoding, which is especially dangerous on SD-WAN management infrastructure that controls routing across an entire enterprise WAN. Together, these reinforce that defense-in-depth — patching browsers promptly, auditing tunnel/overlay configurations, and tightly restricting access to network management consoles — remains essential even when individual bugs look "only" exploitable with prerequisites.
+Both additions to today's KEV catalog represent unauthenticated, network-exploitable vulnerabilities in widely-deployed enterprise edge and ERP infrastructure — continuing a sustained pattern of attackers targeting internet-facing management and gateway appliances (Ivanti) and back-office business systems (Oracle PeopleSoft) for initial access and ransomware staging. The Oracle PeopleSoft flaw is explicitly tied to known ransomware activity, while the Ivanti Sentry command injection follows the well-established trajectory of prior MobileIron/Sentry RCE chains, reinforcing that unmanaged or externally-reachable mobile device management infrastructure remains a high-value target. Organizations running either product should treat these as emergency patch/mitigate actions given the 2-3 day CISA remediation deadlines (BOD 26-04).
 
 ## Blog Post Candidates
 
-1. "Inside a Chromium Sandbox Escape Chain: What CVE-2026-11645 Teaches About Browser Memory Safety"
-2. "When Tunnels Lie: How an Incomplete Comparison in Arista EOS Lets Unexpected Packets Through"
-3. "Authenticated Doesn't Mean Safe: Cisco SD-WAN Manager's Path from Local User to Root"
+1. "Why Unauthenticated ERP Takeovers Matter: Lessons from CVE-2026-35273 (Oracle PeopleSoft)"
+2. "Ivanti Sentry's Recurring RCE Problem: A History of OS Command Injection in MDM Gateways"
+3. "BOD 26-04 in Practice: Triaging Critical CISA KEV Deadlines Under 72 Hours"
 
 ## Newsletter Snippet
 
-CISA added three new vulnerabilities to its Known Exploited Vulnerabilities catalog this week, spanning browsers, network operating systems, and SD-WAN management platforms. The most far-reaching is CVE-2026-11645 (CVSS 8.8), an out-of-bounds read/write in Google Chromium's V8 JavaScript engine that lets attackers execute code inside the browser sandbox via a crafted webpage — affecting Chrome, Edge, Opera, and any other Chromium-based browser. Update your browsers immediately, as this is a prime ingredient in drive-by exploit chains.
+This week CISA added two critical, actively-exploited vulnerabilities to the KEV catalog — both carrying tight 2-3 day remediation deadlines under BOD 26-04. CVE-2026-35273 is a missing-authentication flaw in Oracle PeopleSoft Enterprise PeopleTools that allows an unauthenticated attacker to fully take over the application, and CISA notes it has already been linked to ransomware operations. CVE-2026-10520 affects Ivanti Sentry (formerly MobileIron Sentry), where an OS command injection bug enables unauthenticated, root-level remote code execution on appliances left externally reachable in an unmanaged state.
 
-On the network infrastructure side, Cisco disclosed CVE-2026-20245 (CVSS 7.8) in Catalyst SD-WAN Manager, where an authenticated local attacker can supply a crafted file to escalate to root — a serious risk for any organization where SD-WAN console access isn't tightly restricted. Arista also patched CVE-2026-7473 (CVSS 5.8), a logic flaw in EOS where switches can incorrectly decapsulate and forward unexpected tunneled traffic. All three carry a June 23, 2026 remediation deadline — prioritize the Chromium and Cisco fixes given their higher exploitability.
+If your organization runs either product, prioritize patching or applying vendor mitigations immediately — internet-exposed PeopleSoft and Sentry instances should be considered under active attack. For Sentry specifically, restricting external reachability via mTLS with EPMM or Neurons for MDM significantly reduces exposure if patching can't happen instantly. Full details and remediation guidance for both CVEs are now live on FixTheVuln.
