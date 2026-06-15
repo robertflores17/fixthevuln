@@ -1,3 +1,40 @@
+## 2026-06-15 — Weekly Tech-Debt Audit
+
+**Headline:** Escalating to P0: last week's "12 blog pages missing from sitemap" P1 has worsened to 14 (2 more added this cycle) and `llms-full.txt` now overstates CVE pages 225 vs 133 on disk (was 210/117) — the sitemap/llms.txt drift this audit has flagged at XS effort for three consecutive weeks is now producing a measurably wrong AI/LLM discovery surface; daily CVE and Friday roundup pipelines are healthy; 9 prior items still open, none resolved.
+
+**Pipeline pulse:**
+- Daily CVE trigger last output (`data/appsec-review.md`): 2026-06-13 (2 days old — at threshold; `pending_review.json` `last_checked` 2026-06-14T16:15 UTC with 0 pending — healthy ✓; 2 CVEs published 2026-06-13: Oracle, Ivanti)
+- Friday AI trend roundup last file (`drafts/ai-security-roundup-2026-06-12.md`): 2026-06-12 (Friday — draft present, not yet published; awaiting Tuesday `publish-blog.yml` cycle — normal ✓)
+- `data/pending_review.json` pending count: 0 (last_checked: 2026-06-14T16:15:23 UTC ✓)
+
+**New this week:**
+- P0 pipeline/llms — `sitemap.xml` + `llms-full.txt` + `.github/workflows/publish-blog.yml:69` — Escalating last week's P1: blog pages missing from sitemap grew from 12 to 14 — this week's Tuesday publish added `blog/ai-security-roundup-2026-06-05.html` and `blog/weekly-threat-roundup-2026-06-09.html` on disk but neither appears in `sitemap.xml` because `publish-blog.yml`'s commit step (`git add blog/ cve/ comparisons/ data/ drafts/ sitemap.xml *.html` — note: `sitemap.xml` is listed but never regenerated/staged with new content since no `generate_sitemap.py`/`update_sitemap.py` step runs before it); compounding the existing CVE dedup drift (92 dupes, sitemap now 644 total/552 unique, was 637/545), `llms-full.txt` now lists 225 CVE entries vs 133 real CVE pages on disk (was 210/117 three weeks ago — drift accelerating ~+15 phantom entries/week); AI crawlers and LLM agents discovering this site via `llms.txt`/`llms-full.txt` now receive a page inventory that is wrong by a wide and growing margin, meeting this audit's P0 "wrong llms.txt" criterion — Fix (unchanged, still XS): add `python3 scripts/generate_sitemap.py` (rebuilt from disk with dedup) before the `git add` in `publish-blog.yml` and `auto-publish-cve.yml`; backfill the 14 missing blog URLs; regenerate `llms-full.txt` — Effort: XS
+
+**Still open from prior audits:** 9
+1. P1 cache-bust/JS — `js/error-reporter.js` + `js/quiz-engine.js` — Still no `?v=` cache-bust parameter on 120+ HTML references; Fix: add `?v=1` to all `<script src>` references; update `inject_error_reporter.py:46` and `generate_quiz_pages.py` templates — Effort: S
+2. P1 content — `scripts/generate_quiz_pages.py:387` — Evergreen quiz/hub timestamps unchanged at 60 pages (47 quiz root + 13 practice-test hub); root cause: emits `<p>Last updated: {TODAY}</p>` on every regeneration — Remove timestamp block from quiz/practice-test templates; re-run generators — Effort: S
+3. P2 content — `scripts/generate_llms_txt.py:154` — `ai-agent-security-threats.html` still absent from `GUIDE_PAGES`; page present on disk, AI crawlers see it under "Other Pages" not "Security Guides" — Add to `GUIDE_PAGES` set; re-run `generate_llms_txt.py` — Effort: XS
+4. P2 generator — `scripts/` (14 files >500 LOC, unchanged) — `generate_guides.py` 2,896 · `generate_sprint_kit.py` 1,991 · `fetch_kev.py` 865 · `etsy_to_pinterest.py` 829 · `entity_extractor.py` 765 · `generate_linkedin_posts.py` 716 · `publish_editorial.py` 707 · `audit_pages.py` 661 · `generate_quiz_pages.py` 630 · `generate_cert_pages.py` 595 · `inject_store_ctas.py` 588 · `generate_practice_test_pages.py` 572 · `generate_roadmaps.py` 517 · `generate_cve_pages.py` 504 — Refactor candidates — Effort: L
+5. P2 hygiene — repo-wide — `requirements.txt` still absent; Pillow (`create_hero.py:4`, `generate_linkedin_posts.py:12`) and reportlab (`generate_sprint_kit.py:33–45`) remain undeclared external deps; `security-audit.yml` pip-audit silently no-ops — Create `requirements.txt` with pinned versions; add install step to CI — Effort: XS
+6. P2 pipeline — `scripts/generate_sitemap.py` + `scripts/update_sitemap.py` — Overlapping sitemap-mutation logic; no dedup guard; not wired into publish workflows (direct root cause of the new P0 above; fifth consecutive audit with this symptom) — Merge into single `sitemap.py` with `--build`/`--update` modes; wire into all publish workflows — Effort: S
+7. P3 hygiene — `scripts/` (8 instances, unchanged) — Broad `except Exception:` without logging: `fetch_kev.py:63`, `generate_sitemap.py:86`, `update_sitemap.py:29`, `audit_pages.py:250,382`, `inject_error_reporter.py:46`, `generate_linkedin_posts.py:72`, `create_hero.py:51` — Add `logging.exception()` before each silent except — Effort: S
+8. P3 hygiene — repo root — No `CLAUDE.md`; editorial rules uncodified in-repo — Create `CLAUDE.md` documenting evergreen-page rule, cache-bust policy, pipeline health thresholds — Effort: XS
+9. P3 store — `store/cloudflare-worker.js` — PRICING (599/599 cents) and CP_PRICING (2:{899,1699}, 3:{1299,2499}, 4:{1699,3499}) cross-checked against `store/store.js` frontend (5.99/5.99, 8.99/16.99, 12.99/24.99, 16.99/34.99) — all confirmed matching; webhook HMAC verification confirmed present at `verifyTokenHmac` (line 608); no action needed, retained as a standing check item — Effort: N/A
+
+**Resolved since last audit:** None. CVE pipeline active (+2 pages this week: Oracle, Ivanti, both correctly in sitemap and llms-full.txt); `ai-security-roundup-2026-06-12.md` generated Friday June 12 (publication awaiting Tuesday cycle — normal).
+
+**Metrics tracked:**
+- Total generated pages (cve-*, cert-*, comparisons/*, roadmaps/*): 309 (133 CVE + 66 cert + 43 comparisons + 67 roadmaps) — +6 vs last week (303)
+- Evergreen pages with timestamps (should be 0): 60 (unchanged)
+- Pages missing from llms.txt: 14 (blog: `ai-security-roundup-2026-04-24` through `2026-06-05` + `weekly-threat-roundup-2026-04-28` through `2026-06-09`; was 12)
+- Cache-bust drift count: 2 JS files unversioned (error-reporter.js, quiz-engine.js; unchanged)
+- Sitemap duplicate entries: 92 CVE dupes (644 total / 552 unique; was 92/637 last week) — `llms-full.txt` CVE entries: 225 vs 133 real pages (was 210/117)
+- Scripts >500 LOC: 14 (unchanged)
+- Store worker LOC: 1,151 (unchanged; webhook HMAC verification confirmed at `verifyTokenHmac`, line 608)
+- Python scripts with bare `except:`: 0 / broad `except Exception:` without logging: 8 (unchanged)
+
+---
+
 ## 2026-06-08 — Weekly Tech-Debt Audit
 
 **Headline:** New silent P1: 12 published blog pages (6 AI Security Roundups, 6 Weekly Threat Roundups) exist on disk but are absent from `sitemap.xml` and `llms-full.txt` because `publish-blog.yml` never calls `update_sitemap.py` — these pages are invisible to search crawlers and AI discovery; sitemap duplicate CVE drift persists at 92 dupes (637 total entries); pipeline healthy; 9 prior items still open.
