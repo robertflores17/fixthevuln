@@ -69,7 +69,7 @@ GUIDE_PAGES = {
     "red-teaming-guide.html", "cybersecurity-salary-guide.html",
     "best-cybersecurity-certifications.html", "cybersecurity-job-trends.html",
     "owasp-llm-top10.html", "prompt-injection.html", "model-poisoning.html",
-    "mlsecops.html", "ai-security-careers.html", "grc-career-path.html",
+    "mlsecops.html", "ai-agent-security-threats.html", "ai-security-careers.html", "grc-career-path.html",
     "siem-rule-writing.html", "threat-hunting.html", "log-analysis-cheatsheet.html",
 }
 

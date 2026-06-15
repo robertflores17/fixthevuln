@@ -51,6 +51,11 @@ jobs:
       - name: Inject blog cross-links into guide pages
         run: python3 scripts/inject_blog_links.py
 
+      - name: Rebuild sitemap and llms.txt
+        run: |
+          python3 scripts/generate_sitemap.py
+          python3 scripts/generate_llms_txt.py
+
       - name: Check for changes
         id: changes
         run: |
@@ -66,7 +71,7 @@ jobs:
           git config user.name "FixTheVuln Bot"
           git config user.email "bot@fixthevuln.com"
 
-          git add blog/ cve/ comparisons/ data/ drafts/ sitemap.xml *.html
+          git add blog/ cve/ comparisons/ data/ drafts/ sitemap.xml llms.txt llms-full.txt *.html
           git commit -m "Weekly blog publish + marketing content [skip ci]"
           git push
 

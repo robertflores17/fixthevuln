@@ -39,6 +39,12 @@ jobs:
         if: steps.check.outputs.count != '0'
         run: python3 scripts/generate_cve_social.py
 
+      - name: Rebuild sitemap and llms.txt
+        if: steps.check.outputs.count != '0'
+        run: |
+          python3 scripts/generate_sitemap.py
+          python3 scripts/generate_llms_txt.py
+
       - name: Commit and push changes
         if: steps.check.outputs.count != '0'
         run: |
@@ -52,7 +58,7 @@ jobs:
             else
               COMMIT_MSG="Update KEV data -- Robert [skip ci]"
             fi
-            git add data/kev-data.json data/pending_review.json data/cve-social-posts.txt data/latest-update.json
+            git add data/kev-data.json data/pending_review.json data/cve-social-posts.txt data/latest-update.json cve/ sitemap.xml llms.txt llms-full.txt
             git commit -m "$COMMIT_MSG"
             git push
           fi
