@@ -1,21 +1,21 @@
-# Daily KEV Review — 2026-06-12
+# Daily KEV Review — 2026-06-16
 
-**New CVEs:** 2 | **Critical:** 0 | **High:** 0 | **Medium:** 0 | **Low:** 2 | **Ransomware-linked:** 1
+**New CVEs:** 2 | **Critical:** 0 | **High:** 1 | **Medium:** 1 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-35273 | Oracle |  PeopleSoft Enterprise PeopleTools | N/A | Known | 2026-06-15 |
-| CVE-2026-10520 | Ivanti | Sentry | N/A | Unknown | 2026-06-14 |
+| CVE-2026-54420 | LiteSpeed | cPanel Plugin | 8.5 | Unknown | 2026-06-18 |
+| CVE-2026-20262 | Cisco | Catalyst SD-WAN Manager | 6.5 | Unknown | 2026-06-29 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-06-14 (1 CVE)
+- **Nearest due date:** 2026-06-18 (1 CVE)
 - **Overdue:** None
 
 ## Vendor Summary
-- Oracle: 1 CVE
-- Ivanti: 1 CVE
+- LiteSpeed: 1 CVE
+- Cisco: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
