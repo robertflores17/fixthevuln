@@ -14,6 +14,16 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 
+def cvss_score(v):
+    """Coerce a vuln's CVSS to float. Newly-added KEV entries NVD hasn't scored
+    yet store cvss=None (not missing), so .get('cvss', 0) returns None and
+    float(None) crashes. Treat None/empty/non-numeric as 0.0."""
+    try:
+        return float(v.get('cvss') or 0)
+    except (TypeError, ValueError):
+        return 0.0
+
+
 # ── CVE-to-cert domain classification ─────────────────────────────────
 DOMAIN_KEYWORDS = {
     'comptia-security-plus': {
@@ -123,7 +133,7 @@ def main():
         recent = sorted(recent, key=lambda v: v.get('dateAdded', ''), reverse=True)[:6]
 
     # Sort by CVSS descending
-    recent.sort(key=lambda v: float(v.get('cvss', 0)), reverse=True)
+    recent.sort(key=cvss_score, reverse=True)
 
     # Generate slug and check if already exists
     slug = f"weekly-threat-roundup-{today.strftime('%Y-%m-%d')}"
@@ -136,10 +146,10 @@ def main():
 
     # Stats
     count = len(recent)
-    highest_cvss = max(float(v.get('cvss', 0)) for v in recent)
+    highest_cvss = max(cvss_score(v) for v in recent)
     zero_days = [v for v in recent if v.get('isZeroDay', False)]
-    critical = [v for v in recent if float(v.get('cvss', 0)) >= 9.0]
-    high = [v for v in recent if 7.0 <= float(v.get('cvss', 0)) < 9.0]
+    critical = [v for v in recent if cvss_score(v) >= 9.0]
+    high = [v for v in recent if 7.0 <= cvss_score(v) < 9.0]
 
     # Date formatting
     week_start_display = week_ago.strftime('%b %d')
@@ -157,7 +167,7 @@ def main():
     # Build the vulnerability list
     vuln_entries = []
     for v in recent:
-        cvss = float(v.get('cvss', 0))
+        cvss = cvss_score(v)
         if cvss >= 9.0:
             severity_label = "CRITICAL"
         elif cvss >= 7.0:
