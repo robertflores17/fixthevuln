@@ -290,7 +290,7 @@ page = f"""<!DOCTYPE html>
     }});
     </script>
 {cf_analytics()}
-    <script src="/js/error-reporter.js"></script>
+    <script src="/js/error-reporter.js?v=1"></script>
 </body>
 </html>"""
 

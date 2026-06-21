@@ -503,7 +503,7 @@ def build_vendor_page(vendor_id, quizzes_with_data):
         }
     })();
     </script>
-    <script src="/js/error-reporter.js"></script>"""
+    <script src="/js/error-reporter.js?v=1"></script>"""
 
     return page_wrapper(
         title=meta['seo_title'],

@@ -11,9 +11,9 @@ import re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # ROOT should be the repo root (parent of scripts/)
-SCRIPT_TAG = '<script src="/js/error-reporter.js"></script>'
-# For store pages, use relative path since they're in /store/
-STORE_SCRIPT_TAG = '<script src="/js/error-reporter.js"></script>'
+SCRIPT_TAG = '<script src="/js/error-reporter.js?v=1"></script>'
+# Store pages use the same absolute path — it resolves correctly from /store/
+STORE_SCRIPT_TAG = '<script src="/js/error-reporter.js?v=1"></script>'
 SKIP_FILES = {'data/kev_cards.html'}
 
 def main():

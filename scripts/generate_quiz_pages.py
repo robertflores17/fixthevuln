@@ -8,7 +8,6 @@ import random
 import sys
 from pathlib import Path
 from html import escape
-from datetime import date
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -18,7 +17,6 @@ from lib.constants import SITE_URL, QUIZ_CSS_VERSION
 ETSY_CERTS = Path(__file__).resolve().parent.parent.parent / 'Dropshipping' / 'Etsy-Claude' / 'certifications'
 DATA_DIR = REPO / 'data'
 
-TODAY = date.today().strftime('%B %d, %Y')
 
 # ── Certs that ALREADY have quiz pages (don't regenerate) ──────────
 EXISTING_QUIZZES = {
@@ -384,7 +382,6 @@ def generate_quiz_html(cfg, domains_js, total_questions, questions):
         <div class="container">
             <a href="index.html" style="text-decoration: none; color: inherit;"><h1>FixTheVuln</h1></a>
             <p class="tagline">{name} {exam} Practice Quiz &mdash; {total_questions} Questions</p>
-            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Last updated: {TODAY}</p>
         </div>
     </header>
 
@@ -522,7 +519,7 @@ def generate_quiz_html(cfg, domains_js, total_questions, questions):
 
 {footer(affiliate_disclosure=True, quiz_disclaimer=vendor)}
 
-    <script src="js/quiz-engine.js"></script>
+    <script src="js/quiz-engine.js?v=1"></script>
     <script>
         function startQuiz() {{ QuizEngine.startQuiz(); }}
         function skipQuestion() {{ QuizEngine.skipQuestion(); }}

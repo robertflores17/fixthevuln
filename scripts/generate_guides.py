@@ -124,7 +124,7 @@ def generate_page(cfg):
         content=content,
         keywords=keywords,
         schema_blocks=schemas,
-        extra_body_end='  <script src="/js/error-reporter.js"></script>',
+        extra_body_end='  <script src="/js/error-reporter.js?v=1"></script>',
     )
 
 
