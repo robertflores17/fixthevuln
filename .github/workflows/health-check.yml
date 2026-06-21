@@ -1,0 +1,64 @@
+name: Saturday Health Check
+
+# Weekly health sweep: pipeline + content checks (KEV freshness, stuck CVEs,
+# sitemap/llms drift, recent workflow failures, open urgent issues). Emails a
+# digest via Resend ONLY when there are findings — silent when all clear.
+# Requires repo secret RESEND_API_KEY and repo variable ALERT_EMAIL.
+
+on:
+  schedule:
+    - cron: '0 16 * * 6'  # Saturday 16:00 UTC (8 AM PST / 9 AM PDT)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read   # health_check.py queries recent workflow runs
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Run health sweep
+        id: sweep
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          count=$(python3 scripts/health_check.py --out health-findings.md)
+          echo "findings=$count" >> "$GITHUB_OUTPUT"
+          echo "Findings: $count"
+          cat health-findings.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Email digest when findings exist
+        if: steps.sweep.outputs.findings != '0'
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ALERT_EMAIL: ${{ vars.ALERT_EMAIL }}
+          N: ${{ steps.sweep.outputs.findings }}
+        run: |
+          if [ -z "$RESEND_API_KEY" ]; then
+            echo "::error::RESEND_API_KEY secret is not set — add it with: gh secret set RESEND_API_KEY"
+            exit 1
+          fi
+          subject="🟡 FixTheVuln health sweep: ${N} finding(s)"
+          # -o keeps the third-party response body out of the job log.
+          http=$(jq -n --arg from "FixTheVuln Alerts <hello@fixthevuln.com>" \
+                --arg to "$ALERT_EMAIL" --arg subject "$subject" \
+                --rawfile text health-findings.md \
+                '{from:$from, to:[$to], subject:$subject, text:$text}' \
+          | curl -sS -o /tmp/resend.json -w '%{http_code}' -X POST https://api.resend.com/emails \
+                -H "Authorization: Bearer $RESEND_API_KEY" \
+                -H "Content-Type: application/json" -d @-)
+          if grep -q '"id"' /tmp/resend.json; then
+            echo "Digest emailed to the configured address."
+          else
+            echo "::error::Resend send failed (HTTP $http) — see job for the missing message id."
+            exit 1
+          fi
