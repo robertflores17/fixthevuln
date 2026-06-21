@@ -24,34 +24,58 @@ jobs:
         with:
           python-version: '3.11'
 
+      # Each generator is independent. continue-on-error keeps one crash from
+      # blocking the rest and the publish step; the "Fail if any generator
+      # crashed" gate at the end turns the job red and names the culprit so a
+      # failure can't silently rot (see June 2026 null-CVSS blackout).
       - name: Generate CVE pages
+        id: cve_pages
+        continue-on-error: true
         run: python3 scripts/generate_cve_pages.py
 
       - name: Generate certification comparisons
+        id: comparisons
+        continue-on-error: true
         run: python3 scripts/generate_comparisons.py
 
       - name: Generate weekly threat roundup
+        id: threat_roundup
+        continue-on-error: true
         run: python3 scripts/generate_threat_roundup.py
 
       - name: Publish blog posts
+        id: publish
+        continue-on-error: true
         run: python3 scripts/publish_editorial.py
 
       - name: Generate social media copy
+        id: social
+        continue-on-error: true
         run: python3 scripts/generate_social_posts.py
 
       - name: Generate newsletter copy
+        id: newsletter
+        continue-on-error: true
         run: python3 scripts/generate_newsletter.py
 
       - name: Repurpose content for social
+        id: repurpose
+        continue-on-error: true
         run: python3 scripts/repurpose_content.py
 
       - name: Generate Reddit post templates
+        id: reddit
+        continue-on-error: true
         run: python3 scripts/generate_reddit_posts.py
 
       - name: Inject blog cross-links into guide pages
+        id: crosslinks
+        continue-on-error: true
         run: python3 scripts/inject_blog_links.py
 
       - name: Rebuild sitemap and llms.txt
+        id: sitemap_llms
+        continue-on-error: true
         run: |
           python3 scripts/generate_sitemap.py
           python3 scripts/generate_llms_txt.py
@@ -66,7 +90,9 @@ jobs:
           fi
 
       - name: Commit and push changes
+        id: push
         if: steps.changes.outputs.changes == 'true'
+        continue-on-error: true
         run: |
           git config user.name "FixTheVuln Bot"
           git config user.email "bot@fixthevuln.com"
@@ -86,3 +112,34 @@ jobs:
       - name: No changes
         if: steps.changes.outputs.changes == 'false'
         run: echo "No new content to publish" >> $GITHUB_STEP_SUMMARY
+
+      # Runs after publishing so anything that succeeded is already committed.
+      # Turns the job red and lists every crashed generator.
+      - name: Fail if any generator crashed
+        if: always()
+        run: |
+          failed=""
+          check() { [[ "$2" == "failure" ]] && failed="$failed $1"; }
+          check generate_cve_pages.py      "${{ steps.cve_pages.outcome }}"
+          check generate_comparisons.py    "${{ steps.comparisons.outcome }}"
+          check generate_threat_roundup.py "${{ steps.threat_roundup.outcome }}"
+          check publish_editorial.py       "${{ steps.publish.outcome }}"
+          check generate_social_posts.py   "${{ steps.social.outcome }}"
+          check generate_newsletter.py     "${{ steps.newsletter.outcome }}"
+          check repurpose_content.py       "${{ steps.repurpose.outcome }}"
+          check generate_reddit_posts.py   "${{ steps.reddit.outcome }}"
+          check inject_blog_links.py       "${{ steps.crosslinks.outcome }}"
+          check sitemap+llms_txt           "${{ steps.sitemap_llms.outcome }}"
+          # 'skipped' (no changes to commit) is not a failure; only a real
+          # commit/push crash flags here so the summary can't claim success.
+          check commit+push                "${{ steps.push.outcome }}"
+          if [[ -n "$failed" ]]; then
+            echo "## ⚠️ Pipeline step failures" >> "$GITHUB_STEP_SUMMARY"
+            echo "Everything that succeeded was still published. These crashed and need a look:" >> "$GITHUB_STEP_SUMMARY"
+            for s in $failed; do
+              echo "- \`$s\`" >> "$GITHUB_STEP_SUMMARY"
+              echo "::error::Pipeline step failed: $s"
+            done
+            exit 1
+          fi
+          echo "All generators and publish succeeded." >> "$GITHUB_STEP_SUMMARY"
