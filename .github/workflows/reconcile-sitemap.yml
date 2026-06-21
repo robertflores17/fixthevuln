@@ -1,0 +1,64 @@
+name: Reconcile sitemap & llms.txt
+
+# The daily CVE publish (AppSec CVE Reviewer trigger) changes the on-disk CVE
+# page set but does not full-rebuild sitemap.xml, so stale <url> entries
+# accumulate mid-week and only get reconciled by Tuesday's blog publish. AI
+# crawlers and search engines then hit 404s on removed CVE URLs. This job runs
+# generate_sitemap.py (a full disk scan) + generate_llms_txt.py daily, so the
+# sitemap and llms files always match what's actually on disk. Idempotent: it
+# only commits on days the page set actually drifted.
+
+on:
+  schedule:
+    - cron: '0 23 * * *'  # Daily 23:00 UTC (3 PM PST) — well after the morning CVE publish
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0  # full history so generate_sitemap.py can read lastmod dates
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Reconcile against latest main, commit only if drifted
+        run: |
+          git config user.name "FixTheVuln Bot"
+          git config user.email "bot@fixthevuln.com"
+          # Rebuild from the LATEST main each attempt. A concurrent CVE/blog push
+          # may land between our checkout and push; re-syncing and regenerating
+          # before every commit means we never re-commit a stale sitemap that
+          # would revert pages another job just added. No rebase, so no conflict.
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            python3 scripts/generate_sitemap.py
+            python3 scripts/generate_llms_txt.py
+            if [[ -z $(git status --porcelain sitemap.xml llms.txt llms-full.txt) ]]; then
+              echo "No drift — sitemap and llms already match on-disk pages (attempt $attempt)." >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            # Must equal the full write set of both generators. If a new page
+            # type adds a generated artifact, extend this list AND the check
+            # above, or drift will pass silently with the file left uncommitted.
+            git add sitemap.xml llms.txt llms-full.txt
+            git commit -m "Reconcile sitemap & llms.txt with on-disk pages [skip ci]"
+            if git push; then
+              echo "Pushed sitemap/llms reconciliation (attempt $attempt)." >> "$GITHUB_STEP_SUMMARY"
+              git show --stat HEAD >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            echo "Push rejected by a concurrent push; re-syncing and rebuilding (attempt $attempt)..."
+          done
+          echo "::error::Failed to reconcile after 3 attempts (persistent concurrent pushes)."
+          exit 1
