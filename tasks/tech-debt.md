@@ -1,3 +1,41 @@
+## 2026-06-22 — Weekly Tech-Debt Audit
+
+**Headline:** Strong resolution week — prior P0 (sitemap/llms.txt drift) and 3 other high-priority items fully closed; sitemap now clean (572 entries, 0 dupes, all blog+CVE counts match on-disk); one P0-watch: `appsec-review.md` content date is June 19 (3 days, triggers rule) but KEV pipeline confirmed healthy June 21 with 0 pending — contextually benign weekend quiet period, not a stall; 13 practice-test hub pages still carry evergreen timestamp from April 2.
+
+**Pipeline pulse:**
+- Daily CVE trigger last output (`data/appsec-review.md`): 2026-06-19 (content date — 3 days old, triggers P0 rule; `pending_review.json` `last_checked: 2026-06-21T16:24 UTC` with `total_pending: 0` confirms KEV daily fetch IS running; last CVE published June 19 (Splunk); no new KEV entries from CISA over the weekend — pipeline idle, not stalled ✓)
+- Friday AI trend roundup last file (`drafts/ai-security-roundup-2026-06-19.md`): 2026-06-19 (Friday — normal ✓; next due 2026-06-26)
+- `data/pending_review.json` pending count: 0 (last_checked: 2026-06-21T16:24:28 UTC ✓)
+
+**New this week:**
+- P0-watch pipeline — `data/appsec-review.md` — Content date 2026-06-19 (3 days old, strictly triggers >2-day P0 rule). Mitigating evidence: `pending_review.json` `last_checked` is 2026-06-21 with `total_pending: 0`; daily KEV-fetch commits ("Update KEV last checked timestamp") present for June 20 and June 21; no new CISA KEV entries published over the June 19–22 weekend. Assessment: rule triggered but pipeline NOT stalled — weekend quiet period. No GitHub issue created this cycle. If `appsec-review.md` remains at June 19 by Tuesday June 24 EOD, escalate to hard P0 and file issue. — Effort: monitor only
+- P1 content — `practice-tests/*.html` (13 files, e.g. `practice-tests/comptia.html:466`) — All 13 practice-test hub pages still carry `<p class="pt-timestamp">Last updated: April 2, 2026</p>`. The June 21 fix (`f4f6d63`) removed timestamps from the 47 quiz-root pages but did NOT regenerate the practice-test hub templates. These are evergreen hub pages — timestamps violate CLAUDE.md rule and mislead visitors. Fix: remove `pt-timestamp` block from `scripts/generate_practice_test_pages.py` template; re-run generator — Effort: XS
+
+**Still open from prior audits:** 5
+1. P1 content — `practice-tests/*.html:466` (13 pages) — "Last updated: April 2, 2026" still present on all 13 practice-test hub pages; quiz-root pages fixed June 21 but hub template not updated — Remove timestamp from `generate_practice_test_pages.py` template; re-run — Effort: XS
+2. P2 generator — `scripts/` (14 files >500 LOC, unchanged) — `generate_guides.py` 2,896 · `generate_sprint_kit.py` 1,991 · `fetch_kev.py` 865 · `etsy_to_pinterest.py` 829 · `entity_extractor.py` 765 · `generate_linkedin_posts.py` 716 · `publish_editorial.py` 707 · `audit_pages.py` 661 · `generate_quiz_pages.py` 627 · `generate_cert_pages.py` 595 · `inject_store_ctas.py` 588 · `generate_practice_test_pages.py` 572 · `generate_roadmaps.py` 517 · `generate_cve_pages.py` 504 — Refactor candidates — Effort: L
+3. P2 hygiene — repo-wide — `requirements.txt` absent; Pillow (`create_hero.py:4`, `generate_linkedin_posts.py:12`) and reportlab (`generate_sprint_kit.py:33–45`) are undeclared external deps; `security-audit.yml` pip-audit silently no-ops — Create `requirements.txt` with pinned versions; add install step to CI — Effort: XS
+4. P3 hygiene — `scripts/` (9 instances across 8 scripts, +1 new: `health_check.py:127`) — Broad `except Exception:` without logging: `fetch_kev.py:63`, `generate_sitemap.py:86`, `update_sitemap.py:29`, `audit_pages.py:250,382`, `inject_error_reporter.py:46`, `generate_linkedin_posts.py:72`, `create_hero.py:51`, `health_check.py:127` — Add `logging.exception()` before each silent except — Effort: S
+5. P3 hygiene — repo root — No `CLAUDE.md`; editorial rules (evergreen-page timestamp ban, cache-bust policy, pipeline health thresholds) uncodified in-repo — Create `CLAUDE.md` — Effort: XS
+
+**Resolved since last audit:**
+- ✅ P0 pipeline/llms — Sitemap/llms.txt drift: `fd41592` (June 15) wired `generate_sitemap.py` into publish workflows; daily `reconcile-sitemap.yml` (added June 21, `155ea65`) now keeps sitemap idempotent. Sitemap now 572 entries, **0 duplicates** (was 92 CVE dupes, 644 total), blog 103/103 match, CVE 138/138 match — fully resolved.
+- ✅ P1 cache-bust/JS — `f4f6d63` (June 21): `error-reporter.js?v=1` and `quiz-engine.js?v=1` now on all HTML references — resolved.
+- ✅ P2 pipeline — Overlapping sitemap-mutation logic resolved via daily reconcile job (`reconcile-sitemap.yml`) + `generate_sitemap.py` wired into `publish-blog.yml` and `auto-publish-cve.yml` — resolved.
+- ✅ P2 content — `ai-agent-security-threats.html` confirmed present in `GUIDE_PAGES` at `scripts/generate_llms_txt.py:154` — resolved.
+
+**Metrics tracked:**
+- Total generated pages (cve-*, cert-*, comparisons/*, roadmaps/*): 314 (138 CVE + 66 cert + 43 comparisons + 67 roadmaps) — +5 CVE vs last week (309)
+- Evergreen pages with timestamps (should be 0): 13 (practice-tests/*.html only; quiz-root pages now 0 ✓)
+- Pages missing from llms.txt: 0 (103 blog + 138 CVE both match on-disk ✓)
+- Cache-bust drift count: 0 (resolved ✓)
+- Sitemap duplicate entries: 0 / total entries: 572 (resolved ✓)
+- Scripts >500 LOC: 14 (unchanged)
+- Store worker LOC: 1,151 (unchanged; HMAC webhook verification confirmed at `verifyTokenHmac`; pricing cross-check: worker 599/1599 cents vs frontend $5.99/$15.99 — all match ✓)
+- Python scripts with bare `except Exception:` without logging: 9 instances / 8 scripts (was 8 instances; `health_check.py:127` added)
+
+---
+
 ## 2026-06-15 — Weekly Tech-Debt Audit
 
 **Headline:** Escalating to P0: last week's "12 blog pages missing from sitemap" P1 has worsened to 14 (2 more added this cycle) and `llms-full.txt` now overstates CVE pages 225 vs 133 on disk (was 210/117) — the sitemap/llms.txt drift this audit has flagged at XS effort for three consecutive weeks is now producing a measurably wrong AI/LLM discovery surface; daily CVE and Friday roundup pipelines are healthy; 9 prior items still open, none resolved.
