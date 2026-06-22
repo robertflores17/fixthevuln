@@ -128,6 +128,12 @@ def _gh_api(path):
         return None
 
 
+# The monitoring workflows' own failures are excluded — reporting them here is
+# circular (a failed sweep can't email anyway, and GitHub's native run status
+# already surfaces them), and it adds noise that drowns out real pipeline issues.
+MONITORING_WORKFLOWS = {"Saturday Health Check", "Notify on workflow failure"}
+
+
 def check_workflow_failures():
     data = _gh_api("/actions/runs?per_page=50")
     if not data:
@@ -136,6 +142,9 @@ def check_workflow_failures():
     cutoff = datetime.now(timezone.utc) - timedelta(days=7)
     fails = {}
     for run in data.get("workflow_runs", []):
+        name = run.get("name", "?")
+        if name in MONITORING_WORKFLOWS:
+            continue
         if run.get("conclusion") != "failure" or run.get("event") == "pull_request":
             continue
         try:
@@ -143,7 +152,7 @@ def check_workflow_failures():
         except ValueError:
             continue
         if cd >= cutoff:
-            fails[run.get("name", "?")] = fails.get(run.get("name", "?"), 0) + 1
+            fails[name] = fails.get(name, 0) + 1
     for name, n in sorted(fails.items()):
         add("P1", "CI", f'Workflow "{name}" failed {n}x in the last 7 days.')
 
