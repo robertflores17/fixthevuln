@@ -1,58 +1,51 @@
-# AppSec Review — 2026-06-19
+# AppSec Review — 2026-06-24
 
 **Reviewer:** Robert Flores, CISSP  
-**Pipeline Run:** 2026-06-19  
-**CVEs Reviewed:** 1  
-**Total in Database After Publish:** 137  
+**CVEs Reviewed:** 4  
+**Review Date:** 2026-06-24  
 
 ---
 
 ## Severity Breakdown
 
-| Priority | Count | CVE IDs |
-|----------|-------|---------|
-| Critical | 1 | CVE-2026-20253 |
-| High     | 0 | — |
-| Medium   | 0 | — |
-| Low      | 0 | — |
+| Priority | Count |
+|----------|-------|
+| Critical | 3     |
+| High     | 1     |
+| Medium   | 0     |
+| Low      | 0     |
 
 ---
 
 ## CVE Summary
 
-| CVE ID | Vendor | Product | Priority | Vulnerability Class |
-|--------|--------|---------|----------|---------------------|
-| CVE-2026-20253 | Splunk | Enterprise | critical | Missing Authentication for Critical Function (CWE-306) |
-
----
-
-## CVE Detail
-
-**CVE-2026-20253 — Splunk Enterprise Missing Authentication (critical, CVSS 9.8)**  
-Splunk Enterprise contains a CVSS 9.8 missing authentication vulnerability (CWE-306) allowing an unauthenticated remote attacker to create or truncate arbitrary files through a PostgreSQL sidecar service endpoint. The severity is compounded by Splunk Enterprise's role as a widely-deployed SIEM/log aggregation platform — attackers who can truncate log files destroy forensic evidence, and file creation on a SIEM host may enable configuration injection or persistence. CISA's same-day addition to the KEV catalog with a 3-day remediation window under BOD 26-04 (due 2026-06-21) confirms active in-the-wild exploitation; organizations should treat this as an emergency patch, verify network segmentation of Splunk indexers, and review PostgreSQL sidecar exposure on all Splunk nodes immediately.
+| CVE ID | Vendor | Priority | Vulnerability Class |
+|--------|--------|----------|---------------------|
+| CVE-2025-67038 | Lantronix | critical | OS Command Injection (RCE, root) |
+| CVE-2026-34910 | Ubiquiti | high | Command Injection (Improper Input Validation) |
+| CVE-2026-34909 | Ubiquiti | critical | Path Traversal → Account Compromise |
+| CVE-2026-34908 | Ubiquiti | critical | Improper Access Control (Unauthorized System Modification) |
 
 ---
 
 ## Trend Analysis
 
-This batch highlights an accelerating pattern in 2026 KEV additions: critical-severity, unauthenticated vulnerabilities in enterprise security and observability tooling are being actively exploited with extremely short windows between disclosure and confirmed in-the-wild abuse. CVE-2026-20253 is particularly notable because Splunk Enterprise is itself a security control — an attacker who can truncate arbitrary files on a SIEM can eliminate evidence of their own intrusion, enabling prolonged dwell time. The CWE-306 (Missing Authentication for Critical Function) classification points to an architectural gap rather than a simple coding error: sidecar services and auxiliary processes in enterprise software frequently operate outside the main application's authentication boundary and are overlooked in both development and security review. Teams should audit all internal service endpoints for authentication controls, treating sidecars and auxiliary processes with the same rigor applied to public-facing APIs.
+This batch reflects a continued focus on network infrastructure and edge device security, with three of four CVEs targeting Ubiquiti UniFi OS — a platform ubiquitous in enterprise, SMB, and prosumer networks. The clustering of three vulnerabilities (CVE-2026-34908, -34909, -34910) from the same vendor and CISA advisory bulletin (Bulletin 064) indicates a coordinated disclosure for a multi-flaw attack chain: an attacker with network access could traverse paths to obtain credentials (34909), bypass access controls to modify system state (34908), and chain to command injection for code execution (34910). The Lantronix EDS5000 entry (CVE-2025-67038, CVSS 9.8) is a stark reminder that industrial serial device servers remain high-value targets — unauthenticated root command injection in the username field represents a complete pre-auth compromise of OT/serial infrastructure with minimal attacker sophistication required.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"CVE-2026-20253: When Your SIEM Becomes the Blind Spot"** — Deep dive into how unauthenticated file write on a Splunk Enterprise node enables attackers to truncate log data, cover tracks, and potentially chain to persistence, and why SIEMs need the same emergency patching urgency as edge devices.
+1. **"The Ubiquiti Triple-Threat: How CVE-2026-34908/34909/34910 Chain into Full Compromise"** — Walk through how path traversal to credential theft (34909) enables access control bypass (34908) that then enables command injection (34910), demonstrating chained exploitation on widely-deployed UniFi infrastructure.
 
-2. **"CISA BOD 26-04 and the 3-Day Patch Window: What Enterprise Teams Need to Know"** — Analysis of the new BOD 26-04 directive requiring rapid patching and forensic triage, using CVE-2026-20253 as the case study for why federal agencies face such a compressed timeline.
+2. **"Serial Killer: Unauthenticated RCE in Lantronix EDS5000 and the Forgotten OT Attack Surface"** — Explore how serial device servers bridging IT and OT networks are systematically overlooked in vulnerability management, using CVE-2025-67038 as the case study.
 
-3. **"CWE-306 in Production: Missing Auth on Internal Service Endpoints"** — Broader look at how PostgreSQL sidecar and auxiliary service endpoints escape authentication review, with patterns for detecting and remediating missing authentication in microservice and sidecar architectures.
+3. **"CISA BOD 26-04 in Practice: What the Three-Day Patch Window Means for Network Admins"** — Break down the new BOD 26-04 requirements using this batch of Ubiquiti/Lantronix KEV entries as real examples, covering forensics triage requirements and internet-exposure assessment obligations.
 
 ---
 
 ## Newsletter Snippet
 
-**Active Exploitation Alert: Unauthenticated File Write in Splunk Enterprise**
+**CISA KEV Alert — June 24, 2026:** This week's KEV additions are dominated by network infrastructure vulnerabilities demanding immediate attention. Ubiquiti UniFi OS received three simultaneous KEV entries (CVE-2026-34908, -34909, -34910), covering improper access control, path traversal, and command injection — all exploitable by any actor with network access to UniFi infrastructure. Two carry a perfect CVSS 10.0 score. If you manage UniFi equipment, patch now and review CISA's Bulletin 064 for forensics triage requirements under BOD 26-04. Lantronix EDS5000 serial device servers (CVE-2025-67038, CVSS 9.8) round out the batch with a pre-authentication root command injection — if you have EDS5000 units exposed, treat this as a critical incident response scenario.
 
-CISA added CVE-2026-20253 to the Known Exploited Vulnerabilities catalog this week — a CVSS 9.8 missing authentication vulnerability in Splunk Enterprise that allows an unauthenticated attacker to create or truncate arbitrary files via a PostgreSQL sidecar service endpoint. What makes this particularly dangerous is Splunk's role as a SIEM: an attacker who can truncate log files can erase evidence of their own intrusion, effectively blinding the security operations team. CISA's same-day addition to the KEV catalog and a 3-day federal remediation deadline under BOD 26-04 (due 2026-06-21) confirm this is being actively exploited in the wild.
-
-If your organization runs Splunk Enterprise, apply the vendor patch referenced in SVD-2026-0603 immediately and audit PostgreSQL sidecar service exposure on all Splunk nodes. Any Splunk instance that was network-accessible before patching should be treated as potentially compromised, with particular attention to index integrity and file system changes. For security teams, this is also a reminder to audit authentication controls on all internal sidecar and auxiliary service endpoints — CWE-306 vulnerabilities in adjacent processes are a consistently underexamined attack surface in enterprise deployments.
+The CISA KEV list now stands at 141 tracked vulnerabilities on this site, with 75% of this week's additions rated critical. The Ubiquiti cluster is particularly notable because UniFi OS serves as the control plane for switches, access points, and gateways — a compromised UniFi controller is effectively a compromised network. Combine that with Lantronix's foothold in OT environments and this batch represents a meaningful escalation in infrastructure risk. Patch windows are tight: CISA-mandated remediation due date is June 26, 2026.
