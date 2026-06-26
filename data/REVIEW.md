@@ -1,24 +1,24 @@
-# Daily KEV Review — 2026-06-24
+# Daily KEV Review — 2026-06-26
 
-**CVEs to review:** 4
+**CVEs to review:** 2
 
 ---
 
-## CVE-2025-67038: Lantronix EDS5000
+## CVE-2026-12569: PTC Windchill and FlexPLM
 
 **CVSS:** 9.8
-**Description:** Lantronix EDS5000 contains a code injection vulnerability that could allow attackers to inject arbitrary OS commands into the username parameter. Injected commands are executed with root privileges.
+**Description:** PTC Windchill and FlexPLM contains an improper input validation vulnerability allowing an unauthenticated, remote attacker to execute arbitrary code by sending a malicious request to the network.
 **Fix:** Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
-**Due Date:** 2026-06-26
-**CISA Notes:** https://ltrxdev.atlassian.net/wiki/spaces/LTRXTS/pages/2538438657/Latest+Firmware+for+the+EDS5000+series+EDS5008+EDS5016+EDS5032 ; BOD 26-04: https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk ; Forensics Triage Requirements: https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk ; https://nvd.nist.gov/vuln/detail/CVE-2025-67038
+**Due Date:** 2026-06-28
+**CISA Notes:** https://www.ptc.com/en/support/article/CS473270 ; BOD 26-04: https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk ; Forensics Triage Requirements: https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk ; https://nvd.nist.gov/vuln/detail/CVE-2026-12569
 
 ### Expert Reviews (click to check):
-- [NVD - Official Details](https://nvd.nist.gov/vuln/detail/CVE-2025-67038)
-- [AttackerKB - Exploitability Rating](https://attackerkb.com/topics/CVE-2025-67038)
-- [BleepingComputer - News Coverage](https://www.bleepingcomputer.com/search/?q=CVE-2025-67038)
-- [GreyNoise - Active Scanning](https://viz.greynoise.io/query?gnql=cve%3ACVE-2025-67038)
-- [Rapid7 - Technical Analysis](https://www.rapid7.com/db/?q=CVE-2025-67038)
-- [The Record - Threat Intel](https://therecord.media/?s=CVE-2025-67038)
+- [NVD - Official Details](https://nvd.nist.gov/vuln/detail/CVE-2026-12569)
+- [AttackerKB - Exploitability Rating](https://attackerkb.com/topics/CVE-2026-12569)
+- [BleepingComputer - News Coverage](https://www.bleepingcomputer.com/search/?q=CVE-2026-12569)
+- [GreyNoise - Active Scanning](https://viz.greynoise.io/query?gnql=cve%3ACVE-2026-12569)
+- [Rapid7 - Technical Analysis](https://www.rapid7.com/db/?q=CVE-2026-12569)
+- [The Record - Threat Intel](https://therecord.media/?s=CVE-2026-12569)
 
 ### Your Review:
 Fields are auto-filled. Edit in pending_review.json if needed,
@@ -26,65 +26,21 @@ then set `include_on_site` to `true`.
 
 ---
 
-## CVE-2026-34910: Ubiquiti UniFi OS
+## CVE-2026-20230: Cisco Unified Communications Manager
 
-**CVSS:** 
-**Description:** Ubiquiti UniFi OS contains an improper input validation vulnerability which could allow a malicious actor with access to the network to conduct command injection.
+**CVSS:** 8.6
+**Description:** Cisco Unified Communications Manager (Unified CM) and Cisco Unified Communications Manager Session Management Edition (Unified CM SME) contain a server-side request forgery (SSRF) Vulnerability that could allow an unauthenticated, remote attacker to write files to the underlying operating system that could be used later to elevate to root.
 **Fix:** Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
-**Due Date:** 2026-06-26
-**CISA Notes:** https://community.ui.com/releases/Security-Advisory-Bulletin-064-064/84811c09-4cf4-42ab-bd61-cc994445963b ; BOD 26-04: https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk ; Forensics Triage Requirements: https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk ; https://nvd.nist.gov/vuln/detail/CVE-2026-34910
+**Due Date:** 2026-06-28
+**CISA Notes:** https://www.cisco.com/c/en/us/support/docs/csa/cisco-sa-cucm-ssrf-cXPnHcW.html ; BOD 26-04: https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk ; Forensics Triage Requirements: https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk ; https://nvd.nist.gov/vuln/detail/CVE-2026-20230
 
 ### Expert Reviews (click to check):
-- [NVD - Official Details](https://nvd.nist.gov/vuln/detail/CVE-2026-34910)
-- [AttackerKB - Exploitability Rating](https://attackerkb.com/topics/CVE-2026-34910)
-- [BleepingComputer - News Coverage](https://www.bleepingcomputer.com/search/?q=CVE-2026-34910)
-- [GreyNoise - Active Scanning](https://viz.greynoise.io/query?gnql=cve%3ACVE-2026-34910)
-- [Rapid7 - Technical Analysis](https://www.rapid7.com/db/?q=CVE-2026-34910)
-- [The Record - Threat Intel](https://therecord.media/?s=CVE-2026-34910)
-
-### Your Review:
-Fields are auto-filled. Edit in pending_review.json if needed,
-then set `include_on_site` to `true`.
-
----
-
-## CVE-2026-34909: Ubiquiti UniFi OS
-
-**CVSS:** 10.0
-**Description:** Ubiquiti UniFi OS contains a path traversal vulnerability which could allow a malicious actor with access to the network to access files on the underlying system that could be manipulated to access an underlying account.
-**Fix:** Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
-**Due Date:** 2026-06-26
-**CISA Notes:** https://community.ui.com/releases/Security-Advisory-Bulletin-064-064/84811c09-4cf4-42ab-bd61-cc994445963b ; BOD 26-04: https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk ; Forensics Triage Requirements: https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk ; https://nvd.nist.gov/vuln/detail/CVE-2026-34909
-
-### Expert Reviews (click to check):
-- [NVD - Official Details](https://nvd.nist.gov/vuln/detail/CVE-2026-34909)
-- [AttackerKB - Exploitability Rating](https://attackerkb.com/topics/CVE-2026-34909)
-- [BleepingComputer - News Coverage](https://www.bleepingcomputer.com/search/?q=CVE-2026-34909)
-- [GreyNoise - Active Scanning](https://viz.greynoise.io/query?gnql=cve%3ACVE-2026-34909)
-- [Rapid7 - Technical Analysis](https://www.rapid7.com/db/?q=CVE-2026-34909)
-- [The Record - Threat Intel](https://therecord.media/?s=CVE-2026-34909)
-
-### Your Review:
-Fields are auto-filled. Edit in pending_review.json if needed,
-then set `include_on_site` to `true`.
-
----
-
-## CVE-2026-34908: Ubiquiti UniFi OS
-
-**CVSS:** 10.0
-**Description:** Ubiquiti UniFi OS contains an improper access control vulnerability which could allow a malicious actor with access to the network to make unauthorized changes to the system.
-**Fix:** Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
-**Due Date:** 2026-06-26
-**CISA Notes:** https://community.ui.com/releases/Security-Advisory-Bulletin-064-064/84811c09-4cf4-42ab-bd61-cc994445963b ; BOD 26-04: https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk ; Forensics Triage Requirements: https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk ; https://nvd.nist.gov/vuln/detail/CVE-2026-34908
-
-### Expert Reviews (click to check):
-- [NVD - Official Details](https://nvd.nist.gov/vuln/detail/CVE-2026-34908)
-- [AttackerKB - Exploitability Rating](https://attackerkb.com/topics/CVE-2026-34908)
-- [BleepingComputer - News Coverage](https://www.bleepingcomputer.com/search/?q=CVE-2026-34908)
-- [GreyNoise - Active Scanning](https://viz.greynoise.io/query?gnql=cve%3ACVE-2026-34908)
-- [Rapid7 - Technical Analysis](https://www.rapid7.com/db/?q=CVE-2026-34908)
-- [The Record - Threat Intel](https://therecord.media/?s=CVE-2026-34908)
+- [NVD - Official Details](https://nvd.nist.gov/vuln/detail/CVE-2026-20230)
+- [AttackerKB - Exploitability Rating](https://attackerkb.com/topics/CVE-2026-20230)
+- [BleepingComputer - News Coverage](https://www.bleepingcomputer.com/search/?q=CVE-2026-20230)
+- [GreyNoise - Active Scanning](https://viz.greynoise.io/query?gnql=cve%3ACVE-2026-20230)
+- [Rapid7 - Technical Analysis](https://www.rapid7.com/db/?q=CVE-2026-20230)
+- [The Record - Threat Intel](https://therecord.media/?s=CVE-2026-20230)
 
 ### Your Review:
 Fields are auto-filled. Edit in pending_review.json if needed,

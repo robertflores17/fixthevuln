@@ -1,23 +1,21 @@
-# Daily KEV Review — 2026-06-24
+# Daily KEV Review — 2026-06-26
 
-**New CVEs:** 4 | **Critical:** 3 | **High:** 0 | **Medium:** 0 | **Low:** 1 | **Ransomware-linked:** 0
+**New CVEs:** 2 | **Critical:** 1 | **High:** 1 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-34909 | Ubiquiti | UniFi OS | 10.0 | Unknown | 2026-06-26 |
-| CVE-2026-34908 | Ubiquiti | UniFi OS | 10.0 | Unknown | 2026-06-26 |
-| CVE-2025-67038 | Lantronix | EDS5000 | 9.8 | Unknown | 2026-06-26 |
-| CVE-2026-34910 | Ubiquiti | UniFi OS | N/A | Unknown | 2026-06-26 |
+| CVE-2026-12569 | PTC | Windchill and FlexPLM | 9.8 | Unknown | 2026-06-28 |
+| CVE-2026-20230 | Cisco | Unified Communications Manager | 8.6 | Unknown | 2026-06-28 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-06-26 (4 CVEs)
+- **Nearest due date:** 2026-06-28 (2 CVEs)
 - **Overdue:** None
 
 ## Vendor Summary
-- Ubiquiti: 3 CVEs
-- Lantronix: 1 CVE
+- PTC: 1 CVE
+- Cisco: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
