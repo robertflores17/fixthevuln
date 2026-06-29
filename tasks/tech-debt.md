@@ -1,3 +1,38 @@
+## 2026-06-29 — Weekly Tech-Debt Audit
+
+**Headline:** Quiet positive week — CVE pipeline active (6 new pages since last audit: 4 on June 24, 2 on June 26), KEV daily checks confirmed June 27 and June 28 with 0 pending, Friday AI roundup published June 26 on schedule, llms.txt/sitemap fully in sync; appsec-review.md content date is June 26 (3 days old, same weekend-quiet pattern as June 22 audit); no new material findings; 5 prior items all still open.
+
+**Pipeline pulse:**
+- Daily CVE trigger last output (`data/appsec-review.md`): 2026-06-26 (content date — 3 days old, triggers >2-day rule; mitigated: "Update KEV last checked timestamp" commits 2026-06-27 and 2026-06-28 confirm pipeline running daily; `pending_review.json` `last_checked: 2026-06-28T16:01:52 UTC` with `total_pending: 0` ✓; pipeline idle not stalled — weekend/Monday quiet period)
+- Friday AI trend roundup last file (`drafts/ai-security-roundup-2026-06-26.md`): 2026-06-26 (Friday — on schedule ✓)
+- `data/pending_review.json` pending count: 0 (last_checked: 2026-06-28T16:01:52 UTC ✓)
+
+**New this week:**
+- P0-watch pipeline — `data/appsec-review.md` — Content date 2026-06-26 (3 days old, strictly triggers >2-day P0 rule). Mitigating evidence: KEV pipeline ran 2026-06-27 and 2026-06-28 (git: "Update KEV last checked timestamp"); `pending_review.json` last_checked=2026-06-28T16:01 with total_pending=0; CVE pipeline was active June 24 (4 CVEs: Lantronix, Ubiquiti ×3) and June 26 (2 CVEs: PTC, Cisco). Assessment: weekend quiet, not stalled. No GitHub issue created. Monitor: if no new CVE published by Tuesday 2026-07-01 EOD, escalate to hard P0. — Effort: monitor only
+
+**Still open from prior audits:** 5
+1. P1 content — `practice-tests/*.html:466` (13 pages) — `<p class="pt-timestamp">Last updated: April 2, 2026</p>` still present on all 13 practice-test hub pages. Open since June 22 audit. Fix: remove timestamp block from `scripts/generate_practice_test_pages.py` template; re-run — Effort: XS
+2. P2 generator — `scripts/` (14 files >500 LOC, unchanged) — `generate_guides.py` 2,896 · `generate_sprint_kit.py` 1,991 · `fetch_kev.py` 865 · `etsy_to_pinterest.py` 829 · `entity_extractor.py` 765 · `generate_linkedin_posts.py` 716 · `publish_editorial.py` 707 · `audit_pages.py` 661 · `generate_quiz_pages.py` 627 · `generate_cert_pages.py` 595 · `inject_store_ctas.py` 588 · `generate_practice_test_pages.py` 572 · `generate_roadmaps.py` 517 · `generate_cve_pages.py` 504 — Refactor candidates — Effort: L
+3. P2 hygiene — repo-wide — `requirements.txt` absent; Pillow (`create_hero.py:4`, `generate_linkedin_posts.py:12`) and reportlab (`generate_sprint_kit.py:33–45`) are undeclared external deps; `security-audit.yml` pip-audit silently no-ops — Create `requirements.txt` with pinned versions; add install step to CI — Effort: XS
+4. P3 hygiene — `scripts/` (9 instances across 8 scripts) — Broad `except Exception:` without logging: `fetch_kev.py:63`, `generate_sitemap.py:86`, `update_sitemap.py:29`, `audit_pages.py:250,382`, `inject_error_reporter.py:46`, `generate_linkedin_posts.py:72`, `create_hero.py:51`, `health_check.py:127` — Add `logging.exception()` before each silent except — Effort: S
+5. P3 hygiene — repo root — No `CLAUDE.md`; editorial rules (evergreen-page timestamp ban, cache-bust policy, pipeline health thresholds) uncodified in-repo — Create `CLAUDE.md` — Effort: XS
+
+**Resolved since last audit:** None. CVE pipeline published 6 pages this week (June 24: Lantronix + 3×Ubiquiti; June 26: PTC + Cisco). All reconcile-sitemap.yml commits current.
+
+**Metrics tracked:**
+- Total generated pages (cve-*, cert-*, comparisons/*, roadmaps/*): 320 (144 CVE + 66 cert + 43 comparisons + 67 roadmaps) — +6 CVE vs last week (314)
+- Blog pages: 104 (was 103, +1)
+- Sitemap entries: 579 (was 572, +7 ✓)
+- Evergreen pages with timestamps (should be 0): 13 (practice-tests/*.html only — unchanged)
+- Pages missing from llms.txt: 0 (all counts match on-disk ✓)
+- Cache-bust drift count: 0 (no CSS/JS modified in last 7 days ✓)
+- Scripts >500 LOC: 14 (unchanged)
+- Store worker LOC: 1,151 (unchanged; `verifyStripeSignature` webhook HMAC at line 703 confirmed; PRICING 599/1599 cents ↔ $5.99/$15.99 frontend ✓; CP_PRICING 899/1699, 1299/2499, 1699/3499 cents ↔ CAREER_PATH_PRICING $8.99/$16.99, $12.99/$24.99, $16.99/$34.99 ✓)
+- D1 migrations: 2 (0001_error_log, 0002_quiz_feedback — no new tables)
+- Python scripts with bare `except Exception:` without logging: 9 instances / 8 scripts (unchanged)
+
+---
+
 ## 2026-06-22 — Weekly Tech-Debt Audit
 
 **Headline:** Strong resolution week — prior P0 (sitemap/llms.txt drift) and 3 other high-priority items fully closed; sitemap now clean (572 entries, 0 dupes, all blog+CVE counts match on-disk); one P0-watch: `appsec-review.md` content date is June 19 (3 days, triggers rule) but KEV pipeline confirmed healthy June 21 with 0 pending — contextually benign weekend quiet period, not a stall; 13 practice-test hub pages still carry evergreen timestamp from April 2.
