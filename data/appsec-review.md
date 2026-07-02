@@ -1,19 +1,20 @@
-# AppSec Review — 2026-06-30
+# AppSec Review — 2026-07-02
 
 **Reviewer:** Robert Flores, CISSP  
+**Review Date:** 2026-07-02  
 **CVEs Reviewed:** 1  
-**Date Published:** 2026-06-30
 
 ---
 
 ## Severity Breakdown
 
-| Priority | Count | CVEs |
-|----------|-------|------|
-| Critical | 1 | CVE-2026-48558 |
-| High | 0 | — |
-| Medium | 0 | — |
-| Low | 0 | — |
+| Priority | Count |
+|----------|-------|
+| Critical | 0 |
+| High     | 1 |
+| Medium   | 0 |
+| Low      | 0 |
+| **Total**| **1** |
 
 ---
 
@@ -21,35 +22,28 @@
 
 | CVE ID | Vendor | Priority | Vulnerability Class |
 |--------|--------|----------|---------------------|
-| CVE-2026-48558 | SimpleHelp | critical | Authentication Bypass (Improper Verification of Cryptographic Signature) |
-
----
-
-## CVE Details
-
-**CVE-2026-48558 — SimpleHelp** (CVSS 10.0 · Critical)  
-An authentication bypass (CWE-347) in SimpleHelp's OIDC login flow: when OIDC authentication is configured, identity tokens submitted at login are accepted without verifying their cryptographic signature. A remote, unauthenticated attacker can forge a token containing arbitrary identity claims to obtain a fully authenticated technician session, and in some configurations this also bypasses multi-factor authentication. SimpleHelp is remote support software with broad deployment across MSPs and IT help desks, making compromised sessions a direct path to downstream customer environments. CISA remediation deadline is 2026-07-02 under BOD 26-04.
+| CVE-2026-45659 | Microsoft | high | Deserialization of Untrusted Data (RCE) |
 
 ---
 
 ## Trend Analysis
 
-This week's single KEV addition continues a pattern seen repeatedly in 2026: remote access and remote support tooling remains one of the most consistently exploited categories on the catalog, because a single compromised session in these products grants trusted access into many downstream environments at once — exactly the kind of leverage ransomware affiliates and initial-access brokers look for. CVE-2026-48558 is also a clean illustration of how identity-trust shortcuts undermine layered defenses: by skipping signature verification on OIDC tokens, SimpleHelp effectively let attackers self-issue valid sessions, which in some configurations collapsed MFA into a non-factor. Expect more KEV entries in this vein as OIDC/SSO adoption broadens across SaaS and on-prem support tooling — implementation bugs in the trust-verification step, not the protocol itself, are emerging as the recurring failure mode.
+This week's KEV addition reinforces a persistent pattern in enterprise collaboration platforms: insecure deserialization (CWE-502) continues to be a critical attack surface on widely-deployed products like Microsoft SharePoint. Authenticated RCE via deserialization is particularly dangerous in environments where credential compromise is common — phishing, password spray, or purchased access all hand an attacker the "authorized" foothold needed to trigger this class of vulnerability. CISA's rapid addition (dateAdded 2026-07-01, dueDate 2026-07-04) signals active exploitation in the wild, giving Federal Civilian Executive Branch agencies only 72 hours to remediate — consistent with BOD 26-04 emergency timelines for high-impact Microsoft products.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"CWE-347 in the Wild: When OIDC Token Verification Gets Skipped"** — Technical walkthrough of how missing signature verification in an OIDC login flow turns into full unauthenticated account takeover, using CVE-2026-48558 as the case study.
+1. **"Deserialization Attacks on SharePoint: Why CWE-502 Keeps Winning"** — A technical deep-dive into how .NET deserialization gadget chains enable RCE on SharePoint Server, with guidance on detection via forensic triage artifacts referenced in BOD 26-04.
 
-2. **"Why Remote Support Software Keeps Showing Up on the KEV List"** — Pattern piece tying SimpleHelp to the broader history of remote-access tools (ConnectWise, ScreenConnect, etc.) as ransomware initial-access vectors, with guidance for MSPs on hardening exposure.
+2. **"72-Hour Patch Windows: How CISA BOD 26-04 Is Redefining Federal Patch SLAs"** — An analysis of CISA's accelerated remediation timelines for high-impact KEV entries and what it means for FCEB agencies' vulnerability management programs.
 
-3. **"MFA Isn't a Backstop If the Identity Token Is Forgeable"** — Explainer on how authentication bypass at the token-trust layer can render MFA moot, and what to check in your own OIDC/SSO integrations.
+3. **"The Credential-to-RCE Pipeline: When Auth-Required Isn't Enough"** — Exploring how threat actors chain credential access (phishing, spray, dark web purchases) with authenticated-but-critical vulnerabilities like CVE-2026-45659 to achieve full compromise.
 
 ---
 
 ## Newsletter Snippet
 
-CISA added one new entry to the Known Exploited Vulnerabilities catalog this week, but it's a maximum-severity one: CVE-2026-48558 (CVSS 10.0, Critical), an authentication bypass in SimpleHelp's OIDC login flow. When OIDC authentication is configured, SimpleHelp accepts identity tokens without verifying their cryptographic signature — meaning a remote, unauthenticated attacker can forge a token with arbitrary identity claims and walk straight into a fully authenticated technician session. In some configurations, this also bypasses multi-factor authentication entirely.
+This week CISA added CVE-2026-45659, a deserialization of untrusted data vulnerability in Microsoft SharePoint Server (CVSS 8.8), to the Known Exploited Vulnerabilities catalog. The flaw allows an authorized attacker to execute arbitrary code over the network — a pattern that sounds less severe than unauthenticated RCE, but is actively weaponized by threat actors who leverage phishing campaigns and credential markets to obtain the initial authentication foothold. Federal agencies have until July 4, 2026 to apply vendor mitigations under BOD 26-04 emergency guidance.
 
-SimpleHelp is remote support software widely used by MSPs and IT help desks, and remote-access tooling has repeatedly proven to be one of the highest-value initial-access vectors for ransomware operators — a single compromised session here can cascade into many downstream customer environments. If your organization runs SimpleHelp with OIDC enabled, treat this as a "patch now" item: CISA's remediation deadline is 2026-07-02. Review BOD 26-04 guidance on prioritization and forensics triage requirements if mitigations can't be applied immediately.
+If your organization runs SharePoint Server on-premises, treat this as immediate priority. Apply the Microsoft Security Response Center patch, review your BOD 26-04 compliance posture, and conduct the forensic triage steps referenced in CISA's implementation guidance. Even if SharePoint is cloud-hosted (SharePoint Online), validate your tenant configuration — and use this as a reminder to audit which internal services are accessible to any authenticated user, as that authorization boundary is exactly what this class of exploit targets.
