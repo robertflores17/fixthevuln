@@ -1,0 +1,57 @@
+name: Growth Review Reminder
+
+on:
+  schedule:
+    # Runs every Monday at 5 PM UTC (adjust to your timezone)
+    # For PST: 9 AM, EST: 12 PM
+    - cron: '0 17 * * 1'
+  workflow_dispatch:
+    # Allows manual trigger for testing
+
+jobs:
+  create-reminder:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+
+    steps:
+      - name: Create or update growth review issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DATE=$(date +'%B %d, %Y')
+
+          ISSUE_BODY="## Weekly Growth Review
+
+          Monday check-in for the growth floor (see root CLAUDE.md → Priority
+          Framework → Growth Floor).
+
+          ### Checklist
+
+          - [ ] Add last week's row to \`growth-os/metrics.md\` (CyberFolio +
+                FixTheVuln visitors, signups, Pro/sales, MRR)
+          - [ ] Review \`growth-os/experiments.md\` — start anything marked
+                'Not started', resolve anything past its timeframe
+          - [ ] Confirm the 2-hour growth floor happened this week, or log a
+                'skipped — [reason]' note in this week's metrics row
+          - [ ] Close this issue when done
+
+          ---
+
+          *This is an automated reminder ($DATE). If the growth floor was
+          skipped, that's fine — log why. Two skipped weeks in a row means
+          it's time to re-plan capacity, not ignore it.*"
+
+          EXISTING=$(gh issue list --label "growth-review" --state open --json number --jq '.[0].number' 2>/dev/null || echo "")
+
+          if [ -n "$EXISTING" ]; then
+            echo "Updating existing issue #$EXISTING"
+            gh issue edit $EXISTING --body "$ISSUE_BODY"
+          else
+            echo "Creating new reminder issue"
+            gh issue create \
+              --title "Growth Review: week of $DATE" \
+              --body "$ISSUE_BODY" \
+              --label "growth-review"
+          fi
