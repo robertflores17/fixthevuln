@@ -1,3 +1,39 @@
+## 2026-07-06 — Weekly Tech-Debt Audit
+
+**Headline:** Steady pipeline week — 2 new CVE pages (146 total), 2 new blog posts published; AI Security Roundup 2026-07-03 drafted Thursday (publishes Tuesday per schedule ✓); new growth-review.yml workflow needs `growth-review` GitHub label pre-created or it will fail on first run (P2); appsec-review.md at July 2 (4 days, P0-watch 3rd consecutive week, July 4 US federal holiday context mitigates); 5 prior items all still open.
+
+**Pipeline pulse:**
+- Daily CVE trigger last output (`data/appsec-review.md`): 2026-07-02 (content date — 4 days old, triggers >2-day P0 rule; `pending_review.json` `last_checked: 2026-07-05T15:59:42 UTC` with `total_pending: 0` confirms KEV daily fetch IS running; "Update KEV last checked timestamp" commits July 3, 4, 5 all present; July 4 US federal holiday — CISA published no new KEV entries July 3–5; pipeline idle not stalled ✓)
+- Friday AI trend roundup last file (`drafts/ai-security-roundup-2026-07-03.md`): 2026-07-03 (Thursday — on schedule ✓; HTML publish pending Tuesday July 8 per publish-blog.yml schedule)
+- `data/pending_review.json` pending count: 0 (last_checked: 2026-07-05T15:59:42 UTC ✓)
+
+**New this week:**
+- P2 workflow — `.github/workflows/growth-review.yml:56` — New workflow added 2026-07-04 (commit d9c9717) creates GitHub issues with `--label "growth-review"`. GitHub's `gh issue create` requires the label to pre-exist in the repo; if the label is absent, the step fails. No label-creation guard is present. Scheduled to run Mondays at 17:00 UTC — first run may be today. Fix: add `gh label create "growth-review" --color "0E8A16" --force` as a step before the issue create/edit block — Effort: XS
+- P0-watch pipeline — `data/appsec-review.md` — Content date 2026-07-02 (4 days old, strictly triggers >2-day P0 rule, 3rd consecutive week flagged). Mitigating evidence: `pending_review.json` `last_checked: 2026-07-05` with `total_pending: 0`; daily KEV-fetch "Update KEV last checked timestamp" commits July 3 (4c60b6d), July 4 (1f17929), July 5 (904a4df); July 4 US federal holiday explains CISA gap. Assessment: holiday quiet period, pipeline NOT stalled. No GitHub issue created this cycle. Monitor: if no new CVE published by Tuesday 2026-07-08 EOD, escalate to hard P0 and file issue — Effort: monitor only
+
+**Still open from prior audits:** 5
+1. P1 content — `practice-tests/*.html:466` (13 pages) — `<p class="pt-timestamp">Last updated: April 2, 2026</p>` still present on all 13 practice-test hub pages. Open 3 weeks. Fix: remove timestamp block from `scripts/generate_practice_test_pages.py` template; re-run — Effort: XS
+2. P2 generator — `scripts/` (14 files >500 LOC, unchanged) — `generate_guides.py` 2,896 · `generate_sprint_kit.py` 1,991 · `fetch_kev.py` 865 · `etsy_to_pinterest.py` 829 · `entity_extractor.py` 765 · `generate_linkedin_posts.py` 716 · `publish_editorial.py` 707 · `audit_pages.py` 661 · `generate_quiz_pages.py` 627 · `generate_cert_pages.py` 595 · `inject_store_ctas.py` 588 · `generate_practice_test_pages.py` 572 · `generate_roadmaps.py` 517 · `generate_cve_pages.py` 504 — Refactor candidates — Effort: L
+3. P2 hygiene — repo-wide — `requirements.txt` absent; Pillow (`create_hero.py:4`, `generate_linkedin_posts.py:12`) and reportlab (`generate_sprint_kit.py:33–45`) undeclared external deps; `security-audit.yml` pip-audit silently no-ops — Create `requirements.txt` with pinned versions; add install step to CI — Effort: XS
+4. P3 hygiene — `scripts/` (9 instances across 8 scripts) — Broad `except Exception:` without logging: `fetch_kev.py:63`, `generate_sitemap.py:86`, `update_sitemap.py:29`, `audit_pages.py:250,382`, `inject_error_reporter.py:46`, `generate_linkedin_posts.py:72`, `create_hero.py:51`, `health_check.py:127` — Add `logging.exception()` before each silent except — Effort: S
+5. P3 hygiene — repo root — No `CLAUDE.md`; editorial rules uncodified in-repo — Create `CLAUDE.md` — Effort: XS
+
+**Resolved since last audit:** None. 2 CVE pages published this week: CVE-2026-45659 (Microsoft SharePoint, July 2). AI Security Roundup 2026-07-03 drafted and blog/weekly-threat-roundup-2026-06-30.html published. Reconcile-sitemap.yml ran July 3, 4, 5, 6 keeping llms.txt/sitemap current.
+
+**Metrics tracked:**
+- Total generated pages (cve-*, cert-*, comparisons/*, roadmaps/*): 322 (146 CVE + 66 cert + 43 comparisons + 67 roadmaps) — +2 CVE vs last week (320)
+- Blog pages: 106 (was 104, +2: ai-security-roundup-2026-06-26.html + weekly-threat-roundup-2026-06-30.html)
+- Sitemap entries: 583 (was 579, +4 ✓)
+- Evergreen pages with timestamps (should be 0): 13 (practice-tests/*.html only — unchanged, P1 open 3 weeks)
+- Pages missing from llms.txt: 0 (counts match on-disk ✓ — llms.txt updated to 146 CVE, 106 blog)
+- Cache-bust drift count: 0 (no CSS/JS modified this week ✓)
+- Scripts >500 LOC: 14 (unchanged)
+- Store worker LOC: 1,151 (unchanged; `verifyStripeSignature` webhook HMAC at line 703 confirmed ✓; PRICING 599/1599 cents ↔ $5.99/$15.99 frontend ✓; CP_PRICING 899/1699, 1299/2499, 1699/3499 cents ✓)
+- D1 migrations: 2 (0001_error_log, 0002_quiz_feedback — no new tables)
+- Python scripts with bare `except Exception:` without logging: 9 instances / 8 scripts (unchanged)
+
+---
+
 ## 2026-06-29 — Weekly Tech-Debt Audit
 
 **Headline:** Quiet positive week — CVE pipeline active (6 new pages since last audit: 4 on June 24, 2 on June 26), KEV daily checks confirmed June 27 and June 28 with 0 pending, Friday AI roundup published June 26 on schedule, llms.txt/sitemap fully in sync; appsec-review.md content date is June 26 (3 days old, same weekend-quiet pattern as June 22 audit); no new material findings; 5 prior items all still open.
