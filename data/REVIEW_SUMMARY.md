@@ -1,25 +1,21 @@
-# Daily KEV Review — 2026-07-08
+# Daily KEV Review — 2026-07-11
 
-**New CVEs:** 4 | **Critical:** 3 | **High:** 1 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 2 | **Critical:** 2 | **High:** 0 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-48282 | Adobe | ColdFusion | 10.0 | Unknown | 2026-07-10 |
-| CVE-2026-48908 | JoomShaper | SP Page Builder | 9.8 | Unknown | 2026-07-10 |
-| CVE-2026-56290 | Joomlack | Page Builder | 9.8 | Unknown | 2026-07-10 |
-| CVE-2026-55255 | Langflow | Langflow | 8.4 | Unknown | 2026-07-10 |
+| CVE-2026-56291 | Balbooa | Forms | 9.8 | Unknown | 2026-07-13 |
+| CVE-2026-48939 | iCagenda | iCagenda | 9.8 | Unknown | 2026-07-13 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-07-10 (4 CVEs)
+- **Nearest due date:** 2026-07-13 (2 CVEs)
 - **Overdue:** None
 
 ## Vendor Summary
-- JoomShaper: 1 CVE
-- Langflow: 1 CVE
-- Joomlack: 1 CVE
-- Adobe: 1 CVE
+- Balbooa: 1 CVE
+- iCagenda: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
