@@ -1,3 +1,38 @@
+## 2026-07-13 — Weekly Tech-Debt Audit
+
+**Headline:** Healthy pipeline week — 6 new CVE pages (152 total), 2 blog posts published (weekly-threat-roundup-07-07.html, ai-security-roundup-07-03.html); appsec-review.md content date is July 11 (exactly 2 days, pipeline confirmed healthy: KEV last_checked July 12, 6 CVEs published July 8–11); growth-review label P2 from last audit confirmed resolved; one new P3 (generate_sitemap.py GUIDE_PAGES missing 2 AI guide pages); 5 prior items still open.
+
+**Pipeline pulse:**
+- Daily CVE trigger last output (`data/appsec-review.md`): 2026-07-11 (content date — exactly 2 days old; file modified today 2026-07-13T14:03 UTC; `pending_review.json` `last_checked: 2026-07-12T15:48 UTC` with `total_pending: 0`; 4 CVEs published July 8, 2 CVEs published July 11 — pipeline healthy ✓)
+- Friday AI trend roundup last file (`drafts/ai-security-roundup-2026-07-10.md`): 2026-07-10 (draft only, no .published suffix; scheduled blog publish Tuesday July 14 per publish-blog.yml cron `0 14 * * 2` ✓)
+- `data/pending_review.json` pending count: 0 (last_checked: 2026-07-12T15:48:40 UTC ✓)
+
+**New this week:**
+- P3 generator drift — `scripts/generate_sitemap.py` — GUIDE_PAGES set is missing `ai-agent-security.html` and `genai-data-security.html` (both present in `scripts/generate_llms_txt.py` GUIDE_PAGES). Pages still surface in sitemap at priority 0.7 ("Other Pages") instead of 0.8 ("Security Guides"). No crawl-blocking impact; inconsistency between generators may cause priority downgrade for two key AI-guide pages. Fix: add both filenames to GUIDE_PAGES in `generate_sitemap.py` (~line 76) — Effort: XS
+
+**Still open from prior audits:** 5
+1. P1 content — `practice-tests/*.html:352` (13 pages) — `<p class="pt-timestamp">Last updated: April 2, 2026</p>` still present on all 13 practice-test hub pages (102 days old). Open 4 weeks. Fix: remove timestamp block from `scripts/generate_practice_test_pages.py` template; re-run — Effort: XS
+2. P2 generator — `scripts/` (14 files >500 LOC, unchanged) — `generate_guides.py` 2,896 · `generate_sprint_kit.py` 1,991 · `fetch_kev.py` 865 · `etsy_to_pinterest.py` 829 · `entity_extractor.py` 765 · `generate_linkedin_posts.py` 716 · `publish_editorial.py` 707 · `audit_pages.py` 661 · `generate_quiz_pages.py` 627 · `generate_cert_pages.py` 595 · `inject_store_ctas.py` 588 · `generate_practice_test_pages.py` 572 · `generate_roadmaps.py` 517 · `generate_cve_pages.py` 504 — Refactor candidates — Effort: L
+3. P2 hygiene — repo-wide — `requirements.txt` absent; Pillow (`create_hero.py:4`, `generate_linkedin_posts.py:12`) and reportlab (`generate_sprint_kit.py`) are undeclared external deps; `security-audit.yml` pip-audit silently no-ops — Create `requirements.txt` with pinned versions; add install step to CI — Effort: XS
+4. P3 hygiene — `scripts/` (9 instances across 8 scripts) — Broad `except Exception:` without logging: `fetch_kev.py:63`, `generate_sitemap.py:86`, `update_sitemap.py:29`, `audit_pages.py:250,382`, `inject_error_reporter.py:46`, `generate_linkedin_posts.py:72`, `create_hero.py:51`, `health_check.py:127` — Add `logging.exception()` before each silent except — Effort: S
+5. P3 hygiene — repo root — No `CLAUDE.md`; editorial rules (evergreen-page timestamp ban, cache-bust policy, pipeline health thresholds) uncodified in-repo — Create `CLAUDE.md` — Effort: XS
+
+**Resolved since last audit:** 1 item — P2 workflow `.github/workflows/growth-review.yml` — `growth-review` GitHub label confirmed present (id: LA_kwDOQ3BCDs8AAAACqIb7Fw, color: #0E8A16) — workflow will no longer fail on `gh issue create --label "growth-review"` ✓. Also: 6 CVE pages published (July 8: JoomShaper, Langflow, Joomlack, Adobe; July 11: Balbooa, iCagenda). Weekly threat roundup (July 7) and AI Security Roundup (July 3) blog HTML both published. Reconcile-sitemap.yml ran daily July 7–12 keeping sitemap/llms current.
+
+**Metrics tracked:**
+- Total generated pages (cve-*, cert-*, comparisons/*, roadmaps/*): 328 (152 CVE + 66 cert + 43 comparisons + 67 roadmaps) — +6 CVE vs last week (322)
+- Blog pages: 108 (was 106, +2: weekly-threat-roundup-2026-07-07.html + ai-security-roundup-2026-07-03.html)
+- Sitemap entries: 591 (was 583, +8 ✓)
+- Evergreen pages with timestamps (should be 0): 13 (practice-tests/*.html only — 102 days old, P1 open 4 weeks)
+- Pages missing from llms.txt: 0 (knowledge-gaps.html and vuln-classifier.html intentionally in generate_sitemap.py EXCLUDE_FILES ✓)
+- Cache-bust drift count: 0 (no CSS/JS modified this week ✓)
+- Scripts >500 LOC: 14 (unchanged)
+- Store worker LOC: 1,151 (unchanged; `verifyStripeSignature` webhook HMAC at line 703 confirmed ✓; PRICING 599/1599 cents ↔ $5.99/$15.99 frontend ✓; CP_PRICING 899/1699, 1299/2499, 1699/3499 cents ✓)
+- D1 migrations: 2 (0001_error_log, 0002_quiz_feedback — no new tables)
+- Python scripts with bare `except Exception:` without logging: 9 instances / 8 scripts (unchanged)
+
+---
+
 ## 2026-07-06 — Weekly Tech-Debt Audit
 
 **Headline:** Steady pipeline week — 2 new CVE pages (146 total), 2 new blog posts published; AI Security Roundup 2026-07-03 drafted Thursday (publishes Tuesday per schedule ✓); new growth-review.yml workflow needs `growth-review` GitHub label pre-created or it will fail on first run (P2); appsec-review.md at July 2 (4 days, P0-watch 3rd consecutive week, July 4 US federal holiday context mitigates); 5 prior items all still open.
