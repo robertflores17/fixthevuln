@@ -1,21 +1,19 @@
-# Daily KEV Review — 2026-07-11
+# Daily KEV Review — 2026-07-14
 
-**New CVEs:** 2 | **Critical:** 2 | **High:** 0 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 1 | **Critical:** 0 | **High:** 0 | **Medium:** 1 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-56291 | Balbooa | Forms | 9.8 | Unknown | 2026-07-13 |
-| CVE-2026-48939 | iCagenda | iCagenda | 9.8 | Unknown | 2026-07-13 |
+| CVE-2008-4128 | Cisco | IOS | 4.3 | Unknown | 2026-07-16 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-07-13 (2 CVEs)
+- **Nearest due date:** 2026-07-16 (1 CVE)
 - **Overdue:** None
 
 ## Vendor Summary
-- Balbooa: 1 CVE
-- iCagenda: 1 CVE
+- Cisco: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
