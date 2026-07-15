@@ -1,9 +1,9 @@
-# AppSec Review — 2026-07-14
+# AppSec Review — 2026-07-15
 
 **Reviewer:** Robert Flores, CISSP  
-**Pipeline Run:** 2026-07-14  
-**CVEs Reviewed:** 1  
-**Database Total After Publish:** 152 vulnerabilities  
+**Pipeline Run:** 2026-07-15  
+**CVEs Reviewed:** 4  
+**Database Total After Publish:** 156 vulnerabilities  
 
 ---
 
@@ -11,11 +11,11 @@
 
 | Priority | Count |
 |----------|-------|
-| Critical | 0 |
-| High     | 0 |
-| Medium   | 1 |
+| Critical | 1 |
+| High     | 3 |
+| Medium   | 0 |
 | Low      | 0 |
-| **Total**| **1** |
+| **Total**| **4** |
 
 ---
 
@@ -23,33 +23,47 @@
 
 | CVE ID | Vendor | Product | Priority | Vulnerability Class |
 |--------|--------|---------|----------|---------------------|
-| CVE-2008-4128 | Cisco | IOS 12.4 | Medium | CSRF / Arbitrary Command Execution (CWE-352) |
+| CVE-2026-56155 | Microsoft | Active Directory Federation Services | high | Privilege Escalation (Insufficient Access Control, CWE-1220) |
+| CVE-2026-56164 | Microsoft | SharePoint Server | high | Auth Bypass / Missing Authentication (CWE-306) |
+| CVE-2026-15409 | SonicWall | SMA1000 Appliances | critical | SSRF, Unauthenticated Remote (CWE-918) |
+| CVE-2026-15410 | SonicWall | SMA1000 Appliances | high | Code Injection / OS Command Execution (CWE-94) |
 
 ---
 
 ## CVE Details
 
-### CVE-2008-4128 — Cisco IOS Cross-Site Request Forgery
-Cisco IOS 12.4 exposes privileged web URIs (`/level/15/exec/-`) that are exploitable via CSRF, allowing a remote attacker to execute arbitrary commands if they can induce an authenticated administrator to visit a malicious page. CVSS 4.3 reflects the required victim interaction; however, the attack surface is network infrastructure (routers/switches), where a successful exploitation has outsized blast radius. This 2008 CVE was added to KEV on 2026-07-13 under BOD 26-04, indicating CISA has observed continued active exploitation against federal/critical infrastructure assets still running end-of-life IOS 12.4.
+### CVE-2026-56155 — Microsoft Active Directory Federation Services (CVSS 7.8)
+Insufficient access control (CWE-1220) allows a locally authenticated attacker to escalate privileges within AD FS. Because AD FS is a core identity brokering service, local privilege escalation here can translate to token manipulation and lateral movement across federated environments. 14-day remediation window per BOD 26-04.
+
+### CVE-2026-56164 — Microsoft SharePoint Server (CVSS 5.3)
+Missing authentication for a critical function (CWE-306) lets an unauthenticated remote attacker escalate privileges over the network. CISA assigned a 3-day remediation deadline — the shortest possible window under BOD 26-04 — indicating confirmed, urgent in-the-wild exploitation. SharePoint's enterprise ubiquity amplifies the blast radius considerably beyond what the CVSS score alone suggests.
+
+### CVE-2026-15409 — SonicWall SMA1000 Appliances (CVSS 10.0)
+Unauthenticated SSRF (CWE-918) on a remote access appliance earns a perfect 10.0 CVSS. An attacker can coerce the appliance into making arbitrary internal network requests, potentially pivoting to internal APIs, credential endpoints, or other services behind the perimeter. VPN/secure remote access appliances are prime initial access targets; this class of bug has repeatedly enabled nation-state intrusions. 3-day remediation window.
+
+### CVE-2026-15410 — SonicWall SMA1000 Appliances (CVSS 7.2)
+Code injection enabling OS command execution (CWE-94) on the same SMA1000 platform. Requires remote authentication as an administrator, but CVE-2026-15409 can facilitate credential theft, making these two a natural chain: unauthenticated SSRF to harvest creds → authenticated RCE for full appliance compromise. 3-day remediation window.
 
 ---
 
 ## Trend Analysis
 
-This week's addition reflects a recurring CISA enforcement pattern: retroactive KEV cataloging of aged CVEs (2008-vintage) against end-of-life Cisco IOS releases under BOD 26-04. Rather than novel zero-days, threat actors are opportunistically targeting unpatched legacy network infrastructure — a particularly dangerous attack surface because these devices often sit at network perimeters with elevated trust and limited EDR visibility. The IOS 12.4 mainline branch reached end-of-life in 2013, meaning any organization still running it has likely gone more than a decade without security updates. CISA's forensics triage requirements bundled with this KEV entry suggest active incident response investigations are underway, reinforcing urgency around network device hygiene and asset inventory.
+This batch continues a pattern visible across recent CISA KEV additions: high-value enterprise perimeter infrastructure (identity providers, collaboration platforms, secure remote access appliances) is receiving the most urgent remediation timelines. Both SonicWall entries carry 3-day windows alongside Microsoft SharePoint, signaling that CISA's threat intelligence confirms active exploitation campaigns targeting these products simultaneously — consistent with threat actor interest in gaining network footholds via VPN appliances and then pivoting through identity infrastructure. The pairing of an unauthenticated SSRF (CVE-2026-15409, CVSS 10.0) with an authenticated RCE (CVE-2026-15410) on the same SonicWall product is particularly notable: chaining these two vulnerabilities requires no initial credentials and results in full appliance takeover, a pattern commonly exploited by ransomware affiliates and APT groups seeking persistent access to enterprise environments.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"Why 18-Year-Old Cisco Vulnerabilities Are Still Getting Exploited in 2026"** — Explores how legacy IOS 12.4 devices persist in enterprise and federal networks, why CSRF on network gear is deadlier than it sounds, and the BOD 26-04 remediation timeline.
-2. **"CSRF Is Not Just a Web App Problem: Network Infrastructure Edition"** — Uses CVE-2008-4128 as a case study to explain how CSRF translates to router/switch command execution, with practical mitigations (disable HTTP server, enforce HTTPS-only management, require CSRF tokens).
-3. **"BOD 26-04 and the Hidden Cost of Deferred Patching on Network Devices"** — Examines the policy implications of CISA's binding directive for federal agencies with aged Cisco infrastructure and what the forensics triage requirement signals about real-world exploitation activity.
+1. **"SonicWall SMA1000 SSRF + RCE Chain: How Attackers Turn CVE-2026-15409 and CVE-2026-15410 into Full Appliance Takeover"** — A technical deep-dive on how SSRF can be leveraged to harvest credentials and chain into authenticated OS command execution, with detection and hunting guidance.
+
+2. **"Why CVSS 5.3 Can Still Mean a 3-Day Patch Deadline: Unpacking CVE-2026-56164 (SharePoint Missing Auth)"** — Explores the gap between CVSS scoring and real-world exploit urgency, using this SharePoint auth bypass as a case study in why CISA's KEV context matters more than numeric scores.
+
+3. **"Identity Infrastructure Under Fire: AD FS Privilege Escalation and What It Means for Federated Environments"** — Covers CVE-2026-56155 in the context of federated identity attack paths, including how local privesc in AD FS can cascade across trust relationships.
 
 ---
 
 ## Newsletter Snippet
 
-**KEV Watch — July 14, 2026:** This week CISA added one vulnerability to the Known Exploited Vulnerabilities catalog: CVE-2008-4128, a cross-site request forgery flaw in Cisco IOS 12.4 that enables remote command execution against the device's management web interface. Despite its age (originally disclosed in 2008), active exploitation has been confirmed, and federal agencies have until July 16, 2026 to remediate under BOD 26-04. Organizations running any Cisco IOS 12.4 device — particularly those with HTTP-based management enabled — should treat this as urgent, even though the CVSS score of 4.3 may suggest otherwise; CSRF on network infrastructure can pivot to full device compromise.
+**This week's CISA KEV additions put enterprise perimeter infrastructure squarely in the crosshairs.** Four new vulnerabilities were added on July 14, 2026, spanning Microsoft (Active Directory Federation Services and SharePoint) and SonicWall (SMA1000 remote access appliances). The standout entry is CVE-2026-15409 — a CVSS 10.0 unauthenticated SSRF on SonicWall SMA1000 — which pairs with a companion code injection bug (CVE-2026-15410) to create a no-credential-required path to full appliance takeover. Both SonicWall entries and Microsoft SharePoint carry emergency 3-day remediation deadlines, the most aggressive timeline CISA issues under BOD 26-04, confirming these are being actively exploited right now.
 
-For defenders, the mitigations are straightforward: disable the IOS HTTP server (`no ip http server`), upgrade to a supported IOS/IOS-XE release, and restrict management plane access to trusted hosts via ACL. If upgrade is not feasible, CISA's BOD 26-04 implementation guidance outlines acceptable risk acceptance processes. Security teams should also cross-reference this KEV entry against their asset inventory — any device running IOS 12.4 that has not been replaced is likely carrying other unpatched vulnerabilities given the branch's 2013 end-of-life date.
+**What should you do this week?** If your organization runs SonicWall SMA1000 appliances, patch immediately — treat this as an incident response situation and verify no unauthorized access occurred before applying the fix. SharePoint Server administrators should do the same. For AD FS (CVE-2026-56155, 14-day window), prioritize patching any internet-exposed or externally-reachable AD FS infrastructure first and review federation trust configurations for anomalies. All four CVEs are confirmed in CISA's KEV catalog, meaning patch-or-mitigate is not optional for federal agencies and is strongly recommended for all organizations regardless of sector.
