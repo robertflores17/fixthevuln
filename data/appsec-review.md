@@ -1,69 +1,51 @@
-# AppSec Review — 2026-07-15
+# AppSec Review — 2026-07-16
 
 **Reviewer:** Robert Flores, CISSP  
-**Pipeline Run:** 2026-07-15  
-**CVEs Reviewed:** 4  
-**Database Total After Publish:** 156 vulnerabilities  
+**Review Date:** 2026-07-16  
+**CVE Count:** 2  
+**Database Total After Publish:** 158 vulnerabilities
 
 ---
 
 ## Severity Breakdown
 
-| Priority | Count |
-|----------|-------|
-| Critical | 1 |
-| High     | 3 |
-| Medium   | 0 |
-| Low      | 0 |
-| **Total**| **4** |
+| Priority | Count | CVEs |
+|----------|-------|------|
+| Critical | 1     | CVE-2026-46817 |
+| High     | 1     | CVE-2023-4346  |
+| Medium   | 0     | — |
+| Low      | 0     | — |
+| **Total**| **2** | |
 
 ---
 
 ## CVE Summary
 
-| CVE ID | Vendor | Product | Priority | Vulnerability Class |
-|--------|--------|---------|----------|---------------------|
-| CVE-2026-56155 | Microsoft | Active Directory Federation Services | high | Privilege Escalation (Insufficient Access Control, CWE-1220) |
-| CVE-2026-56164 | Microsoft | SharePoint Server | high | Auth Bypass / Missing Authentication (CWE-306) |
-| CVE-2026-15409 | SonicWall | SMA1000 Appliances | critical | SSRF, Unauthenticated Remote (CWE-918) |
-| CVE-2026-15410 | SonicWall | SMA1000 Appliances | high | Code Injection / OS Command Execution (CWE-94) |
-
----
-
-## CVE Details
-
-### CVE-2026-56155 — Microsoft Active Directory Federation Services (CVSS 7.8)
-Insufficient access control (CWE-1220) allows a locally authenticated attacker to escalate privileges within AD FS. Because AD FS is a core identity brokering service, local privilege escalation here can translate to token manipulation and lateral movement across federated environments. 14-day remediation window per BOD 26-04.
-
-### CVE-2026-56164 — Microsoft SharePoint Server (CVSS 5.3)
-Missing authentication for a critical function (CWE-306) lets an unauthenticated remote attacker escalate privileges over the network. CISA assigned a 3-day remediation deadline — the shortest possible window under BOD 26-04 — indicating confirmed, urgent in-the-wild exploitation. SharePoint's enterprise ubiquity amplifies the blast radius considerably beyond what the CVSS score alone suggests.
-
-### CVE-2026-15409 — SonicWall SMA1000 Appliances (CVSS 10.0)
-Unauthenticated SSRF (CWE-918) on a remote access appliance earns a perfect 10.0 CVSS. An attacker can coerce the appliance into making arbitrary internal network requests, potentially pivoting to internal APIs, credential endpoints, or other services behind the perimeter. VPN/secure remote access appliances are prime initial access targets; this class of bug has repeatedly enabled nation-state intrusions. 3-day remediation window.
-
-### CVE-2026-15410 — SonicWall SMA1000 Appliances (CVSS 7.2)
-Code injection enabling OS command execution (CWE-94) on the same SMA1000 platform. Requires remote authentication as an administrator, but CVE-2026-15409 can facilitate credential theft, making these two a natural chain: unauthenticated SSRF to harvest creds → authenticated RCE for full appliance compromise. 3-day remediation window.
+| CVE ID | Vendor | Priority | Vulnerability Class |
+|--------|--------|----------|---------------------|
+| CVE-2026-46817 | Oracle | critical | Auth Bypass / Improper Privilege Management (CWE-269, CWE-287, CWE-306) |
+| CVE-2023-4346  | KNX Association | high | Account Lockout / Authorization Control Bypass (CWE-645) |
 
 ---
 
 ## Trend Analysis
 
-This batch continues a pattern visible across recent CISA KEV additions: high-value enterprise perimeter infrastructure (identity providers, collaboration platforms, secure remote access appliances) is receiving the most urgent remediation timelines. Both SonicWall entries carry 3-day windows alongside Microsoft SharePoint, signaling that CISA's threat intelligence confirms active exploitation campaigns targeting these products simultaneously — consistent with threat actor interest in gaining network footholds via VPN appliances and then pivoting through identity infrastructure. The pairing of an unauthenticated SSRF (CVE-2026-15409, CVSS 10.0) with an authenticated RCE (CVE-2026-15410) on the same SonicWall product is particularly notable: chaining these two vulnerabilities requires no initial credentials and results in full appliance takeover, a pattern commonly exploited by ransomware affiliates and APT groups seeking persistent access to enterprise environments.
+This batch reflects two converging threat trends. CVE-2026-46817 continues a long-running pattern of high-severity vulnerabilities in Oracle enterprise software: an unauthenticated CVSS 9.8 privilege escalation in Oracle E-Business Suite that directly compromises Oracle Payments is exactly the type of target ransomware operators and nation-state actors prioritize for initial access and financial data exfiltration. The three CWEs (CWE-269, CWE-287, CWE-306) together describe a complete authentication-bypass chain, suggesting attackers can reach sensitive payment workflows with zero credentials, making the 3-day BOD 26-04 remediation deadline entirely appropriate.
+
+CVE-2023-4346 highlights CISA's increasing attention to ICS/OT attack surfaces: a 2023 vulnerability in the KNX building-automation protocol was dormant in the NVD for nearly three years before confirmed active exploitation triggered its KEV addition. The ability to purge all KNX devices and set a BCU lock key — effectively bricking smart-building infrastructure — mirrors tactics seen in recent destructive attacks on critical infrastructure. Organizations operating KNX-based HVAC, lighting, or access-control systems should treat this as urgent given the 29 July 2026 BOD 26-04 deadline.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"SonicWall SMA1000 SSRF + RCE Chain: How Attackers Turn CVE-2026-15409 and CVE-2026-15410 into Full Appliance Takeover"** — A technical deep-dive on how SSRF can be leveraged to harvest credentials and chain into authenticated OS command execution, with detection and hunting guidance.
-
-2. **"Why CVSS 5.3 Can Still Mean a 3-Day Patch Deadline: Unpacking CVE-2026-56164 (SharePoint Missing Auth)"** — Explores the gap between CVSS scoring and real-world exploit urgency, using this SharePoint auth bypass as a case study in why CISA's KEV context matters more than numeric scores.
-
-3. **"Identity Infrastructure Under Fire: AD FS Privilege Escalation and What It Means for Federated Environments"** — Covers CVE-2026-56155 in the context of federated identity attack paths, including how local privesc in AD FS can cascade across trust relationships.
+1. **"Unauth to Owned: Breaking Down the Oracle Payments Auth Bypass (CVE-2026-46817)"** — Walkthrough of the CWE-269/287/306 chain and what privilege escalation to payment-system takeover looks like in practice; includes detection queries for network defenders.
+2. **"ICS in the Crosshairs: How CVE-2023-4346 Lets Attackers Brick Your Building"** — Deep dive into the KNX protocol's authorization model, what BCU key manipulation means operationally, and compensating controls for building-automation environments lacking vendor patches.
+3. **"CISA KEV Time Lag: Why a 2023 ICS CVE Just Got Added in 2026"** — Analysis of how vulnerabilities with delayed KEV additions signal shifts in threat-actor targeting, using this batch as a case study.
 
 ---
 
 ## Newsletter Snippet
 
-**This week's CISA KEV additions put enterprise perimeter infrastructure squarely in the crosshairs.** Four new vulnerabilities were added on July 14, 2026, spanning Microsoft (Active Directory Federation Services and SharePoint) and SonicWall (SMA1000 remote access appliances). The standout entry is CVE-2026-15409 — a CVSS 10.0 unauthenticated SSRF on SonicWall SMA1000 — which pairs with a companion code injection bug (CVE-2026-15410) to create a no-credential-required path to full appliance takeover. Both SonicWall entries and Microsoft SharePoint carry emergency 3-day remediation deadlines, the most aggressive timeline CISA issues under BOD 26-04, confirming these are being actively exploited right now.
+This week's CISA KEV additions include a critical Oracle E-Business Suite auth bypass (CVE-2026-46817, CVSS 9.8) that lets unauthenticated attackers over HTTP take over Oracle Payments — no credentials required. If your organization runs Oracle EBS, patching against the May 2026 Critical Patch Update is not optional; BOD 26-04 sets a three-day remediation deadline (2026-07-18). Review network segmentation around Oracle EBS instances now, and check your SIEM for anomalous HTTP traffic to Oracle Payments endpoints.
 
-**What should you do this week?** If your organization runs SonicWall SMA1000 appliances, patch immediately — treat this as an incident response situation and verify no unauthorized access occurred before applying the fix. SharePoint Server administrators should do the same. For AD FS (CVE-2026-56155, 14-day window), prioritize patching any internet-exposed or externally-reachable AD FS infrastructure first and review federation trust configurations for anomalies. All four CVEs are confirmed in CISA's KEV catalog, meaning patch-or-mitigate is not optional for federal agencies and is strongly recommended for all organizations regardless of sector.
+Also added this week: CVE-2023-4346 in the KNX building-automation protocol, a three-year-old ICS vulnerability that CISA just confirmed as actively exploited. Attackers can purge all devices on a KNX network and permanently lock them with a BCU key — an irreversible denial of service against smart-building infrastructure. If you manage facilities using KNX for HVAC, lighting, or physical access control, contact your integrator about patching or network segmentation immediately. The BOD 26-04 deadline is 2026-07-29.
