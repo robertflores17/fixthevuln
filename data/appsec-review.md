@@ -1,9 +1,9 @@
-# AppSec Review — 2026-07-16
+# AppSec Review — 2026-07-17
 
 **Reviewer:** Robert Flores, CISSP  
-**Review Date:** 2026-07-16  
-**CVE Count:** 2  
-**Database Total After Publish:** 158 vulnerabilities
+**Review Date:** 2026-07-17  
+**CVE Count:** 3  
+**Database Total After Publish:** 161 vulnerabilities
 
 ---
 
@@ -11,11 +11,11 @@
 
 | Priority | Count | CVEs |
 |----------|-------|------|
-| Critical | 1     | CVE-2026-46817 |
-| High     | 1     | CVE-2023-4346  |
+| Critical | 3     | CVE-2026-58644, CVE-2026-25089, CVE-2026-39808 |
+| High     | 0     | — |
 | Medium   | 0     | — |
 | Low      | 0     | — |
-| **Total**| **2** | |
+| **Total**| **3** | |
 
 ---
 
@@ -23,29 +23,28 @@
 
 | CVE ID | Vendor | Priority | Vulnerability Class |
 |--------|--------|----------|---------------------|
-| CVE-2026-46817 | Oracle | critical | Auth Bypass / Improper Privilege Management (CWE-269, CWE-287, CWE-306) |
-| CVE-2023-4346  | KNX Association | high | Account Lockout / Authorization Control Bypass (CWE-645) |
+| CVE-2026-58644 | Microsoft | critical | Deserialization / RCE (CWE-502) |
+| CVE-2026-25089 | Fortinet  | critical | OS Command Injection (CWE-78) |
+| CVE-2026-39808 | Fortinet  | critical | OS Command Injection (CWE-78) |
 
 ---
 
 ## Trend Analysis
 
-This batch reflects two converging threat trends. CVE-2026-46817 continues a long-running pattern of high-severity vulnerabilities in Oracle enterprise software: an unauthenticated CVSS 9.8 privilege escalation in Oracle E-Business Suite that directly compromises Oracle Payments is exactly the type of target ransomware operators and nation-state actors prioritize for initial access and financial data exfiltration. The three CWEs (CWE-269, CWE-287, CWE-306) together describe a complete authentication-bypass chain, suggesting attackers can reach sensitive payment workflows with zero credentials, making the 3-day BOD 26-04 remediation deadline entirely appropriate.
-
-CVE-2023-4346 highlights CISA's increasing attention to ICS/OT attack surfaces: a 2023 vulnerability in the KNX building-automation protocol was dormant in the NVD for nearly three years before confirmed active exploitation triggered its KEV addition. The ability to purge all KNX devices and set a BCU lock key — effectively bricking smart-building infrastructure — mirrors tactics seen in recent destructive attacks on critical infrastructure. Organizations operating KNX-based HVAC, lighting, or access-control systems should treat this as urgent given the 29 July 2026 BOD 26-04 deadline.
+All three CVEs added on 2026-07-16 share a common and deeply concerning pattern: unauthenticated remote code execution with CVSS scores of 9.8. The two Fortinet FortiSandbox advisories (CVE-2026-25089 and CVE-2026-39808) represent distinct vulnerabilities in the same product — FortiSandbox, FortiSandbox Cloud, and FortiSandbox PaaS — suggesting systemic issues in how HTTP request input is handled across the codebase. The presence of dual critical CVEs on a security product (a sandbox environment) is particularly alarming, as threat actors can leverage a compromised sandbox to study and evade organizational defenses. The Microsoft SharePoint deserialization vulnerability continues a long-standing pattern of .NET deserialization issues (CWE-502) in Microsoft's enterprise collaboration platform; SharePoint's prevalence in government and enterprise environments and its internet-facing deployment posture make this a prime initial-access vector for ransomware affiliates and nation-state actors alike. Organizations running any of these products should treat patching as an emergency given the CISA KEV due date of 2026-07-19 and mandatory BOD 26-04 compliance requirements.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"Unauth to Owned: Breaking Down the Oracle Payments Auth Bypass (CVE-2026-46817)"** — Walkthrough of the CWE-269/287/306 chain and what privilege escalation to payment-system takeover looks like in practice; includes detection queries for network defenders.
-2. **"ICS in the Crosshairs: How CVE-2023-4346 Lets Attackers Brick Your Building"** — Deep dive into the KNX protocol's authorization model, what BCU key manipulation means operationally, and compensating controls for building-automation environments lacking vendor patches.
-3. **"CISA KEV Time Lag: Why a 2023 ICS CVE Just Got Added in 2026"** — Analysis of how vulnerabilities with delayed KEV additions signal shifts in threat-actor targeting, using this batch as a case study.
+1. **"Double Trouble in FortiSandbox: Two Critical RCE CVEs and What They Mean for Your Security Stack"** — A deep dive into CVE-2026-25089 and CVE-2026-39808, exploring why security appliances attract attackers and how to harden sandbox deployments.
+2. **"SharePoint Deserialization in 2026: Why CWE-502 Keeps Coming Back"** — Examines the recurring pattern of .NET deserialization vulnerabilities in enterprise Microsoft products and provides hardening guidance for SharePoint administrators.
+3. **"BOD 26-04 and the 72-Hour Patch Window: How to Build a Rapid Response Program"** — Practical guide for security teams on meeting CISA's aggressive patching timelines for KEV vulnerabilities, using this week's advisories as a case study.
 
 ---
 
 ## Newsletter Snippet
 
-This week's CISA KEV additions include a critical Oracle E-Business Suite auth bypass (CVE-2026-46817, CVSS 9.8) that lets unauthenticated attackers over HTTP take over Oracle Payments — no credentials required. If your organization runs Oracle EBS, patching against the May 2026 Critical Patch Update is not optional; BOD 26-04 sets a three-day remediation deadline (2026-07-18). Review network segmentation around Oracle EBS instances now, and check your SIEM for anomalous HTTP traffic to Oracle Payments endpoints.
+This week CISA added three critical vulnerabilities to the Known Exploited Vulnerabilities catalog, all carrying a CVSS score of 9.8 and all exploitable by unauthenticated attackers over the network. Fortinet's FortiSandbox received two separate advisories — CVE-2026-25089 (affecting FortiSandbox, FortiSandbox Cloud, and PaaS) and CVE-2026-39808 — both OS command injection flaws triggered via crafted HTTP requests. Microsoft SharePoint was hit with CVE-2026-58644, a deserialization vulnerability allowing unauthenticated remote code execution, continuing a troubling pattern of CWE-502 issues in enterprise collaboration platforms.
 
-Also added this week: CVE-2023-4346 in the KNX building-automation protocol, a three-year-old ICS vulnerability that CISA just confirmed as actively exploited. Attackers can purge all devices on a KNX network and permanently lock them with a BCU key — an irreversible denial of service against smart-building infrastructure. If you manage facilities using KNX for HVAC, lighting, or physical access control, contact your integrator about patching or network segmentation immediately. The BOD 26-04 deadline is 2026-07-29.
+Federal agencies face a remediation deadline of **2026-07-19** under BOD 26-04; private-sector organizations should treat this timeline as a best-practice benchmark. If your organization runs any of these products and they are internet-accessible, patch immediately or implement compensating controls — these vulnerability classes are trivially weaponized and actively exploited in the wild. Check your attack surface exposure via your ASM tooling and prioritize FortiSandbox instances given the double advisory, which suggests broader input-handling weaknesses in the product line.
