@@ -1,21 +1,22 @@
-# Daily KEV Review — 2026-07-16
+# Daily KEV Review — 2026-07-17
 
-**New CVEs:** 2 | **Critical:** 1 | **High:** 1 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 3 | **Critical:** 3 | **High:** 0 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-46817 | Oracle | E-Business Suite | 9.8 | Unknown | 2026-07-18 |
-| CVE-2023-4346 | KNX Association | KNX Protocol Connection Authorization Option 1 | 7.5 | Unknown | 2026-07-29 |
+| CVE-2026-58644 | Microsoft | SharePoint | 9.8 | Unknown | 2026-07-19 |
+| CVE-2026-25089 | Fortinet | FortiSandbox | 9.8 | Unknown | 2026-07-19 |
+| CVE-2026-39808 | Fortinet | FortiSandbox | 9.8 | Unknown | 2026-07-19 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-07-18 (1 CVE)
+- **Nearest due date:** 2026-07-19 (3 CVEs)
 - **Overdue:** None
 
 ## Vendor Summary
-- Oracle: 1 CVE
-- KNX Association: 1 CVE
+- Fortinet: 2 CVEs
+- Microsoft: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
