@@ -1,3 +1,44 @@
+## 2026-07-20 — Weekly Tech-Debt Audit
+
+**Headline:** Active CVE week — 10 new CVE pages (162 total, highest single-week gain in audit history); pipeline healthy with weekend-quiet pattern; 2 new blog posts published (ai-security-roundup-2026-07-10 + weekly-threat-roundup-2026-07-14); 2 new P2 findings: cert pages (66) and roadmap pages (67) both >110 days stale — never previously caught; P1 practice-tests timestamp now open 5 weeks with no fix.
+
+**Pipeline pulse:**
+- Daily CVE trigger last output (`data/appsec-review.md`): 2026-07-17 (content date — 3 days old; `pending_review.json` `last_checked: 2026-07-19T15:44:32 UTC` with `total_pending: 0`; 10 CVEs published July 14–17; weekend-quiet pattern — pipeline healthy ✓ NOT P0)
+- Friday AI trend roundup last file (`drafts/ai-security-roundup-2026-07-17.md`): 2026-07-17 (draft only, no .published suffix — appears to be a manual/advance trigger since July 17 is Thursday; scheduled blog publish Tuesday July 22 per publish-blog.yml cron `0 14 * * 2` ✓)
+- `data/pending_review.json` pending count: 0 (last_checked: 2026-07-19T15:44:32 UTC ✓)
+
+**New this week:**
+- P2 content — `certs/*.html:140` (66 pages) — "Last updated: March 31, 2026" — 111 days old, exceeds the 90-day auto-regeneration threshold; never flagged in prior audits (was exactly at threshold June 29; missed July 6 and July 13 — first time captured here) — Fix: re-run `python scripts/generate_cert_pages.py` and commit; consider adding cert-page regeneration to Tuesday publish-blog.yml — Effort: XS (one-off run) / S (automate in pipeline)
+- P2 content — `roadmaps/*.html:137` (67 pages) — "Last updated: March 30, 2026" — 112 days old, same threshold breach; comparisons pages are fresh (July 14 ✓) but roadmaps/certs not — Fix: re-run `python scripts/generate_roadmaps.py` and commit — Effort: XS
+
+**Still open from prior audits:** 6
+1. P1 content — `practice-tests/*.html:352` (13 pages) — `<p class="pt-timestamp">Last updated: April 2, 2026</p>` still present (109 days old, open **5 weeks**). Fix: remove timestamp block from `scripts/generate_practice_test_pages.py` template; re-run — Effort: XS
+2. P2 generator — `scripts/` (14 files >500 LOC, unchanged) — `generate_guides.py` 2,896 · `generate_sprint_kit.py` 1,991 · `fetch_kev.py` 865 · `etsy_to_pinterest.py` 829 · `entity_extractor.py` 765 · `generate_linkedin_posts.py` 716 · `publish_editorial.py` 707 · `audit_pages.py` 661 · `generate_quiz_pages.py` 627 · `generate_cert_pages.py` 595 · `inject_store_ctas.py` 588 · `generate_practice_test_pages.py` 572 · `generate_roadmaps.py` 517 · `generate_cve_pages.py` 504 — Effort: L
+3. P2 hygiene — repo-wide — `requirements.txt` absent; Pillow (`create_hero.py:4`, `generate_linkedin_posts.py:12`) and reportlab (`generate_sprint_kit.py`) undeclared external deps; `security-audit.yml` pip-audit silently no-ops — Effort: XS
+4. P3 hygiene — `scripts/` (9 instances across 8 scripts) — Broad `except Exception:` without logging: `fetch_kev.py:63`, `generate_sitemap.py:86`, `update_sitemap.py:29`, `audit_pages.py:250,382`, `inject_error_reporter.py:46`, `generate_linkedin_posts.py:72`, `create_hero.py:51`, `health_check.py:127` — Effort: S
+5. P3 hygiene — repo root — No `CLAUDE.md`; editorial rules uncodified in-repo — Effort: XS
+6. P3 generator drift — `scripts/generate_sitemap.py:72` — GUIDE_PAGES missing `ai-agent-security.html` and `genai-data-security.html` (both present in `generate_llms_txt.py:154`); these pages get sitemap priority 0.7 instead of 0.8 — open 1 week, unresolved — Effort: XS
+
+**Resolved since last audit:**
+- ai-security-roundup-2026-07-10.html published to blog/ (was draft only as of July 13 audit ✓)
+- weekly-threat-roundup-2026-07-14.html published to blog/ ✓
+- 10 new CVE pages published July 14–17: Cisco (July 14) · 4× Microsoft/SonicWall (July 15) · Oracle + KNX Association (July 16) · 3× Microsoft/Fortinet (July 17) ✓
+- sitemap/llms.txt reconciled daily July 14–20 ✓
+
+**Metrics tracked:**
+- Total generated pages (cve-*, cert-*, comparisons/*, roadmaps/*): 338 (162 CVE + 66 cert + 43 comparisons + 67 roadmaps) — +10 CVE vs last week (328)
+- Blog pages: 110 (was 108, +2: ai-security-roundup-2026-07-10.html + weekly-threat-roundup-2026-07-14.html)
+- Sitemap entries: 603 (was 591, +12 ✓)
+- Evergreen pages with timestamps (should be 0): 13 (practice-tests/*.html only — April 2, 2026 — 109 days, P1 open 5 weeks)
+- Pages missing from llms.txt: 0 (llms.txt counts match on-disk: 162 CVE · 66 cert · 43 comp · 67 roadmaps · 110 blog ✓)
+- Cache-bust drift count: 0 (no CSS/JS modified this week ✓)
+- Scripts >500 LOC: 14 (unchanged)
+- Store worker LOC: 1,151 (unchanged; `verifyStripeSignature` HMAC at line 659 confirmed ✓; PRICING 599/1599 cents ↔ $5.99/$15.99 frontend ✓; CP_PRICING 899/1699, 1299/2499, 1699/3499 cents ✓)
+- D1 migrations: 2 (0001_error_log, 0002_quiz_feedback — no new tables)
+- Python scripts with bare `except Exception:` without logging: 9 instances / 8 scripts (unchanged)
+
+---
+
 ## 2026-07-13 — Weekly Tech-Debt Audit
 
 **Headline:** Healthy pipeline week — 6 new CVE pages (152 total), 2 blog posts published (weekly-threat-roundup-07-07.html, ai-security-roundup-07-03.html); appsec-review.md content date is July 11 (exactly 2 days, pipeline confirmed healthy: KEV last_checked July 12, 6 CVEs published July 8–11); growth-review label P2 from last audit confirmed resolved; one new P3 (generate_sitemap.py GUIDE_PAGES missing 2 AI guide pages); 5 prior items still open.
