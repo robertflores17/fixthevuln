@@ -1,9 +1,9 @@
-# AppSec Review — 2026-07-17
+# AppSec Review — 2026-07-22
 
 **Reviewer:** Robert Flores, CISSP  
-**Review Date:** 2026-07-17  
-**CVE Count:** 3  
-**Database Total After Publish:** 161 vulnerabilities
+**Review Date:** 2026-07-22  
+**CVE Count:** 4  
+**Database Total After Publish:** 165 vulnerabilities
 
 ---
 
@@ -11,11 +11,11 @@
 
 | Priority | Count | CVEs |
 |----------|-------|------|
-| Critical | 3     | CVE-2026-58644, CVE-2026-25089, CVE-2026-39808 |
-| High     | 0     | — |
-| Medium   | 0     | — |
-| Low      | 0     | — |
-| **Total**| **3** | |
+| Critical | 2 | CVE-2026-63030, CVE-2026-0770 |
+| High | 2 | CVE-2026-60137, CVE-2021-27137 |
+| Medium | 0 | — |
+| Low | 0 | — |
+| **Total** | **4** | |
 
 ---
 
@@ -23,28 +23,33 @@
 
 | CVE ID | Vendor | Priority | Vulnerability Class |
 |--------|--------|----------|---------------------|
-| CVE-2026-58644 | Microsoft | critical | Deserialization / RCE (CWE-502) |
-| CVE-2026-25089 | Fortinet  | critical | OS Command Injection (CWE-78) |
-| CVE-2026-39808 | Fortinet  | critical | OS Command Injection (CWE-78) |
+| CVE-2026-60137 | WordPress | high | SQL Injection (CWE-89) |
+| CVE-2026-63030 | WordPress | critical | Interpretation Conflict → RCE (CWE-436) |
+| CVE-2026-0770 | Langflow | critical | Untrusted Code Inclusion / RCE (CWE-829) |
+| CVE-2021-27137 | DD-WRT | high | Stack-Based Buffer Overflow (CWE-121) |
 
 ---
 
 ## Trend Analysis
 
-All three CVEs added on 2026-07-16 share a common and deeply concerning pattern: unauthenticated remote code execution with CVSS scores of 9.8. The two Fortinet FortiSandbox advisories (CVE-2026-25089 and CVE-2026-39808) represent distinct vulnerabilities in the same product — FortiSandbox, FortiSandbox Cloud, and FortiSandbox PaaS — suggesting systemic issues in how HTTP request input is handled across the codebase. The presence of dual critical CVEs on a security product (a sandbox environment) is particularly alarming, as threat actors can leverage a compromised sandbox to study and evade organizational defenses. The Microsoft SharePoint deserialization vulnerability continues a long-standing pattern of .NET deserialization issues (CWE-502) in Microsoft's enterprise collaboration platform; SharePoint's prevalence in government and enterprise environments and its internet-facing deployment posture make this a prime initial-access vector for ransomware affiliates and nation-state actors alike. Organizations running any of these products should treat patching as an emergency given the CISA KEV due date of 2026-07-19 and mandatory BOD 26-04 compliance requirements.
+This batch reflects two converging threat trends that security teams should take seriously. The WordPress two-CVE chain (CVE-2026-60137 + CVE-2026-63030) is emblematic of a growing attacker technique: chaining individually moderate-severity vulnerabilities to achieve unauthenticated remote code execution on default installations of the world's most widely deployed CMS — affecting an estimated 40%+ of all websites. The combination of a CVSS 5.9 injection primitive with a CVSS 9.8 interpretation conflict flaw underscores why CVSS scores alone are insufficient for prioritization without considering exploit chain potential. Organizations running WordPress 7.x should treat this as an emergency patch even if their WAF mitigates the individual findings.
+
+The inclusion of CVE-2021-27137 (DD-WRT, 2021) five years after initial disclosure reflects CISA's documented pattern of adding legacy embedded/IoT vulnerabilities to the KEV when active exploitation resumes — often linked to botnet operators targeting router firmware to establish persistent footholds. The Langflow RCE (CVE-2026-0770) signals that AI/ML pipeline tooling is now a meaningful attack surface; as organizations expose orchestration platforms like Langflow to the internet for collaborative AI workflows, attackers are following. Expect more AI tooling CVEs on the KEV in coming quarters.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"Double Trouble in FortiSandbox: Two Critical RCE CVEs and What They Mean for Your Security Stack"** — A deep dive into CVE-2026-25089 and CVE-2026-39808, exploring why security appliances attract attackers and how to harden sandbox deployments.
-2. **"SharePoint Deserialization in 2026: Why CWE-502 Keeps Coming Back"** — Examines the recurring pattern of .NET deserialization vulnerabilities in enterprise Microsoft products and provides hardening guidance for SharePoint administrators.
-3. **"BOD 26-04 and the 72-Hour Patch Window: How to Build a Rapid Response Program"** — Practical guide for security teams on meeting CISA's aggressive patching timelines for KEV vulnerabilities, using this week's advisories as a case study.
+1. **"Breaking WordPress at Scale: How Two Chained CVEs Bypass Standalone CVSS Scoring"** — Deep dive into the CVE-2026-60137 + CVE-2026-63030 exploit chain, covering why a 5.9-score vulnerability can unlock a 9.8-severity attack path and what defenders miss when they filter by CVSS alone.
+
+2. **"AI Infrastructure Is the New Attack Surface: Langflow RCE and the KEV"** — Examines CVE-2026-0770 in the context of organizations deploying AI orchestration tools without proper network segmentation, with guidance on hardening Langflow and similar platforms.
+
+3. **"CISA's Long Memory: Why 2021's DD-WRT Bug Is a 2026 Emergency"** — Explores the lifecycle of embedded/IoT CVEs, how legacy vulnerabilities re-enter active exploitation, and what network defenders can do when firmware patches aren't available.
 
 ---
 
 ## Newsletter Snippet
 
-This week CISA added three critical vulnerabilities to the Known Exploited Vulnerabilities catalog, all carrying a CVSS score of 9.8 and all exploitable by unauthenticated attackers over the network. Fortinet's FortiSandbox received two separate advisories — CVE-2026-25089 (affecting FortiSandbox, FortiSandbox Cloud, and PaaS) and CVE-2026-39808 — both OS command injection flaws triggered via crafted HTTP requests. Microsoft SharePoint was hit with CVE-2026-58644, a deserialization vulnerability allowing unauthenticated remote code execution, continuing a troubling pattern of CWE-502 issues in enterprise collaboration platforms.
+**CISA added four new vulnerabilities to the Known Exploited Vulnerabilities catalog this week, with two rated critical and two rated high severity.** The most urgent is a pair of chained WordPress Core vulnerabilities (CVE-2026-60137 and CVE-2026-63030) that together allow unauthenticated attackers to achieve remote code execution on default installations — patch to WordPress 7.0.2 immediately. Also critical is CVE-2026-0770 in Langflow, the AI workflow orchestration platform, which allows remote code execution without authentication; if you're running Langflow or similar AI pipeline tooling on a public-facing host, upgrade to v1.9.0 and review network exposure now.
 
-Federal agencies face a remediation deadline of **2026-07-19** under BOD 26-04; private-sector organizations should treat this timeline as a best-practice benchmark. If your organization runs any of these products and they are internet-accessible, patch immediately or implement compensating controls — these vulnerability classes are trivially weaponized and actively exploited in the wild. Check your attack surface exposure via your ASM tooling and prioritize FortiSandbox instances given the double advisory, which suggests broader input-handling weaknesses in the product line.
+Rounding out the batch is CVE-2021-27137, a 2021-era stack buffer overflow in DD-WRT router firmware that CISA has flagged for active exploitation in 2026 — a reminder that legacy embedded device vulnerabilities never truly retire. Federal agencies under BOD 26-04 face remediation deadlines as tight as July 24 for three of these four CVEs. Private sector organizations should treat these findings with the same urgency given confirmed active exploitation across all entries.
