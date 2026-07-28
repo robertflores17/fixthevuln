@@ -1,51 +1,59 @@
-# AppSec Review — 2026-07-23
+# AppSec Review — 2026-07-28
 
 **Reviewer:** Robert Flores, CISSP  
-**Review Date:** 2026-07-23  
-**CVE Count:** 2  
-**Database Total After Publish:** 167 vulnerabilities
+**Date:** 2026-07-28  
+**CVEs Reviewed:** 2  
+**Source:** CISA Known Exploited Vulnerabilities (KEV) Catalog
 
 ---
 
 ## Severity Breakdown
 
-| Priority | Count | CVEs |
-|----------|-------|------|
-| Critical | 2 | CVE-2026-16232, CVE-2026-50522 |
-| High | 0 | — |
-| Medium | 0 | — |
-| Low | 0 | — |
-| **Total** | **2** | |
+| Priority  | Count |
+|-----------|-------|
+| Critical  | 1     |
+| High      | 0     |
+| Medium    | 1     |
+| Low       | 0     |
+| **Total** | **2** |
 
 ---
 
 ## CVE Summary
 
-| CVE ID | Vendor | Product | Priority | Vulnerability Class | CVSS |
-|--------|--------|---------|----------|---------------------|------|
-| CVE-2026-16232 | Check Point | SmartConsole | critical | Auth Bypass (Improper Authentication, CWE-287) | 9.1 |
-| CVE-2026-50522 | Microsoft | SharePoint | critical | Remote Code Execution (Deserialization, CWE-502) | 9.8 |
+| CVE ID           | Vendor   | Product                   | Priority | Vuln Class              |
+|------------------|----------|---------------------------|----------|-------------------------|
+| CVE-2026-16812   | Arista   | VeloCloud Orchestrator    | critical | OS Command Injection    |
+| CVE-2025-68686   | Fortinet | FortiOS                   | medium   | Information Disclosure  |
+
+---
+
+## CVE Details
+
+**CVE-2026-16812 — Arista VeloCloud Orchestrator (CVSS 10.0, CWE-78)**  
+OS command injection in the on-prem VeloCloud SD-WAN orchestrator allows a remote, unauthenticated attacker to execute privileged OS commands, fully compromising confidentiality, integrity, and availability of the orchestrator and all managed data. CVSS 10.0; VeloCloud Orchestrators are internet-facing SD-WAN management planes, making this a critical initial access vector for network infrastructure. CISA due date: 2026-07-30 — immediate patching required.
+
+**CVE-2025-68686 — Fortinet FortiOS (CVSS 5.9, CWE-200)**  
+Information disclosure vulnerability that allows a remote unauthenticated attacker to bypass the patch for FortiOS's symbolic link persistence mechanism via crafted HTTP requests. Exploitation requires prior filesystem-level compromise through a separate vulnerability, making this a post-exploit persistence bypass rather than an initial access vector. Despite the unauthenticated HTTP trigger, the dependency on prior compromise limits real-world severity.
 
 ---
 
 ## Trend Analysis
 
-Both CVEs added to the CISA KEV on 2026-07-22 represent the highest-risk vulnerability classes — unauthenticated auth bypass and unauthenticated RCE — on enterprise products with broad organizational deployment. CVE-2026-16232 targets Check Point SmartConsole, a network security management platform whose compromise yields full administrative control over an organization's entire firewall and security policy estate, making it an especially high-value target for ransomware operators and nation-state actors performing lateral movement setup. CVE-2026-50522 continues the pattern of SharePoint deserialization RCEs (a class that includes CVE-2019-0604, CVE-2020-16952, and CVE-2024-38094) being weaponized rapidly following public disclosure; the 9.8 CVSS score reflects the zero-authentication requirement and network-reachable attack surface, and organizations running on-premises SharePoint deployments should treat the 2026-07-25 CISA due date as a hard deadline given the documented ransomware operator interest in SharePoint as an initial access vector.
+This week's KEV additions highlight two converging themes in 2026 threat activity: SD-WAN and network orchestration platforms as high-value targets, and the persistence of post-exploit bypass techniques targeting previously patched vulnerabilities. The Arista VeloCloud Orchestrator vulnerability is particularly concerning given the critical role SD-WAN orchestrators play in enterprise network topology — a full compromise of the VCO yields visibility into and control over an organization's entire SD-WAN fabric. Simultaneously, the Fortinet symbolic-link bypass (CVE-2025-68686) reflects an ongoing pattern where threat actors chain vulnerabilities: initial access through one CVE, then a bypass of defensive patches to maintain persistence. Both CISA's short remediation windows (Arista: 3 days, Fortinet: 14 days) underscore the urgency of patching network infrastructure components before ransomware operators or nation-state actors exploit these footholds at scale.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"Auth Bypass in Check Point SmartConsole: Why Firewall Management Plane Security Matters"** — Deep dive into how management-plane authentication weaknesses create asymmetric risk, with guidance on network segmentation and emergency remediation steps per SK185169.
-
-2. **"The SharePoint Deserialization Pattern: A History of RCE and What CVE-2026-50522 Means for On-Prem Deployments"** — Historical analysis of SharePoint deserialization CVEs, exploitation timelines, and a detection/remediation playbook for enterprise defenders.
-
-3. **"CISA BOD 26-04 in Practice: Prioritizing This Week's Critical KEV Additions"** — A practical guide walking through BOD 26-04 compliance steps for security teams remediating CVE-2026-16232 and CVE-2026-50522 before the July 25 federal deadline.
+1. **"CVSS 10.0: How Arista VeloCloud Orchestrator Command Injection Can Compromise Your Entire SD-WAN"** — Deep dive into CWE-78 exploitation paths in network management planes, with patch guidance and detection opportunities.
+2. **"Patch Bypass: How Threat Actors Extend FortiOS Persistence After Initial Remediation"** — Explores the symbolic link persistence technique CISA flagged in CVE-2025-68686 and what defenders need beyond simply applying vendor patches.
+3. **"SD-WAN Security: Why Orchestrators Are the New Firewall Targets"** — Broader piece on the trend of network management platforms appearing in the KEV catalog and how to reduce attack surface.
 
 ---
 
 ## Newsletter Snippet
 
-This week CISA added two critical-severity vulnerabilities to the KEV catalog, both carrying CVSS scores above 9.0 and both exploitable by unauthenticated remote attackers — the most dangerous threat profile in enterprise security. CVE-2026-16232 is an improper authentication flaw in Check Point SmartConsole (CVSS 9.1) that lets an attacker silently steal a login token and assume full administrative control of an organization's security management platform; Check Point has published remediation guidance in SK185169 and federal agencies face a CISA-mandated patch deadline of July 25. CVE-2026-50522 is a deserialization RCE in Microsoft SharePoint (CVSS 9.8) allowing unauthenticated network attackers to execute arbitrary code — a vulnerability class with a well-documented ransomware exploitation history on this platform.
+**This Week in CISA KEV (2026-07-28):** CISA added two new vulnerabilities to the Known Exploited Vulnerabilities catalog, with Arista's VeloCloud Orchestrator commanding immediate attention. CVE-2026-16812 carries a perfect CVSS 10.0 score — a remote, unauthenticated OS command injection that can fully compromise the SD-WAN orchestrator and all networks it manages. Federal agencies have until July 30th to patch, making this a three-day remediation window. Also added: CVE-2025-68686 in Fortinet FortiOS, a medium-severity symbolic link bypass that lets attackers maintain persistence after a prior compromise, even if the original entry-point vulnerability was patched.
 
-If your organization runs Check Point or on-premises SharePoint, these are not wait-and-see situations. Both products have large blast radii on compromise: SmartConsole controls your entire firewall policy estate, and SharePoint often holds sensitive business documents and serves as a trusted internal hub. Prioritize patching both this week, verify your patch status against vendor advisories, and — per CISA's BOD 26-04 Forensics Triage Requirements — review logs for indicators of compromise even after patching, as CISA's inclusion in KEV confirms active exploitation in the wild.
+If you run Arista VeloCloud Orchestrator on-premises, drop everything and patch now — CVSS 10.0 vulnerabilities in internet-facing network management systems represent some of the highest-risk exposures possible. For Fortinet shops, CVE-2025-68686 is a reminder that patching isn't always sufficient: if you've experienced a prior FortiOS compromise, forensic triage per CISA's BOD 26-04 guidance is essential to confirm no persistent footholds remain. Both vendors have published advisories; links are in this week's vulnerability roundup on FixTheVuln.com.
