@@ -275,6 +275,18 @@ export default {
       return handleQuizSubmit(request, env, cors);
     }
 
+    // ─── ROUTE: GET /quiz-analytics ────────────
+    // Admin quiz analytics dashboard (protected by secret key param)
+    if (request.method === 'GET' && url.pathname === '/quiz-analytics') {
+      return handleQuizAnalytics(request, env, cors);
+    }
+
+    // ─── ROUTE: POST /classifier-feedback ──────
+    // Vulnerability classifier user feedback (Phase 3 CyberMoE RLHF loop)
+    if (request.method === 'POST' && url.pathname === '/classifier-feedback') {
+      return handleClassifierFeedback(request, env, cors);
+    }
+
     return new Response(JSON.stringify({ error: 'Not found' }), {
       status: 404,
       headers: { ...cors, 'Content-Type': 'application/json' },
@@ -1147,5 +1159,173 @@ async function handleQuizSubmit(request, env, cors) {
       status: 400,
       headers: { ...cors, 'Content-Type': 'application/json' },
     });
+  }
+}
+
+// ─── QUIZ ANALYTICS (ADMIN) ────────────────────
+// Backs analytics.html, which was calling this route before it existed on the worker.
+async function handleQuizAnalytics(request, env, cors) {
+  const url = new URL(request.url);
+  const secret = url.searchParams.get('key');
+  if (!env.ADMIN_KEY || secret !== env.ADMIN_KEY) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+      headers: { ...cors, 'Content-Type': 'application/json' },
+    });
+  }
+
+  if (!env.DB) {
+    return new Response(JSON.stringify({ error: 'Not configured' }), {
+      status: 200,
+      headers: { ...cors, 'Content-Type': 'application/json' },
+    });
+  }
+
+  const view = url.searchParams.get('view') || 'summary';
+
+  try {
+    if (view === 'hardest') {
+      // Per-question difficulty across all quizzes. quiz_events has no question text,
+      // so analytics.html falls back to showing quiz_id + question_id (it already
+      // handles a missing question_text field).
+      const { results } = await env.DB.prepare(
+        `SELECT quiz_id, question_id,
+                AVG(is_correct) as correct_rate,
+                COUNT(*) as total
+         FROM quiz_events
+         GROUP BY quiz_id, question_id
+         HAVING total >= 3
+         ORDER BY correct_rate ASC
+         LIMIT 20`
+      ).all();
+      return new Response(JSON.stringify({ questions: results }), {
+        status: 200,
+        headers: { ...cors, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (view === 'domains') {
+      const { results } = await env.DB.prepare(
+        `SELECT domain,
+                AVG(is_correct) as avg_correct_rate,
+                COUNT(DISTINCT question_id) as question_count
+         FROM quiz_events
+         WHERE domain IS NOT NULL
+         GROUP BY domain
+         ORDER BY domain ASC`
+      ).all();
+      return new Response(JSON.stringify({ domains: results }), {
+        status: 200,
+        headers: { ...cors, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // view === 'summary' (default)
+    const stats = await env.DB.prepare(
+      `SELECT COUNT(*) as total_sessions, AVG(score_pct) as avg_score, AVG(time_seconds) as avg_duration
+       FROM quiz_sessions`
+    ).first();
+
+    const eventStats = await env.DB.prepare(`SELECT COUNT(*) as total_events FROM quiz_events`).first();
+    const quizCount = await env.DB.prepare(`SELECT COUNT(DISTINCT quiz_id) as unique_quizzes FROM quiz_sessions`).first();
+
+    const { results: quizzes } = await env.DB.prepare(
+      `SELECT quiz_id, COUNT(*) as attempts, AVG(score_pct) as avg_score, AVG(time_seconds) as avg_duration
+       FROM quiz_sessions
+       GROUP BY quiz_id
+       ORDER BY attempts DESC
+       LIMIT 50`
+    ).all();
+
+    const { results: sessions } = await env.DB.prepare(
+      `SELECT quiz_id, score_pct as score, time_seconds as duration, total_questions, created_at
+       FROM quiz_sessions
+       ORDER BY created_at DESC
+       LIMIT 20`
+    ).all();
+
+    return new Response(JSON.stringify({
+      stats: {
+        total_sessions: stats.total_sessions || 0,
+        total_events: eventStats.total_events || 0,
+        unique_quizzes: quizCount.unique_quizzes || 0,
+        avg_score: stats.avg_score,
+        avg_duration: stats.avg_duration,
+        // No "quiz started" event exists (only completed submissions are recorded),
+        // so a real completion rate can't be derived from this data. analytics.html
+        // renders '-' when this is null rather than showing a fabricated number.
+        completion_rate: null,
+      },
+      quizzes,
+      recent_sessions: sessions,
+    }), {
+      status: 200,
+      headers: { ...cors, 'Content-Type': 'application/json' },
+    });
+  } catch (err) {
+    return new Response(JSON.stringify({ error: 'Query failed' }), {
+      status: 500,
+      headers: { ...cors, 'Content-Type': 'application/json' },
+    });
+  }
+}
+
+// ─── CLASSIFIER FEEDBACK ───────────────────────
+// Backs vuln-classifier.html's feedback button (Phase 3 CyberMoE RLHF loop).
+const CLASSIFIER_RATE_LIMIT = new Map(); // IP -> { count, resetAt }
+
+async function handleClassifierFeedback(request, env, cors) {
+  // Rate limit: 10 submissions/minute per IP
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+  const now = Date.now();
+  const limit = CLASSIFIER_RATE_LIMIT.get(ip);
+  if (limit) {
+    if (now < limit.resetAt) {
+      if (limit.count >= 10) {
+        return new Response('', { status: 429, headers: cors });
+      }
+      limit.count++;
+    } else {
+      CLASSIFIER_RATE_LIMIT.set(ip, { count: 1, resetAt: now + 60000 });
+    }
+  } else {
+    CLASSIFIER_RATE_LIMIT.set(ip, { count: 1, resetAt: now + 60000 });
+  }
+  if (CLASSIFIER_RATE_LIMIT.size > 500) {
+    for (const [k, v] of CLASSIFIER_RATE_LIMIT) {
+      if (now > v.resetAt) CLASSIFIER_RATE_LIMIT.delete(k);
+    }
+  }
+
+  if (!env.DB) {
+    return new Response('', { status: 204, headers: cors });
+  }
+
+  try {
+    const text = await request.text();
+    const body = JSON.parse(text);
+
+    const predicted = String(body.predicted || '').slice(0, 50);
+    const isCorrect = body.correct ? 1 : 0;
+    const correction = body.corrected_domain ? String(body.corrected_domain).slice(0, 50) : null;
+    const snippet = String(body.text_snippet || '').slice(0, 500);
+    const scores = body.scores && typeof body.scores === 'object' ? body.scores : {};
+    const confidence = typeof scores[predicted] === 'number' ? scores[predicted] : null;
+
+    if (!predicted || !snippet) {
+      return new Response('', { status: 400, headers: cors });
+    }
+
+    await env.DB.prepare(
+      `INSERT INTO classifier_feedback (input_text, predicted_domain, confidence, is_correct, correction, entities_json)
+       VALUES (?, ?, ?, ?, ?, ?)`
+    ).bind(snippet, predicted, confidence, isCorrect, correction, JSON.stringify(scores)).run();
+
+    return new Response(JSON.stringify({ success: true }), {
+      status: 201,
+      headers: { ...cors, 'Content-Type': 'application/json' },
+    });
+  } catch {
+    return new Response('', { status: 400, headers: cors });
   }
 }
