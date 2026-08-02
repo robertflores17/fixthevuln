@@ -184,9 +184,17 @@ FREE_RESOURCES = {
 
 
 def parse_cost(cost_str):
-    """Extract numeric cost from string like '$404 USD' or '$1,749 USD (course + exam)'."""
+    """Extract numeric cost from string like '$404 USD' or '$1,749 USD (course + exam)'.
+    When a string lists separate member/non-member prices (e.g. ISACA certs), use the
+    non-member figure since most candidates aren't members when they first sit the exam."""
     if not cost_str:
         return 0
+    if 'non-member' in cost_str.lower():
+        m = re.search(r'\$[\d,]+\s*USD\s*\(non-member', cost_str, re.IGNORECASE)
+        if m:
+            amount = re.search(r'\$[\d,]+', m.group())
+            if amount:
+                return int(amount.group().replace('$', '').replace(',', ''))
     m = re.search(r'\$[\d,]+', cost_str)
     if m:
         return int(m.group().replace('$', '').replace(',', ''))
