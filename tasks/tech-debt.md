@@ -1,3 +1,46 @@
+## 2026-08-03 — Weekly Tech-Debt Audit
+
+**Headline:** Pipeline healthy — 3 CVEs published (171 total), cert pages regenerated Aug 2 (P2 resolved), worker grew +180 LOC for quiz-analytics + classifier-feedback routes (commented, auth in place); P1 practice-tests timestamp now 7 weeks unresolved at 124 days; 8 items still open.
+
+**Pipeline pulse:**
+- Daily CVE trigger last output (`data/appsec-review.md`): 2026-07-30 (4 days old — triggers >2-day P0 rule; mitigating: `pending_review.json` `last_checked: 2026-08-02T15:52 UTC` with `total_pending: 0`; "Update KEV last checked timestamp" commits Aug 1 + Aug 2 confirm daily fetch running; pipeline idle not stalled ✓ NOT hard P0 — same pattern as July 6 and July 20 audits)
+- Friday AI trend roundup last file (`drafts/ai-security-roundup-2026-07-31.md`): 2026-07-31 (draft only, no .published suffix — publishes Tuesday Aug 5 per `publish-blog.yml` cron `0 14 * * 2` ✓)
+- `data/pending_review.json` pending count: 0 (last_checked: 2026-08-02T15:52:06 UTC ✓)
+
+**New this week:**
+- P2 worker growth — `store/cloudflare-worker.js` — LOC grew from 1,151 to 1,331 (+180 lines, 16%) via commit `9c68678` (Aug 1): added `/quiz-analytics` (ADMIN_KEY-protected) and `/classifier-feedback` (rate-limited 10/min/IP) D1 routes. New code paths have section-header comments. `classifier_feedback` table already in `store/migrations/0002_quiz_feedback.sql` ✓. PRICING unchanged (599/1599 cents). No new D1 migrations needed. Effort: monitor growth trajectory — Effort: XS
+
+**Still open from prior audits:** 8
+1. P1 content — `practice-tests/*.html:1` (13 pages) — `<p class="pt-timestamp">Last updated: April 2, 2026</p>` still present (124 days old, open **7 weeks** — unresolved since June 15 audit) — Fix: remove timestamp block from `scripts/generate_practice_test_pages.py` template; re-run — Effort: XS
+2. P2 content — `roadmaps/*.html` (67 pages) — "Last updated: March 30, 2026" — 157 days old (cert pages were fixed Aug 2 but roadmaps were not regenerated) — Fix: re-run `python scripts/generate_roadmaps.py` — Effort: XS
+3. P2 generator — `scripts/` (14 files >500 LOC, unchanged) — `generate_guides.py` 2,896 · `generate_sprint_kit.py` 1,991 · `fetch_kev.py` 865 · `etsy_to_pinterest.py` 829 · `entity_extractor.py` 765 · `generate_linkedin_posts.py` 716 · `publish_editorial.py` 707 · `audit_pages.py` 661 · `generate_quiz_pages.py` 627 · `generate_cert_pages.py` 595 · `inject_store_ctas.py` 588 · `generate_practice_test_pages.py` 572 · `generate_roadmaps.py` 517 · `generate_cve_pages.py` 504 — Effort: L
+4. P2 hygiene — repo-wide — `requirements.txt` absent; Pillow (`create_hero.py:4`, `generate_linkedin_posts.py:12`) and reportlab (`generate_sprint_kit.py`) and requests (`etsy_to_pinterest.py`) undeclared external deps; `security-audit.yml` pip-audit silently no-ops — Effort: XS
+5. P2 SEO — `scripts/generate_sitemap.py:25` — `CONTENT_DIRS = ["blog", "certs", "comparisons", "roadmaps", "cve", "store"]` omits `wstg` and `practice-tests` directories; 13+13=26 pages excluded from sitemap.xml entirely — Fix: add `"wstg"` and `"practice-tests"` to CONTENT_DIRS — Effort: XS
+6. P3 hygiene — `scripts/` (9 instances across 8 scripts) — Broad `except Exception:` without logging: `fetch_kev.py:63`, `generate_sitemap.py:86`, `update_sitemap.py:29`, `audit_pages.py:250,382`, `inject_error_reporter.py:46`, `generate_linkedin_posts.py:72`, `create_hero.py:51`, `health_check.py:127` — Add `logging.exception()` before each — Effort: S
+7. P3 hygiene — repo root — No `CLAUDE.md`; editorial rules (evergreen-page timestamp ban, cache-bust policy, pipeline health thresholds) uncodified in-repo — Effort: XS
+8. P3 generator drift — `scripts/generate_sitemap.py:60–95` — GUIDE_PAGES missing `ai-agent-security.html` and `genai-data-security.html` (both exist on disk; `ai-agent-security-threats.html` was added but is a distinct third page); open **4 weeks** unresolved — Fix: add both filenames to the GUIDE_PAGES set — Effort: XS
+
+**Resolved since last audit:**
+- P2 content — `certs/*.html` (66 pages) — "Last updated: August 2, 2026" after commit `e4f3721` (Aug 2); also fixed ISACA member/non-member pricing bug ✓
+- 3 CVE pages published: Arista (July 28) · Fortinet (July 28) · Cisco (July 30) ✓
+- Blog: `blog/ai-security-roundup-2026-07-24.html` + `blog/weekly-threat-roundup-2026-07-28.html` published ✓
+- Store worker: `/quiz-analytics` + `/classifier-feedback` D1 routes implemented (commit `9c68678`, Aug 1) — `analytics.html` and `vuln-classifier.html` 404s resolved ✓
+- Sitemap/llms.txt reconciled Aug 1–2 ✓
+
+**Metrics tracked:**
+- Total generated pages (cve-*, cert-*, comparisons/*, roadmaps/*): 347 (171 CVE + 66 cert + 43 comparisons + 67 roadmaps) — +3 CVE vs last week (344)
+- Blog pages: 114 (was 112, +2: ai-security-roundup-2026-07-24.html + weekly-threat-roundup-2026-07-28.html ✓)
+- Sitemap entries: 616 (was 611, +5 ✓)
+- Evergreen pages with timestamps (should be 0): 13 (practice-tests/*.html only — April 2, 2026 — 124 days, P1 open 7 weeks)
+- Pages missing from llms.txt: 0 (171 CVE ✓ · 114 blog ✓ · 66 cert ✓ · 43 comp ✓ · 67 roadmaps ✓)
+- Cache-bust drift count: 0 (no CSS/JS modified this week ✓)
+- Scripts >500 LOC: 14 (unchanged)
+- Store worker LOC: 1,331 (+180 vs last week 1,151; new /quiz-analytics + /classifier-feedback routes; PRICING 599/1599 cents ↔ $5.99/$15.99 frontend ✓; CP_PRICING 899/1699, 1299/2499, 1699/3499 cents ✓)
+- D1 migrations: 2 (unchanged — classifier_feedback table already in 0002_quiz_feedback.sql ✓)
+- Python scripts with bare `except Exception:` without logging: 9 instances / 8 scripts (unchanged)
+
+---
+
 ## 2026-07-27 — Weekly Tech-Debt Audit
 
 **Headline:** Pipeline healthy — 6 CVEs published this week (168 total), AI roundup on schedule; one new P2 (wstg/ and practice-tests/ absent from `CONTENT_DIRS` in generate_sitemap.py — 26 pages missing from sitemap.xml); 8 items still open; P1 practice-tests timestamp now 6 weeks unresolved.
