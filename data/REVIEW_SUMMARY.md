@@ -1,4 +1,4 @@
-# Daily KEV Review — 2026-08-07
+# Daily KEV Review — 2026-08-08
 
 **New CVEs:** 1 | **Critical:** 1 | **High:** 0 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
@@ -6,14 +6,14 @@
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-63077 | JetBrains | TeamCity | 9.8 | Unknown | 2026-08-08 |
+| CVE-2026-8037 | Progress | LoadMaster | 9.6 | Unknown | 2026-08-10 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-08-08 (1 CVE)
+- **Nearest due date:** 2026-08-10 (1 CVE)
 - **Overdue:** None
 
 ## Vendor Summary
-- JetBrains: 1 CVE
+- Progress: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
