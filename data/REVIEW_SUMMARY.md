@@ -1,23 +1,19 @@
-# Daily KEV Review — 2026-08-12
+# Daily KEV Review — 2026-08-17
 
-**New CVEs:** 3 | **Critical:** 1 | **High:** 2 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 1 | **Critical:** 1 | **High:** 0 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-72898 | Metabase | Metabase | 10.0 | Unknown | 2026-08-14 |
-| CVE-2026-20349 | Cisco | Secure Firewall Adaptive Security Appliance (ASA) and Secure Firewall Threat Defense (FTD)  | 8.6 | Unknown | 2026-08-14 |
-| CVE-2026-68820 | Microsoft | Windows Ancillary Function Driver for WinSock  | 7.0 | Unknown | 2026-08-25 |
+| CVE-2025-62593 | Ray-Project | Ray | 9.4 | Unknown | 2026-08-21 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-08-14 (2 CVEs)
+- **Nearest due date:** 2026-08-21 (1 CVE)
 - **Overdue:** None
 
 ## Vendor Summary
-- Cisco: 1 CVE
-- Microsoft: 1 CVE
-- Metabase: 1 CVE
+- Ray-Project: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
