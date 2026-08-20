@@ -1,68 +1,37 @@
-# AppSec Review — CISA KEV Batch
+# FixTheVuln AppSec Review
 
-**Date:** 2026-08-19  
-**Reviewer:** Robert Flores, CISSP  
-**CVEs Reviewed:** 4  
-**Source:** CISA Known Exploited Vulnerabilities Catalog (dateAdded: 2026-08-18)
+- **Date:** 2026-08-20
+- **Reviewer:** Robert Flores, CISSP (FixTheVuln AppSec Reviewer)
+- **CVEs reviewed:** 1
+- **Approved for publication:** 1
 
----
+## Severity breakdown
 
-## Severity Breakdown
+| Priority | Count |
+|----------|-------|
+| Critical | 1 |
+| High     | 0 |
+| Medium   | 0 |
+| Low      | 0 |
 
-| Priority | Count | CVEs |
-|----------|-------|------|
-| Critical | 4     | CVE-2026-33824, CVE-2026-59310, CVE-2026-55040, CVE-2026-65400 |
-| High     | 0     | — |
-| Medium   | 0     | — |
-| Low      | 0     | — |
+## Per-CVE summary
 
----
+| CVE | Vendor / Product | Priority | Vulnerability class |
+|-----|------------------|----------|---------------------|
+| CVE-2026-64849 | MLflow / MLflow | critical | Server-Side Request Forgery (CWE-918) |
 
-## CVE Summary
+## Trend analysis
 
-| CVE ID | Vendor | Priority | Vuln Class |
-|--------|--------|----------|------------|
-| CVE-2026-33824 | Microsoft | Critical | Memory Corruption / Double Free → RCE |
-| CVE-2026-59310 | Broadcom | Critical | Path Traversal → RCE |
-| CVE-2026-55040 | Microsoft | Critical | Authentication Bypass |
-| CVE-2026-65400 | Apple | Critical | Improper Authentication / Auth Bypass |
+This cycle's single addition continues a pattern seen across 2025–2026 KEV entries: AI/ML platform components (model registries, tracking servers, notebook backends) increasingly appear alongside traditional enterprise gear. MLflow is exposed on internal networks in the majority of MLOps deployments and, as here, an unauthenticated SSRF that can reach cloud metadata endpoints converts a "developer tool" into a direct path to IAM credential theft. The CVSS 9.3 rating and CISA's inclusion under BOD 26-04 reflect confirmed in-the-wild exploitation, and the pattern echoes prior KEV additions for Ray, Jupyter, and Kubeflow — attackers are prioritizing the ML supply chain because compensating controls (network segmentation, IMDSv2, egress filtering) are often absent on infrastructure that was originally scoped as "internal only."
 
----
+## Blog post candidates
 
-## CVE Details
+1. **"SSRF-to-IAM: Why MLflow's CVE-2026-64849 is a Cloud Credential Heist Waiting to Happen"** — technical walkthrough of the SSRF payload, IMDSv1/v2 behavior, and the AWS/GCP/Azure metadata endpoints that turn a webhook bug into a role-assumption chain.
+2. **"MLOps on the KEV: A Field Guide to Securing MLflow, Ray, and Kubeflow"** — practitioner-focused hardening playbook covering network policies, IMDSv2 enforcement, egress allowlists, and authentication gateways.
+3. **"BOD 26-04 in Practice: Prioritizing ML Platform Patches for Federal and Regulated Environments"** — how to map CISA's new directive to internal ML infrastructure, including forensics triage requirements.
 
-**CVE-2026-33824 — Microsoft IKE Service Extensions (CVSS 9.8)**  
-Double free vulnerability (CWE-415) in the Windows Internet Key Exchange service enables unauthenticated remote code execution. IKE is a network-facing service used in VPN and IPsec implementations, making this broadly exploitable against Windows endpoints and servers with IKE exposed. Patch immediately per BOD 26-04.
+## Newsletter snippet
 
-**CVE-2026-59310 — Broadcom VMware vCenter (CVSS 9.8)**  
-Path traversal vulnerability (CWE-22) in vCenter Server allows any attacker with network access to vCenter to execute arbitrary code. vCenter is a hypervisor management plane and a crown-jewel target — compromise leads to full virtualization infrastructure takeover. Threat actors targeting VMware infrastructure should be expected to weaponize this rapidly.
+**MLflow SSRF joins the KEV — treat it as a cloud credential incident, not a "dev tool" bug.** CISA added CVE-2026-64849 to the Known Exploited Vulnerabilities catalog this week, an unauthenticated server-side request forgery (CVSS 9.3) in MLflow that lets an attacker force the server to fetch arbitrary URLs and read back status and body. On any MLflow instance running in AWS, GCP, or Azure without IMDSv2 or egress restrictions, that primitive is enough to pull instance role credentials, service-account tokens, or Kubernetes metadata — a direct path from an "internal ML tool" to full cloud role assumption. The federal remediation deadline under BOD 26-04 is 2026-09-02.
 
-**CVE-2026-55040 — Microsoft SharePoint (CVSS 9.1)**  
-Weak authentication vulnerability (CWE-1390) allows unauthenticated attackers to bypass security features in SharePoint over the network. SharePoint is widely deployed across enterprise and government environments for document collaboration; auth bypass at this scope enables data exfiltration and lateral movement without valid credentials.
-
-**CVE-2026-65400 — Apple macOS Screen Sharing (CVSS 9.8)**  
-Improper authentication (CWE-287) in macOS allows a network-adjacent attacker to authenticate to Screen Sharing without valid credentials, gaining full remote desktop access. This is particularly dangerous in environments where macOS Screen Sharing is exposed on corporate networks or VPNs, as it grants interactive access with no credential requirement.
-
----
-
-## Trend Analysis
-
-This batch is dominated by authentication and access control failures across high-value enterprise infrastructure: Microsoft's IKE and SharePoint, Broadcom's vCenter, and Apple's macOS Screen Sharing. The pattern reflects a continued threat actor focus on authentication bypass and memory corruption primitives that enable unauthenticated remote code execution — the highest-impact attack class. Notably, all four CVEs are 2026-year identifiers added within days of discovery, suggesting CISA is tracking active in-the-wild exploitation faster than in prior years. The inclusion of VMware vCenter continues a multi-year trend of hypervisor management planes being actively targeted, likely driven by the high value of mass virtualization infrastructure takeover. Organizations should treat this batch as a unified campaign signal: attackers who compromise any one of these may use it as a pivot to reach the others.
-
----
-
-## Blog Post Candidates
-
-1. **"Why IKE Double-Free Vulnerabilities Are Uniquely Dangerous"** — Deep dive into CWE-415 in Windows IKE, how double-free primitives become RCE, and defender mitigations beyond just patching (network segmentation, VPN gateway hardening).
-
-2. **"vCenter in the Crosshairs: Defending VMware Infrastructure Against CVE-2026-59310"** — Explores the blast radius of vCenter compromise, attacker playbooks post-exploitation, and architecture-level controls to limit impact even when patching is delayed.
-
-3. **"Authentication Bypass at Scale: SharePoint and macOS Screen Sharing Weaknesses"** — Pairs CVE-2026-55040 and CVE-2026-65400 to discuss the systemic problem of auth bypass in enterprise software, detection strategies, and zero-trust controls that reduce reliance on authentication as a single control.
-
----
-
-## Newsletter Snippet
-
-This week's CISA KEV additions should trigger immediate patch prioritization across Windows, macOS, and VMware environments. Four critical vulnerabilities — all confirmed actively exploited — span Microsoft's IKE service (double-free RCE, CVSS 9.8), VMware vCenter (path traversal to RCE, CVSS 9.8), Microsoft SharePoint (auth bypass, CVSS 9.1), and Apple macOS Screen Sharing (improper auth, CVSS 9.8). Every one of these is unauthenticated and network-exploitable, meaning attackers need no foothold to begin exploitation. BOD 26-04 due dates are 2026-08-21 — three days from the date of this review.
-
-If your team is triaging which to patch first, start with vCenter: hypervisor management plane compromise gives adversaries the keys to your entire virtualized infrastructure. SharePoint and IKE should follow immediately, particularly for internet-exposed deployments. The macOS Screen Sharing vulnerability is especially critical for organizations allowing remote work access via VPN — an attacker on the same network segment can gain full desktop control on any unpatched Mac. Verify exposure for each product and treat any delay in patching as accepted risk requiring compensating controls.
+If you run MLflow anywhere, patch to the fixed release referenced in MLflow PR #24258 immediately. In parallel, verify IMDSv2 is enforced on every host that runs a tracking server, apply egress allowlists so the server cannot reach 169.254.169.254 or internal-only ranges, and audit CloudTrail / audit logs for anomalous role-assumption or metadata calls originating from MLflow subnets. Given the ransomware status is "Unknown," assume active exploitation and prioritize this alongside your standard critical-patch workflow — the full technical write-up and remediation checklist is live now at fixthevuln.com.
