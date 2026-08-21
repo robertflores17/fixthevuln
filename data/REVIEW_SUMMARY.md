@@ -1,19 +1,20 @@
-# Daily KEV Review — 2026-08-20
+# Daily KEV Review — 2026-08-21
 
-**New CVEs:** 1 | **Critical:** 1 | **High:** 0 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 2 | **Critical:** 2 | **High:** 0 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-64849 | MLflow | MLflow | 9.3 | Unknown | 2026-09-02 |
+| CVE-2026-72529 | TrueConf | Server | 9.8 | Unknown | 2026-08-23 |
+| CVE-2026-72530 | TrueConf | Server | 9.0 | Unknown | 2026-09-03 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-09-02 (1 CVE)
+- **Nearest due date:** 2026-08-23 (1 CVE)
 - **Overdue:** None
 
 ## Vendor Summary
-- MLflow: 1 CVE
+- TrueConf: 2 CVEs
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
