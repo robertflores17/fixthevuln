@@ -1,37 +1,50 @@
-# FixTheVuln AppSec Review
+# AppSec Review — 2026-08-21
 
-- **Date:** 2026-08-20
-- **Reviewer:** Robert Flores, CISSP (FixTheVuln AppSec Reviewer)
-- **CVEs reviewed:** 1
-- **Approved for publication:** 1
+**Reviewer:** Robert Flores, CISSP  
+**Review Date:** 2026-08-21  
+**CVEs Reviewed:** 2  
+**Total in Database After Publish:** 187
 
-## Severity breakdown
+---
 
-| Priority | Count |
-|----------|-------|
-| Critical | 1 |
-| High     | 0 |
-| Medium   | 0 |
-| Low      | 0 |
+## Severity Breakdown
 
-## Per-CVE summary
+| Priority | Count | CVEs |
+|----------|-------|------|
+| Critical | 2 | CVE-2026-72530, CVE-2026-72529 |
+| High | 0 | — |
+| Medium | 0 | — |
+| Low | 0 | — |
 
-| CVE | Vendor / Product | Priority | Vulnerability class |
-|-----|------------------|----------|---------------------|
-| CVE-2026-64849 | MLflow / MLflow | critical | Server-Side Request Forgery (CWE-918) |
+---
 
-## Trend analysis
+## CVE Summary
 
-This cycle's single addition continues a pattern seen across 2025–2026 KEV entries: AI/ML platform components (model registries, tracking servers, notebook backends) increasingly appear alongside traditional enterprise gear. MLflow is exposed on internal networks in the majority of MLOps deployments and, as here, an unauthenticated SSRF that can reach cloud metadata endpoints converts a "developer tool" into a direct path to IAM credential theft. The CVSS 9.3 rating and CISA's inclusion under BOD 26-04 reflect confirmed in-the-wild exploitation, and the pattern echoes prior KEV additions for Ray, Jupyter, and Kubeflow — attackers are prioritizing the ML supply chain because compensating controls (network segmentation, IMDSv2, egress filtering) are often absent on infrastructure that was originally scoped as "internal only."
+| CVE ID | Vendor | Priority | Vulnerability Class |
+|--------|--------|----------|---------------------|
+| CVE-2026-72530 | TrueConf | Critical | Code Injection (CWE-94) — Unauthenticated RCE |
+| CVE-2026-72529 | TrueConf | Critical | Missing Authentication for Critical Function (CWE-306) |
 
-## Blog post candidates
+---
 
-1. **"SSRF-to-IAM: Why MLflow's CVE-2026-64849 is a Cloud Credential Heist Waiting to Happen"** — technical walkthrough of the SSRF payload, IMDSv1/v2 behavior, and the AWS/GCP/Azure metadata endpoints that turn a webhook bug into a role-assumption chain.
-2. **"MLOps on the KEV: A Field Guide to Securing MLflow, Ray, and Kubeflow"** — practitioner-focused hardening playbook covering network policies, IMDSv2 enforcement, egress allowlists, and authentication gateways.
-3. **"BOD 26-04 in Practice: Prioritizing ML Platform Patches for Federal and Regulated Environments"** — how to map CISA's new directive to internal ML infrastructure, including forensics triage requirements.
+## Trend Analysis
 
-## Newsletter snippet
+This batch continues a pattern of enterprise collaboration software emerging as a high-value target for threat actors. Both vulnerabilities affect TrueConf Server's administrative port (4307/TCP) and require zero authentication, making them trivially exploitable by any attacker with network access — a profile consistent with initial-access brokers and ransomware precursors. The pairing of a missing-auth flaw (CVE-2026-72529, CVSS 9.8) with a container-escape code injection (CVE-2026-72530, CVSS 9.0) suggests the two are likely used in sequence: the auth bypass provides execution, and the code injection breaks out of any sandboxing to reach the host OS. The tight remediation deadline on CVE-2026-72529 (2026-08-23 — only 3 days after KEV addition) signals CISA has intelligence on active exploitation at scale.
 
-**MLflow SSRF joins the KEV — treat it as a cloud credential incident, not a "dev tool" bug.** CISA added CVE-2026-64849 to the Known Exploited Vulnerabilities catalog this week, an unauthenticated server-side request forgery (CVSS 9.3) in MLflow that lets an attacker force the server to fetch arbitrary URLs and read back status and body. On any MLflow instance running in AWS, GCP, or Azure without IMDSv2 or egress restrictions, that primitive is enough to pull instance role credentials, service-account tokens, or Kubernetes metadata — a direct path from an "internal ML tool" to full cloud role assumption. The federal remediation deadline under BOD 26-04 is 2026-09-02.
+---
 
-If you run MLflow anywhere, patch to the fixed release referenced in MLflow PR #24258 immediately. In parallel, verify IMDSv2 is enforced on every host that runs a tracking server, apply egress allowlists so the server cannot reach 169.254.169.254 or internal-only ranges, and audit CloudTrail / audit logs for anomalous role-assumption or metadata calls originating from MLflow subnets. Given the ransomware status is "Unknown," assume active exploitation and prioritize this alongside your standard critical-patch workflow — the full technical write-up and remediation checklist is live now at fixthevuln.com.
+## Blog Post Candidates
+
+1. **"Unauthenticated RCE in TrueConf Server: What CVE-2026-72529 and CVE-2026-72530 Mean for Enterprise Video Infrastructure"** — Walk through the attack chain: auth bypass on port 4307 → arbitrary script execution → container escape → host RCE. Good for defenders hardening video-conferencing infrastructure.
+
+2. **"Why CISA's 3-Day Patch Deadline on CVE-2026-72529 Should Alarm You"** — Explain what a sub-one-week CISA KEV due date signals about active exploitation severity. Frame within BOD 26-04 compliance obligations.
+
+3. **"Collaboration Software as an Attack Surface: Trends in 2026 KEV Additions"** — Broader trend piece examining how video conferencing and team collaboration platforms (TrueConf, and others in the KEV catalog) are increasingly targeted for initial access.
+
+---
+
+## Newsletter Snippet
+
+**This week CISA added two critical TrueConf Server vulnerabilities to the Known Exploited Vulnerabilities catalog** — both targeting the same administrative port (4307/TCP) with no authentication required. CVE-2026-72529 (CVSS 9.8) allows unauthenticated remote attackers to execute arbitrary scripts directly; CVE-2026-72530 (CVSS 9.0) enables a breakout from TrueConf's isolated environment to run arbitrary code on the host system. Together they form a complete, zero-credential exploitation chain from the network to host OS.
+
+CISA's remediation deadline for CVE-2026-72529 is **August 23, 2026** — just three days after KEV addition — indicating confirmed, active exploitation in the wild. Federal agencies must patch immediately under BOD 26-04; private-sector organizations running TrueConf Server should treat this as a P0 incident response item. Vendor advisories are available at trueconf.com, with technical detail from Kaspersky ICS-CERT (advisory dated 2026-08-11). If patching is not immediately possible, block external access to port 4307/TCP as an interim control.
