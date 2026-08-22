@@ -1,20 +1,19 @@
-# Daily KEV Review — 2026-08-21
+# Daily KEV Review — 2026-08-22
 
-**New CVEs:** 2 | **Critical:** 2 | **High:** 0 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 1 | **Critical:** 0 | **High:** 1 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-72529 | TrueConf | Server | 9.8 | Unknown | 2026-08-23 |
-| CVE-2026-72530 | TrueConf | Server | 9.0 | Unknown | 2026-09-03 |
+| CVE-2026-73570 | Synacor | Zimbra Collaboration Suite (ZCS) | 8.9 | Unknown | 2026-08-24 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-08-23 (1 CVE)
+- **Nearest due date:** 2026-08-24 (1 CVE)
 - **Overdue:** None
 
 ## Vendor Summary
-- TrueConf: 2 CVEs
+- Synacor: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
