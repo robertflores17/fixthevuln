@@ -1,19 +1,19 @@
-# Daily KEV Review — 2026-08-22
+# Daily KEV Review — 2026-08-25
 
-**New CVEs:** 1 | **Critical:** 0 | **High:** 1 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 1 | **Critical:** 1 | **High:** 0 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-73570 | Synacor | Zimbra Collaboration Suite (ZCS) | 8.9 | Unknown | 2026-08-24 |
+| CVE-2026-21962 | Oracle | HTTP Server and Oracle Weblogic Server Proxy Plug-in | 10.0 | Unknown | 2026-08-27 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-08-24 (1 CVE)
+- **Nearest due date:** 2026-08-27 (1 CVE)
 - **Overdue:** None
 
 ## Vendor Summary
-- Synacor: 1 CVE
+- Oracle: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
