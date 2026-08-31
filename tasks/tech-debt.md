@@ -1,3 +1,49 @@
+## 2026-08-31 — Weekly Tech-Debt Audit
+
+**Headline:** Pipeline healthy — 11 CVEs published (200 total milestone), 2 blog posts published, comparisons regenerated Aug 25; `data/appsec-review.md` current today; all 8 prior items still open; P1 practice-tests timestamp now **12 weeks unresolved** at 151 days.
+
+**Pipeline pulse:**
+- Daily CVE trigger last output (`data/appsec-review.md`): 2026-08-31 (today ✓ — pipeline fully healthy, NOT P0)
+- Friday AI trend roundup last file (`drafts/ai-security-roundup-2026-08-28.md`): 2026-08-28 (Friday ✓ — draft on schedule)
+- `data/pending_review.json` pending count: 0 (last_checked: 2026-08-30T18:14:16 UTC ✓)
+
+**New this week:**
+- None. No new P0/P1/P2/P3 findings.
+- Notable: 200-CVE milestone hit (11 published this week: Oracle Aug 25 + ownCloud/Linux/JFrog/AjaxPro/Red Hat/Citrix/Microsoft/Gitea × 10 on Aug 28); comparisons freshly regenerated Aug 25 (was Aug 18).
+
+**Still open from prior audits:** 8
+1. P1 content — `practice-tests/*.html:1` (13 pages) — `<p class="pt-timestamp">Last updated: April 2, 2026</p>` still present (151 days old, **open 12 weeks** — unresolved since June 15 audit) — Fix: remove timestamp block from `scripts/generate_practice_test_pages.py` template; re-run — Effort: XS
+2. P2 content — `roadmaps/*.html` (67 pages) — "Last updated: March 30, 2026" — 154 days old — Fix: re-run `python scripts/generate_roadmaps.py` — Effort: XS
+3. P2 generator — `scripts/` (14 files >500 LOC, unchanged) — `generate_guides.py` 2,896 · `generate_sprint_kit.py` 1,991 · `fetch_kev.py` 865 · `etsy_to_pinterest.py` 829 · `entity_extractor.py` 765 · `generate_linkedin_posts.py` 716 · `publish_editorial.py` 707 · `audit_pages.py` 661 · `generate_quiz_pages.py` 627 · `generate_cert_pages.py` 595 · `inject_store_ctas.py` 588 · `generate_practice_test_pages.py` 572 · `generate_roadmaps.py` 517 · `generate_cve_pages.py` 504 — Effort: L
+4. P2 hygiene — repo-wide — `requirements.txt` absent; Pillow (`create_hero.py:4`, `generate_linkedin_posts.py:12`) and reportlab (`generate_sprint_kit.py:31–45`) and requests (`etsy_to_pinterest.py`) undeclared external deps; `security-audit.yml` pip-audit silently no-ops (`requirements.txt` check always empty) — Effort: XS
+5. P2 SEO — `scripts/generate_sitemap.py:25` — `CONTENT_DIRS` omits `wstg` and `practice-tests` directories; 13+13=26 pages excluded from sitemap.xml entirely — Fix: add `"wstg"` and `"practice-tests"` to CONTENT_DIRS — Effort: XS
+6. P3 hygiene — `scripts/` (9 instances across 8 scripts) — Broad `except Exception:` without logging: `fetch_kev.py:63`, `generate_sitemap.py:86`, `update_sitemap.py:29`, `audit_pages.py:250,382`, `inject_error_reporter.py:46`, `generate_linkedin_posts.py:72`, `create_hero.py:51`, `health_check.py:127` — Add `logging.exception()` before each — Effort: S
+7. P3 hygiene — repo root — No `CLAUDE.md`; editorial rules (evergreen-page timestamp ban, cache-bust policy, pipeline health thresholds) uncodified in-repo — Effort: XS
+8. P3 generator drift — `scripts/generate_sitemap.py:60–95` — GUIDE_PAGES missing `ai-agent-security.html` and `genai-data-security.html` (both exist on disk; open **8 weeks** unresolved since July 13 audit) — Fix: add both filenames to GUIDE_PAGES set — Effort: XS
+
+**Resolved since last audit:**
+- 11 CVE pages published: Oracle (Aug 25) · ownCloud, Linux, JFrog, AjaxPro, Red Hat, Citrix, Microsoft, Gitea × 10 (Aug 28) ✓
+- Blog: `blog/ai-security-roundup-2026-08-21.html` + `blog/weekly-threat-roundup-2026-08-25.html` published ✓
+- AI roundup draft `drafts/ai-security-roundup-2026-08-28.md` generated Friday Aug 28 ✓
+- Comparisons regenerated Aug 25 (now "Last updated: August 25, 2026" ✓)
+- Sprint kit manifest updated Aug 26 ✓
+- Sitemap/llms.txt reconciled daily Aug 25–31 ✓
+
+**Metrics tracked:**
+- Total generated pages (cve-*, cert-*, comparisons/*, roadmaps/*): 376 (200 CVE + 66 cert + 43 comparisons + 67 roadmaps) — +11 CVE vs last week (365)
+- Blog pages: 122 (was 120, +2: ai-security-roundup-2026-08-21.html + weekly-threat-roundup-2026-08-25.html ✓)
+- Sitemap entries: 653 (was 640, +13 ✓)
+- Evergreen pages with timestamps (should be 0): 13 (practice-tests/*.html only — April 2, 2026 — 151 days, P1 open **12 weeks**)
+- Pages missing from llms.txt: 0 ✓
+- Cache-bust drift count: 0 (no CSS/JS modified this week ✓)
+- Scripts >500 LOC: 14 (unchanged)
+- Store worker LOC: 1,331 (unchanged; PRICING 599/1599 cents ↔ $5.99/$15.99 frontend ✓; CP_PRICING 899/1699, 1299/2499, 1699/3499 cents ✓; webhook HMAC signing confirmed at line 717 ✓)
+- D1 migrations: 2 (unchanged — 0001_error_log, 0002_quiz_feedback)
+- Python scripts with bare `except Exception:` without logging: 9 instances / 8 scripts (unchanged)
+- Certs last updated: August 2, 2026 (29 days — note: prior audit Aug 24 stated "August 18" in error; all 66 cert HTML pages show Aug 2) · Comparisons: August 25, 2026 (6 days ✓) · Roadmaps: March 30, 2026 (154 days — P2 open)
+
+---
+
 ## 2026-08-24 — Weekly Tech-Debt Audit
 
 **Headline:** Pipeline healthy — 9 CVEs published (189 total), 2 blog posts published (ai-security-roundup-2026-08-14 + weekly-threat-roundup-2026-08-18), AI roundup draft 2026-08-21 on track; `data/appsec-review.md` 2 days old (pending_review.json last_checked Aug 23 with 0 pending — idle not stalled); XSS playground security fix landed; all 8 prior items still open; P1 practice-tests timestamp now **11 weeks unresolved** at 144 days.
