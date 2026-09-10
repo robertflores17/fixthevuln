@@ -1,4 +1,4 @@
-# Daily KEV Review — 2026-09-09
+# Daily KEV Review — 2026-09-10
 
 **New CVEs:** 4 | **Critical:** 2 | **High:** 2 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
@@ -6,19 +6,20 @@
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-75650 | Adobe | Commerce and Magento | 10.0 | Unknown | 2026-09-11 |
-| CVE-2026-86218 | N-able | N-central | 9.8 | Unknown | 2026-09-11 |
-| CVE-2026-81963 | Microsoft | Windows | 7.8 | Unknown | 2026-09-22 |
-| CVE-2026-85880 | Microsoft | Windows | 7.8 | Unknown | 2026-09-22 |
+| CVE-2026-20079 | Cisco | Secure Firewall Management Center (FMC) and Security Cloud Control (SCC) Firewall Management | 10.0 | Unknown | 2026-09-12 |
+| CVE-2026-19490 | Citrix | NetScaler | 9.8 | Unknown | 2026-09-12 |
+| CVE-2026-87491 | Google | Chromium V8 | 8.8 | Unknown | 2026-09-23 |
+| CVE-2025-25249 | Fortinet | Multiple Products | 8.1 | Unknown | 2026-09-12 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-09-11 (2 CVEs)
+- **Nearest due date:** 2026-09-12 (3 CVEs)
 - **Overdue:** None
 
 ## Vendor Summary
-- Microsoft: 2 CVEs
-- Adobe: 1 CVE
-- N-able: 1 CVE
+- Citrix: 1 CVE
+- Fortinet: 1 CVE
+- Google: 1 CVE
+- Cisco: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
