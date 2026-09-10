@@ -1,56 +1,54 @@
-# AppSec Review — 2026-09-05
+# AppSec Review — CISA KEV Batch
 
+**Date:** 2026-09-10  
 **Reviewer:** Robert Flores, CISSP  
-**Review Date:** 2026-09-05  
-**CVEs Reviewed:** 1  
+**CVE Count:** 4  
+**CISA KEV dateAdded:** 2026-09-08  
 
 ---
 
 ## Severity Breakdown
 
-| Priority | Count |
-|----------|-------|
-| Critical | 0     |
-| High     | 1     |
-| Medium   | 0     |
-| Low      | 0     |
+| Priority | Count | CVEs |
+|----------|-------|------|
+| Critical | 2 | CVE-2026-75650, CVE-2026-86218 |
+| High | 2 | CVE-2026-81963, CVE-2026-85880 |
+| Medium | 0 | — |
+| Low | 0 | — |
 
 ---
 
 ## CVE Summary
 
-| CVE ID          | Vendor | Product         | Priority | Vuln Class        |
-|-----------------|--------|-----------------|----------|-------------------|
-| CVE-2026-85046  | Google | Chromium V8     | high     | Type Confusion/RCE |
-
----
-
-## CVE Details
-
-**CVE-2026-85046 — Google Chromium V8 Type Confusion**  
-CVSS 8.8 | CWE-843 (Type Confusion) | Added 2026-09-04  
-Remote attacker can execute arbitrary code inside the browser sandbox via a crafted HTML page — no authentication required. Affects all Chromium-based browsers including Chrome, Edge, and Opera, giving this vulnerability broad real-world impact across enterprise and consumer endpoints.
+| CVE ID | Vendor | Product | Priority | Vuln Class | CVSS |
+|--------|--------|---------|----------|------------|------|
+| CVE-2026-75650 | Adobe | Commerce / Magento | Critical | Template Engine Injection / RCE | 10.0 |
+| CVE-2026-86218 | N-able | N-central | Critical | Static Code Injection / Pre-auth RCE | 9.8 |
+| CVE-2026-81963 | Microsoft | Windows Update Stack | High | Link Following / LPE to SYSTEM | 7.8 |
+| CVE-2026-85880 | Microsoft | Windows ALPC | High | Heap Buffer Overflow / LPE | 7.8 |
 
 ---
 
 ## Trend Analysis
 
-This cycle's single addition continues a sustained pattern of browser engine vulnerabilities entering the CISA KEV catalog. Type confusion flaws in JavaScript engines (V8, SpiderMonkey, JavaScriptCore) remain a premier attack vector for threat actors because exploitation requires only a single user visit to a malicious or compromised page — no credentials, no network proximity. The CVSS 8.8 score on CVE-2026-85046 reflects high confidentiality and integrity impact within the sandbox; paired with prevalent weaponization via drive-by campaigns and malvertising, defenders should treat browser patching as a Tier 1 control. Organizations running managed Chrome/Edge fleets should validate auto-update enforcement and confirm patch deployment within the BOD 26-04 14-day deadline (2026-09-18). Unmanaged endpoints and contractor/BYOD devices represent the highest residual risk.
+This batch reflects two converging attack surface trends. First, high-value platform targets: Adobe Commerce (Magento) and N-able N-central are both infrastructure-critical systems with broad deployment — Magento powers a significant slice of global e-commerce, while N-able N-central is an MSP platform whose compromise gives attackers supply-chain reach into downstream customer environments. Both carry pre-authentication RCE, making them prime targets for initial access brokers and ransomware operators seeking fast, scalable entry. Second, Windows local privilege escalation via memory-corruption and symlink primitives continues to trend as a post-exploitation staple, with two separate ALPC/Update-Stack LPE bugs added in the same KEV batch — suggesting active chaining with existing initial-access vectors, likely in ransomware or targeted intrusion campaigns where attackers already have limited foothold and need SYSTEM.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"Drive-By RCE: Why Browser Engine Type Confusion Bugs Keep Making the KEV List"** — Deep dive into CWE-843 exploitation mechanics in V8 and what the recurring KEV additions signal about attacker toolchain economics.
-2. **"BOD 26-04 in Practice: Building a Chromium Patch Enforcement Program"** — Practical guide to verifying Chrome/Edge auto-update compliance at scale using endpoint telemetry and GPO controls.
-3. **"Sandboxed But Not Safe: Understanding Browser Sandbox Escapes vs. In-Sandbox RCE"** — Explainer distinguishing in-sandbox exploitation (like CVE-2026-85046) from full sandbox escapes, and why both warrant critical patching priority.
+1. **"Supply Chain at Risk: Why CVE-2026-86218 in N-able N-central Is a Five-Alarm Fire"** — Deep-dive on MSP platform exploitation, how a single N-central compromise cascades to managed customer networks, and what MSPs need to do right now.
+
+2. **"Template Injection to CVSS 10: Dissecting the Adobe Commerce/Magento RCE Chain"** — Technical walkthrough of CWE-1336 (improper neutralization in template engines), why Magento's server-side rendering surface is persistently dangerous, and hardening recommendations for e-commerce operators.
+
+3. **"The LPE Treadmill: Two Windows Privilege Escalation Bugs in One KEV Batch"** — Pattern analysis of Windows ALPC and Update Stack as recurring exploit targets, attacker post-exploitation playbooks, and the case for aggressive Patch Tuesday SLA enforcement.
 
 ---
 
 ## Newsletter Snippet
 
-**This Week in Active Exploitation — September 5, 2026**
+**September 10, 2026 — KEV Watch**
 
-CISA added one new vulnerability to the Known Exploited Vulnerabilities catalog this week: CVE-2026-85046, a type confusion flaw in Google Chromium's V8 JavaScript engine (CVSS 8.8). The vulnerability enables a remote attacker to execute arbitrary code inside the browser sandbox simply by luring a target to a crafted webpage — no authentication, no user interaction beyond clicking a link. All Chromium-based browsers are affected, including Google Chrome, Microsoft Edge, and Opera, making this one of the highest-exposure single-CVE additions in recent cycles.
+CISA added four actively exploited vulnerabilities to the Known Exploited Vulnerabilities catalog this week, with two reaching critical severity. Adobe Commerce and Magento are affected by a template engine injection flaw (CVE-2026-75650, CVSS 10.0) that enables unauthenticated remote code execution — if you run Magento, patch immediately with no exceptions. N-able N-central carries an equally alarming pre-authentication RCE via static code injection (CVE-2026-86218, CVSS 9.8); given N-central's role as an MSP management hub, exploitation of this vulnerability can provide attackers with direct pathways into managed customer environments at scale. Federal agencies face a September 11 remediation deadline for both.
 
-Federal agencies have until **September 18, 2026** to remediate under BOD 26-04. For everyone else, the guidance is the same: ensure Chrome and Edge are on auto-update and confirm that managed endpoints have received the patch. Given that drive-by exploitation requires only a browser visit, unpatched endpoints should be treated as actively at risk. Check your fleet now, and don't overlook contractor devices and BYOD endpoints where update enforcement is often weakest.
+Rounding out the batch, two Microsoft Windows local privilege escalation vulnerabilities — a link-following flaw in the Windows Update Stack (CVE-2026-81963) and a heap buffer overflow in the Advanced Local Procedure Call subsystem (CVE-2026-85880), both CVSS 7.8 — underscore the continued value of Windows LPE exploits as post-exploitation tools. Attackers routinely chain these with commodity initial-access techniques to reach SYSTEM-level control, making timely Windows patching a critical control even for organizations with strong perimeter defenses. Apply the relevant Microsoft security updates from the September 2026 Patch Tuesday cycle promptly.
