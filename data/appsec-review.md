@@ -1,9 +1,8 @@
-# AppSec Review — CISA KEV Batch
+# AppSec Review — 2026-09-11
 
-**Date:** 2026-09-10  
 **Reviewer:** Robert Flores, CISSP  
-**CVE Count:** 4  
-**CISA KEV dateAdded:** 2026-09-08  
+**CVEs Reviewed:** 4  
+**Source:** CISA Known Exploited Vulnerabilities (KEV) Catalog  
 
 ---
 
@@ -11,44 +10,44 @@
 
 | Priority | Count | CVEs |
 |----------|-------|------|
-| Critical | 2 | CVE-2026-75650, CVE-2026-86218 |
-| High | 2 | CVE-2026-81963, CVE-2026-85880 |
-| Medium | 0 | — |
-| Low | 0 | — |
+| Critical | 2 | CVE-2026-19490, CVE-2026-20079 |
+| High     | 2 | CVE-2025-25249, CVE-2026-87491 |
+| Medium   | 0 | — |
+| Low      | 0 | — |
 
 ---
 
 ## CVE Summary
 
-| CVE ID | Vendor | Product | Priority | Vuln Class | CVSS |
-|--------|--------|---------|----------|------------|------|
-| CVE-2026-75650 | Adobe | Commerce / Magento | Critical | Template Engine Injection / RCE | 10.0 |
-| CVE-2026-86218 | N-able | N-central | Critical | Static Code Injection / Pre-auth RCE | 9.8 |
-| CVE-2026-81963 | Microsoft | Windows Update Stack | High | Link Following / LPE to SYSTEM | 7.8 |
-| CVE-2026-85880 | Microsoft | Windows ALPC | High | Heap Buffer Overflow / LPE | 7.8 |
+| CVE ID | Vendor | Priority | Vulnerability Class |
+|--------|--------|----------|---------------------|
+| CVE-2026-19490 | Citrix | critical | Authentication Bypass (CWE-288) |
+| CVE-2025-25249 | Fortinet | high | Heap-Based Buffer Overflow / RCE (CWE-122, CWE-787) |
+| CVE-2026-87491 | Google | high | Out-of-Bounds Write / Memory Corruption (CWE-787) |
+| CVE-2026-20079 | Cisco | critical | Authentication Bypass → Root RCE (CWE-288) |
 
 ---
 
 ## Trend Analysis
 
-This batch reflects two converging attack surface trends. First, high-value platform targets: Adobe Commerce (Magento) and N-able N-central are both infrastructure-critical systems with broad deployment — Magento powers a significant slice of global e-commerce, while N-able N-central is an MSP platform whose compromise gives attackers supply-chain reach into downstream customer environments. Both carry pre-authentication RCE, making them prime targets for initial access brokers and ransomware operators seeking fast, scalable entry. Second, Windows local privilege escalation via memory-corruption and symlink primitives continues to trend as a post-exploitation staple, with two separate ALPC/Update-Stack LPE bugs added in the same KEV batch — suggesting active chaining with existing initial-access vectors, likely in ransomware or targeted intrusion campaigns where attackers already have limited foothold and need SYSTEM.
+This batch reflects an ongoing and intensifying pattern of unauthenticated authentication bypass vulnerabilities targeting enterprise network security infrastructure. Two of the four CVEs — Citrix NetScaler (CVSS 9.8) and Cisco FMC/SCC (CVSS 10.0) — exploit alternate-path authentication flaws (CWE-288) that allow remote attackers to completely bypass access controls on gateway, VPN, and firewall management systems. These products sit at the perimeter of enterprise networks, meaning a successful exploit can serve as the initial access vector for ransomware or state-sponsored intrusions. The Fortinet heap overflow and Chrome V8 out-of-bounds write round out the batch with memory corruption chains that enable code execution, continuing a multi-year trend of memory safety failures in widely-deployed C/C++ codebases. The presence of a 2025-vintage Fortinet CVE in a September 2026 KEV addition signals that threat actors are revisiting older, under-patched vulnerabilities — organizations that deprioritized patching in 2025 are now demonstrably under active attack.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"Supply Chain at Risk: Why CVE-2026-86218 in N-able N-central Is a Five-Alarm Fire"** — Deep-dive on MSP platform exploitation, how a single N-central compromise cascades to managed customer networks, and what MSPs need to do right now.
+1. **"Unauthenticated to Root: The Authentication Bypass Epidemic in Network Security Products"** — Deep dive into CWE-288 patterns across Citrix NetScaler and Cisco FMC, explaining how alternate-path flaws arise, how attackers exploit them, and what defenders should check beyond the patch.
 
-2. **"Template Injection to CVSS 10: Dissecting the Adobe Commerce/Magento RCE Chain"** — Technical walkthrough of CWE-1336 (improper neutralization in template engines), why Magento's server-side rendering surface is persistently dangerous, and hardening recommendations for e-commerce operators.
+2. **"Why CISA Added a 2025 Fortinet CVE in 2026: Understanding Deferred Exploitation"** — Analysis of why threat actors revisit older vulnerabilities, how to prioritize legacy CVEs, and what the Fortinet heap overflow tells us about operational security debt.
 
-3. **"The LPE Treadmill: Two Windows Privilege Escalation Bugs in One KEV Batch"** — Pattern analysis of Windows ALPC and Update Stack as recurring exploit targets, attacker post-exploitation playbooks, and the case for aggressive Patch Tuesday SLA enforcement.
+3. **"Browser Exploitation in 2026: V8 OOB Writes and the Limits of Sandbox Security"** — Technical primer on Chromium V8 memory safety issues, sandbox escape research, and why browser RCE remains a persistent enterprise risk despite years of hardening.
 
 ---
 
 ## Newsletter Snippet
 
-**September 10, 2026 — KEV Watch**
+**This Week's KEV Additions — Critical Patches for Citrix, Cisco, Fortinet, and Chrome**
 
-CISA added four actively exploited vulnerabilities to the Known Exploited Vulnerabilities catalog this week, with two reaching critical severity. Adobe Commerce and Magento are affected by a template engine injection flaw (CVE-2026-75650, CVSS 10.0) that enables unauthenticated remote code execution — if you run Magento, patch immediately with no exceptions. N-able N-central carries an equally alarming pre-authentication RCE via static code injection (CVE-2026-86218, CVSS 9.8); given N-central's role as an MSP management hub, exploitation of this vulnerability can provide attackers with direct pathways into managed customer environments at scale. Federal agencies face a September 11 remediation deadline for both.
+CISA added four actively exploited vulnerabilities to the KEV catalog this week, two of which carry the highest possible or near-maximum severity scores. Cisco Secure Firewall Management Center (FMC) and Security Cloud Control (SCC) received a CVSS 10.0 rating for an unauthenticated authentication bypass that allows a remote attacker to execute scripts and gain root access to the underlying OS — this is about as bad as it gets for network security infrastructure. Citrix NetScaler ADC and Gateway are similarly affected by a CVSS 9.8 authentication bypass impacting SSL VPN and ICA Proxy configurations. Both have a CISA remediation due date of September 12, meaning federal agencies have essentially no time to spare.
 
-Rounding out the batch, two Microsoft Windows local privilege escalation vulnerabilities — a link-following flaw in the Windows Update Stack (CVE-2026-81963) and a heap buffer overflow in the Advanced Local Procedure Call subsystem (CVE-2026-85880), both CVSS 7.8 — underscore the continued value of Windows LPE exploits as post-exploitation tools. Attackers routinely chain these with commodity initial-access techniques to reach SYSTEM-level control, making timely Windows patching a critical control even for organizations with strong perimeter defenses. Apply the relevant Microsoft security updates from the September 2026 Patch Tuesday cycle promptly.
+Rounding out the batch: Fortinet FortiOS, FortiSwitchManager, and FortiSASE are affected by a heap-based buffer overflow (CVSS 8.1) that enables remote code execution via specially crafted packets — a 2025 CVE that CISA is now flagging due to confirmed in-the-wild exploitation. Google Chrome/Chromium (CVSS 8.8) has a V8 engine out-of-bounds write that allows sandbox-confined arbitrary code execution via a malicious web page, affecting Chrome, Edge, and Opera users. If your organization runs any of these products, treat the September 12 due date as your personal deadline — patch now.
