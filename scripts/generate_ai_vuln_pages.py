@@ -48,18 +48,18 @@ def render_grid(techniques):
 
 
 def main():
-    data = json.loads(CONTENT_PATH.read_text())
+    data = json.loads(CONTENT_PATH.read_text(encoding='utf-8'))
     techniques = data["techniques"]
 
     OUTPUT_DIR.mkdir(exist_ok=True)
     for t in techniques:
         html = render_technique_page(t, hub_url=HUB_URL, hub_name=HUB_NAME)
-        (OUTPUT_DIR / f'{t["id"]}.html').write_text(html)
+        (OUTPUT_DIR / f'{t["id"]}.html').write_text(html, encoding='utf-8')
     print(f"Wrote {len(techniques)} pages to {OUTPUT_DIR}/")
 
-    hub_html = HUB_PATH.read_text()
+    hub_html = HUB_PATH.read_text(encoding='utf-8')
     grid_html = render_grid(techniques)
-    HUB_PATH.write_text(replace_grid_section(hub_html, grid_html))
+    HUB_PATH.write_text(replace_grid_section(hub_html, grid_html), encoding='utf-8')
     print(f"Updated grid in {HUB_PATH}")
 
 
