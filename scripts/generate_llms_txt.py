@@ -118,6 +118,7 @@ CATEGORIES = [
     ("Blog & Study Guides", lambda p: p.startswith("blog/"), "/blog/", None),
     ("Certification Comparisons", lambda p: p.startswith("comparisons/"), "/comparisons/", None),
     ("CVE & Vulnerability Pages", lambda p: p.startswith("cve/"), "/cve-lookup.html", None),
+    ("AI Vulnerability Techniques", lambda p: p.startswith("ai-vulnerabilities/"), "/owasp-llm-top10.html", None),
     ("Store", lambda p: p.startswith("store/"), "/store/store.html", None),
     ("Interactive Security Tools", lambda p: _is_tool(p), "/tools.html", None),
     ("Compliance & Framework Guides", lambda p: _is_compliance(p), "/compliance.html", None),
@@ -330,20 +331,24 @@ def generate_llms_txt(categories, hub_urls):
         "Certification Comparisons",
         "Blog & Study Guides",
         "CVE & Vulnerability Pages",
+        "AI Vulnerability Techniques",
         "OWASP WSTG Testing Guide",
         "Store",
     ]
 
     for cat_name in category_order:
         if cat_name in categories:
-            count = len(categories[cat_name])
-            lines.append(f"## {cat_name} ({count} pages)")
+            items = categories[cat_name]
+            lines.append(f"## {cat_name} ({len(items)} pages)")
             lines.append("")
             # Find the hub URL for this category
             for cname, _, hub_path, _ in CATEGORIES:
                 if cname == cat_name and hub_path:
                     lines.append(f"- [Browse all]({BASE_URL}{hub_path})")
                     break
+            # List all URLs in this category
+            for url, title in sorted(items, key=lambda x: x[1]):
+                lines.append(f"- [{title}]({url})")
             lines.append("")
 
     lines.append("## Additional Resources")
@@ -388,6 +393,7 @@ def generate_llms_full_txt(categories, hub_urls):
         "Certification Comparisons",
         "Blog & Study Guides",
         "CVE & Vulnerability Pages",
+        "AI Vulnerability Techniques",
         "OWASP WSTG Testing Guide",
         "Store",
     ]
