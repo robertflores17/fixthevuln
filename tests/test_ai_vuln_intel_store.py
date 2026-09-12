@@ -9,7 +9,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / 'scripts'))
 
-from lib.ai_vuln_intel_store import add_entry, record_loop_round, get_entries, load_state
+from lib.ai_vuln_intel_store import add_entry, record_loop_round, get_entries, load_state, set_status
 
 
 def _fresh_state():
@@ -70,6 +70,32 @@ class TestGetEntries(unittest.TestCase):
                            "source_url": "https://x", "detected_at": "2026-09-12"})
         self.assertEqual(len(get_entries(state, status="new")), 1)
         self.assertEqual(len(get_entries(state)), 2)
+
+
+class TestSetStatus(unittest.TestCase):
+    def _state_with_entry(self):
+        state = _fresh_state()
+        add_entry(state, {"id": "e1", "type": "framework_ghsa", "status": "new",
+                           "source_url": "https://x", "detected_at": "2026-09-12"})
+        return state
+
+    def test_set_status_on_existing_entry(self):
+        state = self._state_with_entry()
+        result = set_status(state, "e1", "drafted")
+        self.assertTrue(result)
+        self.assertEqual(get_entries(state)[0]["status"], "drafted")
+
+    def test_set_status_on_nonexistent_entry(self):
+        state = _fresh_state()
+        result = set_status(state, "nonexistent", "drafted")
+        self.assertFalse(result)
+
+    def test_set_status_with_notes(self):
+        state = self._state_with_entry()
+        result = set_status(state, "e1", "in_review", notes="Verified claim")
+        self.assertTrue(result)
+        self.assertEqual(get_entries(state)[0]["status"], "in_review")
+        self.assertEqual(get_entries(state)[0]["notes"], "Verified claim")
 
 
 if __name__ == '__main__':
