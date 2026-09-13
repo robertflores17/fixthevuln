@@ -19,7 +19,7 @@ LOOP_CAP = 3
 
 def load_state():
     if STATE_FILE.exists():
-        with open(STATE_FILE, 'r') as f:
+        with open(STATE_FILE, 'r', encoding='utf-8') as f:
             return json.load(f)
     return {"last_updated": None, "entries": []}
 
@@ -27,7 +27,7 @@ def load_state():
 def save_state(state):
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     state["last_updated"] = datetime.now(timezone.utc).isoformat()
-    with open(STATE_FILE, 'w') as f:
+    with open(STATE_FILE, 'w', encoding='utf-8') as f:
         json.dump(state, f, indent=2)
 
 
@@ -62,6 +62,20 @@ def set_status(state, entry_id, status, notes=""):
     if notes:
         e["notes"] = notes
     return True
+
+
+def get_atlas_known_ids(state):
+    """Returns the baseline set of MITRE ATLAS technique IDs recorded on a
+    previous run, or None if no baseline has been recorded yet (first run —
+    callers must treat this as "queue nothing, just record the baseline")."""
+    ids = state.get("atlas_known_ids")
+    return set(ids) if ids is not None else None
+
+
+def set_atlas_known_ids(state, ids):
+    """Persist the current full set of MITRE ATLAS technique IDs as the
+    baseline for the next run's new-technique diff."""
+    state["atlas_known_ids"] = sorted(ids)
 
 
 def record_loop_round(state, entry_id):

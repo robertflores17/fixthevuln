@@ -11,19 +11,22 @@ OWASP GenAI RSS feed rather than fetching it twice.
 
 Usage: python3 scripts/aggregate_ai_vuln_intel.py
 """
+import argparse
 import json
 import re
 import sys
 import urllib.error
 import urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / 'scripts'))
 
-from lib.ai_vuln_intel_store import load_state, save_state, add_entry
+from lib.ai_vuln_intel_store import (
+    load_state, save_state, add_entry, get_atlas_known_ids, set_atlas_known_ids,
+)
 
 OWASP_GENAI_FEED = "https://genai.owasp.org/feed/"
 
@@ -124,10 +127,10 @@ def fetch_atlas_technique_ids():
 
 
 def check_atlas_techniques(remote_technique_ids, known_ids):
-    """New technique IDs present remotely but not yet in
-    data/ai-vuln-content.json (known_ids) become atlas_technique_change
-    signals. An empty remote list (failed fetch) yields no entries — never
-    treat "couldn't fetch" as "everything is missing"."""
+    """New technique IDs present remotely but not in the atlas_known_ids
+    baseline become atlas_technique_change signals. An empty remote list
+    (failed fetch) yields no entries — never treat "couldn't fetch" as
+    "everything is missing"."""
     entries = []
     for tid in remote_technique_ids:
         if tid not in known_ids:
@@ -139,6 +142,26 @@ def check_atlas_techniques(remote_technique_ids, known_ids):
                 "detected_at": datetime.now(timezone.utc).isoformat(),
             })
     return entries
+
+
+def resolve_atlas_signals(remote_ids, known_ids):
+    """Baseline-then-diff flow for MITRE ATLAS technique IDs (avoids a
+    cold-start flood queuing all ~197 real techniques as "new" on day one).
+
+    known_ids is None on the first run (no atlas_known_ids baseline recorded
+    yet): records the full remote set as the baseline and queues nothing.
+    remote_ids empty (failed fetch): no baseline change, no signals.
+    Otherwise: diffs remote_ids against the known_ids baseline via
+    check_atlas_techniques and returns the full remote set as the updated
+    baseline.
+
+    Returns (entries_to_queue, new_baseline_ids_or_None). A None second
+    element means "don't touch the persisted baseline this run"."""
+    if not remote_ids:
+        return [], None
+    if known_ids is None:
+        return [], set(remote_ids)
+    return check_atlas_techniques(remote_ids, known_ids), set(remote_ids)
 
 
 def fetch_ghsa_advisories(repo, github_token=None):
@@ -160,13 +183,32 @@ def fetch_ghsa_advisories(repo, github_token=None):
         return []
 
 
-def check_framework_ghsa(advisories_by_repo):
-    """One queue entry per advisory across all tracked repos. Dedup against
-    already-queued advisories happens via add_entry's id check in main(),
-    same as every other signal type — no separate 'seen' file needed."""
+def _parse_ghsa_date(s):
+    """Parse a GHSA API ISO-8601 timestamp (e.g. '2026-09-01T00:00:00Z').
+    Returns None if missing/unparseable, matching aggregate_ai_security_news.py's
+    lenient handling: an unparseable date is kept, not filtered out."""
+    if not s:
+        return None
+    try:
+        return datetime.fromisoformat(s.replace('Z', '+00:00'))
+    except ValueError:
+        return None
+
+
+def check_framework_ghsa(advisories_by_repo, cutoff_dt):
+    """One queue entry per advisory across all tracked repos published at or
+    after cutoff_dt (recency filter — a live check found 61+ advisories
+    across just 6 of 13 tracked repos, some dating to 2023, with no filter).
+    Dedup against already-queued advisories happens via add_entry's id check
+    in main(), same as every other signal type — no separate 'seen' file
+    needed. Pure function: cutoff_dt is passed in rather than computed from
+    datetime.now() here, so it stays testable without mocking the clock."""
     entries = []
     for repo, advisories in advisories_by_repo.items():
         for adv in advisories:
+            pub_dt = _parse_ghsa_date(adv.get("published_at", ""))
+            if pub_dt is not None and pub_dt < cutoff_dt:
+                continue
             entries.append({
                 "id": f"ghsa-{adv['ghsa_id']}",
                 "type": "framework_ghsa",
@@ -180,6 +222,11 @@ def check_framework_ghsa(advisories_by_repo):
 
 def main():
     import os
+    parser = argparse.ArgumentParser(description="Aggregate AI vulnerability intel signals")
+    parser.add_argument("--days", type=int, default=7,
+                         help="GHSA advisory recency window in days (default 7)")
+    args = parser.parse_args()
+
     state = load_state()
     added = 0
 
@@ -188,25 +235,28 @@ def main():
         if add_entry(state, entry):
             added += 1
 
-    content_path = REPO_ROOT / "data" / "ai-vuln-content.json"
-    known_ids = set()
-    if content_path.exists():
-        content = json.loads(content_path.read_text())
-        known_ids = {t["code"] for t in content["techniques"] if t["framework"] == "mitre-atlas"} | \
-                    {t["code"] for t in content["techniques"] if t["framework"] == "owasp-llm-top10"}
+    known_atlas_ids = get_atlas_known_ids(state)
     remote_ids = fetch_atlas_technique_ids()
-    for entry in check_atlas_techniques(remote_ids, known_ids):
+    atlas_entries, new_baseline = resolve_atlas_signals(remote_ids, known_atlas_ids)
+    for entry in atlas_entries:
         if add_entry(state, entry):
             added += 1
+    baseline_changed = new_baseline is not None and new_baseline != known_atlas_ids
+    if baseline_changed:
+        set_atlas_known_ids(state, new_baseline)
 
     github_token = os.environ.get('GITHUB_TOKEN', '')
     advisories_by_repo = {repo: fetch_ghsa_advisories(repo, github_token) for repo in TRACKED_REPOS}
-    for entry in check_framework_ghsa(advisories_by_repo):
+    cutoff_dt = datetime.now(timezone.utc) - timedelta(days=args.days)
+    for entry in check_framework_ghsa(advisories_by_repo, cutoff_dt):
         if add_entry(state, entry):
             added += 1
 
-    save_state(state)
-    print(f"Added {added} new signal(s) to data/ai-vuln-intel.json")
+    if added > 0 or baseline_changed:
+        save_state(state)
+        print(f"Added {added} new signal(s) to data/ai-vuln-intel.json")
+    else:
+        print("Added 0 new signal(s) — nothing to write")
 
 
 if __name__ == "__main__":
