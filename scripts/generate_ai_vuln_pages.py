@@ -24,6 +24,11 @@ HUB_PATH = REPO_ROOT / "owasp-llm-top10.html"
 HUB_URL = "owasp-llm-top10.html"
 HUB_NAME = "OWASP LLM Top 10"
 
+# Matches every id currently in data/ai-vuln-content.json (e.g.
+# "llm01-prompt-injection"); guards against a malformed id building a write
+# path that escapes OUTPUT_DIR.
+VALID_ID_RE = re.compile(r'^[a-z0-9.-]+$')
+
 GRID_START = "<!-- AI-VULN-GRID-START -->"
 GRID_END = "<!-- AI-VULN-GRID-END -->"
 
@@ -39,8 +44,8 @@ def render_grid(techniques):
     cards = []
     for t in techniques:
         cards.append(f'''                <a href="ai-vulnerabilities/{t["id"]}.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
-                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">{t["code"]}: {esc(t["name"])}</strong>
-                    <span style="font-size:0.85rem;font-weight:700;color:{t["risk_color"]};">{esc(t["risk_level"])}</span>
+                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">{esc(t["code"])}: {esc(t["name"])}</strong>
+                    <span style="font-size:0.85rem;font-weight:700;color:{esc(t["risk_color"])};">{esc(t["risk_level"])}</span>
                 </a>''')
     return f'''            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;">
 {chr(10).join(cards)}
@@ -50,10 +55,15 @@ def render_grid(techniques):
 def main():
     data = json.loads(CONTENT_PATH.read_text(encoding='utf-8'))
     techniques = data["techniques"]
+    last_updated = data["lastUpdated"]
+
+    for t in techniques:
+        if not VALID_ID_RE.match(t["id"]):
+            raise ValueError(f'Invalid technique id {t["id"]!r} — must match {VALID_ID_RE.pattern}')
 
     OUTPUT_DIR.mkdir(exist_ok=True)
     for t in techniques:
-        html = render_technique_page(t, hub_url=HUB_URL, hub_name=HUB_NAME)
+        html = render_technique_page(t, hub_url=HUB_URL, hub_name=HUB_NAME, last_updated=last_updated)
         (OUTPUT_DIR / f'{t["id"]}.html').write_text(html, encoding='utf-8')
     print(f"Wrote {len(techniques)} pages to {OUTPUT_DIR}/")
 

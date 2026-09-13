@@ -25,21 +25,21 @@ SAMPLE = {
 
 class TestRenderTechniquePage(unittest.TestCase):
     def test_includes_code_and_name_in_title(self):
-        html = render_technique_page(SAMPLE, hub_url="/owasp-llm-top10.html", hub_name="OWASP LLM Top 10")
+        html = render_technique_page(SAMPLE, hub_url="/owasp-llm-top10.html", hub_name="OWASP LLM Top 10", last_updated="2026-09-01")
         self.assertIn("LLM01: Prompt Injection", html)
 
     def test_includes_all_mitigations(self):
-        html = render_technique_page(SAMPLE, hub_url="/owasp-llm-top10.html", hub_name="OWASP LLM Top 10")
+        html = render_technique_page(SAMPLE, hub_url="/owasp-llm-top10.html", hub_name="OWASP LLM Top 10", last_updated="2026-09-01")
         self.assertIn("Do the thing", html)
         self.assertIn("Do the other thing", html)
 
     def test_escapes_name_field(self):
         entry = dict(SAMPLE, name='Prompt Injection<script>alert(1)</script>')
-        html = render_technique_page(entry, hub_url="/owasp-llm-top10.html", hub_name="OWASP LLM Top 10")
+        html = render_technique_page(entry, hub_url="/owasp-llm-top10.html", hub_name="OWASP LLM Top 10", last_updated="2026-09-01")
         self.assertNotIn('<script>alert(1)</script>', html)
 
     def test_links_back_to_hub(self):
-        html = render_technique_page(SAMPLE, hub_url="/owasp-llm-top10.html", hub_name="OWASP LLM Top 10")
+        html = render_technique_page(SAMPLE, hub_url="/owasp-llm-top10.html", hub_name="OWASP LLM Top 10", last_updated="2026-09-01")
         self.assertIn('href="../owasp-llm-top10.html"', html)
 
 

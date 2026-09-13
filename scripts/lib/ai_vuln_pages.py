@@ -42,15 +42,21 @@ def _related_links_html(related_links):
     return f'\n            <p>{links}</p>'
 
 
-def render_technique_page(entry, hub_url, hub_name):
-    title = f'{entry["code"]}: {esc(entry["name"])}'
+def render_technique_page(entry, hub_url, hub_name, last_updated):
+    # Unescaped — passed to page_wrapper/html_head, which escapes it once for
+    # <title>/meta (and json.dumps below, for which raw text is correct).
+    # Do NOT esc() here or it double-escapes (e.g. "&amp;" -> "&amp;amp;").
+    title = f'{entry["code"]}: {entry["name"]}'
+    # Escaped — used directly in the body below, which doesn't route through
+    # html_head's own escaping.
+    heading = f'{esc(entry["code"])}: {esc(entry["name"])}'
     canonical = f'{SITE_URL}/ai-vulnerabilities/{entry["id"]}.html'
-    description = f'{title} — risk level {entry["risk_level"]}. Part of the {esc(hub_name)} technique library on {SITE_NAME}.'
+    description = f'{title} — risk level {entry["risk_level"]}. Part of the {hub_name} technique library on {SITE_NAME}.'
 
     content = f'''    <header>
         <div class="container">
             <a href="../index.html" style="text-decoration: none; color: inherit;"><h1>{SITE_NAME}</h1></a>
-            <p class="tagline">{title}</p>
+            <p class="tagline">{heading}</p>
         </div>
     </header>
 
@@ -58,8 +64,8 @@ def render_technique_page(entry, hub_url, hub_name):
         <a href="../{hub_url.lstrip('/')}" class="back-link">&larr; Back to {esc(hub_name)}</a>
 
         <section class="vulnerability-card">
-            <h2>{title}</h2>
-            <p><strong>Risk Level:</strong> <span style="color: {entry["risk_color"]}; font-weight: 700;">{esc(entry["risk_level"])}</span></p>
+            <h2>{heading}</h2>
+            <p><strong>Risk Level:</strong> <span style="color: {esc(entry["risk_color"])}; font-weight: 700;">{esc(entry["risk_level"])}</span></p>
             {entry.get("summary_html", "")}
 {_sections_html(entry["sections"])}
 {_mitigations_html(entry["mitigations"])}
@@ -73,7 +79,7 @@ def render_technique_page(entry, hub_url, hub_name):
             (hub_name, f"{SITE_URL}/{hub_url.lstrip('/')}"),
             (title, None),
         ]),
-        article_schema(title, description, entry.get("lastUpdated") or "2026-09-12"),
+        article_schema(title, description, last_updated),
     ]
 
     return page_wrapper(
