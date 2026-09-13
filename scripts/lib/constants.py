@@ -9,7 +9,7 @@ Bump CSS versions here — all generators pick them up automatically.
 # CSS Cache-Bust Versions (bump here after editing CSS files)
 # ---------------------------------------------------------------------------
 
-STYLE_CSS_VERSION = 8
+STYLE_CSS_VERSION = 9
 QUIZ_CSS_VERSION = 3
 COMPARISON_CSS_VERSION = 3
 STORE_CSS_VERSION = 6
