@@ -338,17 +338,14 @@ def generate_llms_txt(categories, hub_urls):
 
     for cat_name in category_order:
         if cat_name in categories:
-            items = categories[cat_name]
-            lines.append(f"## {cat_name} ({len(items)} pages)")
+            count = len(categories[cat_name])
+            lines.append(f"## {cat_name} ({count} pages)")
             lines.append("")
             # Find the hub URL for this category
             for cname, _, hub_path, _ in CATEGORIES:
                 if cname == cat_name and hub_path:
                     lines.append(f"- [Browse all]({BASE_URL}{hub_path})")
                     break
-            # List all URLs in this category
-            for url, title in sorted(items, key=lambda x: x[1]):
-                lines.append(f"- [{title}]({url})")
             lines.append("")
 
     lines.append("## Additional Resources")
