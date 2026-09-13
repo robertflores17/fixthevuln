@@ -1,56 +1,55 @@
-# AppSec Review — 2026-09-05
+# AppSec Review — 2026-09-12
 
 **Reviewer:** Robert Flores, CISSP  
-**Review Date:** 2026-09-05  
-**CVEs Reviewed:** 1  
+**CVEs Reviewed:** 2  
+**Source:** CISA Known Exploited Vulnerabilities (KEV) Catalog  
 
 ---
 
 ## Severity Breakdown
 
-| Priority | Count |
-|----------|-------|
-| Critical | 0     |
-| High     | 1     |
-| Medium   | 0     |
-| Low      | 0     |
+| Priority | Count | CVEs |
+|----------|-------|------|
+| Critical | 1 | CVE-2026-86060 |
+| High     | 1 | CVE-2026-67277 |
+| Medium   | 0 | — |
+| Low      | 0 | — |
 
 ---
 
 ## CVE Summary
 
-| CVE ID          | Vendor | Product         | Priority | Vuln Class        |
-|-----------------|--------|-----------------|----------|-------------------|
-| CVE-2026-85046  | Google | Chromium V8     | high     | Type Confusion/RCE |
+| CVE ID | Vendor | Priority | Vulnerability Class |
+|--------|--------|----------|---------------------|
+| CVE-2026-86060 | MikroTik | Critical | Argument Injection / Privilege Escalation |
+| CVE-2026-67277 | MikroTik | High | Missing Authentication / Memory Disclosure + DoS |
 
 ---
 
-## CVE Details
+## Analysis
 
-**CVE-2026-85046 — Google Chromium V8 Type Confusion**  
-CVSS 8.8 | CWE-843 (Type Confusion) | Added 2026-09-04  
-Remote attacker can execute arbitrary code inside the browser sandbox via a crafted HTML page — no authentication required. Affects all Chromium-based browsers including Chrome, Edge, and Opera, giving this vulnerability broad real-world impact across enterprise and consumer endpoints.
+**CVE-2026-86060** — MikroTik RouterOS Argument Injection (CWE-88), CVSS 9.8. This argument injection flaw allows an attacker to manipulate the trusted RouterOS policy mask, enabling privilege escalation. With a CVSS of 9.8 and no authentication barrier implied, this is a pre-auth or low-auth network-accessible vector on one of the most widely deployed router platforms in ISP and SMB environments. Priority: **Critical**.
+
+**CVE-2026-67277** — MikroTik RouterOS Missing Authentication for Critical Function (CWE-306), CVSS 8.2. The btest (bandwidth test) service lacks authentication, exposing kernel memory and enabling denial of service remotely. While this doesn't provide full remote code execution, unauthenticated kernel memory disclosure is a high-impact primitive that can facilitate further exploitation or network reconnaissance. Priority: **High**.
 
 ---
 
 ## Trend Analysis
 
-This cycle's single addition continues a sustained pattern of browser engine vulnerabilities entering the CISA KEV catalog. Type confusion flaws in JavaScript engines (V8, SpiderMonkey, JavaScriptCore) remain a premier attack vector for threat actors because exploitation requires only a single user visit to a malicious or compromised page — no credentials, no network proximity. The CVSS 8.8 score on CVE-2026-85046 reflects high confidentiality and integrity impact within the sandbox; paired with prevalent weaponization via drive-by campaigns and malvertising, defenders should treat browser patching as a Tier 1 control. Organizations running managed Chrome/Edge fleets should validate auto-update enforcement and confirm patch deployment within the BOD 26-04 14-day deadline (2026-09-18). Unmanaged endpoints and contractor/BYOD devices represent the highest residual risk.
+Both CVEs this cycle target MikroTik RouterOS, continuing a sustained focus by threat actors on networking infrastructure. RouterOS is prevalent in ISPs, SMBs, and home labs, making it a high-value target for botnet recruitment, traffic interception, and lateral movement into enterprise networks. The combination of an argument injection bug (CVSS 9.8) and a missing-authentication vulnerability in a bandwidth-testing service illustrates a pattern of fundamental design flaws being weaponized rather than sophisticated zero-days — these are the kind of implementation oversights that persist in embedded firmware and are difficult to patch at scale. Organizations should treat all RouterOS devices as internet-adjacent attack surfaces and prioritize immediate patching; MikroTik's September 2026 security advisory (referenced in CISA notes) provides the remediation path.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"Drive-By RCE: Why Browser Engine Type Confusion Bugs Keep Making the KEV List"** — Deep dive into CWE-843 exploitation mechanics in V8 and what the recurring KEV additions signal about attacker toolchain economics.
-2. **"BOD 26-04 in Practice: Building a Chromium Patch Enforcement Program"** — Practical guide to verifying Chrome/Edge auto-update compliance at scale using endpoint telemetry and GPO controls.
-3. **"Sandboxed But Not Safe: Understanding Browser Sandbox Escapes vs. In-Sandbox RCE"** — Explainer distinguishing in-sandbox exploitation (like CVE-2026-85046) from full sandbox escapes, and why both warrant critical patching priority.
+1. **"MikroTik Under Fire: Two KEV Additions and What They Mean for Network Operators"** — Covers both CVEs, explains the attack surface of RouterOS in ISP/SMB environments, and gives practical remediation guidance.
+2. **"Argument Injection: The Forgotten Injection Class"** — Uses CVE-2026-86060 as a case study to explain CWE-88, how it differs from command injection, and why it's underrepresented in training curricula despite high exploitability.
+3. **"When Bandwidth Testing Becomes a Security Risk: Missing Auth in Network Services"** — Deep dive on CVE-2026-67277, the btest service design, and the broader problem of unauthenticated management/diagnostic services in embedded networking firmware.
 
 ---
 
 ## Newsletter Snippet
 
-**This Week in Active Exploitation — September 5, 2026**
+**This Week in Active Exploits:** CISA added two MikroTik RouterOS vulnerabilities to the KEV catalog this week, both with federal patch deadlines of September 13, 2026. The more severe of the two, CVE-2026-86060 (CVSS 9.8), is an argument injection flaw that lets attackers rewrite RouterOS policy masks and escalate privileges — effectively taking administrative control of affected devices. The second, CVE-2026-67277 (CVSS 8.2), exposes the btest (bandwidth test) service without authentication, leaking kernel memory and enabling denial of service. If you manage MikroTik devices, patching is not optional: these are confirmed actively exploited in the wild.
 
-CISA added one new vulnerability to the Known Exploited Vulnerabilities catalog this week: CVE-2026-85046, a type confusion flaw in Google Chromium's V8 JavaScript engine (CVSS 8.8). The vulnerability enables a remote attacker to execute arbitrary code inside the browser sandbox simply by luring a target to a crafted webpage — no authentication, no user interaction beyond clicking a link. All Chromium-based browsers are affected, including Google Chrome, Microsoft Edge, and Opera, making this one of the highest-exposure single-CVE additions in recent cycles.
-
-Federal agencies have until **September 18, 2026** to remediate under BOD 26-04. For everyone else, the guidance is the same: ensure Chrome and Edge are on auto-update and confirm that managed endpoints have received the patch. Given that drive-by exploitation requires only a browser visit, unpatched endpoints should be treated as actively at risk. Check your fleet now, and don't overlook contractor devices and BYOD endpoints where update enforcement is often weakest.
+RouterOS turns up in KEV repeatedly because it sits at the intersection of ubiquity and infrequent patching — a dangerous combination. Many organizations run RouterOS devices on the network perimeter without centralized patch management, and threat actors know it. This week's additions reinforce the trend of targeting networking infrastructure as a beachhead rather than endpoints. Use this as a forcing function to audit your RouterOS inventory, apply the September 2026 advisory patches, and verify no devices are running exposed management or diagnostic services (btest, Winbox, API) on untrusted interfaces.

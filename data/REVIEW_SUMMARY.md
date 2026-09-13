@@ -1,19 +1,24 @@
-# Daily KEV Review — 2026-09-04
+# Daily KEV Review — 2026-09-12
 
-**New CVEs:** 1 | **Critical:** 0 | **High:** 1 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 4 | **Critical:** 2 | **High:** 2 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-85046 | Google | Chromium V8 | 8.8 | Unknown | 2026-09-18 |
+| CVE-2026-85706 | GitLab | Community Edition and Enterprise Edition | 10.0 | Unknown | 2026-09-14 |
+| CVE-2026-84869 | ConnectWise | ScreenConnect | 9.9 | Unknown | 2026-09-14 |
+| CVE-2026-42016 | JFrog | Artifactory | 8.1 | Unknown | 2026-09-25 |
+| CVE-2026-42018 | JFrog | Artifactory | 7.5 | Unknown | 2026-09-25 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-09-18 (1 CVE)
+- **Nearest due date:** 2026-09-14 (2 CVEs)
 - **Overdue:** None
 
 ## Vendor Summary
-- Google: 1 CVE
+- JFrog: 2 CVEs
+- ConnectWise: 1 CVE
+- GitLab: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
