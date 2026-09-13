@@ -8,7 +8,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / 'scripts'))
 
-from aggregate_ai_vuln_intel import check_atlas_techniques, check_owasp_top10_change
+from aggregate_ai_vuln_intel import check_atlas_techniques, check_owasp_top10_change, check_framework_ghsa
 from lib.ai_vuln_intel_store import add_entry
 
 
@@ -67,6 +67,34 @@ class TestCheckAtlasTechniques(unittest.TestCase):
         # to "nothing new" rather than flagging every known technique as missing.
         entries = check_atlas_techniques(remote_technique_ids=[], known_ids={"AML.T0051"})
         self.assertEqual(entries, [])
+
+
+class TestCheckFrameworkGhsa(unittest.TestCase):
+    def test_creates_one_entry_per_advisory(self):
+        advisories_by_repo = {
+            "langchain-ai/langchain": [
+                {"ghsa_id": "GHSA-aaaa-bbbb-cccc", "summary": "SSRF in loader",
+                 "html_url": "https://github.com/advisories/GHSA-aaaa-bbbb-cccc",
+                 "published_at": "2026-09-01T00:00:00Z"},
+            ]
+        }
+        entries = check_framework_ghsa(advisories_by_repo)
+        self.assertEqual(len(entries), 1)
+        self.assertEqual(entries[0]["type"], "framework_ghsa")
+        self.assertIn("GHSA-aaaa-bbbb-cccc", entries[0]["id"])
+
+    def test_no_advisories_produces_no_entries(self):
+        self.assertEqual(check_framework_ghsa({"vllm-project/vllm": []}), [])
+
+    def test_multiple_repos_each_contribute(self):
+        advisories_by_repo = {
+            "ollama/ollama": [{"ghsa_id": "GHSA-1111-2222-3333", "summary": "x",
+                                "html_url": "https://x", "published_at": "2026-09-01T00:00:00Z"}],
+            "huggingface/transformers": [{"ghsa_id": "GHSA-4444-5555-6666", "summary": "y",
+                                           "html_url": "https://x", "published_at": "2026-09-01T00:00:00Z"}],
+        }
+        entries = check_framework_ghsa(advisories_by_repo)
+        self.assertEqual(len(entries), 2)
 
 
 if __name__ == '__main__':

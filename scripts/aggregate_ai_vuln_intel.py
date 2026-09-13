@@ -46,6 +46,22 @@ VERSION_RE = re.compile(r'\b(20\d\d|v\d+(\.\d+)?)\b')
 ATLAS_TECHNIQUES_API = "https://api.github.com/repos/mitre-atlas/atlas-data/contents/dist/ATLAS-latest.yaml"
 ATLAS_ID_RE = re.compile(r'AML\.T\d+(?:\.\d+)?')
 
+TRACKED_REPOS = [
+    "langchain-ai/langchain",
+    "ggml-org/llama.cpp",
+    "vllm-project/vllm",
+    "ollama/ollama",
+    "huggingface/transformers",
+    "langchain-ai/langgraph",
+    "microsoft/autogen",
+    "openai/openai-python",
+    "anthropics/anthropic-sdk-python",
+    "chroma-core/chroma",
+    "weaviate/weaviate",
+    "pinecone-io/pinecone-python-client",
+    "facebookresearch/faiss",
+]
+
 
 def fetch_feed_items(url):
     """Fetch and parse an RSS/Atom feed into a list of {title, url, published}.
@@ -125,7 +141,45 @@ def check_atlas_techniques(remote_technique_ids, known_ids):
     return entries
 
 
+def fetch_ghsa_advisories(repo, github_token=None):
+    """List published security advisories for one repo via GitHub's REST
+    API. Public advisories are readable unauthenticated, but pass the
+    Actions-provided GITHUB_TOKEN when available to avoid the 60/hr
+    unauthenticated rate limit across 13 repos."""
+    url = f"https://api.github.com/repos/{repo}/security-advisories"
+    headers = {'User-Agent': 'FixTheVuln-AI-Vuln-Intel/1.0',
+               'Accept': 'application/vnd.github+json'}
+    if github_token:
+        headers['Authorization'] = f'Bearer {github_token}'
+    try:
+        req = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            return json.loads(resp.read())
+    except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, json.JSONDecodeError) as e:
+        print(f"  Warning: failed to fetch advisories for {repo}: {e}")
+        return []
+
+
+def check_framework_ghsa(advisories_by_repo):
+    """One queue entry per advisory across all tracked repos. Dedup against
+    already-queued advisories happens via add_entry's id check in main(),
+    same as every other signal type — no separate 'seen' file needed."""
+    entries = []
+    for repo, advisories in advisories_by_repo.items():
+        for adv in advisories:
+            entries.append({
+                "id": f"ghsa-{adv['ghsa_id']}",
+                "type": "framework_ghsa",
+                "status": "new",
+                "source_url": adv["html_url"],
+                "detected_at": datetime.now(timezone.utc).isoformat(),
+                "notes": f"{repo}: {adv['summary']}",
+            })
+    return entries
+
+
 def main():
+    import os
     state = load_state()
     added = 0
 
@@ -142,6 +196,12 @@ def main():
                     {t["code"] for t in content["techniques"] if t["framework"] == "owasp-llm-top10"}
     remote_ids = fetch_atlas_technique_ids()
     for entry in check_atlas_techniques(remote_ids, known_ids):
+        if add_entry(state, entry):
+            added += 1
+
+    github_token = os.environ.get('GITHUB_TOKEN', '')
+    advisories_by_repo = {repo: fetch_ghsa_advisories(repo, github_token) for repo in TRACKED_REPOS}
+    for entry in check_framework_ghsa(advisories_by_repo):
         if add_entry(state, entry):
             added += 1
 
