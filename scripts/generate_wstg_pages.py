@@ -163,7 +163,7 @@ def build_quick_ref_table(tests):
         rows.append(
             f'                    <tr>'
             f'<td style="font-weight:600;white-space:nowrap;">{escape_html(t["id"])}</td>'
-            f'<td><a href="#{anchor}" style="color:var(--accent-color);text-decoration:none;">{escape_html(name)}</a></td>'
+            f'<td><a href="#{anchor}" style="color:var(--accent-primary);text-decoration:none;">{escape_html(name)}</a></td>'
             f'<td style="font-size:0.8rem;color:var(--text-muted);">{escape_html(cwes)}</td>'
             f'<td>{build_difficulty_badge(diff)}</td>'
             f'</tr>'

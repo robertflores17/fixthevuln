@@ -424,51 +424,51 @@ def generate_page(product):
 
     # Inject page-specific styles before </head>
     cert_style = """    <style>
-        .cert-hero {{ text-align: center; padding: 3rem 1.5rem 2rem; }}
-        .cert-hero h1 {{ font-size: 2.2rem; margin-bottom: 0.5rem; }}
-        .cert-badge {{ display: inline-block; background: var(--accent-color); color: white; padding: 4px 14px; border-radius: 50px; font-size: 0.8rem; font-weight: 600; margin-bottom: 1rem; }}
-        .cert-meta {{ color: var(--text-secondary); font-size: 1rem; }}
-        .cert-section {{ max-width: 900px; margin: 0 auto 2rem; padding: 0 1.5rem; }}
-        .cert-section h2 {{ font-size: 1.5rem; margin-bottom: 1rem; border-bottom: 2px solid var(--accent-color); padding-bottom: 0.5rem; }}
-        .domain-card {{ background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 10px; padding: 1.5rem; margin-bottom: 1rem; }}
-        .domain-header {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }}
-        .domain-number {{ font-size: 0.8rem; font-weight: 700; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px; }}
-        .domain-weight {{ background: var(--accent-color); color: white; padding: 2px 10px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; }}
-        .domain-name {{ font-size: 1.1rem; margin-bottom: 0.75rem; }}
-        .domain-objectives {{ padding-left: 1.5rem; margin-bottom: 0.75rem; }}
-        .domain-objectives li {{ font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem; line-height: 1.5; }}
-        .domain-concepts {{ display: flex; flex-wrap: wrap; gap: 6px; }}
-        .concept-tag {{ background: var(--bg-tertiary, var(--bg-secondary)); border: 1px solid var(--border-color); border-radius: 50px; padding: 2px 10px; font-size: 0.75rem; color: var(--text-secondary); }}
-        .study-tips {{ list-style: none; padding: 0; }}
-        .study-tips li {{ padding: 0.75rem 1rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 0.5rem; font-size: 0.95rem; line-height: 1.5; }}
-        .study-tips li::before {{ content: "\\2713 "; color: var(--accent-color); font-weight: 700; margin-right: 0.5rem; }}
-        .btn-primary {{ display: inline-block; background: var(--accent-color); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: transform 0.2s; }}
-        .btn-primary:hover {{ transform: translateY(-2px); }}
-        .planner-cta-card {{ background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 2rem; border-radius: 12px; color: white; text-align: center; margin-top: 2rem; }}
-        .planner-cta-card h3 {{ color: white; margin-bottom: 0.5rem; font-size: 1.3rem; }}
-        .planner-cta-card p {{ opacity: 0.9; margin-bottom: 1rem; }}
-        .planner-cta-card .btn-cta {{ display: inline-block; background: #667eea; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; }}
-        .cyberfolio-cta {{ border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem; }}
-        .cyberfolio-cta p {{ color: var(--text-secondary); margin-bottom: 1rem; }}
-        .cyberfolio-cta .btn-cyberfolio {{ display: inline-block; background: #06b6d4; color: white; padding: 10px 22px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.95rem; }}
-        .cyberfolio-cta .btn-cyberfolio:hover {{ opacity: 0.9; }}
-        .faq-item {{ background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 0.5rem; overflow: hidden; }}
-        .faq-item summary {{ padding: 1rem 1.25rem; font-weight: 600; cursor: pointer; list-style: none; }}
-        .faq-item summary::-webkit-details-marker {{ display: none; }}
-        .faq-item p {{ padding: 0 1.25rem 1rem; color: var(--text-secondary); line-height: 1.6; }}
-        .heatmap-container {{ background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; }}
-        .heatmap-title {{ font-size: 1.1rem; margin-bottom: 0.25rem; }}
-        .heatmap-subtitle {{ font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem; line-height: 1.4; }}
-        .heatmap-row {{ display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.6rem; }}
-        .heatmap-label {{ min-width: 140px; display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }}
-        .heatmap-domain-num {{ font-size: 0.7rem; font-weight: 700; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; }}
-        .heatmap-domain-name {{ font-size: 0.8rem; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
-        .heatmap-bar-track {{ flex: 1; background: var(--bg-tertiary, rgba(128,128,128,0.15)); border-radius: 6px; height: 28px; overflow: hidden; }}
-        .heatmap-bar {{ height: 100%; border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; font-size: 0.75rem; font-weight: 700; color: white; min-width: 38px; transition: width 0.6s ease; }}
-        @media (max-width: 600px) {{
-            .heatmap-row {{ flex-direction: column; align-items: flex-start; gap: 0.25rem; }}
-            .heatmap-label {{ min-width: unset; }}
-        }}
+        .cert-hero { text-align: center; padding: 3rem 1.5rem 2rem; }
+        .cert-hero h1 { font-size: 2.2rem; margin-bottom: 0.5rem; }
+        .cert-badge { display: inline-block; background: var(--accent-primary); color: white; padding: 4px 14px; border-radius: 50px; font-size: 0.8rem; font-weight: 600; margin-bottom: 1rem; }
+        .cert-meta { color: var(--text-secondary); font-size: 1rem; }
+        .cert-section { max-width: 900px; margin: 0 auto 2rem; padding: 0 1.5rem; }
+        .cert-section h2 { font-size: 1.5rem; margin-bottom: 1rem; border-bottom: 2px solid var(--accent-primary); padding-bottom: 0.5rem; }
+        .domain-card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 10px; padding: 1.5rem; margin-bottom: 1rem; }
+        .domain-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .domain-number { font-size: 0.8rem; font-weight: 700; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 1px; }
+        .domain-weight { background: var(--accent-primary); color: white; padding: 2px 10px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; }
+        .domain-name { font-size: 1.1rem; margin-bottom: 0.75rem; }
+        .domain-objectives { padding-left: 1.5rem; margin-bottom: 0.75rem; }
+        .domain-objectives li { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem; line-height: 1.5; }
+        .domain-concepts { display: flex; flex-wrap: wrap; gap: 6px; }
+        .concept-tag { background: var(--bg-tertiary, var(--bg-secondary)); border: 1px solid var(--border-color); border-radius: 50px; padding: 2px 10px; font-size: 0.75rem; color: var(--text-secondary); }
+        .study-tips { list-style: none; padding: 0; }
+        .study-tips li { padding: 0.75rem 1rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 0.5rem; font-size: 0.95rem; line-height: 1.5; }
+        .study-tips li::before { content: "\\2713 "; color: var(--accent-primary); font-weight: 700; margin-right: 0.5rem; }
+        .btn-primary { display: inline-block; background: var(--accent-primary); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: transform 0.2s; }
+        .btn-primary:hover { transform: translateY(-2px); }
+        .planner-cta-card { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 2rem; border-radius: 12px; color: white; text-align: center; margin-top: 2rem; }
+        .planner-cta-card h3 { color: white; margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .planner-cta-card p { opacity: 0.9; margin-bottom: 1rem; }
+        .planner-cta-card .btn-cta { display: inline-block; background: #667eea; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; }
+        .cyberfolio-cta { border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem; }
+        .cyberfolio-cta p { color: var(--text-secondary); margin-bottom: 1rem; }
+        .cyberfolio-cta .btn-cyberfolio { display: inline-block; background: #06b6d4; color: white; padding: 10px 22px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.95rem; }
+        .cyberfolio-cta .btn-cyberfolio:hover { opacity: 0.9; }
+        .faq-item { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 0.5rem; overflow: hidden; }
+        .faq-item summary { padding: 1rem 1.25rem; font-weight: 600; cursor: pointer; list-style: none; }
+        .faq-item summary::-webkit-details-marker { display: none; }
+        .faq-item p { padding: 0 1.25rem 1rem; color: var(--text-secondary); line-height: 1.6; }
+        .heatmap-container { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; }
+        .heatmap-title { font-size: 1.1rem; margin-bottom: 0.25rem; }
+        .heatmap-subtitle { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem; line-height: 1.4; }
+        .heatmap-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.6rem; }
+        .heatmap-label { min-width: 140px; display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+        .heatmap-domain-num { font-size: 0.7rem; font-weight: 700; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; }
+        .heatmap-domain-name { font-size: 0.8rem; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .heatmap-bar-track { flex: 1; background: var(--bg-tertiary, rgba(128,128,128,0.15)); border-radius: 6px; height: 28px; overflow: hidden; }
+        .heatmap-bar { height: 100%; border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; font-size: 0.75rem; font-weight: 700; color: white; min-width: 38px; transition: width 0.6s ease; }
+        @media (max-width: 600px) {
+            .heatmap-row { flex-direction: column; align-items: flex-start; gap: 0.25rem; }
+            .heatmap-label { min-width: unset; }
+        }
     </style>"""
     cert_head = cert_head.replace('</head>', cert_style + '\n</head>')
 

@@ -278,32 +278,32 @@ def generate_roadmap_page(product, config):
                         schema_blocks=rm_schemas, depth=1)
 
     rm_style = """    <style>
-        .roadmap-hero {{ text-align: center; padding: 2rem 1.5rem 1rem; }}
-        .roadmap-hero h1 {{ font-size: 1.8rem; margin-bottom: 0.5rem; }}
-        .roadmap-badge {{ display: inline-block; background: var(--accent-color); color: white; padding: 4px 14px; border-radius: 50px; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.75rem; }}
-        .roadmap-meta {{ color: var(--text-secondary); font-size: 0.9rem; }}
-        .roadmap-content {{ max-width: 800px; margin: 0 auto; padding: 0 1.5rem; }}
-        .roadmap-content h2 {{ font-size: 1.3rem; margin: 2rem 0 1rem; border-bottom: 2px solid var(--accent-color); padding-bottom: 0.5rem; }}
+        .roadmap-hero { text-align: center; padding: 2rem 1.5rem 1rem; }
+        .roadmap-hero h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+        .roadmap-badge { display: inline-block; background: var(--accent-primary); color: white; padding: 4px 14px; border-radius: 50px; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.75rem; }
+        .roadmap-meta { color: var(--text-secondary); font-size: 0.9rem; }
+        .roadmap-content { max-width: 800px; margin: 0 auto; padding: 0 1.5rem; }
+        .roadmap-content h2 { font-size: 1.3rem; margin: 2rem 0 1rem; border-bottom: 2px solid var(--accent-primary); padding-bottom: 0.5rem; }
 
         /* Timeline */
-        .timeline {{ position: relative; padding-left: 0; }}
-        .timeline-card {{ display: flex; gap: 1rem; margin-bottom: 0; }}
-        .timeline-marker {{ display: flex; flex-direction: column; align-items: center; width: 28px; flex-shrink: 0; }}
-        .timeline-marker input[type="checkbox"] {{ width: 20px; height: 20px; accent-color: var(--accent-color); cursor: pointer; margin: 0; z-index: 1; }}
-        .timeline-line {{ flex: 1; width: 2px; background: var(--border-color); margin-top: 4px; }}
-        .timeline-card:last-child .timeline-line {{ display: none; }}
-        .timeline-content {{ flex: 1; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; }}
-        .timeline-card.completed .timeline-content {{ opacity: 0.6; }}
-        .timeline-week {{ font-size: 0.75rem; font-weight: 700; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.25rem; }}
-        .timeline-topic {{ font-size: 0.9rem; color: var(--text-secondary); margin: 0; line-height: 1.5; }}
+        .timeline { position: relative; padding-left: 0; }
+        .timeline-card { display: flex; gap: 1rem; margin-bottom: 0; }
+        .timeline-marker { display: flex; flex-direction: column; align-items: center; width: 28px; flex-shrink: 0; }
+        .timeline-marker input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--accent-primary); cursor: pointer; margin: 0; z-index: 1; }
+        .timeline-line { flex: 1; width: 2px; background: var(--border-color); margin-top: 4px; }
+        .timeline-card:last-child .timeline-line { display: none; }
+        .timeline-content { flex: 1; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; }
+        .timeline-card.completed .timeline-content { opacity: 0.6; }
+        .timeline-week { font-size: 0.75rem; font-weight: 700; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.25rem; }
+        .timeline-topic { font-size: 0.9rem; color: var(--text-secondary); margin: 0; line-height: 1.5; }
 
         /* Progress bar */
-        .roadmap-progress {{ background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 10px; padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; }}
-        .roadmap-progress-track {{ flex: 1; height: 10px; background: var(--border-color); border-radius: 5px; overflow: hidden; }}
-        .roadmap-progress-fill {{ height: 100%; background: var(--accent-color); border-radius: 5px; transition: width 0.3s; }}
-        .roadmap-progress-text {{ font-size: 0.85rem; font-weight: 600; min-width: 50px; text-align: right; }}
+        .roadmap-progress { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 10px; padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; }
+        .roadmap-progress-track { flex: 1; height: 10px; background: var(--border-color); border-radius: 5px; overflow: hidden; }
+        .roadmap-progress-fill { height: 100%; background: var(--accent-primary); border-radius: 5px; transition: width 0.3s; }
+        .roadmap-progress-text { font-size: 0.85rem; font-weight: 600; min-width: 50px; text-align: right; }
 
-        .cross-links {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 1.5rem; }}
+        .cross-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 1.5rem; }
     </style>"""
     rm_head = rm_head.replace('</head>', rm_style + '\n</head>')
 
