@@ -34,10 +34,16 @@ jobs:
           python3 scripts/aggregate_ai_security_news.py \
             --days "${{ github.event.inputs.days || '7' }}"
 
+      - name: Aggregate AI vulnerability intel
+        run: |
+          python3 scripts/aggregate_ai_vuln_intel.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Check for changes
         id: changes
         run: |
-          if [[ -n $(git status --porcelain drafts/ data/ai-security-trends.json data/ai_news_seen.json) ]]; then
+          if [[ -n $(git status --porcelain drafts/ data/ai-security-trends.json data/ai_news_seen.json data/ai-vuln-intel.json) ]]; then
             echo "changes=true" >> $GITHUB_OUTPUT
           else
             echo "changes=false" >> $GITHUB_OUTPUT
@@ -48,7 +54,7 @@ jobs:
         run: |
           git config user.name "FixTheVuln Bot"
           git config user.email "bot@fixthevuln.com"
-          git add drafts/ai-security-roundup-*.md data/ai-security-trends.json data/ai_news_seen.json
+          git add drafts/ai-security-roundup-*.md data/ai-security-trends.json data/ai_news_seen.json data/ai-vuln-intel.json
           git commit -m "AI security trend roundup $(date -u +%Y-%m-%d) [skip ci]"
           git push
 
