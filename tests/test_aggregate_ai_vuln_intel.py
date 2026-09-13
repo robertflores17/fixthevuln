@@ -8,7 +8,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / 'scripts'))
 
-from aggregate_ai_vuln_intel import check_owasp_top10_change
+from aggregate_ai_vuln_intel import check_atlas_techniques, check_owasp_top10_change
 from lib.ai_vuln_intel_store import add_entry
 
 
@@ -43,6 +43,30 @@ class TestCheckOwaspTop10Change(unittest.TestCase):
         # Running detection again on the same feed item must not add a duplicate.
         added_second_time = [add_entry(state, e) for e in check_owasp_top10_change(items)]
         self.assertEqual(added_second_time, [False])
+
+
+class TestCheckAtlasTechniques(unittest.TestCase):
+    def test_flags_new_remote_technique(self):
+        entries = check_atlas_techniques(
+            remote_technique_ids=["AML.T0051", "AML.T0043"],
+            known_ids={"AML.T0051"},
+        )
+        self.assertEqual(len(entries), 1)
+        self.assertEqual(entries[0]["type"], "atlas_technique_change")
+        self.assertIn("AML.T0043", entries[0]["id"])
+
+    def test_no_entries_when_nothing_new(self):
+        entries = check_atlas_techniques(
+            remote_technique_ids=["AML.T0051"],
+            known_ids={"AML.T0051"},
+        )
+        self.assertEqual(entries, [])
+
+    def test_empty_remote_list_produces_no_entries(self):
+        # A failed fetch (Step 1's endpoint 404s or times out) must degrade
+        # to "nothing new" rather than flagging every known technique as missing.
+        entries = check_atlas_techniques(remote_technique_ids=[], known_ids={"AML.T0051"})
+        self.assertEqual(entries, [])
 
 
 if __name__ == '__main__':
