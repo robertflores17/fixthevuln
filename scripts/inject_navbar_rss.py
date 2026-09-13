@@ -10,25 +10,33 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT_NAV = """<nav class="site-nav">
     <div class="container">
         <a href="/" class="site-nav-logo">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
         <div class="site-nav-links">
             <a href="guides.html">Guides</a>
             <a href="tools.html">Tools</a>
             <a href="compliance.html">Compliance</a>
             <a href="resources.html">Resources</a>
+            <a href="practice-tests.html">Quizzes</a>
+            <a href="career-paths.html">Career Paths</a>
             <a href="blog/">Blog</a>
+            <a href="/store/store.html" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: .35rem .75rem; border-radius: 6px; font-size: .85rem; font-weight: 600; text-decoration: none;">Store</a>
         </div>
     </div>
 </nav>"""
 
 SUBDIR_NAV = """<nav class="site-nav">
     <div class="container">
-        <a href="/" class="site-nav-logo">FixTheVuln</a>
+        <a href="../" class="site-nav-logo">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
         <div class="site-nav-links">
             <a href="../guides.html">Guides</a>
             <a href="../tools.html">Tools</a>
             <a href="../compliance.html">Compliance</a>
             <a href="../resources.html">Resources</a>
+            <a href="../practice-tests.html">Quizzes</a>
+            <a href="../career-paths.html">Career Paths</a>
             <a href="../blog/">Blog</a>
+            <a href="/store/store.html" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: .35rem .75rem; border-radius: 6px; font-size: .85rem; font-weight: 600; text-decoration: none;">Store</a>
         </div>
     </div>
 </nav>"""
@@ -37,7 +45,7 @@ ROOT_RSS = '    <link rel="alternate" type="application/rss+xml" title="FixTheVu
 SUBDIR_RSS = '    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="../blog/feed.xml">'
 BLOG_RSS = '    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="feed.xml">'
 
-SUBDIRS = ['blog', 'cve', 'comparisons']
+SUBDIRS = ['blog', 'cve', 'comparisons', 'roadmaps', 'certs', 'practice-tests', 'wstg', 'ai-vulnerabilities']
 
 
 def get_subdir(rel_path):
