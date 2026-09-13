@@ -118,6 +118,7 @@ CATEGORIES = [
     ("Blog & Study Guides", lambda p: p.startswith("blog/"), "/blog/", None),
     ("Certification Comparisons", lambda p: p.startswith("comparisons/"), "/comparisons/", None),
     ("CVE & Vulnerability Pages", lambda p: p.startswith("cve/"), "/cve-lookup.html", None),
+    ("AI Security Guides", lambda p: _is_ai_guide(p), "/ai-security.html", None),
     ("AI Vulnerability Techniques", lambda p: p.startswith("ai-vulnerabilities/"), "/owasp-llm-top10.html", None),
     ("Store", lambda p: p.startswith("store/"), "/store/store.html", None),
     ("Interactive Security Tools", lambda p: _is_tool(p), "/tools.html", None),
@@ -139,6 +140,12 @@ COMPLIANCE_PAGES = {
     "risk-register-guide.html", "third-party-risk.html",
 }
 
+AI_GUIDE_PAGES = {
+    "owasp-llm-top10.html", "prompt-injection.html", "model-poisoning.html",
+    "mlsecops.html", "ai-agent-security.html", "ai-agent-security-threats.html",
+    "ai-security-careers.html", "genai-data-security.html",
+}
+
 GUIDE_PAGES = {
     "api-security.html", "cloud-security.html", "container-security.html",
     "database-security.html", "encryption-cheatsheet.html", "incident-response.html",
@@ -150,9 +157,7 @@ GUIDE_PAGES = {
     "what-is-cybersecurity.html", "how-to-get-into-cybersecurity.html",
     "red-teaming-guide.html", "cybersecurity-salary-guide.html",
     "best-cybersecurity-certifications.html",
-    "cybersecurity-job-trends.html",
-    "owasp-llm-top10.html", "prompt-injection.html", "model-poisoning.html",
-    "mlsecops.html", "ai-agent-security.html", "ai-agent-security-threats.html", "ai-security-careers.html", "genai-data-security.html", "grc-career-path.html",
+    "cybersecurity-job-trends.html", "grc-career-path.html",
     "siem-rule-writing.html", "threat-hunting.html", "log-analysis-cheatsheet.html",
 }
 
@@ -161,7 +166,7 @@ HUB_PAGES = {
     "career-paths.html", "practice-tests.html", "about.html", "contact.html",
     "privacy.html", "start-here.html", "planner.html", "kev-archive.html",
     "cve-lookup.html", "cert-cost-calculator.html", "study-tracker.html",
-    "exploit-tracker.html", "security-analyst-roadmap.html",
+    "exploit-tracker.html", "security-analyst-roadmap.html", "ai-security.html",
 }
 
 
@@ -175,6 +180,10 @@ def _is_compliance(path):
 
 def _is_guide(path):
     return path in GUIDE_PAGES
+
+
+def _is_ai_guide(path):
+    return path in AI_GUIDE_PAGES
 
 
 def parse_sitemap(sitemap_path):
