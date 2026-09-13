@@ -22,7 +22,7 @@ SITEMAP_PATH = REPO_ROOT / "sitemap.xml"
 BASE_URL = "https://fixthevuln.com"
 
 # Directories to scan for .html files (relative to repo root)
-CONTENT_DIRS = ["blog", "certs", "comparisons", "roadmaps", "cve", "store"]
+CONTENT_DIRS = ["blog", "certs", "comparisons", "roadmaps", "cve", "store", "ai-vulnerabilities"]
 
 # Files to exclude from sitemap
 EXCLUDE_FILES = {
@@ -115,6 +115,7 @@ def classify_subdir_page(subdir):
         "roadmaps":    (0.6, "monthly", "Study Roadmaps"),
         "cve":         (0.6, "weekly",  "CVE Pages"),
         "store":       (0.8, "monthly", "Store Pages"),
+        "ai-vulnerabilities": (0.6, "monthly", "AI Vulnerability Techniques"),
     }
     return mapping.get(subdir, (0.5, "monthly", "Other"))
 

@@ -118,6 +118,7 @@ CATEGORIES = [
     ("Blog & Study Guides", lambda p: p.startswith("blog/"), "/blog/", None),
     ("Certification Comparisons", lambda p: p.startswith("comparisons/"), "/comparisons/", None),
     ("CVE & Vulnerability Pages", lambda p: p.startswith("cve/"), "/cve-lookup.html", None),
+    ("AI Vulnerability Techniques", lambda p: p.startswith("ai-vulnerabilities/"), "/owasp-llm-top10.html", None),
     ("Store", lambda p: p.startswith("store/"), "/store/store.html", None),
     ("Interactive Security Tools", lambda p: _is_tool(p), "/tools.html", None),
     ("Compliance & Framework Guides", lambda p: _is_compliance(p), "/compliance.html", None),
@@ -330,6 +331,7 @@ def generate_llms_txt(categories, hub_urls):
         "Certification Comparisons",
         "Blog & Study Guides",
         "CVE & Vulnerability Pages",
+        "AI Vulnerability Techniques",
         "OWASP WSTG Testing Guide",
         "Store",
     ]
@@ -388,6 +390,7 @@ def generate_llms_full_txt(categories, hub_urls):
         "Certification Comparisons",
         "Blog & Study Guides",
         "CVE & Vulnerability Pages",
+        "AI Vulnerability Techniques",
         "OWASP WSTG Testing Guide",
         "Store",
     ]
