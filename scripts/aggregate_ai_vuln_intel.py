@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-Populates data/ai-vuln-intel.json from three signal sources:
+Populates data/ai-vuln-intel.json from four signal sources:
   - OWASP LLM Top 10 revision announcements (this file, check_owasp_top10_change)
   - MITRE ATLAS technique diffs (Task 11, check_atlas_techniques)
   - Framework/vector-DB GHSA advisories (Task 12, check_framework_ghsa)
+  - AI Incident Database reports (check_aiid_incidents)
 
 Chained onto the existing Friday ai-trend-roundup.yml workflow (Task 13),
 after aggregate_ai_security_news.py runs. Reuses that script's already-fetched
@@ -49,6 +50,14 @@ VERSION_RE = re.compile(r'\b(20\d\d|v\d+(\.\d+)?)\b')
 ATLAS_TECHNIQUES_API = "https://api.github.com/repos/mitre-atlas/atlas-data/contents/dist/ATLAS-latest.yaml"
 ATLAS_ID_RE = re.compile(r'AML\.T\d+(?:\.\d+)?')
 
+# AIID's RSS feed is one item per news *report*, not per *incident* — several
+# reports commonly cover the same incident (e.g. multiple outlets covering the
+# same event). Each item's description embeds a citation link in the form
+# ".../cite/<incident_id>#<report_id>"; dedup keys off <incident_id> only, so
+# re-coverage of an already-queued incident never queues a second signal.
+AIID_FEED = "https://incidentdatabase.ai/rss.xml"
+AIID_CITE_RE = re.compile(r'incidentdatabase\.ai/cite/(\d+)')
+
 TRACKED_REPOS = [
     "langchain-ai/langchain",
     "ggml-org/llama.cpp",
@@ -83,7 +92,8 @@ def fetch_feed_items(url):
         title = (item.findtext('title') or '').strip()
         link = (item.findtext('link') or '').strip()
         published = (item.findtext('pubDate') or '').strip()
-        items.append({"title": title, "url": link, "published": published})
+        description = (item.findtext('description') or '').strip()
+        items.append({"title": title, "url": link, "published": published, "description": description})
     return items
 
 
@@ -103,6 +113,35 @@ def check_owasp_top10_change(rss_items):
                 "source_url": item["url"],
                 "detected_at": datetime.now(timezone.utc).isoformat(),
             })
+    return entries
+
+
+def check_aiid_incidents(rss_items):
+    """One signal per distinct AI Incident Database *incident*, not per feed
+    item — the feed can list several reports for the same incident in one
+    pull, and add_entry's id-based dedup only catches repeats across runs,
+    not repeats within a single batch, so this also dedups in-batch by
+    incident_id before returning. Items with no extractable citation link
+    (e.g. a stub entry still missing its incident link) are skipped rather
+    than queued with a made-up id."""
+    entries = []
+    seen = set()
+    for item in rss_items:
+        m = AIID_CITE_RE.search(item.get("description", ""))
+        if not m:
+            continue
+        incident_id = m.group(1)
+        if incident_id in seen:
+            continue
+        seen.add(incident_id)
+        entries.append({
+            "id": f"aiid-incident-{incident_id}",
+            "type": "aiid_incident",
+            "status": "new",
+            "source_url": f"https://incidentdatabase.ai/cite/{incident_id}",
+            "detected_at": datetime.now(timezone.utc).isoformat(),
+            "notes": item["title"] if item["title"] and item["title"] != "No title" else "",
+        })
     return entries
 
 
@@ -232,6 +271,11 @@ def main():
 
     owasp_items = fetch_feed_items(OWASP_GENAI_FEED)
     for entry in check_owasp_top10_change(owasp_items):
+        if add_entry(state, entry):
+            added += 1
+
+    aiid_items = fetch_feed_items(AIID_FEED)
+    for entry in check_aiid_incidents(aiid_items):
         if add_entry(state, entry):
             added += 1
 

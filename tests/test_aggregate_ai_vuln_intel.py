@@ -11,7 +11,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / 'scripts'))
 
 from aggregate_ai_vuln_intel import (
     check_atlas_techniques, check_owasp_top10_change, check_framework_ghsa,
-    resolve_atlas_signals,
+    check_aiid_incidents, resolve_atlas_signals,
 )
 from lib.ai_vuln_intel_store import add_entry, get_atlas_known_ids, set_atlas_known_ids
 
@@ -119,6 +119,49 @@ class TestCheckFrameworkGhsa(unittest.TestCase):
         }
         entries = check_framework_ghsa(advisories_by_repo, _CUTOFF_7D)
         self.assertEqual(len(entries), 1)
+
+
+class TestCheckAiidIncidents(unittest.TestCase):
+    """AIID's feed is one item per news report, and the same incident is
+    routinely covered by multiple reports — the riskiest case is queuing
+    the same underlying incident twice, either within one feed pull or
+    across separate runs."""
+
+    def _report(self, incident_id, report_id, title="A real incident"):
+        return {
+            "title": title,
+            "url": "https://example-news-outlet.com/story",
+            "published": "2026-09-12",
+            "description": f"Some excerpt of the report ... (https://incidentdatabase.ai/cite/{incident_id}#{report_id})",
+        }
+
+    def test_fires_on_report_with_citation_link(self):
+        entries = check_aiid_incidents([self._report(1688, 7949)])
+        self.assertEqual(len(entries), 1)
+        self.assertEqual(entries[0]["type"], "aiid_incident")
+        self.assertEqual(entries[0]["id"], "aiid-incident-1688")
+
+    def test_multiple_reports_of_same_incident_collapse_to_one_entry(self):
+        items = [self._report(1688, 7949), self._report(1688, 7950), self._report(1688, 7951)]
+        entries = check_aiid_incidents(items)
+        self.assertEqual(len(entries), 1)
+
+    def test_skips_item_with_no_citation_link(self):
+        stub_item = {"title": "No title", "url": "", "published": "2026-09-13",
+                     "description": " ... (report_number: 7953)"}
+        entries = check_aiid_incidents([stub_item, self._report(1700, 8000)])
+        self.assertEqual(len(entries), 1)
+        self.assertEqual(entries[0]["id"], "aiid-incident-1700")
+
+    def test_dedups_across_runs_when_already_queued(self):
+        state = _state()
+        first_run = [self._report(1688, 7949)]
+        for e in check_aiid_incidents(first_run):
+            add_entry(state, e)
+        # A later run sees a new report about the same incident.
+        second_run = [self._report(1688, 7952)]
+        added = [add_entry(state, e) for e in check_aiid_incidents(second_run)]
+        self.assertEqual(added, [False])
 
 
 class TestAtlasBaseline(unittest.TestCase):
