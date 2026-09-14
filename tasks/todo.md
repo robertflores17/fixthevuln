@@ -1,5 +1,17 @@
 # FixTheVuln — Task Tracker
 
+## Next Up
+
+- [ ] **AI vuln-intel draft/publish pipeline** — `data/ai-vuln-intel.json` (fed by
+  `scripts/aggregate_ai_vuln_intel.py`: OWASP Top 10 change, MITRE ATLAS diff,
+  framework GHSA advisories, AI Incident Database) is currently a manual-review
+  queue only — nothing drafts, verifies, or publishes from it yet. Spec + plan
+  already written: `docs/superpowers/specs/2026-09-12-ai-vuln-intel-pipeline-design.md`
+  and matching plan in `docs/superpowers/plans/`. Needs: `fixthevuln-lead` drafting
+  step, new Marlowe/Sable/Griggs claim-verification agents (§5-6 of spec), then
+  the existing `content-editor`/`appsec` gate. Deliberately deferred — decided
+  2026-09-14 to leave the queue manual-only for now.
+
 ## Current Sprint — AI Security Content (from [un]prompted 2026)
 
 Source: theweatherreport.ai/posts/unprompted-2026-top-insights-day-one

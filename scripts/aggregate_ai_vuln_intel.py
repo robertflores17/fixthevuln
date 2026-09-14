@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """
-Populates data/ai-vuln-intel.json from four signal sources:
+Populates data/ai-vuln-intel.json from five signal sources:
   - OWASP LLM Top 10 revision announcements (this file, check_owasp_top10_change)
   - MITRE ATLAS technique diffs (Task 11, check_atlas_techniques)
   - Framework/vector-DB GHSA advisories (Task 12, check_framework_ghsa)
   - AI Incident Database reports (check_aiid_incidents)
+  - AVID (AI Vulnerability Database) reports (check_avid_reports)
 
 Chained onto the existing Friday ai-trend-roundup.yml workflow (Task 13),
 after aggregate_ai_security_news.py runs. Reuses that script's already-fetched
@@ -27,6 +28,7 @@ sys.path.insert(0, str(REPO_ROOT / 'scripts'))
 
 from lib.ai_vuln_intel_store import (
     load_state, save_state, add_entry, get_atlas_known_ids, set_atlas_known_ids,
+    get_avid_known_ids, set_avid_known_ids,
 )
 
 OWASP_GENAI_FEED = "https://genai.owasp.org/feed/"
@@ -57,6 +59,21 @@ ATLAS_ID_RE = re.compile(r'AML\.T\d+(?:\.\d+)?')
 # re-coverage of an already-queued incident never queues a second signal.
 AIID_FEED = "https://incidentdatabase.ai/rss.xml"
 AIID_CITE_RE = re.compile(r'incidentdatabase\.ai/cite/(\d+)')
+
+# AVID's reports/ directory (concrete report occurrences, as opposed to
+# vulnerabilities/, the more stable recurring-failure-mode taxonomy) grows by
+# well over 1000/year (1714 in 2026 alone, confirmed via the tree API below).
+# The plain Contents API (GET .../contents/reports/<year>) silently truncates
+# a directory listing at 1000 entries with no "truncated" flag — verified by
+# cross-checking a 1714-file year against it and finding only the first 1000
+# alphabetically. The Git Trees API (?recursive=1) does report truncation
+# (`truncated: true/false`) and returns the whole repo tree in one call, so
+# that's used instead and filtered client-side to the target year's prefix.
+# Same baseline-then-diff pattern as MITRE ATLAS above applies once the ID
+# list is correct — scoped to the current year only: older years are
+# closed/static.
+AVID_TREE_API = "https://api.github.com/repos/avidml/avid-db/git/trees/main?recursive=1"
+AVID_REPORT_ID_RE = re.compile(r'AVID-\d{4}-R\d+')
 
 TRACKED_REPOS = [
     "langchain-ai/langchain",
@@ -203,6 +220,60 @@ def resolve_atlas_signals(remote_ids, known_ids):
     return check_atlas_techniques(remote_ids, known_ids), set(remote_ids)
 
 
+def fetch_avid_report_ids(year):
+    """List AVID report IDs present in reports/<year> on avidml/avid-db, via
+    the recursive Git Trees API (see AVID_TREE_API comment above for why —
+    the plain Contents API silently truncates this directory). Per the
+    repo-structure convention in this codebase, a failed or empty fetch
+    (network error, or a next-year prefix that doesn't exist yet) logs and
+    returns [] rather than aborting the run. A GitHub-reported truncation
+    (repo grown past the tree API's own cap) also logs a warning, since it
+    means some report IDs may be silently missing from the result."""
+    try:
+        req = urllib.request.Request(AVID_TREE_API,
+                                      headers={'User-Agent': 'FixTheVuln-AI-Vuln-Intel/1.0',
+                                               'Accept': 'application/vnd.github+json'})
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            tree = json.loads(resp.read())
+    except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, json.JSONDecodeError) as e:
+        print(f"  Warning: failed to fetch AVID repo tree: {e}")
+        return []
+    if tree.get('truncated'):
+        print("  Warning: AVID repo tree listing was truncated by GitHub's API — some report IDs may be missing")
+    prefix = f"reports/{year}/"
+    paths = [t['path'] for t in tree.get('tree', []) if t.get('path', '').startswith(prefix)]
+    return sorted(set(AVID_REPORT_ID_RE.findall(' '.join(paths))))
+
+
+def check_avid_reports(remote_ids, known_ids):
+    """New AVID report IDs present remotely but not in the avid_known_ids
+    baseline become avid_report signals. An empty remote list (failed fetch)
+    yields no entries — same convention as check_atlas_techniques."""
+    entries = []
+    for rid in remote_ids:
+        if rid not in known_ids:
+            entries.append({
+                "id": rid.lower(),
+                "type": "avid_report",
+                "status": "new",
+                "source_url": f"https://avidml.org/database/{rid.lower()}/",
+                "detected_at": datetime.now(timezone.utc).isoformat(),
+            })
+    return entries
+
+
+def resolve_avid_signals(remote_ids, known_ids):
+    """Baseline-then-diff flow for AVID report IDs — identical shape to
+    resolve_atlas_signals, so the ~1000+ reports already in the current
+    year's directory get baselined (not queued) on day one, and only
+    genuinely new reports show up on later runs."""
+    if not remote_ids:
+        return [], None
+    if known_ids is None:
+        return [], set(remote_ids)
+    return check_avid_reports(remote_ids, known_ids), set(remote_ids)
+
+
 def fetch_ghsa_advisories(repo, github_token=None):
     """List published security advisories for one repo via GitHub's REST
     API. Public advisories are readable unauthenticated, but pass the
@@ -285,9 +356,19 @@ def main():
     for entry in atlas_entries:
         if add_entry(state, entry):
             added += 1
-    baseline_changed = new_baseline is not None and new_baseline != known_atlas_ids
-    if baseline_changed:
+    atlas_baseline_changed = new_baseline is not None and new_baseline != known_atlas_ids
+    if atlas_baseline_changed:
         set_atlas_known_ids(state, new_baseline)
+
+    known_avid_ids = get_avid_known_ids(state)
+    remote_avid_ids = fetch_avid_report_ids(datetime.now(timezone.utc).year)
+    avid_entries, new_avid_baseline = resolve_avid_signals(remote_avid_ids, known_avid_ids)
+    for entry in avid_entries:
+        if add_entry(state, entry):
+            added += 1
+    avid_baseline_changed = new_avid_baseline is not None and new_avid_baseline != known_avid_ids
+    if avid_baseline_changed:
+        set_avid_known_ids(state, new_avid_baseline)
 
     github_token = os.environ.get('GITHUB_TOKEN', '')
     advisories_by_repo = {repo: fetch_ghsa_advisories(repo, github_token) for repo in TRACKED_REPOS}
@@ -296,7 +377,7 @@ def main():
         if add_entry(state, entry):
             added += 1
 
-    if added > 0 or baseline_changed:
+    if added > 0 or atlas_baseline_changed or avid_baseline_changed:
         save_state(state)
         print(f"Added {added} new signal(s) to data/ai-vuln-intel.json")
     else:

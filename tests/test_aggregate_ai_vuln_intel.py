@@ -11,7 +11,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / 'scripts'))
 
 from aggregate_ai_vuln_intel import (
     check_atlas_techniques, check_owasp_top10_change, check_framework_ghsa,
-    check_aiid_incidents, resolve_atlas_signals,
+    check_aiid_incidents, check_avid_reports, resolve_atlas_signals, resolve_avid_signals,
 )
 from lib.ai_vuln_intel_store import add_entry, get_atlas_known_ids, set_atlas_known_ids
 
@@ -162,6 +162,52 @@ class TestCheckAiidIncidents(unittest.TestCase):
         second_run = [self._report(1688, 7952)]
         added = [add_entry(state, e) for e in check_aiid_incidents(second_run)]
         self.assertEqual(added, [False])
+
+
+class TestCheckAvidReports(unittest.TestCase):
+    def test_flags_new_remote_report(self):
+        entries = check_avid_reports(
+            remote_ids=["AVID-2026-R0017", "AVID-2026-R0018"],
+            known_ids={"AVID-2026-R0017"},
+        )
+        self.assertEqual(len(entries), 1)
+        self.assertEqual(entries[0]["type"], "avid_report")
+        self.assertEqual(entries[0]["id"], "avid-2026-r0018")
+        self.assertEqual(entries[0]["source_url"], "https://avidml.org/database/avid-2026-r0018/")
+
+    def test_no_entries_when_nothing_new(self):
+        entries = check_avid_reports(
+            remote_ids=["AVID-2026-R0017"], known_ids={"AVID-2026-R0017"})
+        self.assertEqual(entries, [])
+
+    def test_empty_remote_list_produces_no_entries(self):
+        entries = check_avid_reports(remote_ids=[], known_ids={"AVID-2026-R0017"})
+        self.assertEqual(entries, [])
+
+
+class TestAvidBaseline(unittest.TestCase):
+    """Same cold-start-flood concern as ATLAS, at much larger scale — AVID's
+    reports/ directory holds 1000+ entries for the current year alone, so
+    the first run must baseline everything and queue nothing."""
+
+    def test_first_run_queues_nothing_but_writes_baseline(self):
+        entries, new_baseline = resolve_avid_signals(
+            remote_ids=["AVID-2026-R0001", "AVID-2026-R0002"], known_ids=None)
+        self.assertEqual(entries, [])
+        self.assertEqual(new_baseline, {"AVID-2026-R0001", "AVID-2026-R0002"})
+
+    def test_second_run_queues_only_genuinely_new_ids(self):
+        entries, new_baseline = resolve_avid_signals(
+            remote_ids=["AVID-2026-R0001", "AVID-2026-R0002", "AVID-2026-R1001"],
+            known_ids={"AVID-2026-R0001", "AVID-2026-R0002"})
+        self.assertEqual(len(entries), 1)
+        self.assertEqual(entries[0]["id"], "avid-2026-r1001")
+        self.assertEqual(new_baseline, {"AVID-2026-R0001", "AVID-2026-R0002", "AVID-2026-R1001"})
+
+    def test_failed_fetch_does_not_touch_baseline(self):
+        entries, new_baseline = resolve_avid_signals(remote_ids=[], known_ids={"AVID-2026-R0001"})
+        self.assertEqual(entries, [])
+        self.assertIsNone(new_baseline)
 
 
 class TestAtlasBaseline(unittest.TestCase):

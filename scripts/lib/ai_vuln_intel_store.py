@@ -78,6 +78,20 @@ def set_atlas_known_ids(state, ids):
     state["atlas_known_ids"] = sorted(ids)
 
 
+def get_avid_known_ids(state):
+    """Returns the baseline set of AVID report IDs recorded on a previous
+    run, or None if no baseline has been recorded yet (first run — callers
+    must treat this as "queue nothing, just record the baseline")."""
+    ids = state.get("avid_known_ids")
+    return set(ids) if ids is not None else None
+
+
+def set_avid_known_ids(state, ids):
+    """Persist the current full set of AVID report IDs (for the checked
+    year) as the baseline for the next run's new-report diff."""
+    state["avid_known_ids"] = sorted(ids)
+
+
 def record_loop_round(state, entry_id):
     """Increment loop_rounds for entry_id. Returns the resulting status:
     'in_review' while loop_rounds <= LOOP_CAP, 'needs_human_review' once
