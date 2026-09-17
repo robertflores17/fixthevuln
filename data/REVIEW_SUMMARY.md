@@ -1,21 +1,19 @@
-# Daily KEV Review — 2026-09-16
+# Daily KEV Review — 2026-09-17
 
-**New CVEs:** 2 | **Critical:** 0 | **High:** 1 | **Medium:** 0 | **Low:** 1 | **Ransomware-linked:** 0
+**New CVEs:** 1 | **Critical:** 0 | **High:** 0 | **Medium:** 0 | **Low:** 1 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-58704 | Google | Pixel | 8.8 | Unknown | 2026-09-19 |
-| CVE-2026-76460 | Cisco | Identity Services Engine | N/A | Unknown | 2026-09-19 |
+| CVE-2026-87886 | Acronis | Backup | N/A | Unknown | 2026-09-19 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-09-19 (2 CVEs)
+- **Nearest due date:** 2026-09-19 (1 CVE)
 - **Overdue:** None
 
 ## Vendor Summary
-- Google: 1 CVE
-- Cisco: 1 CVE
+- Acronis: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
