@@ -27,7 +27,7 @@ on:
   workflow_dispatch:
     inputs:
       full_submit:
-        description: "Submit all 401 URLs (initial seeding)"
+        description: "Submit every sitemap URL (initial seeding)"
         required: false
         default: "false"
         type: boolean
@@ -71,7 +71,9 @@ jobs:
           fi
 
       - name: Propagate to search engines
-        # Always --full in CI (no persisted log between runs; 401 URLs is well within IndexNow's 10K limit)
+        # Always --full in CI: data/.propagation-log.json is gitignored, so no baseline
+        # persists between runs and incremental mode has nothing to diff against.
+        # The full sitemap stays well inside IndexNow's 10,000-URL per-request limit.
         run: python3 scripts/propagate.py --full
 
       - name: Post results to summary
