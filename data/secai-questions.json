@@ -132,13 +132,13 @@
       "question": "A penetration tester is reviewing the OWASP Top 10 for LLM Applications to identify vulnerabilities in a customer-facing chatbot. Which vulnerability category addresses the risk of an attacker crafting inputs that cause the LLM to bypass its safety guidelines?",
       "options": [
         "LLM01: Prompt Injection",
-        "LLM02: Insecure Output Handling",
-        "LLM03: Training Data Poisoning",
-        "LLM05: Supply Chain Vulnerabilities"
+        "LLM10: Improper Output Handling",
+        "LLM05: Data and Model Poisoning",
+        "LLM04: Supply Chain"
       ],
       "correct": 0,
       "explanation": "OWASP LLM01: Prompt Injection covers attacks where crafted inputs manipulate the LLM into ignoring system instructions, bypassing safety guidelines, or performing unintended actions. This is the most critical and prevalent vulnerability in LLM applications.",
-      "link": "blog/comptia-secai-study-guide.html"
+      "link": "ai-vulnerabilities/llm01-prompt-injection.html"
     },
     {
       "id": 8,
@@ -979,14 +979,14 @@
       "difficulty": "medium",
       "question": "A red team discovers they can cause an LLM to ignore its system prompt instructions by using a technique called 'many-shot jailbreaking,' where they provide numerous examples of the desired (prohibited) behavior in the prompt. Which OWASP LLM vulnerability does this exploit?",
       "options": [
-        "LLM02: Insecure Output Handling",
+        "LLM10: Improper Output Handling",
         "LLM01: Prompt Injection",
-        "LLM06: Excessive Agency",
-        "LLM09: Overreliance"
+        "LLM03: Excessive Agency",
+        "LLM07: Misinformation"
       ],
       "correct": 1,
       "explanation": "Many-shot jailbreaking is a form of prompt injection (LLM01) where the attacker includes many examples of the desired (prohibited) behavior in the prompt to shift the model's behavior through in-context learning. The model treats the examples as implicit instructions, overriding its safety guardrails. This is a direct prompt injection technique.",
-      "link": "ai-agent-security.html"
+      "link": "ai-vulnerabilities/llm01-prompt-injection.html"
     },
     {
       "id": 61,
@@ -1001,8 +1001,8 @@
         "Denial of service through large file uploads"
       ],
       "correct": 1,
-      "explanation": "When LLM outputs are used to construct SQL queries without proper sanitization, the application is vulnerable to SQL injection through the LLM. An attacker could embed SQL injection payloads in uploaded documents that the LLM passes through to the query builder. This is OWASP LLM02 (Insecure Output Handling) — treating LLM outputs as trusted input to downstream systems.",
-      "link": "ai-agent-security.html"
+      "explanation": "When LLM outputs are used to construct SQL queries without proper sanitization, the application is vulnerable to SQL injection through the LLM. An attacker could embed injection payloads in uploaded documents that the LLM passes through to the query builder. This is OWASP LLM10 (Improper Output Handling) in the 2026 edition: treating LLM outputs as trusted input to downstream systems.",
+      "link": "ai-vulnerabilities/llm10-improper-output-handling.html"
     },
     {
       "id": 62,
@@ -1060,13 +1060,13 @@
       "question": "An LLM application has access to an email-sending function and a database query function. A user crafts a prompt that tricks the LLM into sending emails to external addresses with sensitive data from the database. Which OWASP LLM vulnerability category does this BEST represent?",
       "options": [
         "LLM01: Prompt Injection",
-        "LLM06: Excessive Agency",
-        "LLM04: Model Denial of Service",
-        "LLM07: System Prompt Leakage"
+        "LLM03: Excessive Agency",
+        "LLM06: Unbounded Consumption",
+        "LLM08: Hidden Context Exposure"
       ],
       "correct": 1,
-      "explanation": "LLM06: Excessive Agency occurs when an LLM is granted too many capabilities (tools/functions) or too much autonomy without proper guardrails. The LLM should not have unrestricted access to both email-sending and database query functions without approval gates, scope limitations, and human-in-the-loop controls for sensitive actions.",
-      "link": "ai-agent-security.html"
+      "explanation": "LLM03: Excessive Agency occurs when an LLM is granted too many capabilities (tools/functions) or too much autonomy without proper guardrails. The LLM should not have unrestricted access to both email-sending and database query functions without approval gates, scope limitations, and human-in-the-loop controls for sensitive actions.",
+      "link": "ai-vulnerabilities/llm03-excessive-agency.html"
     },
     {
       "id": 66,
@@ -1241,8 +1241,8 @@
         "The database was not encrypted at rest"
       ],
       "correct": 1,
-      "explanation": "The root cause is excessive agency (OWASP LLM06) — the chatbot was given broad permissions without proper authorization controls. Even if prompt injection is the attack vector, the impact would be minimal if the chatbot operated under least-privilege principles with human approval required for sensitive actions like emailing database contents. The focus should be on limiting what the AI can do, not just what it's told to do.",
-      "link": "ai-agent-security.html"
+      "explanation": "The root cause is excessive agency (OWASP LLM03 in the 2026 edition). The chatbot was given broad permissions without proper authorization controls. Even if prompt injection is the attack vector, the impact would be minimal if the chatbot operated under least-privilege principles with human approval required for sensitive actions like emailing database contents. The focus should be on limiting what the AI can do, not just what it's told to do.",
+      "link": "ai-vulnerabilities/llm03-excessive-agency.html"
     },
     {
       "id": 77,
@@ -1268,13 +1268,13 @@
       "question": "An attacker sends extremely long prompts to an LLM API, consuming excessive computational resources and causing service degradation for other users. Which OWASP LLM vulnerability does this exploit?",
       "options": [
         "LLM01: Prompt Injection",
-        "LLM04: Model Denial of Service",
-        "LLM05: Supply Chain Vulnerabilities",
-        "LLM08: Excessive Agency"
+        "LLM06: Unbounded Consumption",
+        "LLM04: Supply Chain",
+        "LLM03: Excessive Agency"
       ],
       "correct": 1,
-      "explanation": "LLM04: Model Denial of Service occurs when attackers exploit the computational requirements of LLMs by sending resource-intensive inputs (very long prompts, complex queries, or high request volumes) that degrade or deny service to legitimate users. Mitigations include input length limits, rate limiting, resource allocation controls, and request timeouts.",
-      "link": "ai-agent-security.html"
+      "explanation": "LLM06: Unbounded Consumption covers attacks that exploit the computational cost of LLM inference by sending resource-intensive inputs (very long prompts, complex queries, or high request volumes) that degrade service for legitimate users or run up infrastructure cost. The 2023 list called the narrower version of this Model Denial of Service. Mitigations include input length limits, rate limiting, resource allocation controls, request timeouts, and cost alerting.",
+      "link": "ai-vulnerabilities/llm06-unbounded-consumption.html"
     },
     {
       "id": 79,

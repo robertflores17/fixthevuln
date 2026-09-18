@@ -32,6 +32,22 @@ EXCLUDE_FILES = {
     "vuln-classifier.html", # internal tool
 }
 
+def is_redirect_stub(path):
+    """True for meta-refresh stubs left behind when a page's URL changes (e.g.
+    the OWASP LLM Top 10 renumbering in the 2026 edition). They exist to carry
+    old inbound links forward and must never be submitted as canonical URLs.
+
+    Only the document head is scanned. An educational page that *shows* a
+    meta-refresh tag in a code sample still contains the literal substring
+    (escaping only touches < and >), and dropping such a page from the sitemap
+    would be silent. A real stub always declares the refresh before </head>."""
+    try:
+        head = path.read_text(encoding="utf-8", errors="ignore").split("</head>", 1)[0]
+    except OSError:
+        return False  # unreadable/broken symlink: let the normal path handle it
+    return 'http-equiv="refresh"' in head
+
+
 # Pages that are tools (priority 0.8)
 TOOL_PAGES = {
     "base64-tool.html", "certificate-decoder.html", "cvss-calculator.html",
@@ -127,7 +143,7 @@ def discover_pages():
     # Root-level .html files
     for f in sorted(REPO_ROOT.glob("*.html")):
         filename = f.name
-        if filename in EXCLUDE_FILES:
+        if filename in EXCLUDE_FILES or is_redirect_stub(f):
             continue
         priority, changefreq, category = classify_root_page(filename)
         if filename == "index.html":
@@ -144,7 +160,7 @@ def discover_pages():
         priority, changefreq, category = classify_subdir_page(subdir)
         for f in sorted(dirpath.glob("*.html")):
             filename = f.name
-            if filename in EXCLUDE_FILES:
+            if filename in EXCLUDE_FILES or is_redirect_stub(f):
                 continue
             rel_path = str(f.relative_to(REPO_ROOT))
             url = f"{BASE_URL}/{rel_path}"

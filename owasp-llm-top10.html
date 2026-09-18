@@ -5,12 +5,12 @@
         <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
     <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="OWASP Top 10 for LLM Applications (2025 v2.0) — prompt injection, sensitive information disclosure, supply chain risks, data poisoning, excessive agency, and more. Essential AI security guide.">
-    <meta name="keywords" content="OWASP LLM Top 10, LLM security, prompt injection, AI security, large language model vulnerabilities, AI risk">
+    <meta name="description" content="OWASP Top 10 for LLM Applications, 2026 edition: prompt injection, sensitive information disclosure, excessive agency, supply chain risk, hidden context exposure, and more. What changed from 2025 and how to defend each risk.">
+    <meta name="keywords" content="OWASP LLM Top 10 2026, LLM security, prompt injection, excessive agency, hidden context exposure, AI security, large language model vulnerabilities, AI risk">
     <title>OWASP Top 10 for LLM Applications - FixTheVuln</title>
     <link rel="canonical" href="https://fixthevuln.com/owasp-llm-top10.html">
     <meta property="og:title" content="OWASP Top 10 for LLM Applications - FixTheVuln">
-    <meta property="og:description" content="OWASP Top 10 for LLM Applications (2025 v2.0) — prompt injection, sensitive information disclosure, supply chain risks, data poisoning, excessive agency, and more. Essential AI security guide.">
+    <meta property="og:description" content="OWASP Top 10 for LLM Applications, 2026 edition: prompt injection, sensitive information disclosure, excessive agency, supply chain risk, hidden context exposure, and more. What changed from 2025 and how to defend each risk.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://fixthevuln.com/owasp-llm-top10.html">
     <meta property="og:image" content="https://fixthevuln.com/og-image.png">
@@ -18,7 +18,7 @@
     <meta property="og:image:height" content="630">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="OWASP Top 10 for LLM Applications - FixTheVuln">
-    <meta name="twitter:description" content="OWASP Top 10 for LLM Applications (2025 v2.0) — prompt injection, sensitive information disclosure, supply chain risks, data poisoning, excessive agency, and more. Essential AI security guide.">
+    <meta name="twitter:description" content="OWASP Top 10 for LLM Applications, 2026 edition: prompt injection, sensitive information disclosure, excessive agency, supply chain risk, hidden context exposure, and more. What changed from 2025 and how to defend each risk.">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
     <link rel="stylesheet" href="style.min.css?v=11">
@@ -38,7 +38,7 @@
         "@context": "https://schema.org",
         "@type": "TechArticle",
         "headline": "OWASP Top 10 for LLM Applications",
-        "description": "OWASP Top 10 for LLM Applications (2025 v2.0) — prompt injection, sensitive information disclosure, supply chain risks, data poisoning, excessive agency, and more. Essential AI security guide.",
+        "description": "OWASP Top 10 for LLM Applications, 2026 edition: prompt injection, sensitive information disclosure, excessive agency, supply chain risk, hidden context exposure, and more. What changed from 2025 and how to defend each risk.",
         "author": { "@type": "Organization", "name": "FixTheVuln" },
         "publisher": { "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" }
     }
@@ -53,7 +53,7 @@
                 "name": "What is the OWASP Top 10 for LLM Applications?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "The OWASP Top 10 for LLM Applications (2025 v2.0) is a security awareness document identifying the most critical vulnerabilities in applications that use Large Language Models. It covers risks like prompt injection, sensitive information disclosure, supply chain vulnerabilities, data poisoning, and excessive agency."
+                    "text": "The OWASP Top 10 for LLM Applications is a security awareness document identifying the most critical vulnerabilities in applications that use Large Language Models. The 2026 edition, published August 2026 and announced September 1, 2026, covers prompt injection, sensitive information disclosure, excessive agency, supply chain risk, data and model poisoning, unbounded consumption, misinformation, hidden context exposure, vector and embedding weaknesses, and improper output handling."
                 }
             },
             {
@@ -140,17 +140,20 @@
         <div class="key-takeaways">
             <h2>Key Takeaways</h2>
             <ul>
-                <li>The 2025 v2.0 list reflects the evolving LLM threat landscape — new categories include System Prompt Leakage, Vector &amp; Embedding Weaknesses, Misinformation, and Unbounded Consumption</li>
-                <li>Prompt injection (LLM01) remains the top risk — treat all user input to LLMs as untrusted</li>
-                <li>Sensitive information disclosure (LLM02) is now the second-highest risk — LLMs can leak training data, system prompts, and PII</li>
-                <li>Excessive agency (LLM06) is critical — never grant LLMs unrestricted access to tools, APIs, or data without human oversight</li>
+                <li>The 2026 edition reranks the list against real incident data for the first time — eight of the ten categories moved position</li>
+                <li>Prompt injection (LLM01) holds the top spot — treat all user input to LLMs as untrusted</li>
+                <li>Sensitive information disclosure (LLM02) stays at number two — LLMs can leak training data, context, and PII</li>
+                <li>Excessive agency jumped from sixth to third (LLM03) as agentic deployments started causing production incidents</li>
+                <li>System Prompt Leakage was broadened and renamed Hidden Context Exposure (LLM08) — it now covers RAG content, memory, application state, and tool schemas</li>
+                <li>Improper Output Handling fell from fifth to tenth (LLM10), but the severity of what it causes (XSS, SSRF, RCE) has not changed</li>
                 <li>Maintain an AI Bill of Materials (AI-BOM) to track models, datasets, and plugins in your supply chain</li>
             </ul>
         </div>
 
         <section class="intro">
             <h2>Securing LLM-Powered Applications</h2>
-            <p>Large Language Models are being integrated into applications at an unprecedented rate — from chatbots and code assistants to autonomous agents. The OWASP Top 10 for LLM Applications (2025 v2.0) identifies the most critical security risks unique to these systems. Unlike traditional web vulnerabilities, LLM risks stem from the probabilistic nature of model outputs, the opacity of training data, and the novel ways users interact with AI systems.</p>
+            <p>Large Language Models are being integrated into applications at an unprecedented rate — from chatbots and code assistants to autonomous agents. The OWASP Top 10 for LLM Applications (2026 edition, published August 2026 and announced September 1, 2026) identifies the most critical security risks unique to these systems. Unlike traditional web vulnerabilities, LLM risks stem from the probabilistic nature of model outputs, the opacity of training data, and the novel ways users interact with AI systems.</p>
+            <p>The 2026 ranking shifts emphasis from protecting the conversation to containing the consequences: categories describing what an application can <em>do</em> with its access and authority moved up, while categories describing what it <em>says</em> moved down.</p>
             <p>Each of the ten categories below has its own detailed page with risk ratings, real-world attack examples, and practical mitigations — click through from the summary grid.</p>
         </section>
 
@@ -164,44 +167,75 @@
                     <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">LLM02: Sensitive Information Disclosure</strong>
                     <span style="font-size:0.85rem;font-weight:700;color:#ef4444;">Critical</span>
                 </a>
-                <a href="ai-vulnerabilities/llm03-supply-chain-vulnerabilities.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
-                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">LLM03: Supply Chain Vulnerabilities</strong>
-                    <span style="font-size:0.85rem;font-weight:700;color:#fd7e14;">High</span>
-                </a>
-                <a href="ai-vulnerabilities/llm04-data-and-model-poisoning.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
-                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">LLM04: Data and Model Poisoning</strong>
-                    <span style="font-size:0.85rem;font-weight:700;color:#fd7e14;">High</span>
-                </a>
-                <a href="ai-vulnerabilities/llm05-improper-output-handling.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
-                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">LLM05: Improper Output Handling</strong>
+                <a href="ai-vulnerabilities/llm03-excessive-agency.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
+                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">LLM03: Excessive Agency</strong>
                     <span style="font-size:0.85rem;font-weight:700;color:#ef4444;">Critical</span>
                 </a>
-                <a href="ai-vulnerabilities/llm06-excessive-agency.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
-                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">LLM06: Excessive Agency</strong>
-                    <span style="font-size:0.85rem;font-weight:700;color:#ef4444;">Critical</span>
-                </a>
-                <a href="ai-vulnerabilities/llm07-system-prompt-leakage.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
-                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">LLM07: System Prompt Leakage</strong>
+                <a href="ai-vulnerabilities/llm04-supply-chain.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
+                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">LLM04: Supply Chain</strong>
                     <span style="font-size:0.85rem;font-weight:700;color:#fd7e14;">High</span>
                 </a>
-                <a href="ai-vulnerabilities/llm08-vector-and-embedding-weaknesses.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
-                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">LLM08: Vector and Embedding Weaknesses</strong>
+                <a href="ai-vulnerabilities/llm05-data-and-model-poisoning.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
+                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">LLM05: Data and Model Poisoning</strong>
                     <span style="font-size:0.85rem;font-weight:700;color:#fd7e14;">High</span>
                 </a>
-                <a href="ai-vulnerabilities/llm09-misinformation.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
-                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">LLM09: Misinformation</strong>
+                <a href="ai-vulnerabilities/llm06-unbounded-consumption.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
+                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">LLM06: Unbounded Consumption</strong>
+                    <span style="font-size:0.85rem;font-weight:700;color:#fd7e14;">High</span>
+                </a>
+                <a href="ai-vulnerabilities/llm07-misinformation.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
+                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">LLM07: Misinformation</strong>
                     <span style="font-size:0.85rem;font-weight:700;color:#ffc107;">Medium</span>
                 </a>
-                <a href="ai-vulnerabilities/llm10-unbounded-consumption.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
-                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">LLM10: Unbounded Consumption</strong>
+                <a href="ai-vulnerabilities/llm08-hidden-context-exposure.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
+                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">LLM08: Hidden Context Exposure</strong>
                     <span style="font-size:0.85rem;font-weight:700;color:#fd7e14;">High</span>
+                </a>
+                <a href="ai-vulnerabilities/llm09-vector-and-embedding-weaknesses.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
+                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">LLM09: Vector and Embedding Weaknesses</strong>
+                    <span style="font-size:0.85rem;font-weight:700;color:#fd7e14;">High</span>
+                </a>
+                <a href="ai-vulnerabilities/llm10-improper-output-handling.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
+                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">LLM10: Improper Output Handling</strong>
+                    <span style="font-size:0.85rem;font-weight:700;color:#ef4444;">Critical</span>
                 </a>
             </div>
 <!-- AI-VULN-GRID-END -->
 
+        <section class="vulnerability-card">
+            <h2>What Changed From the 2025 Edition</h2>
+            <p>All ten 2025 risk areas survive into 2026, but the ordering was rebuilt using incident data alongside expert judgment, and one category was significantly broadened.</p>
+            <div style="overflow-x: auto;">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>2026</th>
+                            <th>Category</th>
+                            <th>Was in 2025</th>
+                            <th>Movement</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>LLM01</td><td>Prompt Injection</td><td>LLM01</td><td>No change</td></tr>
+                        <tr><td>LLM02</td><td>Sensitive Information Disclosure</td><td>LLM02</td><td>No change</td></tr>
+                        <tr><td>LLM03</td><td>Excessive Agency</td><td>LLM06</td><td>Up 3</td></tr>
+                        <tr><td>LLM04</td><td>Supply Chain</td><td>LLM03</td><td>Down 1</td></tr>
+                        <tr><td>LLM05</td><td>Data and Model Poisoning</td><td>LLM04</td><td>Down 1</td></tr>
+                        <tr><td>LLM06</td><td>Unbounded Consumption</td><td>LLM10</td><td>Up 4</td></tr>
+                        <tr><td>LLM07</td><td>Misinformation</td><td>LLM09</td><td>Up 2</td></tr>
+                        <tr><td>LLM08</td><td>Hidden Context Exposure</td><td>LLM07 (System Prompt Leakage)</td><td>Renamed and broadened</td></tr>
+                        <tr><td>LLM09</td><td>Vector and Embedding Weaknesses</td><td>LLM08</td><td>Down 1</td></tr>
+                        <tr><td>LLM10</td><td>Improper Output Handling</td><td>LLM05</td><td>Down 5</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>If you built a control mapping or training deck against the 2025 numbering, the renumbering matters more than the content: LLM05 no longer means Improper Output Handling, and LLM06 no longer means Excessive Agency.</p>
+        </section>
+
+
         <!-- Summary Table -->
         <section class="vulnerability-card">
-            <h2>OWASP LLM Top 10 Summary</h2>
+            <h2>OWASP LLM Top 10 (2026) Summary</h2>
             <div style="overflow-x: auto;">
                 <table class="styled-table">
                     <thead>
@@ -215,14 +249,14 @@
                     <tbody>
                         <tr><td>LLM01</td><td>Prompt Injection</td><td style="color:#ef4444;">Critical</td><td>Input filtering, privilege separation, human-in-the-loop</td></tr>
                         <tr><td>LLM02</td><td>Sensitive Info Disclosure</td><td style="color:#ef4444;">Critical</td><td>PII scrubbing, output filtering, access controls</td></tr>
-                        <tr><td>LLM03</td><td>Supply Chain Vulnerabilities</td><td style="color:#fd7e14;">High</td><td>AI-BOM, hash verification, trusted sources</td></tr>
-                        <tr><td>LLM04</td><td>Data and Model Poisoning</td><td style="color:#fd7e14;">High</td><td>Data provenance, sanitization, anomaly detection</td></tr>
-                        <tr><td>LLM05</td><td>Improper Output Handling</td><td style="color:#ef4444;">Critical</td><td>Output encoding, CSP, never trust LLM output</td></tr>
-                        <tr><td>LLM06</td><td>Excessive Agency</td><td style="color:#ef4444;">Critical</td><td>Minimal functions, read-only defaults, human gates</td></tr>
-                        <tr><td>LLM07</td><td>System Prompt Leakage</td><td style="color:#fd7e14;">High</td><td>No secrets in prompts, leakage detection, separation</td></tr>
-                        <tr><td>LLM08</td><td>Vector &amp; Embedding Weaknesses</td><td style="color:#fd7e14;">High</td><td>Access controls, input validation, metadata filtering</td></tr>
-                        <tr><td>LLM09</td><td>Misinformation</td><td style="color:#ffc107;">Medium</td><td>RAG grounding, fact-checking, human review</td></tr>
-                        <tr><td>LLM10</td><td>Unbounded Consumption</td><td style="color:#fd7e14;">High</td><td>Rate limiting, token caps, cost alerting</td></tr>
+                        <tr><td>LLM03</td><td>Excessive Agency</td><td style="color:#ef4444;">Critical</td><td>Minimal functions, read-only defaults, human gates</td></tr>
+                        <tr><td>LLM04</td><td>Supply Chain</td><td style="color:#fd7e14;">High</td><td>AI-BOM, hash verification, trusted sources</td></tr>
+                        <tr><td>LLM05</td><td>Data and Model Poisoning</td><td style="color:#fd7e14;">High</td><td>Data provenance, sanitization, anomaly detection</td></tr>
+                        <tr><td>LLM06</td><td>Unbounded Consumption</td><td style="color:#fd7e14;">High</td><td>Rate limiting, token caps, cost alerting</td></tr>
+                        <tr><td>LLM07</td><td>Misinformation</td><td style="color:#ffc107;">Medium</td><td>RAG grounding, fact-checking, human review</td></tr>
+                        <tr><td>LLM08</td><td>Hidden Context Exposure</td><td style="color:#fd7e14;">High</td><td>No secrets in context, per-user RAG authz, minimal tool schemas</td></tr>
+                        <tr><td>LLM09</td><td>Vector &amp; Embedding Weaknesses</td><td style="color:#fd7e14;">High</td><td>Access controls, input validation, metadata filtering</td></tr>
+                        <tr><td>LLM10</td><td>Improper Output Handling</td><td style="color:#ef4444;">Critical</td><td>Output encoding, CSP, never trust LLM output</td></tr>
                     </tbody>
                 </table>
             </div>

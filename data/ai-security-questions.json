@@ -441,13 +441,13 @@
       "question": "According to the OWASP Top 10 for LLM Applications, which vulnerability category addresses the risk of an LLM producing factually incorrect but confident-sounding information?",
       "options": [
         "LLM01: Prompt Injection",
-        "LLM02: Insecure Output Handling",
-        "LLM06: Sensitive Information Disclosure",
-        "LLM09: Overreliance"
+        "LLM10: Improper Output Handling",
+        "LLM02: Sensitive Information Disclosure",
+        "LLM07: Misinformation"
       ],
       "correct": 3,
-      "explanation": "OWASP LLM09 (Overreliance) addresses the risk of users or systems trusting LLM outputs without verification, including hallucinated facts presented with high confidence. Mitigations include human-in-the-loop validation, grounding outputs in verified data sources (RAG), and clearly communicating AI limitations to end users.",
-      "link": "ai-agent-security.html"
+      "explanation": "OWASP LLM07 (Misinformation) in the 2026 edition addresses the risk of users or systems trusting LLM outputs without verification, including hallucinated facts presented with high confidence. It absorbed the category the 2023 list called Overreliance. Mitigations include human-in-the-loop validation, grounding outputs in verified data sources (RAG), and clearly communicating AI limitations to end users.",
+      "link": "ai-vulnerabilities/llm07-misinformation.html"
     },
     {
       "id": 27,
@@ -712,14 +712,14 @@
       "difficulty": "easy",
       "question": "Which OWASP LLM Top 10 category specifically covers prompt injection vulnerabilities?",
       "options": [
-        "LLM03: Training Data Poisoning",
+        "LLM05: Data and Model Poisoning",
         "LLM01: Prompt Injection",
-        "LLM06: Sensitive Information Disclosure",
-        "LLM08: Excessive Agency"
+        "LLM02: Sensitive Information Disclosure",
+        "LLM03: Excessive Agency"
       ],
       "correct": 1,
       "explanation": "LLM01: Prompt Injection is the top vulnerability in the OWASP Top 10 for LLM Applications. It covers both direct injection (user manipulates the model via their own input) and indirect injection (attacker places malicious content in external sources the model processes). Its top ranking reflects both the high likelihood and significant potential impact of prompt injection attacks.",
-      "link": "ai-agent-security.html"
+      "link": "ai-vulnerabilities/llm01-prompt-injection.html"
     },
     {
       "id": 44,
@@ -969,13 +969,13 @@
       "question": "An application renders LLM output directly into a web page without sanitization. An attacker uses prompt injection to make the model generate HTML script tags in its response. What vulnerability does this create?",
       "options": [
         "SQL injection",
-        "Cross-site scripting (XSS) via insecure output handling of LLM responses",
+        "Cross-site scripting (XSS) via improper output handling of LLM responses",
         "Server-side request forgery",
         "Buffer overflow"
       ],
       "correct": 1,
-      "explanation": "When LLM output is rendered directly into web pages without sanitization, prompt injection can be chained with XSS. The attacker injects a prompt that causes the model to generate malicious HTML or JavaScript, which the application then renders in the victim's browser. This is OWASP LLM02 (Insecure Output Handling) and demonstrates why model output should always be treated as untrusted data.",
-      "link": "ai-agent-security.html"
+      "explanation": "When LLM output is rendered directly into web pages without sanitization, prompt injection can be chained with XSS. The attacker injects a prompt that causes the model to generate malicious HTML or JavaScript, which the application then renders in the victim's browser. This is OWASP LLM10 (Improper Output Handling) in the 2026 edition and demonstrates why model output should always be treated as untrusted data.",
+      "link": "ai-vulnerabilities/llm10-improper-output-handling.html"
     },
     {
       "id": 60,
@@ -2022,7 +2022,7 @@
       "domain": 3,
       "objective": "3.5",
       "difficulty": "medium",
-      "question": "What is the OWASP LLM Top 10 category 'Excessive Agency' (LLM08)?",
+      "question": "What is the OWASP LLM Top 10 category 'Excessive Agency' (LLM03 in the 2026 edition)?",
       "options": [
         "When an LLM claims to be more capable than it actually is",
         "When an LLM system is granted too many capabilities, overly broad permissions, or excessive autonomy, increasing the potential impact of failures, manipulations, or vulnerabilities",
@@ -2030,8 +2030,8 @@
         "When an LLM generates responses that are too long"
       ],
       "correct": 1,
-      "explanation": "OWASP LLM08 (Excessive Agency) addresses the risk of granting LLM systems too many capabilities or permissions. When an LLM agent has access to destructive tools, broad database permissions, or the ability to take irreversible actions, any vulnerability (prompt injection, hallucination, misinterpretation) has a much larger blast radius. Mitigation follows the principle of least privilege: limit capabilities to what is strictly necessary.",
-      "link": "ai-agent-security.html"
+      "explanation": "OWASP LLM03 (Excessive Agency) addresses the risk of granting LLM systems too many capabilities or permissions. It moved up from sixth place in 2025 to third in 2026 as agentic deployments began causing production incidents. When an LLM agent has access to destructive tools, broad database permissions, or the ability to take irreversible actions, any vulnerability (prompt injection, hallucination, misinterpretation) has a much larger blast radius. Mitigation follows the principle of least privilege: limit capabilities to what is strictly necessary.",
+      "link": "ai-vulnerabilities/llm03-excessive-agency.html"
     },
     {
       "id": 126,
@@ -2054,7 +2054,7 @@
       "domain": 3,
       "objective": "3.6",
       "difficulty": "medium",
-      "question": "What is the OWASP LLM Top 10 category 'Insecure Output Handling' (LLM02)?",
+      "question": "What is the OWASP LLM Top 10 category 'Improper Output Handling' (LLM10 in the 2026 edition)?",
       "options": [
         "When an LLM encrypts its output incorrectly",
         "When downstream components consume LLM-generated output without proper validation or sanitization, potentially leading to XSS, SSRF, privilege escalation, or remote code execution",
@@ -2062,8 +2062,8 @@
         "When the output is stored in an insecure database"
       ],
       "correct": 1,
-      "explanation": "OWASP LLM02 (Insecure Output Handling) occurs when LLM outputs are passed to downstream systems or rendered in user interfaces without proper validation and sanitization. Since LLM outputs can be manipulated via prompt injection, treating them as trusted data creates vulnerabilities: XSS if rendered as HTML, SQL injection if passed to databases, command injection if used in system calls, or SSRF if used to construct URLs.",
-      "link": "ai-agent-security.html"
+      "explanation": "OWASP LLM10 (Improper Output Handling) occurs when LLM outputs are passed to downstream systems or rendered in user interfaces without proper validation and sanitization. Since LLM outputs can be manipulated via prompt injection, treating them as trusted data creates vulnerabilities: XSS if rendered as HTML, SQL injection if passed to databases, command injection if used in system calls, or SSRF if used to construct URLs. It ranked fifth in 2025 and tenth in 2026, but the severity of what it causes did not change.",
+      "link": "ai-vulnerabilities/llm10-improper-output-handling.html"
     },
     {
       "id": 128,
@@ -2230,7 +2230,7 @@
       "domain": 2,
       "objective": "2.6",
       "difficulty": "easy",
-      "question": "What is the OWASP LLM Top 10 category 'Sensitive Information Disclosure' (LLM06)?",
+      "question": "What is the OWASP LLM Top 10 category 'Sensitive Information Disclosure' (LLM02)?",
       "options": [
         "When the model's training code is published publicly",
         "When an LLM reveals private data, proprietary information, or other sensitive content in its responses, either through memorized training data or by exposing information from its context (RAG documents, system prompts, conversation history)",
@@ -2238,8 +2238,8 @@
         "When users share their own sensitive information voluntarily"
       ],
       "correct": 1,
-      "explanation": "OWASP LLM06 (Sensitive Information Disclosure) covers the risk of LLMs revealing private, confidential, or proprietary information. Sources include: memorized training data (PII, code, secrets), RAG-retrieved documents the user should not access, system prompt contents, and conversation history from other sessions. Mitigations include data sanitization in training, access controls in RAG, output filtering, and session isolation.",
-      "link": "ai-agent-security.html"
+      "explanation": "OWASP LLM02 (Sensitive Information Disclosure) covers the risk of LLMs revealing private, confidential, or proprietary information. Sources include memorized training data (PII, code, secrets), RAG-retrieved documents the user should not access, and conversation history from other sessions. It has held second place in both the 2025 and 2026 editions. Mitigations include data sanitization in training, access controls in RAG, output filtering, and session isolation.",
+      "link": "ai-vulnerabilities/llm02-sensitive-information-disclosure.html"
     },
     {
       "id": 139,
@@ -2294,7 +2294,7 @@
       "domain": 4,
       "objective": "4.3",
       "difficulty": "easy",
-      "question": "What does the OWASP LLM Top 10 category 'Training Data Poisoning' (LLM03) address?",
+      "question": "What does the OWASP LLM Top 10 category 'Data and Model Poisoning' (LLM05 in the 2026 edition) address?",
       "options": [
         "When training data is stored in an unencrypted database",
         "The risk that an attacker manipulates training data to introduce backdoors, biases, or other vulnerabilities into the model during the training process",
@@ -2302,8 +2302,8 @@
         "When the training data is too small for the model size"
       ],
       "correct": 1,
-      "explanation": "OWASP LLM03 (Training Data Poisoning) covers the risk of malicious manipulation of training data to embed unwanted behaviors in the model. This includes backdoor insertion (trigger-activated behaviors), bias injection (skewing model outputs), general performance degradation, and safety bypass planting. Mitigations include vetting data sources, data integrity verification, anomaly detection in training metrics, and evaluating models specifically for poisoning indicators.",
-      "link": "ai-agent-security.html"
+      "explanation": "OWASP LLM05 (Data and Model Poisoning) covers malicious manipulation of pre-training, fine-tuning, or embedding data to embed unwanted behaviors in the model. The 2023 list called this Training Data Poisoning; the scope was widened to the model itself, not just its training set. This includes backdoor insertion (trigger-activated behaviors), bias injection, general performance degradation, and safety bypass planting. Mitigations include vetting data sources, data integrity verification, anomaly detection in training metrics, and evaluating models specifically for poisoning indicators.",
+      "link": "ai-vulnerabilities/llm05-data-and-model-poisoning.html"
     },
     {
       "id": 143,
@@ -2358,16 +2358,16 @@
       "domain": 4,
       "objective": "4.4",
       "difficulty": "medium",
-      "question": "What is OWASP LLM Top 10 category 'Model Denial of Service' (LLM04)?",
+      "question": "What is the OWASP LLM Top 10 category 'Unbounded Consumption' (LLM06 in the 2026 edition)?",
       "options": [
         "When a model refuses to answer any questions",
-        "When attackers craft inputs that consume disproportionate computational resources, degrading service availability for legitimate users through resource exhaustion of the model inference infrastructure",
+        "When attackers drive disproportionate resource use through inference requests, degrading availability for legitimate users and running up infrastructure or API cost",
         "When the model denies the existence of certain facts",
         "When the model provider denies access to paying customers"
       ],
       "correct": 1,
-      "explanation": "OWASP LLM04 (Model Denial of Service) addresses attacks that degrade AI system availability through resource exhaustion. Techniques include: crafting extremely long inputs that maximize processing time, sending inputs that trigger expensive internal operations, flooding the system with concurrent requests, and exploiting inefficient model behaviors. Mitigations include input length limits, request rate limiting, timeout controls, resource quotas, and input complexity analysis.",
-      "link": "ai-agent-security.html"
+      "explanation": "OWASP LLM06 (Unbounded Consumption) covers attacks that exhaust the resources behind an AI system. It replaced the narrower Model Denial of Service category from the 2023 list and adds financial exhaustion: on metered inference, an attacker who cannot take the service down can still run up the bill. Techniques include crafting inputs that maximize processing time, triggering expensive internal operations, flooding the system with concurrent requests, and model extraction through high-volume querying. Mitigations include input length limits, rate limiting, timeout controls, resource quotas, and cost alerting.",
+      "link": "ai-vulnerabilities/llm06-unbounded-consumption.html"
     },
     {
       "id": 147,

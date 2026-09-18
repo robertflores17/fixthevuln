@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+        <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="OWASP Agentic Skills Top 10 (AST10): the ten most critical security risks in AI agent skills, from malicious skills and supply chain compromise to untrusted external instructions and missing governance. An OWASP Incubator project, whitepaper v1 in public review, v1.0 targeted Q4 2026.">
+    <meta name="keywords" content="OWASP Agentic Skills Top 10, AST10, AI agent security, agent skills, skill supply chain, malicious skills, MCP security, Claude Code security, agent sandboxing">
+    <title>OWASP Agentic Skills Top 10 (AST10) - FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/agentic-skills-top-10.html">
+    <meta property="og:title" content="OWASP Agentic Skills Top 10 (AST10) - FixTheVuln">
+    <meta property="og:description" content="OWASP Agentic Skills Top 10 (AST10): the ten most critical security risks in AI agent skills, from malicious skills and supply chain compromise to untrusted external instructions and missing governance. An OWASP Incubator project, whitepaper v1 in public review, v1.0 targeted Q4 2026.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fixthevuln.com/agentic-skills-top-10.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="OWASP Agentic Skills Top 10 (AST10) - FixTheVuln">
+    <meta name="twitter:description" content="OWASP Agentic Skills Top 10 (AST10): the ten most critical security risks in AI agent skills, from malicious skills and supply chain compromise to untrusted external instructions and missing governance. An OWASP Incubator project, whitepaper v1 in public review, v1.0 targeted Q4 2026.">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.min.css?v=11">
+    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="blog/feed.xml">    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Guides", "item": "https://fixthevuln.com/guides.html" },
+            { "@type": "ListItem", "position": 3, "name": "OWASP Agentic Skills Top 10" }
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "What is the OWASP Agentic Skills Top 10?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "The OWASP Agentic Skills Top 10 (AST10) catalogues the ten most critical risks in AI agent skills. A skill is a reusable bundle of instructions and resources that an AI agent can find, load, and run on its own. AST10 covers malicious skills, supply chain compromise, over-privileged skills, insecure metadata, untrusted external instructions, weak isolation, update drift, poor scanning, missing governance, and cross-platform reuse. It is an OWASP Incubator project: the v1 whitepaper went out for public review in August 2026 and v1.0 is targeted for Q4 2026."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "How is AST10 different from the OWASP LLM Top 10?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "The LLM Top 10 covers risks in applications built on large language models. AST10 covers a narrower and newer layer: the skills an agent installs and runs. The two overlap at excessive permissions, where LLM03 Excessive Agency describes what an agent may do and AST03 Over-Privileged Skills describes what each installed skill inside it may do."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Why can't normal code scanners catch malicious agent skills?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "A skill's payload can be plain English instructing the agent to read a credentials file and send it somewhere. There is no suspicious function call, no obfuscated string, and nothing for a regex to match. This is AST08, Poor Scanning: against Snyk's toxicskills-goof test suite, SpecWeave's pattern-matching scanner caught three of four malicious samples and missed the one written purely as natural-language instructions."
+                }
+            }
+        ]
+    }
+    </script>
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="/" class="site-nav-logo">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+        <div class="site-nav-links">
+            <a href="guides.html">Guides</a>
+            <a href="tools.html">Tools</a>
+            <a href="compliance.html">Compliance</a>
+            <a href="resources.html">Resources</a>
+            <a href="practice-tests.html">Quizzes</a>
+            <a href="career-paths.html">Career Paths</a>
+            <a href="blog/">Blog</a>
+            <a href="/store/store.html" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: .35rem .75rem; border-radius: 6px; font-size: .85rem; font-weight: 600; text-decoration: none;">Store</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header>
+        <div class="container">
+            <a href="index.html" style="text-decoration: none; color: inherit;"><h1>FixTheVuln</h1></a>
+            <p class="tagline">OWASP Agentic Skills Top 10 (AST10)</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
+            <span>By <strong>FixTheVuln Team</strong></span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Peer-reviewed security content</span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Sources: CISA, NVD, OWASP</span>
+        </div>
+
+            <!-- Quiz Links -->
+            <section style="margin-top: 1.5rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
+                <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Test Your Knowledge</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+                <a href="security-quiz.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Security+ Practice Quiz</a>
+                <a href="cissp-quiz.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">CISSP Practice Quiz</a>
+                </div>
+            </section>
+
+        <a href="index.html" class="back-link">&larr; Back to Home</a>
+
+        <div class="key-takeaways">
+            <h2>Key Takeaways</h2>
+            <ul>
+                <li>A skill is a reusable bundle of instructions an agent can find, load, and run on its own &mdash; and on most platforms it runs with the agent's own filesystem, shell, and credentials</li>
+                <li>AST10 is an OWASP <strong>Incubator</strong> project, not a finished standard: whitepaper v1 went out for public review in August 2026, with v1.0 targeted for Q4 2026</li>
+                <li>The malicious payload in a skill is often plain English, not code, which is why traditional scanners miss it (AST08)</li>
+                <li>Repository configuration files are execution paths now &mdash; cloning a repo can run code before any consent dialog (AST02)</li>
+                <li>Each risk maps to OWASP AISVS v1.0 and the CSA MAESTRO 7-layer threat model, with an indirect NIST AI RMF crosswalk</li>
+            </ul>
+        </div>
+
+        <section class="intro">
+            <h2>Securing the Skills Your Agent Installs</h2>
+            <p>AI coding agents install skills the way browsers install extensions: from a registry, on a one-line command, often without review. The difference is what a skill gets when it loads. On most platforms today it inherits the agent's filesystem access, its shell, and its credentials, and it starts running before anyone has read what it says.</p>
+            <p>The OWASP Agentic Skills Top 10 (AST10) catalogues the ten risks in that layer. It exists because this stopped being hypothetical: the ClawHub registry became the first AI agent registry to be systematically poisoned at scale, and at peak infection five of the seven most-downloaded skills on it were confirmed malware.</p>
+            <p>Treat it as current best thinking rather than a settled standard. AST10 is an OWASP <strong>Incubator</strong> project in active development. Its v1 whitepaper was released for public review in August 2026 and v1.0 is targeted for Q4 2026, so risk titles and ratings can still move before release.</p>
+            <p>Each of the ten risks below has its own page with attack detail, the incident evidence the project cites, and a mitigation checklist.</p>
+        </section>
+
+        <!-- AI-VULN-GRID-START -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;">
+                <a href="ai-vulnerabilities/ast01-malicious-skills.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
+                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">AST01: Malicious Skills</strong>
+                    <span style="font-size:0.85rem;font-weight:700;color:#ef4444;">Critical</span>
+                </a>
+                <a href="ai-vulnerabilities/ast02-supply-chain-compromise.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
+                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">AST02: Supply Chain Compromise</strong>
+                    <span style="font-size:0.85rem;font-weight:700;color:#ef4444;">Critical</span>
+                </a>
+                <a href="ai-vulnerabilities/ast03-over-privileged-skills.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
+                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">AST03: Over-Privileged Skills</strong>
+                    <span style="font-size:0.85rem;font-weight:700;color:#fd7e14;">High</span>
+                </a>
+                <a href="ai-vulnerabilities/ast04-insecure-metadata.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
+                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">AST04: Insecure Metadata</strong>
+                    <span style="font-size:0.85rem;font-weight:700;color:#fd7e14;">High</span>
+                </a>
+                <a href="ai-vulnerabilities/ast05-untrusted-external-instructions.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
+                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">AST05: Untrusted External Instructions</strong>
+                    <span style="font-size:0.85rem;font-weight:700;color:#fd7e14;">High</span>
+                </a>
+                <a href="ai-vulnerabilities/ast06-weak-isolation.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
+                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">AST06: Weak Isolation</strong>
+                    <span style="font-size:0.85rem;font-weight:700;color:#fd7e14;">High</span>
+                </a>
+                <a href="ai-vulnerabilities/ast07-update-drift.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
+                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">AST07: Update Drift</strong>
+                    <span style="font-size:0.85rem;font-weight:700;color:#ffc107;">Medium</span>
+                </a>
+                <a href="ai-vulnerabilities/ast08-poor-scanning.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
+                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">AST08: Poor Scanning</strong>
+                    <span style="font-size:0.85rem;font-weight:700;color:#ffc107;">Medium</span>
+                </a>
+                <a href="ai-vulnerabilities/ast09-no-governance.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
+                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">AST09: No Governance</strong>
+                    <span style="font-size:0.85rem;font-weight:700;color:#ffc107;">Medium</span>
+                </a>
+                <a href="ai-vulnerabilities/ast10-cross-platform-reuse.html" style="display:block;padding:1.25rem;background:var(--bg-tertiary,#f8f9fa);border-radius:8px;text-decoration:none;border:2px solid var(--border-color,#e0e0e0);">
+                    <strong style="display:block;margin-bottom:0.4rem;color:var(--text-primary,#333);">AST10: Cross-Platform Reuse</strong>
+                    <span style="font-size:0.85rem;font-weight:700;color:#ffc107;">Medium</span>
+                </a>
+            </div>
+<!-- AI-VULN-GRID-END -->
+
+        <section class="vulnerability-card">
+            <h2>How AST10 Relates to the LLM Top 10</h2>
+            <p>These are different layers of the same stack. The AST10 project maps each risk to OWASP AISVS v1.0 and to the Cloud Security Alliance's MAESTRO 7-layer threat model for agentic systems, with an indirect NIST AI RMF crosswalk (NIST's first agent-specific deliverables are not expected until late 2026).</p>
+            <div style="overflow-x: auto;">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Question</th>
+                            <th>Covered by</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>What can the model be tricked into saying or doing?</td><td><a href="ai-vulnerabilities/llm01-prompt-injection.html">LLM01: Prompt Injection</a></td></tr>
+                        <tr><td>What is the agent as a whole allowed to do?</td><td><a href="ai-vulnerabilities/llm03-excessive-agency.html">LLM03: Excessive Agency</a></td></tr>
+                        <tr><td>What is each installed skill allowed to do?</td><td><a href="ai-vulnerabilities/ast03-over-privileged-skills.html">AST03: Over-Privileged Skills</a></td></tr>
+                        <tr><td>Where did the skill come from, and is it what it claims?</td><td><a href="ai-vulnerabilities/ast01-malicious-skills.html">AST01</a>, <a href="ai-vulnerabilities/ast04-insecure-metadata.html">AST04</a></td></tr>
+                        <tr><td>Can what the skill points at change after review?</td><td><a href="ai-vulnerabilities/ast05-untrusted-external-instructions.html">AST05: Untrusted External Instructions</a></td></tr>
+                        <tr><td>What contains the damage when a skill turns hostile?</td><td><a href="ai-vulnerabilities/ast06-weak-isolation.html">AST06: Weak Isolation</a></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>If you are securing an agent deployment, the LLM Top 10 and AST10 are both in scope. <a href="owasp-llm-top10.html">The OWASP LLM Top 10 (2026 edition) &rarr;</a></p>
+        </section>
+
+        <section class="vulnerability-card">
+            <h2>AST10 Summary</h2>
+            <div style="overflow-x: auto;">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Risk</th>
+                            <th>Severity</th>
+                            <th>Primary Defense</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>AST01</td><td>Malicious Skills</td><td style="color:#ef4444;">Critical</td><td>Signature verification, install-time behavioral scanning</td></tr>
+                        <tr><td>AST02</td><td>Supply Chain Compromise</td><td style="color:#ef4444;">Critical</td><td>Hash pinning, provenance, treat repo config as code</td></tr>
+                        <tr><td>AST03</td><td>Over-Privileged Skills</td><td style="color:#fd7e14;">High</td><td>Permission manifests, per-skill scoped credentials</td></tr>
+                        <tr><td>AST04</td><td>Insecure Metadata</td><td style="color:#fd7e14;">High</td><td>Safe parsers, schema validation, publish-time analysis</td></tr>
+                        <tr><td>AST05</td><td>Untrusted External Instructions</td><td style="color:#fd7e14;">High</td><td>Hash-pin fetched docs, allowlist domains, audit chains</td></tr>
+                        <tr><td>AST06</td><td>Weak Isolation</td><td style="color:#fd7e14;">High</td><td>Container isolation by default, syscall confinement</td></tr>
+                        <tr><td>AST07</td><td>Update Drift</td><td style="color:#ffc107;">Medium</td><td>Content-hash pinning, signature checks on update</td></tr>
+                        <tr><td>AST08</td><td>Poor Scanning</td><td style="color:#ffc107;">Medium</td><td>Scan the prose layer, sandbox detonation</td></tr>
+                        <tr><td>AST09</td><td>No Governance</td><td style="color:#ffc107;">Medium</td><td>Central inventory, approval workflow, audit logging</td></tr>
+                        <tr><td>AST10</td><td>Cross-Platform Reuse</td><td style="color:#ffc107;">Medium</td><td>Re-validate on port, normalize security metadata</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="font-size:0.9rem;color:var(--text-muted,#666);">Severity ratings are the AST10 project's own, as published in its risk index.</p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
+            <p>Study Planners: <a href="/store/store.html">FixTheVuln Store</a> | Career Tools: <a href="https://cyberfolio.io" target="_blank" rel="noopener">CyberFolio</a></p>
+            <p><a href="index.html">Home</a> | <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a></p>
+        </div>
+    </footer>
+
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode">
+        <span id="theme-icon">🌙</span>
+    </button>
+
+    <script>
+        // Dark mode toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('fixthevuln-theme', newTheme);
+
+            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+
+        // Load saved theme
+        (function() {
+            const savedTheme = localStorage.getItem('fixthevuln-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('theme-icon').textContent = '☀️';
+            }
+        })();
+    </script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+  <script src="/js/error-reporter.js?v=1"></script>
+</body>
+</html>

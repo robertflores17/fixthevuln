@@ -119,6 +119,7 @@ CATEGORIES = [
     ("Certification Comparisons", lambda p: p.startswith("comparisons/"), "/comparisons/", None),
     ("CVE & Vulnerability Pages", lambda p: p.startswith("cve/"), "/cve-lookup.html", None),
     ("AI Security Guides", lambda p: _is_ai_guide(p), "/ai-security.html", None),
+    ("Agentic Skills Techniques", lambda p: p.startswith("ai-vulnerabilities/ast"), "/agentic-skills-top-10.html", None),
     ("AI Vulnerability Techniques", lambda p: p.startswith("ai-vulnerabilities/"), "/owasp-llm-top10.html", None),
     ("Store", lambda p: p.startswith("store/"), "/store/store.html", None),
     ("Interactive Security Tools", lambda p: _is_tool(p), "/tools.html", None),
@@ -141,7 +142,8 @@ COMPLIANCE_PAGES = {
 }
 
 AI_GUIDE_PAGES = {
-    "owasp-llm-top10.html", "prompt-injection.html", "model-poisoning.html",
+    "owasp-llm-top10.html", "agentic-skills-top-10.html",
+    "prompt-injection.html", "model-poisoning.html",
     "mlsecops.html", "ai-agent-security.html", "ai-agent-security-threats.html",
     "ai-security-careers.html", "genai-data-security.html",
 }
@@ -260,6 +262,15 @@ def slug_to_title(filename):
     return " ".join(result) + suffix
 
 
+def _assert_every_category_emitted(category_order):
+    """A category defined in CATEGORIES but absent from an emit list is silently
+    dropped from the generated file. That is how every AI security guide went
+    missing from llms.txt. Fail loudly instead."""
+    missing = [name for name, *_ in CATEGORIES if name not in category_order]
+    if missing:
+        raise ValueError(f"CATEGORIES not present in emit order, would be dropped: {missing}")
+
+
 def categorize_urls(urls):
     """Categorize URLs into groups. Returns dict of category → list of (url, title)."""
     categories = {}
@@ -340,10 +351,13 @@ def generate_llms_txt(categories, hub_urls):
         "Certification Comparisons",
         "Blog & Study Guides",
         "CVE & Vulnerability Pages",
+        "AI Security Guides",
         "AI Vulnerability Techniques",
+        "Agentic Skills Techniques",
         "OWASP WSTG Testing Guide",
         "Store",
     ]
+    _assert_every_category_emitted(category_order)
 
     for cat_name in category_order:
         if cat_name in categories:
@@ -399,10 +413,13 @@ def generate_llms_full_txt(categories, hub_urls):
         "Certification Comparisons",
         "Blog & Study Guides",
         "CVE & Vulnerability Pages",
+        "AI Security Guides",
         "AI Vulnerability Techniques",
+        "Agentic Skills Techniques",
         "OWASP WSTG Testing Guide",
         "Store",
     ]
+    _assert_every_category_emitted(category_order)
 
     for cat_name in category_order:
         if cat_name in categories:

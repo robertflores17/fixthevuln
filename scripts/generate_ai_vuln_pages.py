@@ -20,9 +20,13 @@ from lib.templates import esc
 
 CONTENT_PATH = REPO_ROOT / "data" / "ai-vuln-content.json"
 OUTPUT_DIR = REPO_ROOT / "ai-vulnerabilities"
-HUB_PATH = REPO_ROOT / "owasp-llm-top10.html"
-HUB_URL = "owasp-llm-top10.html"
-HUB_NAME = "OWASP LLM Top 10"
+# Each entry's "framework" field selects its hub. Adding a framework here plus
+# entries in data/ai-vuln-content.json is all a new technique library needs;
+# the hub page itself must carry the AI-VULN-GRID markers.
+FRAMEWORKS = {
+    "owasp-llm-top10": ("owasp-llm-top10.html", "OWASP LLM Top 10"),
+    "owasp-agentic-skills-top10": ("agentic-skills-top-10.html", "OWASP Agentic Skills Top 10"),
+}
 
 # Matches every id currently in data/ai-vuln-content.json (e.g.
 # "llm01-prompt-injection"); guards against a malformed id building a write
@@ -58,19 +62,24 @@ def main():
     last_updated = data["lastUpdated"]
 
     for t in techniques:
-        if not VALID_ID_RE.match(t["id"]):
+        if not VALID_ID_RE.fullmatch(t["id"]):
             raise ValueError(f'Invalid technique id {t["id"]!r} — must match {VALID_ID_RE.pattern}')
+        if t.get("framework") not in FRAMEWORKS:
+            raise ValueError(f'Unknown framework {t.get("framework")!r} on {t["id"]} — add it to FRAMEWORKS')
 
     OUTPUT_DIR.mkdir(exist_ok=True)
     for t in techniques:
-        html = render_technique_page(t, hub_url=HUB_URL, hub_name=HUB_NAME, last_updated=last_updated)
+        hub_url, hub_name = FRAMEWORKS[t["framework"]]
+        html = render_technique_page(t, hub_url=hub_url, hub_name=hub_name, last_updated=last_updated)
         (OUTPUT_DIR / f'{t["id"]}.html').write_text(html, encoding='utf-8')
     print(f"Wrote {len(techniques)} pages to {OUTPUT_DIR}/")
 
-    hub_html = HUB_PATH.read_text(encoding='utf-8')
-    grid_html = render_grid(techniques)
-    HUB_PATH.write_text(replace_grid_section(hub_html, grid_html), encoding='utf-8')
-    print(f"Updated grid in {HUB_PATH}")
+    for framework, (hub_url, _) in FRAMEWORKS.items():
+        members = [t for t in techniques if t["framework"] == framework]
+        hub_path = REPO_ROOT / hub_url
+        hub_html = hub_path.read_text(encoding='utf-8')
+        hub_path.write_text(replace_grid_section(hub_html, render_grid(members)), encoding='utf-8')
+        print(f"Updated grid in {hub_path}")
 
 
 if __name__ == "__main__":
