@@ -29,7 +29,7 @@
         "headline": "37 Vulnerabilities in AI Coding Tools — Zero-Click RCE in Your IDE",
         "description": "Researchers found 37 vulnerabilities across 15+ AI IDE vendors including remote code execution via MCP autoload attacks. Here's what developers and security teams need to know.",
         "datePublished": "2026-03-16",
-        "dateModified": "2026-03-16",
+        "dateModified": "2026-09-19",
         "author": { "@type": "Organization", "name": "FixTheVuln Team", "url": "https://fixthevuln.com" },
         "publisher": { "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" }
     }
@@ -115,7 +115,7 @@
         <div class="container">
             <h1>37 Vulnerabilities in AI Coding Tools — Zero-Click RCE in Your IDE</h1>
             <p>Security research into AI-powered development environments reveals critical attack surface</p>
-            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">Published: March 16, 2026</p>
+            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">Published: March 16, 2026 &middot; <span id="tracker-last-updated">Last updated: September 19, 2026 (disclosure table and research list)</span></p>
         </div>
     </header>
 
@@ -137,6 +137,112 @@
 <p>The affected tools include both commercial products and open-source projects. Some vendors patched within days of disclosure. Others took weeks. A handful of the vulnerabilities remain unpatched at the time of writing, which is why this article focuses on the attack patterns and defenses rather than specific exploit chains.</p>
 
 <p>What makes this research significant is not just the vulnerability count. It is the realization that an entirely new attack surface has emerged in developer tooling, and most organizations have zero visibility into it.</p>
+
+<!-- AI-IDE-TRACKER-START -->
+<h2 id="latest-disclosures">Latest AI IDE and MCP disclosures</h2>
+
+<p>The research above covers early 2026. This table stays current. It lists 88 AI IDE and MCP vulnerabilities published since May 25, 2026, collected daily from NVD, GitHub security advisories for 9 MCP and AI-agent repositories, and the CISA KEV catalog. Most are MCP servers and SDKs: 57 of the 88. Scores are CVSS v3.1 base scores where available, taking the rating NVD marks primary when one exists. Most entries here are days old, and NVD has not scored them yet, so the number shown is the reporting CNA's own assessment until NVD completes its analysis. The 12 most recent are shown.</p>
+
+<div style="overflow-x:auto;margin-bottom:1.5rem;">
+    <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <thead>
+            <tr style="text-align:left;border-bottom:2px solid var(--border-color,#e0e0e0);">
+                <th style="padding:0.6rem;">Published</th>
+                <th style="padding:0.6rem;">ID</th>
+                <th style="padding:0.6rem;">Affected product</th>
+                <th style="padding:0.6rem;">Severity</th>
+                <th style="padding:0.6rem;">Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+                        <tr>
+                            <td style="padding:0.6rem;white-space:nowrap;">2026-09-19</td>
+                            <td style="padding:0.6rem;white-space:nowrap;"><a href="https://nvd.nist.gov/vuln/detail/CVE-2026-93982" target="_blank" rel="noopener">CVE-2026-93982</a></td>
+                            <td style="padding:0.6rem;white-space:nowrap;">OpenPanel</td>
+                            <td style="padding:0.6rem;white-space:nowrap;color:#388e3c;font-weight:700;">Low 3.3</td>
+                            <td style="padding:0.6rem;">OpenPanel through commit bad75bdd writes Model Context Protocol authentication tokens from URL query parameters to plaintext application logs without redaction. Attackers with access to application stdout or centralized logging systems can capture...</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0.6rem;white-space:nowrap;">2026-09-18</td>
+                            <td style="padding:0.6rem;white-space:nowrap;"><a href="https://nvd.nist.gov/vuln/detail/CVE-2026-58197" target="_blank" rel="noopener">CVE-2026-58197</a></td>
+                            <td style="padding:0.6rem;white-space:nowrap;">ToolHive</td>
+                            <td style="padding:0.6rem;white-space:nowrap;color:#f57c00;font-weight:700;">High 8.8</td>
+                            <td style="padding:0.6rem;">ToolHive is a utility designed to simplify the deployment and management of Model Context Protocol servers. Prior to ToolHive CLI 0.30.1 and ToolHive Studio 0.38.0, locally run MCP server containers use the default network permission profile without network...</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0.6rem;white-space:nowrap;">2026-09-17</td>
+                            <td style="padding:0.6rem;white-space:nowrap;"><a href="https://nvd.nist.gov/vuln/detail/CVE-2026-50125" target="_blank" rel="noopener">CVE-2026-50125</a></td>
+                            <td style="padding:0.6rem;white-space:nowrap;">MKP</td>
+                            <td style="padding:0.6rem;white-space:nowrap;color:#f57c00;font-weight:700;">High 7.5</td>
+                            <td style="padding:0.6rem;">MKP is a Model Context Protocol server for Kubernetes. Prior to 0.4.1, cmd/server/main.go exposes the default HTTP endpoint and pkg/mcp/server.go registers the unauthenticated get_resource tool, which accepts attacker-controlled limitBytes and tailLines...</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0.6rem;white-space:nowrap;">2026-09-16</td>
+                            <td style="padding:0.6rem;white-space:nowrap;"><a href="https://nvd.nist.gov/vuln/detail/CVE-2026-64684" target="_blank" rel="noopener">CVE-2026-64684</a></td>
+                            <td style="padding:0.6rem;white-space:nowrap;">RMCP</td>
+                            <td style="padding:0.6rem;white-space:nowrap;color:#f9a825;font-weight:700;">Medium 6.8</td>
+                            <td style="padding:0.6rem;">RMCP is an official Rust SDK for the Model Context Protocol. Prior to 2.1.0, the rmcp crate&#039;s StreamableHttpClientTransport in crates/rmcp/src/transport/common/reqwest/streamable_http_client.rs builds its default_http_client with reqwest&#039;s automatic redirect...</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0.6rem;white-space:nowrap;">2026-09-16</td>
+                            <td style="padding:0.6rem;white-space:nowrap;"><a href="https://nvd.nist.gov/vuln/detail/CVE-2026-63128" target="_blank" rel="noopener">CVE-2026-63128</a></td>
+                            <td style="padding:0.6rem;white-space:nowrap;">RMCP</td>
+                            <td style="padding:0.6rem;white-space:nowrap;color:#f57c00;font-weight:700;">High 7.5</td>
+                            <td style="padding:0.6rem;">RMCP is an official Rust SDK for the Model Context Protocol. Prior to 2.0.0, the rmcp crate&#039;s stateful Streamable HTTP server in crates/rmcp/src/transport/streamable_http_server/tower.rs allows an unauthenticated client to send a well-formed JSON-RPC POST...</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0.6rem;white-space:nowrap;">2026-09-16</td>
+                            <td style="padding:0.6rem;white-space:nowrap;"><a href="https://nvd.nist.gov/vuln/detail/CVE-2026-63127" target="_blank" rel="noopener">CVE-2026-63127</a></td>
+                            <td style="padding:0.6rem;white-space:nowrap;">RMCP</td>
+                            <td style="padding:0.6rem;white-space:nowrap;color:#f57c00;font-weight:700;">High 8.2</td>
+                            <td style="padding:0.6rem;">RMCP is an official Rust SDK for the Model Context Protocol. Prior to 2.0.0, the rmcp crate&#039;s OAuth implementation in crates/rmcp/src/transport/auth.rs omits the RFC 9728 resource field from ResourceServerMetadata and allows...</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0.6rem;white-space:nowrap;">2026-09-15</td>
+                            <td style="padding:0.6rem;white-space:nowrap;"><a href="https://nvd.nist.gov/vuln/detail/CVE-2026-61568" target="_blank" rel="noopener">CVE-2026-61568</a></td>
+                            <td style="padding:0.6rem;white-space:nowrap;">@zereight/mcp-gitlab</td>
+                            <td style="padding:0.6rem;white-space:nowrap;color:#d32f2f;font-weight:700;">Critical 9.6</td>
+                            <td style="padding:0.6rem;">`@zereight/mcp-gitlab` is a Model Context Protocol server for GitLab. Versions prior to 2.1.30 expose the Streamable HTTP MCP endpoint without an effective Host or Origin allowlist. A malicious web page can use DNS rebinding to route browser requests to a...</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0.6rem;white-space:nowrap;">2026-09-15</td>
+                            <td style="padding:0.6rem;white-space:nowrap;"><a href="https://nvd.nist.gov/vuln/detail/CVE-2026-61560" target="_blank" rel="noopener">CVE-2026-61560</a></td>
+                            <td style="padding:0.6rem;white-space:nowrap;">@zereight/mcp-gitlab</td>
+                            <td style="padding:0.6rem;white-space:nowrap;color:#d32f2f;font-weight:700;">Critical 9.8</td>
+                            <td style="padding:0.6rem;">`@zereight/mcp-gitlab` is a Model Context Protocol server for GitLab. Prior to version 2.1.27, the SSE transport mode (`SSE=true`) exposes all MCP tools without any authentication. The `upload_markdown` tool reads arbitrary files from the server&#039;s local...</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0.6rem;white-space:nowrap;">2026-09-15</td>
+                            <td style="padding:0.6rem;white-space:nowrap;"><a href="https://nvd.nist.gov/vuln/detail/CVE-2026-61559" target="_blank" rel="noopener">CVE-2026-61559</a></td>
+                            <td style="padding:0.6rem;white-space:nowrap;">@zereight/mcp-gitlab</td>
+                            <td style="padding:0.6rem;white-space:nowrap;color:#d32f2f;font-weight:700;">Critical 9.6</td>
+                            <td style="padding:0.6rem;">`@zereight/mcp-gitlab` is a Model Context Protocol server for GitLab. Starting in version 0.0.1 and prior to version 2.1.27, when the environment variable `ENABLE_DYNAMIC_API_URL=true` is set, the server reads the `X-GitLab-API-URL` HTTP request header and...</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0.6rem;white-space:nowrap;">2026-09-15</td>
+                            <td style="padding:0.6rem;white-space:nowrap;"><a href="https://nvd.nist.gov/vuln/detail/CVE-2026-59973" target="_blank" rel="noopener">CVE-2026-59973</a></td>
+                            <td style="padding:0.6rem;white-space:nowrap;">FrontMCP</td>
+                            <td style="padding:0.6rem;white-space:nowrap;color:#f57c00;font-weight:700;">High 8.5</td>
+                            <td style="padding:0.6rem;">FrontMCP is a TypeScript-first framework for the Model Context Protocol (MCP). From mcp-from-openapi 2.3.0 until 2.5.0 and from frontmcp and @frontmcp/adapters 1.2.1 until 1.5.0, libs/adapters/src/openapi/openapi.adapter.ts loadOpenAPISpec() forwards...</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0.6rem;white-space:nowrap;">2026-09-15</td>
+                            <td style="padding:0.6rem;white-space:nowrap;"><a href="https://nvd.nist.gov/vuln/detail/CVE-2026-59971" target="_blank" rel="noopener">CVE-2026-59971</a></td>
+                            <td style="padding:0.6rem;white-space:nowrap;">MySQL MCP Server</td>
+                            <td style="padding:0.6rem;white-space:nowrap;color:#d32f2f;font-weight:700;">Critical 10.0</td>
+                            <td style="padding:0.6rem;">MySQL MCP Server is a Model Context Protocol server that enables secure interaction with MySQL databases. Prior to 0.4.2, setting MCP_TRANSPORT=sse causes src/mysql_mcp_server/server.py to construct SseServerTransport without security_settings or...</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0.6rem;white-space:nowrap;">2026-09-15</td>
+                            <td style="padding:0.6rem;white-space:nowrap;"><a href="https://nvd.nist.gov/vuln/detail/CVE-2026-58485" target="_blank" rel="noopener">CVE-2026-58485</a></td>
+                            <td style="padding:0.6rem;white-space:nowrap;">mcp-searxng</td>
+                            <td style="padding:0.6rem;white-space:nowrap;color:#f57c00;font-weight:700;">High 7.1</td>
+                            <td style="padding:0.6rem;">mcp-searxng is a Model Context Protocol server that gives AI assistants web search and URL-reading capabilities through SearXNG. Prior to 1.7.1, web_url_read receives its caller-controlled URL through src/index.ts and validates only the literal hostname in...</td>
+                        </tr>
+        </tbody>
+    </table>
+</div>
+<!-- AI-IDE-TRACKER-END -->
 
 <h2 id="the-mcp-attack-surface">The MCP Attack Surface</h2>
 
@@ -289,6 +395,40 @@
     <li>Establish a review and approval process for new MCP server integrations</li>
     <li>Conduct quarterly audits of MCP configurations across all repositories</li>
 </ul>
+
+<!-- AI-IDE-RESEARCH-START -->
+<h2 id="related-research">Related research</h2>
+
+<p>The table above lists disclosures. The papers below are agent-security research co-authored by Ron F. del Rosario, co-lead of the <a href="https://genai.owasp.org/contributors/" target="_blank" rel="noopener">OWASP Agentic Security Initiative</a> and Head of AI Security for SAP Intelligent Spend and Business Network. They sit adjacent to this attack class rather than surveying it. FixTheVuln already credits his work: the vulnerability classifier and entity extractor adapt patterns from his MIT-licensed <a href="https://github.com/guerilla7/CyberMoE" target="_blank" rel="noopener">CyberMoE</a> framework, and the quiz feedback system was inspired by it. He is not involved with this site. The list is pulled from arXiv cs.CR by author name and refreshes daily. Each byline shows the first two authors in arXiv's order plus a count of the rest. The 5 most recent are shown.</p>
+
+<ul style="list-style:none;padding-left:0;margin-bottom:1.5rem;">
+        <li style="margin-bottom:1rem;">
+            <a href="https://arxiv.org/abs/2605.09822v1" target="_blank" rel="noopener"><strong>Oracle Poisoning: Corrupting Knowledge Graphs to Weaponise AI Agent Reasoning</strong></a><br>
+            <span style="font-size:0.8rem;color:var(--text-muted,#666);">Ben Kereopa-Yorke, Guillermo Diaz and 4 others &middot; May 10, 2026 &middot; arXiv 2605.09822v1</span><br>
+            <span style="font-size:0.85rem;">We define Oracle Poisoning, an attack class in which an adversary corrupts a structured knowledge graph that AI agents query at runtime via tool-use protocols, causing incorrect conclusions through correct reasoning. Unlike prompt...</span>
+        </li>
+        <li style="margin-bottom:1rem;">
+            <a href="https://arxiv.org/abs/2601.00848v1" target="_blank" rel="noopener"><strong>Temporal Attack Pattern Detection in Multi-Agent AI Workflows: An Open Framework for Training Trace-Based Security Models</strong></a><br>
+            <span style="font-size:0.8rem;color:var(--text-muted,#666);">Ron F. Del Rosario &middot; December 29, 2025 &middot; arXiv 2601.00848v1</span><br>
+            <span style="font-size:0.85rem;">We present an openly documented methodology for fine-tuning language models to detect temporal attack patterns in multi-agent AI workflows using OpenTelemetry trace analysis. We curate a dataset of 80,851 examples from 18 public...</span>
+        </li>
+        <li style="margin-bottom:1rem;">
+            <a href="https://arxiv.org/abs/2511.15097v2" target="_blank" rel="noopener"><strong>MAIF: Enforcing AI Trust and Provenance with an Artifact-Centric Agentic Paradigm</strong></a><br>
+            <span style="font-size:0.8rem;color:var(--text-muted,#666);">Vineeth Sai Narajala, Manish Bhatt and 3 others &middot; November 19, 2025 &middot; arXiv 2511.15097v2</span><br>
+            <span style="font-size:0.85rem;">The AI trustworthiness crisis threatens to derail the artificial intelligence revolution, with regulatory barriers, security vulnerabilities, and accountability gaps preventing deployment in critical domains. Current AI systems operate on...</span>
+        </li>
+        <li style="margin-bottom:1rem;">
+            <a href="https://arxiv.org/abs/2509.08646v1" target="_blank" rel="noopener"><strong>Architecting Resilient LLM Agents: A Guide to Secure Plan-then-Execute Implementations</strong></a><br>
+            <span style="font-size:0.8rem;color:var(--text-muted,#666);">Ron F. Del Rosario, Klaudia Krawiecka and 1 other &middot; September 10, 2025 &middot; arXiv 2509.08646v1</span><br>
+            <span style="font-size:0.85rem;">As Large Language Model (LLM) agents become increasingly capable of automating complex, multi-step tasks, the need for robust, secure, and predictable architectural patterns is paramount. This paper provides a comprehensive guide to the...</span>
+        </li>
+        <li style="margin-bottom:1rem;">
+            <a href="https://arxiv.org/abs/2506.01900v1" target="_blank" rel="noopener"><strong>COALESCE: Economic and Security Dynamics of Skill-Based Task Outsourcing Among Team of Autonomous LLM Agents</strong></a><br>
+            <span style="font-size:0.8rem;color:var(--text-muted,#666);">Manish Bhatt, Ronald F. Del Rosario and 2 others &middot; June 2, 2025 &middot; arXiv 2506.01900v1</span><br>
+            <span style="font-size:0.85rem;">The meteoric rise and proliferation of autonomous Large Language Model (LLM) agents promise significant capabilities across various domains. However, their deployment is increasingly constrained by substantial computational demands,...</span>
+        </li>
+</ul>
+<!-- AI-IDE-RESEARCH-END -->
 
 <h2 id="the-bigger-picture">The Bigger Picture</h2>
 

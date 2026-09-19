@@ -1,0 +1,78 @@
+name: AI IDE Vulnerability Tracker
+
+# Keeps the live disclosure table in
+# blog/ai-ide-security-vulnerabilities-2026.html current. The post's narrative
+# is a March 2026 writeup of the [un]prompted research and never changes; only
+# the table between the AI-IDE-TRACKER markers does.
+#
+# Runs daily but commits rarely. generate_ai_ide_tracker.py is a no-op when the
+# rendered table is byte-identical to what's already on the page, so the
+# "Last updated" line and dateModified only move on days a real disclosure
+# landed. A daily unconditional date bump would be freshness spam.
+#
+# Deliberately NO [skip ci] on the commit: propagate-index.yml watches pushes
+# touching **.html, and a changed page is exactly when IndexNow should be told.
+# Adding [skip ci] here would silently stop that submission.
+
+on:
+  schedule:
+    # 20:00 UTC (1 PM PDT) — after the 17:00 CVE publish and 18:00 propagate,
+    # before the 23:00 sitemap reconcile, so kev-data.json is already fresh.
+    - cron: '0 20 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  track:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          # Full history: the push-retry below rebases, which cannot find a
+          # merge base in the default depth-1 clone.
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Collect AI IDE / MCP disclosures
+        env:
+          # A rejected key is handled, not fatal: NVD answers a bad apiKey with
+          # 404, so the script validates it once and falls back to the slower
+          # anonymous rate limit rather than silently collecting nothing.
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: python3 scripts/aggregate_ai_ide_vulns.py
+
+      - name: Render tracker into the post
+        run: python3 scripts/generate_ai_ide_tracker.py
+
+      - name: Commit only if the tracker changed
+        run: |
+          git config user.name "FixTheVuln Bot"
+          git config user.email "bot@fixthevuln.com"
+          PATHS="data/ai-ide-vulns.json blog/ai-ide-security-vulnerabilities-2026.html"
+          if [[ -z $(git status --porcelain $PATHS) ]]; then
+            echo "No new AI IDE/MCP disclosures — page untouched." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git add $PATHS
+          git commit -m "Update AI IDE vulnerability tracker"
+          # No other job writes these two paths, so a concurrent push can only
+          # conflict on unrelated files; rebase resolves it without a merge.
+          for attempt in 1 2 3; do
+            if git push; then
+              echo "Pushed tracker update (attempt $attempt)." >> "$GITHUB_STEP_SUMMARY"
+              git show --stat HEAD >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            echo "Push rejected by a concurrent push; rebasing (attempt $attempt)..."
+            git pull --rebase origin main
+          done
+          echo "::error::Failed to push tracker update after 3 attempts."
+          exit 1
