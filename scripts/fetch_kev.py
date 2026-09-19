@@ -70,6 +70,19 @@ def _validate_nvd_key():
     return _nvd_key_valid
 
 
+def _best_score(metric_list):
+    """Base score from one CVSS metric list, preferring the rating NVD marks
+    Primary. NVD does not order these: CVE-2026-13323 lists Eclipse's Secondary
+    4.1 MEDIUM ahead of NVD's own Primary 8.7 HIGH, so taking [0] published
+    "Medium" for a vulnerability NVD rates High. Returns '' when the list has
+    no usable score."""
+    for m in sorted(metric_list, key=lambda m: m.get('type') != 'Primary'):
+        score = m.get('cvssData', {}).get('baseScore')
+        if score is not None:
+            return str(score)
+    return ''
+
+
 def fetch_cvss_from_nvd(cve_id):
     """Fetch CVSS score and CWE/product data from NVD API v2.0.
     Returns dict with 'score' (str), 'cwes' (list), 'cpe_vendor' (str), 'cpe_product' (str)."""
@@ -92,30 +105,20 @@ def fetch_cvss_from_nvd(cve_id):
         cve_data = vulns[0].get('cve', {})
         metrics = cve_data.get('metrics', {})
 
-        # Try CVSS v3.1, then v3.0
+        # Try CVSS v3.1, then v3.0. Version order is unchanged; only the
+        # choice within a version list moved to Primary-first.
         for key in ('cvssMetricV31', 'cvssMetricV30'):
-            metric_list = metrics.get(key, [])
-            if metric_list:
-                score = metric_list[0].get('cvssData', {}).get('baseScore')
-                if score is not None:
-                    result['score'] = str(score)
-                    break
+            result['score'] = _best_score(metrics.get(key, []))
+            if result['score']:
+                break
 
         # Fallback to v2
         if not result['score']:
-            v2_list = metrics.get('cvssMetricV2', [])
-            if v2_list:
-                score = v2_list[0].get('cvssData', {}).get('baseScore')
-                if score is not None:
-                    result['score'] = str(score)
+            result['score'] = _best_score(metrics.get('cvssMetricV2', []))
 
         # Fallback to CVSS v4.0 if v3 and v2 are unavailable
         if not result['score']:
-            v4_list = metrics.get('cvssMetricV40', [])
-            if v4_list:
-                score = v4_list[0].get('cvssData', {}).get('baseScore')
-                if score is not None:
-                    result['score'] = str(score)
+            result['score'] = _best_score(metrics.get('cvssMetricV40', []))
 
         # Extract CWE IDs from weaknesses
         weaknesses = cve_data.get('weaknesses', [])
