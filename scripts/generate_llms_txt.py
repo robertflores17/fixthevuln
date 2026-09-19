@@ -31,7 +31,7 @@ ABBREVIATIONS = {
     "ms": "Microsoft",
     "sc": "SC",
     "dp": "DP",
-    "ai": "AI",
+    "ai": "AI", "ide": "IDE", "mcp": "MCP",
     "isc2": "ISC2",
     "isaca": "ISACA",
     "giac": "GIAC",
@@ -169,6 +169,7 @@ HUB_PAGES = {
     "privacy.html", "start-here.html", "planner.html", "kev-archive.html",
     "cve-lookup.html", "cert-cost-calculator.html", "study-tracker.html",
     "exploit-tracker.html", "security-analyst-roadmap.html", "ai-security.html",
+    "ai-ide-mcp-disclosures.html",
 }
 
 

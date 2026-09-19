@@ -597,3 +597,68 @@ History scan finds 794 across 918 commits.
       breaks the project's "never display secret values" rule) and `--staged`.
       Note `gitleaks protect` is gone in 8.x; it is `gitleaks git --staged`.
 - [ ] A gate that fires 773 times gets bypassed on day one. Tune before arming.
+
+## Phase A + B shipped — pre-push review 2026-09-19 (second pass)
+
+| Reviewer | Verdict | Findings |
+|---|---|---|
+| appsec | approve | 0 P0/P1, 7 P3 |
+| content-editor | approve-with-fixes | 1 P1, 6 P2, 3 P3 |
+
+### Fixed (all verified independently before accepting)
+
+- **P1 CVSS version.** Both pages claimed "CVSS v3.1 base scores". Confirmed
+  against NVD: CVE-2026-58201 (8.7), CVE-2026-73218 (7.7) and CVE-2026-48124
+  (8.5) carry **only** a v4.0 metric, roughly a fifth of stored entries. v3.1
+  and v4.0 are different scales. Now one `SCORE_CAVEAT` constant shared by the
+  teaser and the archive so they cannot drift.
+- **P2** "until NVD completes its analysis" promised a correction that never
+  arrives: NVD marks a growing share of 2026 CVEs `vulnStatus: Deferred`
+  (confirmed on CVE-2026-48124). Reworded.
+- **P2** "published since May 25, 2026" was computed from 87 of 88 entries,
+  because the KEV row's `published` is deliberately blank. True only by luck;
+  the next KEV entry with an older real date would have falsified it silently.
+  Now "The earliest dated entry is from ...", which is true regardless.
+- **P2** meta description said "updated daily" (the page is *checked* daily and
+  rewritten only on change, which `archive_changed()` exists to guarantee) and
+  said "GitHub security advisories" unscoped, which reads as the whole GHSA
+  database rather than 9 repos.
+- **P3 (appsec)** `data-score` was the only attribute not escaped. Safe today
+  because `sort_key()` provably returns a float; now interpolated `:.1f` so a
+  future string return cannot become stored XSS.
+- **P3 (appsec)** `archive_changed()`'s strip was unanchored, so a summary
+  containing the literal "Last updated: " could mask a real delta and freeze
+  the published archive. Anchored to `<p id="d-updated">`.
+- **P3 (appsec)** the page hand-pasted nav, footer, favicon, beacon token and
+  `style.min.css?v=11` instead of using `lib.templates`/`lib.constants`, which
+  already export all of it. The next CSS bump would have updated 740 pages and
+  served stale CSS to this one. Now generated from the helpers, with tests
+  asserting the CSS version and beacon token match the constants.
+- **Accessibility.** Sortable headers were click-only: no `tabindex`, no
+  keyboard handler, no `aria-sort`, and no `aria-live` on the result count, so
+  keyboard and screen-reader users could not sort at all.
+- **P2** missing theme toggle (dark-mode visitors got a light page) and missing
+  JSON-LD. Added the same toggle markup and storage key as
+  `exploit-tracker.html`, plus a breadcrumb schema via `breadcrumb_schema()`.
+- **P3** "filterable by severity and product" — product is a search box, not a
+  filter. Now "filterable by severity and searchable by product".
+- **P3** verbless opening sentence and noun rotation between meta and body.
+
+### Open follow-ups from this pass
+
+- [ ] **10 of 88 rows have a blank "Affected product" cell** on a page whose
+      description promises "search by product": CVE-2026-85674 (aider),
+      CVE-2026-53965, CVE-2026-49986, CVE-2026-44192, CVE-2026-57495,
+      CVE-2026-15643, CVE-2026-13341, CVE-2026-11624, CVE-2026-45609,
+      CVE-2026-59822. All ten name the product in their own first clause, and
+      search still finds them because the haystack covers the summary. This is
+      a data/extraction gap, not a renderer bug. Belongs with Phase C.
+- [ ] **Per-row CVSS version labels.** The caveat now states the v3.1/v4.0 mix
+      in prose. Showing the version per row needs the collector to store a
+      `score_version` field and a backfill for the 88 existing entries.
+- [ ] **Cross-links.** The archive's only inbound link is the blog teaser.
+      `ai-security.html` is the natural second entry point; `tools.html`,
+      `resources.html` and `blog/index.html` also do not link it.
+- [ ] Page weight at `MAX_STORED = 500` is roughly 500 KB uncompressed, marked
+      with a `ponytail:` comment naming the ceiling. Revisit only if it nears
+      the cap.

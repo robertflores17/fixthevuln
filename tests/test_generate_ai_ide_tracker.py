@@ -20,6 +20,8 @@ from generate_ai_ide_tracker import (
     START, END, render_block, render_row, replace_block, current_block, stamp_dates,
     summary_of, displayable, safe_url, field,
     RESEARCH_START, RESEARCH_END, render_research, byline,
+    sort_key, render_archive_row, render_archive_page, archive_changed,
+    SCORE_CAVEAT,
 )
 
 
@@ -143,13 +145,18 @@ class TestRenderBlock(unittest.TestCase):
     def test_unrated_severity_when_score_missing(self):
         self.assertIn('Unrated', render_row(_entry(severity='', severity_label='')))
 
-    def test_states_earliest_published_date_in_long_form(self):
-        """"Published since", not "recorded since": the first collection ran
-        long after the earliest entry was disclosed, so "recorded" would claim
-        an observation history the site does not have."""
+    def test_states_earliest_dated_entry_in_long_form(self):
+        """"Earliest dated", not "published since": KEV rows carry no
+        publication date and are skipped by the min(), so a claim about all N
+        entries would be computed from fewer than N. Also not "recorded
+        since", which would claim an observation history the site lacks."""
         block = render_block([_entry(published='2026-09-18'), _entry(published='2026-05-01')])
-        self.assertIn('published since May 1, 2026', block)
+        self.assertIn('The earliest dated entry is from May 1, 2026', block)
         self.assertNotIn('recorded since', block)
+
+    def test_undated_entry_does_not_skew_the_span_claim(self):
+        block = render_block([_entry(published=''), _entry(published='2026-05-01')])
+        self.assertIn('The earliest dated entry is from May 1, 2026', block)
 
     def test_states_mcp_share_of_the_total(self):
         """The article counts IDE vendors; most rows are MCP servers. Leaving
@@ -168,7 +175,29 @@ class TestRenderBlock(unittest.TestCase):
     def test_caption_states_the_cvss_precedence(self):
         block = render_block([_entry()])
         self.assertIn('taking the rating NVD marks primary when one exists', block)
-        self.assertIn('CVSS v3.1 base scores where available', block)
+
+    def test_caption_does_not_claim_every_score_is_v31(self):
+        """Verified against NVD 2026-09-19: CVE-2026-58201, CVE-2026-73218 and
+        CVE-2026-48124 carry only a v4.0 metric, roughly a fifth of stored
+        entries. v3.1 and v4.0 are different scales, so presenting both as one
+        unlabelled "v3.1" number is wrong on a site that teaches CVSS."""
+        block = render_block([_entry()])
+        self.assertNotIn('CVSS v3.1 base scores where available', block)
+        self.assertIn('v4.0 where that is the only rating published', block)
+
+    def test_caption_does_not_promise_nvd_will_finish(self):
+        """NVD marks a growing share of 2026 CVEs vulnStatus Deferred, meaning
+        it has stopped enriching them. "until NVD completes its analysis"
+        promises a correction that never arrives."""
+        block = render_block([_entry()])
+        self.assertNotIn('until NVD completes its analysis', block)
+        self.assertIn('has deferred', block)
+
+    def test_both_pages_share_one_score_caveat(self):
+        """The teaser and the archive must not drift apart on this claim."""
+        entries = [_entry()]
+        self.assertIn(SCORE_CAVEAT, render_block(entries))
+        self.assertIn(SCORE_CAVEAT, render_archive_page(entries, date(2026, 9, 19)))
 
     def test_caption_discloses_cna_scored_entries(self):
         """Verified against NVD: 11 of the 12 rows first published here had no
@@ -381,3 +410,165 @@ class TestStampDates(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class TestSortKey(unittest.TestCase):
+    """The archive's severity column sorts on a precomputed number. The first
+    version concatenated the score into a decimal position, which ranked CVSS
+    10.0 ("4.100" -> 4.1) below 9.8 ("4.98") and buried the worst entry
+    mid-table."""
+
+    def test_ten_outranks_nine_point_eight(self):
+        self.assertGreater(sort_key('Critical', '10.0'), sort_key('Critical', '9.8'))
+
+    def test_band_beats_score(self):
+        # A High 8.8 must never outrank a Critical 9.0, and a Critical with a
+        # missing score must still outrank any High.
+        self.assertGreater(sort_key('Critical', '9.0'), sort_key('High', '8.8'))
+        self.assertGreater(sort_key('Critical', ''), sort_key('High', '8.8'))
+
+    def test_unrated_sorts_last(self):
+        self.assertLess(sort_key('', ''), sort_key('Low', '0.1'))
+
+    def test_unparseable_score_does_not_raise(self):
+        self.assertEqual(sort_key('High', 'not-a-number'), 300.0)
+
+
+class TestArchiveRow(unittest.TestCase):
+    """The archive row adds three attribute contexts the blog table does not
+    have (data-search, data-date, data-score), each carrying feed text."""
+
+    HOSTILE = {
+        'id': 'CVE-2026-0001" onmouseover="alert(1)',
+        'product': '<script>alert(1)</script>',
+        'vendor': "'; alert(1); //",
+        'published': '2026-09-19"><img src=x onerror=alert(1)>',
+        'severity': '9.8', 'severity_label': 'Critical',
+        'summary': 'Breakout: " data-x="y </td></tr><tr><td>injected',
+        'url': 'javascript:alert(document.cookie)',
+    }
+
+    def _parse(self, html):
+        from html.parser import HTMLParser
+
+        class P(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.tags = []
+
+            def handle_starttag(self, tag, attrs):
+                self.tags.append((tag, dict(attrs)))
+
+        p = P()
+        p.feed(html)
+        return p.tags
+
+    def test_hostile_entry_yields_exactly_one_row(self):
+        # A substring check is not enough here: "onmouseover=" legitimately
+        # appears as text inside an escaped attribute value. What matters is
+        # whether the parser sees it as an attribute.
+        tags = self._parse(render_archive_row(self.HOSTILE))
+        self.assertEqual(sum(1 for t, _ in tags if t == 'tr'), 1)
+        self.assertEqual(sum(1 for t, _ in tags if t == 'td'), 5)
+
+    def test_no_event_handlers_or_script_survive(self):
+        tags = self._parse(render_archive_row(self.HOSTILE))
+        self.assertFalse(any(t == 'script' for t, _ in tags))
+        self.assertFalse(any(k.startswith('on') for _, a in tags for k in a))
+
+    def test_rejected_scheme_drops_the_anchor_but_keeps_the_id(self):
+        row = render_archive_row(self.HOSTILE)
+        self.assertNotIn('<a href', row)
+        self.assertIn('CVE-2026-0001', row)
+
+    def test_search_haystack_is_lowercased(self):
+        row = render_archive_row({'id': 'CVE-2026-1', 'product': 'RMCP',
+                                  'severity_label': 'High', 'severity': '7.5',
+                                  'published': '2026-09-01', 'summary': 'UPPER Text'})
+        attrs = dict(self._parse(row)[0][1])
+        self.assertIn('rmcp', attrs['data-search'])
+        self.assertIn('upper text', attrs['data-search'])
+
+
+class TestArchiveIdempotence(unittest.TestCase):
+    """The archive carries its own "Last updated" line. Rewriting it daily
+    would commit a date change on days with no new disclosures, which is the
+    freshness signal this whole design exists to avoid."""
+
+    ENTRY = {'id': 'CVE-2026-1', 'product': 'RMCP', 'severity_label': 'High',
+             'severity': '7.5', 'published': '2026-09-01', 'summary': 'x',
+             'url': 'https://nvd.nist.gov/vuln/detail/CVE-2026-1'}
+
+    def test_timestamp_only_difference_is_not_a_change(self):
+        import tempfile
+        old = render_archive_page([self.ENTRY], date(2026, 9, 1))
+        new = render_archive_page([self.ENTRY], date(2026, 9, 19))
+        self.assertNotEqual(old, new)  # the dates really do differ
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / 'archive.html'
+            f.write_text(old, encoding='utf-8')
+            self.assertFalse(archive_changed(new, f))
+
+    def test_new_entry_is_a_change(self):
+        import tempfile
+        old = render_archive_page([self.ENTRY], date(2026, 9, 19))
+        extra = dict(self.ENTRY, id='CVE-2026-2')
+        new = render_archive_page([self.ENTRY, extra], date(2026, 9, 19))
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / 'archive.html'
+            f.write_text(old, encoding='utf-8')
+            self.assertTrue(archive_changed(new, f))
+
+    def test_missing_file_counts_as_changed(self):
+        self.assertTrue(archive_changed('<html></html>', Path('/nonexistent/x.html')))
+
+
+class TestTeaserLinksToArchive(unittest.TestCase):
+    def test_caption_links_the_full_tracker_with_the_real_total(self):
+        entries = [dict(TestArchiveIdempotence.ENTRY, id=f'CVE-2026-{i}')
+                   for i in range(25)]
+        block = render_block(entries, limit=10)
+        self.assertIn('/ai-ide-mcp-disclosures.html', block)
+        self.assertIn('all 25', block)
+        self.assertEqual(block.count('<tr>'), 10)
+
+
+class TestArchiveDriftGuards(unittest.TestCase):
+    """Each of these converts a silent drift into a failing test. All three
+    were safe when written; none of them had anything asserting they stayed
+    that way."""
+
+    ENTRY = TestArchiveIdempotence.ENTRY
+
+    def test_sort_key_always_returns_a_float(self):
+        # data-score is interpolated with :.1f. A tie-breaker that made this
+        # return a string would become stored XSS with no other code change,
+        # and the ordering tests would not notice.
+        for args in (('Critical', '10.0'), ('High', 'not-a-number'),
+                     ('', ''), (None, None)):
+            self.assertIsInstance(sort_key(*args), float)
+
+    def test_css_version_matches_the_shared_constant(self):
+        # Hardcoding the version means the next site-wide bump updates 740
+        # pages and serves stale CSS to this one.
+        from lib.constants import STYLE_CSS_VERSION
+        page = render_archive_page([self.ENTRY], date(2026, 9, 19))
+        self.assertIn(f'style.min.css?v={STYLE_CSS_VERSION}', page)
+
+    def test_beacon_token_matches_the_shared_constant(self):
+        from lib.constants import CF_ANALYTICS_TOKEN
+        page = render_archive_page([self.ENTRY], date(2026, 9, 19))
+        self.assertIn(CF_ANALYTICS_TOKEN, page)
+
+    def test_summary_containing_the_timestamp_sentinel_still_counts_as_changed(self):
+        """The strip in archive_changed() used to be unanchored, so a summary
+        containing the literal "Last updated: " swallowed the rest of its cell
+        and could mask a real delta, freezing the published archive."""
+        import tempfile
+        a = dict(self.ENTRY, summary='Last updated: ABC DEF')
+        b = dict(self.ENTRY, summary='Last updated: abc def')
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / 'archive.html'
+            f.write_text(render_archive_page([a], date(2026, 9, 19)), encoding='utf-8')
+            self.assertTrue(
+                archive_changed(render_archive_page([b], date(2026, 9, 19)), f))
