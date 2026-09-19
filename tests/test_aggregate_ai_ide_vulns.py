@@ -19,6 +19,7 @@ from aggregate_ai_ide_vulns import (
     is_relevant, vendor_of, product_match, merge, severity_label,
     _cvss_from_metrics, _trim, MAX_STORED, affected_product,
     parse_arxiv_atom, MAX_ARXIV_BYTES, _author_matches, ARXIV_AUTHOR_NAMES,
+    cvss_version_of,
 )
 
 # Real advisory openings that must be tracked.
@@ -488,6 +489,101 @@ class TestTrim(unittest.TestCase):
     def test_handles_empty(self):
         self.assertEqual(_trim(''), '')
         self.assertEqual(_trim(None), '')
+
+
+
+
+class TestVendorAttribution(unittest.TestCase):
+    """A tracked product name inside a scoped npm path says what the package
+    integrates WITH, not who ships it."""
+
+    AGENTICMAIL = ("AgenticMail gives AI agents real email addresses and phone "
+                   "numbers. In @agenticmail/claudecode prior to version 0.2.39, "
+                   "a flaw exists.")
+
+    def test_scoped_package_is_not_the_vendor(self):
+        # CVE-2026-57495: NVD's vendor is agenticmail. Filing it under Claude
+        # Code surfaced an AgenticMail advisory when a reader searched
+        # "claude code", and put it in the wrong bucket for the MCP count.
+        self.assertEqual(vendor_of(self.AGENTICMAIL), 'Unknown')
+
+    def test_scoped_package_advisory_is_still_tracked(self):
+        """Only the vendor decision ignores scoped paths. Dropping the advisory
+        entirely would be a worse bug than mislabelling it."""
+        self.assertTrue(is_relevant(self.AGENTICMAIL))
+
+    def test_genuine_scoped_mcp_product_keeps_its_vendor(self):
+        self.assertEqual(
+            vendor_of("@zereight/mcp-gitlab is a Model Context Protocol server "
+                      "for GitLab."), 'MCP')
+
+    def test_stripping_a_scoped_path_does_not_shift_the_weak_name_window(self):
+        """A review caught this: stripping the scoped path before slicing
+        text[:SUBJECT_CHARS] shortens the string, which can pull a name that
+        was previously outside the 80-char subject window inside it. A scoped
+        path early in the text pushed a later, unrelated "database cursor"
+        mention into the window and mislabelled it "Cursor" -- a NEW false
+        attribution introduced by fixing the old one. The window must be
+        computed on the original, unstripped text."""
+        text = ("In @scope/" + "a" * 70 +
+               " prior to 1.0, the database cursor handling in Foo is wrong.")
+        self.assertEqual(vendor_of(text), 'Unknown')
+
+    def test_plain_product_mention_is_unaffected(self):
+        self.assertEqual(
+            vendor_of("Claude Code before 2.0 allows prompt injection in the agent."),
+            'Claude Code')
+
+
+class TestSharedCvssPrecedence(unittest.TestCase):
+    """aggregate and fetch_kev used to disagree on version order (v4.0/v2
+    swapped), so one CVE could publish two different scores on two pages of
+    the same site. There is now one implementation."""
+
+    METRICS = {'cvssMetricV2': [{'type': 'Primary', 'cvssData': {'baseScore': 9.0}}],
+               'cvssMetricV40': [{'type': 'Primary', 'cvssData': {'baseScore': 6.1}}]}
+
+    def test_both_modules_return_the_same_score(self):
+        from fetch_kev import cvss_from_metrics
+        self.assertEqual(_cvss_from_metrics(self.METRICS),
+                         cvss_from_metrics(self.METRICS)[0])
+
+    def test_v4_outranks_v2(self):
+        self.assertEqual(_cvss_from_metrics(self.METRICS), '6.1')
+        self.assertEqual(cvss_version_of(self.METRICS), 'v4.0')
+
+    def test_reports_the_spec_that_produced_the_score(self):
+        for key, want in (('cvssMetricV31', 'v3.1'), ('cvssMetricV30', 'v3.0'),
+                          ('cvssMetricV40', 'v4.0'), ('cvssMetricV2', 'v2.0')):
+            with self.subTest(key=key):
+                self.assertEqual(
+                    cvss_version_of({key: [{'cvssData': {'baseScore': 5.0}}]}), want)
+
+    def test_no_metrics_reports_no_version(self):
+        self.assertEqual(cvss_version_of({}), '')
+
+
+class TestSeverityBandsByVersion(unittest.TestCase):
+    """CVSS v2 has no Critical band: its top rating is High, 7.0-10.0."""
+
+    def test_v2_caps_at_high(self):
+        self.assertEqual(severity_label('9.5', 'v2.0'), 'High')
+        self.assertEqual(severity_label('10.0', 'v2.0'), 'High')
+
+    def test_v3_and_v4_use_critical(self):
+        for v in ('v3.1', 'v3.0', 'v4.0'):
+            with self.subTest(v=v):
+                self.assertEqual(severity_label('9.5', v), 'Critical')
+
+    def test_lower_bands_are_shared(self):
+        for v in ('v3.1', 'v2.0'):
+            with self.subTest(v=v):
+                self.assertEqual(severity_label('7.5', v), 'High')
+                self.assertEqual(severity_label('5.0', v), 'Medium')
+                self.assertEqual(severity_label('1.0', v), 'Low')
+
+    def test_defaults_to_v31_for_entries_stored_before_the_field_existed(self):
+        self.assertEqual(severity_label('9.5'), 'Critical')
 
 
 if __name__ == '__main__':

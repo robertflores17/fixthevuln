@@ -408,8 +408,6 @@ class TestStampDates(unittest.TestCase):
         self.assertEqual(once, stamp_dates(once, date(2026, 9, 19)))
 
 
-if __name__ == '__main__':
-    unittest.main()
 
 
 class TestSortKey(unittest.TestCase):
@@ -661,3 +659,7 @@ class TestShortSummaryEdges(unittest.TestCase):
         "A...", an effectively empty cell that feed text can force."""
         got = short_summary({'summary': 'A ' + 'x' * 300})
         self.assertGreater(len(got), 40)
+
+
+if __name__ == '__main__':
+    unittest.main()

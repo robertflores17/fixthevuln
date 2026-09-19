@@ -39,7 +39,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / 'scripts'))
 
 from aggregate_ai_vuln_intel import fetch_ghsa_advisories, _parse_ghsa_date
-from fetch_kev import _validate_nvd_key
+from fetch_kev import _validate_nvd_key, cvss_from_metrics
 
 DATA_DIR = REPO_ROOT / "data"
 STATE_FILE = DATA_DIR / "ai-ide-vulns.json"
@@ -245,8 +245,31 @@ def is_relevant(text):
     return bool(product_match(text) and CONTEXT_RE.search(text))
 
 
+# "@agenticmail/claudecode" names what the package integrates WITH, not who
+# ships it. Same principle as the "for X is context" note above:
+# CVE-2026-57495 is an AgenticMail advisory and was filed under Claude Code,
+# which surfaced it whenever a reader searched "claude code".
+SCOPED_PACKAGE_RE = re.compile(r'@[\w.-]+/[\w.-]+')
+
+
 def vendor_of(text):
-    m = product_match(text)
+    # Only the vendor decision ignores scoped paths. product_match() and
+    # is_relevant() still see them, so an advisory naming a tracked product
+    # only inside a package path stays TRACKED; it is just not attributed
+    # to that vendor.
+    #
+    # The strip is applied only to the strong-name search, not to the text the
+    # weak-name subject window is sliced from. Stripping first and then slicing
+    # text[:SUBJECT_CHARS] shortens the string, which can pull a name that was
+    # previously outside the 80-char window inside it. Reproduced: a scoped
+    # path early in the text pushed a later, unrelated "database cursor"
+    # mention into the window and mislabelled it "Cursor" -- a new false
+    # attribution introduced by fixing the old one. Windowing on the original,
+    # unstripped text keeps that boundary exactly where it was before this
+    # function started stripping anything.
+    text = str(text or '')
+    m = (STRONG_PRODUCT_RE.search(SCOPED_PACKAGE_RE.sub(' ', text))
+         or WEAK_PRODUCT_RE.search(text[:SUBJECT_CHARS]))
     if not m:
         return 'Unknown'
     key = re.sub(r'[\s-]+', '', m.group(1)).lower()
@@ -256,34 +279,34 @@ def vendor_of(text):
 def _cvss_from_metrics(metrics):
     """Best available CVSS base score as a string.
 
-    Version order is v3.1, v3.0, v4.0, v2: v3.1 first because it is what the
-    industry quotes and what this site's other pages show, not because it is
-    newest. Within a version, the rating NVD marks Primary wins.
-
-    fetch_kev.fetch_cvss_from_nvd parses the same NVD shape but orders v2 ahead
-    of v4.0 and takes metric_list[0] with no Primary preference, so it carries
-    the Secondary-over-Primary defect this function fixes. It is not importable
-    without restructuring a live daily pipeline; see tasks/todo.md."""
-    for key in ('cvssMetricV31', 'cvssMetricV30', 'cvssMetricV40', 'cvssMetricV2'):
-        # NVD's own Primary rating outranks the reporting CNA's Secondary, and
-        # the API does not order them. CVE-2026-13323 lists Eclipse's Secondary
-        # 4.1 MEDIUM ahead of NVD's Primary 8.7 HIGH; taking the first match
-        # published "Medium" for a vulnerability NVD rates High.
-        for m in sorted(metrics.get(key, []), key=lambda m: m.get('type') != 'Primary'):
-            score = m.get('cvssData', {}).get('baseScore')
-            if score is not None:
-                return str(score)
-    return ''
+    Thin wrapper over fetch_kev.cvss_from_metrics, which owns the version
+    precedence for the whole site. This function used to carry its own copy
+    that ordered v4.0 before v2 while fetch_kev did the reverse, so one CVE
+    could publish two different scores on two pages.
+    """
+    return cvss_from_metrics(metrics)[0]
 
 
-def severity_label(score):
-    """CVSS v3.1 qualitative rating band."""
+def cvss_version_of(metrics):
+    """Which CVSS spec produced the score _cvss_from_metrics returns."""
+    return cvss_from_metrics(metrics)[1]
+
+
+def severity_label(score, version='v3.1'):
+    """Qualitative rating band for a CVSS base score.
+
+    `version` matters: CVSS v2 has no Critical band. Its top rating is High
+    (7.0-10.0), so applying v3.1 bands to a v2 score can print a rating that
+    does not exist in that scale. v3.0, v3.1 and v4.0 share the same bands.
+    Defaults to v3.1 for entries stored before the version was recorded; every
+    such entry was checked to be v3.1 or v4.0, which band identically.
+    """
     try:
         s = float(score)
     except (TypeError, ValueError):
         return ''
     if s >= 9.0:
-        return 'Critical'
+        return 'High' if version == 'v2.0' else 'Critical'
     if s >= 7.0:
         return 'High'
     if s >= 4.0:
@@ -336,7 +359,7 @@ def collect_nvd(start_dt, end_dt):
                          if d.get('lang') == 'en'), '')
             if not cve_id or not is_relevant(desc):
                 continue
-            score = _cvss_from_metrics(cve.get('metrics', {}))
+            score, score_version = cvss_from_metrics(cve.get('metrics', {}))
             entries.append({
                 'id': cve_id,
                 'source': 'nvd',
@@ -344,7 +367,8 @@ def collect_nvd(start_dt, end_dt):
                 'product': affected_product(desc),
                 'published': (cve.get('published') or '')[:10],
                 'severity': score,
-                'severity_label': severity_label(score),
+                'score_version': score_version,
+                'severity_label': severity_label(score, score_version or 'v3.1'),
                 'summary': _trim(desc),
                 'url': f"https://nvd.nist.gov/vuln/detail/{cve_id}",
             })

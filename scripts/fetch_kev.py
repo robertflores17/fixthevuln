@@ -83,6 +83,36 @@ def _best_score(metric_list):
     return ''
 
 
+# Canonical CVSS version precedence for the whole site. v3.1 first because it
+# is what the industry quotes and what every other page here shows, not because
+# it is newest; v4.0 ahead of v2 because v2 is the weakest scale still in NVD.
+# aggregate_ai_ide_vulns.py imports this rather than keeping its own copy: the
+# two used to disagree (v4.0/v2 swapped), so one CVE could show two different
+# scores on two pages of the same site.
+CVSS_METRIC_ORDER = ('cvssMetricV31', 'cvssMetricV30', 'cvssMetricV40', 'cvssMetricV2')
+
+# The spec each metric key reports. severity_label() needs this because CVSS v2
+# has no Critical band: its top rating is High (7.0-10.0), so applying v3.1
+# bands to a v2 score can print a rating that does not exist in that scale.
+CVSS_METRIC_VERSION = {
+    'cvssMetricV31': 'v3.1', 'cvssMetricV30': 'v3.0',
+    'cvssMetricV40': 'v4.0', 'cvssMetricV2': 'v2.0',
+}
+
+
+def cvss_from_metrics(metrics):
+    """Best available (score, version) from an NVD `metrics` object.
+
+    Returns ('', '') when nothing usable is present. Version precedence is
+    CVSS_METRIC_ORDER; within a version the rating NVD marks Primary wins.
+    """
+    for key in CVSS_METRIC_ORDER:
+        score = _best_score(metrics.get(key, []))
+        if score:
+            return score, CVSS_METRIC_VERSION[key]
+    return '', ''
+
+
 def fetch_cvss_from_nvd(cve_id):
     """Fetch CVSS score and CWE/product data from NVD API v2.0.
     Returns dict with 'score' (str), 'cwes' (list), 'cpe_vendor' (str), 'cpe_product' (str)."""
@@ -91,7 +121,7 @@ def fetch_cvss_from_nvd(cve_id):
     if NVD_API_KEY and _validate_nvd_key():
         headers['apiKey'] = NVD_API_KEY
 
-    result = {'score': '', 'cwes': [], 'cpe_vendor': '', 'cpe_product': ''}
+    result = {'score': '', 'score_version': '', 'cwes': [], 'cpe_vendor': '', 'cpe_product': ''}
 
     try:
         req = urllib.request.Request(url, headers=headers)
@@ -105,20 +135,10 @@ def fetch_cvss_from_nvd(cve_id):
         cve_data = vulns[0].get('cve', {})
         metrics = cve_data.get('metrics', {})
 
-        # Try CVSS v3.1, then v3.0. Version order is unchanged; only the
-        # choice within a version list moved to Primary-first.
-        for key in ('cvssMetricV31', 'cvssMetricV30'):
-            result['score'] = _best_score(metrics.get(key, []))
-            if result['score']:
-                break
-
-        # Fallback to v2
-        if not result['score']:
-            result['score'] = _best_score(metrics.get('cvssMetricV2', []))
-
-        # Fallback to CVSS v4.0 if v3 and v2 are unavailable
-        if not result['score']:
-            result['score'] = _best_score(metrics.get('cvssMetricV40', []))
+        # One shared precedence for the site. This used to try v2 ahead of
+        # v4.0 while the AI IDE tracker did the reverse, so the same CVE could
+        # publish two different scores on two pages.
+        result['score'], result['score_version'] = cvss_from_metrics(metrics)
 
         # Extract CWE IDs from weaknesses
         weaknesses = cve_data.get('weaknesses', [])
@@ -314,7 +334,7 @@ def format_for_review(vuln, nvd_data=None):
     """Format a vulnerability for review with auto-filled fields.
     nvd_data is a dict with keys: score, cwes, cpe_vendor, cpe_product."""
     if nvd_data is None:
-        nvd_data = {'score': '', 'cwes': [], 'cpe_vendor': '', 'cpe_product': ''}
+        nvd_data = {'score': '', 'score_version': '', 'cwes': [], 'cpe_vendor': '', 'cpe_product': ''}
 
     cve_id = vuln.get('cveID', 'Unknown')
     vendor = vuln.get('vendorProject', 'Unknown')
@@ -347,6 +367,13 @@ def format_for_review(vuln, nvd_data=None):
 
         # Auto-filled fields (review and edit if needed)
         "cvss": nvd_data.get('score', ''),
+        # Persisted so it is not computed-and-discarded: cvss_from_metrics()
+        # returns this, and dropping it here would let the value imply a
+        # per-entry version guarantee that nothing downstream actually keeps.
+        # Not yet consumed by generate_cve_pages.py's own severity_label(),
+        # which still assumes v3.1 bands -- that is a separate change to a
+        # live-published pipeline and out of scope here.
+        "cvss_version": nvd_data.get('score_version', ''),
         "short_description": truncate(description),
         "fix": required_action,
         "include_on_site": False,
@@ -693,6 +720,7 @@ def cmd_backfill():
         for cve_id, nvd_data in cvss_results.items():
             if nvd_data.get('score'):
                 pending[cve_id]['cvss'] = nvd_data['score']
+                pending[cve_id]['cvss_version'] = nvd_data.get('score_version', '')
             # Also backfill CWE/CPE data if missing
             if nvd_data.get('cwes') and not pending[cve_id].get('cwes'):
                 pending[cve_id]['cwes'] = nvd_data['cwes']

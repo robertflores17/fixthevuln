@@ -808,3 +808,90 @@ what each review found. Ordered by the priority framework in `../CLAUDE.md`.
   shared runner IP, so a 403 is possible; it degrades to "no GHSA rows".
 - **Archive page weight** is ~500 KB uncompressed at `MAX_STORED = 500`, marked
   with a `ponytail:` comment naming the ceiling. Revisit only near the cap.
+
+## Items 3-5 fixed 2026-09-19
+
+- **3. Vendor misattribution.** `vendor_of()` now ignores scoped npm paths:
+  `@agenticmail/claudecode` names what a package integrates WITH, not who ships
+  it. Only the vendor decision ignores them; `product_match()` and
+  `is_relevant()` still see them, so such advisories stay tracked. Two stored
+  vendors corrected: CVE-2026-57495 Claude Code -> Unknown, and CVE-2026-13323
+  Windsurf -> Unknown (the Open VSX Registry bug the file's own header comment
+  already cites as a misattribution; its product column said Open VSX Registry
+  while the vendor field still said Windsurf). MCP count unchanged at 57, so
+  the published caption stays correct.
+- **4. One CVSS precedence for the site.** `cvss_from_metrics()` now lives in
+  `fetch_kev.py` and `aggregate_ai_ide_vulns.py` imports it. The two used to
+  disagree (v4.0/v2 swapped), so one CVE could publish two different scores on
+  two pages. Order is v3.1, v3.0, v4.0, v2. Verified live that the
+  Primary-over-Secondary preference survives: CVE-2026-13323 still returns 8.7.
+- **5. CVSS v2 has no Critical band.** `severity_label(score, version)` caps v2
+  at High. `collect_nvd` now records `score_version`, and the default stays
+  v3.1 for entries stored before the field existed (all of which are v3.1 or
+  v4.0, which band identically). This also lays the groundwork for item 9.
+
+### New, found while verifying
+
+- [ ] **`generate_sprint_kit.py:477` is a THIRD copy of the CVSS parser**, with
+      its own precedence (v3.1, v3.0, v2 — no v4.0 at all) and no
+      Primary-over-Secondary preference. It is a separate monthly pipeline with
+      its own local function, so nothing in items 3-5 reached it, but it is the
+      same divergence class item 4 just fixed between the other two.
+      (I first misread its call site as consuming fetch_kev's dict return and
+      nearly reported a bug that does not exist; it returns a float and is used
+      correctly.)
+
+## AppSec review of items 3-5 — fixes applied 2026-09-19
+
+Verdict: approve (no P0/P1). Two P2/P3 findings acted on beyond the review's
+own required-fixes list (none required, all P2/P3):
+
+- **Hidden tests, two files.** 12 new tests in `test_aggregate_ai_ide_vulns.py`
+  and all 28 tests appended across earlier passes in
+  `test_generate_ai_ide_tracker.py` were sitting below the
+  `if __name__ == '__main__': unittest.main()` guard. `unittest.main()` calls
+  `sys.exit()`, so under direct invocation (`python3 tests/test_x.py`) those
+  classes were never defined. Measured before the fix: 52 vs 64 direct/module
+  in one file, 59 vs 87 in the other -- 28 tests silently not running under
+  the invocation style a human would actually use. No CI workflow runs
+  `unittest` at all, so this was purely a trust problem: a test that never
+  runs reads as covered. Moved both blocks above the guard; all three test
+  files now report identical counts under `python3 file.py` and
+  `python3 -m unittest`.
+- **A new false attribution, introduced by fixing the old one.** `vendor_of()`
+  stripped scoped npm paths before slicing `text[:SUBJECT_CHARS]` for the
+  weak-name window. Stripping shortens the string, so a name previously
+  outside the 80-char window could land inside it. Reproduced: a scoped path
+  early in an advisory pushed a later, unrelated "database cursor" mention
+  into the window and mislabelled it "Cursor". Fixed by slicing the weak-name
+  window from the original, unstripped text; only the strong-name search runs
+  on the stripped copy. Verified all four cases (the repro, the original
+  AgenticMail fix, a genuine scoped MCP product, a genuine Cursor lead) return
+  correctly. Regression test added.
+- **`score_version` was computed and discarded.** `fetch_cvss_from_nvd()`
+  returned it but `format_for_review()` only wrote `cvss` into the pending
+  entry, so the value never reached `pending_review.json` or `kev-data.json`.
+  Now persisted as `cvss_version` in both the fresh-fetch and `--backfill`
+  paths. Deliberately NOT wired into `generate_cve_pages.py`'s own
+  `severity_label()`, which still assumes v3.1 bands -- that is a change to a
+  separate, live-published pipeline with its own review surface, out of scope
+  for items 3-5.
+- **The sprint kit's CVSS ladder was a third, still-divergent copy.** Its
+  docstring claimed to reuse fetch_kev.py logic while actually carrying no
+  v4.0 branch and `metric_list[0]` with no Primary preference -- the exact
+  defect item 4 fixed elsewhere, still live in the one pipeline that prints a
+  score into a paid monthly PDF. Delegated to the shared
+  `fetch_kev.cvss_from_metrics`, same pattern as the aggregator. Import wiring
+  confirmed correct (the module import succeeds; `reportlab` is a pre-existing,
+  unrelated dependency not installed in this sandbox, so the full module could
+  not be exercised end-to-end here).
+
+207 tests. Both AI IDE pages idempotent and unaffected by these fixes (none
+changed currently-stored tracker data).
+
+### Open, not done here
+
+- [ ] `generate_cve_pages.py`'s `severity_label()` still assumes v3.1 bands
+      and never reads the now-persisted `cvss_version`. A v2-only KEV entry
+      would still render a Critical it cannot actually reach. Separate change,
+      separate pipeline, separate review.

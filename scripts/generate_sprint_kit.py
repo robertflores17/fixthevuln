@@ -29,6 +29,9 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from calendar import monthrange
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from fetch_kev import cvss_from_metrics
+
 # ── ReportLab imports ────────────────────────────────
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
@@ -475,7 +478,15 @@ def fetch_epss_scores(cve_ids):
 
 
 def fetch_cvss_from_nvd(cve_id):
-    """Fetch CVSS score from NVD for a single CVE (reuses fetch_kev.py logic)."""
+    """Fetch CVSS score from NVD for a single CVE.
+
+    Delegates version precedence to fetch_kev.cvss_from_metrics rather than
+    keeping a local copy. The docstring here used to say "reuses fetch_kev.py
+    logic" while actually carrying its own stale ladder: no v4.0 branch at
+    all, and metric_list[0] with no Primary-over-Secondary preference -- the
+    same defect fixed elsewhere on the site, still live in the one pipeline
+    that prints a score into a paid PDF.
+    """
     url = f"{NVD_API_URL}?cveId={cve_id}"
     headers = {'User-Agent': 'FixTheVuln-SprintKit/1.0'}
     if NVD_API_KEY:
@@ -491,22 +502,8 @@ def fetch_cvss_from_nvd(cve_id):
             return None
 
         cve_data = vulns[0].get('cve', {})
-        metrics = cve_data.get('metrics', {})
-
-        for key in ('cvssMetricV31', 'cvssMetricV30'):
-            metric_list = metrics.get(key, [])
-            if metric_list:
-                score = metric_list[0].get('cvssData', {}).get('baseScore')
-                if score is not None:
-                    return float(score)
-
-        v2_list = metrics.get('cvssMetricV2', [])
-        if v2_list:
-            score = v2_list[0].get('cvssData', {}).get('baseScore')
-            if score is not None:
-                return float(score)
-
-        return None
+        score, _version = cvss_from_metrics(cve_data.get('metrics', {}))
+        return float(score) if score else None
     except Exception as e:
         print(f"    Warning: NVD lookup failed for {cve_id}: {e}")
         return None
