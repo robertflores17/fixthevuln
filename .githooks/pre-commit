@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Secret scan on staged changes. Tracked in .githooks/ rather than .git/hooks/
+# so it survives a re-clone; enable with:
+#
+#     git config core.hooksPath .githooks
+#
+# Tuning lives in .gitleaks.toml. This site teaches secret handling, so its own
+# lesson pages are full of example credentials: an untuned scan reports 773
+# findings, all false. The config allowlists by pattern rather than by path, so
+# a real secret pasted into a lesson page still fires.
+set -euo pipefail
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+    echo "pre-commit: gitleaks is not installed, so staged changes were NOT scanned."
+    echo "  Install:  brew install gitleaks"
+    echo "  Bypass:   git commit --no-verify   (only if you are certain)"
+    # Fail closed. Skipping silently would make every future commit look
+    # scanned when nothing was checked, which is worse than no hook.
+    exit 1
+fi
+
+# 'gitleaks protect' was removed in 8.x; --staged scans the index.
+if ! gitleaks git --staged --redact --no-banner --log-level warn --config .gitleaks.toml; then
+    echo
+    echo "pre-commit: a possible secret is staged. The value above is redacted."
+    echo "  If it is real:  unstage it, rotate the credential, then recommit."
+    echo "  If it is not:   add a pattern to .gitleaks.toml (not a path, so the"
+    echo "                  scanner keeps watching that file), then recommit."
+    echo "  Bypass:         git commit --no-verify"
+    exit 1
+fi

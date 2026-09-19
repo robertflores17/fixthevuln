@@ -72,4 +72,37 @@ If two reviewers disagree: AppSec wins on security, Content Editor wins on facts
 
 - Detailed architecture (that lives in `CLAUDE.md`).
 - Task execution skills like `deploy`, `publish-cves`, `batch-generate` (those live in `.claude/skills/`).
-- CI-level checks (pre-commit hooks, gitleaks). Wire those separately in `settings.json` when ready.
+- CI-level checks beyond the secret scan below.
+
+## Secret scanning (pre-commit)
+
+`.githooks/pre-commit` runs gitleaks against staged changes. It is tracked, not
+in `.git/hooks/`, so it survives a re-clone. Enable it once per clone:
+
+```
+brew install gitleaks
+git config core.hooksPath .githooks
+```
+
+The hook **fails closed** when gitleaks is missing. Skipping silently would make
+every later commit look scanned when nothing was checked.
+
+Tuning lives in `.gitleaks.toml` and is by **pattern, not by path**. That
+distinction is the whole design: this site teaches secret handling, so its own
+lesson pages are full of example credentials, and an untuned scan reports 773
+findings, every one false. Allowlisting those files by path would have silenced
+the scanner exactly where a real mistake is most likely. Allowlisting the
+*shapes* of placeholders instead brings the repo to 0 findings while a real
+secret pasted into a lesson page still fires.
+
+Measured 2026-09-19: 773 -> 0 false positives, and 7 of 7 planted real secrets
+(Stripe `sk_live_`, AWS access key pair, GitHub PAT, OpenAI, Resend, RSA private
+key, Slack bot token) still detected. Re-run that check after editing the
+allowlist: a config reporting zero can mean "tuned" or "blind", and only the
+planted-secret test tells you which.
+
+Two values are allowlisted because they are public by design, not overlooked:
+the Cloudflare Web Analytics beacon token (ships in the client HTML of every
+page, declared as `CF_ANALYTICS_TOKEN`) and the IndexNow key (the protocol
+verifies ownership by requiring it be served at `/<key>.txt`). Stripe's
+publishable `pk_` prefix is allowlisted; the secret `sk_` prefix is not.

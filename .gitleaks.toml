@@ -1,0 +1,81 @@
+# Secret scanning config for FixTheVuln.
+#
+# This repo teaches secret handling, so its own lesson pages are full of example
+# credentials on purpose. An untuned scan reports 773 findings, every one a
+# false positive. A gate that noisy gets bypassed with --no-verify on day one,
+# which is worse than no gate.
+#
+# Tuning is by PATTERN, not by path. Allowlisting whole teaching files would
+# blind the scanner to a real secret pasted into one, which is exactly where a
+# mistake is most likely on this site.
+
+title = "FixTheVuln"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Public tokens and teaching placeholders"
+
+# Match these against the whole line, not just the captured secret. Several of
+# the patterns below describe the CONTEXT that makes a match benign (a
+# storageKey assignment, an example.com URL) rather than the value itself, and
+# the default target of "secret" would never see them.
+regexTarget = "line"
+
+regexes = [
+  # Cloudflare Web Analytics beacon token. Public by design: it ships in the
+  # client HTML of all 740 pages and is declared in scripts/lib/constants.py
+  # as CF_ANALYTICS_TOKEN. Not a GitHub secret, nothing to rotate.
+  '''8304415b01684a00adedcbf6975458d7''',
+
+  # Placeholder runs. Gitleaks uses Go's RE2, which has no backreferences, so
+  # this enumerates the characters people actually pad with rather than using
+  # (.)\1{5,}. Catches the sk_live_ and SG. examples in secrets-management.html.
+  '''(?i)(x{6,}|0{6,}|1{6,}|a{6,}|z{6,}|y{6,}|n{6,}|\*{6,}|\.{6,}|_{6,}|-{6,})''',
+
+  # Explicit placeholder vocabulary used across the guides.
+  '''(?i)(your[_-]?(api[_-]?)?(key|token|secret)|<[^>]*(key|token|secret)[^>]*>|replace[_-]?me|example[_-]?(key|token)|dummy|placeholder|redacted|xxx+)''',
+
+  # Documentation prose about keys rather than keys themselves, e.g.
+  # "key that must match aws:PrincipalOrgID".
+  '''(?i)key that must match''',
+
+  # Stripe PUBLISHABLE key. pk_ keys are designed to ship in client JS and
+  # identify the account; they cannot move money. The secret half is sk_, which
+  # lives in the Worker via `wrangler secret put` and is NOT allowlisted here.
+  '''pk_(live|test)_[A-Za-z0-9]+''',
+
+  # Sequential placeholders: sk-1234567890abcdef and friends. A real key is not
+  # an ascending run, and the ones here are 19 chars where OpenAI's are 48+.
+  '''(?i)(01234|12345|23456|abcdef|qwerty)''',
+
+  # localStorage/sessionStorage key NAMES, not values. The quiz engine config
+  # carries `storageKey: 'fixthevuln_xyz_quiz'` on every one of the 68 quiz
+  # pages, which the generic rule reads as a credential assignment.
+  '''(?i)(storage|cache|session)Key['"]?\s*[:=]''',
+
+  # Pentest tool flags in quiz answers, e.g. a sqlmap --cookie=PHPSESSID example.
+  '''(?i)(sqlmap|PHPSESSID|--cookie=|--auth=)''',
+
+  # Documentation hostnames. RFC 2606 reserves example.com for exactly this.
+  '''(?i)(api\.)?example\.(com|org|net)''',
+
+  # IndexNow key. Public by definition: the protocol verifies ownership by
+  # requiring the key be served at https://fixthevuln.com/<key>.txt, and that
+  # file is committed at the repo root.
+  '''5a07bd052d536ad031adb837450259ce''',
+]
+
+paths = [
+  # Vendored/generated artefacts that are not ours to scan.
+  '''(^|/)node_modules/''',
+  '''(^|/)\.wrangler/''',
+  '''(^|/)__pycache__/''',
+  # Sample JWTs are the entire point of the decoder page.
+  '''^jwt-decoder\.html$''',
+  # Agent session transcripts. Gitignored, so they can never be staged, but
+  # they are noise in a full-repo scan.
+  '''(^|/)\.nova-tracer/''',
+  '''(^|/)\.claude/''',
+]
