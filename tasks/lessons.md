@@ -48,3 +48,26 @@ _Capture lessons here after any user correction._
 - **Why it happened:** I generated the file and wrote the click-path from prior familiarity, then read `developers.cloudflare.com/.../csv-file-format/` only after he hit the error. Every one of the three mistakes was answered verbatim on a doc page I had not opened. I also verified the wrong things thoroughly — I curled all 16 URLs to prove the redirect targets were live, which was real work that could not catch a format error.
 - **Prevention rule:** Before writing ANY file another system will import (CSV, YAML, manifest, upload template) or giving a click-path through someone else's dashboard UI, open that vendor's current format/UI reference first and cite it. Treat "I know this format" exactly like "I know this figure" — the existing rule that bans round-number guesses in copy applies to file formats and navigation paths too. A generated import file is not verified by checking that its *contents* are semantically right; it is verified against the consuming system's schema.
 - **Also:** when a vendor UI shows a limit or entitlement error right after following my instructions, suspect my instruction before the user's plan. Here the `1/1` list limit was real but irrelevant — the actual fault was creating the wrong list type on the wrong page.
+
+## 2026-09-19 — Network code passing locally proves nothing about CI
+
+**What happened:** `fetch_arxiv_author()` sent only a `User-Agent`. It worked
+from this laptop every time. The first GitHub Actions run failed with
+`HTTP Error 406: Not Acceptable`, because urllib sends no `Accept` header by
+default and `export.arxiv.org` refuses when nothing acceptable is offered.
+The response differs by caller IP, so local testing could never have caught it.
+
+**What made it worse:** the job still reported success. A failed arXiv fetch is
+deliberately treated as "no change", so the stored papers survived and the
+green check hid a section that would never have refreshed again.
+
+**Rules:**
+1. When adding a fetch against a host this repo already talks to, grep for the
+   existing call first and copy its headers. `aggregate_ai_security_news.py:113`
+   already had the correct `Accept` for arXiv. The ladder's "already in this
+   codebase?" rung applies to HTTP headers, not just functions.
+2. Degrade-to-no-change is the right failure mode, but it converts bugs into
+   silence. After the first CI run of any new pipeline, read the step log for
+   warnings even when the run is green. A passing job is not a working job.
+3. Verify claimed config before relying on it. CLAUDE.md listed `NVD_API_KEY`
+   as a GitHub secret; `gh secret list` shows it has never existed.
