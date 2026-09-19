@@ -520,7 +520,7 @@ Three reviewers run on the combined working tree: native `security-review`, `app
       rejected key with 404 and `_validate_nvd_key()` falls back to anonymous,
       so a bad key and a good one produce the same job conclusion. Stripe
       secrets are correctly absent: those live in the Worker via wrangler.
-- [ ] `SKILLS.md` is untracked and has never been committed, though `CLAUDE.md`
+- [x] `SKILLS.md` is untracked and has never been committed, though `CLAUDE.md`
       references it. Not part of this change set.
 
 ## Plan: scale the AI IDE tracker section (2026-09-19)
@@ -534,36 +534,42 @@ post and the 200-char summary column is what makes it tall.
 
 ### Phase A — new page `/ai-ide-mcp-disclosures.html`
 
-- [ ] Renderer writes a standalone page from the same `data/ai-ide-vulns.json`.
+- [x] Renderer writes a standalone page from the same `data/ai-ide-vulns.json`.
       Extend `generate_ai_ide_tracker.py` rather than adding a second script:
       it already owns `render_row`, `safe_url`, `esc`, `severity` colours.
-- [ ] Full table, all stored entries, not a 12-row window.
-- [ ] Client-side severity filter chips + product/text search + sortable date
+- [x] Full table, all stored entries, not a 12-row window.
+- [x] Client-side severity filter chips + product/text search + sortable date
       and severity columns. Vanilla JS, no framework, no backend. All data is
       already in the DOM, so filtering is a class toggle.
-- [ ] Follow the standard page pattern: OG + Twitter Card meta, canonical,
+- [x] Follow the standard page pattern: OG + Twitter Card meta, canonical,
       Cloudflare Analytics before `</body>`, social share bar.
-- [ ] Auto-generated page, so it KEEPS a "Last updated" timestamp in
+- [x] Auto-generated page, so it KEEPS a "Last updated" timestamp in
       `Month Day, Year` format (`strftime('%B %-d, %Y')`) per the timestamp rules.
-- [ ] Move the table CSS out of inline `style=` attributes into `style.css`,
+- [~] Move the table CSS into `style.css`. **Not done deliberately**: the
+      archive's classes exist only on that page, and moving them would mean
+      re-minifying and bumping `?v=` across 740 pages for no shared use.
+      Superseded line kept for context:
+- [x] (was) Move the table CSS out of inline `style=` attributes into `style.css`,
       since it will now be used on two pages. Re-minify and bump `?v=`.
-- [ ] Register: add to `sitemap.xml`, add to `TOOL_PAGES` in
+- [x] Register: add to `sitemap.xml`, add to `TOOL_PAGES` in
       `generate_llms_txt.py`, re-run it, then `propagate.py`.
 
 ### Phase B — blog post becomes a teaser
 
-- [ ] Drop `DEFAULT_LIMIT` 12 -> 10 and tighten columns.
-- [ ] Add "View all N disclosures" linking to the new page. N must come from
+- [x] Drop `DEFAULT_LIMIT` 12 -> 10 and tighten columns.
+- [x] Add "View all N disclosures" linking to the new page. N must come from
       the data, not a literal.
-- [ ] Caption stays accurate about what the *table* shows vs what the archive
+- [x] Caption stays accurate about what the *table* shows vs what the archive
       holds. The CNA-score caveat and the earliest-published span stay.
 
 ### Phase C — summary column
 
-- [ ] Strip the leading definitional sentence ("X is a Model Context Protocol
+- [x] Strip the leading definitional sentence ("X is a Model Context Protocol
       server for Y.") before truncating. Verified against real data: fires on
       66 of 88 entries (75%), cuts roughly 40% of row height.
-- [ ] Truncate to ~110 chars rather than 200.
+- [~] Truncate to ~110 chars. **Rejected after measurement**: 130 chars cost
+      18 of 88 cells their impact language. Shipped the boilerplate strip at
+      the original 260 instead (same meaning, 23% shorter).
 - [ ] **Known ceiling:** the result reads as a mid-sentence fragment and is
       heavy with file paths (`crates/rmcp/src/transport/common/reqwest/...`).
       True 90-char impact clauses need semantic rewriting, not truncation.
@@ -573,10 +579,10 @@ post and the 200-char summary column is what makes it tall.
 
 ### Gates
 
-- [ ] `appsec` on the new page's client-side filter/sort JS (DOM injection,
+- [x] `appsec` on the new page's client-side filter/sort JS (DOM injection,
       and the search box is user input rendered back to the page).
-- [ ] `content-editor` on the new page's copy and any caption changes.
-- [ ] `/pre-push-review` before push. Blocks on any P0/P1.
+- [x] `content-editor` on the new page's copy and any caption changes.
+- [x] `/pre-push-review` before push. Blocks on any P0/P1.
 
 ## Open: gitleaks pre-commit hook (2026-09-19, paused)
 
@@ -589,14 +595,14 @@ content: 766 `generic-api-key` across quiz/guide pages, 4 `curl-auth-header` in
 `secrets-management.html` (verified a placeholder: 13 chars, 1 distinct char).
 History scan finds 794 across 918 commits.
 
-- [ ] Write `.gitleaks.toml` with an allowlist for the teaching paths, or
+- [x] Write `.gitleaks.toml` with an allowlist for the teaching paths, or
       generate a baseline file and scan against it.
-- [ ] Only then add `.githooks/pre-commit` + `git config core.hooksPath`, so
+- [x] Only then add `.githooks/pre-commit` + `git config core.hooksPath`, so
       the hook is tracked rather than living in `.git/hooks`.
-- [ ] Hook must use `--redact` (printing the secret defeats the purpose and
+- [x] Hook must use `--redact` (printing the secret defeats the purpose and
       breaks the project's "never display secret values" rule) and `--staged`.
       Note `gitleaks protect` is gone in 8.x; it is `gitleaks git --staged`.
-- [ ] A gate that fires 773 times gets bypassed on day one. Tune before arming.
+- [x] A gate that fires 773 times gets bypassed on day one. Tune before arming.
 
 ## Phase A + B shipped — pre-push review 2026-09-19 (second pass)
 
@@ -646,7 +652,7 @@ History scan finds 794 across 918 commits.
 
 ### Open follow-ups from this pass
 
-- [ ] **10 of 88 rows have a blank "Affected product" cell** on a page whose
+- [x] **10 of 88 rows have a blank "Affected product" cell** on a page whose
       description promises "search by product": CVE-2026-85674 (aider),
       CVE-2026-53965, CVE-2026-49986, CVE-2026-44192, CVE-2026-57495,
       CVE-2026-15643, CVE-2026-13341, CVE-2026-11624, CVE-2026-45609,
@@ -734,3 +740,71 @@ truncation.** It needs rewriting, which is what `review_summary` is for and why
 - [ ] Cross-links: nothing links into the tracker from `tools.html`,
       `ai-security.html` or the KEV pages.
 - [ ] CVE-2026-13341's product string is long for a `nowrap` column.
+
+
+# OPEN ITEMS — consolidated 2026-09-19
+
+Supersedes the scattered per-pass lists above, which are kept as a record of
+what each review found. Ordered by the priority framework in `../CLAUDE.md`.
+
+## Needs a decision from Robert
+
+1. **`review_summary` via the Phase 4 scheduled Claude trigger.** Recurring and
+   billable, never created. It is the only thing that turns the summary column
+   into real impact clauses, and the plumbing already exists: `summary_of()`
+   prefers the field and `short_summary()` leaves it uncut. Would fix the two
+   Critical 9.8 Cursor rows that currently describe Cursor's sandbox rather
+   than the flaw. Draft prompt is in this file. **Everything else below can be
+   done without spending anything.**
+2. **Rotate the two Resend API keys** in `.claude/settings.local.json`. Never
+   committed and `.claude/` is gitignored, but they are in shell history and
+   were printed to a terminal. `RESEND_API_KEY` is also a GitHub secret.
+
+## P2 — wrong data on a published page
+
+3. **`vendor_of()` files `@agenticmail/claudecode` under "Claude Code".**
+   NVD's vendor is `agenticmail` (CVE-2026-57495). It feeds `search_text()`, so
+   searching "claude code" on the archive surfaces an AgenticMail advisory, and
+   it feeds the caption's published "57 of the 88 are MCP" count. Data fix plus
+   a `vendor_of()` guard for scoped npm names.
+4. **Aggregator and `fetch_kev` disagree on CVSS version precedence.** The
+   aggregator tries v3.1, v3.0, v4.0, v2; `fetch_cvss_from_nvd` tries v3.1,
+   v3.0, v2, v4.0. The same CVE can show two different scores in two places on
+   the site. Pick one order and share it.
+5. **`severity_label()` applies CVSS v3.1 bands to a v2 fallback score.** v2 has
+   no Critical band, so a v2-only CVE at >=9.0 would render a rating that does
+   not exist in that scale. No current row is affected.
+
+## P3 — hardening, no live exploit path
+
+6. **arXiv DOCTYPE guard only scans `body[:2048]`.** A DOCTYPE is legal anywhere
+   in the prolog. Needs upstream TLS control to reach and libexpat caps the
+   damage. Fix with `defusedxml` and delete both hand-rolled guards.
+7. **`resp.read()` on the NVD response is unbounded** (the arXiv path caps
+   correctly), and the arXiv `title` is the one field that skips `_trim()`.
+8. **No CSP anywhere on the site.** Escaping is the only XSS control on these
+   pages. Pre-existing and site-wide; any CSP needs `'unsafe-inline'` or a
+   nonce pass across 740 pages because the nav toggle uses inline `onclick`.
+
+## P4/P5 — polish and reach
+
+9. **Per-row CVSS version labels.** The caption states the v3.1/v4.0 mix in
+   prose; per-row labels need a `score_version` field plus an 88-CVE backfill.
+10. **Cross-links into the tracker.** Its only inbound link is the blog teaser.
+    Nothing links from `tools.html`, `ai-security.html`, or the KEV pages,
+    though it is the most current dataset on the site.
+11. **Table cells render bare ISO dates** while captions use house-style long
+    dates, contradicting `long_date()`'s own docstring rationale.
+12. **CVE-2026-13341's product string** ("Kong Konnect Model Context Protocol
+    server") is wide for a `white-space:nowrap` column. NVD calls it
+    KongHQ / mcp-konnect.
+
+## Known and deliberate — do not "fix"
+
+- **GHSA has contributed 0 of 88 rows.** NVD dedup wins. Documented in
+  `generate_ai_ide_tracker.py`. Do not rewrite the caption to drop the source.
+- **GHSA runs unauthenticated on purpose.** urllib replays headers across
+  redirects and the Actions `GITHUB_TOKEN` is write-scoped. 60 req/hr per
+  shared runner IP, so a 403 is possible; it degrades to "no GHSA rows".
+- **Archive page weight** is ~500 KB uncompressed at `MAX_STORED = 500`, marked
+  with a `ponytail:` comment naming the ceiling. Revisit only near the cap.
