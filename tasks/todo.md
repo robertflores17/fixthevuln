@@ -512,12 +512,13 @@ Three reviewers run on the combined working tree: native `security-review`, `app
       and runners share IPs, so a 403 is possible. Degrades to "no GHSA rows".
 - [ ] Site ships no CSP, so escaping is the only XSS control on this page.
       Pre-existing, out of scope here.
-- [ ] **`NVD_API_KEY` is not a GitHub secret.** `gh secret list` shows only
-      CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_API_TOKEN, RESEND_API_KEY,
-      RESEND_EMAIL_API, UNSPLASH_ACCESS_KEY. CLAUDE.md claims NVD_API_KEY is
-      set, so the doc is wrong and `fetch-vulnerabilities.yml` has also been
-      running anonymous. Anonymous NVD works at 5 req/30s (collect took 60s).
-      Reissue the key and add it as a repo secret to fix both jobs. Stripe
+- [x] **`NVD_API_KEY` added as a repo secret 2026-09-19 16:43Z and verified
+      working.** It had never existed, so `fetch-vulnerabilities.yml` had been
+      running anonymous too. Confirmed authenticating rather than silently
+      falling back: collect went 60s -> 9s (0.6s pacing vs 6.0s) with zero NVD
+      warnings. Duration is the only tell available, because NVD answers a
+      rejected key with 404 and `_validate_nvd_key()` falls back to anonymous,
+      so a bad key and a good one produce the same job conclusion. Stripe
       secrets are correctly absent: those live in the Worker via wrangler.
 - [ ] `SKILLS.md` is untracked and has never been committed, though `CLAUDE.md`
       references it. Not part of this change set.
