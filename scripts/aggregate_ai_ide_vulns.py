@@ -453,7 +453,14 @@ def fetch_arxiv_author(surname=ARXIV_AUTHOR_QUERY, category=ARXIV_CATEGORY,
         'max_results': max_results,
     })
     try:
-        req = urllib.request.Request(url, headers={'User-Agent': 'FixTheVuln-AIIDE-Tracker/1.0'})
+        # export.arxiv.org answers 406 when nothing acceptable is offered, and
+        # urllib sends no Accept header by default. Cost one CI run to find:
+        # the request succeeds from a laptop and fails from an Actions runner.
+        # Same header the Friday roundup already uses in aggregate_ai_security_news.py.
+        req = urllib.request.Request(url, headers={
+            'User-Agent': 'FixTheVuln-AIIDE-Tracker/1.0',
+            'Accept': 'application/atom+xml, application/xml, text/xml, */*',
+        })
         with urllib.request.urlopen(req, timeout=30) as resp:
             body = resp.read(MAX_ARXIV_BYTES + 1)
     # OSError covers URLError, HTTPError and ConnectionResetError; a mid-transfer
