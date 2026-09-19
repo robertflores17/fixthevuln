@@ -239,7 +239,9 @@ GHSA publishes before NVD indexes.
       on exactly the days the page changed. Verified `auto-publish-cve.yml` only watches
       `data/pending_review.json`, which this job never writes.
 - [x] Added to `notify-on-failure.yml` watch list
-- [ ] Verify: `workflow_dispatch` manual run, check `gh run list` (needs push first)
+- [x] Verify: `workflow_dispatch` manual run, check `gh run list`. Dispatched three times
+      across the build (initial secret check, arXiv 406 fix, NVD key validation); all
+      `completed/success`, confirmed via `gh run view --json jobs`.
 
 ### Phase 4 — Claude-reviewed digest (optional, ships after 1-3)
 - [ ] Claude Code scheduled trigger (subscription, no API cost) mirroring `AppSec CVE Reviewer`:
@@ -742,62 +744,78 @@ truncation.** It needs rewriting, which is what `review_summary` is for and why
 - [ ] CVE-2026-13341's product string is long for a `nowrap` column.
 
 
-# OPEN ITEMS — consolidated 2026-09-19
+# OPEN ITEMS — reconciled 2026-09-19 (second pass)
 
-Supersedes the scattered per-pass lists above, which are kept as a record of
-what each review found. Ordered by the priority framework in `../CLAUDE.md`.
+Supersedes every list above, including the "consolidated" one from earlier
+today, which went stale within the same day (items 3-5 shipped in commit
+a7a654b3 while still listed there as open). This is the authoritative list.
 
 ## Needs a decision from Robert
 
 1. **`review_summary` via the Phase 4 scheduled Claude trigger.** Recurring and
    billable, never created. It is the only thing that turns the summary column
-   into real impact clauses, and the plumbing already exists: `summary_of()`
-   prefers the field and `short_summary()` leaves it uncut. Would fix the two
-   Critical 9.8 Cursor rows that currently describe Cursor's sandbox rather
-   than the flaw. Draft prompt is in this file. **Everything else below can be
-   done without spending anything.**
-2. **Rotate the two Resend API keys** in `.claude/settings.local.json`. Never
-   committed and `.claude/` is gitignored, but they are in shell history and
-   were printed to a terminal. `RESEND_API_KEY` is also a GitHub secret.
+   into real impact clauses -- the plumbing already exists (`summary_of()`
+   prefers the field, `short_summary()` leaves it uncut, `status: "excluded"`
+   drops a row from both the table and the count). Would fix the two Critical
+   9.8 Cursor rows that describe Cursor's sandbox rather than the flaw. Draft
+   trigger prompt is above, in the Phase 4 section. **Nothing below costs
+   anything.**
+2. ~~Rotate the two Resend API keys~~ **Done** -- confirmed rotated;
+   `.claude/settings.local.json` still holds the two dead key literals in its
+   Bash allowlist (cosmetic now, cleanup command given separately).
+   `RESEND_API_KEY`/`RESEND_EMAIL_API` GitHub secrets still show their old
+   2026-06-22 update timestamp -- if the *old* key was what those used,
+   `notify-on-failure.yml`'s email step and `health-check.yml` are silently
+   broken until `gh secret set RESEND_API_KEY` runs. Not yet confirmed either
+   way.
+3. **AI vuln-intel draft/publish pipeline** (unrelated to the tracker, older
+   item). Deliberately deferred 2026-09-14 to stay manual-review-only. Spec at
+   `docs/superpowers/specs/2026-09-12-ai-vuln-intel-pipeline-design.md`.
+
+## Shipped since the last reconciliation
+
+Items 3, 4, 5 (vendor misattribution, one CVSS precedence, v2 severity bands)
+and the third divergent CVSS copy in `generate_sprint_kit.py` -- see "Items 3-5
+fixed" and "AppSec review of items 3-5" sections below for the full detail.
+`generate_cve_pages.py`'s own `severity_label()` remains unfixed (separate
+live-published pipeline, needs its own review) -- carried forward below.
 
 ## P2 — wrong data on a published page
 
-3. **`vendor_of()` files `@agenticmail/claudecode` under "Claude Code".**
-   NVD's vendor is `agenticmail` (CVE-2026-57495). It feeds `search_text()`, so
-   searching "claude code" on the archive surfaces an AgenticMail advisory, and
-   it feeds the caption's published "57 of the 88 are MCP" count. Data fix plus
-   a `vendor_of()` guard for scoped npm names.
-4. **Aggregator and `fetch_kev` disagree on CVSS version precedence.** The
-   aggregator tries v3.1, v3.0, v4.0, v2; `fetch_cvss_from_nvd` tries v3.1,
-   v3.0, v2, v4.0. The same CVE can show two different scores in two places on
-   the site. Pick one order and share it.
-5. **`severity_label()` applies CVSS v3.1 bands to a v2 fallback score.** v2 has
-   no Critical band, so a v2-only CVE at >=9.0 would render a rating that does
-   not exist in that scale. No current row is affected.
+4. **`generate_cve_pages.py`'s `severity_label()` still assumes v3.1 bands**
+   and does not read the now-persisted `cvss_version`. A v2-only KEV entry
+   would still render a Critical it cannot reach in that scale. No current KEV
+   entry is v2-only (checked against all 12 pre-2016 CVEs in `kev-data.json`),
+   so this is latent, not live.
 
 ## P3 — hardening, no live exploit path
 
-6. **arXiv DOCTYPE guard only scans `body[:2048]`.** A DOCTYPE is legal anywhere
-   in the prolog. Needs upstream TLS control to reach and libexpat caps the
-   damage. Fix with `defusedxml` and delete both hand-rolled guards.
-7. **`resp.read()` on the NVD response is unbounded** (the arXiv path caps
+5. **arXiv DOCTYPE guard only scans `body[:2048]`.** A DOCTYPE is legal
+   anywhere in the prolog. Needs upstream TLS control to reach and libexpat
+   caps the damage. Fix with `defusedxml` and delete both hand-rolled guards.
+6. **`resp.read()` on the NVD response is unbounded** (the arXiv path caps
    correctly), and the arXiv `title` is the one field that skips `_trim()`.
-8. **No CSP anywhere on the site.** Escaping is the only XSS control on these
+7. **No CSP anywhere on the site.** Escaping is the only XSS control on these
    pages. Pre-existing and site-wide; any CSP needs `'unsafe-inline'` or a
    nonce pass across 740 pages because the nav toggle uses inline `onclick`.
 
 ## P4/P5 — polish and reach
 
-9. **Per-row CVSS version labels.** The caption states the v3.1/v4.0 mix in
-   prose; per-row labels need a `score_version` field plus an 88-CVE backfill.
-10. **Cross-links into the tracker.** Its only inbound link is the blog teaser.
-    Nothing links from `tools.html`, `ai-security.html`, or the KEV pages,
-    though it is the most current dataset on the site.
-11. **Table cells render bare ISO dates** while captions use house-style long
+8. **Per-row CVSS version labels.** `score_version` is now recorded on new NVD
+   entries (item 5), but the 88 stored entries predate the field and the
+   renderer does not yet show it per row -- only the caption's prose caveat
+   does. Needs a backfill pass plus a render change.
+9. **Cross-links into the tracker.** Its only inbound link is the blog teaser.
+   Nothing links from `tools.html`, `ai-security.html`, or the KEV pages,
+   though it is the most current dataset on the site.
+10. **Table cells render bare ISO dates** while captions use house-style long
     dates, contradicting `long_date()`'s own docstring rationale.
-12. **CVE-2026-13341's product string** ("Kong Konnect Model Context Protocol
+11. **CVE-2026-13341's product string** ("Kong Konnect Model Context Protocol
     server") is wide for a `white-space:nowrap` column. NVD calls it
     KongHQ / mcp-konnect.
+12. **Monitor GSC validation on 331 "discovered not indexed" pages**
+    (unrelated to the tracker; check due ~2026-03-30, likely overdue -- worth
+    a status check next time SEO work comes up).
 
 ## Known and deliberate — do not "fix"
 
@@ -808,38 +826,6 @@ what each review found. Ordered by the priority framework in `../CLAUDE.md`.
   shared runner IP, so a 403 is possible; it degrades to "no GHSA rows".
 - **Archive page weight** is ~500 KB uncompressed at `MAX_STORED = 500`, marked
   with a `ponytail:` comment naming the ceiling. Revisit only near the cap.
-
-## Items 3-5 fixed 2026-09-19
-
-- **3. Vendor misattribution.** `vendor_of()` now ignores scoped npm paths:
-  `@agenticmail/claudecode` names what a package integrates WITH, not who ships
-  it. Only the vendor decision ignores them; `product_match()` and
-  `is_relevant()` still see them, so such advisories stay tracked. Two stored
-  vendors corrected: CVE-2026-57495 Claude Code -> Unknown, and CVE-2026-13323
-  Windsurf -> Unknown (the Open VSX Registry bug the file's own header comment
-  already cites as a misattribution; its product column said Open VSX Registry
-  while the vendor field still said Windsurf). MCP count unchanged at 57, so
-  the published caption stays correct.
-- **4. One CVSS precedence for the site.** `cvss_from_metrics()` now lives in
-  `fetch_kev.py` and `aggregate_ai_ide_vulns.py` imports it. The two used to
-  disagree (v4.0/v2 swapped), so one CVE could publish two different scores on
-  two pages. Order is v3.1, v3.0, v4.0, v2. Verified live that the
-  Primary-over-Secondary preference survives: CVE-2026-13323 still returns 8.7.
-- **5. CVSS v2 has no Critical band.** `severity_label(score, version)` caps v2
-  at High. `collect_nvd` now records `score_version`, and the default stays
-  v3.1 for entries stored before the field existed (all of which are v3.1 or
-  v4.0, which band identically). This also lays the groundwork for item 9.
-
-### New, found while verifying
-
-- [ ] **`generate_sprint_kit.py:477` is a THIRD copy of the CVSS parser**, with
-      its own precedence (v3.1, v3.0, v2 — no v4.0 at all) and no
-      Primary-over-Secondary preference. It is a separate monthly pipeline with
-      its own local function, so nothing in items 3-5 reached it, but it is the
-      same divergence class item 4 just fixed between the other two.
-      (I first misread its call site as consuming fetch_kev's dict return and
-      nearly reported a bug that does not exist; it returns a float and is used
-      correctly.)
 
 ## AppSec review of items 3-5 — fixes applied 2026-09-19
 
