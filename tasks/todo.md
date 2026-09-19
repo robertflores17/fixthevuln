@@ -662,3 +662,75 @@ History scan finds 794 across 918 commits.
 - [ ] Page weight at `MAX_STORED = 500` is roughly 500 KB uncompressed, marked
       with a `ponytail:` comment naming the ceiling. Revisit only if it nears
       the cap.
+
+## Phase C (partial) — review 2026-09-19 (third pass)
+
+| Reviewer | Verdict | Findings |
+|---|---|---|
+| appsec | approve-with-fixes | 0 P0/P1, 2 P2, 2 P3 |
+| content-editor | approve-with-fixes | **3 P1**, 6 P2, 3 P3 |
+
+### The summary shortening was reverted to a boilerplate strip only
+
+Shipping a 130-char budget cost meaning. Measured, counting cells that retain
+any impact language (allows/exposes/bypass/unauthenticated/traversal/...):
+
+| variant | cells with no impact language | avg len |
+|---|---|---|
+| 260, no strip (original) | 48 of 88 | 249 |
+| **260 + strip (shipped)** | **48 of 88** | **191** |
+| 130 + strip (rejected) | 66 of 88 | 123 |
+
+Stripping the definitional opener is free: identical meaning, 23% shorter.
+Truncating to 130 was not. It landed worst on the two Critical 9.8 Cursor rows
+(CVE-2026-50549, CVE-2026-50548), which ended up describing the sandbox that
+was supposed to prevent the bug and stopping before the adversative that says
+it fails. A clause-selection heuristic was tried and rejected: it improved the
+aggregate (66 -> 50) but still missed those two rows, and it would have been a
+third heuristic patching a second one.
+
+**The ~90-char impact clause chosen at planning is not reachable by
+truncation.** It needs rewriting, which is what `review_summary` is for and why
+`summary_of()` already prefers it. That remains the open decision.
+
+### Fixed this pass
+
+- **P1** CVE-2026-11624 was NOT correctly blank. I judged it protocol guidance
+  and encoded that in a test docstring as a permanent fact. Its CNA is
+  `cve-coordination@google.com` and the fix is `--allowed-hosts` in v0.25.0 of
+  Google's MCP Toolbox for Databases. A blank product beside Critical 9.4 made
+  the page read as if MCP itself carried that score. Backfilled, test rewritten.
+- **P1** the two Critical Cursor rows (see above).
+- **P1** the 130-char budget (see above).
+- **P2 (appsec)** `short_summary()`'s `review_summary` early return dropped the
+  `str()` coercion the old call sites carried. A non-string written by the
+  review pass raised `AttributeError` and aborted the daily render.
+- **P2 (appsec)** the new verb pattern admitted prepositional-phrase subjects:
+  "The vulnerability in Cline enables ..." extracted "vulnerability in Cline",
+  putting a real vendor inside a phrase the advisory never asserted. Rejecting
+  prepositions generally cost two correct captures ("Cursor for Windows",
+  "gpt-researcher"), so only " in " is rejected.
+- **P3 (appsec)** `DEFINITION_RE`'s `.{0,80}?` crossed sentence boundaries and
+  deleted a real impact sentence preceding the gloss. Now `[^.]{0,80}?`.
+- **P3 (appsec)** truncation could collapse a cell to "A..." on feed-controlled
+  text.
+- **P2** blank products 4 -> 0. aider, Cortex and Ansible Lightspeed MCP server
+  backfilled by hand from NVD rather than by widening the regex, which would
+  have reintroduced the false-positive class the closed verb set prevents.
+- **P3** CVE-2026-59822 `published` backfilled to NVD's 2026-07-08, so it no
+  longer renders a dash and sorts correctly.
+
+### Open
+
+- [ ] **`review_summary` for the Critical/High rows.** The one fix that would
+      give real impact clauses without another heuristic. Needs the Phase 4
+      scheduled Claude trigger, which is recurring and billable and still needs
+      sign-off.
+- [ ] **CVE-2026-57495 `vendor` is "Claude Code"; NVD says `agenticmail`.**
+      Pre-existing `vendor_of()` misfire on `@agenticmail/claudecode`. It feeds
+      `search_text()`, so searching "claude code" surfaces an AgenticMail
+      advisory, and it feeds the caption's "57 of the 88" MCP count.
+- [ ] Per-row CVSS version labels (needs a `score_version` field + backfill).
+- [ ] Cross-links: nothing links into the tracker from `tools.html`,
+      `ai-security.html` or the KEV pages.
+- [ ] CVE-2026-13341's product string is long for a `nowrap` column.

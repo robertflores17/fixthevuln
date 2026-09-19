@@ -21,7 +21,7 @@ from generate_ai_ide_tracker import (
     summary_of, displayable, safe_url, field,
     RESEARCH_START, RESEARCH_END, render_research, byline,
     sort_key, render_archive_row, render_archive_page, archive_changed,
-    SCORE_CAVEAT,
+    SCORE_CAVEAT, short_summary, SUMMARY_CHARS,
 )
 
 
@@ -572,3 +572,92 @@ class TestArchiveDriftGuards(unittest.TestCase):
             f.write_text(render_archive_page([a], date(2026, 9, 19)), encoding='utf-8')
             self.assertTrue(
                 archive_changed(render_archive_page([b], date(2026, 9, 19)), f))
+
+
+class TestShortSummary(unittest.TestCase):
+    """Presentation only. The stored summary stays long so the archive's search
+    box keeps matching text the cell no longer displays."""
+
+    REAL = ("RMCP is an official Rust SDK for the Model Context Protocol. Prior "
+            "to 2.0.0, the rmcp crate's OAuth implementation in "
+            "crates/rmcp/src/transport/auth.rs omits the RFC 9728 resource field.")
+
+    def test_drops_the_definitional_opener(self):
+        got = short_summary({'summary': self.REAL})
+        self.assertNotIn('is an official Rust SDK', got)
+        self.assertTrue(got.startswith('Prior to 2.0.0'))
+
+    def test_keeps_the_version_clause(self):
+        """The affected-version range is the one thing a reader acts on, and it
+        survives truncation because it comes first."""
+        self.assertIn('2.0.0', short_summary({'summary': self.REAL}))
+
+    def test_reviewed_summary_is_never_chopped(self):
+        """A reviewer wrote it to be read. summary_of() prefers it, and the
+        shortener must not then truncate or strip it."""
+        long_review = 'Unauthenticated SSE transport exposes every MCP tool. ' * 5
+        entry = {'summary': self.REAL, 'review_summary': long_review}
+        self.assertEqual(short_summary(entry), long_review)
+
+    def test_respects_the_budget(self):
+        self.assertLessEqual(len(short_summary({'summary': 'word ' * 200})),
+                             SUMMARY_CHARS + 3)
+
+    def test_short_text_is_returned_unchanged(self):
+        self.assertEqual(short_summary({'summary': 'A brief note.'}), 'A brief note.')
+
+    def test_strip_is_skipped_when_it_would_leave_nothing(self):
+        # "X is a Y." with no second clause must not become an empty cell.
+        text = 'Cline is an autonomous coding agent for the terminal.'
+        self.assertEqual(short_summary({'summary': text}), text)
+
+    def test_missing_summary_does_not_raise(self):
+        for entry in ({}, {'summary': None}, {'summary': ''}):
+            self.assertEqual(short_summary(entry), '')
+
+    def test_stays_linear_on_adversarial_text(self):
+        import time
+        entry = {'summary': 'x ' + 'a-' * 3000 + ' is a thing. ' + 'b ' * 800}
+        start = time.perf_counter()
+        short_summary(entry)
+        self.assertLess(time.perf_counter() - start, 0.1)
+
+    def test_search_haystack_is_not_shortened(self):
+        """The whole point of shortening at render time: the archive row's
+        data-search attribute must still carry text the cell no longer shows."""
+        # Long enough that truncation actually bites; REAL alone fits the budget.
+        long_text = self.REAL + (' An unauthenticated client can then replay the '
+                                 'token against any downstream resource server '
+                                 'that trusts the issuer, including SENTINELWORD.')
+        entry = {'id': 'CVE-2026-1', 'product': 'RMCP', 'severity_label': 'High',
+                 'severity': '7.5', 'published': '2026-09-01', 'summary': long_text}
+        row = render_archive_row(entry)
+        self.assertIn('sentinelword', row.lower())            # in data-search
+        self.assertNotIn('SENTINELWORD', short_summary(entry))  # cut from the cell
+
+
+class TestShortSummaryEdges(unittest.TestCase):
+    """Three defects a review caught after the first cut. Each was reachable
+    from CNA-authored advisory text or from the LLM review pass's own output."""
+
+    def test_non_string_review_summary_does_not_crash_the_render(self):
+        """data/ai-ide-vulns.json is written by the daily review pass. The old
+        call sites wrapped this in str(); the early return dropped that, so a
+        reviewer emitting a bare number aborted the whole daily render."""
+        for value in (123, 4.5, True):
+            self.assertEqual(short_summary({'summary': 'x', 'review_summary': value}),
+                             str(value))
+
+    def test_strip_does_not_cross_a_sentence_boundary(self):
+        """With '.' in the prefix class the strip spanned a sentence break and
+        deleted a real impact sentence sitting before the definitional gloss."""
+        text = ("Unauthenticated remote code execution is possible in the default "
+                "config. Foo is a server for MCP. Prior to 1.2, the handler "
+                "passes user input to a shell without quoting.")
+        self.assertIn('remote code execution', short_summary({'summary': text}))
+
+    def test_leading_short_word_does_not_collapse_the_cell(self):
+        """rsplit on a string whose only space is near the start returned
+        "A...", an effectively empty cell that feed text can force."""
+        got = short_summary({'summary': 'A ' + 'x' * 300})
+        self.assertGreater(len(got), 40)

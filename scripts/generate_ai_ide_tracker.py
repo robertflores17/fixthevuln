@@ -87,6 +87,67 @@ def safe_url(url):
     return url if url.startswith(('https://', 'http://')) else ''
 
 
+# "RMCP is an official Rust SDK for the Model Context Protocol." Once the
+# product has its own column, that opening sentence is pure boilerplate: it
+# fires on 65 of 88 stored entries and removes roughly 23% of the text.
+# Both quantifiers are bounded, so this stays linear on adversarial input.
+# [^.] in the prefix, not '.': with '.' the strip can span a sentence break and
+# delete a real impact sentence sitting before the gloss. Verified: an opening
+# "Unauthenticated remote code execution is possible ... Foo is a server for
+# MCP. Prior to 1.2, ..." lost the RCE sentence from the cell entirely.
+DEFINITION_RE = re.compile(r'^[^.]{0,80}?\s+is\s+(?:an?|the)\s+[^.]{0,120}\.\s+')
+# Budget chosen by measurement, not taste. Counting cells that retain any
+# impact language (allows/exposes/bypass/unauthenticated/traversal/...):
+#
+#   260 no strip (original)   48 of 88 without impact   avg 249 chars
+#   260 + strip               48 of 88                  avg 191
+#   130 + strip               66 of 88                  avg 123
+#
+# Stripping the boilerplate is free: same meaning, 23% shorter. Truncating to
+# 130 is not: it cost 18 more cells their statement of what actually goes
+# wrong, and it landed on the two Critical 9.8 Cursor rows, which ended up
+# describing the sandbox that was supposed to stop the bug.
+#
+# A genuine ~90-char impact clause needs rewriting, not truncation, and that is
+# what `review_summary` is for. Clause-selection heuristics were tried and
+# rejected: they improved the aggregate but still missed those two rows.
+SUMMARY_CHARS = 260
+
+
+def short_summary(entry, limit=SUMMARY_CHARS):
+    """The summary with its definitional opener removed, then truncated.
+
+    This is presentation only: the stored summary stays long so the archive's
+    search haystack keeps matching on text the cell no longer shows.
+
+    Known ceiling: stripping is not rewriting. What survives is the advisory's
+    own second clause, so it often starts mid-sentence and is heavy with file
+    paths. A real impact clause needs `review_summary`, which summary_of()
+    already prefers. Do not try to synthesise one with more regex.
+    """
+    # Coerce before the branch below, not after. data/ai-ide-vulns.json is
+    # written by the daily review pass, and a non-string here used to be caught
+    # by str() at the call sites; returning it raw would crash esc() mid-render.
+    text = str(summary_of(entry) or '')
+    if entry.get('review_summary'):
+        # A reviewer wrote this to be read. Do not chop it up.
+        return text
+    text = ' '.join(text.split())
+    stripped = DEFINITION_RE.sub('', text)
+    # Only take the strip when something is left worth showing.
+    if len(stripped) > 40:
+        text = stripped
+    if len(text) <= limit:
+        return text
+    # rsplit avoids cutting mid-word, but collapses to "A..." when the only
+    # space is near the start, which CNA-controlled text can force. Fall back
+    # to a hard cut rather than render an empty-looking cell.
+    cut = text[:limit].rsplit(' ', 1)[0]
+    if len(cut) < limit // 3:
+        cut = text[:limit]
+    return cut + '...'
+
+
 def summary_of(entry):
     """A reviewer's rewritten summary when one exists, else the raw feed text.
     Lets the daily Claude review improve wording without the renderer needing
@@ -116,7 +177,7 @@ def render_row(entry):
         f'                            <td style="padding:0.6rem;white-space:nowrap;">{id_cell}</td>\n'
         f'                            <td style="padding:0.6rem;white-space:nowrap;">{field(entry, "product")}</td>\n'
         f'                            <td style="padding:0.6rem;white-space:nowrap;color:{color};font-weight:700;">{esc(severity)}</td>\n'
-        f'                            <td style="padding:0.6rem;">{esc(str(summary_of(entry) or ""))}</td>\n'
+        f'                            <td style="padding:0.6rem;">{esc(short_summary(entry))}</td>\n'
         '                        </tr>'
     )
 
@@ -344,7 +405,7 @@ def render_archive_row(entry):
         f'<td class="d-id">{id_cell}</td>'
         f'<td class="d-product">{field(entry, "product")}</td>'
         f'<td class="d-sev" style="color:{color};">{esc(severity)}</td>'
-        f'<td class="d-sum">{esc(str(summary_of(entry) or ""))}</td>'
+        f'<td class="d-sum">{esc(short_summary(entry))}</td>'
         '</tr>'
     )
 

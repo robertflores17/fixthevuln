@@ -193,12 +193,17 @@ class TestAffectedProduct(unittest.TestCase):
 
     def test_rejects_a_capture_that_swallowed_a_version_clause(self):
         """Real regression: this yielded "Spring AI. Prior to" by matching
-        across the sentence break. The product is mcp-security, and blank is
-        the honest answer when the pattern cannot find it."""
-        self.assertEqual(affected_product(
+        across the sentence break, misattributing the bug to Spring AI. It then
+        returned blank once that capture was rejected, and now returns the
+        actual product via the closed verb set. What must never come back is
+        the misattribution."""
+        got = affected_product(
             "mcp-security provides Security and Authorization support for Model "
             "Context Protocol in Spring AI. Prior to 0.1.9, the mcp-security "
-            "framework fails to validate tokens."), '')
+            "framework fails to validate tokens.")
+        self.assertEqual(got, 'mcp-security')
+        self.assertNotIn('Spring AI', got)
+        self.assertNotIn('Prior to', got)
 
     def test_strips_a_trailing_version_from_a_range(self):
         """Real regression: "IBM Langflow OSS 1.0.0" in an Affected product
@@ -241,6 +246,82 @@ ATOM = b"""<?xml version="1.0" encoding="UTF-8"?>
   <author><name>Maria Del Rosario</name></author>
  </entry>
 </feed>"""
+
+
+class TestAffectedProductOpenings(unittest.TestCase):
+    """Real advisory openings that produced a blank product cell. All six are
+    verbatim from data/ai-ide-vulns.json, not invented. The column advertises
+    product search, so a blank cell is a visible gap."""
+
+    def test_parenthetical_gloss_does_not_blank_the_subject(self):
+        # Advisories routinely gloss the product with its package name, and the
+        # subject patterns cannot match across the parens.
+        for desc, expected in (
+            ("AWS HealthLake MCP Server (awslabs.healthlake-mcp-server) is a "
+             "Model Context Protocol server that enables AI assistants.",
+             "AWS HealthLake MCP Server"),
+            ("The MCP PHP SDK (Composer package mcp/sdk) is the official Model "
+             "Context Protocol SDK for PHP.", "MCP PHP SDK"),
+        ):
+            self.assertEqual(affected_product(desc), expected)
+
+    def test_descriptive_verbs_other_than_is(self):
+        for desc, expected in (
+            ("AgenticMail gives AI agents real email addresses and phone numbers.",
+             "AgenticMail"),
+            ("mcp-security provides Security and Authorization support for Model "
+             "Context Protocol in Spring AI. Prior to 0.1.9, the framework fails.",
+             "mcp-security"),
+            ("BerriAI LiteLLM contains an improper authentication vulnerability "
+             "in the MCP Streamable HTTP endpoint.", "BerriAI LiteLLM"),
+        ):
+            self.assertEqual(affected_product(desc), expected)
+
+    def test_rejects_a_phrase_about_the_product(self):
+        """"<noun> in <Product>" names the product inside a phrase the advisory
+        never asserted. Publishing "vulnerability in Cline" puts a real
+        vendor's name in a fabricated one, which is worse than a blank cell.
+        These openings all passed the verb match with a bad subject."""
+        for desc in (
+            "The vulnerability in Cline enables remote attackers to read files.",
+            "The insecure default in Cursor provides attackers with code execution.",
+            "A crafted request (see PoC) enables path traversal.",
+            "The affected version contains a flaw in the MCP handler.",
+        ):
+            with self.subTest(desc=desc[:40]):
+                self.assertEqual(affected_product(desc), '')
+
+    def test_product_names_containing_prepositions_survive(self):
+        """Rejecting prepositions generally cost two correct captures, so only
+        " in " is rejected. "Cursor for Windows" is a real product name."""
+        self.assertEqual(
+            affected_product("Cursor for Windows before 1.2.3 allows code execution"),
+            'Cursor for Windows')
+
+    def test_verb_set_stays_closed(self):
+        """A general "^SUBJ <any verb>" rule would name the opening noun phrase
+        of almost any sentence. These must still return blank rather than
+        guess."""
+        for desc in (
+            "A vulnerability was discovered that affects several servers.",
+            "This issue occurs when the server starts.",
+            "An attacker sends a crafted request to the endpoint.",
+        ):
+            self.assertEqual(affected_product(desc), '')
+
+    def test_protocol_context_opener_is_not_a_product_claim(self):
+        """An advisory that OPENS with protocol context still belongs to a
+        product. CVE-2026-11624 reads "The Model Context Protocol has a
+        security warning..." and I wrongly called it spec guidance; its CNA is
+        cve-coordination@google.com and the fix is --allowed-hosts in v0.25.0
+        of Google's MCP Toolbox for Databases. Blank is the right output for
+        the extractor, because the product is not in the opening clause, but
+        the row must not be left blank on the page: it is backfilled by hand in
+        data/ai-ide-vulns.json. A blank cell beside a Critical 9.4 made the
+        page read as if the protocol itself carried that score."""
+        self.assertEqual(
+            affected_product("The Model Context Protocol has a security warning "
+                             "advising servers to validate the Origin header."), '')
 
 
 class TestAffectedProductRuntime(unittest.TestCase):

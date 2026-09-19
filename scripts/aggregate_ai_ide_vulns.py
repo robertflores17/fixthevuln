@@ -165,11 +165,18 @@ SUBJECT_PATTERNS = [re.compile(x) for x in (
     rf'^(?:The\s+)?{_SUBJ}\s+v?\d+\.\d',
     rf'\b(?:discovered|found|identified|detected|exists?)\s+in\s+(?:the\s+)?{_SUBJ}\s+(?:up\s+to|prior\s+to|before|version|v?\d)',
     rf'\bin\s+(?:the\s+)?{_SUBJ}\s+(?:before|version|v?\d+\.\d)',
+    # Advisories that open "X provides/contains/gives ..." instead of "X is a".
+    # A closed verb set, not a general verb match: "^SUBJ <any verb>" would
+    # capture the opening noun phrase of almost any sentence and start naming
+    # things like "A vulnerability" as the affected product.
+    rf'^(?:The\s+)?{_SUBJ}\s+(?:provides|contains|gives|implements|enables)\s',
 )]
 # Words a pattern can capture when an advisory opens unusually. Better to show
 # nothing than to name "version" as the affected product.
 SUBJECT_JUNK = {'version', 'a', 'an', 'the', 'it', 'this', 'that', 'and',
-                'vulnerability', 'issue', 'all', 'some', 'use', 'flaw'}
+                'vulnerability', 'issue', 'all', 'some', 'use', 'flaw',
+                'affected', 'crafted request', 'a crafted request', 'attacker',
+                'remote attacker', 'default', 'insecure default'}
 
 
 def affected_product(description):
@@ -179,6 +186,12 @@ def affected_product(description):
     # Only the opening clause ever names the product, so bounding the input
     # keeps worst-case matching work fixed no matter how the patterns evolve.
     text = (description or '')[:400].replace('`', '').replace('"', '')
+    # Drop parentheticals before matching. Advisories routinely gloss the
+    # product with its package name -- "AWS HealthLake MCP Server
+    # (awslabs.healthlake-mcp-server) is a ..." -- and the subject patterns
+    # cannot cross the parens, so the whole row came out blank. Bounded length
+    # keeps this linear.
+    text = re.sub(r'\s*\([^)]{0,80}\)', '', text)
     for pattern in SUBJECT_PATTERNS:
         m = pattern.search(text)
         if not m:
@@ -188,6 +201,21 @@ def affected_product(description):
         # "mcp-security provides support ... in Spring AI. Prior to 0.1.9"
         # yielded "Spring AI. Prior to" by matching across the sentence break.
         if re.search(r'\b(prior|before|through|version)\b', name, re.I):
+            continue
+        # "<noun> in <Product>" is a phrase about the product, not the product.
+        # "The vulnerability in Cline enables ..." would otherwise publish
+        # "vulnerability in Cline", putting a real vendor's name inside a
+        # fabricated one. Printing a wrong product is worse than printing none,
+        # which is why this function returns '' rather than guessing.
+        #
+        # Only " in " is rejected, not prepositions generally: "Cursor for
+        # Windows" is a real product name and "for|of|with" appear inside
+        # legitimate ones. Rejecting those cost two correct captures when tried.
+        if re.search(r'\bin\b', name, re.I):
+            continue
+        # Generic words that survive as a capture when an advisory opens with a
+        # description of the flaw instead of the product.
+        if name.lower() in SUBJECT_JUNK:
             continue
         # "IBM Langflow OSS 1.0.0" names one version where the advisory covers
         # 1.0.0 through 1.10.3. In an "Affected product" column that reads as
