@@ -522,3 +522,78 @@ Three reviewers run on the combined working tree: native `security-review`, `app
       secrets are correctly absent: those live in the Worker via wrangler.
 - [ ] `SKILLS.md` is untracked and has never been committed, though `CLAUDE.md`
       references it. Not part of this change set.
+
+## Plan: scale the AI IDE tracker section (2026-09-19)
+
+Decided with Robert: full archive moves to its own page, the blog post keeps a
+short teaser, and the summary column gets shortened. Not started.
+
+**Why:** 12 of 88 shown, 76 already invisible, `MAX_STORED` is 500 (roughly a
+year at 5-9 disclosures/week). The section is already the longest thing in the
+post and the 200-char summary column is what makes it tall.
+
+### Phase A — new page `/ai-ide-mcp-disclosures.html`
+
+- [ ] Renderer writes a standalone page from the same `data/ai-ide-vulns.json`.
+      Extend `generate_ai_ide_tracker.py` rather than adding a second script:
+      it already owns `render_row`, `safe_url`, `esc`, `severity` colours.
+- [ ] Full table, all stored entries, not a 12-row window.
+- [ ] Client-side severity filter chips + product/text search + sortable date
+      and severity columns. Vanilla JS, no framework, no backend. All data is
+      already in the DOM, so filtering is a class toggle.
+- [ ] Follow the standard page pattern: OG + Twitter Card meta, canonical,
+      Cloudflare Analytics before `</body>`, social share bar.
+- [ ] Auto-generated page, so it KEEPS a "Last updated" timestamp in
+      `Month Day, Year` format (`strftime('%B %-d, %Y')`) per the timestamp rules.
+- [ ] Move the table CSS out of inline `style=` attributes into `style.css`,
+      since it will now be used on two pages. Re-minify and bump `?v=`.
+- [ ] Register: add to `sitemap.xml`, add to `TOOL_PAGES` in
+      `generate_llms_txt.py`, re-run it, then `propagate.py`.
+
+### Phase B — blog post becomes a teaser
+
+- [ ] Drop `DEFAULT_LIMIT` 12 -> 10 and tighten columns.
+- [ ] Add "View all N disclosures" linking to the new page. N must come from
+      the data, not a literal.
+- [ ] Caption stays accurate about what the *table* shows vs what the archive
+      holds. The CNA-score caveat and the earliest-published span stay.
+
+### Phase C — summary column
+
+- [ ] Strip the leading definitional sentence ("X is a Model Context Protocol
+      server for Y.") before truncating. Verified against real data: fires on
+      66 of 88 entries (75%), cuts roughly 40% of row height.
+- [ ] Truncate to ~110 chars rather than 200.
+- [ ] **Known ceiling:** the result reads as a mid-sentence fragment and is
+      heavy with file paths (`crates/rmcp/src/transport/common/reqwest/...`).
+      True 90-char impact clauses need semantic rewriting, not truncation.
+      `summary_of()` already prefers `review_summary`, so the Phase 4 Claude
+      trigger is the real fix. Do not build a second extraction heuristic to
+      fake it: `affected_product()` took several iterations and shipped a P0.
+
+### Gates
+
+- [ ] `appsec` on the new page's client-side filter/sort JS (DOM injection,
+      and the search box is user input rendered back to the page).
+- [ ] `content-editor` on the new page's copy and any caption changes.
+- [ ] `/pre-push-review` before push. Blocks on any P0/P1.
+
+## Open: gitleaks pre-commit hook (2026-09-19, paused)
+
+gitleaks 8.30.1 installed via brew. `core.hooksPath` still unset, no hook written.
+
+Baseline scan: **773 findings in the working tree, all false positives.** This
+site teaches secret handling, so the default ruleset fires on its own lesson
+content: 766 `generic-api-key` across quiz/guide pages, 4 `curl-auth-header` in
+`api-security.html`, 2 `jwt` in `jwt-decoder.html`, 1 `stripe-access-token` in
+`secrets-management.html` (verified a placeholder: 13 chars, 1 distinct char).
+History scan finds 794 across 918 commits.
+
+- [ ] Write `.gitleaks.toml` with an allowlist for the teaching paths, or
+      generate a baseline file and scan against it.
+- [ ] Only then add `.githooks/pre-commit` + `git config core.hooksPath`, so
+      the hook is tracked rather than living in `.git/hooks`.
+- [ ] Hook must use `--redact` (printing the secret defeats the purpose and
+      breaks the project's "never display secret values" rule) and `--staged`.
+      Note `gitleaks protect` is gone in 8.x; it is `gitleaks git --staged`.
+- [ ] A gate that fires 773 times gets bypassed on day one. Tune before arming.
