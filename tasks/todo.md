@@ -936,10 +936,9 @@ CVEs did not get published and the routine will likely repeat this exact
 failure tomorrow (17:00 UTC) unless fixed, since it has no equivalent of the
 STEP 0 guard just added to AI Vuln Intel Reviewer.
 
-- [ ] **Decide whether to apply the same STEP 0 fix to AppSec CVE Reviewer.**
-      Not done without asking -- it's Robert's live daily publish pipeline and
-      it just broke today; a second unreviewed change to it same-day felt like
-      the wrong call to make unilaterally.
-- [ ] **Check claude.ai/admin-settings/usage** -- the org's monthly Claude
-      spend limit was hit mid-run. Any trigger firing again before that resets
-      or is raised will likely also fail partway through.
+- [x] **STEP 0 fix applied to AppSec CVE Reviewer** 2026-09-20T00:55:35Z, after
+      Robert confirmed. Update diffed programmatically against the original
+      before sending: every line outside the new STEP 0 block is byte-identical
+      -- approval logic, publish pipeline commands, and commit rules untouched.
+      Next run 2026-09-20T17:08:46Z is the first real test.
+- [x] **Spend limit raised by Robert** 2026-09-20.
