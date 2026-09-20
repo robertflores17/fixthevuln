@@ -10,6 +10,19 @@
 
 **Spec:** `docs/superpowers/specs/2026-09-12-ai-vuln-intel-pipeline-design.md`
 
+**Status as of 2026-09-20:** Tasks 1-5 and 10-13 were built in an earlier
+session without checkbox tracking -- confirmed done by direct inspection
+(scripts, `data/ai-vuln-content.json` with 20 techniques across both
+frameworks, `ai-vulnerabilities/*.html`, hub-page grid markers,
+`generate_llms_txt.py` categories, and `aggregate_ai_vuln_intel.py` already
+chained into `ai-trend-roundup.yml`), not by re-walking each sub-step, so
+their checkboxes below are left unticked as a known gap in this file rather
+than mass-ticked without verifying every step. Tasks 6-9 (Marlowe, Sable,
+Griggs, CLAUDE.md docs) were built and ticked 2026-09-20. **Task 14 (the
+scheduled trigger) is not done** -- it needs Robert's sign-off; see the AI
+Vulnerability Intel Pipeline note in `CLAUDE.md`. Without it, nothing in
+`data/ai-vuln-intel.json` moves past `status: "new"` on its own.
+
 ## Global Constraints
 
 - Stdlib only — no new pip/npm dependencies (matches `aggregate_ai_security_news.py`'s "Stdlib-only (no deps)" convention).
@@ -767,7 +780,7 @@ git commit -m "Add ai-vulnerabilities/ category to llms.txt generator"
 **Files:**
 - Create: `.claude/agents/claim-extractor.md` (gitignored — no commit step)
 
-- [ ] **Step 1: Write the agent file**
+- [x] **Step 1: Write the agent file**
 
 ```markdown
 ---
@@ -812,7 +825,8 @@ NOTES: <anything ambiguous about what counts as a claim, for Sable/Griggs to fla
 - Do not edit the draft.
 ```
 
-- [ ] **Step 2: Verify it's ignored by git (confirming no accidental commit)**
+- [x] **Step 2: Verify it's ignored by git (confirming no accidental commit)** -- confirmed
+  2026-09-20: `git check-ignore -v` prints `.gitignore:1:.claude/` for all three files.
 
 Run: `git check-ignore -v .claude/agents/claim-extractor.md`
 Expected: prints the `.gitignore` rule matching it (`.claude/`)
@@ -824,7 +838,7 @@ Expected: prints the `.gitignore` rule matching it (`.claude/`)
 **Files:**
 - Create: `.claude/agents/evidence-searcher.md` (gitignored — no commit step)
 
-- [ ] **Step 1: Write the agent file**
+- [x] **Step 1: Write the agent file**
 
 ```markdown
 ---
@@ -871,7 +885,7 @@ signal to require it be softened or cut, not proof it's false.
 - Do not edit the draft.
 ```
 
-- [ ] **Step 2: Verify it's ignored by git**
+- [x] **Step 2: Verify it's ignored by git** -- confirmed 2026-09-20.
 
 Run: `git check-ignore -v .claude/agents/evidence-searcher.md`
 Expected: prints the `.gitignore` rule matching it
@@ -883,7 +897,7 @@ Expected: prints the `.gitignore` rule matching it
 **Files:**
 - Create: `.claude/agents/critic.md` (gitignored — no commit step)
 
-- [ ] **Step 1: Write the agent file**
+- [x] **Step 1: Write the agent file**
 
 ```markdown
 ---
@@ -940,7 +954,7 @@ revision, then Marlowe → Sable → Griggs run again on the revised draft.
 - Do not edit the draft yourself.
 ```
 
-- [ ] **Step 2: Verify it's ignored by git**
+- [x] **Step 2: Verify it's ignored by git** -- confirmed 2026-09-20.
 
 Run: `git check-ignore -v .claude/agents/critic.md`
 Expected: prints the `.gitignore` rule matching it
@@ -954,7 +968,7 @@ Expected: prints the `.gitignore` rule matching it
 
 **Interfaces:** none — documentation only.
 
-- [ ] **Step 1: Add to the Role System section**
+- [x] **Step 1: Add to the Role System section**
 
 In `CLAUDE.md`, under `## Role System (Review Gates)`, after the existing `Content Editor` bullet, add:
 
@@ -969,7 +983,7 @@ In `CLAUDE.md`, under `## Role System (Review Gates)`, after the existing `Conte
   See `docs/superpowers/specs/2026-09-12-ai-vuln-intel-pipeline-design.md`.
 ```
 
-- [ ] **Step 2: Verify no accidental commit**
+- [x] **Step 2: Verify no accidental commit** -- `git status --short CLAUDE.md` prints nothing.
 
 Run: `git status --short CLAUDE.md`
 Expected: no output (file is gitignored, `git status` won't list it as modified)
