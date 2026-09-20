@@ -887,3 +887,59 @@ changed currently-stored tracker data).
       and never reads the now-persisted `cvss_version`. A v2-only KEV entry
       would still render a Critical it cannot actually reach. Separate change,
       separate pipeline, separate review.
+
+
+## AI Vuln Intel Reviewer trigger updated 2026-09-20
+
+Robert asked to "loop with Marlowe, Sable and Griggs" and "auto-commit". The
+trigger already existed (created 2026-09-13 in an earlier session I hadn't
+discovered) -- it had already auto-published once, 2026-09-18, 9 entries, via
+an inline verification pass that predated the three agent personas. Updated
+via `RemoteTrigger` (`trig_017xceZFhTAxS5hL9bGr6KMF`), not created.
+
+**Key finding that changed the design:** the plan's Task 14 assumed
+Marlowe/Sable/Griggs would run via Agent-tool subagent dispatch. This
+account's own Caption Loop (Harlow/Flint) trigger's prompt documents that this
+hangs 15-40+ minutes with zero output inside a scheduled routine session --
+confirmed by a prior diagnostic, not theoretical. The updated prompt performs
+every persona inline via explicit perspective-switching instead, the same
+proven pattern Caption Loop and AppSec CVE Reviewer already use, and inlines
+the actual standards text since `.claude/agents/*.md` is gitignored and does
+not exist in a fresh remote clone.
+
+Added a STEP 0 (ensure clean start on main, fix a detached HEAD before any
+edits) not in the original design, directly motivated by a failure just
+observed in AppSec CVE Reviewer's same-day run (see below).
+
+Next fire: Friday 2026-09-25 15:00 UTC.
+
+## URGENT, unrelated: AppSec CVE Reviewer (daily KEV pipeline) failed today
+
+Discovered while investigating the above. `trig_01QS6sm2WZe1crAsB5fpFQJi`
+fired 2026-09-19T17:09Z, ran 11 minutes, **status FAILED**.
+
+Root cause, from the run log: the sandbox started on a **detached HEAD**
+several commits behind `main` (this session pushed heavily throughout the
+day). The routine's own recovery attempt (`git checkout main` ->
+`git stash -u` -> `git stash pop`) produced merge conflicts across every
+`cve/*.html` file. Two Claude Code auto-mode classifier denials correctly
+blocked destructive recovery attempts (`git checkout -- cve/` with the only
+backup already dropped). The run then hit **the org's monthly Claude spend
+limit** while still fighting the conflict and ended without committing.
+
+**Verified the real repo is unaffected:** `pending_review.json` still shows
+both pending CVEs (`CVE-2025-39964`, `CVE-2026-53266`) as `include_on_site:
+false`, `kev-data.json` still has 227 entries (not 229, confirming the
+sandbox's in-progress edits never reached origin/main), `git status` on a
+fresh clone is clean. Nothing corrupted -- the only cost is that today's 2
+CVEs did not get published and the routine will likely repeat this exact
+failure tomorrow (17:00 UTC) unless fixed, since it has no equivalent of the
+STEP 0 guard just added to AI Vuln Intel Reviewer.
+
+- [ ] **Decide whether to apply the same STEP 0 fix to AppSec CVE Reviewer.**
+      Not done without asking -- it's Robert's live daily publish pipeline and
+      it just broke today; a second unreviewed change to it same-day felt like
+      the wrong call to make unilaterally.
+- [ ] **Check claude.ai/admin-settings/usage** -- the org's monthly Claude
+      spend limit was hit mid-run. Any trigger firing again before that resets
+      or is raised will likely also fail partway through.

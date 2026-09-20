@@ -18,11 +18,13 @@ frameworks, `ai-vulnerabilities/*.html`, hub-page grid markers,
 chained into `ai-trend-roundup.yml`), not by re-walking each sub-step, so
 their checkboxes below are left unticked as a known gap in this file rather
 than mass-ticked without verifying every step. Tasks 6-9 (Marlowe, Sable,
-Griggs, CLAUDE.md docs) were built and ticked 2026-09-20. **Task 14 (the
-scheduled trigger) is not done** -- it needs Robert's sign-off; see the AI
-Vulnerability Intel Pipeline note in `CLAUDE.md`. Without it, nothing in
-`data/ai-vuln-intel.json` moves past `status: "new"` on its own.
-
+Griggs, CLAUDE.md docs) were built and ticked 2026-09-20. **Task 14 status corrected
+2026-09-20: the trigger already existed** (created 2026-09-13, discovered mid-session when
+Robert asked to "create the schedule"), had already auto-published once (2026-09-18, 9
+entries, via an inline check that predated the Marlowe/Sable/Griggs personas), and was
+updated in place to explicitly perform those three plus content-editor/appsec standards. See
+the AI Vulnerability Intel Pipeline note in `CLAUDE.md` for the Agent-tool-hang finding that
+changed Task 14's mechanism from what this plan originally specified.
 ## Global Constraints
 
 - Stdlib only — no new pip/npm dependencies (matches `aggregate_ai_security_news.py`'s "Stdlib-only (no deps)" convention).
@@ -1496,11 +1498,26 @@ This task configures a recurring Claude Code cloud trigger — not application c
 
 **Files:** none created directly by this task — it configures a scheduled trigger via the `schedule` skill/CronCreate, the same mechanism that created the existing "AppSec CVE Reviewer" trigger referenced in `CLAUDE.md`.
 
-- [ ] **Step 1: Confirm the precedent trigger's cadence and prompt shape**
+- [x] **Step 1: Confirm the precedent trigger's cadence and prompt shape**
+
+  Superseded: read via `RemoteTrigger get` instead of grepping CLAUDE.md, since the trigger
+  already existed from an earlier session and its actual prompt was the ground truth to build
+  from, not CLAUDE.md's (then-incorrect) description of it.
 
 Run: `grep -A5 "AppSec CVE Reviewer" CLAUDE.md` to re-read the existing trigger's documented schedule (daily, 10 AM PDT / 9 AM PST) and pipeline steps before modeling the new one on it.
 
-- [ ] **Step 2: Invoke the `schedule` skill to create the new trigger**
+- [x] **Step 2: Invoke the `schedule` skill to create the new trigger**
+
+  **Superseded 2026-09-20 in two ways.** First, the trigger already existed (created
+  2026-09-13) -- this was an UPDATE via `RemoteTrigger` action=update on
+  `trig_017xceZFhTAxS5hL9bGr6KMF`, not a create. Second, and load-bearing: the routine prompt
+  below assumes Marlowe/Sable/Griggs run via Agent-tool subagent dispatch. That hangs for
+  15-40+ minutes with zero output inside a scheduled routine session -- confirmed by a prior
+  diagnostic on this account's Caption Loop (Harlow/Flint) trigger, whose own prompt documents
+  the finding. The prompt actually shipped performs every persona inline via explicit
+  perspective-switching instead (the proven pattern Caption Loop and AppSec CVE Reviewer
+  already use), and inlines the standards text rather than reading `.claude/agents/*.md` --
+  that directory is gitignored and does not exist in a fresh remote clone.
 
 Use the `schedule` skill (which wraps `CronCreate`) to create a new weekly trigger, **Friday 7 AM PT** (one hour after `ai-trend-roundup.yml`'s 6 AM PT run, so `data/ai-vuln-intel.json` is already populated), with this routine prompt:
 
@@ -1546,11 +1563,18 @@ record_loop_round already returning needs_human_review — trust it, don't
 re-implement the cap here).
 ```
 
-- [ ] **Step 3: Verify the trigger was created**
+- [x] **Step 3: Verify the trigger was created**
+
+  `RemoteTrigger get trig_017xceZFhTAxS5hL9bGr6KMF` confirms `enabled: true`,
+  `updated_at: 2026-09-20T00:46:54Z`, `next_run_at: 2026-09-25T15:03:44Z` (Friday, unchanged --
+  only the prompt was updated, not the schedule).
 
 Use `CronList` (or ask the `schedule` skill to list triggers) and confirm the new trigger appears with the Friday 7 AM PT schedule.
 
-- [ ] **Step 4: Document it in `CLAUDE.md`**
+- [x] **Step 4: Document it in `CLAUDE.md`**
+
+  Done 2026-09-20 -- corrected an earlier pass that had wrongly stated the trigger did not
+  exist.
 
 Add a row to the `GitHub Actions Workflows` table's surrounding prose, or a new subsection near "AI Security Trend Roundup" in `CLAUDE.md` (gitignored, no commit needed):
 
