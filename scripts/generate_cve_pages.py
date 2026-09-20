@@ -30,12 +30,20 @@ SITEMAP_PATH = REPO_ROOT / 'sitemap.xml'
 TODAY = date.today().isoformat()
 
 
-def severity_label(cvss):
-    """Return severity label for a CVSS score."""
+def severity_label(cvss, version=''):
+    """Return severity label for a CVSS score.
+
+    `version` matters: CVSS v2 has no Critical band, so a v2 score of 9.0+
+    must still read HIGH, its true ceiling. Unset or unrecognised versions
+    (every entry published before kev-data.json started carrying
+    "cvssVersion", and every hand-typed one since) use the v3.1/v3.0/v4.0
+    bands, which is the previous, unconditional behaviour of this function.
+    """
     if cvss is None:
         return 'UNKNOWN'
+    is_v2 = str(version).strip().lower() in ('v2', 'v2.0', '2', '2.0')
     if cvss >= 9.0:
-        return 'CRITICAL'
+        return 'HIGH' if is_v2 else 'CRITICAL'
     if cvss >= 7.0:
         return 'HIGH'
     if cvss >= 4.0:
@@ -96,7 +104,7 @@ def build_cve_faq_schema(vuln):
     desc = vuln.get('description', '')
     fix = vuln.get('fix', '')
     cvss = vuln.get('cvss')
-    sev = severity_label(cvss)
+    sev = severity_label(cvss, vuln.get('cvssVersion', ''))
     cvss_display = str(cvss) if cvss is not None else 'N/A'
     is_zero_day = vuln.get('isZeroDay', False)
 
@@ -158,7 +166,7 @@ def generate_cve_page(vuln):
     title = vuln['title'].strip()
     cvss = vuln.get('cvss')
     cvss_display = str(cvss) if cvss is not None else 'N/A'
-    sev = severity_label(cvss)
+    sev = severity_label(cvss, vuln.get('cvssVersion', ''))
     sev_color = severity_color(sev)
     sev_bg = severity_bg(sev)
     desc = escape_html(vuln.get('description', ''))
@@ -298,7 +306,7 @@ def generate_index_page(vulns):
         cve_id = v['id']
         cvss = v.get('cvss')
         cvss_display = str(cvss) if cvss is not None else 'N/A'
-        sev = severity_label(cvss)
+        sev = severity_label(cvss, v.get('cvssVersion', ''))
         sev_color = severity_color(sev)
         title = escape_html(v['title'].strip())
         date_added = v.get('dateAdded', '')

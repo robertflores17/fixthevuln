@@ -76,6 +76,12 @@ def convert_to_kev_format(vuln):
         "id": vuln.get('cveID', 'Unknown'),
         "title": title,
         "cvss": cvss_num,
+        # fetch_kev.py writes this alongside "cvss" when NVD supplies a score.
+        # Carried through so severity_label() in generate_cve_pages.py can tell
+        # a v2 score (no Critical band) from a v3.1/v4.0 one. A manually typed
+        # "cvss" with no matching version defaults to v3.1 bands downstream,
+        # which is correct for every hand-entered entry to date.
+        "cvssVersion": vuln.get('cvss_version', ''),
         "isZeroDay": is_zero_day,
         "description": description,
         "fix": vuln.get('fix', 'Apply vendor patches.'),

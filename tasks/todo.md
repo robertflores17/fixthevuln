@@ -782,11 +782,17 @@ live-published pipeline, needs its own review) -- carried forward below.
 
 ## P2 — wrong data on a published page
 
-4. **`generate_cve_pages.py`'s `severity_label()` still assumes v3.1 bands**
-   and does not read the now-persisted `cvss_version`. A v2-only KEV entry
-   would still render a Critical it cannot reach in that scale. No current KEV
-   entry is v2-only (checked against all 12 pre-2016 CVEs in `kev-data.json`),
-   so this is latent, not live.
+~~4. `generate_cve_pages.py`'s `severity_label()`~~ **Fixed 2026-09-20.** Now
+   `severity_label(cvss, version)`, caps v2 at HIGH. `cvssVersion` travels
+   `fetch_kev.py` -> `pending_review.json` (`cvss_version`) ->
+   `generate_html.py`'s `convert_to_kev_format` -> `kev-data.json`
+   (`cvssVersion`) -> the three call sites in `generate_cve_pages.py`. Verified
+   0 of 227 currently-published entries change label (latent-not-live fix, per
+   design). AppSec: approve, no P0/P1. One optional P3 noted and left as-is: a
+   human hand-editing `pending_review.json`'s `cvss` for a genuine v2 score
+   without also setting `cvss_version` would still print CRITICAL -- fails in
+   the conservative (over-, not under-) direction, so not worth guarding.
+   `tests/test_generate_cve_pages_severity.py`, 7 tests.
 
 ## P3 — hardening, no live exploit path
 
