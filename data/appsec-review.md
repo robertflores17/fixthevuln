@@ -1,59 +1,53 @@
-# AppSec Review — 2026-09-18
+# AppSec Review — 2026-09-20
 
 **Reviewer:** Robert Flores, CISSP  
-**Date:** 2026-09-18  
-**CVEs Reviewed:** 1  
-**Source:** CISA Known Exploited Vulnerabilities (KEV) Catalog
+**Review Date:** 2026-09-20  
+**CVEs Reviewed:** 3  
+**Source:** CISA Known Exploited Vulnerabilities (KEV) — added 2026-09-18
 
 ---
 
 ## Severity Breakdown
 
-| Priority | Count |
-|----------|-------|
-| Critical | 0     |
-| High     | 1     |
-| Medium   | 0     |
-| Low      | 0     |
-| **Total**| **1** |
+| Priority | Count | CVEs |
+|----------|-------|------|
+| Critical | 0     | —    |
+| High     | 3     | CVE-2025-39964, CVE-2026-53266, CVE-2025-39682 |
+| Medium   | 0     | —    |
+| Low      | 0     | —    |
 
 ---
 
 ## CVE Summary
 
-| CVE ID          | Vendor  | Product | Priority | Vulnerability Class              |
-|-----------------|---------|---------|----------|----------------------------------|
-| CVE-2026-87886  | Acronis | Backup  | high     | Incorrect Default Permissions / Privilege Escalation |
-
----
-
-## CVE Analysis
-
-**CVE-2026-87886 — Acronis Backup Incorrect Default Permissions Vulnerability**  
-The Acronis Backup plugin for cPanel & WHM and extension for Plesk contains incorrect default permissions, allowing an attacker with limited existing access to escalate privileges on the host system. cPanel/WHM and Plesk are extremely common in shared and managed hosting environments, making the attack surface broad. CISA issued a tight 3-day remediation window (due 2026-09-19) under BOD 26-04, reflecting confirmed active exploitation. Rated **high** due to privilege escalation in widely-deployed hosting panel infrastructure; no CVSS score published at time of review.
+| CVE ID | Vendor | Product | Priority | Vuln Class |
+|--------|--------|---------|----------|------------|
+| CVE-2025-39964 | Linux | Kernel | high | Race Condition (CWE-362) |
+| CVE-2026-53266 | Linux | Kernel | high | Out-of-Bounds Write (CWE-787) |
+| CVE-2025-39682 | Linux | Kernel | high | Improper Exceptional Condition Check (CWE-754) |
 
 ---
 
 ## Trend Analysis
 
-This week's KEV addition continues a trend of threat actors targeting hosting-layer infrastructure — backup agents, panel plugins, and management extensions installed on Linux/cPanel servers. Acronis Backup's integration with cPanel & WHM and Plesk means successful exploitation could affect thousands of downstream tenants on a single compromised server. Incorrect default permissions vulnerabilities are often underestimated because they require some level of pre-existing access, yet in shared hosting environments that threshold is effectively lowered by multi-tenant architectures. CISA's accelerated 3-day due date under BOD 26-04 signals that exploitation is both active and targeted at internet-exposed management panels.
+All three KEV additions this cycle target the Linux Kernel across distinct subsystems — the cryptographic socket layer (AF_ALG), the netfilter ebtables SNAT target, and the TLS receive path — reflecting a sustained pattern of kernel-level exploitation that bypasses userspace mitigations. Two of the three CVEs (CVE-2025-39964, CVE-2025-39682) were disclosed in 2025 but added to KEV only now, indicating CISA's growing enforcement posture under BOD 26-04, where delayed confirmation of active exploitation drives retroactive additions for components that are already EoL or near-EoL. The out-of-bounds write in ebtables (CVE-2026-53266, CVSS 8.8) carries the highest risk for organizations running Linux-based network appliances or bridging infrastructure, as exploitation can occur from the network layer without local access; defenders should prioritize kernel patching for internet-facing hosts and evaluate exposure of older kernel versions still running in containerized or virtualized environments.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"Why Backup Software Is the New Ransomware Target"** — Explore how backup agents and plugins (Acronis, Veeam, backup extensions) have become high-value targets; compromising backup infrastructure gives attackers both persistence and leverage before deploying ransomware.
+1. **"When the Kernel Is the Attack Surface: Analyzing CVE-2026-53266 and the ebtables OOB Write"** — Deep dive into how splice-imported page fragmentation in the SNAT target creates a write primitive, suitable for defenders and kernel developers.
 
-2. **"cPanel & WHM: The Hidden Attack Surface in Shared Hosting"** — A guide for hosting providers and their customers on hardening cPanel/WHM installations, reviewing installed plugins/extensions, and monitoring for privilege escalation indicators.
+2. **"BOD 26-04 in Practice: Why CISA Is Adding 2025 Kernel CVEs Now"** — Explainer on CISA's updated enforcement timeline and what retroactive KEV additions mean for patching windows in government and critical infrastructure.
 
-3. **"Incorrect Default Permissions: The Silent Privilege Escalation"** — Educational deep-dive on CWE-276 (Incorrect Default Permissions), how to detect misconfigured permissions in production, and why "works out of the box" configurations in third-party plugins often sacrifice security for ease of installation.
+3. **"TLS in the Kernel Is Still Hard: CVE-2025-39682 and the Zero-Length Record Edge Case"** — Technical analysis of how subtle state-machine flaws in kernel TLS can lead to memory safety violations, with mitigations for organizations relying on kTLS offload.
 
 ---
 
 ## Newsletter Snippet
 
-**CISA KEV Alert: Acronis Backup Privilege Escalation — Patch by September 19**
+**Patch Tuesday Isn't Enough: Three Linux Kernel Vulnerabilities Hit the CISA KEV**
 
-This week CISA added CVE-2026-87886 to the Known Exploited Vulnerabilities catalog, a privilege escalation flaw in the Acronis Backup plugin for cPanel & WHM and its Plesk extension. Attackers who gain any foothold on an affected server can leverage the misconfigured default permissions to escalate to higher privilege levels — a critical risk in shared hosting environments where thousands of sites may be co-located on a single compromised host. CISA has set a 3-day remediation deadline under BOD 26-04, reflecting active exploitation in the wild.
+CISA added three Linux Kernel vulnerabilities to its Known Exploited Vulnerabilities catalog this week, all confirmed actively exploited in the wild. The most severe — CVE-2026-53266 (CVSS 8.8) — is an out-of-bounds write in the ebtables SNAT target that allows an attacker to corrupt kernel memory through a crafted ARP hardware address rewrite in a bridged network environment, potentially leading to kernel-level code execution. Alongside it, CVE-2025-39964 (a race condition in the AF_ALG cryptographic socket) and CVE-2025-39682 (an exceptional-condition bypass in the kernel TLS receive path) round out a batch that highlights how attackers are increasingly targeting kernel subsystems as userspace hardening matures.
 
-If your organization or hosting provider uses Acronis Backup with cPanel, WHM, or Plesk, apply the vendor patch immediately per the Acronis security advisory (SEC-10986). Review all third-party panel plugins and extensions for similar permission misconfigurations, and ensure your incident response plan covers backup software compromise — an attacker who controls your backups controls your recovery options. As always, internet-exposed management panels should be restricted to trusted IP ranges and monitored for anomalous privilege usage.
+Organizations running Linux hosts — particularly those on older or EoL kernel versions — should treat these as urgent patches under BOD 26-04's risk-based prioritization framework. The three-day due date (2026-09-21) signals CISA's elevated urgency classification. If patching is not immediately possible, consider isolating affected hosts, restricting network bridging configurations, and auditing kTLS offload usage. All three CVEs have upstream kernel fixes available; consult your distribution's advisory for backported patch availability.
