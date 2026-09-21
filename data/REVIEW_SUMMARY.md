@@ -1,4 +1,4 @@
-# Daily KEV Review — 2026-09-19
+# Daily KEV Review — 2026-09-21
 
 **New CVEs:** 1 | **Critical:** 0 | **High:** 1 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
@@ -6,14 +6,14 @@
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2025-39682 | Linux | Kernel | 7.1 | Unknown | 2026-09-21 |
+| CVE-2026-7273 | Zyxel | GS1900 Series Switches | 8.8 | Unknown | 2026-09-24 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-09-21 (1 CVE)
+- **Nearest due date:** 2026-09-24 (1 CVE)
 - **Overdue:** None
 
 ## Vendor Summary
-- Linux: 1 CVE
+- Zyxel: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
