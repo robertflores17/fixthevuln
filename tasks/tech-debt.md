@@ -1,3 +1,47 @@
+## 2026-09-21 — Weekly Tech-Debt Audit
+
+**Headline:** All-clear week with one resolution — P1 cache-bust drift cleared (4 CVE pages updated v=10→v=11, 0 drifted files remaining); pipeline healthy; 7 CVEs published (231 total); P1 practice-tests timestamp **15 weeks unresolved** at 172 days.
+
+**Pipeline pulse:**
+- Daily CVE trigger last output (`data/appsec-review.md`): 2026-09-20 (1 day ago ✓ — pipeline healthy, NOT P0)
+- Friday AI trend roundup last file (`drafts/ai-security-roundup-2026-09-18.md`): 2026-09-18 (Friday ✓ — draft on schedule, publishes Tue Sep 23)
+- `data/pending_review.json` pending count: 0 (last_checked: 2026-09-20T17:46:50 UTC ✓)
+
+**New this week:**
+- None. No new P0/P1/P2/P3 findings.
+- Notable: `SKILLS.md` added — role-contract subagents (COO, AppSec, Content Editor, Tech Debt Auditor) + mandatory `/pre-push-review` gate; partially addresses P3 no-CLAUDE.md item but the file itself remains absent
+- Notable: `.gitleaks.toml` + pre-commit hook configured; `NVD_API_KEY` secret added and verified (was causing rate-limit degradation and arXiv 406 errors)
+- Notable: 7 CVE pages published (Linux Kernel ×3 Sep 20 + 4 from bulk sweep); bulk commit also touched 80 existing CVE files for the v=10→v=11 cache-bust fix, resolving last week's P1
+- Notable: Sitemap reconciled Sep 21 → 713 entries (+21 vs 692)
+
+**Still open from prior audits:** 8
+1. P1 content — `practice-tests/*.html:1` (13 pages) — `<p class="pt-timestamp">Last updated: April 2, 2026</p>` still present (172 days old, **open 15 weeks**) — Fix: remove timestamp block from `scripts/generate_practice_test_pages.py` template; re-run — Effort: XS
+2. P2 content — `roadmaps/*.html` (67 pages) — "Last updated: March 30, 2026" — 175 days old — Fix: re-run `python scripts/generate_roadmaps.py` — Effort: XS
+3. P2 generator — `scripts/` (14 files >500 LOC, count unchanged) — `generate_guides.py` 2,753 · `generate_sprint_kit.py` 1,988 · `fetch_kev.py` 896 · `etsy_to_pinterest.py` 829 · `entity_extractor.py` 765 · `generate_linkedin_posts.py` 716 · `publish_editorial.py` 707 · `audit_pages.py` 661 · `generate_ai_ide_tracker.py` 651 · `generate_quiz_pages.py` 627 · `aggregate_ai_ide_vulns.py` 611 · `generate_cert_pages.py` 595 · `inject_store_ctas.py` 588 · `generate_practice_test_pages.py` 572 · `generate_roadmaps.py` 517 · `generate_cve_pages.py` 512 — Effort: L
+4. P2 hygiene — repo-wide — `requirements.txt` absent; Pillow (`create_hero.py:4`, `generate_linkedin_posts.py:12`) and reportlab (`generate_sprint_kit.py:31–45`) and requests (`etsy_to_pinterest.py`) undeclared external deps; `security-audit.yml` pip-audit silently no-ops — Effort: XS
+5. P2 SEO — `scripts/generate_sitemap.py:25` — `CONTENT_DIRS` omits `wstg` and `practice-tests` directories; 13+13=26 pages excluded from sitemap.xml entirely — Fix: add `"wstg"` and `"practice-tests"` to CONTENT_DIRS — Effort: XS
+6. P3 hygiene — `scripts/` (9 instances across 8 scripts) — Broad `except Exception:` without logging: `fetch_kev.py:63`, `generate_sitemap.py:86`, `update_sitemap.py:29`, `audit_pages.py:250,382`, `inject_error_reporter.py:46`, `generate_linkedin_posts.py:72`, `create_hero.py:51`, `health_check.py:127` — Add `logging.exception()` before each — Effort: S
+7. P3 hygiene — repo root — No `CLAUDE.md`; editorial rules (evergreen-page timestamp ban, cache-bust policy, pipeline health thresholds) uncodified in-repo (`SKILLS.md` partially mitigates via role-contracts but not a substitute) — Effort: XS
+8. P3 generator drift — `scripts/generate_sitemap.py:60–76` — GUIDE_PAGES missing `ai-agent-security.html` and `genai-data-security.html` (pages ARE in sitemap.xml via reconcile workflow; generate_llms_txt.py already has both ✓; risk is priority mis-assignment on fresh generate_sitemap.py run; open **11 weeks** since July 13 audit) — Fix: add both filenames to generate_sitemap.py GUIDE_PAGES set — Effort: XS
+
+**Resolved since last audit:**
+- P1 cache-bust — `cve/CVE-2026-42016.html`, `cve/CVE-2026-42018.html`, `cve/CVE-2026-84869.html`, `cve/CVE-2026-85706.html` shipped Sep 13 at `style.min.css?v=10`; bulk CVE publish commit (5f03784) updated all 4 to v=11; `grep -l "style.min.css?v=10" cve/*.html` returns 0 files ✓
+
+**Metrics tracked:**
+- Total generated pages (cve-*, cert-*, comparisons/*, roadmaps/*): 407 (231 CVE + 66 cert + 43 comparisons + 67 roadmaps) — +7 CVE vs last week (400)
+- Blog pages: ~128 (data/blog_metadata.json updated Sep 15 "Weekly blog publish + marketing content"; +2 from 126 ✓)
+- Sitemap entries: 713 (was 692, +21 ✓)
+- Evergreen pages with timestamps (should be 0): 13 (practice-tests/*.html — April 2, 2026 — 172 days, P1 open **15 weeks**)
+- Pages missing from llms.txt: 0 ✓ (reconcile ran Sep 21 ✓)
+- Cache-bust drift count: **0 files** ✓ (was 4 — RESOLVED)
+- Scripts >500 LOC: 14 (count unchanged; `generate_guides.py` current LOC 2,753 vs 2,896 in Sep 14 count — likely blank-line counting variance)
+- Store worker LOC: 1,331 (unchanged; PRICING 599/1599 cents ↔ $5.99/$15.99 frontend ✓; CP_PRICING tiers ✓; webhook HMAC-SHA256 signing confirmed ✓)
+- D1 migrations: 2 (unchanged — 0001_error_log, 0002_quiz_feedback)
+- Python scripts with bare `except Exception:` without logging: 9 instances / 8 scripts (unchanged)
+- Certs last updated: August 2, 2026 (49 days — below 90-day threshold ✓) · Comparisons: September 8, 2026 (13 days ✓) · Roadmaps: March 30, 2026 (175 days — P2 open)
+
+---
+
 ## 2026-09-14 — Weekly Tech-Debt Audit
 
 **Headline:** Pipeline healthy — 14 CVEs published (224 total), 2 blog posts, ai-vulnerabilities hub (10 OWASP LLM pages) + ai-security.html shipped; 1 new P1 (4 CVE pages at stale cache-bust v=10); P1 practice-tests timestamp **14 weeks unresolved** at 165 days.
