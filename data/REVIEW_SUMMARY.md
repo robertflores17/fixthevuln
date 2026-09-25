@@ -1,24 +1,25 @@
-# Daily KEV Review — 2026-09-23
+# Daily KEV Review — 2026-09-25
 
-**New CVEs:** 4 | **Critical:** 4 | **High:** 0 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 4 | **Critical:** 2 | **High:** 1 | **Medium:** 1 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-93952 | Arista | VeloCloud Orchestrator | 10.0 | Unknown | 2026-09-25 |
-| CVE-2026-94127 | F5 | BIG-IP APM | 9.8 | Unknown | 2026-09-25 |
-| CVE-2026-93616 | Check Point | Multiple Products | 9.8 | Unknown | 2026-09-25 |
-| CVE-2026-85102 | Check Point | Multiple Products | 9.8 | Unknown | 2026-09-25 |
+| CVE-2026-5430 | WSO2 | Multiple Products | 10.0 | Unknown | 2026-09-27 |
+| CVE-2026-71362 | Adobe | Commerce and Magento  | 9.1 | Unknown | 2026-09-27 |
+| CVE-2026-65660 | Microsoft | SharePoint | 8.8 | Unknown | 2026-09-28 |
+| CVE-2026-67279 | MikroTik | RouterOS | 6.5 | Unknown | 2026-09-28 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-09-25 (4 CVEs)
+- **Nearest due date:** 2026-09-27 (2 CVEs)
 - **Overdue:** None
 
 ## Vendor Summary
-- Check Point: 2 CVEs
-- Arista: 1 CVE
-- F5: 1 CVE
+- MikroTik: 1 CVE
+- Microsoft: 1 CVE
+- WSO2: 1 CVE
+- Adobe: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links

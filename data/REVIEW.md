@@ -1,24 +1,68 @@
-# Daily KEV Review — 2026-09-23
+# Daily KEV Review — 2026-09-25
 
 **CVEs to review:** 4
 
 ---
 
-## CVE-2026-93952: Arista VeloCloud Orchestrator
+## CVE-2026-67279: MikroTik RouterOS
+
+**CVSS:** 6.5
+**Description:** Mikrotik RouterOS contains an improper enforcement of behavioral workflow vulnerability that could allow an unauthenticated client to open a session channel and send an exec request. This vulnerability can be chained to achieve unauthenticated exploitation of CVE-2026-86060.
+**Fix:** Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
+**Due Date:** 2026-09-28
+**CISA Notes:** https://mikrotik.com/supportsec/september-2026-vulnerability/?utm_source=chatgpt.com ; ; BOD 26-04: https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk ; Forensics Triage Requirements: https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk ; https://nvd.nist.gov/vuln/detail/CVE-2026-67279
+
+### Expert Reviews (click to check):
+- [NVD - Official Details](https://nvd.nist.gov/vuln/detail/CVE-2026-67279)
+- [AttackerKB - Exploitability Rating](https://attackerkb.com/topics/CVE-2026-67279)
+- [BleepingComputer - News Coverage](https://www.bleepingcomputer.com/search/?q=CVE-2026-67279)
+- [GreyNoise - Active Scanning](https://viz.greynoise.io/query?gnql=cve%3ACVE-2026-67279)
+- [Rapid7 - Technical Analysis](https://www.rapid7.com/db/?q=CVE-2026-67279)
+- [The Record - Threat Intel](https://therecord.media/?s=CVE-2026-67279)
+
+### Your Review:
+Fields are auto-filled. Edit in pending_review.json if needed,
+then set `include_on_site` to `true`.
+
+---
+
+## CVE-2026-65660: Microsoft SharePoint
+
+**CVSS:** 8.8
+**Description:** Microsoft SharePoint contains a code injection vulnerability which could allow an authorized attacker to execute code over a network.
+**Fix:** Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
+**Due Date:** 2026-09-28
+**CISA Notes:** https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-65660 ; ; BOD 26-04: https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk ; Forensics Triage Requirements: https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk ; https://nvd.nist.gov/vuln/detail/CVE-2026-65660
+
+### Expert Reviews (click to check):
+- [NVD - Official Details](https://nvd.nist.gov/vuln/detail/CVE-2026-65660)
+- [AttackerKB - Exploitability Rating](https://attackerkb.com/topics/CVE-2026-65660)
+- [BleepingComputer - News Coverage](https://www.bleepingcomputer.com/search/?q=CVE-2026-65660)
+- [GreyNoise - Active Scanning](https://viz.greynoise.io/query?gnql=cve%3ACVE-2026-65660)
+- [Rapid7 - Technical Analysis](https://www.rapid7.com/db/?q=CVE-2026-65660)
+- [The Record - Threat Intel](https://therecord.media/?s=CVE-2026-65660)
+
+### Your Review:
+Fields are auto-filled. Edit in pending_review.json if needed,
+then set `include_on_site` to `true`.
+
+---
+
+## CVE-2026-5430: WSO2 Multiple Products
 
 **CVSS:** 10.0
-**Description:** Arista VeloCloud Orchestrator (VCO) on-prem contains an improper input validation vulnerability that may allow a remote attacker to access privileged internal functionality and impact the VCO host. Successful exploitation may compromise the confidentiality, integrity, and availability of the orchestrator and data managed by the orchestrator.
+**Description:** WSO2 API Control Plane, API Manager, Traffic Manager & Universal Gateway contain a path traversal vulnerability that could allow for unrestricted file upload and lead to remote code execution. 
 **Fix:** Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
-**Due Date:** 2026-09-25
-**CISA Notes:** https://www.arista.com/en/support/advisories-notices/security-advisory/24765-security-advisory-0183 ; ; BOD 26-04: https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk ; Forensics Triage Requirements: https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk ; https://nvd.nist.gov/vuln/detail/CVE-2026-93952
+**Due Date:** 2026-09-27
+**CISA Notes:** https://security.docs.wso2.com/en/latest/security-announcements/security-advisories/2026/WSO2-2026-5328/ ; ; BOD 26-04: https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk ; Forensics Triage Requirements: https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk ; https://nvd.nist.gov/vuln/detail/CVE-2026-5430
 
 ### Expert Reviews (click to check):
-- [NVD - Official Details](https://nvd.nist.gov/vuln/detail/CVE-2026-93952)
-- [AttackerKB - Exploitability Rating](https://attackerkb.com/topics/CVE-2026-93952)
-- [BleepingComputer - News Coverage](https://www.bleepingcomputer.com/search/?q=CVE-2026-93952)
-- [GreyNoise - Active Scanning](https://viz.greynoise.io/query?gnql=cve%3ACVE-2026-93952)
-- [Rapid7 - Technical Analysis](https://www.rapid7.com/db/?q=CVE-2026-93952)
-- [The Record - Threat Intel](https://therecord.media/?s=CVE-2026-93952)
+- [NVD - Official Details](https://nvd.nist.gov/vuln/detail/CVE-2026-5430)
+- [AttackerKB - Exploitability Rating](https://attackerkb.com/topics/CVE-2026-5430)
+- [BleepingComputer - News Coverage](https://www.bleepingcomputer.com/search/?q=CVE-2026-5430)
+- [GreyNoise - Active Scanning](https://viz.greynoise.io/query?gnql=cve%3ACVE-2026-5430)
+- [Rapid7 - Technical Analysis](https://www.rapid7.com/db/?q=CVE-2026-5430)
+- [The Record - Threat Intel](https://therecord.media/?s=CVE-2026-5430)
 
 ### Your Review:
 Fields are auto-filled. Edit in pending_review.json if needed,
@@ -26,65 +70,21 @@ then set `include_on_site` to `true`.
 
 ---
 
-## CVE-2026-94127: F5 BIG-IP APM
+## CVE-2026-71362: Adobe Commerce and Magento
 
-**CVSS:** 9.8
-**Description:** F5 BIG-IP APM contains a heap-based buffer overflow vulnerability when access policy and an OAuth profile are configured on a virtual server. This vulnerability could allow an unauthenticated attacker to perform remote code execution.
+**CVSS:** 9.1
+**Description:** Adobe Commerce and Magento contains an incorrect authorization vulnerability that could allow an attacker to leverage this vulnerability to gain elevated access to sensitive resources without any user interaction. 
 **Fix:** Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
-**Due Date:** 2026-09-25
-**CISA Notes:** For temporary mitigation to allow for proactive forensic triage, apply the vendor-provided iRule. Once completed, install the final vendor patch as soon as possible. For more information please see: https://my.f5.com/manage/s/article/K000162605 ; BOD 26-04: https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk ; Forensics Triage Requirements: https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk ; https://nvd.nist.gov/vuln/detail/CVE-2026-94127
+**Due Date:** 2026-09-27
+**CISA Notes:** https://helpx.adobe.com/security/products/magento/apsb26-92.html ; ; BOD 26-04: https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk ; Forensics Triage Requirements: https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk ; https://nvd.nist.gov/vuln/detail/CVE-2026-71362
 
 ### Expert Reviews (click to check):
-- [NVD - Official Details](https://nvd.nist.gov/vuln/detail/CVE-2026-94127)
-- [AttackerKB - Exploitability Rating](https://attackerkb.com/topics/CVE-2026-94127)
-- [BleepingComputer - News Coverage](https://www.bleepingcomputer.com/search/?q=CVE-2026-94127)
-- [GreyNoise - Active Scanning](https://viz.greynoise.io/query?gnql=cve%3ACVE-2026-94127)
-- [Rapid7 - Technical Analysis](https://www.rapid7.com/db/?q=CVE-2026-94127)
-- [The Record - Threat Intel](https://therecord.media/?s=CVE-2026-94127)
-
-### Your Review:
-Fields are auto-filled. Edit in pending_review.json if needed,
-then set `include_on_site` to `true`.
-
----
-
-## CVE-2026-93616: Check Point Multiple Products
-
-**CVSS:** 9.8
-**Description:** Check Point Security Management Server, Multi-Domain Security Management Server, Log Server, Multi-Domain Log Server, and SmartEvent contain a path traversal vulnerability that allows an unauthenticated attacker to upload and execute arbitrary scripts.
-**Fix:** Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
-**Due Date:** 2026-09-25
-**CISA Notes:** https://support.checkpoint.com/results/sk/sk1000171/ ; ; BOD 26-04: https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk ; Forensics Triage Requirements: https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk ; https://nvd.nist.gov/vuln/detail/CVE-2026-93616
-
-### Expert Reviews (click to check):
-- [NVD - Official Details](https://nvd.nist.gov/vuln/detail/CVE-2026-93616)
-- [AttackerKB - Exploitability Rating](https://attackerkb.com/topics/CVE-2026-93616)
-- [BleepingComputer - News Coverage](https://www.bleepingcomputer.com/search/?q=CVE-2026-93616)
-- [GreyNoise - Active Scanning](https://viz.greynoise.io/query?gnql=cve%3ACVE-2026-93616)
-- [Rapid7 - Technical Analysis](https://www.rapid7.com/db/?q=CVE-2026-93616)
-- [The Record - Threat Intel](https://therecord.media/?s=CVE-2026-93616)
-
-### Your Review:
-Fields are auto-filled. Edit in pending_review.json if needed,
-then set `include_on_site` to `true`.
-
----
-
-## CVE-2026-85102: Check Point Multiple Products
-
-**CVSS:** 9.8
-**Description:** Check Point Security Gateway and Check Point Spark Firewall using Site to Site VPN or Remote Access VPN contain an improper certificate validation vulnerability which could allow an unauthenticated remote attacker to execute arbitrary code on the Gateway.
-**Fix:** Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.
-**Due Date:** 2026-09-25
-**CISA Notes:** https://support.checkpoint.com/results/sk/sk1000117 ; ; BOD 26-04: https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk ; Forensics Triage Requirements: https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk ; https://nvd.nist.gov/vuln/detail/CVE-2026-85102
-
-### Expert Reviews (click to check):
-- [NVD - Official Details](https://nvd.nist.gov/vuln/detail/CVE-2026-85102)
-- [AttackerKB - Exploitability Rating](https://attackerkb.com/topics/CVE-2026-85102)
-- [BleepingComputer - News Coverage](https://www.bleepingcomputer.com/search/?q=CVE-2026-85102)
-- [GreyNoise - Active Scanning](https://viz.greynoise.io/query?gnql=cve%3ACVE-2026-85102)
-- [Rapid7 - Technical Analysis](https://www.rapid7.com/db/?q=CVE-2026-85102)
-- [The Record - Threat Intel](https://therecord.media/?s=CVE-2026-85102)
+- [NVD - Official Details](https://nvd.nist.gov/vuln/detail/CVE-2026-71362)
+- [AttackerKB - Exploitability Rating](https://attackerkb.com/topics/CVE-2026-71362)
+- [BleepingComputer - News Coverage](https://www.bleepingcomputer.com/search/?q=CVE-2026-71362)
+- [GreyNoise - Active Scanning](https://viz.greynoise.io/query?gnql=cve%3ACVE-2026-71362)
+- [Rapid7 - Technical Analysis](https://www.rapid7.com/db/?q=CVE-2026-71362)
+- [The Record - Threat Intel](https://therecord.media/?s=CVE-2026-71362)
 
 ### Your Review:
 Fields are auto-filled. Edit in pending_review.json if needed,
