@@ -18,7 +18,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / 'scripts'))
 from aggregate_ai_ide_vulns import (
     is_relevant, vendor_of, product_match, merge, severity_label,
     _cvss_from_metrics, _trim, MAX_STORED, affected_product,
-    parse_arxiv_atom, MAX_ARXIV_BYTES, _author_matches, ARXIV_AUTHOR_NAMES,
+    parse_arxiv_rss, _split_rss_authors, _rss_pubdate_to_iso,
+    MAX_ARXIV_BYTES, _author_matches, ARXIV_AUTHOR_NAMES,
     cvss_version_of,
 )
 
@@ -228,25 +229,30 @@ class TestAffectedProduct(unittest.TestCase):
                                  {'version', 'a', 'an', 'the', 'vulnerability'})
 
 
-ATOM = b"""<?xml version="1.0" encoding="UTF-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
- <entry>
-  <id>http://arxiv.org/abs/2509.08646v1</id>
-  <title>Architecting Resilient
-   LLM Agents</title>
-  <published>2025-09-10T00:00:00Z</published>
-  <summary>As LLM agents become capable of automating tasks.</summary>
-  <author><name>Ron F. Del Rosario</name></author>
-  <author><name>Klaudia Krawiecka</name></author>
- </entry>
- <entry>
-  <id>http://arxiv.org/abs/9999.99999v1</id>
-  <title>Unrelated paper by someone else</title>
-  <published>2025-01-01T00:00:00Z</published>
-  <summary>Nothing to do with the tracked author.</summary>
-  <author><name>Maria Del Rosario</name></author>
- </entry>
-</feed>"""
+RSS = b"""<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
+ <channel>
+  <item>
+   <title>Architecting Resilient
+    LLM Agents</title>
+   <link>https://arxiv.org/abs/2509.08646</link>
+   <description>arXiv:2509.08646v1 Announce Type: new
+Abstract: As LLM agents become capable of automating tasks.</description>
+   <guid isPermaLink="false">oai:arXiv.org:2509.08646v1</guid>
+   <pubDate>Wed, 10 Sep 2025 00:00:00 -0400</pubDate>
+   <dc:creator>Ron F. Del Rosario, Klaudia Krawiecka</dc:creator>
+  </item>
+  <item>
+   <title>Unrelated paper by someone else</title>
+   <link>https://arxiv.org/abs/9999.99999</link>
+   <description>arXiv:9999.99999v1 Announce Type: new
+Abstract: Nothing to do with the tracked author.</description>
+   <guid isPermaLink="false">oai:arXiv.org:9999.99999v1</guid>
+   <pubDate>Wed, 01 Jan 2025 00:00:00 -0500</pubDate>
+   <dc:creator>Maria Del Rosario</dc:creator>
+  </item>
+ </channel>
+</rss>"""
 
 
 class TestAffectedProductOpenings(unittest.TestCase):
@@ -356,7 +362,7 @@ class TestArxivParsing(unittest.TestCase):
         """arXiv cs.CR submission is open, so a surname substring match would
         let anyone named Del Rosario onto a page that vouches for him by name.
         The second fixture entry is authored by a different Del Rosario."""
-        papers = parse_arxiv_atom(ATOM)
+        papers = parse_arxiv_rss(RSS)
         self.assertEqual([p['id'] for p in papers], ['2509.08646v1'])
 
     def test_accepts_both_spellings_of_the_real_author(self):
@@ -371,30 +377,61 @@ class TestArxivParsing(unittest.TestCase):
 
     def test_preserves_author_order(self):
         """Author order carries meaning in academic credit; never reorder."""
-        self.assertEqual(parse_arxiv_atom(ATOM)[0]['authors'],
+        self.assertEqual(parse_arxiv_rss(RSS)[0]['authors'],
                          ['Ron F. Del Rosario', 'Klaudia Krawiecka'])
 
     def test_collapses_whitespace_in_wrapped_titles(self):
-        self.assertEqual(parse_arxiv_atom(ATOM)[0]['title'],
+        self.assertEqual(parse_arxiv_rss(RSS)[0]['title'],
                          'Architecting Resilient LLM Agents')
 
+    def test_strips_announce_type_boilerplate_from_summary(self):
+        self.assertEqual(parse_arxiv_rss(RSS)[0]['summary'],
+                         'As LLM agents become capable of automating tasks.')
+
+    def test_converts_pubdate_to_iso(self):
+        self.assertEqual(parse_arxiv_rss(RSS)[0]['published'], '2025-09-10')
+
     def test_upgrades_abstract_link_to_https(self):
-        self.assertTrue(parse_arxiv_atom(ATOM)[0]['url'].startswith('https://'))
+        self.assertTrue(parse_arxiv_rss(RSS)[0]['url'].startswith('https://'))
 
     def test_refuses_a_doctype(self):
         """ElementTree expands internal entities, so a DTD is a billion-laughs
         vector. arXiv never sends one."""
         billion = (b'<?xml version="1.0"?><!DOCTYPE lolz [<!ENTITY lol "lol">'
                    b'<!ENTITY lol1 "&lol;&lol;&lol;">]>'
-                   b'<feed xmlns="http://www.w3.org/2005/Atom"><entry>'
-                   b'<author><name>Ron F. Del Rosario</name></author></entry></feed>')
-        self.assertEqual(parse_arxiv_atom(billion), [])
+                   b'<rss xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><item>'
+                   b'<dc:creator>Ron F. Del Rosario</dc:creator></item></channel></rss>')
+        self.assertEqual(parse_arxiv_rss(billion), [])
 
     def test_refuses_an_oversized_response(self):
-        self.assertEqual(parse_arxiv_atom(b'x' * (MAX_ARXIV_BYTES + 1)), [])
+        self.assertEqual(parse_arxiv_rss(b'x' * (MAX_ARXIV_BYTES + 1)), [])
 
     def test_malformed_xml_returns_empty_not_an_exception(self):
-        self.assertEqual(parse_arxiv_atom(b'<feed><unclosed>'), [])
+        self.assertEqual(parse_arxiv_rss(b'<rss><unclosed>'), [])
+
+
+class TestRssAuthorSplitting(unittest.TestCase):
+    def test_affiliation_parens_do_not_split_author_list(self):
+        """Real dc:creator text from export.arxiv.org/rss/cs.CR: affiliations
+        in parens carry their own commas, which must not fragment the list."""
+        self.assertEqual(
+            _split_rss_authors(
+                'Gustavo Banegas (LIX, GRACE), Benjamin Smith (GRACE, LIX)'),
+            ['Gustavo Banegas (LIX, GRACE)', 'Benjamin Smith (GRACE, LIX)'])
+
+    def test_plain_comma_list_splits_normally(self):
+        self.assertEqual(
+            _split_rss_authors('Shuzheng Wang, Yue Huang, Zhuoer Xu'),
+            ['Shuzheng Wang', 'Yue Huang', 'Zhuoer Xu'])
+
+
+class TestRssPubdate(unittest.TestCase):
+    def test_parses_rfc822_date(self):
+        self.assertEqual(
+            _rss_pubdate_to_iso('Wed, 10 Sep 2025 00:00:00 -0400'), '2025-09-10')
+
+    def test_malformed_date_returns_empty_string(self):
+        self.assertEqual(_rss_pubdate_to_iso('not a date'), '')
 
 
 class TestKevDates(unittest.TestCase):

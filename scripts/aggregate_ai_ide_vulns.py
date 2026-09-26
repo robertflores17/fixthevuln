@@ -27,11 +27,11 @@ import os
 import re
 import sys
 import time
-import urllib.error
 import urllib.parse
 import urllib.request
 import http.client
 from datetime import datetime, timedelta, timezone
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
@@ -88,25 +88,30 @@ GHSA_REPOS = [
     "block/goose",
 ]
 
-ARXIV_API = "https://export.arxiv.org/api/query"
-ARXIV_NS = {'a': 'http://www.w3.org/2005/Atom'}
+ARXIV_RSS = "https://export.arxiv.org/rss"
+RSS_NS = {'dc': 'http://purl.org/dc/elements/1.1/'}
 # Researchers whose AI-agent security work this page draws on. FixTheVuln
 # already credits del Rosario: the quiz-feedback analytics, entity extractor
 # and vulnerability classifier are adapted from his MIT-licensed CyberMoE
 # framework. Google Scholar has no API and blocks automated access, so arXiv
 # is the feed that can actually be polled.
-# arXiv's au: search is a fuzzy surname match, so the query is deliberately
-# broad and the real filter runs locally against ARXIV_AUTHOR_NAMES. cs.CR
-# submission is open to anyone: matching on the surname alone would let a
-# different Del Rosario put an arbitrary title, abstract and outbound link on
-# this page, under a heading that names him. Both spellings appear on his own
-# papers, so both are accepted.
-ARXIV_AUTHOR_QUERY = "Del Rosario"
+#
+# This scans every cs.CR RSS item and filters locally against
+# ARXIV_AUTHOR_NAMES, rather than querying export.arxiv.org/api/query with an
+# au: surname search. That query endpoint answers every request from a GitHub
+# Actions runner with an empty-body 406, regardless of headers (confirmed
+# 2026-09-26: identical failure across three User-Agent/Accept variants) --
+# while the RSS endpoint on the same domain serves Actions runners fine (it's
+# what aggregate_ai_security_news.py's Friday roundup already polls). cs.CR
+# submission is open to anyone, so the filter matches full names, not the
+# surname alone: a different Del Rosario could otherwise put an arbitrary
+# title, abstract and outbound link on this page, under a heading that names
+# him. Both spellings appear on his own papers, so both are accepted.
 ARXIV_AUTHOR_NAMES = ("ron f. del rosario", "ronald f. del rosario")
 ARXIV_CATEGORY = "cs.CR"
 MAX_RESEARCH = 20
-# Hard ceiling on the arXiv response before it reaches the XML parser. Measured
-# at ~3 KB for 20 results, so this is 300x headroom.
+# Hard ceiling on the arXiv response before it reaches the XML parser. A full
+# day's cs.CR RSS feed measured ~80 KB for ~75 entries, so this is >10x headroom.
 MAX_ARXIV_BYTES = 1_000_000
 
 
@@ -448,16 +453,44 @@ def _author_matches(authors, accepted):
     return any(' '.join(a.split()).lower() in accepted for a in authors)
 
 
-def parse_arxiv_atom(body, accepted_names=ARXIV_AUTHOR_NAMES):
-    """Atom bytes to paper dicts, refusing input that should never come from
-    arXiv. Split out from the fetch so the guards are testable offline."""
+def _split_rss_authors(creator):
+    """dc:creator's comma-joined author list to individual names, without
+    splitting inside a parenthesized affiliation -- arXiv's optional
+    '(Institute A, Institute B)' suffix contains its own commas."""
+    names, current, depth = [], [], 0
+    for ch in creator:
+        if ch == '(':
+            depth += 1
+        elif ch == ')':
+            depth = max(0, depth - 1)
+        if ch == ',' and depth == 0:
+            names.append(''.join(current).strip())
+            current = []
+        else:
+            current.append(ch)
+    if current:
+        names.append(''.join(current).strip())
+    return [n for n in names if n]
+
+
+def _rss_pubdate_to_iso(text):
+    """RFC 822 'Thu, 04 Sep 2025 00:00:00 -0400' -> '2025-09-04'."""
+    try:
+        return parsedate_to_datetime(text).date().isoformat()
+    except (TypeError, ValueError):
+        return ''
+
+
+def parse_arxiv_rss(body, accepted_names=ARXIV_AUTHOR_NAMES):
+    """RSS 2.0 bytes to paper dicts, refusing input that should never come
+    from arXiv. Split out from the fetch so the guards are testable offline."""
     if len(body) > MAX_ARXIV_BYTES:
         print(f"  Warning: arXiv response over {MAX_ARXIV_BYTES} bytes; skipped")
         return []
     # Python's ElementTree refuses external entities but does expand internal
     # ones, so a DTD is a billion-laughs vector. Verified on this interpreter:
-    # the external-entity case raises, the expansion case parses. arXiv's Atom
-    # API never sends a doctype, so refusing one costs nothing and removes the
+    # the external-entity case raises, the expansion case parses. arXiv's RSS
+    # feed never sends a doctype, so refusing one costs nothing and removes the
     # vector without taking a defusedxml dependency.
     if b'<!DOCTYPE' in body[:2048].upper():
         print("  Warning: arXiv response carried a doctype; skipped")
@@ -475,78 +508,47 @@ def parse_arxiv_atom(body, accepted_names=ARXIV_AUTHOR_NAMES):
         return []
 
     papers = []
-    for entry in root.findall('a:entry', ARXIV_NS):
-        authors = [a.findtext('a:name', default='', namespaces=ARXIV_NS)
-                   for a in entry.findall('a:author', ARXIV_NS)]
+    for item in root.findall('channel/item'):
+        creator = item.findtext('dc:creator', default='', namespaces=RSS_NS)
+        authors = _split_rss_authors(creator)
         if not _author_matches(authors, accepted_names):
             continue
-        abs_url = entry.findtext('a:id', default='', namespaces=ARXIV_NS)
+        guid = item.findtext('guid', default='')
+        paper_id = guid.rsplit(':', 1)[-1] if guid else ''
+        abstract = re.sub(r'^arXiv:\S+\s+Announce Type:\s*\S+\s*',
+                           '', item.findtext('description', default=''))
+        abstract = re.sub(r'^Abstract:\s*', '', abstract)
         papers.append({
-            'id': abs_url.rsplit('/', 1)[-1],
-            'title': ' '.join(entry.findtext('a:title', default='', namespaces=ARXIV_NS).split()),
+            'id': paper_id,
+            'title': ' '.join(item.findtext('title', default='').split()),
             'authors': authors,
-            'published': entry.findtext('a:published', default='', namespaces=ARXIV_NS)[:10],
-            'summary': _trim(entry.findtext('a:summary', default='', namespaces=ARXIV_NS), 240),
-            'url': abs_url.replace('http://', 'https://'),
+            'published': _rss_pubdate_to_iso(item.findtext('pubDate', default='')),
+            'summary': _trim(abstract, 240),
+            'url': f"https://arxiv.org/abs/{paper_id}" if paper_id else '',
         })
     return papers
 
 
-def fetch_arxiv_author(surname=ARXIV_AUTHOR_QUERY, category=ARXIV_CATEGORY,
-                       max_results=MAX_RESEARCH):
-    """Papers in `category` matching `surname`, newest first. The arXiv-side
-    au: match is a fuzzy surname search and is deliberately broad; the binding
-    filter is parse_arxiv_atom's full-name check against ARXIV_AUTHOR_NAMES, so
-    a different Del Rosario publishing in cs.CR is not attributed here."""
-    url = f"{ARXIV_API}?" + urllib.parse.urlencode({
-        'search_query': f'au:"{surname}" AND cat:{category}',
-        'sortBy': 'submittedDate',
-        'sortOrder': 'descending',
-        'max_results': max_results,
-    })
-    variants = [
-        ('current', {
-            'User-Agent': 'FixTheVuln-AIIDE-Tracker/1.0',
-            'Accept': 'application/atom+xml, application/xml, text/xml, */*',
-        }),
-        ('contact-ua', {
-            'User-Agent': 'FixTheVuln-AIIDE-Tracker/1.0 (+https://fixthevuln.com)',
-            'Accept': 'application/atom+xml, application/xml, text/xml, */*',
-        }),
-        ('browser-like', {
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36',
-            'Accept': 'application/atom+xml, application/xml, text/xml, */*',
-            'Accept-Language': 'en-US,en;q=0.9',
-            'Accept-Encoding': 'identity',
-        }),
-    ]
-    for label, headers in variants:
-        try:
-            req = urllib.request.Request(url, headers=headers)
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                print(f"  DEBUG variant {label}: HTTP {resp.status}")
-        except (OSError, http.client.HTTPException) as e:
-            print(f"  DEBUG variant {label}: failed: {e}")
+def fetch_arxiv_author(category=ARXIV_CATEGORY):
+    """Every paper in `category`'s daily RSS feed whose dc:creator carries an
+    accepted full author name (see ARXIV_AUTHOR_NAMES above). Replaces a
+    surname query against export.arxiv.org/api/query, which answers every
+    request from a GitHub Actions runner with an empty-body 406 regardless of
+    headers -- see the comment above ARXIV_AUTHOR_NAMES."""
+    url = f"{ARXIV_RSS}/{category}"
     try:
-        # export.arxiv.org answers 406 when nothing acceptable is offered, and
-        # urllib sends no Accept header by default. Cost one CI run to find:
-        # the request succeeds from a laptop and fails from an Actions runner.
-        # Same header the Friday roundup already uses in aggregate_ai_security_news.py.
         req = urllib.request.Request(url, headers={
             'User-Agent': 'FixTheVuln-AIIDE-Tracker/1.0',
-            'Accept': 'application/atom+xml, application/xml, text/xml, */*',
+            'Accept': 'application/rss+xml, application/xml, text/xml, */*',
         })
         with urllib.request.urlopen(req, timeout=30) as resp:
             body = resp.read(MAX_ARXIV_BYTES + 1)
     # OSError covers URLError, HTTPError and ConnectionResetError; a mid-transfer
     # reset during read() is not a URLError and would otherwise crash the job.
     except (OSError, http.client.HTTPException) as e:
-        print(f"  Warning: arXiv query for {surname!r} failed: {e}")
-        if isinstance(e, urllib.error.HTTPError):
-            print(f"  DEBUG headers: {dict(e.headers)}")
-            print(f"  DEBUG body: {e.read()[:500]!r}")
+        print(f"  Warning: arXiv RSS fetch for {category!r} failed: {e}")
         return []
-    return parse_arxiv_atom(body)
+    return parse_arxiv_rss(body)
 
 
 def collect_research():
