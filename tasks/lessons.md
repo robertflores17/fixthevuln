@@ -71,3 +71,26 @@ green check hid a section that would never have refreshed again.
    warnings even when the run is green. A passing job is not a working job.
 3. Verify claimed config before relying on it. CLAUDE.md listed `NVD_API_KEY`
    as a GitHub secret; `gh secret list` shows it has never existed.
+
+**2026-09-26 update — rule 1 fixed the wrong layer, and nobody checked.** The
+`Accept` header above did NOT fix the 406; it kept failing identically every
+single day from 2026-09-20 through 2026-09-26 (six days, caught by Robert
+noticing the *page* looked stale, not by any CI signal — rule 2 above was
+written but never actually followed up on). Root cause, confirmed by
+dispatching the workflow with a diagnostic patch that tried three header
+variants: `export.arxiv.org/api/query` returns an empty-body 406 to every
+GitHub Actions runner regardless of User-Agent/Accept, full stop. It's an
+endpoint-level block, not a negotiation problem — `export.arxiv.org/rss/cs.CR`
+on the *same domain* has been serving these runners fine the whole time (same
+job family, `aggregate_ai_security_news.py`'s Friday roundup). Fixed by
+switching `fetch_arxiv_author()` to scan that RSS feed and filter locally,
+instead of querying by author.
+4. A header fix that makes a 406 go away in theory but was never re-verified
+   against a live CI run is a hypothesis, not a fix. Rule 2 says to read the
+   log after the first run — this actually has to happen, and it has to
+   happen again any time the same warning could plausibly still be there.
+5. When two endpoints on the same host differ in whether Actions runners can
+   reach them, that's evidence of a path-specific block (bot/scraping
+   defenses target bulk-query APIs harder than syndication feeds), not a
+   header problem. Prefer the endpoint this repo already has proof of working
+   from CI over hand-tuning headers against the one that doesn't.
