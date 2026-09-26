@@ -20,7 +20,7 @@ from aggregate_ai_ide_vulns import (
     _cvss_from_metrics, _trim, MAX_STORED, affected_product,
     parse_arxiv_rss, _split_rss_authors, _rss_pubdate_to_iso,
     MAX_ARXIV_BYTES, _author_matches, ARXIV_AUTHOR_NAMES,
-    cvss_version_of,
+    cvss_version_of, reverify_entries, _superseding_id,
 )
 
 # Real advisory openings that must be tracked.
@@ -434,6 +434,23 @@ class TestRssPubdate(unittest.TestCase):
         self.assertEqual(_rss_pubdate_to_iso('not a date'), '')
 
 
+class TestArchivePersistence(unittest.TestCase):
+    def test_missing_file_returns_empty_shape(self):
+        import aggregate_ai_ide_vulns as agg
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / 'ai-ide-vulns-archive.json'
+            with mock.patch.object(agg, 'ARCHIVE_FILE', f):
+                self.assertEqual(agg.load_archive(), {'entries': []})
+
+    def test_round_trips_through_disk(self):
+        import aggregate_ai_ide_vulns as agg
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / 'ai-ide-vulns-archive.json'
+            with mock.patch.object(agg, 'ARCHIVE_FILE', f):
+                agg.save_archive({'entries': [{'id': 'CVE-1'}]})
+                self.assertEqual(agg.load_archive(), {'entries': [{'id': 'CVE-1'}]})
+
+
 class TestKevDates(unittest.TestCase):
     """kev-data.json carries only dateAdded, the CISA catalog-add date. It is
     not a publication date and must never reach the table's "Published"
@@ -512,6 +529,152 @@ class TestRetention(unittest.TestCase):
                       for i in range(MAX_STORED)])
         self.assertEqual(len(state['entries']), MAX_STORED)
         self.assertNotIn('CVE-OLD', [e['id'] for e in state['entries']])
+
+    def test_undated_entry_is_not_evicted_ahead_of_older_dated_entries(self):
+        """KEV entries never carry a `published` date (see fetch_kev.py). If
+        eviction sorted by `published`, an undated entry always sorts last --
+        worse than even a 2020 CVE -- so a KEV disclosure found yesterday
+        would be dropped before a dated CVE found years ago. Eviction must be
+        driven by `detected_at` (when this pipeline found it), not by
+        whether the source happened to supply a publication date."""
+        state = {'last_updated': None, 'entries': []}
+        merge(state, [{'id': f'CVE-OLD-{i:05d}', 'published': '2020-01-01', 'source': 'nvd'}
+                      for i in range(MAX_STORED - 1)])
+        merge(state, [
+            {'id': 'CVE-NEW-DATED', 'published': '2026-09-01', 'source': 'nvd'},
+            {'id': 'KEV-NEW-UNDATED', 'published': None, 'source': 'kev'},
+        ])
+        ids = [e['id'] for e in state['entries']]
+        self.assertEqual(len(ids), MAX_STORED)
+        self.assertIn('KEV-NEW-UNDATED', ids)
+        self.assertIn('CVE-NEW-DATED', ids)
+
+    def test_evicted_entries_land_in_the_archive_when_one_is_given(self):
+        state = {'last_updated': None, 'entries': []}
+        archive = []
+        merge(state, [{'id': 'CVE-OLD', 'published': '2020-01-01', 'source': 'nvd'}],
+              archive=archive)
+        merge(state, [{'id': f'CVE-{i:05d}', 'published': '2026-09-18', 'source': 'nvd'}
+                      for i in range(MAX_STORED)], archive=archive)
+        self.assertEqual([e['id'] for e in archive], ['CVE-OLD'])
+
+    def test_without_an_archive_evicted_entries_are_simply_dropped(self):
+        """No archive argument keeps the old behavior: nothing to break for a
+        caller that hasn't opted in."""
+        state = {'last_updated': None, 'entries': []}
+        merge(state, [{'id': 'CVE-OLD', 'published': '2020-01-01', 'source': 'nvd'}])
+        merge(state, [{'id': f'CVE-{i:05d}', 'published': '2026-09-18', 'source': 'nvd'}
+                      for i in range(MAX_STORED)])
+        self.assertEqual(len(state['entries']), MAX_STORED)
+
+
+class TestSupersedingId(unittest.TestCase):
+    def test_finds_another_cve_id_in_the_rejection_text(self):
+        self.assertEqual(
+            _superseding_id('CVE-2026-1000',
+                             '** REJECT ** DO NOT USE THIS CANDIDATE NUMBER. '
+                             'ConsultIDs: CVE-2026-2000.'),
+            'CVE-2026-2000')
+
+    def test_ignores_its_own_id(self):
+        self.assertEqual(_superseding_id('CVE-2026-1000', 'CVE-2026-1000 is a duplicate.'), '')
+
+    def test_no_other_id_returns_empty_string(self):
+        self.assertEqual(
+            _superseding_id('CVE-2026-1000', 'This candidate was withdrawn by its CNA.'), '')
+
+
+class TestReverifyEntries(unittest.TestCase):
+    """reverify_entries() is merge()'s dedup blind spot fixed after the fact:
+    an entry is normally never looked at again once stored, so nothing here
+    would ever notice NVD rejecting or superseding a CVE post-capture without
+    this pass."""
+
+    def setUp(self):
+        # use_nvd_key() makes a real network call the first time it's asked
+        # (it validates NVD_API_KEY against NVD's own API) and the pacing
+        # loop does a real time.sleep() between candidates -- neither belongs
+        # in a unit test regardless of what's in this machine's environment.
+        sleep_patcher = mock.patch('aggregate_ai_ide_vulns.time.sleep')
+        key_patcher = mock.patch('aggregate_ai_ide_vulns.use_nvd_key', return_value=True)
+        sleep_patcher.start()
+        key_patcher.start()
+        self.addCleanup(sleep_patcher.stop)
+        self.addCleanup(key_patcher.stop)
+
+    def _entry(self, cve_id, source='nvd', status='new', last_verified_at=None):
+        return {'id': cve_id, 'source': source, 'status': status,
+                'last_verified_at': last_verified_at, 'severity_label': 'Critical'}
+
+    def test_rejected_status_is_flagged_with_its_successor(self):
+        state = {'entries': [self._entry('CVE-2026-1000')]}
+        record = {'vulnStatus': 'Rejected',
+                  'descriptions': [{'lang': 'en',
+                                     'value': 'ConsultIDs: CVE-2026-2000.'}]}
+        with mock.patch('aggregate_ai_ide_vulns.fetch_nvd_by_id', return_value=record):
+            newly_rejected = reverify_entries(state)
+        self.assertEqual(newly_rejected, 1)
+        entry = state['entries'][0]
+        self.assertEqual(entry['status'], 'rejected')
+        self.assertEqual(entry['superseded_by'], 'CVE-2026-2000')
+        self.assertTrue(entry['last_verified_at'])
+
+    def test_non_rejected_status_only_stamps_last_verified_at(self):
+        state = {'entries': [self._entry('CVE-2026-1000')]}
+        with mock.patch('aggregate_ai_ide_vulns.fetch_nvd_by_id',
+                         return_value={'vulnStatus': 'Analyzed', 'descriptions': []}):
+            newly_rejected = reverify_entries(state)
+        self.assertEqual(newly_rejected, 0)
+        self.assertEqual(state['entries'][0]['status'], 'new')
+        self.assertTrue(state['entries'][0]['last_verified_at'])
+
+    def test_a_reinstated_cve_is_cleared_back_to_live(self):
+        """A CNA can dispute and reverse a rejection. Content-editor review
+        2026-09-26: the forward-only transition would otherwise permanently
+        mislabel a CVE that's live again."""
+        state = {'entries': [self._entry('CVE-2026-1000', status='rejected')]}
+        state['entries'][0]['superseded_by'] = 'CVE-2026-2000'
+        with mock.patch('aggregate_ai_ide_vulns.fetch_nvd_by_id',
+                         return_value={'vulnStatus': 'Analyzed', 'descriptions': []}):
+            reverify_entries(state)
+        self.assertEqual(state['entries'][0]['status'], 'new')
+        self.assertNotIn('superseded_by', state['entries'][0])
+
+    def test_failed_lookup_does_not_update_last_verified_at(self):
+        """A None return (network/parse failure) must leave the entry as the
+        stalest one, so it's retried next run instead of silently skipped."""
+        state = {'entries': [self._entry('CVE-2026-1000', last_verified_at='2020-01-01')]}
+        with mock.patch('aggregate_ai_ide_vulns.fetch_nvd_by_id', return_value=None):
+            reverify_entries(state)
+        self.assertEqual(state['entries'][0]['last_verified_at'], '2020-01-01')
+
+    def test_non_cve_ids_are_never_looked_up(self):
+        """A GHSA advisory with no CVE assigned has no NVD record to check."""
+        state = {'entries': [self._entry('GHSA-xxxx-yyyy-zzzz', source='ghsa')]}
+        with mock.patch('aggregate_ai_ide_vulns.fetch_nvd_by_id') as fetch:
+            reverify_entries(state)
+        fetch.assert_not_called()
+
+    def test_stalest_verified_entries_are_checked_first(self):
+        state = {'entries': [
+            self._entry('CVE-2026-0001', last_verified_at='2026-06-01'),
+            self._entry('CVE-2026-0002', last_verified_at='2020-01-01'),
+            self._entry('CVE-2026-0003', last_verified_at=None),
+        ]}
+        checked = []
+        def fake_fetch(cve_id):
+            checked.append(cve_id)
+            return {'vulnStatus': 'Analyzed', 'descriptions': []}
+        with mock.patch('aggregate_ai_ide_vulns.fetch_nvd_by_id', side_effect=fake_fetch):
+            reverify_entries(state, limit=2)
+        self.assertEqual(checked, ['CVE-2026-0003', 'CVE-2026-0002'])
+
+    def test_respects_the_batch_limit(self):
+        state = {'entries': [self._entry(f'CVE-2026-{i:04d}') for i in range(5)]}
+        with mock.patch('aggregate_ai_ide_vulns.fetch_nvd_by_id',
+                         return_value={'vulnStatus': 'Analyzed', 'descriptions': []}) as fetch:
+            reverify_entries(state, limit=2)
+        self.assertEqual(fetch.call_count, 2)
 
 
 class TestTrim(unittest.TestCase):

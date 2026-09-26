@@ -43,6 +43,7 @@ from fetch_kev import _validate_nvd_key, cvss_from_metrics
 
 DATA_DIR = REPO_ROOT / "data"
 STATE_FILE = DATA_DIR / "ai-ide-vulns.json"
+ARCHIVE_FILE = DATA_DIR / "ai-ide-vulns-archive.json"
 KEV_DATA_FILE = DATA_DIR / "kev-data.json"
 
 NVD_API_URL = "https://services.nvd.nist.gov/rest/json/cves/2.0"
@@ -351,6 +352,86 @@ def fetch_nvd_keyword(keyword, start_dt, end_dt):
         return []
 
 
+def fetch_nvd_by_id(cve_id):
+    """Single-CVE lookup for the re-verification pass in reverify_entries().
+    Same host and auth as fetch_nvd_keyword. Returns the raw `cve` record, or
+    None on any failure -- the caller must leave last_verified_at untouched
+    on None so a transient failure gets retried next run instead of being
+    mistaken for 'checked and fine'."""
+    headers = {'User-Agent': 'FixTheVuln-AIIDE-Tracker/1.0'}
+    if use_nvd_key():
+        headers['apiKey'] = NVD_API_KEY
+    try:
+        query = urllib.parse.urlencode({'cveId': cve_id})
+        req = urllib.request.Request(f"{NVD_API_URL}?{query}", headers=headers)
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            vulns = json.loads(resp.read().decode('utf-8')).get('vulnerabilities', [])
+    except (OSError, http.client.HTTPException, json.JSONDecodeError) as e:
+        print(f"  Warning: NVD re-verify lookup for {cve_id!r} failed: {e}")
+        return None
+    return vulns[0]['cve'] if vulns else None
+
+
+CVE_ID_RE = re.compile(r'^CVE-\d{4}-\d+$')
+# Unanchored twin of CVE_ID_RE for scanning free text rather than validating
+# a whole id field -- ^...$ never matches mid-string, so findall() over a
+# description needs this one instead.
+CVE_ID_SCAN_RE = re.compile(r'CVE-\d{4}-\d+')
+REVERIFY_BATCH = 20
+
+
+def _superseding_id(own_id, description):
+    """Best-effort successor lookup from a Rejected record's own description.
+    NVD/MITRE rejection notes conventionally list the replacement under
+    'ConsultIDs:', but the exact phrasing isn't guaranteed across CNAs, so
+    this takes any OTHER CVE id mentioned in the text rather than matching
+    that literal phrase. Returns '' when the record names no other CVE."""
+    for match in CVE_ID_SCAN_RE.findall(description or ''):
+        if match != own_id:
+            return match
+    return ''
+
+
+def reverify_entries(state, limit=REVERIFY_BATCH):
+    """Re-checks NVD's vulnStatus for the `limit` stalest-verified stored
+    entries (oldest or missing last_verified_at first), so a CVE rejected or
+    merged into another ID AFTER we first captured it doesn't sit on the page
+    forever looking like a live disclosure. merge()'s dedup means an entry is
+    otherwise never revisited once stored -- this is the only thing that
+    ever looks at a stored entry again. Only entries whose id is a CVE id are
+    checked; GHSA-only ids (no CVE assigned) have no NVD record to check
+    against. At REVERIFY_BATCH=20/week against MAX_STORED=500, a full sweep
+    takes ~25 weeks -- a CVE rejected right after capture can display at its
+    original severity for months before this reaches it. Returns the count
+    newly marked rejected this run."""
+    candidates = [e for e in state['entries'] if CVE_ID_RE.match(e.get('id', ''))]
+    candidates.sort(key=lambda e: e.get('last_verified_at') or '')
+    candidates = candidates[:limit]
+    delay = NVD_DELAY_WITH_KEY if use_nvd_key() else NVD_DELAY_ANON
+    newly_rejected = 0
+    for i, entry in enumerate(candidates):
+        if i:
+            time.sleep(delay)
+        record = fetch_nvd_by_id(entry['id'])
+        if record is None:
+            continue
+        entry['last_verified_at'] = datetime.now(timezone.utc).isoformat()
+        if record.get('vulnStatus') == 'Rejected':
+            if entry.get('status') != 'rejected':
+                desc = next((d['value'] for d in record.get('descriptions', [])
+                             if d.get('lang') == 'en'), '')
+                entry['status'] = 'rejected'
+                entry['superseded_by'] = _superseding_id(entry['id'], desc)
+                newly_rejected += 1
+        elif entry.get('status') == 'rejected':
+            # A CNA dispute can get a rejection reinstated. Rare, but a CVE
+            # that's live again must not stay permanently mislabeled because
+            # this pass only ever checked for the forward transition before.
+            entry['status'] = 'new'
+            entry.pop('superseded_by', None)
+    return newly_rejected
+
+
 def collect_nvd(start_dt, end_dt):
     entries = []
     delay = NVD_DELAY_WITH_KEY if use_nvd_key() else NVD_DELAY_ANON
@@ -573,12 +654,30 @@ def save_state(state):
     STATE_FILE.write_text(json.dumps(state, indent=2) + "\n", encoding='utf-8')
 
 
-def merge(state, found):
+def load_archive():
+    """Entries evicted from the MAX_STORED-capped active list, kept
+    permanently. Uncapped by design: the cap exists to bound what the live
+    tracker page embeds and ships to every visitor, not to bound how much
+    history this repo is allowed to remember."""
+    if ARCHIVE_FILE.exists():
+        return json.loads(ARCHIVE_FILE.read_text(encoding='utf-8'))
+    return {"entries": []}
+
+
+def save_archive(archive):
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    ARCHIVE_FILE.write_text(json.dumps(archive, indent=2) + "\n", encoding='utf-8')
+
+
+def merge(state, found, archive=None):
     """Add entries whose id isn't already stored. Returns the count added.
     Dedup is a plain id set rather than lib.ai_vuln_intel_store.add_entry: that
     store is bound to ai-vuln-intel.json and stamps every entry with the
     loop_rounds/notes fields of its claim-verification loop, which this
-    pipeline does not run."""
+    pipeline does not run.
+
+    Entries pushed out by the MAX_STORED cap are appended to `archive` (a
+    list) when one is given, rather than discarded -- see load_archive()."""
     known = {e['id'] for e in state['entries']}
     added = 0
     for entry in found:
@@ -589,8 +688,19 @@ def merge(state, found):
         state['entries'].append(entry)
         known.add(entry['id'])
         added += 1
-    state['entries'].sort(key=lambda e: (e.get('published') or '', e['id']), reverse=True)
+    # Eviction order: least-recently-DETECTED first. `published` is not a
+    # usable eviction key -- KEV entries never carry one (see fetch_kev.py),
+    # so sorting eviction by `published` would evict every KEV entry before
+    # any dated CVE, no matter how recently the KEV entry was actually found.
+    state['entries'].sort(key=lambda e: e.get('detected_at') or '', reverse=True)
+    evicted = state['entries'][MAX_STORED:]
     del state['entries'][MAX_STORED:]
+    if archive is not None and evicted:
+        archive.extend(evicted)
+    # Storage/display order is separate from eviction order: newest published
+    # first. A KEV row with no date sorts last here, which only affects
+    # display position, not survival.
+    state['entries'].sort(key=lambda e: (e.get('published') or '', e['id']), reverse=True)
     return added
 
 
@@ -598,19 +708,35 @@ def main():
     parser = argparse.ArgumentParser(description="Collect AI IDE / MCP vulnerability disclosures")
     parser.add_argument('--days', type=int, default=MAX_WINDOW_DAYS,
                         help=f"publication lookback window (max {MAX_WINDOW_DAYS})")
+    parser.add_argument('--reverify', action='store_true',
+                        help="Skip collection; instead re-check NVD's vulnStatus for "
+                             f"the {REVERIFY_BATCH} stalest-verified stored entries")
     args = parser.parse_args()
+
+    if args.reverify:
+        state = load_state()
+        newly_rejected = reverify_entries(state)
+        if newly_rejected:
+            save_state(state)
+        print(f"Re-verified up to {REVERIFY_BATCH} entries; "
+              f"{newly_rejected} newly marked rejected")
+        return 0
 
     days = min(args.days, MAX_WINDOW_DAYS)
     end_dt = datetime.now(timezone.utc)
     start_dt = end_dt - timedelta(days=days)
 
     state = load_state()
+    archive = load_archive()
+    archived_before = len(archive['entries'])
     found = []
     found += collect_nvd(start_dt, end_dt)
     found += collect_ghsa(start_dt)
     found += collect_kev()
 
-    added = merge(state, found)
+    added = merge(state, found, archive=archive['entries'])
+    if len(archive['entries']) > archived_before:
+        save_archive(archive)
     # Papers are replaced wholesale rather than merged: the list is small and
     # the source is authoritative. An empty result is treated as a failed fetch
     # and keeps the last known-good list, so a genuine "every paper withdrawn"

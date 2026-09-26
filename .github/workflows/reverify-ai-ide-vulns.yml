@@ -1,0 +1,70 @@
+name: AI IDE Tracker Re-verification
+
+# merge() in aggregate_ai_ide_vulns.py dedupes by id and never revisits an
+# entry once stored. If NVD rejects or supersedes a CVE AFTER we've already
+# published it, nothing would ever notice -- the tracker would keep showing
+# a withdrawn CVE as a live disclosure forever. This is the only thing that
+# looks at an already-stored entry again: it re-checks NVD's vulnStatus for
+# a rotating slice of the stalest-verified stored entries (oldest or missing
+# last_verified_at first, see reverify_entries()) and flags anything NVD has
+# since rejected.
+#
+# Weekly, not daily: this is a background-integrity check, not new-disclosure
+# collection (that's ai-ide-tracker.yml), and running it less often keeps NVD
+# load down for a low-yield check on a niche CVE set.
+
+on:
+  schedule:
+    # Sunday 21:00 UTC — after the day's regular tracker run, on a day with
+    # no CVE-publish/propagate pipeline contending for the same NVD budget.
+    - cron: '0 21 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  reverify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Re-verify stored entries against NVD
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: python3 scripts/aggregate_ai_ide_vulns.py --reverify
+
+      - name: Render tracker into the post
+        run: python3 scripts/generate_ai_ide_tracker.py
+
+      - name: Commit only if something was newly rejected
+        run: |
+          git config user.name "FixTheVuln Bot"
+          git config user.email "bot@fixthevuln.com"
+          PATHS="data/ai-ide-vulns.json blog/ai-ide-security-vulnerabilities-2026.html ai-ide-mcp-disclosures.html"
+          if [[ -z $(git status --porcelain $PATHS) ]]; then
+            echo "Re-verification found nothing newly rejected." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git add $PATHS
+          git commit -m "Re-verify AI IDE tracker entries against NVD"
+          for attempt in 1 2 3; do
+            if git push; then
+              echo "Pushed re-verification update (attempt $attempt)." >> "$GITHUB_STEP_SUMMARY"
+              git show --stat HEAD >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            echo "Push rejected by a concurrent push; rebasing (attempt $attempt)..."
+            git pull --rebase origin main
+          done
+          echo "::error::Failed to push re-verification update after 3 attempts."
+          exit 1

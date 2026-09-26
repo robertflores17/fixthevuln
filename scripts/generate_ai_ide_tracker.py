@@ -185,7 +185,10 @@ def render_row(entry):
 def render_block(entries, limit=DEFAULT_LIMIT):
     """The table plus its caption. Returns only the inner HTML; the caller
     puts the markers back around it."""
-    entries = displayable(entries)
+    # Rejected/superseded entries stay in the full tracker (transparently
+    # labeled) but drop out of this "current state" teaser -- a disclosure
+    # NVD itself has withdrawn has no business in a "latest disclosures" list.
+    entries = [e for e in displayable(entries) if e.get('status') != 'rejected']
     shown = entries[:limit]
     if not shown:
         return ('<h2 id="latest-disclosures">Latest AI IDE and MCP disclosures</h2>\n'
@@ -390,21 +393,44 @@ def render_archive_row(entry):
     with no per-keystroke DOM parsing."""
     label = str(entry.get('severity_label') or '')
     score = str(entry.get('severity') or '')
-    color = SEVERITY_COLORS.get(label, 'var(--text-muted,#666)')
-    severity = f"{label} {score}".strip() or 'Unrated'
+    rejected = entry.get('status') == 'rejected'
+    if rejected:
+        # NVD lists this CVE's vulnStatus as Rejected after we first captured
+        # it -- shown, not deleted, but never as if it were still a live
+        # Critical/High. A named "possible" successor is this pipeline's own
+        # best-effort read of the rejection notice's free text (any other
+        # CVE id it mentions), not a relationship NVD itself asserts -- it
+        # could name a related-but-not-replacing CVE. Hedged and linked to
+        # its own NVD record so a reader can verify in one click rather than
+        # taking the guess as settled fact. Built as its own pre-escaped
+        # fragment (like id_cell below), not passed through esc() as a
+        # whole -- esc() would encode the <a> itself into visible text.
+        successor = entry.get('superseded_by') or ''
+        if successor:
+            successor_url = f"https://nvd.nist.gov/vuln/detail/{successor}"
+            sev_html = (f'Possibly superseded by <a href="{esc(successor_url)}" '
+                        f'target="_blank" rel="noopener">{esc(successor)}</a>')
+        else:
+            sev_html = esc("Marked Rejected in NVD")
+        color = 'var(--text-muted,#666)'
+        data_severity = 'Rejected'
+    else:
+        color = SEVERITY_COLORS.get(label, 'var(--text-muted,#666)')
+        sev_html = esc(f"{label} {score}".strip() or 'Unrated')
+        data_severity = label or 'Unrated'
     url = safe_url(entry.get('url'))
     ident = field(entry, 'id')
     id_cell = f'<a href="{esc(url)}" target="_blank" rel="noopener">{ident}</a>' if url else ident
     published = str(entry.get('published') or '')
     return (
-        f'<tr data-severity="{esc(label or "Unrated")}" '
+        f'<tr data-severity="{esc(data_severity)}" '
         f'data-search="{esc(search_text(entry))}" '
         f'data-date="{esc(published)}" '
-        f'data-score="{sort_key(label, score):.1f}">'
+        f'data-score="{0.0 if rejected else sort_key(label, score):.1f}">'
         f'<td class="d-date">{esc(long_date(published)) if published else "&mdash;"}</td>'
         f'<td class="d-id">{id_cell}</td>'
         f'<td class="d-product">{field(entry, "product")}</td>'
-        f'<td class="d-sev" style="color:{color};">{esc(severity)}</td>'
+        f'<td class="d-sev" style="color:{color};">{sev_html}</td>'
         f'<td class="d-sum">{esc(short_summary(entry))}</td>'
         '</tr>'
     )
@@ -424,14 +450,30 @@ def render_archive_page(entries, today):
     # duplicating each summary. Gzip handles the repetition well. Revisit with
     # server-side paging or a JSON fetch only if the archive nears the cap.
     entries = displayable(entries)
-    counts = {k: sum(1 for e in entries if e.get('severity_label') == k)
+    # Rejected/superseded entries stay IN the table (transparency: nothing
+    # that was ever tracked here just disappears) but are not "disclosures
+    # the site tracks" -- they're withdrawn CVEs. Excluded from the headline
+    # count and severity chips; a "Rejected" chip has no count key to filter
+    # into, which is intentional, not an oversight -- see how it's tallied.
+    live = [e for e in entries if e.get('status') != 'rejected']
+    rejected_count = len(entries) - len(live)
+    counts = {k: sum(1 for e in live if e.get('severity_label') == k)
               for k in SEVERITY_ORDER}
     rows = '\n'.join(render_archive_row(e) for e in entries)
-    earliest = min((str(e.get('published')) for e in entries if e.get('published')),
+    earliest = min((str(e.get('published')) for e in live if e.get('published')),
                    default='')
     # "earliest dated", not "published since": KEV rows carry no publication
     # date, so a claim about all N entries would be computed from fewer.
     since = f" The earliest dated entry is from {esc(long_date(earliest))}." if earliest else ""
+    # "Rejected" is NVD's own vulnStatus. A named successor is this site's
+    # best-effort read of the rejection notice's text, not an NVD-asserted
+    # replacement -- content-editor review 2026-09-26 flagged the prior
+    # wording ("NVD has ... superseded them") as crediting NVD with a claim
+    # only this pipeline is making.
+    superseded_note = (f" {rejected_count} additional entr{'y is' if rejected_count == 1 else 'ies are'} "
+                       "shown below but excluded from this count: NVD has since rejected them "
+                       "(where the rejection notice names a replacement, this page notes it)."
+                       if rejected_count else "")
     chips = '\n'.join(
         f'        <button class="d-chip" data-filter="{k}" type="button">{k} '
         f'<span class="d-chip-n">{counts[k]}</span></button>'
@@ -457,7 +499,7 @@ def render_archive_page(entries, today):
 <div class="container">
     <a href="blog/ai-ide-security-vulnerabilities-2026.html" class="back-link">&larr; Back to the AI IDE security analysis</a>
     <h1>AI IDE and MCP vulnerability tracker</h1>
-    <p>This page lists every AI IDE and Model Context Protocol disclosure the site tracks, {len(entries)} in total, collected daily from {SOURCES_SENTENCE}.{since} {SCORE_CAVEAT}</p>
+    <p>This page lists every AI IDE and Model Context Protocol disclosure the site tracks, {len(live)} in total, collected daily from {SOURCES_SENTENCE}.{since} {SCORE_CAVEAT}{superseded_note}</p>
     <p id="d-updated" style="font-size:.9rem;color:var(--text-muted,#666);">Last updated: {today.strftime('%B %-d, %Y')}</p>
 
     <div class="d-controls">

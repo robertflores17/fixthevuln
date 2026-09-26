@@ -142,6 +142,14 @@ class TestRenderBlock(unittest.TestCase):
         self.assertIn('No disclosures', block)
         self.assertNotIn('<table', block)
 
+    def test_rejected_entries_are_excluded_from_the_latest_teaser(self):
+        """A CVE NVD has withdrawn has no business in a "latest disclosures"
+        list -- the full tracker (not this teaser) is where it stays visible."""
+        block = render_block([_entry(id='CVE-2026-1'),
+                              _entry(id='CVE-2026-2', status='rejected')])
+        self.assertIn('lists 1 ', block)
+        self.assertNotIn('CVE-2026-2', block)
+
     def test_unrated_severity_when_score_missing(self):
         self.assertIn('Unrated', render_row(_entry(severity='', severity_label='')))
 
@@ -486,6 +494,68 @@ class TestArchiveRow(unittest.TestCase):
         attrs = dict(self._parse(row)[0][1])
         self.assertIn('rmcp', attrs['data-search'])
         self.assertIn('upper text', attrs['data-search'])
+
+    def test_rejected_entry_shows_its_successor_not_its_old_severity(self):
+        """Hedged ("Possibly") and linked to the successor's own NVD record,
+        not stated as settled fact -- content-editor review 2026-09-26: the
+        successor is this pipeline's best-effort read of free text, not
+        something NVD itself asserts."""
+        row = render_archive_row(_entry(status='rejected', superseded_by='CVE-2026-9999',
+                                        severity_label='Critical', severity='9.8'))
+        self.assertIn('Possibly superseded by', row)
+        self.assertIn('href="https://nvd.nist.gov/vuln/detail/CVE-2026-9999"', row)
+        self.assertIn('>CVE-2026-9999</a>', row)
+        self.assertNotIn('Critical', row)
+
+    def test_rejected_entry_without_a_known_successor_says_so(self):
+        row = render_archive_row(_entry(status='rejected', severity_label='Critical'))
+        self.assertIn('Marked Rejected in NVD', row)
+
+    def test_rejected_entry_does_not_match_any_severity_chip(self):
+        row = render_archive_row(_entry(status='rejected', severity_label='Critical'))
+        attrs = dict(self._parse(row)[0][1])
+        self.assertEqual(attrs['data-severity'], 'Rejected')
+
+    def test_rejected_entry_sorts_to_the_bottom_on_severity(self):
+        row = render_archive_row(_entry(status='rejected', severity_label='Critical', severity='9.8'))
+        attrs = dict(self._parse(row)[0][1])
+        self.assertEqual(attrs['data-score'], '0.0')
+
+
+class TestArchivePageSupersededCounts(unittest.TestCase):
+    """A rejected CVE stays a row on the page (nothing tracked here just
+    disappears) but must not read as a live disclosure in the headline count
+    or the severity chips -- those numbers claim "confirmed", not "listed"."""
+
+    def test_rejected_entry_is_excluded_from_the_headline_count(self):
+        page = render_archive_page([_entry(id='CVE-2026-1'),
+                                    _entry(id='CVE-2026-2', status='rejected')],
+                                   date(2026, 9, 19))
+        self.assertIn('the site tracks, 1 in total', page)
+
+    def test_rejected_entry_is_still_a_row_on_the_page(self):
+        page = render_archive_page([_entry(id='CVE-2026-1'),
+                                    _entry(id='CVE-2026-2', status='rejected')],
+                                   date(2026, 9, 19))
+        self.assertIn('CVE-2026-2', page)
+
+    def test_rejected_entry_is_excluded_from_severity_chip_counts(self):
+        page = render_archive_page([_entry(id='CVE-2026-1', severity_label='Critical'),
+                                    _entry(id='CVE-2026-2', severity_label='Critical',
+                                           status='rejected')],
+                                   date(2026, 9, 19))
+        self.assertIn('Critical <span class="d-chip-n">1</span>', page)
+
+    def test_footnote_appears_only_when_something_is_excluded(self):
+        """"Rejected" stays framed as NVD's own claim; the successor guess
+        stays framed as this site's read of the rejection notice, per
+        content-editor review 2026-09-26 -- not attributed to NVD."""
+        with_rejected = render_archive_page(
+            [_entry(id='CVE-2026-1'), _entry(id='CVE-2026-2', status='rejected')],
+            date(2026, 9, 19))
+        without = render_archive_page([_entry(id='CVE-2026-1')], date(2026, 9, 19))
+        self.assertIn('NVD has since rejected them', with_rejected)
+        self.assertNotIn('NVD has since rejected them', without)
 
 
 class TestArchiveIdempotence(unittest.TestCase):
