@@ -519,6 +519,9 @@ def fetch_arxiv_author(surname=ARXIV_AUTHOR_QUERY, category=ARXIV_CATEGORY,
     # reset during read() is not a URLError and would otherwise crash the job.
     except (OSError, http.client.HTTPException) as e:
         print(f"  Warning: arXiv query for {surname!r} failed: {e}")
+        if isinstance(e, urllib.error.HTTPError):
+            print(f"  DEBUG headers: {dict(e.headers)}")
+            print(f"  DEBUG body: {e.read()[:500]!r}")
         return []
     return parse_arxiv_atom(body)
 
