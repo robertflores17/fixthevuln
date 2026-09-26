@@ -504,6 +504,29 @@ def fetch_arxiv_author(surname=ARXIV_AUTHOR_QUERY, category=ARXIV_CATEGORY,
         'sortOrder': 'descending',
         'max_results': max_results,
     })
+    variants = [
+        ('current', {
+            'User-Agent': 'FixTheVuln-AIIDE-Tracker/1.0',
+            'Accept': 'application/atom+xml, application/xml, text/xml, */*',
+        }),
+        ('contact-ua', {
+            'User-Agent': 'FixTheVuln-AIIDE-Tracker/1.0 (+https://fixthevuln.com)',
+            'Accept': 'application/atom+xml, application/xml, text/xml, */*',
+        }),
+        ('browser-like', {
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36',
+            'Accept': 'application/atom+xml, application/xml, text/xml, */*',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Accept-Encoding': 'identity',
+        }),
+    ]
+    for label, headers in variants:
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                print(f"  DEBUG variant {label}: HTTP {resp.status}")
+        except (OSError, http.client.HTTPException) as e:
+            print(f"  DEBUG variant {label}: failed: {e}")
     try:
         # export.arxiv.org answers 406 when nothing acceptable is offered, and
         # urllib sends no Accept header by default. Cost one CI run to find:
