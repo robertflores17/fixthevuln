@@ -1,52 +1,56 @@
-# AppSec Review — 2026-09-26
+# AppSec Review — 2026-09-27
 
 **Reviewer:** Robert Flores, CISSP  
-**Date:** 2026-09-26  
-**CVEs Reviewed:** 4  
-**Pipeline Run:** Scheduled automated review
+**Review Date:** 2026-09-27  
+**CVEs Reviewed:** 1  
+**Cumulative Database:** 240 vulnerabilities (231 active, 9 archived)
 
 ---
 
 ## Severity Breakdown
 
-| Priority | Count | CVEs |
-|----------|-------|------|
-| Critical | 2 | CVE-2026-5430, CVE-2026-71362 |
-| High     | 2 | CVE-2026-67279, CVE-2026-65660 |
-| Medium   | 0 | — |
-| Low      | 0 | — |
+| Priority | Count |
+|----------|-------|
+| Critical | 0     |
+| High     | 1     |
+| Medium   | 0     |
+| Low      | 0     |
 
 ---
 
 ## CVE Summary
 
-| CVE ID | Vendor | Priority | Vulnerability Class |
-|--------|--------|----------|---------------------|
-| CVE-2026-67279 | MikroTik | high | Improper Workflow Enforcement / Pre-auth session hijack chain |
-| CVE-2026-65660 | Microsoft | high | Code Injection (RCE, auth required) |
-| CVE-2026-5430 | WSO2 | critical | Path Traversal → Unrestricted File Upload → Unauthenticated RCE |
-| CVE-2026-71362 | Adobe | critical | Incorrect Authorization / Auth Bypass (no user interaction) |
+| CVE ID         | Vendor    | Priority | Vulnerability Class              |
+|----------------|-----------|----------|----------------------------------|
+| CVE-2026-87902 | WordPress | High     | Remote File Inclusion (CWE-98) / RCE |
+
+---
+
+## CVE Detail
+
+**CVE-2026-87902 — WordPress Core Remote File Inclusion**  
+CVSS 8.1 (v3.1). An unauthenticated attacker can manipulate page-template resolution to include an arbitrary readable local `.php` file outside active theme directories, achieving remote code execution. WordPress powers an estimated 43%+ of the public web; exploitation at scale is highly probable given active KEV listing. CISA referenced BOD 26-04 forensic triage requirements, indicating federal scope beyond standard patching SLAs. Due date is 2026-09-28 — patch window is extremely tight.
 
 ---
 
 ## Trend Analysis
 
-This batch reflects a continuing pattern of critical vulnerabilities in API management and e-commerce infrastructure, alongside renewed exploitation of enterprise collaboration platforms. WSO2's perfect CVSS 10.0 path traversal (CVE-2026-5430) targeting API Control Plane, API Manager, and Universal Gateway represents a maximum-risk unauthenticated RCE scenario that could expose entire backend service meshes; the diversity of affected WSO2 products suggests a shared vulnerable code path rather than an isolated component flaw. Adobe Commerce/Magento's authorization bypass (CVE-2026-71362, CVSS 9.1) continues a multi-year pattern of high-severity Magento auth flaws actively targeted for payment skimming and credential harvesting, making patch compliance on internet-facing storefronts critically urgent. The MikroTik chain vulnerability reinforces a longstanding concern about router/network-edge devices: even a "medium" CVSS entry can serve as the first link in an unauthenticated exploitation chain when paired with a secondary bug, and CISA's simultaneous listing of both chain components underscores that network-edge patching must treat these as a single critical event.
+This week's single-entry batch continues a pattern of CISA KEV additions targeting high-profile CMS and web-application infrastructure. WordPress Core RFI (CWE-98) represents a classic yet persistent class: despite decades of awareness, path-traversal and file-inclusion primitives resurface in new architectural contexts (theme resolution, plugin hooks, REST endpoints). The unauthenticated vector without any precondition beyond a readable local `.php` file lowers the bar dramatically for opportunistic mass exploitation. Combined with WordPress's extraordinary market share, the attack surface is effectively every unpatched instance on the internet. The BOD 26-04 citation and forensic triage language signal that CISA is treating this as an active intrusion vector requiring IR readiness, not merely routine patching.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"The WSO2 API Gateway Catastrophe: When Path Traversal Becomes CVSS 10.0"** — Deep-dive into how file-upload primitives via path traversal in API gateway products lead to unauthenticated RCE, with implications for zero-trust API architectures.
+1. **"CWE-98 in 2026: Why Remote File Inclusion Never Died"** — Walk through the historical arc of RFI (PHP register_globals era → modern theme/plugin surface), explain how page-template resolution became the new attack surface in WordPress Core, and provide detection signatures (access log patterns, EDR indicators) for defenders. High SEO value given WordPress's installed base.
 
-2. **"Chaining MikroTik: How Two 'Medium' CVEs Add Up to a Critical Network Compromise"** — Analysis of CVE-2026-67279 + CVE-2026-86060 as an exploit chain, covering why vulnerability chaining undermines CVSS-only prioritization frameworks.
+2. **"BOD 26-04 Deep Dive: What CISA's New Patching Directive Means for Federal IT Teams"** — CVE-2026-87902 is the first KEV entry explicitly referencing BOD 26-04 forensic triage requirements. A timely explainer on the directive's dual mandate (patch prioritization + forensic readiness) would capture search traffic from federal IT and FISMA-scoped practitioners.
 
-3. **"Magento's Persistent Authorization Problem: A Timeline of Auth Bypass CVEs"** — A look at recurring incorrect-authorization patterns in Adobe Commerce/Magento and what defenders running e-commerce infrastructure should do beyond patching.
+3. **"CISA KEV Due Dates Are Getting Shorter: A 3-Day Patch Window Analysis"** — CVE-2026-87902 has a one-day notice before its due date (added 2026-09-25, due 2026-09-28). Analyze the distribution of KEV due dates over 2025–2026 and discuss operational implications for vulnerability management programs lacking automated patching pipelines.
 
 ---
 
 ## Newsletter Snippet
 
-**This week's CISA KEV additions include two critical and two high-severity vulnerabilities across network infrastructure, API management, enterprise collaboration, and e-commerce platforms.** The most urgent is CVE-2026-5430 in WSO2's API product suite—a path traversal vulnerability with a perfect CVSS 10.0 score enabling unauthenticated remote code execution across API Control Plane, API Manager, Traffic Manager, and Universal Gateway. Organizations running WSO2 API infrastructure should treat this as an emergency patch: internet-facing or internally-reachable instances are at risk of full compromise without any authentication. Adobe Commerce and Magento users face a similarly urgent situation with CVE-2026-71362 (CVSS 9.1), an authorization bypass that grants elevated access to sensitive resources with no user interaction required—a classic precursor to payment skimmer deployment on e-commerce storefronts.
+**This week in the CISA KEV catalog:** One new critical web vulnerability was added — CVE-2026-87902, a Remote File Inclusion flaw in WordPress Core rated CVSS 8.1. The vulnerability allows an unauthenticated attacker to force WordPress's page-template resolution to include an attacker-chosen local PHP file, effectively achieving remote code execution without credentials. With WordPress running on over 43% of all websites, the blast radius of this vulnerability cannot be overstated. CISA's due date of September 28 gives affected organizations essentially 72 hours from disclosure — organizations without automated patching pipelines should treat this as an emergency change.
 
-On the high-severity front, Microsoft SharePoint's code injection flaw (CVE-2026-65660, CVSS 8.8) enables authenticated remote code execution, making it a prime post-phishing lateral-movement target in environments where SharePoint is internet-accessible. The MikroTik RouterOS entry (CVE-2026-67279) rounds out the batch: while its standalone CVSS is 6.5, CISA explicitly notes it chains with CVE-2026-86060 to achieve unauthenticated exploitation—network teams managing RouterOS deployments should apply the September 2026 vendor advisory immediately and treat this as a critical infrastructure patching event. All four vulnerabilities have confirmed active exploitation per CISA KEV inclusion and carry BOD 26-04 remediation requirements.
+For federal agencies, CISA explicitly invoked BOD 26-04's forensic triage requirements alongside the standard patch mandate, signaling that evidence preservation and IR readiness are expected alongside remediation. If you haven't patched yet: update to the latest WordPress Core release, audit template-include hooks in active themes and plugins, and review web server access logs for anomalous `?template=` or `?page_template=` parameter activity. The FixTheVuln CVE detail page for CVE-2026-87902 includes remediation steps, OWASP mapping, and curated threat intelligence links.
