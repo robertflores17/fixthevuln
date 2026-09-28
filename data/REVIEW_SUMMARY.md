@@ -1,19 +1,20 @@
-# Daily KEV Review — 2026-09-26
+# Daily KEV Review — 2026-09-28
 
-**New CVEs:** 1 | **Critical:** 0 | **High:** 1 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 2 | **Critical:** 1 | **High:** 1 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-87902 | WordPress | Core | 8.1 | Unknown | 2026-09-28 |
+| CVE-2026-88771 | Citrix | NetScaler | 9.8 | Unknown | 2026-09-30 |
+| CVE-2026-88772 | Citrix | NetScaler | 8.1 | Unknown | 2026-09-30 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-09-28 (1 CVE)
+- **Nearest due date:** 2026-09-30 (2 CVEs)
 - **Overdue:** None
 
 ## Vendor Summary
-- WordPress: 1 CVE
+- Citrix: 2 CVEs
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
