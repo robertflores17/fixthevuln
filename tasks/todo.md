@@ -942,3 +942,22 @@ STEP 0 guard just added to AI Vuln Intel Reviewer.
       -- approval logic, publish pipeline commands, and commit rules untouched.
       Next run 2026-09-20T17:08:46Z is the first real test.
 - [x] **Spend limit raised by Robert** 2026-09-20.
+
+## Stale-content remediation (2026-09-28) — from 5-way audit of pages dated Feb-Mar 2026
+
+Order: batch 1 retired/renamed exams -> wrong exam codes -> wrong fees/format -> unsourced stats -> P2 drift.
+Five editors run in parallel on disjoint file sets (Microsoft / AWS+Google+HashiCorp+K8s / CompTIA /
+Cisco+ISC2+ISACA+EC+GIAC+OffSec / AI+evergreen). Rules: only apply facts verified against a vendor page;
+unverifiable claims are softened or cut, never guessed; retired exams keep their URL and get a legacy
+notice pointing to the successor; bump "Last updated" on edited generated/blog pages.
+Gate: content-editor + appsec on the combined diff before any push.
+
+- [ ] Microsoft study guides (12)
+- [ ] AWS / Google / HashiCorp / K8s study guides (17)
+- [ ] CompTIA study guides (14)
+- [ ] Cisco / ISC2 / ISACA / EC-Council / GIAC / OffSec study guides (22)
+- [ ] AI + evergreen pages (genai-data-security, prompt-injection, ai-security-careers, 3 blog posts)
+- [ ] Combined pre-push review, push, verify live
+- Follow-ups discovered, NOT in scope: same stale facts also live in certs/*.html, roadmaps/*.html,
+  quiz pages, data/cert-costs.json, tracker data, and store planner products for retired exams;
+  source cert JSONs live in Dropshipping/Etsy-Claude/certifications (OneDrive, outside this repo).

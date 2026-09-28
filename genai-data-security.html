@@ -144,7 +144,7 @@
                 <li>Context windows merge data from multiple trust domains into a single flat namespace with no internal access control &mdash; a fundamental architectural weakness</li>
                 <li>Derived artifacts (embeddings, fine-tuned weights, cached retrievals) are first-class security concerns &mdash; deleting source data is insufficient</li>
                 <li>Real CVEs referenced throughout: EmailGPT (CVE-2024-5184), Qdrant path traversal (CVE-2024-3584), LangChain injection (CVE-2024-8309)</li>
-                <li>EU AI Act Article 10 data governance deadline: August 2026 &mdash; organizations deploying high-risk AI must comply</li>
+                <li>EU AI Act Article 10 data governance applies to high-risk AI systems from December 2, 2027 (Annex III use cases) or August 2, 2028 (systems embedded in regulated products), after the 2026 AI Omnibus delay</li>
                 <li>AI-DSPM framework provides a 13-category posture assessment model with tiered mitigations (Foundational, Hardening, Advanced)</li>
             </ul>
         </div>
@@ -275,7 +275,7 @@
             <p><strong>Risk Level:</strong> <span style="color: #fd7e14; font-weight: 700;">High</span></p>
             <p>Schema and semantic validation bypass through malformed data formats (CSV, JSON, Parquet) and snapshot import vulnerabilities. When GenAI systems ingest data without proper validation, attackers can exploit parsing differences to inject malicious content.</p>
             <h4>Real-World Context</h4>
-            <p>Qdrant path traversal (<strong>CVE-2024-3584</strong>) allowed snapshot import to write files outside the intended directory, potentially achieving remote code execution on the vector store server.</p>
+            <p>Qdrant path traversal (<strong>CVE-2024-3584</strong>) allowed snapshot upload to write or overwrite arbitrary files on the server, which NVD says could lead to full system takeover (CWE-20, assigned by the CNA; fixed in Qdrant 1.9.0).</p>
             <h4>Mitigations</h4>
             <div class="remediation">
                 <ul>
@@ -326,7 +326,7 @@
             <p><strong>Risk Level:</strong> <span style="color: #ef4444; font-weight: 700;">Critical</span></p>
             <p>Unlawful basis and consent failures, erasure gaps (GDPR Right to Be Forgotten cannot be honored in model weights), and lineage absence create regulatory exposure. The guide maps risks to GDPR, HIPAA, CCPA/CPRA, EU AI Act (Article 10), and the Colorado AI Act.</p>
             <h4>Key Deadline</h4>
-            <p style="padding: 1rem; background: rgba(239, 68, 68, 0.1); border-left: 4px solid #ef4444; border-radius: 4px;"><strong>EU AI Act Article 10 &mdash; August 2026:</strong> Organizations deploying high-risk AI systems must demonstrate data governance for training datasets, including quality criteria, bias examination, and gap identification. This guide's DSGAI07 controls directly satisfy Article 10 requirements.</p>
+            <p style="padding: 1rem; background: rgba(239, 68, 68, 0.1); border-left: 4px solid #ef4444; border-radius: 4px;"><strong>EU AI Act Article 10 &mdash; December 2, 2027 (Annex III) / August 2, 2028 (Annex I):</strong> Providers of high-risk AI systems must demonstrate data governance for training datasets, including quality criteria, bias examination, and gap identification. The AI Omnibus (in force July 27, 2026) moved these dates back from August 2, 2026, per the <a href="https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai" target="_blank" rel="noopener">European Commission</a>. This guide's DSGAI07 controls map to Article 10 requirements.</p>
             <h4>Mitigations</h4>
             <div class="remediation">
                 <ul>
@@ -387,7 +387,7 @@
             <p><strong>Risk Level:</strong> <span style="color: #ef4444; font-weight: 700;">Critical</span></p>
             <p>LLM-powered text-to-SQL and text-to-graph-query features bypass traditional database access boundaries. When a user asks a natural language question, the LLM generates a SQL query that may access tables and columns the user shouldn't see. Prompt-to-query injection enables privilege amplification through model authority.</p>
             <h4>Real-World Context</h4>
-            <p>LangChain GraphCypher injection (<strong>CVE-2024-8309</strong>) allowed attackers to inject arbitrary Cypher queries through natural language input, potentially reading or modifying the entire graph database.</p>
+            <p>LangChain GraphCypher injection (<strong>CVE-2024-8309</strong>) allowed prompt injection to turn natural language input into injected database queries in the GraphCypherQAChain class of LangChain 0.2.5, which NVD says can lead to data exfiltration, modification, or deletion.</p>
             <h4>Mitigations</h4>
             <div class="remediation">
                 <ul>
@@ -589,11 +589,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>EU AI Act (Article 10)</td><td>Training data governance for high-risk AI systems</td><td style="color:#ef4444; font-weight:600;">August 2026</td></tr>
+                        <tr><td>EU AI Act (Article 10)</td><td>Training data governance for high-risk AI systems</td><td style="color:#ef4444; font-weight:600;">Dec 2, 2027 (Annex III); Aug 2, 2028 (Annex I)</td></tr>
                         <tr><td>GDPR</td><td>Right to erasure extends to model weights and embeddings</td><td>Ongoing</td></tr>
                         <tr><td>CCPA/CPRA</td><td>Consumer data rights apply to AI-derived profiles</td><td>Ongoing</td></tr>
                         <tr><td>HIPAA</td><td>PHI in AI training/inference requires BAAs and encryption</td><td>Ongoing</td></tr>
-                        <tr><td>Colorado AI Act</td><td>High-risk AI system transparency and impact assessments</td><td>February 2026</td></tr>
+                        <tr><td>Colorado AI Act (SB 26-189)</td><td>Automated decision-making disclosures and consumer rights; replaced SB 24-205 on May 14, 2026</td><td>January 1, 2027</td></tr>
                     </tbody>
                 </table>
             </div>

@@ -114,7 +114,7 @@
         <div class="container">
             <h1>AI Agent Supply Chain Attacks Explained</h1>
             <p>Expert cybersecurity insights for IT professionals</p>
-            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">Last updated: March 24, 2026</p>
+            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">Last updated: September 28, 2026</p>
         </div>
     </header>
 
@@ -145,7 +145,7 @@
 
 <h2 id="real-world-attack-the-what-would-elon-do-codex-skill">Real-World Attack: The "What Would Elon Do?" Codex Skill</h2>
 
-<p>In 2026, researchers at Cisco AI Defense audited the OpenClaw skill marketplace and found that the <strong>#1-ranked skill</strong> — called "What Would Elon Do?" — contained embedded malware. It had thousands of installs. It had positive reviews. And it was actively exfiltrating data from every developer who used it.</p>
+<p>In 2026, Cisco AI Defense ran its open-source Skill Scanner against an OpenClaw community skill called "What Would Elon Do?", which had been inflated to rank as the <strong>#1 skill</strong> in the skill repository. The scanner surfaced nine findings, two critical and five high severity. Per <a href="https://blogs.cisco.com/ai/personal-ai-agents-like-openclaw-are-a-security-nightmare" target="_blank" rel="noopener">Cisco's write-up</a>, the skill instructed the agent to run a curl command that silently sent data to a server controlled by the skill's author, and it used direct prompt injection to make the agent bypass its safety guidelines and run that command without asking. Cisco concluded the skill was "functionally malware."</p>
 
 <p>The skill contained:</p>
 
@@ -161,7 +161,7 @@
 
 <h2 id="the-5-core-threat-categories">The 5 Core Threat Categories</h2>
 
-<p>Cisco's research maps agent skill threats into a 16-category taxonomy aligned with OWASP LLM Top 10 and MITRE ATLAS. Here are the five categories that matter most for defenders.</p>
+<p>Cisco's Skill Scanner maps findings to Cisco's AI Security Framework (AITech codes), and its documentation says cross-framework mappings to OWASP, MITRE ATLAS, and NIST AML are supported. Here are the five categories that matter most for defenders.</p>
 
 <h3 id="1-prompt-injection-in-agent-contexts">1. Prompt Injection in Agent Contexts</h3>
 
@@ -206,7 +206,7 @@
     <li><strong>Staged payloads:</strong> Base64-encoded strings assembled across multiple files, decoded and executed only at runtime. Each individual file passes static analysis.</li>
 </ul>
 
-<p>These techniques aren't theoretical. The "What Would Elon Do?" skill used Unicode steganography and base64 encoding in its actual attack payload.</p>
+<p>These techniques are documented evasion patterns for agent skills. Cisco's published findings on "What Would Elon Do?" describe the silent curl exfiltration and direct prompt injection described above.</p>
 
 <h3 id="5-supply-chain-attacks-on-agent-marketplaces">5. Supply Chain Attacks on Agent Marketplaces</h3>
 
@@ -232,7 +232,7 @@
     <li><strong>LLM-assisted semantic analysis:</strong> For obfuscated or novel threats that evade pattern matching, the scanner uses an LLM to reason about code intent. "This function reads environment variables, encodes them, and passes them to an HTTP request — is this expected behavior for a code formatting skill?"</li>
 </ol>
 
-<p>The tool maps findings to a <strong>16-category threat taxonomy</strong> cross-referenced with OWASP LLM Top 10, MITRE ATLAS, and NIST AI 100-2 (Adversarial Machine Learning). This means scan results speak the same language your security team already uses for risk assessment.</p>
+<p>The tool maps findings to Cisco's AI Security Framework (AITech and AISubtech codes), with cross-framework mappings to OWASP, MITRE ATLAS, and NIST AML available through its taxonomy metadata. Check the <a href="https://github.com/cisco-ai-defense/skill-scanner" target="_blank" rel="noopener">skill-scanner repository</a> for the current mapping before you rely on it in a risk assessment.</p>
 
 <blockquote><p>Cisco's own disclaimer is worth internalizing: "No findings does NOT equal no risk." The scanner is a detection layer, not a guarantee. Defense in depth applies to agent security the same way it applies everywhere else.</p></blockquote>
 
@@ -253,7 +253,7 @@
 
 <p>AI agent skills are the next major supply chain attack surface. The trust model is broken by design: skills run with agent-level permissions, marketplaces have minimal security vetting, and developers install them with the same casual trust they gave browser toolbars in 2008.</p>
 
-<p>The "What Would Elon Do?" incident wasn't an outlier — it was the first one we caught. Detection tooling is emerging, but prevention requires fundamental changes to how marketplaces operate: mandatory code signing, permission scoping, behavioral sandboxing, and continuous monitoring.</p>
+<p>The "What Would Elon Do?" incident is one documented example of a broader pattern. Detection tooling is emerging, but prevention requires fundamental changes to how marketplaces operate: mandatory code signing, permission scoping, behavioral sandboxing, and continuous monitoring.</p>
 
 <p>If your organization uses AI coding agents — and in 2026, most do — agent skill security belongs on your threat model today.</p>
 
