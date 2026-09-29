@@ -796,32 +796,36 @@ live-published pipeline, needs its own review) -- carried forward below.
 
 ## P3 — hardening, no live exploit path
 
-5. **arXiv DOCTYPE guard only scans `body[:2048]`.** A DOCTYPE is legal
-   anywhere in the prolog. Needs upstream TLS control to reach and libexpat
-   caps the damage. Fix with `defusedxml` and delete both hand-rolled guards.
-6. **`resp.read()` on the NVD response is unbounded** (the arXiv path caps
-   correctly), and the arXiv `title` is the one field that skips `_trim()`.
+5. ~~**arXiv DOCTYPE guard only scans `body[:2048]`.**~~ **Reassessed 2026-09-29, not fixing.**
+   The code's own comment already covers why: CPython's ElementTree installs no external-entity
+   handler regardless of DOCTYPE position, so the guard is defense-in-depth on top of an already-
+   XXE-immune parser, not the only control. Taking a `defusedxml` dependency for this is not
+   worth it per the project's own "no new dependency for what stdlib already handles" bias.
+6. ~~**`resp.read()` on the NVD response is unbounded**~~ **Reassessed 2026-09-29, not fixing.**
+   NVD is a trusted first-party HTTPS host with a 30s timeout; matches the project's own DOS/
+   resource-exhaustion exclusion precedent. Fixed the other half: **arXiv `title` now goes
+   through `_trim(title, 200)`** (2026-09-29).
 7. **No CSP anywhere on the site.** Escaping is the only XSS control on these
    pages. Pre-existing and site-wide; any CSP needs `'unsafe-inline'` or a
-   nonce pass across 740 pages because the nav toggle uses inline `onclick`.
+   nonce pass across 740 pages because the nav toggle uses inline `onclick`. Still open --
+   its own project, out of scope for a quick pass.
 
 ## P4/P5 — polish and reach
 
-8. **Per-row CVSS version labels.** `score_version` is now recorded on new NVD
-   entries (item 5), but the 88 stored entries predate the field and the
-   renderer does not yet show it per row -- only the caption's prose caveat
-   does. Needs a backfill pass plus a render change.
-9. **Cross-links into the tracker.** Its only inbound link is the blog teaser.
-   Nothing links from `tools.html`, `ai-security.html`, or the KEV pages,
-   though it is the most current dataset on the site.
-10. **Table cells render bare ISO dates** while captions use house-style long
-    dates, contradicting `long_date()`'s own docstring rationale.
-11. **CVE-2026-13341's product string** ("Kong Konnect Model Context Protocol
-    server") is wide for a `white-space:nowrap` column. NVD calls it
-    KongHQ / mcp-konnect.
-12. **Monitor GSC validation on 331 "discovered not indexed" pages**
-    (unrelated to the tracker; check due ~2026-03-30, likely overdue -- worth
-    a status check next time SEO work comes up).
+8. **[x] Per-row CVSS version labels — fixed 2026-09-29.** `reverify_entries()` now backfills
+   `score_version` on entries missing it using the record it already fetches for the rejection
+   check (no extra NVD call), and `render_archive_row` appends ` (v3.1)`/`(v4.0)`/etc. to the
+   severity cell when present. The 88 pre-existing entries backfill passively over ~5 weeks at
+   the existing `REVERIFY_BATCH=20/week` rate.
+9. **[x] Cross-links into the tracker — fixed 2026-09-29.** Added cards/links from `tools.html`,
+   `ai-security.html`, and `exploit-tracker.html` (the KEV page).
+10. **[x] Table cells render bare ISO dates — fixed 2026-09-29.** `render_row` (blog teaser table)
+    now uses `long_date()`, matching `render_archive_row`.
+11. **[x] CVE-2026-13341's product string — fixed 2026-09-29.** Shortened to "Kong Konnect MCP
+    Server" in `data/ai-ide-vulns.json`.
+12. **Monitor GSC validation on 331 "discovered not indexed" pages** — due ~2026-03-30, now
+    overdue. Not fixable from here (no GSC API access); ask Robert to check the Search Console
+    UI directly next time SEO work comes up.
 
 ## Known and deliberate — do not "fix"
 
@@ -979,9 +983,36 @@ Gate: content-editor + appsec on the combined diff before any push.
   catalog, so roadmap and cert pages could show different labels for the same id) and caught a same-bug
   instance in `generate_cert_blog_posts.py`'s `CERT_BLOG_CONFIGS` that would have regenerated a
   mislabeled draft on the next `publish-blog.yml` run.
-- [ ] Pushed as of this writing — verify live site next.
+- [x] Pushed as of this writing — verify live site next. (verified live 2026-09-28)
 
-Follow-ups discovered, NOT yet done: same stale facts likely still live in quiz pages beyond
-terraform/vault (not audited this pass), the store's other planner products for retired exams
-(pricing/listing decision, not made), and `data/blog_metadata.json`/`data/social/*`/`data/newsletters/*`
-snapshots for other certs (deliberately left as historical artifacts, not rewritten).
+### Phase 3-4 (2026-09-29) — quiz-page audit, all 68 pages
+
+- [x] 7 retired-exam quizzes (ai900/az500/az204/ms900/ai102/aws-mls/aws-dbs) got the same
+  `RETIRED_EXAMS` notice as their cert/roadmap pages — pushed 290a63e8
+- [x] casp-plus/pentest-plus/linux-plus/data-plus/ceh quizzes: confirmed stale vs corrected blog
+  guides, "Content note." added — pushed 17f82d16
+- [x] Remaining ~52 quiz pages checked (exam code present in corresponding verified blog guide) —
+  all current, no action needed. Confirmed the quiz domain-weight buttons are a generator-wide flat
+  1/N% placeholder, not a staleness signal (checked against terraform-quiz, known-good).
+- [x] Resolved `aws-security-quiz.html` (was ambiguous — confirmed stale, shows retired SCS-C02
+  domains) and `aplus-quiz.html` (confirmed retired 220-1101/1102 generation) — "Content note."
+  added to both, pushed f71ebc4e
+- [x] `ai-security-quiz.html` / `cpts-quiz.html` — house-brand quizzes, no vendor blueprint to
+  drift from, no action needed
+
+### Phase 5 (2026-09-29) — aws-security-specialty cert/roadmap domain-name fix
+
+- [x] Root cause: OneDrive `aws/security_specialty_scs-c03.json` pairs correct SCS-C03 weights
+  with old SCS-C02 domain names (domains 1/2/6). Added `DOMAIN_NAME_OVERRIDES`/
+  `apply_domain_overrides()` to `scripts/lib/templates.py` (in-memory correction, OneDrive file
+  untouched), wired into `generate_cert_pages.py` + `generate_roadmaps.py`, regenerated. Verified
+  against AWS's own SCS-C02->SCS-C03 comparison doc. Also fixed an AppSec P2: cert-page heatmap
+  wasn't escaping domain names (roadmaps sibling already did) — pushed 24863451, verified live.
+
+Follow-ups discovered, NOT yet done: the store's other planner products for retired exams
+(pricing/listing decision — needs Robert's call), `data/blog_metadata.json`/`data/social/*`/
+`data/newsletters/*` snapshots for other certs (deliberately left as historical artifacts, not
+rewritten), `k3_run.json` in repo root (untracked LLM debug output, unrelated to FixTheVuln — ask
+Robert before deleting), and a tech-debt note from AppSec: `DOMAIN_NAME_OVERRIDES` is a second
+source of truth layered on the read-only OneDrive config — fine as a one-off patch, revisit the
+override mechanism's location if more certs need the same treatment.

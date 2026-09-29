@@ -169,11 +169,13 @@ def render_row(entry):
     severity = f"{label} {score}".strip() or 'Unrated'
     url = safe_url(entry.get('url'))
     ident = field(entry, 'id')
+    published = entry.get('published')
+    date_cell = esc(long_date(published)) if published else field(entry, 'published')
     # A dropped scheme must not silently drop the identifier too.
     id_cell = f'<a href="{esc(url)}" target="_blank" rel="noopener">{ident}</a>' if url else ident
     return (
         '                        <tr>\n'
-        f'                            <td style="padding:0.6rem;white-space:nowrap;">{field(entry, "published")}</td>\n'
+        f'                            <td style="padding:0.6rem;white-space:nowrap;">{date_cell}</td>\n'
         f'                            <td style="padding:0.6rem;white-space:nowrap;">{id_cell}</td>\n'
         f'                            <td style="padding:0.6rem;white-space:nowrap;">{field(entry, "product")}</td>\n'
         f'                            <td style="padding:0.6rem;white-space:nowrap;color:{color};font-weight:700;">{esc(severity)}</td>\n'
@@ -416,7 +418,9 @@ def render_archive_row(entry):
         data_severity = 'Rejected'
     else:
         color = SEVERITY_COLORS.get(label, 'var(--text-muted,#666)')
-        sev_html = esc(f"{label} {score}".strip() or 'Unrated')
+        version = str(entry.get('score_version') or '').strip()
+        version_suffix = f" ({version})" if version else ''
+        sev_html = esc((f"{label} {score}".strip() or 'Unrated') + version_suffix)
         data_severity = label or 'Unrated'
     url = safe_url(entry.get('url'))
     ident = field(entry, 'id')

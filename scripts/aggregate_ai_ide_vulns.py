@@ -416,6 +416,12 @@ def reverify_entries(state, limit=REVERIFY_BATCH):
         if record is None:
             continue
         entry['last_verified_at'] = datetime.now(timezone.utc).isoformat()
+        if not entry.get('score_version'):
+            # Backfills the field on entries stored before it was tracked,
+            # using the record this pass already fetched -- no extra NVD call.
+            version = cvss_version_of(record.get('metrics', {}))
+            if version:
+                entry['score_version'] = version
         if record.get('vulnStatus') == 'Rejected':
             if entry.get('status') != 'rejected':
                 desc = next((d['value'] for d in record.get('descriptions', [])
@@ -601,7 +607,7 @@ def parse_arxiv_rss(body, accepted_names=ARXIV_AUTHOR_NAMES):
         abstract = re.sub(r'^Abstract:\s*', '', abstract)
         papers.append({
             'id': paper_id,
-            'title': ' '.join(item.findtext('title', default='').split()),
+            'title': _trim(' '.join(item.findtext('title', default='').split()), 200),
             'authors': authors,
             'published': _rss_pubdate_to_iso(item.findtext('pubDate', default='')),
             'summary': _trim(abstract, 240),
