@@ -100,6 +100,15 @@ OUTDATED_CONTENT = {
         '<a href="/blog/hashicorp-vault-study-guide.html">Vault 003 study guide</a> '
         'for the current curriculum.'
     ),
+    'comptia-data-plus': (
+        'The domain breakdown below is for CompTIA Data+ exam version DA0-001. '
+        'CompTIA\'s current version is DA0-002 (launched October 2025), which '
+        'renamed and reweighted two domains: "Data Mining" became "Data '
+        'Acquisition and Preparation," and "Data Governance, Quality, and '
+        'Controls" became "Data Governance." See the '
+        '<a href="/blog/comptia-data-plus-study-guide.html">DA0-002 study guide</a> '
+        'for the current curriculum.'
+    ),
 }
 
 

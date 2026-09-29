@@ -45,7 +45,7 @@ COMPARISON_MAP = {
     'cisa-vs-cism.html':                        [('isaca-cisa', 'ISACA CISA'), ('isaca-cism', 'ISACA CISM')],
     'crisc-vs-cism.html':                       [('isaca-crisc', 'ISACA CRISC'), ('isaca-cism', 'ISACA CISM')],
     'aws-developer-vs-aws-saa.html':            [('aws-developer', 'AWS Developer'), ('aws-solutions-architect', 'AWS Solutions Architect')],
-    'aws-cloudops-vs-aws-saa.html':             [('aws-cloudops', 'AWS SysOps'), ('aws-solutions-architect', 'AWS Solutions Architect')],
+    'aws-cloudops-vs-aws-saa.html':             [('aws-cloudops', 'AWS CloudOps'), ('aws-solutions-architect', 'AWS Solutions Architect')],
     'aws-clf-vs-aws-saa.html':                  [('aws-cloud-practitioner', 'AWS Cloud Practitioner'), ('aws-solutions-architect', 'AWS Solutions Architect')],
     'az-900-vs-az-104.html':                    [('ms-az-900', 'Microsoft AZ-900'), ('ms-az-104', 'Microsoft AZ-104')],
     'az-104-vs-az-500.html':                    [('ms-az-104', 'Microsoft AZ-104'), ('ms-az-500', 'Microsoft AZ-500')],
