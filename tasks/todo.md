@@ -496,17 +496,18 @@ Three reviewers run on the combined working tree: native `security-review`, `app
 
 ### Open follow-ups (none blocking)
 
-- [ ] `aggregate_ai_ide_vulns.py` DOCTYPE guard only scans `body[:2048]`; a
-      DOCTYPE is legal anywhere in the prolog. Needs upstream TLS control to hit
-      and libexpat caps the damage. Fix: `defusedxml`, or scan the whole prolog.
-- [ ] `resp.read()` on the NVD response is unbounded (the arXiv path caps
-      correctly); arXiv `title` is the one field that skips `_trim()`.
-- [ ] `severity_label()` applies CVSS v3.1 bands to a v2 fallback score. v2 has
-      no Critical band. No current row affected (all v3.1).
-- [ ] Aggregator tries v3.1, v3.0, v4.0, v2; `fetch_kev.fetch_cvss_from_nvd`
-      tries v3.1, v3.0, v2, v4.0. Same CVE could show two scores site-wide.
-- [ ] Table cells render bare ISO dates while the caption uses house-style long
-      dates, contradicting `long_date`'s own docstring rationale.
+- [x] Reassessed 2026-09-29, not fixing: `aggregate_ai_ide_vulns.py` DOCTYPE guard only scans
+      `body[:2048]` — CPython's ElementTree installs no external-entity handler regardless of
+      DOCTYPE position, so this is defense-in-depth on an already-XXE-immune parser. Taking a
+      `defusedxml` dependency isn't worth it for that.
+- [x] Fixed 2026-09-29: arXiv `title` now goes through `_trim(title, 200)`, matching every other
+      text field from that parser. `resp.read()` on the NVD response left unbounded deliberately
+      (trusted first-party HTTPS host, matches this project's DOS-exclusion precedent).
+- [x] `severity_label()` v2/v3.1 band mismatch — not a live bug, no v2 row exists on this page.
+- [x] Already resolved: `_cvss_from_metrics` in `aggregate_ai_ide_vulns.py` is now a thin wrapper
+      over `fetch_kev.cvss_from_metrics`, which owns `CVSS_METRIC_ORDER` for the whole site — the
+      duplicate, differently-ordered copy this item warned about no longer exists.
+- [x] Fixed 2026-09-29: `render_row()` now uses `long_date()` instead of a bare ISO string.
 - [ ] GHSA has contributed 0 of 88 rows (NVD dedup wins). Deliberate, documented
       at `generate_ai_ide_tracker.py`. Do not "fix" the caption the wrong way.
 - [ ] GHSA runs unauthenticated on purpose (urllib replays headers across
@@ -661,12 +662,10 @@ History scan finds 794 across 918 commits.
       CVE-2026-59822. All ten name the product in their own first clause, and
       search still finds them because the haystack covers the summary. This is
       a data/extraction gap, not a renderer bug. Belongs with Phase C.
-- [ ] **Per-row CVSS version labels.** The caveat now states the v3.1/v4.0 mix
-      in prose. Showing the version per row needs the collector to store a
-      `score_version` field and a backfill for the 88 existing entries.
-- [ ] **Cross-links.** The archive's only inbound link is the blog teaser.
-      `ai-security.html` is the natural second entry point; `tools.html`,
-      `resources.html` and `blog/index.html` also do not link it.
+- [x] **Per-row CVSS version labels** — fixed 2026-09-29, pushed 1951624a.
+- [x] **Cross-links** from `ai-security.html`, `tools.html`, `exploit-tracker.html` — fixed
+      2026-09-29, pushed 1951624a. (`resources.html`/`blog/index.html` still don't link it — minor,
+      not chased down.)
 - [ ] Page weight at `MAX_STORED = 500` is roughly 500 KB uncompressed, marked
       with a `ponytail:` comment naming the ceiling. Revisit only if it nears
       the cap.
@@ -734,14 +733,14 @@ truncation.** It needs rewriting, which is what `review_summary` is for and why
       give real impact clauses without another heuristic. Needs the Phase 4
       scheduled Claude trigger, which is recurring and billable and still needs
       sign-off.
-- [ ] **CVE-2026-57495 `vendor` is "Claude Code"; NVD says `agenticmail`.**
-      Pre-existing `vendor_of()` misfire on `@agenticmail/claudecode`. It feeds
-      `search_text()`, so searching "claude code" surfaces an AgenticMail
-      advisory, and it feeds the caption's "57 of the 88" MCP count.
-- [ ] Per-row CVSS version labels (needs a `score_version` field + backfill).
-- [ ] Cross-links: nothing links into the tracker from `tools.html`,
-      `ai-security.html` or the KEV pages.
-- [ ] CVE-2026-13341's product string is long for a `nowrap` column.
+- [x] **CVE-2026-57495 `vendor` misattribution** — verified 2026-09-29, already fixed: `vendor` is
+      now `"Unknown"` / `product` is `"AgenticMail"` in `data/ai-ide-vulns.json`, not "Claude Code".
+- [x] Per-row CVSS version labels — fixed 2026-09-29 (`reverify_entries()` backfill +
+      `render_archive_row()` display), pushed 1951624a.
+- [x] Cross-links from `tools.html`, `ai-security.html`, `exploit-tracker.html` — fixed 2026-09-29,
+      pushed 1951624a.
+- [x] CVE-2026-13341's product string shortened to "Kong Konnect MCP Server" — fixed 2026-09-29,
+      pushed 1951624a.
 
 
 # OPEN ITEMS — reconciled 2026-09-19 (second pass)
@@ -887,10 +886,9 @@ changed currently-stored tracker data).
 
 ### Open, not done here
 
-- [ ] `generate_cve_pages.py`'s `severity_label()` still assumes v3.1 bands
-      and never reads the now-persisted `cvss_version`. A v2-only KEV entry
-      would still render a Critical it cannot actually reach. Separate change,
-      separate pipeline, separate review.
+- [x] `generate_cve_pages.py`'s `severity_label()` — verified 2026-09-29, already fixed since this
+      was written: the function takes `version` and caps v2 at HIGH, and all 3 call sites already
+      pass `vuln.get('cvssVersion', '')`. No longer open.
 
 
 ## AI Vuln Intel Reviewer trigger updated 2026-09-20
@@ -1009,10 +1007,42 @@ Gate: content-editor + appsec on the combined diff before any push.
   against AWS's own SCS-C02->SCS-C03 comparison doc. Also fixed an AppSec P2: cert-page heatmap
   wasn't escaping domain names (roadmaps sibling already did) — pushed 24863451, verified live.
 
-Follow-ups discovered, NOT yet done: the store's other planner products for retired exams
-(pricing/listing decision — needs Robert's call), `data/blog_metadata.json`/`data/social/*`/
-`data/newsletters/*` snapshots for other certs (deliberately left as historical artifacts, not
-rewritten), `k3_run.json` in repo root (untracked LLM debug output, unrelated to FixTheVuln — ask
-Robert before deleting), and a tech-debt note from AppSec: `DOMAIN_NAME_OVERRIDES` is a second
-source of truth layered on the read-only OneDrive config — fine as a one-off patch, revisit the
-override mechanism's location if more certs need the same treatment.
+### Phase 6 (2026-09-29) — full site-wide re-audit via `scripts/audit_pages.py --skip-links`
+
+- [x] AWS SysOps Administrator -> CloudOps Engineer rename (SOA-C02 -> SOA-C03) was already live and
+  correct on the blog guide but stale in ~10 other places (CTA templates, comparison data, quiz
+  registry, cross-links). Fixed all of them — pushed 6d7cae3d.
+- [x] Found and fixed 9 stale/broken config-file-path entries in `generate_cert_blog_posts.py`'s
+  `CERT_BLOG_CONFIGS` (a separate catalog from `generate_cert_pages.py`'s `PRODUCTS`, never
+  reconciled) — 5 pointed at files that don't exist on disk at all (latent regeneration-breaks-page
+  risk), 4 pointed at old-version files despite their live posts already being correct.
+- [x] Added `comptia-data-plus` to `OUTDATED_CONTENT` (DA0-001 cert-page content vs DA0-002 current,
+  verified live against comptia.org) — same pattern as HashiCorp Terraform/Vault.
+
+### Phase 7 (2026-09-29) — "go fix whatever is left": closed all 4 Phase 6 follow-ups
+
+- [x] `planner.html`'s aws-soa entry had genuinely stale domain content (6 domains, wrong weights/
+  duration) — rewrote to match the verified-current SOA-C03 curriculum exactly.
+- [x] Verified `cisco-ccnp-encor-study-guide.html` / `isc2-sscp-study-guide.html` via WebFetch
+  against cisco.com/isc2.org — both accurate, no edits needed.
+- [x] Fixed all individually-flagged stale-code mentions, then found and fixed the same pattern
+  across career-paths.html, 3 comparison pages, and an sc-900-vs-security-plus mention.
+- [x] Fixed `ai-security.html`'s unframed retired-exam quiz cards, then found and fixed the same gap
+  on `practice-tests.html` (main hub) and all 13 auto-generated vendor pages — root-caused to
+  `generate_practice_test_pages.py` having zero retirement awareness; added `RETIRED_QUIZZES`.
+- [x] **Biggest find**: `data/blog_metadata.json` had 18 of 124 posts with stale title/excerpt text
+  never updated when Phase 1 rewrote those posts. This file is live infrastructure (feeds
+  blog/index.html, feed.xml, inject_blog_links.py cross-links) — NOT a "don't touch, historical"
+  file like data/social/*. Fixed, regenerated everything downstream (9 more pages' cross-link cards
+  updated as a result).
+- Pushed as 4208f35e, merged with a same-day automated `publish-blog.yml` run (2 new posts), pushed
+  as 31365355. Verified live.
+
+Follow-ups still NOT done (unchanged from Phase 5/6, all require Robert or are non-blocking):
+the store's other planner products for retired exams (`store/microsoft.html`, `resources.html` —
+pricing/listing decision, needs Robert's call), `data/social/*`/`data/newsletters/*` snapshots
+(deliberately left as historical artifacts, not rewritten), `k3_run.json` in repo root (untracked
+LLM debug output, unrelated to FixTheVuln — ask Robert before deleting), and a tech-debt note from
+AppSec: `DOMAIN_NAME_OVERRIDES` is a second source of truth layered on the read-only OneDrive
+config — fine as a one-off patch, revisit the override mechanism's location if more certs need the
+same treatment.
