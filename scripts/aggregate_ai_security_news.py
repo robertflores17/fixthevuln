@@ -275,7 +275,13 @@ def build_digest(grouped: dict, cutoff_dt: datetime, today: datetime) -> str:
     lines.append(f'title: "AI Security Trend Roundup — {week_end}"')
     lines.append(f'description: "{total} curated AI security updates from OWASP GenAI, arXiv, Simon Willison, CISA, and 4 more sources covering {week_start}–{today.strftime("%b %d")}. Every item credited to its original author."')
     lines.append('keywords: "AI security, LLM security, prompt injection, agentic AI, GenAI threats, AI vulnerabilities, AI red team"')
-    lines.append(f'date: "{iso_date}"')
+    # No `date:` field here deliberately: this digest is written on aggregation
+    # day (Friday), but publish_editorial.py doesn't turn it into a live page
+    # until the next Tuesday publish-blog.yml run, up to 4 days later. Leaving
+    # `date` unset lets _parse_frontmatter's setdefault() stamp the page with
+    # the day it actually goes live, instead of a datePublished/"Last updated"
+    # that undercounts the post's real age by up to 4 days. The week the
+    # digest covers is still stated in the title and body copy above/below.
     lines.append(f'slug: "{slug}"')
     lines.append('author: "FixTheVuln Team"')
     lines.append('sources: "OWASP GenAI Security Project, Simon Willison, arXiv cs.CR, Protect AI, Google Project Zero, CISA, NIST, Hacker News"')
