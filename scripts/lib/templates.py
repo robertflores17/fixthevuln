@@ -115,6 +115,30 @@ def outdated_content_notice(pid):
     )
 
 
+# Some OneDrive cert-config entries pair a current exam version's percentages
+# with a prior version's domain names (caught on aws-security-specialty: the
+# SCS-C03 weights are correct but domains 1/2/6 still carry SCS-C02 names).
+# Unlike OUTDATED_CONTENT, the underlying objectives/percentages ARE current
+# here, so a silent name correction is right -- not a "this is stale" notice.
+DOMAIN_NAME_OVERRIDES = {
+    'aws-security-specialty': {
+        1: 'Detection',
+        2: 'Incident Response',
+        6: 'Security Foundations and Governance',
+    },
+}
+
+
+def apply_domain_overrides(pid, domains):
+    """Mutate domain dicts in place to fix stale names from cert-config data."""
+    overrides = DOMAIN_NAME_OVERRIDES.get(pid)
+    if not overrides:
+        return
+    for d in domains:
+        if d.get('number') in overrides:
+            d['name'] = overrides[d['number']]
+
+
 # ---------------------------------------------------------------------------
 # Escape Helpers
 # ---------------------------------------------------------------------------

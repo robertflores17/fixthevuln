@@ -15,7 +15,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from lib.templates import (html_head, nav, share_bar, footer, cf_analytics, esc as _esc,
                             retirement_notice, RETIRED_EXAMS,
-                            outdated_content_notice, OUTDATED_CONTENT)
+                            outdated_content_notice, OUTDATED_CONTENT,
+                            apply_domain_overrides)
 from lib.constants import SITE_URL, STYLE_CSS_VERSION, FAVICON_SVG
 CERTS_DIR = REPO / 'certs'
 ETSY_CERTS = Path.home() / 'Library' / 'CloudStorage' / 'OneDrive-Personal' / 'Documents' / 'Invest' / 'Business' / 'Dropshipping' / 'Etsy-Claude' / 'certifications'  # OneDrive path (Dropshipping is docs-only, stays on OneDrive per Business/CLAUDE.md)
@@ -228,7 +229,7 @@ def generate_heatmap_html(domains):
         except (ValueError, TypeError):
             pct = 0
         color = colors[i % len(colors)]
-        name = d.get('name', f'Domain {d.get("number", i+1)}')
+        name = escape(d.get('name', f'Domain {d.get("number", i+1)}'))
         bars += f'''
                 <div class="heatmap-row">
                     <div class="heatmap-label">
@@ -303,6 +304,7 @@ def generate_page(product):
     study_weeks = 12
     if config:
         domains = config.get('domains', [])
+        apply_domain_overrides(pid, domains)
         study_weeks = config.get('planner_settings', {}).get('num_weeks', 12)
         for d in domains:
             objectives_html = ''.join(

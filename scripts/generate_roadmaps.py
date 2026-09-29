@@ -14,7 +14,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from lib.templates import (html_head, nav, share_bar, footer, cf_analytics, breadcrumb_schema, esc as _esc,
                             retirement_notice, RETIRED_EXAMS,
-                            outdated_content_notice, OUTDATED_CONTENT)
+                            outdated_content_notice, OUTDATED_CONTENT,
+                            apply_domain_overrides)
 from lib.constants import SITE_URL
 ETSY_CERTS = Path.home() / 'Library' / 'CloudStorage' / 'OneDrive-Personal' / 'Documents' / 'Invest' / 'Business' / 'Dropshipping' / 'Etsy-Claude' / 'certifications'  # OneDrive path (Dropshipping is docs-only, stays on OneDrive per Business/CLAUDE.md)
 ROADMAPS_DIR = REPO / 'roadmaps'
@@ -217,6 +218,7 @@ def generate_roadmap_page(product, config):
     vendor = VENDOR_NAMES.get(vendor_id, vendor_id)
 
     domains = config.get('domains', [])
+    apply_domain_overrides(pid, domains)
     weekly_plan = config.get('weekly_study_plan', [])
     num_weeks = config.get('planner_settings', {}).get('num_weeks', 12)
     # Prefer the in-repo PRODUCTS catalog's exam code over the OneDrive config's
