@@ -1,56 +1,52 @@
-# AppSec Review — 2026-09-27
+# AppSec Review — 2026-09-29
 
 **Reviewer:** Robert Flores, CISSP  
-**Review Date:** 2026-09-27  
-**CVEs Reviewed:** 1  
-**Cumulative Database:** 240 vulnerabilities (231 active, 9 archived)
+**CVEs Reviewed:** 2  
+**Review Date:** 2026-09-29  
+**Data Source:** CISA Known Exploited Vulnerabilities (KEV) Catalog
 
 ---
 
 ## Severity Breakdown
 
-| Priority | Count |
-|----------|-------|
-| Critical | 0     |
-| High     | 1     |
-| Medium   | 0     |
-| Low      | 0     |
+| Priority | Count | CVEs |
+|----------|-------|------|
+| Critical | 1 | CVE-2026-88771 |
+| High | 1 | CVE-2026-88772 |
+| Medium | 0 | — |
+| Low | 0 | — |
 
 ---
 
 ## CVE Summary
 
-| CVE ID         | Vendor    | Priority | Vulnerability Class              |
-|----------------|-----------|----------|----------------------------------|
-| CVE-2026-87902 | WordPress | High     | Remote File Inclusion (CWE-98) / RCE |
-
----
-
-## CVE Detail
-
-**CVE-2026-87902 — WordPress Core Remote File Inclusion**  
-CVSS 8.1 (v3.1). An unauthenticated attacker can manipulate page-template resolution to include an arbitrary readable local `.php` file outside active theme directories, achieving remote code execution. WordPress powers an estimated 43%+ of the public web; exploitation at scale is highly probable given active KEV listing. CISA referenced BOD 26-04 forensic triage requirements, indicating federal scope beyond standard patching SLAs. Due date is 2026-09-28 — patch window is extremely tight.
+| CVE ID | Vendor | Product | CVSS | Priority | Vuln Class |
+|--------|--------|---------|------|----------|------------|
+| CVE-2026-88771 | Citrix | NetScaler ADC/Gateway | 9.8 | Critical | Unauthenticated RCE (Improper Input Validation, CWE-20) |
+| CVE-2026-88772 | Citrix | NetScaler ADC/Gateway | 8.1 | High | Memory Corruption / RCE+DoS (Buffer Bounds, CWE-119) |
 
 ---
 
 ## Trend Analysis
 
-This week's single-entry batch continues a pattern of CISA KEV additions targeting high-profile CMS and web-application infrastructure. WordPress Core RFI (CWE-98) represents a classic yet persistent class: despite decades of awareness, path-traversal and file-inclusion primitives resurface in new architectural contexts (theme resolution, plugin hooks, REST endpoints). The unauthenticated vector without any precondition beyond a readable local `.php` file lowers the bar dramatically for opportunistic mass exploitation. Combined with WordPress's extraordinary market share, the attack surface is effectively every unpatched instance on the internet. The BOD 26-04 citation and forensic triage language signal that CISA is treating this as an active intrusion vector requiring IR readiness, not merely routine patching.
+Both CVEs this cycle target Citrix NetScaler ADC and NetScaler Gateway, continuing a persistent pattern of threat actors focusing on perimeter network devices — particularly those from Citrix — as primary initial access vectors. CVE-2026-88771 (CVSS 9.8) is especially alarming: unauthenticated arbitrary command execution on a device that sits at the edge of enterprise networks gives attackers immediate foothold with no credential requirement. The companion CVE-2026-88772 (CVSS 8.1) compounds the risk — memory corruption enabling RCE or DoS on the same product family suggests a coordinated research effort targeting NetScaler internals, reminiscent of the 2023–2024 "Citrix Bleed" wave. CISA's mandate for forensic triage (BOD 26-04) rather than just patching signals confirmed active exploitation at scale, and the tight 3-day due date (2026-09-27 to 2026-09-30) underscores the urgency for any organization running NetScaler in front of VPN or ADC workloads.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"CWE-98 in 2026: Why Remote File Inclusion Never Died"** — Walk through the historical arc of RFI (PHP register_globals era → modern theme/plugin surface), explain how page-template resolution became the new attack surface in WordPress Core, and provide detection signatures (access log patterns, EDR indicators) for defenders. High SEO value given WordPress's installed base.
+1. **"Citrix NetScaler Under Siege Again: What CVE-2026-88771 Means for Enterprise VPN Security"** — Deep dive into the unauthenticated RCE vector, how it compares to prior Citrix exploits (Citrix Bleed, CVE-2023-3519), and what forensic triage looks like under BOD 26-04.
 
-2. **"BOD 26-04 Deep Dive: What CISA's New Patching Directive Means for Federal IT Teams"** — CVE-2026-87902 is the first KEV entry explicitly referencing BOD 26-04 forensic triage requirements. A timely explainer on the directive's dual mandate (patch prioritization + forensic readiness) would capture search traffic from federal IT and FISMA-scoped practitioners.
+2. **"Memory Corruption on Network Appliances: Why CWE-119 in Citrix NetScaler Is More Dangerous Than It Sounds"** — Educational post on buffer bounds vulnerabilities in network infrastructure, how RCE/DoS from CVE-2026-88772 can be chained with CVE-2026-88771 for a full kill chain.
 
-3. **"CISA KEV Due Dates Are Getting Shorter: A 3-Day Patch Window Analysis"** — CVE-2026-87902 has a one-day notice before its due date (added 2026-09-25, due 2026-09-28). Analyze the distribution of KEV due dates over 2025–2026 and discuss operational implications for vulnerability management programs lacking automated patching pipelines.
+3. **"CISA KEV September 2026 Roundup: Perimeter Devices Remain Threat Actor Favorites"** — Monthly trend analysis tying this Citrix cluster to the broader pattern of edge-device exploitation, with IOC guidance and patch prioritization advice for security teams.
 
 ---
 
 ## Newsletter Snippet
 
-**This week in the CISA KEV catalog:** One new critical web vulnerability was added — CVE-2026-87902, a Remote File Inclusion flaw in WordPress Core rated CVSS 8.1. The vulnerability allows an unauthenticated attacker to force WordPress's page-template resolution to include an attacker-chosen local PHP file, effectively achieving remote code execution without credentials. With WordPress running on over 43% of all websites, the blast radius of this vulnerability cannot be overstated. CISA's due date of September 28 gives affected organizations essentially 72 hours from disclosure — organizations without automated patching pipelines should treat this as an emergency change.
+**CISA adds two critical Citrix NetScaler vulnerabilities to KEV — patch by September 30**
 
-For federal agencies, CISA explicitly invoked BOD 26-04's forensic triage requirements alongside the standard patch mandate, signaling that evidence preservation and IR readiness are expected alongside remediation. If you haven't patched yet: update to the latest WordPress Core release, audit template-include hooks in active themes and plugins, and review web server access logs for anomalous `?template=` or `?page_template=` parameter activity. The FixTheVuln CVE detail page for CVE-2026-87902 includes remediation steps, OWASP mapping, and curated threat intelligence links.
+CISA added CVE-2026-88771 and CVE-2026-88772 to the Known Exploited Vulnerabilities catalog this week, both targeting Citrix NetScaler ADC and NetScaler Gateway. CVE-2026-88771 (CVSS 9.8) allows an unauthenticated attacker to execute arbitrary commands — making it one of the most severe network perimeter vulnerabilities seen this year. CVE-2026-88772 (CVSS 8.1) compounds the risk with a memory buffer vulnerability enabling remote code execution or denial of service on the same product family.
+
+Federal agencies have until September 30, 2026, to apply mitigations under BOD 26-04. CISA's guidance goes beyond patching — organizations are required to run forensic triage using provided IOCs directly in the NetScaler console to check for prior compromise. If you're running Citrix NetScaler ADC or Gateway in any internet-facing capacity, treat this as an emergency: assume the possibility of prior exploitation, isolate where feasible, and follow Citrix's published mitigation guidance at CTX697096 and CTX694799 immediately.
