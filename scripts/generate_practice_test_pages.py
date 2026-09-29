@@ -134,6 +134,21 @@ QUIZ_REGISTRY = [
     {'quiz': 'cpts-quiz.html',        'json': 'cpts-questions.json',        'name': 'Hack The Box CPTS', 'short': 'CPTS',   'exam': 'CPTS',   'vendor': 'specialty', 'tagline': 'Hands-on penetration testing across the full kill chain'},
 ]
 
+# Same 7 exams as RETIRED_EXAMS in lib/templates.py, keyed by quiz filename
+# instead of cert id since that's what QUIZ_REGISTRY indexes by. Card text
+# gets this suffix; the quiz page itself carries the full notice. AI-900 gets
+# its named successor (matches practice-tests.html's hand-patched text); the
+# other 6 have no named successor in RETIRED_EXAMS, so a plain "(Retired)".
+RETIRED_QUIZZES = {
+    'ai900-quiz.html': ' (Retired, see AI-901)',
+    'az500-quiz.html': ' (Retired)',
+    'az204-quiz.html': ' (Retired)',
+    'ms900-quiz.html': ' (Retired)',
+    'ai102-quiz.html': ' (Retired)',
+    'aws-mls-quiz.html': ' (Retired)',
+    'aws-dbs-quiz.html': ' (Retired)',
+}
+
 # ---------------------------------------------------------------------------
 # Vendor Metadata
 # ---------------------------------------------------------------------------
@@ -338,17 +353,19 @@ def build_quiz_card(quiz, data, depth=1):
     domains_str = ' &bull; '.join(
         esc(d['name']) for d in data['domains'].values()
     ) if data['domains'] else ''
+    suffix = RETIRED_QUIZZES.get(quiz['quiz'], '')
+    cta_suffix = ' (retired)' if quiz['quiz'] in RETIRED_QUIZZES else ''
 
     return f"""        <div class="pt-quiz-card pt-animate">
             <div class="pt-quiz-vendor">{esc(VENDOR_META[quiz['vendor']]['name'])}</div>
-            <h3>{esc(quiz['name'])} {esc(quiz['exam'])}</h3>
+            <h3>{esc(quiz['name'])} {esc(quiz['exam'])}{suffix}</h3>
             <div class="pt-quiz-tagline">{esc(quiz['tagline'])}</div>
             <div class="pt-quiz-stats">
                 <span class="pt-quiz-stat"><strong>{data['total_questions']}</strong> questions</span>
                 <span class="pt-quiz-stat"><strong>{data['domain_count']}</strong> domains</span>
             </div>
             <div class="pt-quiz-domains">{domains_str}</div>
-            <a href="{prefix}{quiz['quiz']}" class="pt-quiz-cta">Start {esc(quiz['short'])} Quiz &rarr;</a>
+            <a href="{prefix}{quiz['quiz']}" class="pt-quiz-cta">Start {esc(quiz['short'])} Quiz{cta_suffix} &rarr;</a>
         </div>"""
 
 
@@ -402,7 +419,11 @@ def build_vendor_page(vendor_id, quizzes_with_data):
             {
                 '@type': 'ListItem',
                 'position': i + 1,
-                'name': f'{q["name"]} {q["exam"]} Practice Test',
+                'name': f'{q["name"]} {q["exam"]} Practice Test' + (
+                    ' (Retired Exam, see AI-901)' if q['quiz'] == 'ai900-quiz.html'
+                    else ' (Retired Exam)' if q['quiz'] in RETIRED_QUIZZES
+                    else ''
+                ),
                 'url': f'{SITE_URL}/{q["quiz"]}',
             }
             for i, (q, _) in enumerate(quizzes_with_data)
