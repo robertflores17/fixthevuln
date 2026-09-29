@@ -12,9 +12,11 @@ from html import escape
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from lib.templates import (html_head, nav, share_bar, footer, cf_analytics, breadcrumb_schema, esc as _esc)
+from lib.templates import (html_head, nav, share_bar, footer, cf_analytics, breadcrumb_schema, esc as _esc,
+                            retirement_notice, RETIRED_EXAMS,
+                            outdated_content_notice, OUTDATED_CONTENT)
 from lib.constants import SITE_URL
-ETSY_CERTS = Path(__file__).resolve().parent.parent.parent / 'Dropshipping' / 'Etsy-Claude' / 'certifications'
+ETSY_CERTS = Path.home() / 'Library' / 'CloudStorage' / 'OneDrive-Personal' / 'Documents' / 'Invest' / 'Business' / 'Dropshipping' / 'Etsy-Claude' / 'certifications'  # OneDrive path (Dropshipping is docs-only, stays on OneDrive per Business/CLAUDE.md)
 ROADMAPS_DIR = REPO / 'roadmaps'
 
 TODAY = datetime.now().strftime('%B %-d, %Y')
@@ -83,8 +85,8 @@ PRODUCTS = [
     {'id': 'offsec-oscp',             'vendor': 'offsec',     'name': 'OffSec OSCP',                   'config': 'offsec/oscp_pen-200.json'},
     {'id': 'offsec-oswa',             'vendor': 'offsec',     'name': 'OffSec OSWA',                   'config': 'offsec/oswa_web-200.json'},
     {'id': 'offsec-oswe',             'vendor': 'offsec',     'name': 'OffSec OSWE',                   'config': 'offsec/oswe_web-300.json'},
-    {'id': 'hashicorp-terraform',     'vendor': 'hashicorp',  'name': 'HashiCorp Terraform Associate', 'config': 'hashicorp/terraform_associate_003.json'},
-    {'id': 'hashicorp-vault',         'vendor': 'hashicorp',  'name': 'HashiCorp Vault Associate',     'config': 'hashicorp/vault_associate_003.json'},
+    {'id': 'hashicorp-terraform',     'vendor': 'hashicorp',  'name': 'HashiCorp Terraform Associate', 'meta': 'TA-003 · 8 objectives', 'config': 'hashicorp/terraform_associate_003.json'},
+    {'id': 'hashicorp-vault',         'vendor': 'hashicorp',  'name': 'HashiCorp Vault Associate',     'meta': 'VA-002 · 8 objectives', 'config': 'hashicorp/vault_associate_003.json'},
     {'id': 'k8s-cka',                 'vendor': 'k8s',        'name': 'Kubernetes CKA',                'config': 'kubernetes/cka.json'},
     {'id': 'k8s-ckad',                'vendor': 'k8s',        'name': 'Kubernetes CKAD',               'config': 'kubernetes/ckad.json'},
     {'id': 'k8s-cks',                 'vendor': 'k8s',        'name': 'Kubernetes CKS',                'config': 'kubernetes/cks.json'},
@@ -217,7 +219,12 @@ def generate_roadmap_page(product, config):
     domains = config.get('domains', [])
     weekly_plan = config.get('weekly_study_plan', [])
     num_weeks = config.get('planner_settings', {}).get('num_weeks', 12)
-    exam_code = config.get('exam_details', {}).get('exam_code', product.get('meta', '').split('·')[0].strip() if 'meta' in product else '')
+    # Prefer the in-repo PRODUCTS catalog's exam code over the OneDrive config's
+    # exam_details.exam_code — the OneDrive source can drift (e.g. a file named
+    # "..._003.json" whose own exam_code field still says an older label) and
+    # this keeps roadmaps consistent with what certs/*.html shows for the same id.
+    exam_code = (product.get('meta', '').split('·')[0].strip() if 'meta' in product
+                 else config.get('exam_details', {}).get('exam_code', ''))
 
     heatmap = generate_heatmap(domains)
     timeline = generate_timeline(weekly_plan, num_weeks, pid)
@@ -268,13 +275,18 @@ def generate_roadmap_page(product, config):
                     <p style="font-size:0.8rem;color:var(--text-secondary);margin:0;">Test your knowledge with free practice questions</p>
                 </a>'''
 
-    rm_desc = f'Free {name} study roadmap. {num_weeks}-week plan with domain weights, free resources, and progress tracking. Start your {name} journey today.'
+    if pid in RETIRED_EXAMS:
+        rm_desc = f'{name} is a retired certification. This archived roadmap keeps the old week-by-week plan for reference and points to what the vendor offers now.'
+        rm_title = f'{name} Study Roadmap (Retired Exam)'
+    else:
+        rm_desc = f'Free {name} study roadmap. {num_weeks}-week plan with domain weights, free resources, and progress tracking. Start your {name} journey today.'
+        rm_title = f'{name} Study Roadmap — Free Week-by-Week Plan'
     rm_canonical = f'{SITE_URL}/roadmaps/{pid}.html'
     rm_schemas = [
         breadcrumb_schema([("Home", f"{SITE_URL}/"), ("Roadmaps", f"{SITE_URL}/roadmaps/"), (f"{name} Roadmap", None)]),
         faq_schema_json,
     ]
-    rm_head = html_head(f'{name} Study Roadmap — Free Week-by-Week Plan', rm_desc, rm_canonical,
+    rm_head = html_head(rm_title, rm_desc, rm_canonical,
                         schema_blocks=rm_schemas, depth=1)
 
     rm_style = """    <style>
@@ -318,10 +330,13 @@ def generate_roadmap_page(product, config):
 
         <section class="roadmap-hero">
             <span class="roadmap-badge">{escape(vendor)}</span>
-            <h1>{escape(name)} Study Roadmap</h1>
+            <h1>{escape(name)} Study Roadmap{' (Retired Exam)' if pid in RETIRED_EXAMS else ''}</h1>
             <p class="roadmap-meta">{escape(exam_code)} &middot; {num_weeks}-week plan &middot; Free</p>
             <p style="font-size:0.85rem;color:var(--text-secondary);margin-top:0.5rem;">Last updated: {TODAY}</p>
         </section>
+
+        {retirement_notice(pid)}
+        {outdated_content_notice(pid)}
 
         <div class="roadmap-content">
             <div class="roadmap-progress">

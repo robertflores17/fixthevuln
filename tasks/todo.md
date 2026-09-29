@@ -952,12 +952,36 @@ unverifiable claims are softened or cut, never guessed; retired exams keep their
 notice pointing to the successor; bump "Last updated" on edited generated/blog pages.
 Gate: content-editor + appsec on the combined diff before any push.
 
-- [ ] Microsoft study guides (12)
-- [ ] AWS / Google / HashiCorp / K8s study guides (17)
-- [ ] CompTIA study guides (14)
-- [ ] Cisco / ISC2 / ISACA / EC-Council / GIAC / OffSec study guides (22)
-- [ ] AI + evergreen pages (genai-data-security, prompt-injection, ai-security-careers, 3 blog posts)
-- [ ] Combined pre-push review, push, verify live
-- Follow-ups discovered, NOT in scope: same stale facts also live in certs/*.html, roadmaps/*.html,
-  quiz pages, data/cert-costs.json, tracker data, and store planner products for retired exams;
-  source cert JSONs live in Dropshipping/Etsy-Claude/certifications (OneDrive, outside this repo).
+- [x] Microsoft study guides (12) — pushed 57521920
+- [x] AWS / Google / HashiCorp / K8s study guides (17) — pushed 57521920
+- [x] CompTIA study guides (14) — pushed 57521920
+- [x] Cisco / ISC2 / ISACA / EC-Council / GIAC / OffSec study guides (22) — pushed 57521920
+- [x] AI + evergreen pages (genai-data-security, prompt-injection, ai-security-careers, 3 blog posts) — pushed 57521920, 650ba1af
+- [x] Combined pre-push review, push, verify live — done
+
+### Phase 2 (2026-09-28, same day) — certs/roadmaps/quizzes/store, found + fixed along the way
+
+- [x] Fixed broken `ETSY_CERTS` path in 6 generator scripts — pointed at a local path that stopped
+  existing after the 2026-08-09 OneDrive move; real source is
+  `~/Library/CloudStorage/OneDrive-Personal/Documents/Invest/Business/Dropshipping/Etsy-Claude/certifications`.
+  Read-only against that OneDrive data per Robert's call.
+- [x] Added shared `RETIRED_EXAMS`/`retirement_notice()` to `scripts/lib/templates.py`, wired into
+  `generate_cert_pages.py` + `generate_roadmaps.py`; regenerated all 66 certs + 66 roadmaps + hub +
+  `data/cert-costs.json` (`retired`/`retired_note` fields) + `cert-cost-calculator.html` UI.
+  Same 7 exams as the blog fix.
+- [x] Found HashiCorp Terraform/Vault mislabeled everywhere (TA-003/VA-002, current is 004/003) and
+  first-pass relabeled it — content-editor blocked (P0 x2): label changed but the OneDrive config's
+  domain content is still the old curriculum (`vault_associate_003.json` file is misnamed — it holds
+  VA-002 content). Fixed by reverting the label everywhere content is still old (~15 files) and adding
+  a distinct `OUTDATED_CONTENT`/`outdated_content_notice()` (blue, not amber — these aren't discontinued,
+  just showing an older version) pointing to the corrected blog study guide. Also fixed
+  `generate_roadmaps.py`'s `exam_code` sourcing (was preferring the OneDrive config over the in-repo
+  catalog, so roadmap and cert pages could show different labels for the same id) and caught a same-bug
+  instance in `generate_cert_blog_posts.py`'s `CERT_BLOG_CONFIGS` that would have regenerated a
+  mislabeled draft on the next `publish-blog.yml` run.
+- [ ] Pushed as of this writing — verify live site next.
+
+Follow-ups discovered, NOT yet done: same stale facts likely still live in quiz pages beyond
+terraform/vault (not audited this pass), the store's other planner products for retired exams
+(pricing/listing decision, not made), and `data/blog_metadata.json`/`data/social/*`/`data/newsletters/*`
+snapshots for other certs (deliberately left as historical artifacts, not rewritten).

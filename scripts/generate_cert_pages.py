@@ -13,10 +13,12 @@ from html import escape
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from lib.templates import (html_head, nav, share_bar, footer, cf_analytics, esc as _esc)
+from lib.templates import (html_head, nav, share_bar, footer, cf_analytics, esc as _esc,
+                            retirement_notice, RETIRED_EXAMS,
+                            outdated_content_notice, OUTDATED_CONTENT)
 from lib.constants import SITE_URL, STYLE_CSS_VERSION, FAVICON_SVG
 CERTS_DIR = REPO / 'certs'
-ETSY_CERTS = Path(__file__).resolve().parent.parent.parent / 'Dropshipping' / 'Etsy-Claude' / 'certifications'
+ETSY_CERTS = Path.home() / 'Library' / 'CloudStorage' / 'OneDrive-Personal' / 'Documents' / 'Invest' / 'Business' / 'Dropshipping' / 'Etsy-Claude' / 'certifications'  # OneDrive path (Dropshipping is docs-only, stays on OneDrive per Business/CLAUDE.md)
 
 # ── Product catalog (from store.js) ──────────────────────────────────
 PRODUCTS = [
@@ -81,8 +83,8 @@ PRODUCTS = [
     {'id': 'offsec-oscp',             'vendor': 'offsec',     'name': 'OffSec OSCP',                   'meta': 'PEN-200 · Practical',   'config': 'offsec/oscp_pen-200.json'},
     {'id': 'offsec-oswa',             'vendor': 'offsec',     'name': 'OffSec OSWA',                   'meta': 'WEB-200 · Practical',   'config': 'offsec/oswa_web-200.json'},
     {'id': 'offsec-oswe',             'vendor': 'offsec',     'name': 'OffSec OSWE',                   'meta': 'WEB-300 · Practical',   'config': 'offsec/oswe_web-300.json'},
-    {'id': 'hashicorp-terraform',     'vendor': 'hashicorp',  'name': 'HashiCorp Terraform Associate', 'meta': 'TA-003 · 9 objectives', 'config': 'hashicorp/terraform_associate_003.json'},
-    {'id': 'hashicorp-vault',         'vendor': 'hashicorp',  'name': 'HashiCorp Vault Associate',     'meta': 'VA-002 · 10 objectives','config': 'hashicorp/vault_associate_003.json'},
+    {'id': 'hashicorp-terraform',     'vendor': 'hashicorp',  'name': 'HashiCorp Terraform Associate', 'meta': 'TA-003 · 8 objectives', 'config': 'hashicorp/terraform_associate_003.json'},
+    {'id': 'hashicorp-vault',         'vendor': 'hashicorp',  'name': 'HashiCorp Vault Associate',     'meta': 'VA-002 · 8 objectives','config': 'hashicorp/vault_associate_003.json'},
     {'id': 'k8s-cka',                 'vendor': 'k8s',        'name': 'Kubernetes CKA',                'meta': 'CKA · Performance-based','config': 'kubernetes/cka.json'},
     {'id': 'k8s-ckad',                'vendor': 'k8s',        'name': 'Kubernetes CKAD',               'meta': 'CKAD · Performance-based','config':'kubernetes/ckad.json'},
     {'id': 'k8s-cks',                 'vendor': 'k8s',        'name': 'Kubernetes CKS',                'meta': 'CKS · Performance-based','config': 'kubernetes/cks.json'},
@@ -416,10 +418,15 @@ def generate_page(product):
             </div>
         </section>'''
 
-    cert_desc = f'{name} ({exam_code}) certification study guide with complete exam syllabus, domain breakdown, training resources, and free practice quizzes. Study tips + fillable PDF planners.'
+    if pid in RETIRED_EXAMS:
+        cert_desc = f'{name} ({exam_code}) is a retired certification. This archived guide keeps the old exam syllabus for reference and points to what the vendor offers now.'
+        cert_title = f'{name} Study Guide (Retired Exam)'
+    else:
+        cert_desc = f'{name} ({exam_code}) certification study guide with complete exam syllabus, domain breakdown, training resources, and free practice quizzes. Study tips + fillable PDF planners.'
+        cert_title = f'{name} Certification Study Guide & Exam Syllabus'
     cert_keywords = f'{name}, {exam_code}, {exam_code.replace("-", "").replace(" ", "")}, {name} certification, {name} exam, {name} syllabus, {name} domains, {name} training, cybersecurity certification'
     cert_canonical = f'{SITE_URL}/certs/{pid}.html'
-    cert_head = html_head(f'{name} Certification Study Guide & Exam Syllabus', cert_desc, cert_canonical,
+    cert_head = html_head(cert_title, cert_desc, cert_canonical,
                           keywords=cert_keywords, schema_blocks=[faq_schema], depth=1)
 
     # Inject page-specific styles before </head>
@@ -483,10 +490,13 @@ def generate_page(product):
 
         <section class="cert-hero">
             <span class="cert-badge">{vendor}</span>
-            <h1>{name} Certification</h1>
+            <h1>{name} Certification{' (Retired Exam)' if pid in RETIRED_EXAMS else ''}</h1>
             <p class="cert-meta">{exam_code} &middot; {domain_info}</p>
             <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">Last updated: {datetime.now().strftime('%B %-d, %Y')}</p>
         </section>
+
+        {retirement_notice(pid)}
+        {outdated_content_notice(pid)}
 
         <section class="cert-section">
             <h2>Exam Syllabus & Domains</h2>

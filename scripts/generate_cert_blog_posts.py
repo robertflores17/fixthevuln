@@ -13,7 +13,7 @@ from pathlib import Path
 from datetime import date
 
 REPO = Path(__file__).resolve().parent.parent
-ETSY_CERTS = REPO.parent / 'Dropshipping' / 'Etsy-Claude' / 'certifications'
+ETSY_CERTS = Path.home() / 'Library' / 'CloudStorage' / 'OneDrive-Personal' / 'Documents' / 'Invest' / 'Business' / 'Dropshipping' / 'Etsy-Claude' / 'certifications'  # OneDrive path (Dropshipping is docs-only, stays on OneDrive per Business/CLAUDE.md)
 DRAFTS_DIR = REPO / 'drafts'
 
 TODAY = date.today().strftime('%Y-%m-%d')

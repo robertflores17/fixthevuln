@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-ETSY_CERTS = Path(__file__).resolve().parent.parent.parent / 'Dropshipping' / 'Etsy-Claude' / 'certifications'
+ETSY_CERTS = Path.home() / 'Library' / 'CloudStorage' / 'OneDrive-Personal' / 'Documents' / 'Invest' / 'Business' / 'Dropshipping' / 'Etsy-Claude' / 'certifications'  # OneDrive path (Dropshipping is docs-only, stays on OneDrive per Business/CLAUDE.md)
 
 # Product catalog (mirrors generate_cert_pages.py)
 PRODUCTS = [

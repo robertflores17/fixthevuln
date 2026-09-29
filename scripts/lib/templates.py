@@ -14,6 +14,108 @@ from .constants import (
 
 
 # ---------------------------------------------------------------------------
+# Retired Exams
+# ---------------------------------------------------------------------------
+# Shared by generate_cert_pages.py and generate_roadmaps.py so a cert/roadmap
+# page never presents a retired exam as current. Facts verified against
+# vendor pages 2026-09-28 (same pass that fixed the blog/*-study-guide.html
+# pages) — see tasks/lessons.md before adding an entry without a source.
+RETIRED_EXAMS = {
+    'ms-ai-900': (
+        'Microsoft retired AI-900 on June 30, 2026 and replaced it with AI-901 '
+        '(Microsoft Azure AI Fundamentals). AI-901 has 2 skill areas instead of 5 '
+        'and expects basic Python knowledge. See the <a href="https://learn.microsoft.com/en-us/credentials/certifications/exams/ai-901/" '
+        'target="_blank" rel="noopener">AI-901 exam page on Microsoft Learn</a>.'
+    ),
+    'ms-az-500': (
+        'Microsoft retired AZ-500 and the Azure Security Engineer Associate certification '
+        'on August 31, 2026. Microsoft Learn names no direct successor exam. See the '
+        '<a href="https://learn.microsoft.com/en-us/credentials/certifications/azure-security-engineer/" '
+        'target="_blank" rel="noopener">current security engineer certifications on Microsoft Learn</a>.'
+    ),
+    'ms-az-204': (
+        'Microsoft retired AZ-204 and the Azure Developer Associate certification. '
+        'AI-200 (Azure AI Cloud Developer Associate) is a newer, AI-focused exam. See the '
+        '<a href="https://learn.microsoft.com/en-us/credentials/certifications/azure-developer/" '
+        'target="_blank" rel="noopener">Azure Developer certification page on Microsoft Learn</a>.'
+    ),
+    'ms-ai-102': (
+        'Microsoft retired AI-102 and the Azure AI Engineer Associate certification. '
+        'AI-103 (Azure AI Apps and Agents Developer Associate) is the newer exam. See the '
+        '<a href="https://learn.microsoft.com/en-us/credentials/certifications/azure-ai-engineer/" '
+        'target="_blank" rel="noopener">Azure AI Engineer certification page on Microsoft Learn</a>.'
+    ),
+    'ms-ms-900': (
+        'Microsoft retired MS-900 and the Microsoft 365 Fundamentals certification. '
+        'AB-900 (Copilot and Agent Administration Fundamentals) is the newer exam. See the '
+        '<a href="https://learn.microsoft.com/en-us/credentials/certifications/microsoft-365-fundamentals/" '
+        'target="_blank" rel="noopener">Microsoft 365 Fundamentals certification page on Microsoft Learn</a>.'
+    ),
+    'aws-machine-learning': (
+        'AWS retired the Machine Learning &ndash; Specialty exam (MLS-C01); the last test '
+        'day was March 31, 2026. AWS names ML Engineer &ndash; Associate (MLA-C01) as an '
+        'alternative. See the <a href="https://aws.amazon.com/certification/certified-machine-learning-specialty/" '
+        'target="_blank" rel="noopener">AWS certification retirement notice</a>.'
+    ),
+    'aws-database-specialty': (
+        'AWS retired the Database &ndash; Specialty exam (DBS-C01); the last exam date was '
+        'April 29, 2024. AWS named no direct replacement. See the '
+        '<a href="https://aws.amazon.com/blogs/training-and-certification/aws-certification-retirements-and-launches/" '
+        'target="_blank" rel="noopener">AWS certification retirements and launches post</a>.'
+    ),
+}
+
+
+def retirement_notice(pid):
+    """Amber 'this exam is retired' notice box, or '' if pid is still current."""
+    body = RETIRED_EXAMS.get(pid)
+    if not body:
+        return ''
+    return (
+        '<div role="note" style="border-left: 4px solid #f59e0b; background: var(--bg-secondary); '
+        'color: var(--text-primary); padding: 1rem 1.25rem; border-radius: 8px; margin: 0 0 1.5rem 0;">'
+        f'<strong>Retired exam.</strong> {body}</div>'
+    )
+
+
+# ---------------------------------------------------------------------------
+# Outdated Content (superseded exam version, not a discontinued exam)
+# ---------------------------------------------------------------------------
+# Distinct from RETIRED_EXAMS: the exam itself is still offered, but the
+# domain breakdown sourced from this site's cert-config data describes an
+# older exam version than what the vendor currently tests. Points readers to
+# the study guide, which was rewritten with the current curriculum.
+OUTDATED_CONTENT = {
+    'hashicorp-terraform': (
+        'The domain breakdown below is for Terraform Associate exam version 003. '
+        'HashiCorp\'s current version is 004, which adds objectives on custom '
+        'validation conditions and HCP Terraform workspaces. See the '
+        '<a href="/blog/hashicorp-terraform-study-guide.html">Terraform 004 study guide</a> '
+        'for the current curriculum.'
+    ),
+    'hashicorp-vault': (
+        'The domain breakdown below is for Vault Associate exam version 002. '
+        'HashiCorp\'s current version is 003, which has 9 domains instead of 8, '
+        'including encryption as a service and Vault architecture. See the '
+        '<a href="/blog/hashicorp-vault-study-guide.html">Vault 003 study guide</a> '
+        'for the current curriculum.'
+    ),
+}
+
+
+def outdated_content_notice(pid):
+    """Blue 'this domain breakdown is outdated' notice box, or '' if current."""
+    body = OUTDATED_CONTENT.get(pid)
+    if not body:
+        return ''
+    return (
+        '<div role="note" style="border-left: 4px solid #3b82f6; background: var(--bg-secondary); '
+        'color: var(--text-primary); padding: 1rem 1.25rem; border-radius: 8px; margin: 0 0 1.5rem 0;">'
+        f'<strong>Content note.</strong> {body}</div>'
+    )
+
+
+# ---------------------------------------------------------------------------
 # Escape Helpers
 # ---------------------------------------------------------------------------
 

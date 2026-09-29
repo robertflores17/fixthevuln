@@ -255,8 +255,8 @@ const PRODUCTS = [
   { id: 'offsec-oswe',             vendor: 'offsec',    name: 'OffSec OSWE',                  meta: 'WEB-300 · Practical exam', popular: false, tags: ['Advanced Web', 'Code Review', 'Exploitation'] },
 
   // HashiCorp
-  { id: 'hashicorp-terraform',     vendor: 'hashicorp', name: 'HashiCorp Terraform Associate', meta: 'TA-003 · 9 objectives', popular: true, tags: ['IaC', 'Terraform', 'Provisioning'] },
-  { id: 'hashicorp-vault',         vendor: 'hashicorp', name: 'HashiCorp Vault Associate',    meta: 'VA-002 · 10 objectives', popular: false, tags: ['Secrets Mgmt', 'Encryption', 'Auth'] },
+  { id: 'hashicorp-terraform',     vendor: 'hashicorp', name: 'HashiCorp Terraform Associate', meta: 'TA-003 · 8 objectives', popular: true, tags: ['IaC', 'Terraform', 'Provisioning'] },
+  { id: 'hashicorp-vault',         vendor: 'hashicorp', name: 'HashiCorp Vault Associate',    meta: 'VA-002 · 8 objectives', popular: false, tags: ['Secrets Mgmt', 'Encryption', 'Auth'] },
 
   // Kubernetes
   { id: 'k8s-cka',                 vendor: 'k8s',       name: 'Kubernetes CKA',               meta: 'CKA · Performance-based', popular: true, tags: ['Cluster Admin', 'Networking', 'Scheduling'] },

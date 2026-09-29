@@ -3,12 +3,16 @@
 Consolidates exam fees, retake info, study weeks, salary ranges,
 and resource links for the Cert Cost Calculator tool page."""
 
+import html
 import json
 import re
+import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-ETSY_CERTS = Path(__file__).resolve().parent.parent.parent / 'Dropshipping' / 'Etsy-Claude' / 'certifications'
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from lib.templates import RETIRED_EXAMS
+ETSY_CERTS = Path.home() / 'Library' / 'CloudStorage' / 'OneDrive-Personal' / 'Documents' / 'Invest' / 'Business' / 'Dropshipping' / 'Etsy-Claude' / 'certifications'  # OneDrive path (Dropshipping is docs-only, stays on OneDrive per Business/CLAUDE.md)
 
 # Product catalog (mirrors generate_cert_pages.py)
 PRODUCTS = [
@@ -72,8 +76,8 @@ PRODUCTS = [
     {'id': 'offsec-oscp',             'vendor': 'offsec',     'name': 'OffSec OSCP',                   'meta': 'PEN-200 · Practical',   'config': 'offsec/oscp_pen-200.json'},
     {'id': 'offsec-oswa',             'vendor': 'offsec',     'name': 'OffSec OSWA',                   'meta': 'WEB-200 · Practical',   'config': 'offsec/oswa_web-200.json'},
     {'id': 'offsec-oswe',             'vendor': 'offsec',     'name': 'OffSec OSWE',                   'meta': 'WEB-300 · Practical',   'config': 'offsec/oswe_web-300.json'},
-    {'id': 'hashicorp-terraform',     'vendor': 'hashicorp',  'name': 'HashiCorp Terraform Associate', 'meta': 'TA-003 · 9 objectives', 'config': 'hashicorp/terraform_associate_003.json'},
-    {'id': 'hashicorp-vault',         'vendor': 'hashicorp',  'name': 'HashiCorp Vault Associate',     'meta': 'VA-002 · 10 objectives','config': 'hashicorp/vault_associate_003.json'},
+    {'id': 'hashicorp-terraform',     'vendor': 'hashicorp',  'name': 'HashiCorp Terraform Associate', 'meta': 'TA-003 · 8 objectives', 'config': 'hashicorp/terraform_associate_003.json'},
+    {'id': 'hashicorp-vault',         'vendor': 'hashicorp',  'name': 'HashiCorp Vault Associate',     'meta': 'VA-002 · 8 objectives','config': 'hashicorp/vault_associate_003.json'},
     {'id': 'k8s-cka',                 'vendor': 'k8s',        'name': 'Kubernetes CKA',                'meta': 'CKA · Performance-based','config': 'kubernetes/cka.json'},
     {'id': 'k8s-ckad',                'vendor': 'k8s',        'name': 'Kubernetes CKAD',               'meta': 'CKAD · Performance-based','config':'kubernetes/ckad.json'},
     {'id': 'k8s-cks',                 'vendor': 'k8s',        'name': 'Kubernetes CKS',                'meta': 'CKS · Performance-based','config': 'kubernetes/cks.json'},
@@ -289,6 +293,8 @@ def main():
             'exam_code': exam_code,
             'vendor': VENDOR_NAMES.get(vendor, vendor),
             'vendor_id': vendor,
+            'retired': pid in RETIRED_EXAMS,
+            'retired_note': html.unescape(re.sub(r'<[^>]+>', '', RETIRED_EXAMS[pid])) if pid in RETIRED_EXAMS else '',
             'exam_fee': exam_fee,
             'retake_policy': retake_policy,
             'study_weeks': study_weeks,

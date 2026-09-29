@@ -142,6 +142,7 @@
         </div>
 
         <div id="calcResults" class="calc-results">
+            <div id="retiredNotice" style="display:none; border-left: 4px solid #f59e0b; background: var(--bg-secondary); color: var(--text-primary); padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 1.5rem;"></div>
             <div class="cost-overview" id="costOverview"></div>
 
             <div class="path-compare">
@@ -220,7 +221,7 @@ function populateDropdown() {
     Object.keys(vendors).sort().forEach(vendor => {
         html += '<optgroup label="' + esc(vendor) + '">';
         vendors[vendor].forEach(c => {
-            html += '<option value="' + esc(c.id) + '">' + esc(c.name) + ' (' + esc(c.exam_code) + ')</option>';
+            html += '<option value="' + esc(c.id) + '">' + esc(c.name) + ' (' + esc(c.exam_code) + (c.retired ? ', Retired' : '') + ')</option>';
         });
         html += '</optgroup>';
     });
@@ -239,6 +240,14 @@ function onCertSelect(e) {
     const cert = certData.find(c => c.id === id);
     if (!cert) return;
     results.classList.add('active');
+    const notice = document.getElementById('retiredNotice');
+    if (cert.retired) {
+        notice.style.display = 'block';
+        notice.innerHTML = '<strong>Retired exam.</strong> ' + esc(cert.retired_note);
+    } else {
+        notice.style.display = 'none';
+        notice.innerHTML = '';
+    }
     renderOverview(cert);
     renderPaths(cert);
     renderROI(cert);
