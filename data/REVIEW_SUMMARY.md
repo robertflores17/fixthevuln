@@ -1,19 +1,19 @@
-# Daily KEV Review — 2026-09-29
+# Daily KEV Review — 2026-09-30
 
-**New CVEs:** 1 | **Critical:** 0 | **High:** 1 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 1 | **Critical:** 1 | **High:** 0 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-86950 | Apple | Multiple Products | 8.8 | Unknown | 2026-10-02 |
+| CVE-2026-76504 | Cisco | Catalyst SD-WAN Manager | 9.8 | Unknown | 2026-10-03 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-10-02 (1 CVE)
+- **Nearest due date:** 2026-10-03 (1 CVE)
 - **Overdue:** None
 
 ## Vendor Summary
-- Apple: 1 CVE
+- Cisco: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
