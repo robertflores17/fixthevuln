@@ -61,7 +61,9 @@ jobs:
             echo "No new AI IDE/MCP disclosures — page untouched." >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
-          git add $PATHS
+          EXISTING=()
+          for p in $PATHS; do [[ -e "$p" ]] && EXISTING+=("$p"); done
+          git add "${EXISTING[@]}"
           git commit -m "Update AI IDE vulnerability tracker"
           # No other job writes these two paths, so a concurrent push can only
           # conflict on unrelated files; rebase resolves it without a merge.
