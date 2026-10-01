@@ -1,9 +1,8 @@
-# AppSec Review — 2026-09-30
+# AppSec Review — 2026-10-01
 
 **Reviewer:** Robert Flores, CISSP  
-**Review Date:** 2026-09-30  
-**CVEs Published:** 1  
-**Pipeline Run:** Automated scheduled review
+**Review Date:** 2026-10-01  
+**CVEs Reviewed:** 1  
 
 ---
 
@@ -11,40 +10,39 @@
 
 | Priority | Count |
 |----------|-------|
-| Critical | 0     |
-| High     | 1     |
+| Critical | 1     |
+| High     | 0     |
 | Medium   | 0     |
 | Low      | 0     |
-| **Total**| **1** |
 
 ---
 
 ## CVE Summary
 
-| CVE ID          | Vendor | Product          | Priority | Vuln Class            |
-|-----------------|--------|------------------|----------|-----------------------|
-| CVE-2026-86950  | Apple  | Multiple Products| High     | Out-of-Bounds Write (RCE) |
+| CVE ID          | Vendor | Product                      | Priority | Vulnerability Class         |
+|-----------------|--------|------------------------------|----------|-----------------------------|
+| CVE-2026-76504  | Cisco  | Catalyst SD-WAN Manager      | Critical | Authentication Bypass (URI Encoding) |
 
 ---
 
 ## Trend Analysis
 
-This cycle adds a single high-severity Apple out-of-bounds write vulnerability (CVE-2026-86950) affecting iOS, macOS, and iPadOS via the CoreGraphics subsystem. The addition follows the aggressive BOD 26-04 remediation timeline with only a 3-day patch window, reflecting CISA's heightened urgency around memory-corruption vulnerabilities in widely deployed consumer and enterprise Apple platforms. CWE-787 (Out-of-Bounds Write) continues to represent one of the most prevalent and dangerous vulnerability classes in CISA KEV additions, as these flaws frequently enable reliable code execution primitives exploited by advanced threat actors and commodity malware alike.
+This batch features a single critical-severity authentication bypass affecting Cisco Catalyst SD-WAN Manager — a key network management plane product broadly deployed in enterprise and government environments. The vulnerability (CWE-177) exploits improper handling of URI hex encoding, allowing unauthenticated remote attackers to gain admin-level access. With a CVSS score of 9.8 and a CISA-mandated remediation deadline of 2026-10-03, organizations running Cisco SD-WAN Manager should treat this as an emergency patch priority. The tight 3-day remediation window under BOD 26-04 reflects CISA's assessment that active exploitation is occurring in the wild. Network management platforms continue to be high-value targets, as compromising them yields broad lateral movement opportunity across managed infrastructure — a pattern consistent with prior campaigns targeting Cisco IOS XE and Fortinet management interfaces.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"BOD 26-04 in Action: Why Apple's 3-Day Patch Windows Are the New Normal"** — Explore how CISA's risk-based prioritization directive is compressing remediation timelines for widely-deployed platforms and what that means for enterprise patch management programs.
-2. **"CoreGraphics and CWE-787: Memory Safety Failures in the Apple Ecosystem"** — Deep dive into the out-of-bounds write class in Apple's graphics stack, historical exploitation patterns, and the developer-side mitigations that can reduce future exposure.
-3. **"CISA KEV as a Risk Signal: How to Triage Actively Exploited CVEs Before the Patch Window Closes"** — Practical guide for security teams on using the KEV catalog alongside CVSS scores and vendor advisories to prioritize remediation under time pressure.
+1. **"Authentication Bypass via URI Encoding: Anatomy of CVE-2026-76504 in Cisco SD-WAN Manager"** — Deep dive on CWE-177, how hex/percent encoding is abused to bypass authentication gates, and mitigations.
+2. **"Why Network Management Planes Are the New Crown Jewels: Lessons from Recent Cisco KEV Entries"** — Trend piece covering the surge in management-layer attacks targeting SD-WAN, SDDC, and network orchestrators.
+3. **"BOD 26-04 in Practice: Forensics Triage Requirements for CISA KEV Vulnerabilities"** — Practical guide to what BOD 26-04 now requires beyond patching, including the new forensics triage obligations.
 
 ---
 
 ## Newsletter Snippet
 
-**This Week in Actively Exploited Vulnerabilities**
+**Critical Cisco SD-WAN Auth Bypass — Patch by October 3rd**
 
-CISA added CVE-2026-86950 to the Known Exploited Vulnerabilities catalog this week — an out-of-bounds write flaw in Apple's CoreGraphics library affecting iOS, macOS, and iPadOS. Rated CVSS 8.8, the vulnerability allows arbitrary code execution and carries one of the tightest remediation deadlines we've seen: federal agencies must patch by October 2nd under BOD 26-04. If your organization manages Apple devices, this one should be at the top of your patch queue today.
+CISA added CVE-2026-76504 to the Known Exploited Vulnerabilities catalog on September 30th, 2026. The vulnerability affects Cisco Catalyst SD-WAN Manager and allows an unauthenticated, remote attacker to gain admin-level access by exploiting improper URI hex encoding (CWE-177, CVSS 9.8). Federal agencies and organizations following BOD 26-04 must apply vendor mitigations by October 3, 2026, and complete forensics triage per CISA's implementation guidance. This is a network management plane vulnerability — if exploited, an attacker controls the SD-WAN fabric, not just a single device.
 
-The continued appearance of CWE-787 (Out-of-Bounds Write) vulnerabilities in the KEV catalog is a reminder that memory corruption remains a primary exploitation vector for nation-state and sophisticated criminal actors. Apple's swift advisory publication and CISA's rapid KEV inclusion underscore the value of monitoring these feeds in real time. Subscribe to FixTheVuln for daily KEV updates and prioritized patching guidance delivered straight to your inbox.
+If you're running Cisco Catalyst SD-WAN Manager exposed to the internet (or reachable from untrusted segments), prioritize this above all other patching activity this week. Review Cisco's advisory at the link in our KEV tracker, isolate the management interface behind a VPN or zero-trust gateway if immediate patching is not feasible, and ensure your SOC has visibility into admin-plane authentication events so you can detect any pre-patch exploitation attempts.
