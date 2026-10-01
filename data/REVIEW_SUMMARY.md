@@ -1,19 +1,19 @@
-# Daily KEV Review — 2026-09-30
+# Daily KEV Review — 2026-10-01
 
-**New CVEs:** 1 | **Critical:** 1 | **High:** 0 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 1 | **Critical:** 0 | **High:** 0 | **Medium:** 0 | **Low:** 1 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-76504 | Cisco | Catalyst SD-WAN Manager | 9.8 | Unknown | 2026-10-03 |
+| CVE-2026-104286 | Fortinet | FortiMail | N/A | Unknown | 2026-10-04 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-10-03 (1 CVE)
+- **Nearest due date:** 2026-10-04 (1 CVE)
 - **Overdue:** None
 
 ## Vendor Summary
-- Cisco: 1 CVE
+- Fortinet: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
