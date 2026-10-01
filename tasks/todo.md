@@ -1041,8 +1041,7 @@ Gate: content-editor + appsec on the combined diff before any push.
 Follow-ups still NOT done (unchanged from Phase 5/6, all require Robert or are non-blocking):
 the store's other planner products for retired exams (`store/microsoft.html`, `resources.html` —
 pricing/listing decision, needs Robert's call), `data/social/*`/`data/newsletters/*` snapshots
-(deliberately left as historical artifacts, not rewritten), `k3_run.json` in repo root (untracked
-LLM debug output, unrelated to FixTheVuln — ask Robert before deleting), and a tech-debt note from
+(deliberately left as historical artifacts, not rewritten), and a tech-debt note from
 AppSec: `DOMAIN_NAME_OVERRIDES` is a second source of truth layered on the read-only OneDrive
 config — fine as a one-off patch, revisit the override mechanism's location if more certs need the
 same treatment.
