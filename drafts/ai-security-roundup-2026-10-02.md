@@ -1,0 +1,136 @@
+---
+title: "AI Security Trend Roundup — Oct 02, 2026"
+description: "25 curated AI security updates from OWASP GenAI, arXiv, Simon Willison, CISA, and 4 more sources covering Sep 25–Oct 02. Every item credited to its original author."
+keywords: "AI security, LLM security, prompt injection, agentic AI, GenAI threats, AI vulnerabilities, AI red team"
+slug: "ai-security-roundup-2026-10-02"
+author: "FixTheVuln Team"
+sources: "OWASP GenAI Security Project, Simon Willison, arXiv cs.CR, Protect AI, Google Project Zero, CISA, NIST, Hacker News"
+cta_section: "comptia"
+---
+
+# AI Security Trend Roundup — Oct 02, 2026
+
+*Covering Sep 25 → Oct 02, 2026. 25 new items from 8 tracked sources.*
+
+> This digest credits every source by name and links directly to each original post. Editorial curation by FixTheVuln — all rights and attribution belong to the original authors.
+
+## Academic & Research
+
+- **[Characterizing and Codifying Malware Sophistication](https://arxiv.org/abs/2610.00098)**  
+  Source: [arXiv cs.CR](https://arxiv.org/list/cs.CR/recent) — Oct 02
+  arXiv:2610.00098v1 Announce Type: new Abstract: 'Sophisticated' is widely used to describe malware, yet it lacks a consistent definition within academic literature. While existing software quality and complexity metrics offer some insight into malware structure, they do not captu
+
+- **[A Comprehensive Review of One-Pixel Attack: Research Status, Taxonomy, Applications, Regulation Policy and Future Directions](https://arxiv.org/abs/2610.00125)**  
+  Source: [arXiv cs.CR](https://arxiv.org/list/cs.CR/recent) — Oct 02
+  arXiv:2610.00125v1 Announce Type: new Abstract: One-Pixel Attacks (OPAs) represent one of the most extreme demonstrations of adversarial fragility in deep learning, where modifying a single pixel can reliably induce high-confidence misclassification across domains such as medical
+
+- **[A Verifier Can Leak the Answer: Diagnosability Before Optimization in Closed-Loop Agent Debugging](https://arxiv.org/abs/2610.00126)**  
+  Source: [arXiv cs.CR](https://arxiv.org/list/cs.CR/recent) — Oct 02
+  arXiv:2610.00126v1 Announce Type: new Abstract: Agent developers increasingly compare prompts, tools, policies, and diagnosis algorithms through simulator-grounded verifiers. A verifier can nevertheless make a solver comparison vacuous: if its probes or predicates encode the targ
+
+- **[Evasion Attacks: How Adversarial Noise Bypasses ML Classifiers](https://arxiv.org/abs/2610.00136)**  
+  Source: [arXiv cs.CR](https://arxiv.org/list/cs.CR/recent) — Oct 02
+  arXiv:2610.00136v1 Announce Type: new Abstract: This paper presents a reproducible, educational study of evasion attacks in image classification and text classification. A compact convolutional network trained on MNIST reached 98.63% clean test accuracy and was evaluated under tw
+
+- **[Intrusion Detection for Agentic Processes: Evidence-Based Runtime Monitoring](https://arxiv.org/abs/2610.00151)**  
+  Source: [arXiv cs.CR](https://arxiv.org/list/cs.CR/recent) — Oct 02
+  arXiv:2610.00151v1 Announce Type: new Abstract: Agent deployments increasingly combine language-model inference with retrieval, delegation, tool execution, external-system access, and human approval. Security-relevant deviations can therefore emerge across an evolving process rat
+
+- **[Actions with Receipts: Jointly Binding Claims, Evidence, and Execution for Replayable Tool-Agent Auditing](https://arxiv.org/abs/2610.00327)**  
+  Source: [arXiv cs.CR](https://arxiv.org/list/cs.CR/recent) — Oct 02
+  arXiv:2610.00327v1 Announce Type: new Abstract: Tool-using agents can expose citations and execution logs while leaving a critical association unaudited: whether the claim shown to a user is the claim emitted by the committed execution and supported by the cited source. A valid c
+
+- **[Authorization for Self-Modifying AI Agent Populations: Conserving Authority across Replacement, Forking, and Rollback](https://arxiv.org/abs/2610.00347)**  
+  Source: [arXiv cs.CR](https://arxiv.org/list/cs.CR/recent) — Oct 02
+  arXiv:2610.00347v1 Announce Type: new Abstract: Self-modifying AI agents can replace, fork, and roll back identity-bearing software while descendants remain executable. Per-successor authorization does not constrain the resulting population: siblings may duplicate quotas, combine
+
+- **[Proof-Gated Signing: Solver-Checked Transaction Guards that Hold Under State Drift for Onchain AI Agents](https://arxiv.org/abs/2610.00354)**  
+  Source: [arXiv cs.CR](https://arxiv.org/list/cs.CR/recent) — Oct 02
+  arXiv:2610.00354v1 Announce Type: new Abstract: AI agents that control wallets read attacker-reachable content, so they can be steered into proposing harmful transactions. The usual last line of defense is a pre-signing check: a static allowlist, an LLM reviewer, or a transaction
+
+- **[On the Relationship between Model Quantization and Model Inversion Attacks](https://arxiv.org/abs/2610.00382)**  
+  Source: [arXiv cs.CR](https://arxiv.org/list/cs.CR/recent) — Oct 02
+  arXiv:2610.00382v1 Announce Type: new Abstract: Model quantization reduces the numerical precision of neural network weights and activations to lower storage and computational costs. Model inversion attacks recover or reconstruct sensitive training data or inference inputs from m
+
+- **[From A2A Attacks to Envelope-Layer Defense: Red-Teaming Evaluation of LLM Agents and a Three-Layer Isomorphic Attack-Defense Model](https://arxiv.org/abs/2610.00392)**  
+  Source: [arXiv cs.CR](https://arxiv.org/list/cs.CR/recent) — Oct 02
+  arXiv:2610.00392v1 Announce Type: new Abstract: Agent interaction protocols such as ACP and A2A have moved LLM-based agents toward multi-agent collaboration, introducing new security threats. A task sent by a remote peer over A2A is treated as a legitimate request, providing a na
+
+- **[Identity-Bound Governance Under Execution Uncertainty: An Accountability Proof Block for LLM Agent Persistent Halts, with Cryptographic Implementation and Cross-Model Calibration](https://arxiv.org/abs/2610.00787)**  
+  Source: [arXiv cs.CR](https://arxiv.org/list/cs.CR/recent) — Oct 02
+  arXiv:2610.00787v1 Announce Type: new Abstract: A correctly governed LLM agent can reach a state in which neither continuing execution nor automatically halting is admissible: the system has detected a persistent failure of its observability or drift-detection layer, but cannot i
+
+- **[Do Defenses Against LLM Extraction Work Across Attacks? A Lifecycle Benchmark of Black-Box Model Extraction](https://arxiv.org/abs/2610.00839)**  
+  Source: [arXiv cs.CR](https://arxiv.org/list/cs.CR/recent) — Oct 02
+  arXiv:2610.00839v1 Announce Type: new Abstract: Large language models (LLMs) deployed through text-only APIs face model extraction risks, as adversaries can collect their responses to train surrogates that reproduce their capabilities. While prior work has developed diverse attac
+
+
+## Prompt Injection & LLM Security
+
+- **[Quoting Matthew Green](https://simonwillison.net/2026/Oct/1/matthew-green/)**  
+  Source: [Simon Willison](https://simonwillison.net/) — Oct 01
+  [...] Put these pieces together and you have the two halves of a worm: a payload that hijacks the agent, and an agent that will carry the payload to the next agent. Agents in separately-isolated sandboxes discovered that they could leave instructions for each other in a shared pa
+
+- **[He Built This City](https://simonwillison.net/2026/Sep/30/he-built-this-city/)**  
+  Source: [Simon Willison](https://simonwillison.net/) — Sep 30
+  I visited the Museum of the City of New York today and got to see He Built This City: Joe Macken’s Model, the 50 x27 feet model of the city built over a 21 year period from balsa wood and cardboard. It exceeded my already high expectations. The exhibition closes on 12th October s
+
+- **[Quoting Anthropic Frontier Red Team](https://simonwillison.net/2026/Sep/29/anthropic-frontier-red-team/)**  
+  Source: [Simon Willison](https://simonwillison.net/) — Sep 29
+  We evaluate several models on 100 tasks from the [internal Binary Exploitation benchmark] (selected at random), and find that GLM-5.3 develops full control flow hijacks in 4% of the trials; Claude Mythos Preview did so in 6%. Although GLM-5.3 performs below Claude Mythos Preview 
+
+- **[GPT 6.1 Sol: Near-Astra intelligence for a fifth of the price](https://simonwillison.net/2026/Sep/29/hn-49898129/)**  
+  Source: [Simon Willison](https://simonwillison.net/) — Sep 29
+  My comment on GPT 6.1 Sol: Near-Astra intelligence for a fifth of the price &mdash; Hacker News.I'm a bit late with the pelicans because I was live-blogging the keynote: https://simonwillison.net/2026/Sep/29/openai-devday-2026-liv... Here they are for GPT-6.1-Sol: https://tools.s
+
+- **[Photo Scrubber — local face blur & metadata removal](https://simonwillison.net/2026/Sep/29/photo-scrubber/)**  
+  Source: [Simon Willison](https://simonwillison.net/) — Sep 29
+  Tool: Photo Scrubber — local face blur & metadata removal I took a photograph of some protesters, then thought about how I don't like sharing photographs of strangers with identifiable faces. I had GPT-6 Astra build this experimental tool that would identify faces and automatical
+
+- **[OpenAI DevDay 2026 live blog](https://simonwillison.net/2026/Sep/29/openai-devday-2026-live-blog/)**  
+  Source: [Simon Willison](https://simonwillison.net/) — Sep 29
+  I'm at OpenAI DevDay today, in Fort Mason, San Francisco. Same as last year I'll be live blogging the keynote and some other notes during the day. OpenAI gave me a free ticket and a seat in the "creator" area for the keynote. Tags: ai, openai, generative-ai, llms, coding-agents, 
+
+- **[Claude Sonnet 5.5](https://simonwillison.net/2026/Sep/28/claude-sonnet-5-5/)**  
+  Source: [Simon Willison](https://simonwillison.net/) — Sep 28
+  Claude Sonnet 5.5 New Sonnet model from Anthropic today. They say it "runs 30%+ faster, and costs up to 30% less for most work" - it's priced the same as Sonnet 5 but appears to beat it on every benchmark, and should be cheaper to run as well. Here are some pelicans riding bicycl
+
+- **[Quoting @joedaroo](https://simonwillison.net/2026/Sep/28/joedaroo/)**  
+  Source: [Simon Willison](https://simonwillison.net/) — Sep 28
+  To say that we were surprised at the jump and suddenness of the capabilities of our models when it came to “cyber” or “swarming” or “message boards” or anything else related to the incidents is an understatement. Security posture takes time to develop. It’s not just about hardeni
+
+- **[Quoting Muse AI Agent](https://simonwillison.net/2026/Sep/28/muse-ai-agent/)**  
+  Source: [Simon Willison](https://simonwillison.net/) — Sep 28
+  Bad news on the MX Keys Mini pickup. Usman showed up at your building around 9:15 and waited, messaged a bunch of times, and nobody came down. He left angry at 9:38 and left a negative rating. Worse, my auto-reply told him "Yep I'm here!" at 9:27 when you clearly weren't availabl
+
+- **[2026 in LLMs (so far)](https://simonwillison.net/2026/Sep/27/2026-in-llms-so-far/)**  
+  Source: [Simon Willison](https://simonwillison.net/) — Sep 27
+  On Friday I gave the closing keynote at the WeAreDevelopers World Congress North America in San Jose. I tied together the key trends from the past year into a chronological exploration of everything that happened in 2026. The video is on YouTube; here are my annotated slides and 
+
+- **[S3 Is the Future, S3 Is the Past](https://simonwillison.net/2026/Sep/27/hn-49871741/)**  
+  Source: [Simon Willison](https://simonwillison.net/) — Sep 27
+  My comment on S3 Is the Future, S3 Is the Past &mdash; Hacker News.One thing I find notable about S3 today is that, while it used to drop in price reasonably often, there hasn't been a price drop in a full decade: 2006-03-14 $0.150/GB-month 2010-11-01 $0.140/GB-month 2012-02-01 $
+
+- **[Bluesky reply bot checker](https://simonwillison.net/2026/Sep/27/bluesky-bot-check/)**  
+  Source: [Simon Willison](https://simonwillison.net/) — Sep 27
+  Tool: Bluesky reply bot checker Automated reply bots on Twitter are a scourge - as someone with a decent number of followers I attract a swarm of these, such that anything I post there attracts dozens of mindless automated replies. They've started manifesting on Bluesky as well. 
+
+- **[Kākāpō Party](https://simonwillison.net/2026/Sep/26/kakapo-party/)**  
+  Source: [Simon Willison](https://simonwillison.net/) — Sep 26
+  Tool: Kākāpō Party I presented a closing keynote for the WeAreDevelopers World Congress North America yesterday. As a STAR moment I decided to weave in references to the record breaking kākāpō breeding season we had in 2026. For my closing slide I wanted to celebrate, and I had s
+
+
+---
+
+## Source List
+
+All sources tracked in this roundup, credited to their original authors/organizations:
+
+- [OWASP GenAI Security Project](https://genai.owasp.org/) — feed: `https://genai.owasp.org/feed/`
+- [Simon Willison](https://simonwillison.net/) — feed: `https://simonwillison.net/atom/everything/`
+- [arXiv cs.CR](https://arxiv.org/list/cs.CR/recent) — feed: `http://export.arxiv.org/rss/cs.CR`
+- [Protect AI](https://protectai.com/) — feed: `https://protectai.com/blog/rss.xml`
+- [Google Project Zero](https://googleprojectzero.blogspot.com/) — feed: `https://googleprojectzero.blogspot.com/feeds/posts/default`
+- [CISA Cybersecurity Advisories](https://www.cisa.gov/news-events/cybersecurity-advisories) — feed: `https://www.cisa.gov/cybersecurity-advisories/all.xml`
+- [NIST Cybersecurity News](https://www.nist.gov/cybersecurity) — feed: `https://www.nist.gov/news-events/cybersecurity/rss.xml`
+- [Hacker News (AI Security)](https://news.ycombinator.com/) — feed: `https://hnrss.org/newest?q=%22AI+security%22+OR+%22prompt+injection%22+OR+%22LLM+vulnerability%22&points=20`
