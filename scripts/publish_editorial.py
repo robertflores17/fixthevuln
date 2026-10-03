@@ -9,6 +9,7 @@ Usage:
     python3 scripts/publish_editorial.py --draft FILE  # Publish a specific draft
 """
 
+import html
 import os
 import sys
 import json
@@ -115,7 +116,7 @@ class MarkdownConverter:
 
     def _inline(self, text):
         # Links [text](url)
-        text = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2">\1</a>', text)
+        text = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', self._link, text)
         # Bold **text**
         text = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', text)
         # Italic *text*
@@ -123,6 +124,13 @@ class MarkdownConverter:
         # Inline code `text`
         text = re.sub(r'`(.+?)`', r'<code>\1</code>', text)
         return text
+
+    def _link(self, m):
+        label, href = m.group(1), m.group(2)
+        # Only http(s) and local paths become links; anything else (javascript:, entity-encoded schemes) stays text.
+        if not re.match(r'(?:https?://|/(?!/)|\.{1,2}/|#)', href):
+            return label
+        return f'<a href="{html.escape(href, quote=True)}">{label}</a>'
 
     def _escape(self, text):
         return text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
@@ -343,6 +351,12 @@ class BlogPublisher:
         post_head = html_head(title, description, canonical,
                               keywords=keywords, schema_blocks=post_schemas, depth=1)
 
+        byline_html = '' if fm.get('auto_digest') == 'true' else f'''        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
+            <span>By <strong>{self._esc(author)}</strong></span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Sources: {self._esc(sources)}</span>
+        </div>
+'''
         return f'''<!DOCTYPE html>
 <html lang="en">
 {post_head}
@@ -359,13 +373,7 @@ class BlogPublisher:
     </header>
 
     <main class="container">
-        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
-            <span>By <strong>{self._esc(author)}</strong></span>
-            <span aria-hidden="true">&middot;</span>
-            <span>Peer-reviewed security content</span>
-            <span aria-hidden="true">&middot;</span>
-            <span>Sources: {self._esc(sources)}</span>
-        </div>
+{byline_html}
         <div class="content-wrapper">
 {html_body}
         </div>
@@ -378,7 +386,7 @@ class BlogPublisher:
             <div style="border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem;">
                 <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.3rem;">CyberFolio</p>
                 <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Building cybersecurity skills? Track them in one place.</p>
-                <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills &mdash; free.</p>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills, free.</p>
                 <a href="https://cyberfolio.io" style="display:inline-block;background:#06b6d4;color:white;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;" target="_blank" rel="noopener">Build Your Portfolio &rarr;</a>
             </div>
 
@@ -406,10 +414,6 @@ class BlogPublisher:
         cta_text = section.get('cta_text', 'Shop Now')
         url = section.get('url', '/store/store.html')
         also = section.get('also_available', '')
-
-        # Adjust path for blog subdirectory
-        if url.startswith('/'):
-            url = '..' + url
 
         also_html = f'''
                 <p style="font-size: 0.8rem; opacity: 0.85; margin-top: 0.75rem;">Also available: {self._esc(also)}</p>''' if also else ''
@@ -530,7 +534,7 @@ class BlogPublisher:
 
     def _generate_rss_feed(self):
         """Generate blog/feed.xml RSS 2.0 feed."""
-        posts = sorted(self.metadata['posts'], key=lambda p: p['date'], reverse=True)[:20]
+        posts = sorted(self.metadata['posts'], key=lambda p: p['date'], reverse=True)
 
         items = []
         for p in posts:

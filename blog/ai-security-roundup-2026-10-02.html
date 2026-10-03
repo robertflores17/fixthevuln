@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="23 AI security updates from arXiv cs.CR and Simon Willison, for the week ending Oct 02, 2026. Every item credited to its original author.">
+    <meta name="keywords" content="AI security, LLM security, prompt injection, agentic AI, GenAI threats, AI vulnerabilities, AI red team">
+    <title>AI Security Trend Roundup: Oct 02, 2026 - FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/blog/ai-security-roundup-2026-10-02.html">
+    <meta property="og:title" content="AI Security Trend Roundup: Oct 02, 2026 - FixTheVuln">
+    <meta property="og:description" content="23 AI security updates from arXiv cs.CR and Simon Willison, for the week ending Oct 02, 2026. Every item credited to its original author.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://fixthevuln.com/blog/ai-security-roundup-2026-10-02.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AI Security Trend Roundup: Oct 02, 2026 - FixTheVuln">
+    <meta name="twitter:description" content="23 AI security updates from arXiv cs.CR and Simon Willison, for the week ending Oct 02, 2026. Every item credited to its original author.">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="stylesheet" href="../style.min.css?v=11">
+    <script type="application/ld+json">
+{
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "AI Security Trend Roundup: Oct 02, 2026",
+        "description": "23 AI security updates from arXiv cs.CR and Simon Willison, for the week ending Oct 02, 2026. Every item credited to its original author.",
+        "datePublished": "2026-10-03",
+        "dateModified": "2026-10-03",
+        "author": {
+                "@type": "Organization",
+                "name": "FixTheVuln Team",
+                "url": "https://fixthevuln.com"
+        },
+        "publisher": {
+                "@type": "Organization",
+                "name": "FixTheVuln",
+                "url": "https://fixthevuln.com"
+        }
+}
+    </script>
+    <script type="application/ld+json">
+{
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+                {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": "https://fixthevuln.com/"
+                },
+                {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Blog",
+                        "item": "https://fixthevuln.com/blog/"
+                },
+                {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": "AI Security Trend Roundup: Oct 02, 2026"
+                }
+        ]
+}
+    </script>
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "What is this article about?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "23 AI security updates from arXiv cs.CR and Simon Willison, for the week ending Oct 02, 2026. Every item credited to its original author."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Why is AI Security Trend Roundup important for cybersecurity?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Understanding ai security trend roundup is critical for cybersecurity professionals to stay ahead of emerging threats and protect their organizations. This article provides actionable insights and analysis."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How can I stay updated on cybersecurity threats?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Follow FixTheVuln for weekly threat roundups, vulnerability breakdowns, and security certification guides. Subscribe to CISA alerts and monitor the Known Exploited Vulnerabilities (KEV) catalog for the latest actively exploited vulnerabilities."
+            }
+        }
+    ]
+}
+    </script>
+    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="../blog/feed.xml">
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="../" class="site-nav-logo">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+        <div class="site-nav-links">
+            <a href="../guides.html">Guides</a>
+            <a href="../tools.html">Tools</a>
+            <a href="../compliance.html">Compliance</a>
+            <a href="../resources.html">Resources</a>
+            <a href="../practice-tests.html">Quizzes</a>
+            <a href="../career-paths.html">Career Paths</a>
+            <a href="../blog/">Blog</a>
+            <a href="/store/store.html" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: .35rem .75rem; border-radius: 6px; font-size: .85rem; font-weight: 600; text-decoration: none;">Store</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header class="content-header">
+        <div class="container">
+            <h1>AI Security Trend Roundup: Oct 02, 2026</h1>
+            <p>Expert cybersecurity insights for IT professionals</p>
+            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">Last updated: October 3, 2026</p>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <div class="content-wrapper">
+<h1 id="ai-security-trend-roundup-oct-02-2026">AI Security Trend Roundup: Oct 02, 2026</h1>
+
+<p><em>Items from the week ending Oct 02, 2026. arXiv items announced Oct 2, 2026 (IDs: 2610.xxxxx). 23 items from 2 sources.</em></p>
+
+<blockquote><p>This digest credits every source by name and links directly to each original post. Items are selected automatically by keyword and feed filters. All rights and attribution belong to the original authors.</p></blockquote>
+
+<h2 id="academic-research">Academic & Research</h2>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2610.00125">A Comprehensive Review of One-Pixel Attack: Research Status, Taxonomy, Applications, Regulation Policy and Future Directions</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Oct 2026 arXiv:2610.00125v1 Announce Type: new Abstract: One-Pixel Attacks (OPAs) represent one of the most extreme demonstrations of adversarial fragility in deep learning, where modifying a single pixel can reliably induce high-confidence misclassification across domains such as medical</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2610.00126">A Verifier Can Leak the Answer: Diagnosability Before Optimization in Closed-Loop Agent Debugging</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Oct 2026 arXiv:2610.00126v1 Announce Type: new Abstract: Agent developers increasingly compare prompts, tools, policies, and diagnosis algorithms through simulator-grounded verifiers. A verifier can nevertheless make a solver comparison vacuous: if its probes or predicates encode the targ</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2610.00136">Evasion Attacks: How Adversarial Noise Bypasses ML Classifiers</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Oct 2026 arXiv:2610.00136v1 Announce Type: new Abstract: This paper presents a reproducible, educational study of evasion attacks in image classification and text classification. A compact convolutional network trained on MNIST reached 98.63% clean test accuracy and was evaluated under tw</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2610.00151">Intrusion Detection for Agentic Processes: Evidence-Based Runtime Monitoring</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Oct 2026 arXiv:2610.00151v1 Announce Type: new Abstract: Agent deployments increasingly combine language-model inference with retrieval, delegation, tool execution, external-system access, and human approval. Security-relevant deviations can therefore emerge across an evolving process rat</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2610.00327">Actions with Receipts: Jointly Binding Claims, Evidence, and Execution for Replayable Tool-Agent Auditing</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Oct 2026 arXiv:2610.00327v1 Announce Type: new Abstract: Tool-using agents can expose citations and execution logs while leaving a critical association unaudited: whether the claim shown to a user is the claim emitted by the committed execution and supported by the cited source. A valid c</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2610.00347">Authorization for Self-Modifying AI Agent Populations: Conserving Authority across Replacement, Forking, and Rollback</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Oct 2026 arXiv:2610.00347v1 Announce Type: new Abstract: Self-modifying AI agents can replace, fork, and roll back identity-bearing software while descendants remain executable. Per-successor authorization does not constrain the resulting population: siblings may duplicate quotas, combine</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2610.00354">Proof-Gated Signing: Solver-Checked Transaction Guards that Hold Under State Drift for Onchain AI Agents</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Oct 2026 arXiv:2610.00354v1 Announce Type: new Abstract: AI agents that control wallets read attacker-reachable content, so they can be steered into proposing harmful transactions. The usual last line of defense is a pre-signing check: a static allowlist, an LLM reviewer, or a transaction</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2610.00382">On the Relationship between Model Quantization and Model Inversion Attacks</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Oct 2026 arXiv:2610.00382v1 Announce Type: new Abstract: Model quantization reduces the numerical precision of neural network weights and activations to lower storage and computational costs. Model inversion attacks recover or reconstruct sensitive training data or inference inputs from m</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2610.00392">From A2A Attacks to Envelope-Layer Defense: Red-Teaming Evaluation of LLM Agents and a Three-Layer Isomorphic Attack-Defense Model</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Oct 2026 arXiv:2610.00392v1 Announce Type: new Abstract: Agent interaction protocols such as ACP and A2A have moved LLM-based agents toward multi-agent collaboration, introducing new security threats. A task sent by a remote peer over A2A is treated as a legitimate request, providing a na</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2610.00787">Identity-Bound Governance Under Execution Uncertainty: An Accountability Proof Block for LLM Agent Persistent Halts, with Cryptographic Implementation and Cross-Model Calibration</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Oct 2026 arXiv:2610.00787v1 Announce Type: new Abstract: A correctly governed LLM agent can reach a state in which neither continuing execution nor automatically halting is admissible: the system has detected a persistent failure of its observability or drift-detection layer, but cannot i</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2610.00839">Do Defenses Against LLM Extraction Work Across Attacks? A Lifecycle Benchmark of Black-Box Model Extraction</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Oct 2026 arXiv:2610.00839v1 Announce Type: new Abstract: Large language models (LLMs) deployed through text-only APIs face model extraction risks, as adversaries can collect their responses to train surrogates that reproduce their capabilities. While prior work has developed diverse attac</p>
+
+<h2 id="ai-news-commentary">AI News & Commentary</h2>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/1/matthew-green/">Quoting Matthew Green</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, quoting Matthew Green, Oct 01 [...] Put these pieces together and you have the two halves of a worm: a payload that hijacks the agent, and an agent that will carry the payload to the next agent. Agents in separately-isolated sandboxes discovered that they could leave instructions for each other in a shared pa</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Sep/30/he-built-this-city/">He Built This City</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Sep 30 I visited the Museum of the City of New York today and got to see He Built This City: Joe Macken’s Model, the 50 by 27 feet model of the city built over a 21 year period from balsa wood and cardboard. It exceeded my already high expectations. The exhibition closes on 12th October s</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Sep/29/anthropic-frontier-red-team/">Quoting Anthropic Frontier Red Team</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Sep 29 Anthropic Frontier Red Team, quoted by Simon Willison: We evaluate several models on 100 tasks from the [internal Binary Exploitation benchmark] (selected at random), and find that GLM-5.3 develops full control flow hijacks in 4% of the trials; Claude Mythos Preview did so in 6%. Although GLM-5.3 performs below Claude Mythos Preview</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Sep/29/hn-49898129/">GPT 6.1 Sol: Near-Astra intelligence for a fifth of the price</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Sep 29 My comment on GPT 6.1 Sol: Near-Astra intelligence for a fifth of the price, Hacker News. I'm a bit late with the pelicans because I was live-blogging the keynote: https://simonwillison.net/2026/Sep/29/openai-devday-2026-liv... Here they are for GPT-6.1-Sol: https://tools.s</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Sep/29/photo-scrubber/">Photo Scrubber: local face blur &amp; metadata removal</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Sep 29 Tool: Photo Scrubber, local face blur &amp; metadata removal. I took a photograph of some protesters, then thought about how I don't like sharing photographs of strangers with identifiable faces. I had GPT-6 Astra build this experimental tool that would identify faces and automatical</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Sep/29/openai-devday-2026-live-blog/">OpenAI DevDay 2026 live blog</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Sep 29 I'm at OpenAI DevDay today, in Fort Mason, San Francisco. Same as last year I'll be live blogging the keynote and some other notes during the day. OpenAI gave me a free ticket and a seat in the "creator" area for the keynote. Tags: ai, openai, generative-ai, llms, coding-agents,</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Sep/28/claude-sonnet-5-5/">Claude Sonnet 5.5</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Sep 28 Claude Sonnet 5.5 New Sonnet model from Anthropic today. Anthropic says it "runs 30%+ faster, and costs up to 30% less for most work" - it's priced the same as Sonnet 5 but appears to beat it on every benchmark, and should be cheaper to run as well. Here are some pelicans riding bicycl</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Sep/28/joedaroo/">Quoting @joedaroo</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Sep 28 To say that we were surprised at the jump and suddenness of the capabilities of our models when it came to “cyber” or “swarming” or “message boards” or anything else related to the incidents is an understatement. Security posture takes time to develop. It’s not just about hardeni</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Sep/27/2026-in-llms-so-far/">2026 in LLMs (so far)</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Sep 27 On Friday I gave the closing keynote at the WeAreDevelopers World Congress North America in San Jose. I tied together the key trends from the past year into a chronological exploration of everything that happened in 2026. The video is on YouTube; here are my annotated slides and</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Sep/27/hn-49871741/">S3 Is the Future, S3 Is the Past</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Sep 27 My comment on S3 Is the Future, S3 Is the Past, Hacker News. One thing I find notable about S3 today is that, while it used to drop in price reasonably often, there hasn't been a price drop in a full decade: 2006-03-14 $0.150/GB-month 2010-11-01 $0.140/GB-month 2012-02-01 $</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Sep/27/bluesky-bot-check/">Bluesky reply bot checker</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Sep 27 Tool: Bluesky reply bot checker Automated reply bots on Twitter are a scourge - as someone with a decent number of followers I attract a swarm of these, such that anything I post there attracts dozens of mindless automated replies. They've started manifesting on Bluesky as well.</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Sep/26/kakapo-party/">Kākāpō Party</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Sep 26 Tool: Kākāpō Party I presented a closing keynote for the WeAreDevelopers World Congress North America yesterday. As a STAR moment I decided to weave in references to the record breaking kākāpō breeding season we had in 2026. For my closing slide I wanted to celebrate, and I had s</p>
+
+<hr>
+
+<h2 id="source-list">Source List</h2>
+
+<p>Sources in this roundup, credited to their original authors/organizations:</p>
+
+<ul>
+    <li><a href="https://simonwillison.net/">Simon Willison</a>, feed: <code>https://simonwillison.net/atom/everything/</code></li>
+    <li><a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, feed: <code>http://export.arxiv.org/rss/cs.CR</code></li>
+</ul>
+        </div>
+
+
+            <!-- Related Tools -->
+            <section style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
+                <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Explore More</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+                    <a href="../tools.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Free Security Tools</a>
+                    <a href="../practice-tests.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Practice Quizzes</a>
+                    <a href="../comparisons/" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Cert Comparisons</a>
+                </div>
+            </section>
+
+
+            <!-- Store CTA -->
+            <section style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
+                <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
+                <h3 style="color: white; margin-bottom: 0.5rem;">Studying for Security+? Get the Study Planner</h3>
+                <p style="opacity: 0.9; margin-bottom: 1rem;">Structured study planners for CompTIA certifications. Domain trackers, time blocking, and exam strategies.</p>
+                <a href="/store/store.html" style="display: inline-block; background: #667eea; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 600;">Shop Security+ Planner</a>
+                <p style="font-size: 0.8rem; opacity: 0.85; margin-top: 0.75rem;">Also available: CompTIA A+, Network+, CySA+, PenTest+</p>
+            </section>
+
+            <!-- CyberFolio CTA -->
+            <div style="border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem;">
+                <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.3rem;">CyberFolio</p>
+                <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Building cybersecurity skills? Track them in one place.</p>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills, free.</p>
+                <a href="https://cyberfolio.io" style="display:inline-block;background:#06b6d4;color:white;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;" target="_blank" rel="noopener">Build Your Portfolio &rarr;</a>
+            </div>
+
+            <a href="../index.html" class="back-link">&larr; Back to Home</a>
+            <a href="index.html" class="back-link" style="margin-left: 1rem;">&larr; All Blog Posts</a>
+    </main>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
+        <p>Study Planners: <a href="/store/store.html">FixTheVuln Store</a> | Career Tools: <a href="https://cyberfolio.io" target="_blank" rel="noopener">CyberFolio</a></p>
+        <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+            <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+        </p>
+    </div>
+</footer>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

@@ -114,8 +114,6 @@ def generate_page(cfg):
         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">
             <span>By <strong>FixTheVuln Team</strong></span>
             <span aria-hidden="true">&middot;</span>
-            <span>Peer-reviewed security content</span>
-            <span aria-hidden="true">&middot;</span>
             <span>Sources: CISA, NVD, OWASP</span>
         </div>
 {quiz_section}
