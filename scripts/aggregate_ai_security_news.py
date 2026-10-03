@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import html
 import json
 import re
 import sys
@@ -32,6 +33,7 @@ import urllib.request
 from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from pathlib import Path
+from urllib.parse import quote, urlparse
 from xml.etree import ElementTree as ET
 
 
@@ -107,13 +109,14 @@ SOURCES = [
 USER_AGENT = 'FixTheVuln-AISecurityAggregator/1.0 (+https://fixthevuln.com)'
 HTTP_TIMEOUT = 20  # seconds
 MAX_ITEMS_PER_SOURCE = 25  # cap to keep digest sane
+MAX_FEED_BYTES = 2_000_000  # cap raw feed size before parsing
 
 
 def fetch_feed(url: str) -> bytes | None:
     req = urllib.request.Request(url, headers={'User-Agent': USER_AGENT, 'Accept': 'application/rss+xml, application/atom+xml, application/xml, text/xml, */*'})
     try:
         with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as resp:
-            return resp.read()
+            return resp.read(MAX_FEED_BYTES)
     except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError) as e:
         print(f'    [fetch-error] {url}: {e}', file=sys.stderr)
         return None
@@ -174,7 +177,8 @@ def parse_feed(raw: bytes, source: dict) -> list[dict]:
             elif tag in ('pubDate', 'published', 'updated') and not published:
                 published = _text(child)
 
-        if not title or not link:
+        # Only web links: feed text is untrusted and would otherwise reach an href as-is.
+        if not title or not link or urlparse(link).scheme not in ('http', 'https'):
             continue
 
         items.append({
@@ -191,14 +195,28 @@ def parse_feed(raw: bytes, source: dict) -> list[dict]:
     return items
 
 
-_HTML_TAG_RE = re.compile(r'<[^>]+>')
+_HTML_TAG_RE = re.compile(r'<[^<>]*>')  # no backtracking on unclosed '<'
 _WS_RE = re.compile(r'\s+')
+
+
+def _md_text(s: str) -> str:
+    """HTML-escape feed text, then escape markdown punctuation so the publisher cannot build links or emphasis from it."""
+    s = html.escape(s, quote=True)
+    for ch, ent in (('[', '&#91;'), (']', '&#93;'), ('(', '&#40;'), (')', '&#41;'),
+                    ('*', '&#42;'), ('_', '&#95;'), ('`', '&#96;')):
+        s = s.replace(ch, ent)
+    return s
 
 
 def _clean_html(s: str) -> str:
     if not s:
         return ''
     s = _HTML_TAG_RE.sub('', s)
+    # Em-dashes are banned in consumer-facing copy (anti-AI-tell rule); feeds send them as entities.
+    # Collapse whitespace first so the dash pattern never backtracks over long whitespace runs.
+    s = re.sub(r' ?(?:&mdash;|—) ?', ', ', _WS_RE.sub(' ', s))
+    # Feeds sometimes drop the space after a sentence ("Hacker News.I'm").
+    s = re.sub(r'([a-z]{2})\.([A-Z])', r'\1. \2', s)
     s = (s.replace('&nbsp;', ' ')
           .replace('&amp;', '&')
           .replace('&lt;', '<')
@@ -266,14 +284,17 @@ def build_digest(grouped: dict, cutoff_dt: datetime, today: datetime) -> str:
     week_start = (today - timedelta(days=7)).strftime('%b %d')
     week_end = today.strftime('%b %d, %Y')
     total = sum(len(v) for v in grouped.values())
+    # Name only the sources that produced items, not every configured feed.
+    contributing = list(dict.fromkeys(e['source']['name'] for v in grouped.values() for e in v))
+    source_names = ', '.join(contributing)
     iso_date = today.strftime('%Y-%m-%d')
     slug = f'ai-security-roundup-{iso_date}'
 
     lines: list[str] = []
     # Frontmatter — required by scripts/publish_editorial.py to convert to blog post.
     lines.append('---')
-    lines.append(f'title: "AI Security Trend Roundup — {week_end}"')
-    lines.append(f'description: "{total} curated AI security updates from OWASP GenAI, arXiv, Simon Willison, CISA, and 4 more sources covering {week_start}–{today.strftime("%b %d")}. Every item credited to its original author."')
+    lines.append(f'title: "AI Security Trend Roundup: {week_end}"')
+    lines.append(f'description: "{total} AI security updates from {source_names}, covering {week_start}–{today.strftime("%b %d")}. Every item credited to its original author."')
     lines.append('keywords: "AI security, LLM security, prompt injection, agentic AI, GenAI threats, AI vulnerabilities, AI red team"')
     # No `date:` field here deliberately: this digest is written on aggregation
     # day (Friday), but publish_editorial.py doesn't turn it into a live page
@@ -284,16 +305,18 @@ def build_digest(grouped: dict, cutoff_dt: datetime, today: datetime) -> str:
     # digest covers is still stated in the title and body copy above/below.
     lines.append(f'slug: "{slug}"')
     lines.append('author: "FixTheVuln Team"')
-    lines.append('sources: "OWASP GenAI Security Project, Simon Willison, arXiv cs.CR, Protect AI, Google Project Zero, CISA, NIST, Hacker News"')
+    lines.append(f'sources: "{source_names}"')
+    # Machine-built digest: the publisher omits the byline so no editorial role is implied.
+    lines.append('auto_digest: "true"')
     lines.append('cta_section: "comptia"')
     lines.append('---')
     lines.append('')
-    lines.append(f'# AI Security Trend Roundup — {week_end}')
+    lines.append(f'# AI Security Trend Roundup: {week_end}')
     lines.append('')
-    lines.append(f'*Covering {week_start} → {week_end}. {total} new items from {len(SOURCES)} tracked sources.*')
+    lines.append(f'*Covering {week_start} → {week_end}. {total} new items from {len(contributing)} sources.*')
     lines.append('')
     lines.append('> This digest credits every source by name and links directly to each original post. '
-                 'Editorial curation by FixTheVuln — all rights and attribution belong to the original authors.')
+                 'Items are selected automatically by keyword and feed filters. All rights and attribution belong to the original authors.')
     lines.append('')
 
     for cat_key, cat_title in CATEGORY_ORDER:
@@ -306,13 +329,16 @@ def build_digest(grouped: dict, cutoff_dt: datetime, today: datetime) -> str:
             src = entry['source']
             it = entry['item']
             pub = it['published_dt'].strftime('%b %d') if it.get('published_dt') else it.get('published', '')[:16]
-            lines.append(f"- **[{it['title']}]({it['link']})**  ")
+            # Feed text is untrusted and the publisher emits this markdown as raw HTML, so escape it here.
+            title = _md_text(it['title'])
+            href = quote(it['link'], safe=":/?#[]@!$&'*+,;=%~-._")
+            lines.append(f"- **[{title}]({href})**  ")
             credit = f"  Source: [{src['name']}]({src['site']})"
             if pub:
-                credit += f' — {pub}'
+                credit += f', {html.escape(pub, quote=False)}'
             lines.append(credit)
             if it.get('summary'):
-                lines.append(f"  {it['summary'][:280]}")
+                lines.append(f"  {_md_text(it['summary'][:280])}")
             lines.append('')
         lines.append('')
 
@@ -320,10 +346,12 @@ def build_digest(grouped: dict, cutoff_dt: datetime, today: datetime) -> str:
     lines.append('')
     lines.append('## Source List')
     lines.append('')
-    lines.append('All sources tracked in this roundup, credited to their original authors/organizations:')
+    lines.append('Sources in this roundup, credited to their original authors/organizations:')
     lines.append('')
     for s in SOURCES:
-        lines.append(f"- [{s['name']}]({s['site']}) — feed: `{s['feed']}`")
+        if s['name'] not in contributing:
+            continue
+        lines.append(f"- [{s['name']}]({s['site']}), feed: `{s['feed']}`")
     lines.append('')
     return '\n'.join(lines)
 
