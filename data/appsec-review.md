@@ -1,49 +1,50 @@
-# AppSec Review — 2026-10-02
+# AppSec Review — 2026-10-03
 
 **Reviewer:** Robert Flores, CISSP  
-**Pipeline run:** 2026-10-02  
-**CVEs reviewed:** 1  
-**Total in database after publish:** 245
+**Review Date:** 2026-10-03  
+**CVEs Reviewed:** 2  
+**Source:** CISA Known Exploited Vulnerabilities (KEV) Catalog
 
 ---
 
 ## Severity Breakdown
 
-| Priority | Count |
-|----------|-------|
-| Critical | 1 |
-| High | 0 |
-| Medium | 0 |
-| Low | 0 |
+| Priority | Count | CVEs |
+|----------|-------|------|
+| Critical | 2     | CVE-2026-102490, CVE-2026-102489 |
+| High     | 0     | — |
+| Medium   | 0     | — |
+| Low      | 0     | — |
 
 ---
 
 ## CVE Summary
 
-| CVE ID | Vendor | Product | Priority | Vulnerability Class |
-|--------|--------|---------|----------|---------------------|
-| CVE-2026-104286 | Fortinet | FortiMail | Critical | Path Traversal / NULL Byte Injection (Unauthenticated Arbitrary File Write) |
+| CVE ID | Vendor | Priority | Vulnerability Class |
+|--------|--------|----------|---------------------|
+| CVE-2026-102490 | Zammad GmbH | Critical | Improper Privilege Management (LPE → Root) |
+| CVE-2026-102489 | Zammad GmbH | Critical | Session Fixation (Remote Code Execution) |
 
 ---
 
 ## Trend Analysis
 
-This week's CISA KEV addition centers on Fortinet's FortiMail email security gateway, reinforcing a persistent trend: perimeter security appliances — firewalls, email gateways, VPN concentrators — continue to be prime targets for nation-state and ransomware actors seeking initial access to enterprise networks. The path traversal + NULL byte bypass pattern on FortiMail is consistent with the class of vulnerabilities (e.g., CVE-2024-21762, CVE-2023-27997) that threat actors have repeatedly weaponized against Fortinet infrastructure at scale. CISA's three-day remediation window under BOD 26-04 underscores that this is being actively exploited in the wild, likely as part of a broader campaign targeting email infrastructure to harvest credentials, intercept communications, or establish persistence before detection. Organizations running FortiMail should treat this as an emergency patch — arbitrary file write on an email gateway with no authentication required is the functional equivalent of pre-auth remote code execution.
+This batch represents a fully chained two-stage attack against Zammad, a widely-deployed open-source helpdesk and CRM platform. CVE-2026-102489 provides the remote entry point via session fixation, enabling unauthenticated attackers to execute code as the zammad service user; CVE-2026-102490 then escalates those privileges to root through improper privilege management. The deliberate chaining of these two vulnerabilities — both carrying CVSS 9.8 and added to KEV on the same date — is consistent with a coordinated threat actor campaign targeting helpdesk infrastructure, which commonly processes sensitive customer data and internal tickets. CISA's tight 3-day remediation window (due 2026-10-05) under BOD 26-04 underscores the urgency. Organizations running Zammad should treat this as an emergency patch given the active exploitation and full remote-to-root potential.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"Fortinet FortiMail Under Fire: Why Path Traversal on Email Gateways Is a Critical Access Vector"** — Deep dive into how unauthenticated arbitrary file write translates to full compromise, with timeline of Fortinet vulnerabilities in the KEV catalog.
-2. **"BOD 26-04 in Practice: How CISA's 3-Day Patch Windows Are Reshaping Federal Cybersecurity Response"** — Analysis of the tightening remediation timelines and operational impact on agencies.
-3. **"The Perimeter Appliance Problem: A Year-in-Review of Network Edge Vulnerabilities on the KEV List"** — Trend piece examining how often firewall/gateway/VPN products appear in the KEV catalog and what it signals about attacker TTPs.
+1. **"Chained to Root: How CVE-2026-102489 + CVE-2026-102490 Turn Zammad Into a Full Compromise"** — Deep dive into the two-stage exploit chain, how session fixation enables RCE, and how organizations can detect exploitation attempts.
+
+2. **"Why Helpdesk Software Is the New Perimeter: Lessons from the Zammad KEV Chain"** — Broader trend analysis on threat actors targeting internal tooling (Jira, Zammad, Zendesk) as initial access vectors into corporate networks.
+
+3. **"CISA BOD 26-04 in Practice: Responding to a 3-Day Patch Deadline"** — Practical guide for security teams triaging and patching under BOD 26-04's compressed timelines, using this Zammad pair as a real-world case study.
 
 ---
 
 ## Newsletter Snippet
 
-**Critical FortiMail Vulnerability Added to CISA KEV Catalog**
+**CISA adds Zammad chain exploit to KEV — patch by October 5th.** Two critical vulnerabilities in Zammad GmbH's open-source helpdesk platform were added to CISA's Known Exploited Vulnerabilities catalog on October 2nd with a mandatory remediation deadline of October 5, 2026 under BOD 26-04. CVE-2026-102489 (session fixation, CVSS 9.8) allows an unauthenticated remote attacker to achieve code execution as the zammad service account, while CVE-2026-102490 (improper privilege management, CVSS 9.8) escalates that foothold to root. The two flaws are designed to be chained, making the combined attack fully remote and unauthenticated.
 
-CISA added CVE-2026-104286 to the Known Exploited Vulnerabilities catalog this week — a critical-severity path traversal and NULL byte injection vulnerability in Fortinet FortiMail that allows unauthenticated attackers to write arbitrary files on the underlying system via crafted HTTP or HTTPS requests. With no authentication required, this is functionally a pre-auth remote code execution vector on enterprise email gateways, making it a high-value target for initial access. Federal agencies face a 72-hour remediation deadline under BOD 26-04.
-
-Organizations running FortiMail should apply the vendor patch immediately (see FG-IR-26-175) and review CISA's Forensics Triage Requirements for signs of prior compromise. If patching is not immediately feasible, restrict internet-facing access to FortiMail admin interfaces as a temporary mitigation. The short due date reflects active exploitation — don't wait on this one.
+Federal agencies and any organization running Zammad should apply vendor patches immediately. If patches cannot be deployed within the window, CISA guidance requires either implementing compensating controls or discontinuing use of the product. Security teams should also audit Zammad logs for session anomalies and privilege escalation indicators, as active exploitation has already been confirmed in the wild per CISA's KEV addition.
