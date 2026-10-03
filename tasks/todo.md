@@ -1045,3 +1045,10 @@ pricing/listing decision, needs Robert's call), `data/social/*`/`data/newsletter
 AppSec: `DOMAIN_NAME_OVERRIDES` is a second source of truth layered on the read-only OneDrive
 config — fine as a one-off patch, revisit the override mechanism's location if more certs need the
 same treatment.
+
+## Backlog — added 2026-10-03
+
+- [ ] **Store favicon.** `store/store.html` uses `/favicon.ico`, while the other pages use the blue "F" SVG. Robert likes the store tab icon as-is, so keep it unless that changes.
+- [ ] **CISM quiz weights on Nov 3, 2026. Source unverified, do not implement yet.** ISACA confirms the outline is updated effective 3 Nov 2026, but the new domain percentages (18/20/33/29 from a press-release summary) are not verified against a primary ISACA source. Before Nov 3: capture the ISACA URL and published weights, then update `cism-quiz.html` (lines 626-629 and the `domains` map near line 808) and drop the dated note.
+- [ ] **Newsletter form (10 pages).** The beehiiv form sends the email as a `?email=` query parameter. Needs the embed snippet from the beehiiv dashboard.
+- [ ] **CISSP quiz (done 2026-10-03)** — weights now 16/10/13/13/13/12/13/10 to match the ISC2 outline effective 2024-04-15.
