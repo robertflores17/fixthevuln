@@ -331,7 +331,7 @@ def build_digest(grouped: dict, cutoff_dt: datetime, today: datetime) -> str:
             pub = it['published_dt'].strftime('%b %d') if it.get('published_dt') else it.get('published', '')[:16]
             # Feed text is untrusted and the publisher emits this markdown as raw HTML, so escape it here.
             title = _md_text(it['title'])
-            href = html.escape(quote(it['link'], safe=":/?#[]@!$&'*+,;=%~-._"), quote=True)
+            href = quote(it['link'], safe=":/?#[]@!$&'*+,;=%~-._")
             lines.append(f"- **[{title}]({href})**  ")
             credit = f"  Source: [{src['name']}]({src['site']})"
             if pub:
