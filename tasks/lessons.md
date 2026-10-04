@@ -94,3 +94,26 @@ instead of querying by author.
    defenses target bulk-query APIs harder than syndication feeds), not a
    header problem. Prefer the endpoint this repo already has proof of working
    from CI over hand-tuning headers against the one that doesn't.
+
+## 2026-10-04 — Unreadable links in dark mode kept coming back
+
+**What went wrong:** links on the new ISO 27001 page (Primary sources list, an
+inline GDPR link) rendered in browser-default `#0000EE` on the dark card, at
+1.69:1 contrast. Robert flagged it as a repeat. The source list's bullets also
+hung outside the card. Root cause: `style.css` never set a base link color, and
+the global `* { padding: 0 }` reset strips list indentation. Every page that
+used a plain `<a>` or `<ul>` without its own class or inline style hit this.
+Earlier fixes were per page, with inline colors, so the next new page broke again.
+
+**What's correct:** fix it once in the shared stylesheet. Add a `--link-color`
+token (light `#4c51bf`, dark `#a5b4fc`), then `:where(a)` and
+`:where(.vulnerability-card) :where(ul, ol)` base rules. `:where()` has zero
+specificity, so every existing class or inline style still wins.
+
+**Rules:**
+1. A visual bug the user calls "again" is a missing shared default. Look at
+   `style.css` before touching the page.
+2. Dark mode is part of "done" for any new page. Run self-QA check 13: force
+   `data-theme="dark"`, take a headless Chrome screenshot, and look at it.
+3. A CSS bump has three places: `style.min.css`, every page's `?v=`, and
+   `STYLE_CSS_VERSION` in `scripts/lib/constants.py`.
