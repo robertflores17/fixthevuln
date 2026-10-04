@@ -76,6 +76,7 @@ ABBREVIATIONS = {
     "pci": "PCI",
     "dss": "DSS",
     "soc2": "SOC 2",
+    "iso": "ISO",
     "cve": "CVE",
     "cvss": "CVSS",
     "kev": "KEV",
@@ -139,6 +140,7 @@ COMPLIANCE_PAGES = {
     "cis-controls.html", "gdpr-guide.html", "hipaa-guide.html",
     "nist-framework.html", "pci-dss.html", "soc2-basics.html",
     "risk-register-guide.html", "third-party-risk.html", "financial-compliance.html",
+    "iso-27001.html",
 }
 
 AI_GUIDE_PAGES = {

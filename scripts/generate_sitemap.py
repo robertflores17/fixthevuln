@@ -60,7 +60,7 @@ TOOL_PAGES = {
 COMPLIANCE_PAGES = {
     "cis-controls.html", "gdpr-guide.html", "hipaa-guide.html",
     "nist-framework.html", "pci-dss.html", "soc2-basics.html",
-    "risk-register-guide.html", "third-party-risk.html",
+    "risk-register-guide.html", "third-party-risk.html", "iso-27001.html",
 }
 
 # Hub/navigation pages (priority 0.9)

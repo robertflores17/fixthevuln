@@ -88,7 +88,7 @@ HIGH_VOLATILITY_PAGES = {
 
 LOW_VOLATILITY_PAGES = {
     'nist-framework.html', 'gdpr-guide.html', 'hipaa-guide.html',
-    'pci-dss.html', 'soc2-basics.html', 'cis-controls.html',
+    'pci-dss.html', 'soc2-basics.html', 'cis-controls.html', 'iso-27001.html',
     'incident-response.html', 'security-analyst-roadmap.html',
 }
 
