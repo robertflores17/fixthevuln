@@ -117,3 +117,9 @@ specificity, so every existing class or inline style still wins.
    `data-theme="dark"`, take a headless Chrome screenshot, and look at it.
 3. A CSS bump has three places: `style.min.css`, every page's `?v=`, and
    `STYLE_CSS_VERSION` in `scripts/lib/constants.py`.
+4. cssnano's default preset renumbers z-index values (900/1000 became 1/2).
+   It only sees `style.css`, so page-level z-index values like
+   `.hero-stats { z-index: 3 }` end up above the sticky nav. AppSec caught
+   this before push. Always minify with `zindex: false`, and diff the old
+   and new min file rule by rule. The only differences should be the rules
+   you changed.
