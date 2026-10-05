@@ -1,3 +1,48 @@
+## 2026-10-05 — Weekly Tech-Debt Audit
+
+**Headline:** New P1 cache-bust miss — `style.min.css` re-minified (commit `1c3dd2a`) without version bump after v=12 deploy; pipeline fully healthy today; 248 CVEs, 133 blog posts; practice-tests timestamps regenerated to Sep 29 but P1 (evergreen timestamp ban) still open at 17 weeks.
+
+**Pipeline pulse:**
+- Daily CVE trigger last output (`data/appsec-review.md`): 2026-10-05 (today ✓ — pipeline fully healthy, NOT P0)
+- Friday AI trend roundup last file (`drafts/ai-security-roundup-2026-10-02.md.published`): 2026-10-02 (Friday ✓ — published on schedule)
+- `data/pending_review.json` pending count: 0 (last_checked: 2026-10-04T18:26:55 UTC ✓)
+
+**New this week:**
+- P1 cache-bust — `style.min.css` — Re-minified in commit `1c3dd2a` ("Re-minify style.css with z-index rebasing disabled") after v=12 was deployed across all HTML in `5916f81`; file hash changed (`f0722d69...` → `a2710272...`) but no HTML version bump followed; all 151 HTML pages reference `style.min.css?v=12` against changed CSS content — Fix: `sed -i 's/style\.min\.css?v=12/style.min.css?v=13/g'` across all HTML — Effort: XS
+- Notable: ISO 27001 guide added (`iso-27001.html`); in sitemap ✓ and llms.txt ✓
+- Notable: OWASP LLM Top 10:2025 numbering corrections applied across `ai-vulnerabilities/` (commits `c3d2e49`, `648c32c`); ai-vulnerabilities added to `CONTENT_DIRS` in `generate_sitemap.py` ✓ (partial fix for P2 #5 below)
+- Notable: Practice-tests timestamps regenerated to "September 29, 2026" (was April 2, 2026 — staleness resolved); however, P1 evergreen-timestamp rule remains open — timestamps must be *removed*, not refreshed
+- Notable: 7 CVEs published (Zammad GmbH CVE-2026-102489, CVE-2026-102490 + 5 others); 3 blog posts published
+- Notable: AI IDE tracker backlog fixes (commit `1951624`); aggregate_ai_ide_vulns.py grew 765→771 LOC; generate_ai_ide_tracker.py grew 693→697 LOC
+
+**Still open from prior audits:** 8
+1. P1 content — `practice-tests/*.html:1` (13 pages) — `<p class="pt-timestamp">Last updated: September 29, 2026</p>` present (timestamps regenerated but NOT removed; evergreen pages must have zero timestamps per CLAUDE.md rule; **open 17 weeks**) — Fix: remove `pt-timestamp` block from `scripts/generate_practice_test_pages.py` template; re-run — Effort: XS
+2. P2 content — `roadmaps/*.html` (67 pages) — "Last updated: March 30, 2026" — 189 days old — Fix: re-run `python scripts/generate_roadmaps.py` — Effort: XS
+3. P2 generator — `scripts/` (**16 files >500 LOC**, count unchanged) — `generate_guides.py` 2,751 · `generate_sprint_kit.py` 1,988 · `fetch_kev.py` 896 · `etsy_to_pinterest.py` 829 · `aggregate_ai_ide_vulns.py` 771 · `entity_extractor.py` 765 · `generate_linkedin_posts.py` 716 · `publish_editorial.py` 711 · `generate_ai_ide_tracker.py` 697 · `audit_pages.py` 661 · `generate_quiz_pages.py` 627 · `generate_cert_pages.py` 607 · `generate_practice_test_pages.py` 593 · `inject_store_ctas.py` 588 · `generate_roadmaps.py` 534 · `generate_cve_pages.py` 512 — Effort: L
+4. P2 hygiene — repo-wide — `requirements.txt` absent; Pillow (`create_hero.py:4`, `generate_linkedin_posts.py:12`) and reportlab (`generate_sprint_kit.py:31–45`) and requests (`etsy_to_pinterest.py`) undeclared external deps; `security-audit.yml` pip-audit silently no-ops — Effort: XS
+5. P2 SEO — `scripts/generate_sitemap.py:25` — `CONTENT_DIRS` still omits `wstg` and `practice-tests` directories (26 pages excluded from sitemap; `ai-vulnerabilities` was added this week ✓ partial fix) — Fix: add `"wstg"` and `"practice-tests"` to CONTENT_DIRS — Effort: XS
+6. P3 hygiene — `scripts/` (9 instances across 8 scripts) — Broad `except Exception:` without logging: `fetch_kev.py:63`, `generate_sitemap.py:102`, `update_sitemap.py:29`, `audit_pages.py:250,382`, `create_hero.py:51`, `generate_linkedin_posts.py:72`, `health_check.py:127` — Add `logging.exception()` before each — Effort: S
+7. P3 hygiene — repo root — No `CLAUDE.md`; editorial rules (evergreen-page timestamp ban, cache-bust policy, pipeline health thresholds) uncodified in-repo (`SKILLS.md` partially mitigates; open **since Aug 2026**) — Effort: XS
+8. P3 generator drift — `scripts/generate_sitemap.py:88` — GUIDE_PAGES missing `ai-agent-security.html` and `genai-data-security.html` (pages are in sitemap via reconcile workflow ✓; risk is priority mis-assignment on fresh generate_sitemap.py run; open **13 weeks** since July 13 audit) — Fix: add both filenames to GUIDE_PAGES set — Effort: XS
+
+**Still open from prior audits:** 8
+**Resolved since last audit:** None (practice-tests staleness dimension resolved but P1 evergreen-timestamp violation still open)
+
+**Metrics tracked:**
+- Total generated pages (cve-*, cert-*, comparisons/*, roadmaps/*): 424 (248 CVE + 66 cert + 43 comparisons + 67 roadmaps) — +7 CVE vs last week (417)
+- Blog pages: 133 (was 130, +3 ✓)
+- Sitemap entries: 737 (was 725, +12 ✓)
+- Evergreen pages with timestamps (should be 0): 13 (practice-tests/*.html — "September 29, 2026" — dates refreshed but timestamps not removed; P1 open **17 weeks**)
+- Pages missing from llms.txt: 0 ✓ (reconcile ran Oct 5 ✓)
+- Cache-bust drift count: **1 file** — new P1 — `style.min.css` content changed (re-minify commit `1c3dd2a`) without v bump; all 151 HTML pages at stale `?v=12`
+- Scripts >500 LOC: 16 (unchanged count; individual LOC shifted: `generate_practice_test_pages.py` 572→593, `publish_editorial.py` 707→711, `aggregate_ai_ide_vulns.py` 765→771, `generate_ai_ide_tracker.py` 693→697)
+- Store worker LOC: 1,331 (unchanged; PRICING 599/1599 cents ↔ $5.99/$15.99 frontend ✓; CP_PRICING tiers ✓; webhook HMAC-SHA256 signing confirmed ✓)
+- D1 migrations: 2 (unchanged — 0001_error_log, 0002_quiz_feedback)
+- Python scripts with bare `except Exception:` without logging: 9 instances / 8 scripts (unchanged)
+- Certs last updated: August 2, 2026 (64 days — below 90-day threshold ✓) · Comparisons: September 2026 (fresh ✓) · Roadmaps: March 30, 2026 (189 days — P2 open)
+
+---
+
 ## 2026-09-28 — Weekly Tech-Debt Audit
 
 **Headline:** All-clear week — arXiv 406 error in AI IDE tracker root-caused and resolved (switched to RSS feed, test coverage added); 10 CVEs published (241 total); pipeline fully healthy; P1 practice-tests timestamp **16 weeks unresolved** at 179 days.
