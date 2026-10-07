@@ -63,6 +63,9 @@ const CERT_NAMES = {
   'isaca-cisa': 'ISACA CISA',
   'isaca-cism': 'ISACA CISM',
   'isaca-crisc': 'ISACA CRISC',
+  // PECB
+  'pecb-iso27001-li': 'PECB ISO/IEC 27001 Lead Implementer',
+  'pecb-iso27001-la': 'PECB ISO/IEC 27001 Lead Auditor',
   // GIAC
   'giac-gsec': 'GIAC GSEC',
   'giac-gcih': 'GIAC GCIH',
