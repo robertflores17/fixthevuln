@@ -168,7 +168,7 @@ GUIDE_PAGES = {
 HUB_PAGES = {
     "", "guides.html", "tools.html", "compliance.html", "resources.html",
     "career-paths.html", "practice-tests.html", "about.html", "contact.html",
-    "privacy.html", "start-here.html", "planner.html", "kev-archive.html",
+    "privacy.html", "terms.html", "start-here.html", "planner.html", "kev-archive.html",
     "cve-lookup.html", "cert-cost-calculator.html", "study-tracker.html",
     "exploit-tracker.html", "security-analyst-roadmap.html", "ai-security.html",
     "ai-ide-mcp-disclosures.html",
@@ -379,6 +379,7 @@ def generate_llms_txt(categories, hub_urls):
     lines.append(f"- [About]({BASE_URL}/about.html)")
     lines.append(f"- [Contact]({BASE_URL}/contact.html)")
     lines.append(f"- [Privacy Policy]({BASE_URL}/privacy.html)")
+    lines.append(f"- [Terms]({BASE_URL}/terms.html)")
     lines.append(f"- [Sitemap]({BASE_URL}/sitemap.xml)")
     lines.append(f"- [Full AI-readable site index]({BASE_URL}/llms-full.txt)")
     lines.append("")

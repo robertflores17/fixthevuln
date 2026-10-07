@@ -783,12 +783,12 @@ async function sendCustomerEmail(env, toEmail, downloads, items) {
     return `
       <tr>
         <td style="padding:12px 16px;border-bottom:1px solid #e5e7eb;">
-          <strong style="color:#1e293b;">${certName}</strong>
-          <span style="display:inline-block;background:#eff6ff;color:#2563eb;padding:2px 8px;border-radius:50px;font-size:11px;font-weight:600;margin-left:6px;">${variantLabel}</span>
-          <br><span style="color:#64748b;font-size:13px;">${dl.filename}</span>
+          <strong style="color:#1e293b;">${escapeHtml(certName)}</strong>
+          <span style="display:inline-block;background:#eff6ff;color:#2563eb;padding:2px 8px;border-radius:50px;font-size:11px;font-weight:600;margin-left:6px;">${escapeHtml(variantLabel)}</span>
+          <br><span style="color:#64748b;font-size:13px;">${escapeHtml(dl.filename)}</span>
         </td>
         <td style="padding:12px 16px;border-bottom:1px solid #e5e7eb;text-align:right;">
-          <a href="${dl.url}" style="display:inline-block;background:#2563eb;color:#ffffff;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">Download</a>
+          <a href="${escapeHtml(dl.url)}" style="display:inline-block;background:#2563eb;color:#ffffff;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">Download</a>
         </td>
       </tr>`;
   }
@@ -797,7 +797,7 @@ async function sendCustomerEmail(env, toEmail, downloads, items) {
     return `
       <tr>
         <td colspan="2" style="padding:16px 16px 8px;background:#f8fafc;border-bottom:1px solid #e5e7eb;">
-          <strong style="color:#1e293b;font-size:15px;">${name} Career Path</strong>
+          <strong style="color:#1e293b;font-size:15px;">${escapeHtml(name)} Career Path</strong>
         </td>
       </tr>`;
   }
@@ -904,7 +904,7 @@ async function sendSellerNotification(env, customerEmail, downloads, items, amou
       <table style="width:100%;border-collapse:collapse;">
         <tr>
           <td style="padding:8px 0;color:#64748b;font-size:14px;width:120px;">Customer</td>
-          <td style="padding:8px 0;color:#1e293b;font-size:14px;font-weight:600;">${customerEmail || 'No email provided'}</td>
+          <td style="padding:8px 0;color:#1e293b;font-size:14px;font-weight:600;">${escapeHtml(customerEmail || 'No email provided')}</td>
         </tr>
         <tr>
           <td style="padding:8px 0;color:#64748b;font-size:14px;">Amount</td>
@@ -912,7 +912,7 @@ async function sendSellerNotification(env, customerEmail, downloads, items, amou
         </tr>
         <tr>
           <td style="padding:8px 0;color:#64748b;font-size:14px;vertical-align:top;">Items</td>
-          <td style="padding:8px 0;color:#1e293b;font-size:14px;white-space:pre-line;">${itemListStr}</td>
+          <td style="padding:8px 0;color:#1e293b;font-size:14px;white-space:pre-line;">${escapeHtml(itemListStr)}</td>
         </tr>
       </table>
     </div>
@@ -1032,7 +1032,7 @@ async function handleClientError(request, env, cors) {
 }
 
 function escapeHtml(str) {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 async function handleAdminErrors(request, env, cors) {
