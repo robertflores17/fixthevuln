@@ -326,7 +326,7 @@ async function handleCheckout(request, env, cors) {
   }
 
   try {
-    const { items } = await request.json();
+    const { items, utm } = await request.json();
 
     if (!items || !items.length) {
       return new Response(JSON.stringify({ error: 'No items provided' }), {
@@ -393,6 +393,13 @@ async function handleCheckout(request, env, cors) {
     params.append('success_url', 'https://fixthevuln.com/store/success.html?session_id={CHECKOUT_SESSION_ID}');
     params.append('cancel_url', 'https://fixthevuln.com/store/store.html');
     params.append('metadata[purchased_items]', purchasedItems);
+    // Referral attribution (optional). Only short slug-like values reach Stripe metadata.
+    for (const key of ['source', 'medium', 'campaign']) {
+      const value = utm?.[key];
+      if (typeof value === 'string' && /^[\w.-]{1,50}$/.test(value)) {
+        params.append(`metadata[utm_${key}]`, value);
+      }
+    }
     params.append('automatic_tax[enabled]', 'true');
     params.append('allow_promotion_codes', 'true');
 
@@ -747,7 +754,7 @@ async function handleWebhook(request, env) {
         if (customerEmail) {
           promises.push(sendCustomerEmail(env, customerEmail, downloads, items));
         }
-        promises.push(sendSellerNotification(env, customerEmail, downloads, items, amountCents));
+        promises.push(sendSellerNotification(env, customerEmail, downloads, items, amountCents, session.metadata?.utm_source));
 
         await Promise.allSettled(promises);
       }
@@ -870,7 +877,7 @@ async function sendCustomerEmail(env, toEmail, downloads, items) {
 }
 
 // ─── SELLER NOTIFICATION ────────────────────────
-async function sendSellerNotification(env, customerEmail, downloads, items, amountCents) {
+async function sendSellerNotification(env, customerEmail, downloads, items, amountCents, utmSource) {
   // Build subject: prefer career path names over listing every cert
   const pathNames = [...new Set(downloads.filter(dl => dl.careerPathName).map(dl => dl.careerPathName))];
   const individualNames = downloads.filter(dl => !dl.careerPathId).map(dl => CERT_NAMES[dl.certId] || dl.certId);
@@ -909,6 +916,10 @@ async function sendSellerNotification(env, customerEmail, downloads, items, amou
         <tr>
           <td style="padding:8px 0;color:#64748b;font-size:14px;">Amount</td>
           <td style="padding:8px 0;color:#1e293b;font-size:14px;font-weight:600;">${amount}</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 0;color:#64748b;font-size:14px;">Source</td>
+          <td style="padding:8px 0;color:#1e293b;font-size:14px;font-weight:600;">${escapeHtml(utmSource || 'Direct / unknown')}</td>
         </tr>
         <tr>
           <td style="padding:8px 0;color:#64748b;font-size:14px;vertical-align:top;">Items</td>

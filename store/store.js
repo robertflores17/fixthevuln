@@ -296,6 +296,18 @@ try {
   localStorage.removeItem('ftv_cart');
   cart = [];
 }
+// Remember UTM tags from the landing URL so checkout can attribute the sale (last touch wins).
+const utmParams = new URLSearchParams(location.search);
+if (utmParams.has('utm_source')) {
+  localStorage.setItem('ftv_utm', JSON.stringify({
+    source: utmParams.get('utm_source'),
+    medium: utmParams.get('utm_medium'),
+    campaign: utmParams.get('utm_campaign'),
+  }));
+}
+function getStoredUtm() {
+  try { return JSON.parse(localStorage.getItem('ftv_utm')); } catch (e) { return null; }
+}
 let selectedVariant = localStorage.getItem('ftv_variant') || 'standard';
 if (!PRICING[selectedVariant]) selectedVariant = 'standard';
 let selectedVendor = 'all';
@@ -844,6 +856,7 @@ if (btnCheckout) {
             variantLabel: item.variantLabel,
             price: item.price,
           })),
+          utm: getStoredUtm(),
         }),
       });
 
