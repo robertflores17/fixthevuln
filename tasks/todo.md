@@ -1,6 +1,6 @@
 # FixTheVuln — Task Tracker
 
-## In Progress — ISO 27001 study planners (2026-10-07)
+## Done — ISO 27001 study planners (2026-10-07)
 
 Generator found (no rebuild): OneDrive `.../Documents/Invest/Business/Dropshipping/Etsy-Claude/`
 — JSON per cert in `certifications/`, scripts in `Generate-scripts/Fillable` + `adhd-cert-planner`,
@@ -45,8 +45,17 @@ free retake within 12 months. NOT published by PECB: domain weights, question co
       (LI v8.0, LA v7.0): retake = 12 months from coupon date after 15-day wait; open book, essay-type
       moving to MC; $1,000 standalone exam; 70% cited to handbook; allowed-materials checklist item.
       Regenerated all 10 files, re-uploaded to R2, byte-verified.
-- [ ] 6c. **(needs Robert's OK)** upload 10 objects to R2, `wrangler deploy` the worker,
-      test a $0 / test-mode checkout → download for one variant. Then `/self-qa`, push.
+- [x] 6c. Shipped 2026-10-07: gate re-run PROCEED, `/self-qa` pass, PR #141 merged (1f49032d),
+      worker redeployed from main (f0b1fdb8); live checkout verified for both IDs. Follow-ups merged
+      same day: terms.html + email HTML escaping (#141), terms/privacy margins (#142, #143),
+      Contact section alignment (#144), privacy footer Terms link (#145).
+
+**Review:** Generator was never lost (it lives in Etsy-Claude on OneDrive), so the rebuild plan
+was dropped after one search. Content Editor caught a real P1 (retake window counted from the
+failed exam instead of the coupon date); the fix came from the PECB candidate handbooks, not the
+product pages, which omit it. End-to-end paid purchase (email + download) not yet tested.
+
+## Next Up
 
 - [ ] **AI vuln-intel draft/publish pipeline** — `data/ai-vuln-intel.json` (fed by
   `scripts/aggregate_ai_vuln_intel.py`: OWASP Top 10 change, MITRE ATLAS diff,
@@ -92,6 +101,7 @@ Source: theweatherreport.ai/posts/unprompted-2026-top-insights-day-one
 
 ## Completed
 
+- [x] PECB ISO/IEC 27001 Lead Implementer + Lead Auditor planners live in store (2026-10-07)
 - [x] Sitemap: 381 → 450 URLs (2026-03-16)
 - [x] Quiz analytics: POST /quiz/submit endpoint + sendBeacon client (2026-03-16)
 - [x] generate_sitemap.py script (2026-03-16)
