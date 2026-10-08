@@ -185,7 +185,7 @@ def nav(depth=0):
     prefix = '../' * depth
     return f"""<nav class="site-nav">
     <div class="container">
-        <a href="{'/' if depth == 0 else prefix}" class="site-nav-logo">{SITE_NAME}</a>
+        <a href="{'/' if depth == 0 else prefix}" class="site-nav-logo"><img src="/logo/ftv-logo.svg" alt="" width="24" height="24">{SITE_NAME}</a>
         <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
         <div class="site-nav-links">
             <a href="{prefix}guides.html">Guides</a>

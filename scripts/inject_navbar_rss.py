@@ -9,7 +9,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 ROOT_NAV = """<nav class="site-nav">
     <div class="container">
-        <a href="/" class="site-nav-logo">FixTheVuln</a>
+        <a href="/" class="site-nav-logo"><img src="/logo/ftv-logo.svg" alt="" width="24" height="24">FixTheVuln</a>
         <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
         <div class="site-nav-links">
             <a href="guides.html">Guides</a>
@@ -26,7 +26,7 @@ ROOT_NAV = """<nav class="site-nav">
 
 SUBDIR_NAV = """<nav class="site-nav">
     <div class="container">
-        <a href="../" class="site-nav-logo">FixTheVuln</a>
+        <a href="../" class="site-nav-logo"><img src="/logo/ftv-logo.svg" alt="" width="24" height="24">FixTheVuln</a>
         <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
         <div class="site-nav-links">
             <a href="../guides.html">Guides</a>
