@@ -9,7 +9,7 @@ Bump CSS versions here — all generators pick them up automatically.
 # CSS Cache-Bust Versions (bump here after editing CSS files)
 # ---------------------------------------------------------------------------
 
-STYLE_CSS_VERSION = 12
+STYLE_CSS_VERSION = 13
 QUIZ_CSS_VERSION = 3
 COMPARISON_CSS_VERSION = 3
 STORE_CSS_VERSION = 6
@@ -31,13 +31,7 @@ CYBERFOLIO_URL = "https://cyberfolio.io"
 CF_ANALYTICS_TOKEN = "8304415b01684a00adedcbf6975458d7"
 
 # ---------------------------------------------------------------------------
-# Favicon (inline SVG data URI — identical across all pages)
+# Favicon (shared SVG file — identical across all pages)
 # ---------------------------------------------------------------------------
 
-FAVICON_SVG = (
-    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' "
-    "viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' "
-    "fill='%23667eea'/%3E%3Ctext x='50' y='68' font-family='Arial,sans-serif' "
-    "font-size='60' font-weight='bold' fill='white' text-anchor='middle'%3E"
-    "F%3C/text%3E%3C/svg%3E"
-)
+FAVICON_SVG = "/favicon.svg"

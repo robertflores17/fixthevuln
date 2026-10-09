@@ -1,5 +1,60 @@
 # FixTheVuln — Task Tracker
 
+## Done — ISO 27001 study planners (2026-10-07)
+
+Generator found (no rebuild): OneDrive `.../Documents/Invest/Business/Dropshipping/Etsy-Claude/`
+— JSON per cert in `certifications/`, scripts in `Generate-scripts/Fillable` + `adhd-cert-planner`,
+workflow in `.claude/skills/add-cert.md`. Its `store/*.sh` scripts have a stale BASE path
+(`Documents/Home/Invest`). Steps 1–2 below are superseded by: write 4 JSON configs
+(`pecb/iso27001_{li,la}.json` + `adhd_` pairs), run the 4 generators. Ships two new products: `pecb-iso27001-li` (Lead Implementer) and
+`pecb-iso27001-la` (Lead Auditor). Each = 4 PDFs + `_bundle.zip` in R2.
+
+Verified facts (pecb.com, 2026-10-07): 7 domains each (names below), credential tiers
+(Provisional / Implementer|Auditor / Lead / Senior Lead), exam fee bundled into training,
+free retake within 12 months. NOT published by PECB: domain weights, question count.
+3 hours / 70% pass mark agree across third-party sources only → print with
+"confirm with your training provider". No domain % badges (PECB doesn't weight them).
+
+- [x] 1. (superseded) `scripts/generate_planners.py` (reportlab, in repo so it can't go missing again):
+      cert data as a dict, standard layout (71 pp) + ADHD layout (123 pp), light/dark
+      themes, AcroForm fields. Verify: page count + page titles diff against the CASP+
+      reference PDFs via `pdftotext`; render pages to PNG and eyeball.
+- [x] 2. ISO-specific replacements for IT-only pages: ports → Annex A theme map
+      (control numbers + own wording, no ISO text), command line → ISMS mandatory
+      documents, troubleshooting → PDCA / audit process, PBQ → scenario practice,
+      powers-of-2 scratch → audit-sampling notes. Verify: no "port"/"PBQ" in output text.
+- [x] 3. Generate 2 certs × 4 variants + 2 bundle zips into scratchpad (never committed).
+      DONE 2026-10-07: configs in Etsy-Claude `certifications/pecb/`; 8 PDFs (72 pp std, 117 pp ADHD)
+      + 2 bundles in Etsy-Claude `store/generated-pdfs/`. Added 4 optional config keys to the
+      std/dark/ADHD generators (`reference_tables.commands_title`, `commands_notes_title`,
+      `troubleshooting_methodology.page_title`, `brain_dump_sections`); CISM regenerates
+      text-identical with old vs new scripts. Domain badges read "N of 7" (PECB publishes no weights).
+- [x] 4. Store: add both IDs to `store/store.js` PRODUCTS + `CERT_NAMES` in
+      `store/cloudflare-worker.js`; add to `store/security-governance.html` if it lists
+      products statically. Verify: `node --check`, IDs match worker.
+- [x] 5. ISO page CTA → link the ISO planners instead of the CISA one.
+      DONE 2026-10-07: new vendor `pecb` (store.js PRODUCTS/VENDOR_GROUP_MAP/vendorDisplayName,
+      worker CERT_NAMES, security-governance.html tab + PAGE_CONFIG + copy), store.js?v=8 on all
+      10 store pages, iso-27001.html CTA. Verified in headless Chrome (PECB tab shows 2 cards).
+- [x] 6a. R2 upload DONE 2026-10-07: 10 objects in `fixthevuln-planners`, each downloaded back
+      and byte-compared to the local file (all match).
+- [x] 6b. Worker deploy DONE 2026-10-07: version 60d9130d (deployed from a clean /tmp clone of HEAD
+      + only the CERT_NAMES diff, which is still UNCOMMITTED locally — commit it with the site push).
+      Live /checkout returns Stripe sessions for pecb-iso27001-li/la; unknown ID still rejected.
+- [x] 6b2. Pre-push gate run 1 BLOCKED (content-editor P1: retake window). Fixed per PECB handbooks
+      (LI v8.0, LA v7.0): retake = 12 months from coupon date after 15-day wait; open book, essay-type
+      moving to MC; $1,000 standalone exam; 70% cited to handbook; allowed-materials checklist item.
+      Regenerated all 10 files, re-uploaded to R2, byte-verified.
+- [x] 6c. Shipped 2026-10-07: gate re-run PROCEED, `/self-qa` pass, PR #141 merged (1f49032d),
+      worker redeployed from main (f0b1fdb8); live checkout verified for both IDs. Follow-ups merged
+      same day: terms.html + email HTML escaping (#141), terms/privacy margins (#142, #143),
+      Contact section alignment (#144), privacy footer Terms link (#145).
+
+**Review:** Generator was never lost (it lives in Etsy-Claude on OneDrive), so the rebuild plan
+was dropped after one search. Content Editor caught a real P1 (retake window counted from the
+failed exam instead of the coupon date); the fix came from the PECB candidate handbooks, not the
+product pages, which omit it. End-to-end paid purchase (email + download) not yet tested.
+
 ## Next Up
 
 - [ ] **AI vuln-intel draft/publish pipeline** — `data/ai-vuln-intel.json` (fed by
@@ -46,6 +101,7 @@ Source: theweatherreport.ai/posts/unprompted-2026-top-insights-day-one
 
 ## Completed
 
+- [x] PECB ISO/IEC 27001 Lead Implementer + Lead Auditor planners live in store (2026-10-07)
 - [x] Sitemap: 381 → 450 URLs (2026-03-16)
 - [x] Quiz analytics: POST /quiz/submit endpoint + sendBeacon client (2026-03-16)
 - [x] generate_sitemap.py script (2026-03-16)

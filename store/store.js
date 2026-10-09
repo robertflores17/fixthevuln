@@ -18,7 +18,7 @@ const VENDOR_META = {
   microsoft:  { name: 'Microsoft',    icon: '🔷', color: '#0078d4', url: 'microsoft.html',           desc: 'Azure Fundamentals, Administrator, Security Engineer, AI' },
   cisco:      { name: 'Cisco',        icon: '🌐', color: '#049fd9', url: 'cisco.html',               desc: 'CCNA, CCNP ENCOR, CyberOps, DevNet' },
   google:     { name: 'Google Cloud', icon: '🔵', color: '#4285f4', url: 'google-cloud.html',        desc: 'Cloud Engineer, Architect, Data Engineer, Security' },
-  'security-governance': { name: 'Security & Governance', icon: '🛡️', color: '#805ad5', url: 'security-governance.html', desc: 'ISC2 CISSP/CCSP, ISACA CISA/CISM, GIAC GSEC/GCIH' },
+  'security-governance': { name: 'Security & Governance', icon: '🛡️', color: '#805ad5', url: 'security-governance.html', desc: 'ISC2 CISSP/CCSP, ISACA CISA/CISM, PECB ISO 27001, GIAC GSEC/GCIH' },
   'offensive-devops':    { name: 'Offensive & DevOps',    icon: '💻', color: '#d53f8c', url: 'offensive-devops.html',    desc: 'EC-Council CEH, OffSec OSCP, HashiCorp Terraform, Kubernetes CKA' },
   lifestyle:  { name: 'Lifestyle & Productivity', icon: '📓', color: '#38a169', url: 'lifestyle.html',   desc: 'Budget Binder, Wellness Journal, Digital Planner, Business Templates' },
   education:  { name: 'Education',    icon: '📚', color: '#d69e2e', url: 'education.html',           desc: 'Teacher Planner, Student Planner, ADHD Student Planner' },
@@ -31,7 +31,7 @@ const VENDOR_GROUP_MAP = {
   microsoft: ['microsoft'],
   cisco: ['cisco'],
   google: ['google'],
-  'security-governance': ['isc2', 'isaca', 'giac'],
+  'security-governance': ['isc2', 'isaca', 'pecb', 'giac'],
   'offensive-devops': ['ec-council', 'offsec', 'hashicorp', 'k8s'],
   lifestyle: ['lifestyle', 'bundles'],
   education: ['education'],
@@ -231,6 +231,10 @@ const PRODUCTS = [
   { id: 'isaca-cism',              vendor: 'isaca',     name: 'ISACA CISM',                   meta: 'CISM 2026 · 4 domains', popular: false, tags: ['Governance', 'Risk', 'Incident Mgmt'] },
   { id: 'isaca-crisc',             vendor: 'isaca',     name: 'ISACA CRISC',                  meta: 'CRISC · 4 domains',    popular: false, tags: ['Risk', 'IT Controls', 'Monitoring'] },
 
+  // PECB
+  { id: 'pecb-iso27001-li',        vendor: 'pecb',      name: 'ISO/IEC 27001 Lead Implementer', meta: 'PECB · 7 domains',    popular: false, tags: ['ISMS', 'Risk Treatment', 'Annex A'] },
+  { id: 'pecb-iso27001-la',        vendor: 'pecb',      name: 'ISO/IEC 27001 Lead Auditor',   meta: 'PECB · 7 domains',     popular: false, tags: ['ISMS', 'Audit', 'ISO 19011'] },
+
   // GIAC
   { id: 'giac-gsec',               vendor: 'giac',      name: 'GIAC GSEC',                    meta: 'GSEC · 7 domains',     popular: false, tags: ['Defense', 'Networking', 'Incident Resp'] },
   { id: 'giac-gcih',               vendor: 'giac',      name: 'GIAC GCIH',                    meta: 'GCIH · 6 domains',     popular: false, tags: ['Incident Resp', 'Hacker Tools', 'Exploits'] },
@@ -291,6 +295,18 @@ try {
   console.error('Corrupted cart data — resetting', e);
   localStorage.removeItem('ftv_cart');
   cart = [];
+}
+// Remember UTM tags from the landing URL so checkout can attribute the sale (last touch wins).
+const utmParams = new URLSearchParams(location.search);
+if (utmParams.has('utm_source')) {
+  localStorage.setItem('ftv_utm', JSON.stringify({
+    source: utmParams.get('utm_source'),
+    medium: utmParams.get('utm_medium'),
+    campaign: utmParams.get('utm_campaign'),
+  }));
+}
+function getStoredUtm() {
+  try { return JSON.parse(localStorage.getItem('ftv_utm')); } catch (e) { return null; }
 }
 let selectedVariant = localStorage.getItem('ftv_variant') || 'standard';
 if (!PRICING[selectedVariant]) selectedVariant = 'standard';
@@ -516,6 +532,7 @@ function vendorDisplayName(vendor) {
     microsoft: 'Microsoft',
     cisco: 'Cisco',
     isaca: 'ISACA',
+    pecb: 'PECB',
     giac: 'GIAC',
     google: 'Google Cloud',
     'ec-council': 'EC-Council',
@@ -839,6 +856,7 @@ if (btnCheckout) {
             variantLabel: item.variantLabel,
             price: item.price,
           })),
+          utm: getStoredUtm(),
         }),
       });
 
