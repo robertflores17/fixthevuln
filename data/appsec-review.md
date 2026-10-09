@@ -1,21 +1,19 @@
-# AppSec Review — 2026-10-06
+# AppSec Review — 2026-10-09
 
-**Reviewer:** Robert Flores, CISSP  
-**Review Date:** 2026-10-06  
-**CVEs Reviewed:** 1  
-**Pipeline Run:** Automated scheduled review
+**Reviewer:** Robert Flores, CISSP (automated via FixTheVuln AppSec Reviewer)
+**CVE Count:** 5
+**Source:** CISA KEV — dateAdded 2026-10-08
 
 ---
 
 ## Severity Breakdown
 
-| Priority | Count |
-|----------|-------|
-| Critical | 0     |
-| High     | 1     |
-| Medium   | 0     |
-| Low      | 0     |
-| **Total**| **1** |
+| Priority | Count | CVEs |
+|----------|-------|------|
+| Critical | 2 | CVE-2021-3199, CVE-2015-3306 |
+| High     | 2 | CVE-2015-5477, CVE-2016-3081 |
+| Medium   | 1 | CVE-2023-22894 |
+| Low      | 0 | — |
 
 ---
 
@@ -23,40 +21,32 @@
 
 | CVE ID | Vendor | Priority | Vulnerability Class |
 |--------|--------|----------|---------------------|
-| CVE-2026-88779 | Citrix | High | Memory Buffer Overflow (CWE-119) / DoS |
-
----
-
-## CVE Details
-
-### CVE-2026-88779 — Citrix NetScaler ADC/Gateway Memory Buffer Overflow
-- **CVSS:** 7.5 (v3.1)  
-- **Class:** Improper Restriction of Operations within the Bounds of a Memory Buffer (CWE-119)  
-- **Priority:** High  
-- **Date Added to KEV:** 2026-10-04 | **Due:** 2026-10-07  
-
-Citrix NetScaler ADC and Gateway — perimeter devices handling SSL VPN, application delivery, and load balancing — contain a memory buffer overflow that can be triggered remotely to cause denial of service. Although CISA's initial documentation scopes this to DoS, CWE-119 class vulnerabilities in perimeter network appliances historically carry escalation potential; combined with active exploitation confirmed by CISA's KEV listing, this warrants high priority. Organizations running internet-facing NetScaler deployments should treat the 2026-10-07 CISA BOD 26-04 due date as a hard deadline.
+| CVE-2015-5477 | ISC (BIND) | High | Denial of Service (data processing / assertion failure) |
+| CVE-2016-3081 | Apache (Struts) | High | Remote Code Execution (command injection) |
+| CVE-2023-22894 | Strapi | Medium | Information Disclosure (cleartext sensitive data storage) |
+| CVE-2021-3199 | ONLYOFFICE | Critical | Remote Code Execution (path traversal via file upload) |
+| CVE-2015-3306 | ProFTPD | Critical | Remote Code Execution (improper access control / arbitrary file write) |
 
 ---
 
 ## Trend Analysis
 
-Today's batch reflects a continuing pattern of high-severity vulnerabilities in network perimeter appliances making CISA's KEV catalog. Citrix NetScaler has appeared multiple times in recent KEV additions — this is consistent with the broader trend of threat actors targeting SSL VPN and application delivery controllers as initial access footholds, given their internet-facing posture and privileged network position. Memory corruption vulnerabilities (CWE-119 family) in this class of appliance are particularly concerning because they sit at the intersection of high exploitability and high blast radius: a compromised gateway provides lateral movement capability across the entire network. Security teams should prioritize Citrix NetScaler patching, audit exposure with forensic triage per CISA BOD 26-04 implementation guidance, and consider moving to zero-trust network access architectures that reduce reliance on perimeter VPN devices.
+This batch represents a BOD 26-04 retroactive sweep, with four of five CVEs dating from 2015–2021. CISA's pattern of revisiting decade-old vulnerabilities signals that legacy infrastructure — FTP servers, DNS resolvers, Java web frameworks, and document collaboration platforms — remains actively exploited in the wild, likely targeting unpatched government and enterprise assets. The presence of Apache Struts (CVE-2016-3081) alongside the ProFTPD module-copy flaw (CVE-2015-3306, CVSS 10.0) confirms that unauthenticated RCE on widely-deployed open-source servers continues to be a high-value attack surface. The Strapi chain (CVE-2023-22894 + CVE-2023-22621) is the only recent entry and illustrates how CMS/headless platforms are increasingly weaponized via privilege-escalation chains that convert partial access into full RCE on EoL software.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"Citrix NetScaler Keeps Landing on CISA's Most Wanted List — Here's Why"** — An analysis of the recurring appearance of NetScaler in KEV, what attackers find attractive about it, and how organizations can break the cycle through zero-trust architecture.
+1. **"The FTP File That Pwned Servers for a Decade: Inside ProFTPD CVE-2015-3306"** — Deep dive into mod_copy's SITE CPFR/CPTO abuse, real-world exploitation scenarios (e.g., combined with WordPress file-upload paths), and detection strategies using FTP log analysis.
 
-2. **"CISA BOD 26-04 Deep Dive: What the Forensics Triage Requirements Actually Mean for Your Team"** — A practical guide to the forensic triage requirements embedded in BOD 26-04, with concrete playbooks for network appliance incidents.
+2. **"Apache Struts Is Still in Production: Why CVE-2016-3081 Keeps Showing Up in KEV"** — Enterprise Java lifecycle management failures, how Dynamic Method Invocation persists in legacy codebases, and a timeline of Struts KEV additions from 2017 to 2026.
 
-3. **"Memory Corruption in Perimeter Devices: Why DoS Ratings Understate the Real Risk"** — An educational post explaining how CWE-119 class vulnerabilities in network appliances can evolve from DoS to RCE, using historical Citrix CVEs as case studies.
+3. **"Chaining for RCE: The Strapi CVE-2023-22894 + CVE-2023-22621 Attack Path"** — Step-by-step technical breakdown of how admin panel information disclosure chains into template injection for unauthenticated RCE, and why EoL headless CMS platforms are a growing attack vector.
 
 ---
 
 ## Newsletter Snippet
 
-**This week, CISA added CVE-2026-88779 — a memory buffer overflow in Citrix NetScaler ADC and Gateway — to the Known Exploited Vulnerabilities catalog.** With a CVSS of 7.5 and a patch deadline of October 7, 2026, federal agencies and private-sector organizations running NetScaler in internet-facing configurations are on the clock. The vulnerability enables remote denial of service, and CISA's inclusion of forensic triage requirements under BOD 26-04 signals that exploitation activity may be more sophisticated than a simple DoS campaign.
+**CISA added 5 new vulnerabilities to the Known Exploited Vulnerabilities catalog this week**, spanning legacy DNS, FTP, and Java web infrastructure alongside a modern headless CMS chain. Two reach critical severity: **ONLYOFFICE Docs (CVE-2021-3199, CVSS 9.8)** allows unauthenticated path traversal leading to remote code execution via a malformed image upload path, and **ProFTPD (CVE-2015-3306, CVSS 10.0)** exposes arbitrary file read/write through the mod_copy module — a flaw that has been actively weaponized for over a decade but remains unpatched across legacy FTP deployments. BOD 26-04 compliance teams should prioritize these two for immediate assessment.
 
-If your organization uses Citrix NetScaler for SSL VPN or application delivery, apply vendor patches immediately and conduct forensic triage per the BOD 26-04 implementation guidance. This marks another in a series of Citrix perimeter device vulnerabilities reaching KEV, reinforcing that attackers continue to view gateway appliances as high-value initial access targets. Consider this an inflection point to evaluate your dependency on legacy perimeter VPN architectures.
+The remaining three — **ISC BIND (CVE-2015-5477)**, **Apache Struts (CVE-2016-3081)**, and **Strapi (CVE-2023-22894)** — round out a week dominated by retroactive enforcement of old vulnerabilities on infrastructure that organizations assumed was already remediated. The Strapi entry is particularly noteworthy: rated medium at CVSS 4.9 in isolation, it chains with CVE-2023-22621 for full RCE and affects software that may already be end-of-life, meaning vendors will not issue patches. If your organization runs any self-hosted Strapi instance, the recommended action is upgrade or decommission — not patch.
