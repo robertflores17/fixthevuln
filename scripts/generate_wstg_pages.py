@@ -18,7 +18,8 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from lib.templates import (html_head, nav, share_bar, footer, cf_analytics,
-                           article_schema, breadcrumb_schema, esc)
+                           article_schema, breadcrumb_schema, esc,
+                           existing_date_published)
 from lib.constants import SITE_URL
 from entity_extractor import OWASP_LABELS, OWASP_COLORS
 
@@ -237,7 +238,8 @@ def generate_category_page(cat, all_categories):
     cat_canonical = f'{SITE_URL}/wstg/{slug}.html'
     cat_keywords = f'{escape_html(code)}, OWASP WSTG, {escape_html(name)}, web security testing, penetration testing, {", ".join(certs)}'
     cat_schemas = [
-        article_schema(f'{code}: {name} — OWASP Web Security Testing Guide', meta_desc, TODAY),
+        article_schema(f'{code}: {name} — OWASP Web Security Testing Guide', meta_desc,
+                       existing_date_published(WSTG_DIR / f'{slug}.html', TODAY), TODAY),
         breadcrumb_schema([("Home", f"{SITE_URL}/"), ("Guides", f"{SITE_URL}/guides.html"), ("OWASP WSTG", f"{SITE_URL}/wstg/"), (name, None)]),
     ]
     if faq_schema:
