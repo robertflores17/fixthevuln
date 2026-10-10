@@ -123,3 +123,23 @@ specificity, so every existing class or inline style still wins.
    this before push. Always minify with `zindex: false`, and diff the old
    and new min file rule by rule. The only differences should be the rules
    you changed.
+
+## 2026-10-10: Cert-figure fix shipped without the content-editor gate, and too narrowly
+
+**What happened:** PR #149 fixed CISSP/CISM figures on `cissp-vs-cism.html`. Rook ran
+pre-push-review's checks himself and reported "the content-editor subagent didn't
+review this." Oscar merged anyway. The scope was also too narrow: it covered only
+CISSP/CISM, only comparison pages, and only the cert that triggered the report. The
+CCSP figures (150 / 240 min, stale since ISC2 moved CCSP to CAT) and a CISSP
+"125-175" sentence on `best-cybersecurity-certifications.html` stayed live until
+Robert asked. Fixed in #150.
+
+**Rules:**
+1. Any change to a cert/CVE/quiz fact gets a real `content-editor` dispatch before
+   push. A report that says "content-editor didn't run" blocks the merge. It is not a
+   footnote.
+2. When one cert's exam format is stale, check every cert from the same vendor and
+   every page type: `data/cert-comparisons.json`, `certs/`, `blog/*study-guide*`, and
+   `best-cybersecurity-certifications.html`. Grep both the literal dash and `&ndash;`.
+3. Flint (credibility-editor) checks LinkedIn captions only. A caption that links a
+   site page does not make that page verified.
