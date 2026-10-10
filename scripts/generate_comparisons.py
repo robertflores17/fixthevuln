@@ -165,11 +165,13 @@ def generate_comparison_page(comp, certs):
     )
 
     def spec_row(label, key):
+        if key not in c1 and key not in c2:
+            return None
         v1 = escape_html(c1.get(key, 'N/A'))
         v2 = escape_html(c2.get(key, 'N/A'))
         return f'<tr><td style="font-weight:600;color:var(--text-muted);">{label}</td><td>{v1}</td><td>{v2}</td></tr>'
 
-    table_rows = '\n'.join([
+    table_rows = '\n'.join(r for r in [
         spec_row('Vendor', 'vendor'),
         spec_row('Exam Code', 'code'),
         spec_row('Level', 'level'),
@@ -180,7 +182,7 @@ def generate_comparison_page(comp, certs):
         spec_row('Renewal', 'renewal'),
         spec_row('Prerequisites', 'prerequisites'),
         spec_row('Avg Salary Range', 'salary_range'),
-    ])
+    ] if r)
 
     canonical = f'{SITE_URL}/comparisons/{slug}.html'
     keywords = f"{escape_html(c1['name'])}, {escape_html(c2['name'])}, certification comparison, {escape_html(c1['vendor'])}, {escape_html(c2['vendor'])}, IT certification"
