@@ -269,8 +269,8 @@ function renderOverview(c) {
 
 function renderPaths(c) {
     const fee = c.exam_fee || 0;
-    const budgetTotal = fee + 6;
-    const premiumTotal = fee + 6 + 50 + 30;
+    const PLANNER = 5.99;
+    const total = fee ? fmt(fee + PLANNER) : 'Varies';
 
     document.getElementById('budgetPath').innerHTML = `
         <h3><span class="path-badge">Budget</span> Budget Path</h3>
@@ -279,17 +279,17 @@ function renderPaths(c) {
         <div class="path-line"><span>Free video courses</span><span>$0</span></div>
         <div class="path-line"><span>Free practice tests</span><span>$0</span></div>
         <div class="path-line"><span>Official docs / labs</span><span>$0</span></div>
-        <div class="path-total"><span>Total</span><span>${fee ? fmt(budgetTotal) : 'Varies + $6'}</span></div>
+        <div class="path-total"><span>Total</span><span>${total}</span></div>
     `;
 
     document.getElementById('premiumPath').innerHTML = `
         <h3><span class="path-badge">Premium</span> Premium Path</h3>
         <div class="path-line"><span>Exam voucher</span><span>${fee ? fmt(fee) : 'Varies'}</span></div>
         <div class="path-line"><span>Study planner (PDF)</span><span>$5.99</span></div>
-        <div class="path-line"><span>Practice exam platform</span><span>~$50</span></div>
-        <div class="path-line"><span>Video course (Udemy/CBT)</span><span>~$30</span></div>
-        <div class="path-line"><span>Official study guide</span><span>~$40</span></div>
-        <div class="path-total"><span>Total</span><span>${fee ? fmt(premiumTotal + 40) : 'Varies + $126'}</span></div>
+        <div class="path-line"><span>Practice exam platform</span><span>Price varies</span></div>
+        <div class="path-line"><span>Video course (Udemy/CBT)</span><span>Price varies</span></div>
+        <div class="path-line"><span>Official study guide</span><span>Price varies</span></div>
+        <div class="path-total"><span>Total</span><span>${total} + materials</span></div>
     `;
 }
 

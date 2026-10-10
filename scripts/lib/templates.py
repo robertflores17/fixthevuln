@@ -6,6 +6,7 @@ One nav. One footer. One share bar. One source of truth.
 """
 
 import json
+import re
 from .constants import (
     STYLE_CSS_VERSION, QUIZ_CSS_VERSION, COMPARISON_CSS_VERSION,
     SITE_NAME, SITE_URL, OG_IMAGE, CYBERFOLIO_URL,
@@ -379,6 +380,18 @@ def faq_schema(questions):
         "@type": "FAQPage",
         "mainEntity": entities,
     }, indent=8)
+
+
+def existing_date_published(path, default):
+    """Return the datePublished already in the page at path, else default.
+
+    Regenerating a page must not reset its original publish date.
+    """
+    try:
+        m = re.search(r'"datePublished":\s*"(\d{4}-\d{2}-\d{2})"', path.read_text(encoding='utf-8'))
+    except FileNotFoundError:
+        return default
+    return m.group(1) if m else default
 
 
 def article_schema(headline, description, date_published, date_modified=None):

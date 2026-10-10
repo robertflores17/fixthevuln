@@ -17,7 +17,8 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from lib.templates import (html_head, nav, share_bar, footer, cf_analytics,
-                           article_schema, breadcrumb_schema, esc)
+                           article_schema, breadcrumb_schema, esc,
+                           existing_date_published)
 from lib.constants import SITE_URL, COMPARISON_CSS_VERSION
 
 DATA_PATH = REPO_ROOT / 'data' / 'cert-comparisons.json'
@@ -186,7 +187,8 @@ def generate_comparison_page(comp, certs):
     canonical = f'{SITE_URL}/comparisons/{slug}.html'
     keywords = f"{escape_html(c1['name'])}, {escape_html(c2['name'])}, certification comparison, {escape_html(c1['vendor'])}, {escape_html(c2['vendor'])}, IT certification"
     schema_blocks = [
-        article_schema(f'{title}: Which Certification Should You Get?', meta_desc, TODAY),
+        article_schema(f'{title}: Which Certification Should You Get?', meta_desc,
+                       existing_date_published(COMP_DIR / f'{slug}.html', TODAY), TODAY),
         breadcrumb_schema([("Home", f"{SITE_URL}/"), ("Certification Comparisons", f"{SITE_URL}/comparisons/"), (title, None)]),
         faq_schema_json,
     ]
