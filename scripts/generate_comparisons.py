@@ -181,7 +181,6 @@ def generate_comparison_page(comp, certs):
         spec_row('Passing Score', 'passing'),
         spec_row('Renewal', 'renewal'),
         spec_row('Prerequisites', 'prerequisites'),
-        spec_row('Avg Salary Range', 'salary_range'),
     ] if r)
 
     canonical = f'{SITE_URL}/comparisons/{slug}.html'
