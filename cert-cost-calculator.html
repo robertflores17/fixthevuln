@@ -5,18 +5,18 @@
     <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
     <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Certification Cost Calculator — Total Cost & ROI | FixTheVuln</title>
-    <meta name="description" content="Free certification cost calculator. Compare exam fees, study material costs, and salary ROI for 65+ IT certifications including Security+, CISSP, AWS, Azure, and Cisco.">
+    <title>Certification Cost Calculator — Exam Fees & Study Paths | FixTheVuln</title>
+    <meta name="description" content="Free certification cost calculator. Compare exam fees and budget vs premium study paths for 65+ IT certifications including Security+, CISSP, AWS, Azure, and Cisco.">
     <link rel="icon" href="/favicon.ico" sizes="any">
     <meta property="og:title" content="Cert Cost Calculator | FixTheVuln">
-    <meta property="og:description" content="Calculate total certification costs and salary ROI for 65+ IT certs.">
+    <meta property="og:description" content="Calculate total certification costs and study paths for 65+ IT certs.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://fixthevuln.com/cert-cost-calculator.html">
     <meta property="og:image" content="https://fixthevuln.com/og-image.png">
     <link rel="canonical" href="https://fixthevuln.com/cert-cost-calculator.html">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Cert Cost Calculator | FixTheVuln">
-    <meta name="twitter:description" content="Calculate total certification costs and salary ROI for 65+ IT certs.">
+    <meta name="twitter:description" content="Calculate total certification costs and study paths for 65+ IT certs.">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="stylesheet" href="style.min.css?v=13">
     <script type="application/ld+json">
@@ -24,13 +24,13 @@
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
         "name": "Certification Cost Calculator",
-        "description": "Calculate total certification costs and salary ROI for 65+ IT certifications",
+        "description": "Calculate total certification costs and study paths for 65+ IT certifications",
         "url": "https://fixthevuln.com/cert-cost-calculator.html",
         "applicationCategory": "EducationalApplication",
         "operatingSystem": "Web Browser",
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-        "featureList": ["Exam fee breakdown", "Budget vs Premium path comparison", "Salary ROI analysis", "65+ certifications"],
-        "dateModified": "2026-03-01"
+        "featureList": ["Exam fee breakdown", "Budget vs Premium path comparison", "65+ certifications"],
+        "dateModified": "2026-10-10"
     }
     </script>
     <script type="application/ld+json">
@@ -71,12 +71,6 @@
         .path-line { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; }
         .path-line:last-child { border-bottom: none; }
         .path-total { font-weight: 700; font-size: 1.1rem; color: var(--accent-primary); margin-top: 0.75rem; padding-top: 0.75rem; border-top: 2px solid var(--accent-primary); display: flex; justify-content: space-between; }
-        .roi-panel { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px; padding: 1.5rem; color: white; margin-bottom: 2rem; }
-        .roi-panel h3 { color: white; margin-bottom: 1rem; }
-        .roi-bar-track { background: rgba(255,255,255,0.15); border-radius: 8px; height: 24px; margin-bottom: 0.5rem; overflow: hidden; position: relative; }
-        .roi-bar { height: 100%; border-radius: 8px; background: linear-gradient(90deg, #667eea, #10b981); display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; font-size: 0.75rem; font-weight: 700; min-width: 60px; }
-        .roi-labels { display: flex; justify-content: space-between; font-size: 0.8rem; opacity: 0.8; margin-bottom: 1rem; }
-        .roi-note { font-size: 0.85rem; opacity: 0.9; line-height: 1.5; }
         .cross-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 2rem; }
         .cross-link { display: block; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 10px; padding: 1rem; text-decoration: none; color: inherit; transition: transform 0.2s; }
         .cross-link:hover { transform: translateY(-2px); }
@@ -131,7 +125,7 @@
     <div class="calc-container">
         <div class="calc-header">
             <h1>Certification Cost Calculator</h1>
-            <p>Calculate the total cost of your next IT certification and see the salary ROI. Compare budget vs premium study paths for 65+ certs.</p>
+            <p>Calculate the total cost of your next IT certification. Compare budget vs premium study paths for 65+ certs.</p>
         </div>
 
         <div class="calc-select-wrap">
@@ -149,8 +143,6 @@
                 <div class="path-card path-budget" id="budgetPath"></div>
                 <div class="path-card path-premium" id="premiumPath"></div>
             </div>
-
-            <div class="roi-panel" id="roiPanel"></div>
 
             <div class="free-resources" id="freeResources"></div>
 
@@ -250,7 +242,6 @@ function onCertSelect(e) {
     }
     renderOverview(cert);
     renderPaths(cert);
-    renderROI(cert);
     renderResources(cert);
     renderCrossLinks(cert);
 }
@@ -267,11 +258,6 @@ function renderOverview(c) {
             <div class="stat-label">Study Time</div>
             <div class="stat-value">${c.study_weeks} weeks</div>
             <div class="stat-sub">Recommended prep</div>
-        </div>
-        <div class="cost-stat">
-            <div class="stat-label">Salary Range</div>
-            <div class="stat-value">${c.salary_min ? fmt(c.salary_min) + '–' + fmt(c.salary_max) : 'N/A'}</div>
-            <div class="stat-sub">Average with cert</div>
         </div>
         <div class="cost-stat">
             <div class="stat-label">Planner</div>
@@ -304,31 +290,6 @@ function renderPaths(c) {
         <div class="path-line"><span>Video course (Udemy/CBT)</span><span>~$30</span></div>
         <div class="path-line"><span>Official study guide</span><span>~$40</span></div>
         <div class="path-total"><span>Total</span><span>${fee ? fmt(premiumTotal + 40) : 'Varies + $126'}</span></div>
-    `;
-}
-
-function renderROI(c) {
-    const el = document.getElementById('roiPanel');
-    if (!c.salary_min || !c.salary_max) {
-        el.innerHTML = '<h3>Salary ROI</h3><p class="roi-note">Salary data not available for this certification. Check vendor resources for current market rates.</p>';
-        return;
-    }
-    const fee = c.exam_fee || 0;
-    const totalCost = fee + 6;
-    const avgSalary = Math.round((c.salary_min + c.salary_max) / 2);
-    const roiPercent = totalCost > 0 ? Math.round(((avgSalary - totalCost) / totalCost) * 100) : 0;
-    const barWidth = Math.min(100, Math.max(10, roiPercent / 500 * 100));
-
-    el.innerHTML = `
-        <h3>Salary ROI (Budget Path)</h3>
-        <div class="roi-labels">
-            <span>Investment: ${fmt(totalCost)}</span>
-            <span>Avg Salary: ${fmt(avgSalary)}/yr</span>
-        </div>
-        <div class="roi-bar-track">
-            <div class="roi-bar" style="width: ${barWidth}%">${roiPercent.toLocaleString()}x</div>
-        </div>
-        <p class="roi-note">With a budget-path investment of ${fmt(totalCost)} and an average certified salary of ${fmt(avgSalary)}/year, this certification pays for itself in <strong>${totalCost > 0 ? Math.ceil(totalCost / (avgSalary / 12)) : '< 1'} month${totalCost > 0 && Math.ceil(totalCost / (avgSalary / 12)) !== 1 ? 's' : ''}</strong>. ROI is ${roiPercent.toLocaleString()}x your investment in year one alone.</p>
     `;
 }
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Generate cert-costs.json from cert configs and comparison data.
-Consolidates exam fees, retake info, study weeks, salary ranges,
+Consolidates exam fees, retake info, study weeks,
 and resource links for the Cert Cost Calculator tool page."""
 
 import html
@@ -205,46 +205,7 @@ def parse_cost(cost_str):
     return 0
 
 
-def parse_salary_range(salary_str):
-    """Parse salary range like '$65,000–$95,000' into (min, max)."""
-    if not salary_str or salary_str == 'N/A':
-        return (0, 0)
-    nums = re.findall(r'\$?([\d,]+)', salary_str)
-    if len(nums) >= 2:
-        return (int(nums[0].replace(',', '')), int(nums[1].replace(',', '')))
-    elif len(nums) == 1:
-        val = int(nums[0].replace(',', ''))
-        return (val, val)
-    return (0, 0)
-
-
 def main():
-    # Load comparison data for salary ranges
-    comp_path = REPO / 'data' / 'cert-comparisons.json'
-    comparisons = {}
-    if comp_path.exists():
-        comp_data = json.loads(comp_path.read_text(encoding='utf-8'))
-        comparisons = comp_data.get('certifications', {})
-
-    # Build a lookup from product ID to comparison key
-    # The comparison keys use different naming than product IDs
-    pid_to_comp = {}
-    for p in PRODUCTS:
-        # Try exact match with hyphens
-        pid = p['id']
-        # Try common transformations
-        candidates = [
-            pid,
-            pid.replace('comptia-', ''),
-            pid.replace('isc2-', ''),
-            pid.replace('aws-', 'aws-'),
-            pid.replace('ms-', ''),
-        ]
-        for key in comparisons:
-            if key in candidates or pid.endswith(key) or key.endswith(pid.split('-', 1)[-1] if '-' in pid else pid):
-                pid_to_comp[pid] = key
-                break
-
     certs = []
     for product in PRODUCTS:
         pid = product['id']
@@ -266,12 +227,6 @@ def main():
         exam_fee = parse_cost(exam_details.get('exam_cost', ''))
         study_weeks = config.get('planner_settings', {}).get('num_weeks', 12) if config else 12
         retake_policy = exam_details.get('retake_policy', 'Check vendor website')
-
-        # Get salary from comparison data
-        comp_key = pid_to_comp.get(pid, '')
-        comp_entry = comparisons.get(comp_key, {})
-        salary_str = comp_entry.get('salary_range', '')
-        salary_min, salary_max = parse_salary_range(salary_str)
 
         # Free resources
         free_resources = FREE_RESOURCES.get(vendor, [])
@@ -298,8 +253,6 @@ def main():
             'exam_fee': exam_fee,
             'retake_policy': retake_policy,
             'study_weeks': study_weeks,
-            'salary_min': salary_min,
-            'salary_max': salary_max,
             'free_resources': free_resources,
             'paid_resources': paid_resources,
             'planner_url': planner_url,
