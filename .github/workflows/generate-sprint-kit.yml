@@ -3,8 +3,10 @@ name: Generate Patch Tuesday Sprint Kit
 on:
   schedule:
     # Wednesday after 2nd Tuesday (Patch Tuesday) at 12PM Pacific (20:00 UTC)
-    # 2nd Tuesday falls on days 8-14, so Wednesday after is days 9-15
-    - cron: '0 20 9-15 * 3'
+    # 2nd Tuesday falls on days 8-14, so Wednesday after is days 9-15.
+    # Cron ORs day-of-month with day-of-week, so '9-15 * 3' would fire every
+    # day 9-15 AND every Wednesday. Run days 9-15 and let the gate job pick Wednesday.
+    - cron: '0 20 9-15 * *'
   workflow_dispatch:
     inputs:
       month:
@@ -13,7 +15,22 @@ on:
         type: string
 
 jobs:
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      go: ${{ steps.check.outputs.go }}
+    steps:
+      - id: check
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ] || [ "$(date -u +%u)" = "3" ]; then
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "go=false" >> "$GITHUB_OUTPUT"
+          fi
+
   generate-and-upload:
+    needs: gate
+    if: needs.gate.outputs.go == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -82,6 +99,23 @@ jobs:
             git commit -m "Update sprint kit manifest ($(date +'%Y-%m-%d'))"
             git push
           fi
+
+      # Scheduled runs only: manual runs regenerate past months and must not email anyone.
+      # The worker also refuses a second delivery for the same month.
+      - name: Email kit to subscribers
+        if: steps.generate.outputs.has_cves != 'false' && github.event_name == 'schedule'
+        env:
+          KIT_DELIVERY_SECRET: ${{ secrets.KIT_DELIVERY_SECRET }}
+          PDF_NAME: ${{ steps.generate.outputs.filename }}
+        run: |
+          MONTH="${PDF_NAME#patch-sprint-kit-}"
+          MONTH="${MONTH%.pdf}"
+          # Header via stdin so the secret never appears in the process list
+          curl --fail-with-body -sS -X POST \
+            https://fixthevuln-checkout.robertflores17.workers.dev/sprint-kit/deliver \
+            -H @- \
+            -H "Content-Type: application/json" \
+            -d "{\"month\": \"$MONTH\"}" <<< "Authorization: Bearer $KIT_DELIVERY_SECRET"
 
       - name: Summary
         if: always()

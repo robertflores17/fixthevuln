@@ -6,6 +6,7 @@
 //   STRIPE_SECRET_KEY    - your Stripe secret key
 //   STRIPE_WEBHOOK_SECRET - webhook signing secret
 //   RESEND_API_KEY       - Resend API key for emails
+//   KIT_DELIVERY_SECRET  - bearer secret for POST /sprint-kit/deliver (also a GitHub secret)
 // R2 bucket binding:
 //   PLANNERS - bound to fixthevuln-planners R2 bucket
 // ============================================
@@ -290,6 +291,12 @@ export default {
       return handleClassifierFeedback(request, env, cors);
     }
 
+    // ─── ROUTE: POST /sprint-kit/deliver ───────
+    // Monthly kit email to active subscribers (called by generate-sprint-kit.yml)
+    if (request.method === 'POST' && url.pathname === '/sprint-kit/deliver') {
+      return handleKitDelivery(request, env);
+    }
+
     return new Response(JSON.stringify({ error: 'Not found' }), {
       status: 404,
       headers: { ...cors, 'Content-Type': 'application/json' },
@@ -514,6 +521,7 @@ async function handleVerify(request, env, cors) {
 
     return new Response(JSON.stringify({
       verified: true,
+      mode: session.mode,
       downloads,
     }), {
       status: 200,
@@ -600,6 +608,10 @@ async function handleDownload(request, env, cors) {
 // ─── FILENAME MAPPING ───────────────────────────
 // Maps cert_id + variant to the PDF filename in R2
 function getFilename(certId, variant) {
+  // Sprint kit tokens are only minted server-side (kitDownloadUrl), never from cart input
+  if (certId === 'sprint-kit') {
+    return `patch-sprint-kit-${variant}.pdf`;
+  }
   // Bundle variant returns a zip with all 4 formats
   if (variant === 'bundle') {
     return `${certId}_bundle.zip`;
@@ -757,6 +769,16 @@ async function handleWebhook(request, env) {
         promises.push(sendSellerNotification(env, customerEmail, downloads, items, amountCents, session.metadata?.utm_source));
 
         await Promise.allSettled(promises);
+      }
+
+      // Sprint kit subscription: welcome email with the current kit. The Stripe
+      // account is shared with CyberFolio, so match on the kit's price, not mode.
+      if (session.mode === 'subscription' && customerEmail && await isKitSession(env, session.id)) {
+        const month = await latestKitMonth(env);
+        await Promise.allSettled([
+          resendPost(env, 'emails', kitEmail(customerEmail, month, month && await kitDownloadUrl(env, month), true)),
+          sendSellerNotification(env, customerEmail, [{ certId: 'Patch Tuesday Sprint Kit', variant: 'monthly subscription' }], [], amountCents, session.metadata?.utm_source),
+        ]);
       }
     }
   } catch (err) {
@@ -944,6 +966,171 @@ async function sendSellerNotification(env, customerEmail, downloads, items, amou
       html,
     }),
   });
+}
+
+// ─── PATCH TUESDAY SPRINT KIT SUBSCRIPTION ─────
+const KIT_PRICE_ID = 'price_1T45YOLBnrzacKtTCA08o8PY';
+const KIT_LINK_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
+async function stripeGet(env, path) {
+  const res = await fetch(`https://api.stripe.com/v1/${path}`, {
+    headers: { 'Authorization': `Bearer ${env.STRIPE_SECRET_KEY}` },
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(`Stripe ${path.split('?')[0]}: ${data.error?.message || res.status}`);
+  return data;
+}
+
+async function isKitSession(env, sessionId) {
+  const items = await stripeGet(env, `checkout/sessions/${encodeURIComponent(sessionId)}/line_items`);
+  return items.data.some(li => li.price?.id === KIT_PRICE_ID);
+}
+
+// Latest kit in R2, as YYYY-MM (keys sort chronologically)
+async function latestKitMonth(env) {
+  const { objects } = await env.PLANNERS.list({ prefix: 'patch-sprint-kit-' });
+  const months = objects.map(o => o.key.match(/^patch-sprint-kit-(\d{4}-\d{2})\.pdf$/)?.[1]).filter(Boolean);
+  return months.sort().pop() || null;
+}
+
+async function kitDownloadUrl(env, month) {
+  const payload = btoa(JSON.stringify({ sessionId: `kit-${month}`, items: [`sprint-kit__${month}`], expiry: Date.now() + KIT_LINK_TTL_MS }));
+  const token = `${payload}.${await createTokenHmac(payload, env.STRIPE_WEBHOOK_SECRET)}`;
+  return `https://fixthevuln-checkout.robertflores17.workers.dev/download?token=${encodeURIComponent(token)}&file=${encodeURIComponent(getFilename('sprint-kit', month))}`;
+}
+
+function kitMonthLabel(month) {
+  const [y, m] = month.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, 1)).toLocaleString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+}
+
+// Builds one kit email. url is null only for a welcome sent before any kit exists.
+function kitEmail(toEmail, month, url, welcome) {
+  const label = month ? kitMonthLabel(month) : '';
+  const subject = welcome
+    ? 'Welcome to the Patch Tuesday Sprint Kit'
+    : `Your ${label} Patch Tuesday Sprint Kit`;
+  const intro = welcome
+    ? 'Thanks for subscribing. Each new kit arrives by email the day after Patch Tuesday.'
+      + (url ? ` Here's the current one (${escapeHtml(label)}) so you can start now.` : '')
+    : `The ${escapeHtml(label)} kit is ready: this cycle's CISA KEV additions, pre-filled triage matrix, 14-day sprint calendar and executive summary.`;
+  const button = url ? `
+        <p style="text-align:center;margin:0 0 24px;">
+          <a href="${escapeHtml(url)}" style="display:inline-block;background:#2563eb;color:#ffffff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;font-size:15px;">Download the ${escapeHtml(label)} kit</a>
+        </p>
+        <p style="color:#92400e;font-size:13px;margin:0 0 24px;">This link expires in 7 days. Please save the PDF after downloading.</p>` : '';
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <div style="max-width:600px;margin:0 auto;padding:40px 20px;">
+    <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+      <div style="background:#2563eb;padding:32px 24px;text-align:center;">
+        <h1 style="color:#ffffff;margin:0;font-size:24px;font-weight:700;">FixTheVuln</h1>
+        <p style="color:rgba(255,255,255,0.85);margin:8px 0 0;font-size:15px;">Patch Tuesday Sprint Kit</p>
+      </div>
+      <div style="padding:32px 24px;">
+        <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 24px;">${intro}</p>${button}
+        <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0;">
+          Questions? Reply to this email or contact
+          <a href="mailto:hello@fixthevuln.com" style="color:#2563eb;">hello@fixthevuln.com</a>
+        </p>
+      </div>
+      <div style="border-top:1px solid #e5e7eb;padding:20px 24px;text-align:center;">
+        <p style="margin:0;color:#94a3b8;font-size:12px;">&copy; 2026 FixTheVuln &middot; Educational resources for security professionals</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  return { from: 'FixTheVuln <hello@fixthevuln.com>', to: [toEmail], subject, html };
+}
+
+// path is 'emails' (one message) or 'emails/batch' (array of up to 100)
+async function resendPost(env, path, body) {
+  const res = await fetch(`https://api.resend.com/${path}`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`Resend ${res.status}`);
+}
+
+async function activeKitSubscriberEmails(env) {
+  const emails = new Set();
+  let after = '';
+  while (true) {
+    const page = await stripeGet(env, `subscriptions?price=${KIT_PRICE_ID}&status=active&limit=100&expand[]=data.customer${after}`);
+    for (const sub of page.data) {
+      if (sub.customer?.email) emails.add(sub.customer.email);
+    }
+    if (!page.has_more) break;
+    after = `&starting_after=${page.data[page.data.length - 1].id}`;
+  }
+  return [...emails];
+}
+
+function safeEqual(a, b) {
+  if (typeof a !== 'string' || typeof b !== 'string' || a.length !== b.length) return false;
+  let mismatch = 0;
+  for (let i = 0; i < a.length; i++) mismatch |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return mismatch === 0;
+}
+
+// POST { month: 'YYYY-MM', dry_run?: bool } with Authorization: Bearer KIT_DELIVERY_SECRET.
+// An R2 marker per month, claimed before sending, makes reruns and overlapping
+// calls no-ops: a crash mid-send means a missed month, never a duplicate.
+async function handleKitDelivery(request, env) {
+  const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
+  const auth = request.headers.get('Authorization') || '';
+  if (!env.KIT_DELIVERY_SECRET || !safeEqual(auth, `Bearer ${env.KIT_DELIVERY_SECRET}`)) {
+    return json({ error: 'Unauthorized' }, 401);
+  }
+
+  let body;
+  try { body = await request.json(); } catch { return json({ error: 'Invalid JSON' }, 400); }
+  const month = body.month;
+  if (typeof month !== 'string' || !/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) {
+    return json({ error: 'month must be YYYY-MM' }, 400);
+  }
+  if (!await env.PLANNERS.head(getFilename('sprint-kit', month))) {
+    return json({ error: `No kit in R2 for ${month}` }, 404);
+  }
+  const marker = `sprint-kit-deliveries/${month}.json`;
+  if (await env.PLANNERS.head(marker)) {
+    return json({ month, skipped: 'already delivered' });
+  }
+
+  const emails = await activeKitSubscriberEmails(env);
+  if (body.dry_run) return json({ month, dry_run: true, subscribers: emails.length });
+
+  await env.PLANNERS.put(marker, JSON.stringify({ status: 'sending', startedAt: new Date().toISOString() }));
+
+  // Resend batch: 100 messages per call keeps us far under Workers' subrequest cap and Resend's 2 req/s
+  const url = await kitDownloadUrl(env, month);
+  const failed = [];
+  for (let i = 0; i < emails.length; i += 100) {
+    const chunk = emails.slice(i, i + 100);
+    try { await resendPost(env, 'emails/batch', chunk.map(e => kitEmail(e, month, url, false))); } catch { failed.push(...chunk); }
+  }
+  await env.PLANNERS.put(marker, JSON.stringify({ status: 'done', deliveredAt: new Date().toISOString(), sent: emails.length - failed.length, failed: failed.length }));
+
+  if (failed.length) {
+    // ponytail: no automatic retry; failed addresses go to the seller inbox (not the public Actions log) for a manual resend
+    await resendPost(env, 'emails', {
+      from: 'FixTheVuln Store <hello@fixthevuln.com>',
+      to: ['hello@fixthevuln.com'],
+      subject: `Sprint kit ${month}: ${failed.length} delivery failure(s)`,
+      html: `<p>Kit emails failed for:</p><pre>${escapeHtml(failed.join('\n'))}</pre>`,
+    }).catch(err => console.error('Failure notice not sent:', err.message));
+  }
+  return json({ month, sent: emails.length - failed.length, failed: failed.length }, failed.length ? 502 : 200);
 }
 
 // ─── CLIENT ERROR REPORTING ────────────────────
