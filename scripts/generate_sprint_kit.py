@@ -388,19 +388,30 @@ def get_patch_tuesday(year, month):
 
 def get_patch_cycle_range(year, month):
     """
-    Return (start, end) date range for the Patch Tuesday cycle.
-    Cycle runs from 2nd Tuesday of month N through day before 2nd Tuesday of month N+1.
+    Return (start, end) KEV window for month N's kit.
+    Runs from the day after month N-1's Patch Tuesday through month N's Patch
+    Tuesday (inclusive, so its zero-days land here). The kit ships the day
+    after, so the window is complete when it's built; the sprint starts at `end`.
     """
-    start = get_patch_tuesday(year, month)
+    end = get_patch_tuesday(year, month)
 
-    # Next month's Patch Tuesday
-    if month == 12:
-        next_year, next_month = year + 1, 1
+    # Previous month's Patch Tuesday
+    if month == 1:
+        prev_year, prev_month = year - 1, 12
     else:
-        next_year, next_month = year, month + 1
-    end = get_patch_tuesday(next_year, next_month) - timedelta(days=1)
+        prev_year, prev_month = year, month - 1
+    start = get_patch_tuesday(prev_year, prev_month) + timedelta(days=1)
 
     return start, end
+
+
+def latest_patch_month(today):
+    """Return (year, month) of the most recent Patch Tuesday on or before today."""
+    if today >= get_patch_tuesday(today.year, today.month):
+        return today.year, today.month
+    if today.month == 1:
+        return today.year - 1, 12
+    return today.year, today.month - 1
 
 
 # ══════════════════════════════════════════════════════
@@ -758,7 +769,7 @@ def build_cover_page(entries, month_label, cycle_start, cycle_end, styles):
     elements.append(Spacer(1, 0.3 * inch))
 
     # Cycle info
-    cycle_text = f"Patch Tuesday Cycle: {cycle_start.strftime('%b %d')} \u2013 {cycle_end.strftime('%b %d, %Y')}"
+    cycle_text = f"KEV additions: {cycle_start.strftime('%b %d')} \u2013 {cycle_end.strftime('%b %d, %Y')}"
     elements.append(Paragraph(cycle_text, ParagraphStyle(
         'cycle', parent=styles['KitBody'], alignment=TA_CENTER, textColor=TEXT_MED
     )))
@@ -1154,7 +1165,7 @@ def build_trend_page(entries, year, month, styles):
     return elements
 
 
-def build_sprint_calendar(cycle_start, entries, styles):
+def build_sprint_calendar(patch_tuesday, entries, styles):
     """Page: 14-Day Sprint Calendar dated from Patch Tuesday with data-driven tasks."""
     elements = []
 
@@ -1178,7 +1189,7 @@ def build_sprint_calendar(cycle_start, entries, styles):
     for e in entries:
         try:
             due_dt = datetime.strptime(e.get('dueDate', ''), '%Y-%m-%d')
-            day_offset = (due_dt - cycle_start).days + 1  # 1-indexed
+            day_offset = (due_dt - patch_tuesday).days + 1  # 1-indexed
             if 1 <= day_offset <= 14:
                 due_date_flags.setdefault(day_offset, []).append(e['cveID'])
         except (ValueError, TypeError):
@@ -1186,7 +1197,7 @@ def build_sprint_calendar(cycle_start, entries, styles):
 
     elements.append(Paragraph("4. 14-Day Sprint Calendar", styles['SectionHeader']))
     elements.append(Paragraph(
-        f"Starting from Patch Tuesday ({cycle_start.strftime('%B %d, %Y')}). "
+        f"Starting from Patch Tuesday ({patch_tuesday.strftime('%B %d, %Y')}). "
         "Tasks are auto-populated from this cycle's CVE data.",
         styles['KitBody']
     ))
@@ -1221,7 +1232,7 @@ def build_sprint_calendar(cycle_start, entries, styles):
 
     rows = [header]
     for day_num, phase, tasks in phases:
-        day_date = cycle_start + timedelta(days=day_num - 1)
+        day_date = patch_tuesday + timedelta(days=day_num - 1)
         # Append due date callout if any CVEs are due on this day
         task_text = tasks
         if day_num in due_date_flags:
@@ -1821,7 +1832,7 @@ def generate_pdf(entries, year, month, cycle_start, cycle_end):
     """Generate the complete Sprint Kit PDF."""
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    month_label = f"{cycle_start.strftime('%B %Y')}"
+    month_label = f"{cycle_end.strftime('%B %Y')}"
     filename = f"patch-sprint-kit-{year}-{month:02d}.pdf"
     filepath = OUTPUT_DIR / filename
 
@@ -1846,7 +1857,7 @@ def generate_pdf(entries, year, month, cycle_start, cycle_end):
     elements.extend(build_triage_matrix(entries, styles))
     elements.extend(build_trend_page(entries, year, month, styles))
     elements.extend(build_cve_detail_pages(entries, styles))
-    elements.extend(build_sprint_calendar(cycle_start, entries, styles))
+    elements.extend(build_sprint_calendar(cycle_end, entries, styles))
     elements.extend(build_testing_checklist(entries, styles))
     elements.extend(build_sla_tracker(entries, styles))
     elements.extend(build_executive_summary(entries, month_label, cycle_start, cycle_end, styles))
@@ -1916,7 +1927,7 @@ def main():
     )
     parser.add_argument(
         '--month', type=str, default=None,
-        help='Target month in YYYY-MM format (default: current month)'
+        help='Target month in YYYY-MM format (default: month of the latest Patch Tuesday)'
     )
     args = parser.parse_args()
 
@@ -1929,8 +1940,7 @@ def main():
             print(f"Error: Invalid month format '{args.month}'. Use YYYY-MM.")
             sys.exit(1)
     else:
-        now = datetime.now()
-        year, month = now.year, now.month
+        year, month = latest_patch_month(datetime.now())
 
     print("=" * 60)
     print(f"PATCH TUESDAY SPRINT KIT GENERATOR")
