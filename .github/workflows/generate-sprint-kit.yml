@@ -80,7 +80,10 @@ jobs:
           PDF_NAME=$(basename "$PDF_FILE")
 
           echo "Uploading $PDF_NAME to R2..."
+          # --remote: wrangler v4 defaults to a local simulated bucket, so
+          # without it every upload "completed" on the runner and never reached R2.
           wrangler r2 object put "fixthevuln-planners/$PDF_NAME" \
+            --remote \
             --file="$PDF_FILE" \
             --content-type="application/pdf"
 
