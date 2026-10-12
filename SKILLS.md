@@ -18,6 +18,17 @@ FixTheVuln is a cybersecurity education platform. Its content (CVE writeups, cer
 ## Mandatory gates
 
 - **Before `git push`:** run `/pre-push-review` (defined in `.claude/commands/`, not `.claude/skills/`) — chains the native `security-review` skill + AppSec subagent + Content Editor (if content changed).
+  - **Fresh clone or new machine:** the gate is shared by CyberFolio, FixTheVuln, and
+    recon-toolkit from `~/Projects/Business/.claude/`, which is not in any repo, and so is the
+    `pre-push` hook that enforces it. Neither comes with a clone. From the repo root:
+    ```
+    mkdir -p .claude/commands
+    ln -sf ~/Projects/Business/.claude/commands/pre-push-review.md .claude/commands/pre-push-review.md
+    ln -sf ~/Projects/Business/.claude/hooks/pre-push-gate.sh .githooks/pre-push
+    echo .githooks/pre-push >> .git/info/exclude   # this repo uses core.hooksPath .githooks;
+                                                    # keeps the symlink out of git
+    ```
+    Without the hook link, nothing stops an unreviewed push.
 - **Daily AppSec CVE Reviewer trigger** (10 AM PDT) auto-publishes CVEs. When that trigger ships broken content, this review gate is your only line of defense before it compounds across the site.
 - **Never skip the Content Editor gate on CVE/cert/quiz changes.** An LLM-introduced factual error is the highest-impact failure mode for this project.
 
