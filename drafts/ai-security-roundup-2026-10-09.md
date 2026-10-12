@@ -4,7 +4,7 @@ description: "33 AI security updates from OWASP GenAI Security Project, Simon Wi
 keywords: "AI security, LLM security, prompt injection, agentic AI, GenAI threats, AI vulnerabilities, AI red team"
 slug: "ai-security-roundup-2026-10-09"
 author: "FixTheVuln Team"
-sources: "OWASP GenAI Security Project, Simon Willison, arXiv cs.CR"
+sources: "OWASP GenAI Security Project, Simon Willison, arXiv cs.CR, GitHub Security Advisories"
 auto_digest: "true"
 cta_section: "comptia"
 ---
@@ -158,6 +158,50 @@ cta_section: "comptia"
 
 ---
 
+## Framework Advisories
+
+Security advisories for AI serving and agent frameworks, each sourced from the project's own GitHub Security Advisory.
+
+- **vllm-project/vllm: [GHSA-x6mc-67gf-chw4](https://github.com/vllm-project/vllm/security/advisories/GHSA-x6mc-67gf-chw4) (CVE-2026-105758):** Qwen2-VL and Qwen3-VL video samplers bound frame count using the request-controlled `max_frames`/`fps` fields in `media_io_kwargs`, which the existing `num_frames` cap doesn't reach. An unauthenticated attacker can raise a `POST /tokenize` request's memory footprint from roughly 2.3 GiB to 13.6 GiB, exhausting server memory. CVSS v3.1 5.3 (Moderate); affects vLLM >= 0.24.0, fixed in >= 0.30.0.
+
+- **vllm-project/vllm: [GHSA-5fj9-pfhr-6j48](https://github.com/vllm-project/vllm/security/advisories/GHSA-5fj9-pfhr-6j48) (CVE-2026-105759):** The Rust frontend's metrics middleware records the raw HTTP method token of every request as a Prometheus label with no allowlist or cardinality limit, so an unauthenticated caller can grow the label set and `/metrics` response without bound, risking an out-of-memory crash. The `--api-key` flag doesn't block it because `/tokenize` and `/detokenize` sit outside the key check. CVSS v3.1 5.9 (Moderate); fixed in vLLM >= 0.30.0.
+
+- **vllm-project/vllm: [GHSA-58v5-2m8f-94pr](https://github.com/vllm-project/vllm/security/advisories/GHSA-58v5-2m8f-94pr) (CVE-2026-105760):** A chat completion request that selects the GLMGA video sampler via `media_io_kwargs` and sets outsized `fps`/`max_frames` values makes the server build an oversized, deduplicated frame-index list before decoding, burning CPU and memory on even a two-frame video and delaying other requests. CVSS v3.1 5.3 (Moderate); affects vLLM >= 0.23.0rc2, < 0.30.0, fixed in 0.30.0.
+
+- **vllm-project/vllm: [GHSA-85xf-c7hm-whqw](https://github.com/vllm-project/vllm/security/advisories/GHSA-85xf-c7hm-whqw) (CVE-2026-105757):** Three structured-output request paths (an xgrammar fallback mismatch, `ngram_gpu` speculative-decoding padding, and the opt-in Rust frontend's empty grammar/json acceptance) raise uncaught exceptions that the scheduler treats as fatal, killing the shared EngineCore and denying service to every concurrent user from a single crafted request. CVSS v3.1 6.5 (Moderate); confirmed on 0.25.1, fixed in 0.30.0.
+
+- **vllm-project/vllm: [GHSA-ph72-cqr5-qpp7](https://github.com/vllm-project/vllm/security/advisories/GHSA-ph72-cqr5-qpp7) (CVE-2026-105754):** The scale-out disaggregated multimodal transport accepts caller-supplied feature data without validating it against the active model's renderer output, letting an authenticated user crash the shared EngineCore via forged grid geometry or a non-positive placeholder length, poison another request's encoder-cache entry, or corrupt placeholder masks during replay (5 sites). CVSS v3.1 6.5 (Moderate, one site scores 5.9); confirmed on 0.25.1, fixed in 0.30.0.
+
+- **vllm-project/vllm: [GHSA-2823-qmq8-rwvj](https://github.com/vllm-project/vllm/security/advisories/GHSA-2823-qmq8-rwvj) (CVE-2026-105756):** The OpenAI-compatible request models only check that a client-supplied `cache_salt` is a non-empty string; a value the LMCache-MP KV connector rejects (for example, one containing `/` or over 128 characters) raises an uncaught `ValueError` that propagates to the EngineCore's fatal-error handler, letting one unauthenticated request take down the engine for all tenants. CVSS v3.1 6.5 (Moderate); confirmed on 0.25.1, fixed in 0.30.0.
+
+- **vllm-project/vllm: [GHSA-2phq-3phc-84px](https://github.com/vllm-project/vllm/security/advisories/GHSA-2phq-3phc-84px) (CVE-2026-105755):** With flash late-interaction enabled (the default for supported models), `/score` and `/rerank` cache query embeddings keyed on the caller-supplied `X-Request-Id` header; a concurrent request reusing that header value overwrites the victim's cached query, scoring the victim's documents against the attacker's query and potentially exhausting the shared use counter. CVSS v3.1 4.2 (Moderate); confirmed on 0.25.1, fixed in 0.30.0.
+
+- **vllm-project/vllm: [GHSA-ph3r-5jfg-f84f](https://github.com/vllm-project/vllm/security/advisories/GHSA-ph3r-5jfg-f84f) (CVE-2026-105753):** vLLM's default LRU multimodal cache can desync between the frontend and engine core: if a request is rejected after the frontend hashes its media but before the engine core receives it, a later request reusing that media hash gets a frontend cache hit while the engine core gets no payload, tripping a reachable assertion that crashes request handling. CVSS v3.1 6.5 (Moderate); confirmed on 0.25.1, fixed in 0.28.0.
+
+- **vllm-project/vllm: [GHSA-m52c-39rh-f3gp](https://github.com/vllm-project/vllm/security/advisories/GHSA-m52c-39rh-f3gp):** The `/v1/audio/transcriptions` endpoint falls back to PyAV/FFmpeg when `soundfile` can't parse an upload, checking only file size beforehand; a malformed IAMF audio container can trigger a heap overflow in FFmpeg's `libavformat` IAMF parser, and repeated crafted uploads can corrupt the heap and crash the API process. CVSS v3.1 6.5 (Moderate), no CVE assigned yet; confirmed on 0.25.1, fixed in 0.29.0.
+
+- **vllm-project/vllm: [GHSA-935w-9g4m-p28p](https://github.com/vllm-project/vllm/security/advisories/GHSA-935w-9g4m-p28p) (CVE-2026-105752):** On the GPT-OSS Harmony tool-calling path, next-turn prompt continuations are resubmitted without the caller's `cache_salt`, landing in a shared, unsalted cache namespace; another tenant who can guess the post-tool history can submit a matching prompt and read exact cached-token counts, defeating the prefix-cache membership protection `cache_salt` is meant to provide. CVSS v3.1 3.1 (Low); the advisory states this is distinct from the earlier GHSA-4qjh-9fv9-r85r (CVE-2025-46570); confirmed on 0.25.1, fixed in 0.30.0.
+
+- **langchain-ai/langgraph: [GHSA-4hm6-w6qq-w73v](https://github.com/langchain-ai/langgraph/security/advisories/GHSA-4hm6-w6qq-w73v):** In LangGraph deployments using JavaScript/TypeScript custom authentication, the server can fail to apply Store authorization changes an auth handler returns when that handler restricts users by rewriting the requested namespace, letting an authenticated ordinary user read, overwrite, search, or delete other users' Store data. CVSS v4.0 8.6 (High), no CVE assigned yet; Python handlers and handlers that reject (rather than rewrite) unauthorized namespaces are unaffected; fixed in `langgraph-api` >= 0.15.0.
+
+### Earlier vLLM advisories (September 2026)
+
+- **[GHSA-wpww-v874-ph2p](https://github.com/vllm-project/vllm/security/advisories/GHSA-wpww-v874-ph2p)**: vllm-project/vllm: DoS via unbounded `cache_salt` length (CVSS 5.3, Moderate). The `cache_salt` field on vLLM's API endpoints enforces no maximum length, so an unauthenticated request with a multi-hundred-MB salt gets SHA-256-hashed on the single EngineCore scheduler thread, stalling unrelated requests (a 200MB salt pushed concurrent p90 latency to ~1.8s). Affects vllm < 0.29.0; fixed in 0.29.0.
+
+- **[GHSA-jcq2-4gch-5qhf](https://github.com/vllm-project/vllm/security/advisories/GHSA-jcq2-4gch-5qhf)**: vllm-project/vllm: uncontrolled resource consumption in multimodal chat audio decoding (CVSS 4.3, Moderate). The chat message parser bypasses the `VLLM_MAX_AUDIO_CLIP_FILESIZE_MB` size check that the speech-to-text endpoint already enforces, letting an unauthenticated caller force oversized audio downloads/decodes and exhaust memory and CPU. Affects vllm < 0.29.0; fixed in 0.29.0.
+
+- **[GHSA-j682-9xp5-rrf3](https://github.com/vllm-project/vllm/security/advisories/GHSA-j682-9xp5-rrf3)**: vllm-project/vllm: sampler subclass counter shadowing bypasses PyNvVideoCodec decoder limits (CVSS 3.7, Low). Sampler subclasses that inherit from `PyNvVideoCodecVideoBackendMixin` each keep an independent shadow `_active_decoder_slots` counter, so a client cycling through different sampler subclasses can exceed the configured process-wide decoder limit and consume more GPU memory than reserved at startup. Affects vllm < 0.29.0; fixed in 0.29.0.
+
+- **[GHSA-p6g9-7v3x-m8mv](https://github.com/vllm-project/vllm/security/advisories/GHSA-p6g9-7v3x-m8mv)**: vllm-project/vllm: remote media fetched and fully materialized before size/item limits are enforced, across 4 ingress points (CVSS 6.5, Moderate). vLLM fully downloads HTTP responses, decodes base64 payloads, or spawns fetch tasks for media *before* applying the documented size/quantity limits, letting a remote attacker trigger memory and bandwidth exhaustion with oversized or over-counted media requests. Affects vllm ≤ 0.29.0; fixed after 0.29.0.
+
+- **[GHSA-3mqx-f33v-vgp9](https://github.com/vllm-project/vllm/security/advisories/GHSA-3mqx-f33v-vgp9)**: vllm-project/vllm: disaggregated `generate` skips decoder prompt-length validation for some multimodal processors (CVSS 6.5, Moderate). Processors that set `skip_prompt_length_check=True` (e.g. Nemotron Parse, Whisper, FireRedLID) skip length validation for both encoder and decoder prompts in disaggregated serving mode, letting a request exceed `max_model_len` and crash the worker instead of being rejected at the API layer. Affects vllm < 0.29.0; fixed in 0.29.0.
+
+- **[GHSA-qff2-492f-9fm4](https://github.com/vllm-project/vllm/security/advisories/GHSA-qff2-492f-9fm4)**: vllm-project/vllm: Rust HTTP/gRPC frontends bypass the Python `stop_token_ids` vocab-bound fix and can terminate EngineCore (CVSS 5.9, Moderate). The Rust-side frontends construct engine-facing sampling parameters directly, skipping the vocabulary-range validation applied on the Python side; an out-of-range `stop_token_ids` value combined with `min_tokens > 0` reaches `logits.index_put_()` and triggers a fatal CUDA assertion. Affects vllm >= 0.22.0, <= 0.23.0; fixed in 0.24.0.
+
+- **[GHSA-hhv2-872h-628q](https://github.com/vllm-project/vllm/security/advisories/GHSA-hhv2-872h-628q)**: vllm-project/vllm: incomplete artifact pin propagation in FunAudioChat and Tarsier2 (CVSS 6.5, Moderate). Three code paths in these model implementations fail to forward an operator's pinned Hugging Face `revision` when loading feature-extractor, tokenizer, or config artifacts, so a later change to those repos' default branch can silently alter preprocessing/tokenizer behavior on a deployment believed to be pinned. Affects vllm >= 0.22.1, <= 0.28.0; fixed in 0.28.0.
+
+- **[GHSA-v5gm-qgmv-gc6c](https://github.com/vllm-project/vllm/security/advisories/GHSA-v5gm-qgmv-gc6c)**: vllm-project/vllm: out-of-range `stop_token_ids` with `min_tokens` can kill vLLM EngineCore (CVSS 6.5, Moderate). The `/v1/completions` and `/v1/chat/completions` endpoints check that user-supplied `stop_token_ids` are integers but not that they fall within the model's vocabulary; when `min_tokens > 0`, an out-of-range ID is used as a logits index and triggers a fatal CUDA assertion, crashing EngineCore and requiring a service restart. Affects vllm < 0.29.0; fixed in 0.29.0.
+
 ## Source List
 
 Sources in this roundup, credited to their original authors/organizations:
@@ -165,3 +209,4 @@ Sources in this roundup, credited to their original authors/organizations:
 - [OWASP GenAI Security Project](https://genai.owasp.org/), feed: `https://genai.owasp.org/feed/`
 - [Simon Willison](https://simonwillison.net/), feed: `https://simonwillison.net/atom/everything/`
 - [arXiv cs.CR](https://arxiv.org/list/cs.CR/recent), feed: `http://export.arxiv.org/rss/cs.CR`
+- [GitHub Security Advisories](https://github.com/advisories), per-project advisory pages linked above

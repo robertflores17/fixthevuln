@@ -358,6 +358,16 @@ def build_digest(grouped: dict, cutoff_dt: datetime, today: datetime) -> str:
 
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
+def carry_framework_advisories(existing, digest):
+    """Keep a "## Framework Advisories" section the AI Vuln Intel Reviewer routine
+    already appended to this week's draft. Without this, regenerating the draft
+    overwrote it: 19 published advisories were lost this way (Sep 18, Oct 09)."""
+    m = re.search(r"^## Framework Advisories\n.*?(?=^## |\Z)", existing, re.M | re.S)
+    if not m or "## Framework Advisories" in digest or "## Source List" not in digest:
+        return digest
+    return digest.replace("## Source List", m.group(0).rstrip("\n") + "\n\n## Source List", 1)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--dry-run', action='store_true', help='Preview; write nothing')
@@ -468,6 +478,8 @@ def main():
         print('...(truncated)')
         return 0
 
+    if digest_path.exists():
+        digest = carry_framework_advisories(digest_path.read_text(encoding='utf-8'), digest)
     digest_path.write_text(digest, encoding='utf-8')
     trends_path.write_text(json.dumps(trends_payload, indent=2), encoding='utf-8')
     merged = {**seen, **new_seen}

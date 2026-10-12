@@ -4,7 +4,7 @@ Populates data/ai-vuln-intel.json from five signal sources:
   - OWASP LLM Top 10 revision announcements (this file, check_owasp_top10_change)
   - MITRE ATLAS technique diffs (Task 11, check_atlas_techniques)
   - Framework/vector-DB GHSA advisories (Task 12, check_framework_ghsa)
-  - AI Incident Database reports (check_aiid_incidents)
+  - AI Incident Database reports (check_aiid_incidents) -- paused 2026-10-12, see main()
   - AVID (AI Vulnerability Database) reports (check_avid_reports)
 
 Chained onto the existing Friday ai-trend-roundup.yml workflow (Task 13),
@@ -345,10 +345,10 @@ def main():
         if add_entry(state, entry):
             added += 1
 
-    aiid_items = fetch_feed_items(AIID_FEED)
-    for entry in check_aiid_incidents(aiid_items):
-        if add_entry(state, entry):
-            added += 1
+    # AI Incident Database collection paused 2026-10-12: no reviewer step consumes
+    # aiid_incident entries (77 had piled up at "new"), and the incidents are
+    # sensitive real-world harm reports with no agreed publishing format. To resume,
+    # restore the check_aiid_incidents(fetch_feed_items(AIID_FEED)) loop here.
 
     known_atlas_ids = get_atlas_known_ids(state)
     remote_ids = fetch_atlas_technique_ids()

@@ -24,7 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / 'scripts'))
 import re
 import time
 
-from aggregate_ai_security_news import CATEGORY_ORDER, SOURCES, _clean_html, build_digest, parse_feed
+from aggregate_ai_security_news import CATEGORY_ORDER, SOURCES, _clean_html, build_digest, carry_framework_advisories, parse_feed
 from publish_editorial import MarkdownConverter
 from publish_editorial import BlogPublisher
 
@@ -100,3 +100,26 @@ class TestFeedTextEscaping(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class CarryFrameworkAdvisoriesTest(unittest.TestCase):
+    """Regenerating a week's draft must not drop the reviewer's advisories."""
+
+    NEW = "# Roundup\n\n## Research\n\n- item\n\n## Source List\n\n- src\n"
+    EXISTING = ("# Roundup\n\n## Research\n\n- old\n\n## Framework Advisories\n\n"
+                "- **GHSA-aaaa-bbbb-cccc** one\n\n### Earlier\n\n- **GHSA-dddd-eeee-ffff** two\n\n"
+                "## Source List\n\n- src\n")
+
+    def test_section_carried_into_regenerated_digest(self):
+        out = carry_framework_advisories(self.EXISTING, self.NEW)
+        self.assertIn("GHSA-aaaa-bbbb-cccc", out)
+        self.assertIn("GHSA-dddd-eeee-ffff", out)
+        self.assertLess(out.index("## Framework Advisories"), out.index("## Source List"))
+        self.assertEqual(out.count("## Source List"), 1)
+
+    def test_no_section_leaves_digest_unchanged(self):
+        self.assertEqual(carry_framework_advisories(self.NEW, self.NEW), self.NEW)
+
+    def test_not_duplicated_when_digest_already_has_it(self):
+        out = carry_framework_advisories(self.EXISTING, self.EXISTING)
+        self.assertEqual(out.count("## Framework Advisories"), 1)
