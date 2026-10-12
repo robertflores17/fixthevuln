@@ -1,3 +1,45 @@
+## 2026-10-12 — Weekly Tech-Debt Audit
+
+**Headline:** P0 auto-triggered — `data/appsec-review.md` is 3 days old (last content: 2026-10-09); likely a false-positive from a genuine CISA quiet period (fetch ran Oct 11, 0 pending CVEs) but strict rule requires flagging; P1 practice-tests timestamps still unresolved at 18 weeks; style.min.css cache-bust and roadmap staleness both resolved this week.
+
+**Pipeline pulse:**
+- Daily CVE trigger last output (`data/appsec-review.md`): 2026-10-09 (**3 days ago — P0 by rule**; fetch ran Oct 11 with 0 new CVEs — may be genuine quiet period; GitHub issue #156 opened)
+- Friday AI trend roundup last file (`drafts/ai-security-roundup-2026-10-09.md`): 2026-10-09 (Friday ✓ — on schedule)
+- `data/pending_review.json` pending count: 0 (last_checked: 2026-10-11T19:15:38 UTC ✓)
+
+**New this week:**
+- P0 pipeline — `data/appsec-review.md` — Content dated 2026-10-09, 3 days old (>2-day threshold = automatic P0; GitHub issue #156); `data/REVIEW_SUMMARY.md` confirms last KEV batch was 2026-10-08 (5 CVEs); fetch ran 2026-10-11 with 0 new entries — stall is likely a genuine CISA quiet period rather than pipeline failure; however `appsec-review.md` is not written on zero-CVE runs, making freshness signal unreliable — Fix: write a minimal "no new CVEs — pipeline healthy" entry to `appsec-review.md` on every daily run; verify Oct 10–11 Claude session ran — Effort: XS
+- P2 worker growth — `store/cloudflare-worker.js` — Grew 1,331→1,532 LOC (+201, +15%) in one week from sprint kit delivery routes (PR #154: POST `/sprint-kit/deliver`, R2 listing, HMAC token signing for kit links, welcome email on kit checkout); webhook HMAC-SHA256 signature verification still present ✓; PRICING cents↔dollars match ✓ — Fix: no immediate action; consider extracting sprint-kit delivery into a separate module before next growth cycle — Effort: M
+- P3 manifest over-commits — `data/sprint-kit-manifest.json` — 8 identical "Update sprint kit manifest (2026-10-11)" commits from Oct 11 (likely `workflow_dispatch` test runs for PRs #154 and #155); no functional impact, noisy git history — Fix: cosmetic; squash optional — Effort: XS
+
+**Still open from prior audits:** 7
+1. P1 content — `practice-tests/*.html:1` (13 pages) — `<p class="pt-timestamp">Last updated: September 29, 2026</p>` still present (**18 weeks open**) — Fix: remove `pt-timestamp` block from `scripts/generate_practice_test_pages.py` template; re-run — Effort: XS
+2. P2 hygiene — repo-wide — `requirements.txt` absent; Pillow (`create_hero.py:4`, `generate_linkedin_posts.py:12`), reportlab (`generate_sprint_kit.py:31–45`), requests (`etsy_to_pinterest.py`) undeclared external deps; `security-audit.yml` pip-audit silently no-ops — Effort: XS
+3. P2 generator — `scripts/` (**16 files >500 LOC**, count unchanged; `generate_sprint_kit.py` 1,988→1,998 +10) — `generate_guides.py` 2,751 · `generate_sprint_kit.py` 1,998 · `fetch_kev.py` 896 · `etsy_to_pinterest.py` 829 · `aggregate_ai_ide_vulns.py` 771 · `entity_extractor.py` 765 · `generate_linkedin_posts.py` 716 · `publish_editorial.py` 711 · `generate_ai_ide_tracker.py` 697 · `audit_pages.py` 661 · `generate_quiz_pages.py` 627 · `generate_cert_pages.py` 607 · `generate_practice_test_pages.py` 593 · `inject_store_ctas.py` 588 · `generate_roadmaps.py` 534 · `generate_cve_pages.py` 512 — Effort: L
+4. P2 SEO — `scripts/generate_sitemap.py:25` — `CONTENT_DIRS` still omits `wstg` (13 HTML files, 0 in sitemap) and `practice-tests` subpages — Fix: add `"wstg"` and `"practice-tests"` to `CONTENT_DIRS` — Effort: XS
+5. P3 hygiene — `scripts/` (9 instances across 8–9 scripts) — Bare `except Exception:` without logging: `fetch_kev.py:63`, `generate_sitemap.py:102`, `update_sitemap.py:29`, `audit_pages.py:250,382`, `create_hero.py:51`, `generate_linkedin_posts.py:72`, `inject_error_reporter.py:46`, `health_check.py:127` — Add `logging.exception()` before each — Effort: S
+6. P3 hygiene — repo root — No `CLAUDE.md`; editorial rules (evergreen-page timestamp ban, cache-bust policy, pipeline health thresholds) uncodified in-repo — Effort: XS
+7. P3 generator drift — `scripts/generate_sitemap.py:25` — `GUIDE_PAGES` missing `ai-agent-security.html` and `genai-data-security.html` (pages in sitemap via reconcile ✓; risk is priority mis-assignment on fresh run; open **14 weeks** since July 13 audit) — Fix: add both filenames to `GUIDE_PAGES` set — Effort: XS
+
+**Resolved since last audit:**
+- P1 cache-bust (new Oct 5) — `style.min.css` re-minified Oct 4 without version bump → v=12→v=13 properly bumped in commit `ab1095d` (Oct 8, "Apply new FTV logo to favicon, touch icon, and site nav") across all 758 pages ✓
+- P2 content — `roadmaps/*.html` staleness (March 30, 2026, 189 days) → Regenerated in Oct 8 commit, now "September 29, 2026" (13 days old, within 90-day threshold) ✓
+
+**Metrics tracked:**
+- Total generated pages (cve-*, cert-*, comparisons/*, roadmaps/*): 430 (254 CVE +6 · 66 cert · 43 comparisons · 67 roadmaps)
+- Blog pages: 134 (+1)
+- Sitemap entries: 745 (+8 from 737)
+- Evergreen pages with timestamps (should be 0): 13 (practice-tests/*.html — "September 29, 2026" — P1 open **18 weeks**)
+- Pages missing from llms.txt: 0 ✓ (reconcile ran Oct 12 ✓)
+- Cache-bust drift count: **0 files** ✓ (P1 resolved — v=13 confirmed across all HTML)
+- Scripts >500 LOC: 16 (unchanged; `generate_sprint_kit.py` +10 LOC to 1,998)
+- Store worker LOC: **1,532** (+201 from 1,331; new sprint kit delivery routes)
+- D1 migrations: 2 (unchanged — 0001_error_log, 0002_quiz_feedback)
+- Python scripts with bare `except Exception:` without logging: 9 instances / 8–9 scripts (unchanged)
+- Certs last updated: October 8, 2026 (4 days — fresh ✓); Comparisons: October 10, 2026 (fresh ✓); Roadmaps: September 29, 2026 (13 days — resolved ✓)
+
+---
+
 ## 2026-10-05 — Weekly Tech-Debt Audit
 
 **Headline:** New P1 cache-bust miss — `style.min.css` re-minified (commit `1c3dd2a`) without version bump after v=12 deploy; pipeline fully healthy today; 248 CVEs, 133 blog posts; practice-tests timestamps regenerated to Sep 29 but P1 (evergreen timestamp ban) still open at 17 weeks.
