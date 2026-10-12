@@ -19,8 +19,10 @@ FixTheVuln is a cybersecurity education platform. Its content (CVE writeups, cer
 
 - **Before `git push`:** run `/pre-push-review` (defined in `.claude/commands/`, not `.claude/skills/`) — chains the native `security-review` skill + AppSec subagent + Content Editor (if content changed).
   - **Fresh clone or new machine:** the gate is shared by CyberFolio, FixTheVuln, and
-    recon-toolkit from `~/Projects/Business/.claude/`, which is not in any repo, and so is the
-    `pre-push` hook that enforces it. Neither comes with a clone. From the repo root:
+    recon-toolkit from `~/Projects/Business/.claude/`, and so is the `pre-push` hook that enforces
+    it. Neither comes with a clone of this repo. Both are backed up in the private
+    `linkedin-growth-ops` repo (`business-claude/`); on a new machine, set that up first per its
+    `CLAUDE.md`. Then, from this repo's root:
     ```
     mkdir -p .claude/commands
     ln -sf ~/Projects/Business/.claude/commands/pre-push-review.md .claude/commands/pre-push-review.md
