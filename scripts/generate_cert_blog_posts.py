@@ -111,16 +111,16 @@ QUIZ_MAP = {
 
 # ── Cert page mapping (cert_id → cert page filename) ─────────────────
 CERT_PAGE_MAP = {
-    'comptia-security-plus': 'certifications/comptia-security-plus.html',
-    'comptia-a-plus-1201': 'certifications/comptia-a-plus-1201.html',
-    'comptia-a-plus-1202': 'certifications/comptia-a-plus-1202.html',
-    'comptia-network-plus': 'certifications/comptia-network-plus.html',
-    'comptia-linux-plus': 'certifications/comptia-linux-plus.html',
-    'comptia-cysa-plus': 'certifications/comptia-cysa-plus.html',
-    'comptia-pentest-plus': 'certifications/comptia-pentest-plus.html',
-    'comptia-casp-plus': 'certifications/comptia-casp-plus.html',
-    'comptia-cloud-plus': 'certifications/comptia-cloud-plus.html',
-    'comptia-data-plus': 'certifications/comptia-data-plus.html',
+    'comptia-security-plus': 'certs/comptia-security-plus.html',
+    'comptia-a-plus-1201': 'certs/comptia-a-plus-1201.html',
+    'comptia-a-plus-1202': 'certs/comptia-a-plus-1202.html',
+    'comptia-network-plus': 'certs/comptia-network-plus.html',
+    'comptia-linux-plus': 'certs/comptia-linux-plus.html',
+    'comptia-cysa-plus': 'certs/comptia-cysa-plus.html',
+    'comptia-pentest-plus': 'certs/comptia-pentest-plus.html',
+    'comptia-casp-plus': 'certs/comptia-casp-plus.html',
+    'comptia-cloud-plus': 'certs/comptia-cloud-plus.html',
+    'comptia-data-plus': 'certs/comptia-data-plus.html',
 }
 
 # ── All certifications to generate blog posts for ────────────────────
