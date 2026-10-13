@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="33 AI security updates from OWASP GenAI Security Project, Simon Willison, arXiv cs.CR, covering Oct 02–Oct 09. Every item credited to its original author.">
+    <meta name="keywords" content="AI security, LLM security, prompt injection, agentic AI, GenAI threats, AI vulnerabilities, AI red team">
+    <title>AI Security Trend Roundup: Oct 09, 2026 - FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/blog/ai-security-roundup-2026-10-09.html">
+    <meta property="og:title" content="AI Security Trend Roundup: Oct 09, 2026 - FixTheVuln">
+    <meta property="og:description" content="33 AI security updates from OWASP GenAI Security Project, Simon Willison, arXiv cs.CR, covering Oct 02–Oct 09. Every item credited to its original author.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://fixthevuln.com/blog/ai-security-roundup-2026-10-09.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AI Security Trend Roundup: Oct 09, 2026 - FixTheVuln">
+    <meta name="twitter:description" content="33 AI security updates from OWASP GenAI Security Project, Simon Willison, arXiv cs.CR, covering Oct 02–Oct 09. Every item credited to its original author.">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="stylesheet" href="../style.min.css?v=13">
+    <script type="application/ld+json">
+{
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "AI Security Trend Roundup: Oct 09, 2026",
+        "description": "33 AI security updates from OWASP GenAI Security Project, Simon Willison, arXiv cs.CR, covering Oct 02\u2013Oct 09. Every item credited to its original author.",
+        "datePublished": "2026-10-13",
+        "dateModified": "2026-10-13",
+        "author": {
+                "@type": "Organization",
+                "name": "FixTheVuln Team",
+                "url": "https://fixthevuln.com"
+        },
+        "publisher": {
+                "@type": "Organization",
+                "name": "FixTheVuln",
+                "url": "https://fixthevuln.com"
+        }
+}
+    </script>
+    <script type="application/ld+json">
+{
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+                {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": "https://fixthevuln.com/"
+                },
+                {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Blog",
+                        "item": "https://fixthevuln.com/blog/"
+                },
+                {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": "AI Security Trend Roundup: Oct 09, 2026"
+                }
+        ]
+}
+    </script>
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "What is this article about?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "33 AI security updates from OWASP GenAI Security Project, Simon Willison, arXiv cs.CR, covering Oct 02–Oct 09. Every item credited to its original author."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Why is AI Security Trend Roundup important for cybersecurity?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Understanding ai security trend roundup is critical for cybersecurity professionals to stay ahead of emerging threats and protect their organizations. This article provides actionable insights and analysis."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How can I stay updated on cybersecurity threats?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Follow FixTheVuln for weekly threat roundups, vulnerability breakdowns, and security certification guides. Subscribe to CISA alerts and monitor the Known Exploited Vulnerabilities (KEV) catalog for the latest actively exploited vulnerabilities."
+            }
+        }
+    ]
+}
+    </script>
+    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="../blog/feed.xml">
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="../" class="site-nav-logo"><img src="/logo/ftv-logo.svg" alt="" width="24" height="24">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+        <div class="site-nav-links">
+            <a href="../guides.html">Guides</a>
+            <a href="../tools.html">Tools</a>
+            <a href="../compliance.html">Compliance</a>
+            <a href="../resources.html">Resources</a>
+            <a href="../practice-tests.html">Quizzes</a>
+            <a href="../career-paths.html">Career Paths</a>
+            <a href="../blog/">Blog</a>
+            <a href="/store/store.html" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: .35rem .75rem; border-radius: 6px; font-size: .85rem; font-weight: 600; text-decoration: none;">Store</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header class="content-header">
+        <div class="container">
+            <h1>AI Security Trend Roundup: Oct 09, 2026</h1>
+            <p>Expert cybersecurity insights for IT professionals</p>
+            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">Last updated: October 13, 2026</p>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <div class="content-wrapper">
+<h1 id="ai-security-trend-roundup-oct-09-2026">AI Security Trend Roundup: Oct 09, 2026</h1>
+
+<p><em>Covering Oct 02 → Oct 09, 2026. 33 new items from 3 sources.</em></p>
+
+<blockquote><p>This digest credits every source by name and links directly to each original post. Items are selected automatically by keyword and feed filters. All rights and attribution belong to the original authors.</p></blockquote>
+
+<h2 id="standards-frameworks">Standards & Frameworks</h2>
+
+<ul>
+    <li><strong><a href="https://genai.owasp.org/2026/10/08/genai-and-agentic-ai-exploit-roundup-q3-2026/?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=genai-and-agentic-ai-exploit-roundup-q3-2026">GenAI and Agentic AI Exploit Roundup Q3 2026</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://genai.owasp.org/">OWASP GenAI Security Project</a>, Oct 08 Coverage period: July 1, 2026 through September 30, 2026 Overview This roundup consolidates selected major AI-related security incidents and exploit disclosures reported during the coverage period. It aligns each entry to the OWASP Top 10 for LLM Applications 2026 and the OWASP T</p>
+
+<h2 id="academic-research">Academic & Research</h2>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2610.10608">From Investigation Failures to Reliable SOC Agents: Understanding and Improving LLM-Based Alert Triage</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Oct 09 arXiv:2610.10608v1 Announce Type: new Abstract: Security operations centers &#40;SOCs&#41; must triage large volumes of alerts, most of which are benign, while missed attacks can remain uninvestigated. Tool-using large language model &#40;LLM&#41; agents can retrieve evidence during triage, but</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2610.10612">PyCache Trap: The Inspection-Execution Gap in Agent Skill Scanners</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Oct 09 arXiv:2610.10612v1 Announce Type: new Abstract: Agent skills combine instructions with executable resources, giving third-party packages access to an agent&#x27;s runtime. Existing skill scanners inspect documentation and visible source, but Python may execute a bundled bytecode cache</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2610.10742">BRANCH: Bypassing Multi-Scanner AI Guardrails</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Oct 09 arXiv:2610.10742v1 Announce Type: new Abstract: AI systems increasingly rely on Large Language Models &#40;LLMs&#41; as core reasoning engines, making them targets for prompt injection and jailbreaks. Guardrails monitor and validate model inputs and outputs, yet their isolated, task-focu</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2610.10752">Detection-Guided Adaptive Purification with Diffusion Models for Robust Audio Deepfake Detection</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Oct 09 arXiv:2610.10752v1 Announce Type: new Abstract: Audio deepfake detectors remain vulnerable to adversarial perturbations that suppress the acoustic cues used for detection, allowing manipulated utterances to evade the detector. Although existing defenses can improve robustness, th</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2610.10909">Power Side-Channel Membership Inference Attack on Embedded Machine Learning</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Oct 09 arXiv:2610.10909v1 Announce Type: new Abstract: Membership inference attacks &#40;MIAs&#41; threaten the privacy of machine learning &#40;ML&#41; training data by determining whether a sample was used to train a target model. Existing MIAs rely on model outputs, ranging from prediction probabili</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2610.10929">Speedbumps: Rejection Attacks on Speculative Decoding</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Oct 09 arXiv:2610.10929v1 Announce Type: new Abstract: Speculative decoding is a popular technique for increasing the speed and reducing the costs of large language model &#40;LLM&#41; inference by verifying multiple draft tokens in a single target-model forward pass. The resulting benefit depe</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2610.11030">NOMOS: Compiling Written Policies into Statically Verified Tool-Call Gates for LLM Agents</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Oct 09 arXiv:2610.11030v1 Announce Type: new Abstract: Tool-using LLM agents violate the policies they are deployed to enforce, often silently. Prior defenses hand-write rules, query an LLM verifier per action, or compile policies through heavyweight formal machinery. Naive compilation</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2610.11112">False Claims, Credible Images: A Red-Teaming Benchmark for Commercial Image Generators</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Oct 09 arXiv:2610.11112v1 Announce Type: new Abstract: Image-generation models can now produce text-rich, natural-looking visual artifacts that are hard to distinguish from real-world evidence, such as news reports and textbook pages. Yet, the same capability introduces a new risk: thes</p>
+
+<h2 id="prompt-injection-llm-security">Prompt Injection & LLM Security</h2>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/9/matthew-green/">Quoting Matthew Green</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 09 Everyone is very concerned about being respectable, so I’m going to be the goofball who raises worst-case possibilities. I think there is a 1% chance we live in Minicrypt, and a 15% chance we functionally lose confidence in our existing public-key encryption algorithms. &#91;...&#93; The</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/9/built-using-my-voice/">A new feature for my blog, built using my voice</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 09 I shipped a new feature for my blog today: the Newsletters page, which offers an index of all of the newsletters I&#x27;ve sent out, both my free weekly Substack and my monthly sponsors-only updates. I built the feature almost entirely using my voice, chatting away to my laptop while</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/9/ttok/">ttok 1.0</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 09 Release: ttok 1.0 I released ttok 0.4, ran uv tool upgrade ttok, piped a file into the new version... and realized that it was defaulting to the GPT-4 tokenizer when it should very clearly default to GPT-5/GPT-6 instead! I figured switching the default was a reasonable excuse to</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/8/ttok/">ttok 0.4</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 08 Release: ttok 0.4 ttok is my CLI tool for counting tokens, using OpenAI&#x27;s open source tiktoken library. It hasn&#x27;t been in updated in a couple of years, but I finally fixed a Click warning, updated CI, and added a --list-models command to list available models. It works with uvx,</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/8/carson-gross/">Quoting Carson Gross</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 08 Computer programming is, fundamentally, about two things: Problem-solving using computers Learning to control complexity while solving these problems I have a hard time imagining a future where knowing how to solve problems with computers and how to control the complexity of thos</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/7/ben-affleck/">Quoting Ben Affleck</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 07 I&#x27;ve always been kind of into computers since I was young. And then when film started to move from analog film to digital, I became more interested in that aspect of it. And the visual effects workflow for many years has included machine learning. So I can write like pretty shitt</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/7/claude-haiku-5-5/">Claude Haiku 5.5</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 07 As previously promised, here&#x27;s Anthropic&#x27;s new fast, low cost model: Introducing Claude Haiku 5.5. The previous Haiku, 4.5, was very much showing its age. It came out almost a year ago, and was priced at $1/million input and $5/million output - relatively expensive even back then</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/7/anti-patterns-in-software-blogging/">Anti-Patterns in Software Blogging</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 07 Anti-Patterns in Software Blogging Some excellent writing advice from Michael Lynch. Michael warns against &quot;meandering intros&quot;, misjudging your reader&#x27;s existing knowledge, assuming they&#x27;ll read your previous posts, and excessive formality. He also warns against overreliance on l</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/7/jake-boggan/">Quoting Jake Boggan</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 07 I was a graph theory junkie long ago and even moved to Budapest for awhile to study among the greats. While I was there I started working on Barnette&#x27;s Conjecture which came to occupy my thoughts over the next 24 years of my life, on and off as I worked in many different fields.</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/7/openai-rogue-agents-wikimedia/">OpenAI “rogue” agent activities found on Wikimedia projects</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 07 OpenAI “rogue” agent activities found on Wikimedia projects Given how tempting a target wikis are for rogue agent swarms, it&#x27;s not a huge surprise that Wikipedia found evidence of that activity once they went looking: The Wikimedia Foundation conducted its own investigation to se</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/6/victoria-kim/">Quoting Victoria Kim</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 06 Since the Medicare breach, OpenAI has put in place additional monitoring to allow “immediate intervention” by staff to stop training if the company’s models access the internet in ways they’re not supposed to, Mr. Kwon &#91;chief strategy officer at OpenAI&#93; said., Victoria Kim, Repor</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/6/llm-openai-decisions/">llm-openai-decisions 0.1a0</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 06 Release: llm-openai-decisions 0.1a0 OpenAI released their new Jev-style Decisions API, as previously announced at last week&#x27;s DevDay. Since I already have an llm-typesafe plugin for talking to Jev, I had GPT-6 Astra read the new OpenAI API documentation and build an llm-openai-de</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/6/llm-mistral/">llm-mistral 0.16</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 06 Release: llm-mistral 0.16 Adds support for reasoning models, such as the newly released Mistral Large 4. Tags: llm, mistral, llm-reasoning</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/6/hn-49983751/">EmbeddingGemma 2</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 06 My comment on EmbeddingGemma 2, Hacker News. I really appreciate that EmbeddingGemma 2 is under the Apache 2.0 license. For embedding models in particular, I don&#x27;t think it makes sense to use a closed, proprietary, hosted-only model. Most applications of embedding models involve</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/6/le-chonk/">Introducing Mistral Large 4: Le chonk</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 06 Introducing Mistral Large 4: Le chonk Mistral are back in the game. Today they&#x27;re releasing a preview of Mistral Large 4, a 1 trillion parameter, 49 billion active parameter model trained on their own cluster of 3,800 NVIDIA Grace Blackwell GPUs. The preview is available via thei</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/6/datasette-parseable-opentelemetry/">Using Parseable with Datasette for OpenTelemetry traces</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 06 TIL: Using Parseable with Datasette for OpenTelemetry traces I saw Parseable in a Show HN today - it&#x27;s a new observability platform with both an open source &#40;AGPL&#41; Rust implementation &#40;a single ~180MB binary&#41;, an &quot;Enterprise&quot; version with extra features and a cloud hosted option.</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/6/hn-49982139/">Mistral Large 4</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 06 My comment on Mistral Large 4, Hacker News. wren6991: The benchmark is saturated. Frontier models are tested with an armadillo in fishnet tights jaywalking on Mars. OK well I couldn&#x27;t resist this one: llm -m claude-opus-5.5 &#x27;Generate an SVG of an armadillo in fishnet tights jaywa</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/6/datasette-atom/">datasette-atom 0.11a0</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 06 Release: datasette-atom 0.11a0 A minor fix for compatibility with the latest Datasette alphas. This meant we could upgrade the datasette.io site to Datasette 1.0a41. Tags: atom, datasette</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/6/scrimshaw-jukebox/">Scrimshaw Jukebox</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 06 Tool: Scrimshaw Jukebox I wanted to see if Claude Opus 5.5 could compose music, so I tried this: I want you to write some computer game music for me. First design simple text based format for the music and build an artifact that can play it out loud - include some example tracks</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/5/felix-rieseberg/">Quoting Felix Rieseberg</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 05 The &quot;old&quot; version of Cowork runs model inference in the cloud, executing tool calls in an Anthropic-provided VM we shipped to your computer. We added the VM for capability, safety, and security reasons - mapping in just the data you explicitly added to your session. People loved</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/4/qwen38-addition-in-words/">Qwen3.8 27B addition in words</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 04 Research: Qwen3.8 27B addition in words Colin Frasier posted on Bluesky about an experiment he ran over two years ago using GPT-4o to see how well it could &quot;compute the sum but return the answer in words&quot; across increasingly large numbers. Here&#x27;s the chart he shared of those resu</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/3/default-hard-budget-caps/">We&#x27;re going to need default hard budget caps on pretty much everything</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 03 Here&#x27;s a product feature which the world is going to need a whole lot more of over the coming months and years: default hard budget caps. I&#x27;m talking about the feature of pay-by-usage services and APIs that lets you say &quot;after $X/month, cut this thing off and return errors&quot;. Thes</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/3/newsletter/">September sponsors-only newsletter</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 03 I just sent the September edition of my sponsors-only monthly newsletter. If you are a sponsor &#40;or start a sponsorship now&#41; you can access it here. This month: More Fable class models A pricing war 3D graphics, Blender, and pixel art LLMs come for mathematics So many more acciden</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Oct/2/rex-s-dino-store/">Rex&#x27;s Dino Store</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Oct 02 Museum: Rex&amp;#x27;s Dino Store Located just before the turnstiles in the Grand Army Plaza subway station at the north end of Brooklyn&#x27;s Prospect Park is this former newsstand which is now operated by a dinosaur. The density of dinosaur puns is exceptional. Tags: art, new-york</p>
+
+<hr>
+
+<h2 id="framework-advisories">Framework Advisories</h2>
+
+<p>Security advisories for AI serving and agent frameworks, each sourced from the project's own GitHub Security Advisory.</p>
+
+<ul>
+    <li><strong>vllm-project/vllm: <a href="https://github.com/vllm-project/vllm/security/advisories/GHSA-x6mc-67gf-chw4">GHSA-x6mc-67gf-chw4</a> (CVE-2026-105758):</strong> Qwen2-VL and Qwen3-VL video samplers bound frame count using the request-controlled <code>max_frames</code>/<code>fps</code> fields in <code>media_io_kwargs</code>, which the existing <code>num_frames</code> cap doesn't reach. In the advisory's test, 74 extra bytes of JSON on an unauthenticated <code>POST /tokenize</code> request took the server's peak memory (RSS) from 2,271 MiB to 13,629 MiB. CVSS v3.1 5.3 (Moderate); affects vLLM >= 0.24.0, fixed in >= 0.30.0.</li>
+</ul>
+
+<ul>
+    <li><strong>vllm-project/vllm: <a href="https://github.com/vllm-project/vllm/security/advisories/GHSA-5fj9-pfhr-6j48">GHSA-5fj9-pfhr-6j48</a> (CVE-2026-105759):</strong> The Rust frontend's metrics middleware records the raw HTTP method token of every request as a Prometheus label with no allowlist or cardinality limit, so an unauthenticated caller can grow the label set and <code>/metrics</code> response without bound, risking an out-of-memory crash. The <code>--api-key</code> flag doesn't block it because <code>/tokenize</code> and <code>/detokenize</code> sit outside the key check. CVSS v3.1 5.9 (Moderate); fixed in vLLM >= 0.30.0.</li>
+</ul>
+
+<ul>
+    <li><strong>vllm-project/vllm: <a href="https://github.com/vllm-project/vllm/security/advisories/GHSA-58v5-2m8f-94pr">GHSA-58v5-2m8f-94pr</a> (CVE-2026-105760):</strong> A chat completion request that selects the GLMGA video sampler via <code>media_io_kwargs</code> and sets outsized <code>fps</code>/<code>max_frames</code> values makes the server build an oversized, deduplicated frame-index list before decoding, burning CPU and memory on even a two-frame video and delaying other requests. CVSS v3.1 5.3 (Moderate); affects vLLM >= 0.23.0rc2, < 0.30.0, fixed in 0.30.0.</li>
+</ul>
+
+<ul>
+    <li><strong>vllm-project/vllm: <a href="https://github.com/vllm-project/vllm/security/advisories/GHSA-85xf-c7hm-whqw">GHSA-85xf-c7hm-whqw</a> (CVE-2026-105757):</strong> Three structured-output request paths (an xgrammar fallback mismatch, <code>ngram_gpu</code> speculative-decoding padding, and the opt-in Rust frontend's empty grammar/json acceptance) raise uncaught exceptions that the scheduler treats as fatal, killing the shared EngineCore and denying service to every concurrent user from one or two ordinary structured-output requests. CVSS v3.1 6.5 (Moderate); confirmed on 0.25.1, fixed in 0.30.0.</li>
+</ul>
+
+<ul>
+    <li><strong>vllm-project/vllm: <a href="https://github.com/vllm-project/vllm/security/advisories/GHSA-ph72-cqr5-qpp7">GHSA-ph72-cqr5-qpp7</a> (CVE-2026-105754):</strong> The scale-out disaggregated multimodal transport accepts caller-supplied feature data without validating it against the active model's renderer output, letting an authenticated user crash the shared EngineCore via forged grid geometry or a non-positive placeholder length, poison another request's encoder-cache entry, or corrupt placeholder masks during replay (5 sites). CVSS v3.1 6.5 (Moderate, one site scores 5.9); confirmed on 0.25.1, fixed in 0.30.0.</li>
+</ul>
+
+<ul>
+    <li><strong>vllm-project/vllm: <a href="https://github.com/vllm-project/vllm/security/advisories/GHSA-2823-qmq8-rwvj">GHSA-2823-qmq8-rwvj</a> (CVE-2026-105756):</strong> The OpenAI-compatible request models only check that a client-supplied <code>cache_salt</code> is a non-empty string; a value the LMCache-MP KV connector rejects (for example, one containing <code>/</code> or over 128 characters) raises an uncaught <code>ValueError</code> that propagates to the EngineCore's fatal-error handler, letting one request take down the engine for all tenants when the opt-in LMCache-MP connector is enabled. CVSS v3.1 6.5 (Moderate); confirmed on 0.25.1, fixed in 0.30.0.</li>
+</ul>
+
+<ul>
+    <li><strong>vllm-project/vllm: <a href="https://github.com/vllm-project/vllm/security/advisories/GHSA-2phq-3phc-84px">GHSA-2phq-3phc-84px</a> (CVE-2026-105755):</strong> With flash late-interaction enabled (the default for supported models), <code>/score</code> and <code>/rerank</code> cache query embeddings keyed on the caller-supplied <code>X-Request-Id</code> header; a concurrent request reusing that header value overwrites the victim's cached query, scoring the victim's documents against the attacker's query and potentially exhausting the shared use counter. CVSS v3.1 4.2 (Moderate); confirmed on 0.25.1, fixed in 0.30.0.</li>
+</ul>
+
+<ul>
+    <li><strong>vllm-project/vllm: <a href="https://github.com/vllm-project/vllm/security/advisories/GHSA-ph3r-5jfg-f84f">GHSA-ph3r-5jfg-f84f</a> (CVE-2026-105753):</strong> vLLM's default LRU multimodal cache can desync between the frontend and engine core: if a request is rejected after the frontend hashes its media but before the engine core receives it, a later request reusing that media hash gets a frontend cache hit while the engine core gets no payload, tripping a reachable assertion that fails the later request (on some revisions it cascades into engine-loop failures). CVSS v3.1 6.5 (Moderate); confirmed on 0.25.1, fixed in 0.28.0.</li>
+</ul>
+
+<ul>
+    <li><strong>vllm-project/vllm: <a href="https://github.com/vllm-project/vllm/security/advisories/GHSA-m52c-39rh-f3gp">GHSA-m52c-39rh-f3gp</a>:</strong> The <code>/v1/audio/transcriptions</code> endpoint falls back to PyAV/FFmpeg when <code>soundfile</code> can't parse an upload, checking only file size beforehand; a malformed IAMF audio container can trigger a heap overflow in FFmpeg's <code>libavformat</code> IAMF parser, and repeated crafted uploads can corrupt the heap and crash the API process. CVSS v3.1 6.5 (Moderate), no CVE assigned yet; confirmed on 0.25.1, fixed in 0.29.0.</li>
+</ul>
+
+<ul>
+    <li><strong>vllm-project/vllm: <a href="https://github.com/vllm-project/vllm/security/advisories/GHSA-935w-9g4m-p28p">GHSA-935w-9g4m-p28p</a> (CVE-2026-105752):</strong> On the GPT-OSS Harmony tool-calling path, next-turn prompt continuations are resubmitted without the caller's <code>cache_salt</code>, landing in a shared, unsalted cache namespace; another tenant who can guess the post-tool history can submit a matching prompt and read exact cached-token counts, defeating the prefix-cache membership protection <code>cache_salt</code> is meant to provide. CVSS v3.1 3.1 (Low); the advisory states this is distinct from the earlier GHSA-4qjh-9fv9-r85r (CVE-2025-46570); confirmed on 0.25.1, fixed in 0.30.0.</li>
+</ul>
+
+<ul>
+    <li><strong>langchain-ai/langgraph: <a href="https://github.com/langchain-ai/langgraph/security/advisories/GHSA-4hm6-w6qq-w73v">GHSA-4hm6-w6qq-w73v</a>:</strong> In LangGraph deployments using JavaScript/TypeScript custom authentication, the server can fail to apply Store authorization changes an auth handler returns when that handler restricts users by rewriting the requested namespace, letting an authenticated ordinary user read, overwrite, search, or delete other users' Store data. CVSS v4.0 8.6 (High), no CVE assigned yet; Python handlers and handlers that reject (rather than rewrite) unauthorized namespaces are unaffected; fixed in <code>langgraph-api</code> >= 0.15.0.</li>
+</ul>
+
+<h3 id="earlier-vllm-advisories-september-2026">Earlier vLLM advisories (September 2026)</h3>
+
+<ul>
+    <li><strong><a href="https://github.com/vllm-project/vllm/security/advisories/GHSA-wpww-v874-ph2p">GHSA-wpww-v874-ph2p</a> (CVE-2026-100647)</strong>: vllm-project/vllm: DoS via unbounded <code>cache_salt</code> length (CVSS 5.3, Moderate). The <code>cache_salt</code> field on vLLM's API endpoints enforces no maximum length, so an unauthenticated request with a multi-hundred-MB salt gets SHA-256-hashed on the single EngineCore scheduler thread, stalling unrelated requests (a single 200 MB salt added about 1.2 s of latency; six concurrent 100 MB-salt requests pushed unrelated requests to a p90 of about 1.8 s). Affects vllm < 0.29.0; fixed in 0.29.0.</li>
+</ul>
+
+<ul>
+    <li><strong><a href="https://github.com/vllm-project/vllm/security/advisories/GHSA-jcq2-4gch-5qhf">GHSA-jcq2-4gch-5qhf</a> (CVE-2026-100648)</strong>: vllm-project/vllm: uncontrolled resource consumption in multimodal chat audio decoding (CVSS 4.3, Moderate). The chat message parser bypasses the <code>VLLM_MAX_AUDIO_CLIP_FILESIZE_MB</code> size check that the speech-to-text endpoint already enforces, letting a caller force oversized audio downloads/decodes that consume memory and CPU beyond the configured per-file limit. Affects vllm < 0.29.0; fixed in 0.29.0.</li>
+</ul>
+
+<ul>
+    <li><strong><a href="https://github.com/vllm-project/vllm/security/advisories/GHSA-j682-9xp5-rrf3">GHSA-j682-9xp5-rrf3</a> (CVE-2026-100649)</strong>: vllm-project/vllm: sampler subclass counter shadowing bypasses PyNvVideoCodec decoder limits (CVSS 3.7, Low). Sampler subclasses that inherit from <code>PyNvVideoCodecVideoBackendMixin</code> each keep an independent shadow <code>_active_decoder_slots</code> counter, so a client cycling through different sampler subclasses can exceed the configured process-wide decoder limit and consume more GPU memory than reserved at startup. Affects vllm < 0.29.0; fixed in 0.29.0.</li>
+</ul>
+
+<ul>
+    <li><strong><a href="https://github.com/vllm-project/vllm/security/advisories/GHSA-p6g9-7v3x-m8mv">GHSA-p6g9-7v3x-m8mv</a></strong>: vllm-project/vllm: remote media fetched and fully materialized before size/item limits are enforced, across 4 ingress points (CVSS 6.5, Moderate). vLLM fully downloads HTTP responses, decodes base64 payloads, or spawns fetch tasks for media <em>before</em> applying the documented size/quantity limits, letting a remote attacker trigger memory and bandwidth exhaustion with oversized or over-counted media requests. Affects vllm ≤ 0.29.0; fixed after 0.29.0.</li>
+</ul>
+
+<ul>
+    <li><strong><a href="https://github.com/vllm-project/vllm/security/advisories/GHSA-3mqx-f33v-vgp9">GHSA-3mqx-f33v-vgp9</a></strong>: vllm-project/vllm: disaggregated <code>generate</code> skips decoder prompt-length validation for some multimodal processors (CVSS 6.5, Moderate). Processors that set <code>skip_prompt_length_check=True</code> (e.g. Nemotron Parse, Whisper, FireRedLID) skip length validation for both encoder and decoder prompts in disaggregated serving mode, letting an overlong request reach worker input batching and fail there, before model execution, instead of being rejected at the API layer. Affects vllm < 0.29.0; fixed in 0.29.0.</li>
+</ul>
+
+<ul>
+    <li><strong><a href="https://github.com/vllm-project/vllm/security/advisories/GHSA-qff2-492f-9fm4">GHSA-qff2-492f-9fm4</a></strong>: vllm-project/vllm: Rust HTTP/gRPC frontends bypass the Python <code>stop_token_ids</code> vocab-bound fix and can terminate EngineCore (CVSS 5.9, Moderate). The Rust-side frontends construct engine-facing sampling parameters directly, skipping the vocabulary-range validation applied on the Python side; an out-of-range <code>stop_token_ids</code> value combined with <code>min_tokens > 0</code> reaches <code>logits.index_put_()</code> and triggers a fatal CUDA assertion. Affects vllm >= 0.22.0, <= 0.23.0; fixed in 0.24.0.</li>
+</ul>
+
+<ul>
+    <li><strong><a href="https://github.com/vllm-project/vllm/security/advisories/GHSA-hhv2-872h-628q">GHSA-hhv2-872h-628q</a></strong>: vllm-project/vllm: incomplete artifact pin propagation in FunAudioChat and Tarsier2 (CVSS 6.5, Moderate). Three code paths in these model implementations fail to forward an operator's pinned Hugging Face <code>revision</code> when loading feature-extractor, tokenizer, or config artifacts, so a later change to those repos' default branch can silently alter preprocessing/tokenizer behavior on a deployment believed to be pinned. The advisory lists the affected range as 0.22.1 through 0.28.0; upgrade past 0.28.0.</li>
+</ul>
+
+<ul>
+    <li><strong><a href="https://github.com/vllm-project/vllm/security/advisories/GHSA-v5gm-qgmv-gc6c">GHSA-v5gm-qgmv-gc6c</a></strong>: vllm-project/vllm: out-of-range <code>stop_token_ids</code> with <code>min_tokens</code> can kill vLLM EngineCore (CVSS 6.5, Moderate). The <code>/v1/completions</code> and <code>/v1/chat/completions</code> endpoints check that user-supplied <code>stop_token_ids</code> are integers but not that they fall within the model's vocabulary; when <code>min_tokens > 0</code>, an out-of-range ID is used as a logits index and triggers a fatal CUDA assertion, crashing EngineCore and requiring a service restart. Affects vllm < 0.29.0; fixed in 0.29.0.</li>
+</ul>
+
+<h2 id="source-list">Source List</h2>
+
+<p>Sources in this roundup, credited to their original authors/organizations:</p>
+
+<ul>
+    <li><a href="https://genai.owasp.org/">OWASP GenAI Security Project</a>, feed: <code>https://genai.owasp.org/feed/</code></li>
+    <li><a href="https://simonwillison.net/">Simon Willison</a>, feed: <code>https://simonwillison.net/atom/everything/</code></li>
+    <li><a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, feed: <code>http://export.arxiv.org/rss/cs.CR</code></li>
+    <li><a href="https://github.com/advisories">GitHub Security Advisories</a>, per-project advisory pages linked above</li>
+</ul>
+        </div>
+
+
+            <!-- Related Tools -->
+            <section style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
+                <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Explore More</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+                    <a href="../tools.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Free Security Tools</a>
+                    <a href="../practice-tests.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Practice Quizzes</a>
+                    <a href="../comparisons/" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Cert Comparisons</a>
+                </div>
+            </section>
+
+
+            <!-- Store CTA -->
+            <section style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
+                <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
+                <h3 style="color: white; margin-bottom: 0.5rem;">Studying for Security+? Get the Study Planner</h3>
+                <p style="opacity: 0.9; margin-bottom: 1rem;">Structured study planners for CompTIA certifications. Domain trackers, time blocking, and exam strategies.</p>
+                <a href="/store/store.html" style="display: inline-block; background: #667eea; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 600;">Shop Security+ Planner</a>
+                <p style="font-size: 0.8rem; opacity: 0.85; margin-top: 0.75rem;">Also available: CompTIA A+, Network+, CySA+, PenTest+</p>
+            </section>
+
+            <!-- CyberFolio CTA -->
+            <div style="border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem;">
+                <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.3rem;">CyberFolio</p>
+                <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Building cybersecurity skills? Track them in one place.</p>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills, free.</p>
+                <a href="https://cyberfolio.io" style="display:inline-block;background:#06b6d4;color:white;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;" target="_blank" rel="noopener">Build Your Portfolio &rarr;</a>
+            </div>
+
+            <a href="../index.html" class="back-link">&larr; Back to Home</a>
+            <a href="index.html" class="back-link" style="margin-left: 1rem;">&larr; All Blog Posts</a>
+    </main>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
+        <p>Study Planners: <a href="/store/store.html">FixTheVuln Store</a> | Career Tools: <a href="https://cyberfolio.io" target="_blank" rel="noopener">CyberFolio</a></p>
+        <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+            <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+        </p>
+    </div>
+</footer>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
