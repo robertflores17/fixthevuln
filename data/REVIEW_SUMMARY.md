@@ -1,27 +1,21 @@
-# Daily KEV Review — 2026-10-08
+# Daily KEV Review — 2026-10-13
 
-**New CVEs:** 5 | **Critical:** 2 | **High:** 2 | **Medium:** 1 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 2 | **Critical:** 0 | **High:** 2 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2015-3306 | ProFTPD | ProFTPD | 10.0 | Unknown | 2026-10-11 |
-| CVE-2021-3199 | ONLYOFFICE | Docs | 9.8 | Unknown | 2026-10-11 |
-| CVE-2016-3081 | Apache | Struts | 8.1 | Unknown | 2026-10-11 |
-| CVE-2015-5477 | ISC | BIND | 7.5 | Unknown | 2026-10-11 |
-| CVE-2023-22894 | Strapi | Strapi | 4.9 | Unknown | 2026-10-11 |
+| CVE-2026-96951 | Microsoft | Windows | 8.8 | Unknown | 2026-10-16 |
+| CVE-2026-104935 | Ivanti | Connect Secure | 8.6 | Unknown | 2026-10-16 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-10-11 (5 CVEs)
+- **Nearest due date:** 2026-10-16 (2 CVEs)
 - **Overdue:** None
 
 ## Vendor Summary
-- ISC: 1 CVE
-- Apache: 1 CVE
-- Strapi: 1 CVE
-- ONLYOFFICE: 1 CVE
-- ProFTPD: 1 CVE
+- Ivanti: 1 CVE
+- Microsoft: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
