@@ -135,6 +135,31 @@ cta_section: "comptia"
 
 ---
 
+## Framework Advisories
+
+- **[GHSA-6cxc-2vcg-w5qc](https://github.com/vllm-project/vllm/security/advisories/GHSA-6cxc-2vcg-w5qc)** — vllm-project/vllm
+  `InputBatch.condense()` in vLLM's V1 worker leaves a stale `allowed_token_ids` mask on a recycled batch row, so a later unrestricted request reusing that slot can have its sampling silently limited by an earlier request's allowlist, with no error returned. Rated Low (CVSS 3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N), no CVE assigned. Affects vllm below 0.31.0; fixed in 0.31.0 (PR #43931).
+
+- **[GHSA-p92p-rxj5-7p2x](https://github.com/vllm-project/vllm/security/advisories/GHSA-p92p-rxj5-7p2x)** — vllm-project/vllm
+  A client-supplied UUID on a multimodal content part is used directly as the cache identity across two uncoordinated processor caches (API process and engine process); an unauthenticated remote client can exploit the resulting mismatch to trigger a fatal error that kills the EngineCore process and crashes the whole serving instance. Rated Moderate (CVSS 6.5, AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H), no CVE. Affects vllm below 0.31.0; fixed in 0.31.0 (PR #57833).
+
+- **[GHSA-4xqp-c3mv-qff7](https://github.com/vllm-project/vllm/security/advisories/GHSA-4xqp-c3mv-qff7)** — vllm-project/vllm
+  A single request with `max_tokens: null` and an oversized `min_tokens` skips the API process's validation and later crashes the engine's input-handling thread outside normal error handling, hanging all generation while `/health` keeps reporting 200. Reachable without an API key via the `/inference/v1/generate` endpoint mounted by default since v0.29.0. Rated Moderate (CVSS 6.5, AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H), no CVE. Affects vllm below 0.31.0; fixed in 0.31.0.
+
+- **[GHSA-823j-m4cj-hmjf](https://github.com/vllm-project/vllm/security/advisories/GHSA-823j-m4cj-hmjf)** — vllm-project/vllm
+  When serving a MOSS-Audio model, caller-controlled `mm_processor_kwargs` on the unauthenticated `/tokenize` endpoint build processors cached in an unbounded dictionary, so repeated or oversized requests can exhaust host memory and crash or degrade the API process; the `--api-key` flag does not protect `/tokenize`. Rated High (CVSS 7.5, AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H), no CVE. Affects vllm above 0.24.0 and below 0.31.0; fixed in 0.31.0.
+
+- **[GHSA-h3rc-6mm3-gc2m](https://github.com/vllm-project/vllm/security/advisories/GHSA-h3rc-6mm3-gc2m)** — vllm-project/vllm
+  A caller-supplied `code_revision` inside `mm_processor_kwargs` is passed through to Transformers, which imports processor code from that revision when the operator has `trust_remote_code` enabled — letting a remote client swap in different code from the same model repo and achieve code execution in the API process. The default `trust_remote_code=False` setting is unaffected. GitHub displays High (8.1, AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H); the advisory text separately suggests Critical (9.8) under a lower-complexity vector, a discrepancy worth noting rather than resolving in either direction. No CVE. Affects vllm 0.7.3 up to (not including) 0.31.0; fixed in 0.31.0 (PR #58830).
+
+- **[GHSA-rh6f-3x46-j33q](https://github.com/vllm-project/vllm/security/advisories/GHSA-rh6f-3x46-j33q)** — vllm-project/vllm
+  Two caller-influenced cache keys — a multimodal EXIF `ImageID` hash, and untyped prefix-cache "extra keys" — can collide across unrelated requests, letting one request's cached image or KV state be reused by another and weakening `cache_salt` isolation between LoRA and base-model requests. The higher-rated site is Moderate (CVSS 6.5); a second site is Low (3.1). No CVE. Affects vllm below 0.31.0 (confirmed on 0.25.1); fixed in 0.31.0 (PR #51899).
+
+- **[GHSA-3fx2-cqw9-xr3c](https://github.com/langchain-ai/langgraph/security/advisories/GHSA-3fx2-cqw9-xr3c)** — langchain-ai/langgraph
+  The LangGraph Python SDK's v3 streaming client inserts caller-supplied `thread_id`/`assistant_id` values into request paths without URL-encoding at four call sites, so relative path segments can redirect an authenticated GET request to a different readable path on the same configured server; the affected requests are GETs only, so there is no write capability. Rated Moderate (CVSS 4.3). Affects `langgraph` >=1.2.3,<1.2.14 and `langgraph-sdk` >=0.4.0,<0.4.6; fixed in `langgraph` 1.2.14 / `langgraph-sdk` 0.4.6. The LangGraph Platform is not affected.
+
+---
+
 ## Source List
 
 Sources in this roundup, credited to their original authors/organizations:
