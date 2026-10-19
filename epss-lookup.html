@@ -112,14 +112,14 @@
     <header class="content-header">
         <div class="container">
             <h1>Bulk EPSS Score Lookup</h1>
-            <p>Paste any number of CVE IDs and see which ones are most likely to be exploited</p>
+            <p>Paste up to 1,000 CVE IDs and see which ones are most likely to be exploited</p>
         </div>
     </header>
 
     <main class="container">
         <div class="content-wrapper">
             <div class="info-box">
-                <strong>What is EPSS?</strong> The Exploit Prediction Scoring System, published daily by <a href="https://www.first.org/epss/" target="_blank" rel="noopener">FIRST</a>, estimates the probability that a CVE will see exploitation activity in the next 30 days. CVSS rates how bad a flaw is. EPSS estimates how likely attackers are to use it.
+                <strong>What is EPSS?</strong> The Exploit Prediction Scoring System, published daily through <a href="https://www.first.org/epss/" target="_blank" rel="noopener">FIRST</a>, estimates the probability that a CVE will see exploitation activity in the next 30 days. CVSS rates how bad a flaw is. EPSS estimates how likely attackers are to use it.
             </div>
 
             <div class="tool-form">
@@ -153,10 +153,10 @@
 
             <div class="info-box" style="margin-top: 2rem;">
                 <h3>How to read the results</h3>
-                <p><strong>EPSS probability</strong> is the model's estimate, from 0% to 100%, that the CVE gets exploited in the next 30 days.</p>
-                <p><strong>Percentile</strong> is where the CVE ranks against every other scored CVE. A 95th-percentile CVE scores higher than 95% of all CVEs.</p>
-                <p>Use EPSS alongside CVSS and the <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank" rel="noopener">CISA KEV catalog</a>. A CVE already in KEV is being exploited, whatever its EPSS score says. A CVE with no score is either too new or not yet in FIRST's data.</p>
-                <p style="font-size: 0.9rem; color: var(--text-muted);">Data from the <a href="https://www.first.org/epss/api" target="_blank" rel="noopener">FIRST EPSS API</a>. Lookups run in your browser. Your CVE list goes to FIRST only, never to FixTheVuln.</p>
+                <p><strong>EPSS probability</strong> is the model's estimate, from 0% to 100%, that exploitation activity against the CVE is observed in the next 30 days.</p>
+                <p><strong>Percentile</strong> is where the CVE ranks against every other scored CVE. A 95th-percentile CVE has a higher EPSS score than 95% of all scored CVEs.</p>
+                <p>Use EPSS alongside CVSS and the <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank" rel="noopener">CISA KEV catalog</a>. A CVE in KEV has confirmed exploitation in the wild. Prioritize it whatever its EPSS score says. A CVE with no score is usually too new for today's scoring run, reserved or rejected, or a mistyped ID.</p>
+                <p style="font-size: 0.9rem; color: var(--text-muted);">Data from the <a href="https://api.first.org/epss/" target="_blank" rel="noopener">FIRST EPSS API</a>. Only the CVE IDs found in your text are sent, from your browser straight to FIRST's API. FixTheVuln never receives them. Scoring a whole scanner export? FIRST publishes every score as a <a href="https://www.first.org/epss/data" target="_blank" rel="noopener">daily CSV download</a>, which suits large lists better than this API.</p>
             </div>
 
             <!-- Related Content -->
@@ -185,7 +185,7 @@
         <section style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
             <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
             <h3 style="color: white; margin-bottom: 0.5rem;">Patch Tuesday Sprint Kit</h3>
-            <p style="opacity: 0.9; margin-bottom: 1rem;">Fillable PDF templates for vulnerability management, with an EPSS column in the patch priority tracker.</p>
+            <p style="opacity: 0.9; margin-bottom: 1rem;">Free fillable templates for patch triage, with an EPSS column in the Monthly Triage Matrix. $4.99/mo for a kit pre-filled with each cycle's CISA KEV data.</p>
             <a href="store/patch-tuesday-kit.html" style="display:inline-block;background:#10b981;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">Try Free Templates</a>
         </section>
     </main>
@@ -206,19 +206,21 @@
     </button>
 
     <script>
-        // FIRST's API takes a comma-separated list, max 100 CVEs per request
+        // cve= is capped at 2000 chars and responses page at 100 rows by default; 100 IDs fits both
         const EPSS_API = 'https://api.first.org/data/v1/epss?cve=';
         const BATCH = 100;
         const MAX_CVES = 1000;
 
         function extractCves(text) {
-            const ids = (text.match(/CVE-\d{4}-\d{4,7}/gi) || []).map(s => s.toUpperCase());
+            const ids = (text.match(/\bCVE-\d{4}-\d{4,7}\b/gi) || []).map(s => s.toUpperCase());
             return [...new Set(ids)];
         }
 
         function pct(v) {
+            const n = parseFloat(v);
+            if (!Number.isFinite(n)) return '-';
             // Truncate, not round: 0.99999 must not display as a certain 100.00%
-            return (Math.floor(parseFloat(v) * 10000) / 100).toFixed(2) + '%';
+            return (Math.floor(n * 10000) / 100).toFixed(2) + '%';
         }
 
         function addRow(tbody, cells) {
@@ -261,13 +263,13 @@
 
             btn.disabled = true;
             status.textContent = 'Looking up ' + ids.length + ' CVE' + (ids.length > 1 ? 's' : '') + '...';
-            const scores = {};
+            const scores = new Map();
             try {
                 for (let i = 0; i < ids.length; i += BATCH) {
                     const res = await fetch(EPSS_API + ids.slice(i, i + BATCH).join(','));
                     if (!res.ok) throw new Error('FIRST API returned HTTP ' + res.status);
                     const json = await res.json();
-                    (json.data || []).forEach(d => { scores[d.cve] = d; });
+                    (json.data || []).forEach(d => scores.set(d.cve, d));
                 }
             } catch (err) {
                 status.textContent = 'Lookup failed: ' + err.message + '. Try again in a minute.';
@@ -276,12 +278,12 @@
             }
             btn.disabled = false;
 
-            const found = ids.filter(id => scores[id]).sort((a, b) => scores[b].epss - scores[a].epss);
-            const missing = ids.filter(id => !scores[id]);
+            const found = ids.filter(id => scores.has(id)).sort((a, b) => scores.get(b).epss - scores.get(a).epss);
+            const missing = ids.filter(id => !scores.has(id));
 
             tbody.replaceChildren();
             found.forEach(id => {
-                const d = scores[id];
+                const d = scores.get(id);
                 addRow(tbody, [nvdLink(id), pct(d.epss), pct(d.percentile), d.date]);
             });
             missing.forEach(id => addRow(tbody, [nvdLink(id), 'No score', '-', '-']));
