@@ -223,6 +223,13 @@
             return (Math.floor(n * 10000) / 100).toFixed(2) + '%';
         }
 
+        function ord(v) {
+            const n = parseFloat(v);
+            if (!Number.isFinite(n)) return '-';
+            // Capped below 100th: no CVE scores higher than itself
+            return Math.min(Math.floor(n * 10000) / 100, 99.99).toFixed(2) + 'th';
+        }
+
         function addRow(tbody, cells) {
             const tr = document.createElement('tr');
             cells.forEach(c => {
@@ -284,7 +291,7 @@
             tbody.replaceChildren();
             found.forEach(id => {
                 const d = scores.get(id);
-                addRow(tbody, [nvdLink(id), pct(d.epss), pct(d.percentile), d.date]);
+                addRow(tbody, [nvdLink(id), pct(d.epss), ord(d.percentile), d.date]);
             });
             missing.forEach(id => addRow(tbody, [nvdLink(id), 'No score', '-', '-']));
 
