@@ -79,6 +79,7 @@ ABBREVIATIONS = {
     "iso": "ISO",
     "cve": "CVE",
     "cvss": "CVSS",
+    "epss": "EPSS",
     "kev": "KEV",
     "ssl": "SSL",
     "tls": "TLS",
@@ -130,7 +131,7 @@ CATEGORIES = [
 ]
 
 TOOL_PAGES = {
-    "base64-tool.html", "certificate-decoder.html", "cvss-calculator.html",
+    "base64-tool.html", "certificate-decoder.html", "cvss-calculator.html", "epss-lookup.html",
     "hash-generator.html", "jwt-decoder.html", "password-generator.html",
     "password-strength.html", "regex-tester.html", "sql-injection-simulator.html",
     "subnet-calculator.html", "xss-playground.html",

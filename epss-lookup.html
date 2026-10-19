@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <link rel="preconnect" href="https://api.first.org" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Free bulk EPSS lookup. Paste a list of CVE IDs and get each one's EPSS exploit probability and percentile from FIRST, sorted highest risk first.">
+    <title>Bulk EPSS Score Lookup - FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/epss-lookup.html">
+    <meta property="og:title" content="Bulk EPSS Score Lookup - FixTheVuln">
+    <meta property="og:description" content="Paste a list of CVE IDs and get each one's EPSS exploit probability and percentile from FIRST, sorted highest risk first.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fixthevuln.com/epss-lookup.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Bulk EPSS Score Lookup - FixTheVuln">
+    <meta name="twitter:description" content="Paste a list of CVE IDs and get each one's EPSS exploit probability and percentile from FIRST, sorted highest risk first.">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="stylesheet" href="style.min.css?v=13">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Bulk EPSS Score Lookup",
+        "description": "Free bulk EPSS lookup. Paste a list of CVE IDs and get each one's EPSS exploit probability and percentile from FIRST.",
+        "url": "https://fixthevuln.com/epss-lookup.html",
+        "applicationCategory": "SecurityApplication",
+        "applicationSubCategory": "Cybersecurity Tool",
+        "operatingSystem": "Any (Web Browser)",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": "Bulk CVE input, EPSS probability, EPSS percentile, Sorted by exploit likelihood",
+        "keywords": "EPSS lookup, EPSS score, exploit prediction, CVE prioritization, vulnerability management",
+        "dateModified": "2026-10-19",
+        "author": { "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" },
+        "publisher": { "@type": "Organization", "name": "FixTheVuln", "url": "https://fixthevuln.com" }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fixthevuln.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Tools", "item": "https://fixthevuln.com/tools.html" },
+            { "@type": "ListItem", "position": 3, "name": "EPSS Lookup" }
+        ]
+    }
+    </script>
+    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="blog/feed.xml">
+    <style>
+        #cveInput {
+            width: 100%;
+            min-height: 160px;
+            padding: 0.8rem;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.95rem;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            resize: vertical;
+        }
+        #cveInput:focus { outline: none; border-color: var(--accent-primary); }
+        #epssStatus { margin: 1rem 0; color: var(--text-muted); }
+        #epssTable { width: 100%; }
+        #epssTable td:nth-child(2), #epssTable td:nth-child(3) { font-variant-numeric: tabular-nums; }
+        .table-scroll { overflow-x: auto; }
+    </style>
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="/" class="site-nav-logo"><img src="/logo/ftv-logo.svg" alt="" width="24" height="24">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+        <div class="site-nav-links">
+            <a href="guides.html">Guides</a>
+            <a href="tools.html">Tools</a>
+            <a href="compliance.html">Compliance</a>
+            <a href="resources.html">Resources</a>
+            <a href="practice-tests.html">Quizzes</a>
+            <a href="career-paths.html">Career Paths</a>
+            <a href="blog/">Blog</a>
+            <a href="/store/store.html" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: .35rem .75rem; border-radius: 6px; font-size: .85rem; font-weight: 600; text-decoration: none;">Store</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header class="content-header">
+        <div class="container">
+            <h1>Bulk EPSS Score Lookup</h1>
+            <p>Paste any number of CVE IDs and see which ones are most likely to be exploited</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="content-wrapper">
+            <div class="info-box">
+                <strong>What is EPSS?</strong> The Exploit Prediction Scoring System, published daily by <a href="https://www.first.org/epss/" target="_blank" rel="noopener">FIRST</a>, estimates the probability that a CVE will see exploitation activity in the next 30 days. CVSS rates how bad a flaw is. EPSS estimates how likely attackers are to use it.
+            </div>
+
+            <div class="tool-form">
+                <form id="epssForm">
+                    <div class="form-group">
+                        <label for="cveInput">CVE IDs (one per line, or paste a scanner report, CSV, or email)</label>
+                        <textarea id="cveInput" spellcheck="false" placeholder="CVE-2021-44228&#10;CVE-2023-4863&#10;CVE-2024-3400"></textarea>
+                    </div>
+                    <button type="submit" class="btn" id="epssBtn">Look Up EPSS Scores</button>
+                </form>
+            </div>
+
+            <div id="epssStatus" role="status" aria-live="polite"></div>
+
+            <div id="result" class="result-box" style="display:none;">
+                <h3>Results, highest exploit probability first</h3>
+                <div class="table-scroll">
+                    <table id="epssTable">
+                        <thead>
+                            <tr>
+                                <th>CVE</th>
+                                <th>EPSS probability</th>
+                                <th>Percentile</th>
+                                <th>Score date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="epssBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="info-box" style="margin-top: 2rem;">
+                <h3>How to read the results</h3>
+                <p><strong>EPSS probability</strong> is the model's estimate, from 0% to 100%, that the CVE gets exploited in the next 30 days.</p>
+                <p><strong>Percentile</strong> is where the CVE ranks against every other scored CVE. A 95th-percentile CVE scores higher than 95% of all CVEs.</p>
+                <p>Use EPSS alongside CVSS and the <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank" rel="noopener">CISA KEV catalog</a>. A CVE already in KEV is being exploited, whatever its EPSS score says. A CVE with no score is either too new or not yet in FIRST's data.</p>
+                <p style="font-size: 0.9rem; color: var(--text-muted);">Data from the <a href="https://www.first.org/epss/api" target="_blank" rel="noopener">FIRST EPSS API</a>. Lookups run in your browser. Your CVE list goes to FIRST only, never to FixTheVuln.</p>
+            </div>
+
+            <!-- Related Content -->
+            <section style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid var(--border-color, #e0e0e0);">
+                <h2 style="margin-bottom: 1.5rem;">Related Resources</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                    <a href="cvss-calculator.html" style="background: var(--bg-tertiary, #f8f9fa); color: var(--text-primary, #333); padding: 1.25rem; border-radius: 8px; text-decoration: none; border: 2px solid var(--border-color, #e0e0e0);">
+                        <strong style="display: block; margin-bottom: 0.5rem; color: var(--accent-primary, #667eea);">🧮 CVSS Calculator</strong>
+                        <span style="font-size: 0.9rem; color: var(--text-muted, #666);">Calculate vulnerability severity scores</span>
+                    </a>
+                    <a href="exploit-tracker.html" style="background: var(--bg-tertiary, #f8f9fa); color: var(--text-primary, #333); padding: 1.25rem; border-radius: 8px; text-decoration: none; border: 2px solid var(--border-color, #e0e0e0);">
+                        <strong style="display: block; margin-bottom: 0.5rem; color: var(--accent-primary, #667eea);">🎯 Exploit Tracker</strong>
+                        <span style="font-size: 0.9rem; color: var(--text-muted, #666);">Recently exploited vulnerabilities</span>
+                    </a>
+                    <a href="vuln-tracking.html" style="background: var(--bg-tertiary, #f8f9fa); color: var(--text-primary, #333); padding: 1.25rem; border-radius: 8px; text-decoration: none; border: 2px solid var(--border-color, #e0e0e0);">
+                        <strong style="display: block; margin-bottom: 0.5rem; color: var(--accent-primary, #667eea);">📋 Vulnerability Tracking</strong>
+                        <span style="font-size: 0.9rem; color: var(--text-muted, #666);">Prioritize and track remediation</span>
+                    </a>
+                </div>
+            </section>
+
+            <a href="tools.html" class="back-link">← Back to Tools</a>
+        </div>
+
+        <!-- Store CTA -->
+        <section style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
+            <h3 style="color: white; margin-bottom: 0.5rem;">Patch Tuesday Sprint Kit</h3>
+            <p style="opacity: 0.9; margin-bottom: 1rem;">Fillable PDF templates for vulnerability management, with an EPSS column in the patch priority tracker.</p>
+            <a href="store/patch-tuesday-kit.html" style="display:inline-block;background:#10b981;color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;margin:0.25rem;">Try Free Templates</a>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
+            <p>For detailed guides: <a href="https://fixthevuln.com" target="_blank">FixTheVuln.com</a> | Shop planners: <a href="/store/store.html">FixTheVuln Store</a></p>
+            <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+                <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode">
+        <span id="theme-icon">🌙</span>
+    </button>
+
+    <script>
+        // FIRST's API takes a comma-separated list, max 100 CVEs per request
+        const EPSS_API = 'https://api.first.org/data/v1/epss?cve=';
+        const BATCH = 100;
+        const MAX_CVES = 1000;
+
+        function extractCves(text) {
+            const ids = (text.match(/CVE-\d{4}-\d{4,7}/gi) || []).map(s => s.toUpperCase());
+            return [...new Set(ids)];
+        }
+
+        function pct(v) {
+            // Truncate, not round: 0.99999 must not display as a certain 100.00%
+            return (Math.floor(parseFloat(v) * 10000) / 100).toFixed(2) + '%';
+        }
+
+        function addRow(tbody, cells) {
+            const tr = document.createElement('tr');
+            cells.forEach(c => {
+                const td = document.createElement('td');
+                if (c instanceof Node) td.appendChild(c); else td.textContent = c;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        }
+
+        function nvdLink(id) {
+            const a = document.createElement('a');
+            a.href = 'https://nvd.nist.gov/vuln/detail/' + encodeURIComponent(id);
+            a.target = '_blank';
+            a.rel = 'noopener';
+            a.textContent = id;
+            return a;
+        }
+
+        document.getElementById('epssForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const status = document.getElementById('epssStatus');
+            const btn = document.getElementById('epssBtn');
+            const tbody = document.getElementById('epssBody');
+            const result = document.getElementById('result');
+
+            let ids = extractCves(document.getElementById('cveInput').value);
+            if (!ids.length) {
+                status.textContent = 'No CVE IDs found. Use the format CVE-2024-12345.';
+                result.style.display = 'none';
+                return;
+            }
+            let note = '';
+            if (ids.length > MAX_CVES) {
+                note = ' Only the first ' + MAX_CVES + ' were looked up.';
+                ids = ids.slice(0, MAX_CVES);
+            }
+
+            btn.disabled = true;
+            status.textContent = 'Looking up ' + ids.length + ' CVE' + (ids.length > 1 ? 's' : '') + '...';
+            const scores = {};
+            try {
+                for (let i = 0; i < ids.length; i += BATCH) {
+                    const res = await fetch(EPSS_API + ids.slice(i, i + BATCH).join(','));
+                    if (!res.ok) throw new Error('FIRST API returned HTTP ' + res.status);
+                    const json = await res.json();
+                    (json.data || []).forEach(d => { scores[d.cve] = d; });
+                }
+            } catch (err) {
+                status.textContent = 'Lookup failed: ' + err.message + '. Try again in a minute.';
+                btn.disabled = false;
+                return;
+            }
+            btn.disabled = false;
+
+            const found = ids.filter(id => scores[id]).sort((a, b) => scores[b].epss - scores[a].epss);
+            const missing = ids.filter(id => !scores[id]);
+
+            tbody.replaceChildren();
+            found.forEach(id => {
+                const d = scores[id];
+                addRow(tbody, [nvdLink(id), pct(d.epss), pct(d.percentile), d.date]);
+            });
+            missing.forEach(id => addRow(tbody, [nvdLink(id), 'No score', '-', '-']));
+
+            result.style.display = 'block';
+            status.textContent = found.length + ' of ' + ids.length + ' CVEs scored.' +
+                (missing.length ? ' ' + missing.length + (missing.length > 1 ? ' have' : ' has') + ' no EPSS score yet.' : '') + note;
+        });
+    </script>
+
+    <script>
+        // Dark mode toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('fixthevuln-theme', newTheme);
+
+            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+
+        // Load saved theme
+        (function() {
+            const savedTheme = localStorage.getItem('fixthevuln-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('theme-icon').textContent = '☀️';
+            }
+        })();
+    </script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+  <script src="/js/error-reporter.js?v=1"></script>
+</body>
+</html>
