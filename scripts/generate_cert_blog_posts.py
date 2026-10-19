@@ -359,8 +359,8 @@ Test your knowledge with our free tools:
 
 {cert_link}
 
-- [CVSS Calculator](/cvss-calculator.html) — Practice scoring vulnerabilities
-- [Password Strength Checker](/password-strength.html) — Test password security
+- [CVSS Calculator](/cvss-calculator.html): Practice scoring vulnerabilities
+- [Password Strength Checker](/password-strength.html): Test password security
 
 ## Career Impact
 
@@ -476,9 +476,9 @@ Check the official {vendor} website for the most current exam details including 
 
 {quiz_link}
 
-- [CVSS Calculator](/cvss-calculator.html) — Practice scoring vulnerabilities
-- [Password Strength Checker](/password-strength.html) — Test password security
-- [Career Paths](/career-paths.html) — Plan your certification roadmap
+- [CVSS Calculator](/cvss-calculator.html): Practice scoring vulnerabilities
+- [Password Strength Checker](/password-strength.html): Test password security
+- [Career Paths](/career-paths.html): Plan your certification roadmap
 
 ## Career Impact
 

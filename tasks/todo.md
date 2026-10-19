@@ -1131,3 +1131,17 @@ by regenerating 8 offline generators in a scratch copy: transform then finds 0 r
 inject_seo_schema.py quiz-name split now handles ": " as well as the old dash.
 Found and fixed a live bug: 49 pages showed a literal "&mdash;" in <title>/og/twitter titles
 (html_head double-escaped "&mdash;" to "&amp;mdash;").
+
+### Phase 2 batch 1 — 2026-10-19
+- [x] Boilerplate repeated on 5+ pages (51 phrases): CyberFolio CTA, link-list "Name — desc", CVSS badges,
+      planner/subscribe price buttons, cert heatmap + focus lines, roundup RSS/KEV/curation lines, quiz
+      disclaimer, store trust/bundle lines. Fixed in HTML + generators (cert, cve, roadmaps, threat roundup,
+      cert blog posts, injectors). Regenerated 10 generators in a scratch copy: 0 phrases return.
+- [x] Stale figure fixed on 66 cert pages: "3,150+ questions across 66 certifications" -> "10,500+ ... 68"
+      (matches practice-tests.html hub). The literal is hardcoded in generate_cert_pages.py and will drift again.
+- Result: 2,025 removed, 3,313 left.
+
+Phase 2 rule for later batches: do NOT rewrite quoted third-party text (AI roundup excerpts, attributed
+quotes, CVE descriptions from CISA/NVD). Only FixTheVuln's own copy.
+Next batches by section: certs/cve/comparisons/store/wstg/practice-tests (small), then root guides,
+roadmaps, blog (largest).

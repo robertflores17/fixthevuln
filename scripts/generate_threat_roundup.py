@@ -190,7 +190,7 @@ def main():
 
     # What this means section
     if highest_cvss >= 9.0:
-        action_msg = """If you run any of the affected products, **patch immediately**. Critical-severity vulnerabilities are actively exploited in the wild — CISA adds them to the KEV catalog specifically because they represent real, current threats.
+        action_msg = """If you run any of the affected products, **patch immediately**. Critical-severity vulnerabilities are actively exploited in the wild. CISA adds them to the KEV catalog specifically because they represent real, current threats.
 
 Use the [CVSS Calculator](/cvss-calculator.html) to assess how these scores apply to your specific environment."""
     elif highest_cvss >= 7.0:
@@ -269,14 +269,14 @@ cta_section: "{cta_section}"
 
 ## Tools to Help
 
-- [CVSS Calculator](/cvss-calculator.html) — Score these vulnerabilities for your specific environment
-- [Exploit Tracker](/exploit-tracker.html) — Filter KEV vulnerabilities by certification relevance
-- [Study Tracker](/study-tracker.html) — Track your exam objective completion
-- [Security+ Practice Quiz](/security-quiz.html) — Test your knowledge of vulnerability types and mitigations
+- [CVSS Calculator](/cvss-calculator.html): Score these vulnerabilities for your specific environment
+- [Exploit Tracker](/exploit-tracker.html): Filter KEV vulnerabilities by certification relevance
+- [Study Tracker](/study-tracker.html): Track your exam objective completion
+- [Security+ Practice Quiz](/security-quiz.html): Test your knowledge of vulnerability types and mitigations
 
 ## Stay Updated
 
-This roundup is published every Tuesday. Bookmark the [FixTheVuln Blog](/blog/) to stay on top of the latest threats — or subscribe via [RSS](/blog/feed.xml).
+This roundup is published every Tuesday. Bookmark the [FixTheVuln Blog](/blog/) to stay on top of the latest threats, or subscribe via [RSS](/blog/feed.xml).
 """
 
     if dry_run:

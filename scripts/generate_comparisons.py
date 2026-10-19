@@ -274,8 +274,8 @@ def generate_comparison_page(comp, certs):
             <h2>Test Your Knowledge</h2>
             <p>Already studying? Try our free tools:</p>
             <ul>
-                <li><a href="../security-quiz.html">Security+ Practice Quiz</a> &mdash; 300 questions mapped to SY0-701 domains</li>
-                <li><a href="../cvss-calculator.html">CVSS Calculator</a> &mdash; Practice scoring vulnerabilities</li>
+                <li><a href="../security-quiz.html">Security+ Practice Quiz</a>: 300 questions mapped to SY0-701 domains</li>
+                <li><a href="../cvss-calculator.html">CVSS Calculator</a>: Practice scoring vulnerabilities</li>
             </ul>
 
         </div>
