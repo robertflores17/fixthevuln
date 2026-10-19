@@ -16,7 +16,7 @@ on:
 
 jobs:
   gate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       go: ${{ steps.check.outputs.go }}
     steps:
@@ -31,7 +31,7 @@ jobs:
   generate-and-upload:
     needs: gate
     if: needs.gate.outputs.go == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
 
