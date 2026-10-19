@@ -1,3 +1,49 @@
+## 2026-10-19 — Weekly Tech-Debt Audit
+
+**Headline:** All-clear week — pipeline fully healthy (last_checked Oct 18, 0 pending CVEs); 9 CVEs published (263 total); AI security roundup draft Oct 16 on schedule (publishes Tuesday Oct 21); no new findings; P1 practice-tests timestamps remain open at **19 weeks**.
+
+**Pipeline pulse:**
+- KEV fetch last checked (`data/pending_review.json` last_checked): 2026-10-18T17:39:00 UTC (yesterday ✓ — fresh, NO P0)
+- CVEs pending review (`total_pending`), waiting since (`last_updated`): 0, 2026-10-17 ✓ — NO P0
+- Daily CVE trigger last publish (`data/appsec-review.md`): 2026-10-17 (2 days ago ✓ — informational; pipeline confirmed healthy via pending_review.json)
+- Friday AI trend roundup last file (`drafts/ai-security-roundup-2026-10-16.md`): 2026-10-16 (last Friday ✓ — draft on schedule; publish-blog.yml fires Tuesday Oct 21 at 14:00 UTC)
+
+**New this week:**
+- None. No new P0/P1/P2/P3 findings.
+- Notable: 9 CVE pages published (BeyondTrust, Fortinet, Ivanti, Microsoft, Atlassian, Ahsay ×2, Cisco, Palo Alto Networks — commits Oct 13–17); +11 sitemap entries (756 total); +2 blog posts (136 total)
+- Notable: AI vuln intel updated — 7 writeups for vLLM & LangGraph GHSA advisories published across `ai-vulnerabilities/`; tracker now at 28 pages (vs 20 prior)
+- Notable: Sprint kit manifest updated 2026-10-14; AI IDE tracker updated Oct 13–16 (3 commits); sitemap reconciled 3× this week
+
+**Still open from prior audits:** 8
+1. P1 content — `practice-tests/*.html:1` (13 pages) — `<p class="pt-timestamp">Last updated: September 29, 2026</p>` still present (**19 weeks open**) — Fix: remove `pt-timestamp` block from `scripts/generate_practice_test_pages.py` template; re-run — Effort: XS
+2. P2 hygiene — repo-wide — `requirements.txt` absent; Pillow (`create_hero.py:4`, `generate_linkedin_posts.py:12`), reportlab (`generate_sprint_kit.py:31–45`), requests (`etsy_to_pinterest.py`) undeclared external deps; `security-audit.yml` pip-audit silently no-ops — Effort: XS
+3. P2 generator — `scripts/` (**16 files >500 LOC**, unchanged) — `generate_guides.py` 2,751 · `generate_sprint_kit.py` 1,998 · `fetch_kev.py` 896 · `etsy_to_pinterest.py` 829 · `aggregate_ai_ide_vulns.py` 771 · `entity_extractor.py` 765 · `generate_linkedin_posts.py` 716 · `publish_editorial.py` 711 · `generate_ai_ide_tracker.py` 697 · `audit_pages.py` 661 · `generate_quiz_pages.py` 627 · `generate_cert_pages.py` 607 · `generate_practice_test_pages.py` 593 · `inject_store_ctas.py` 588 · `generate_roadmaps.py` 534 · `generate_cve_pages.py` 512 — Effort: L
+4. P2 SEO — `scripts/generate_sitemap.py:25` — `CONTENT_DIRS` still omits `wstg` (13 HTML files) and `practice-tests` (13 HTML files) — Fix: add both to `CONTENT_DIRS` — Effort: XS
+5. P2 worker growth — `store/cloudflare-worker.js` — 1,532 LOC (unchanged; sprint kit delivery routes stable; no new growth this week; consider extracting sprint-kit module before next growth cycle) — Effort: M
+6. P3 hygiene — `scripts/` (9 instances across 8 scripts) — Bare `except Exception:` without logging: `fetch_kev.py:63`, `generate_sitemap.py:102`, `update_sitemap.py:29`, `audit_pages.py:250,382`, `create_hero.py:51`, `generate_linkedin_posts.py:72`, `inject_error_reporter.py:46`, `health_check.py:127` — Add `logging.exception()` before each — Effort: S
+7. P3 hygiene — repo root — No `CLAUDE.md`; editorial rules (evergreen-page timestamp ban, cache-bust policy, pipeline health thresholds) uncodified in-repo — Effort: XS
+8. P3 generator drift — `scripts/generate_sitemap.py:76–95` — `GUIDE_PAGES` still missing `ai-agent-security.html` and `genai-data-security.html` (pages in sitemap via reconcile ✓; risk is priority mis-assignment on fresh run; open **15 weeks** since July 13 audit) — Fix: add both filenames to `GUIDE_PAGES` set — Effort: XS
+
+**Resolved since last audit:**
+- P0 pipeline (Oct 12) — daily pipeline health special rule updated 2026-10-12: stall now determined by `pending_review.json` last_checked and total_pending, not `appsec-review.md` file age; no false P0 this week per updated rule; issue #156 noted the false positive root cause
+- P2 manifest over-commits (Oct 12) — cosmetic; no new over-commits this week
+
+**Metrics tracked:**
+- Total generated pages (cve-*, cert-*, comparisons/*, roadmaps/*): 439 (263 CVE +9 · 66 cert · 43 comparisons · 67 roadmaps)
+- AI vuln pages (`ai-vulnerabilities/`): 28 (+8 vs prior audits' 20)
+- Blog pages: 136 (+2 from 134)
+- Sitemap entries: 756 (+11 from 745)
+- Evergreen pages with timestamps (should be 0): 13 (practice-tests/*.html — "September 29, 2026" — P1 open **19 weeks**)
+- Pages missing from llms.txt: 0 ✓ (reconcile ran 3× this week)
+- Cache-bust drift count: 0 files ✓ (no CSS/JS modified in last 7 days)
+- Scripts >500 LOC: 16 (unchanged; no LOC changes this week)
+- Store worker LOC: 1,532 (unchanged; PRICING 599/1599 cents ↔ $5.99/$15.99 frontend ✓; CP_PRICING tiers ✓; webhook HMAC-SHA256 signing confirmed ✓)
+- D1 migrations: 2 (unchanged — 0001_error_log, 0002_quiz_feedback)
+- Python scripts with bare `except Exception:` without logging: 9 instances / 8 scripts (unchanged)
+- Certs last updated: September 29, 2026 (20 days ✓); Comparisons: October 13, 2026 (6 days ✓); Roadmaps: September 29, 2026 (20 days ✓)
+
+---
+
 ## 2026-10-12 — Weekly Tech-Debt Audit
 
 **Headline:** P0 auto-triggered — `data/appsec-review.md` is 3 days old (last content: 2026-10-09); likely a false-positive from a genuine CISA quiet period (fetch ran Oct 11, 0 pending CVEs) but strict rule requires flagging; P1 practice-tests timestamps still unresolved at 18 weeks; style.min.css cache-bust and roadmap staleness both resolved this week.
