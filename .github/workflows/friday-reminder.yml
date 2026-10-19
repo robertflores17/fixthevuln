@@ -49,6 +49,10 @@ jobs:
         if: steps.check.outputs.pending_count != '0' || steps.prs.outputs.pr_count != '0'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Via env, not ${{ }} in the script: PR titles are attacker-controlled.
+          PENDING_COUNT: ${{ steps.check.outputs.pending_count }}
+          PR_COUNT: ${{ steps.prs.outputs.pr_count }}
+          OPEN_PRS: ${{ steps.prs.outputs.open_prs }}
         run: |
           DATE=$(date +'%B %d, %Y')
           WEEKEND_DATE=$(date -d "+2 days" +'%B %d' 2>/dev/null || date -v+2d +'%B %d')
@@ -59,12 +63,12 @@ jobs:
 
           ### Pending Items
 
-          - **Vulnerabilities awaiting review:** ${{ steps.check.outputs.pending_count }}
-          - **Open Pull Requests:** ${{ steps.prs.outputs.pr_count }}
+          - **Vulnerabilities awaiting review:** $PENDING_COUNT
+          - **Open Pull Requests:** $PR_COUNT
 
           ### Open PRs to Review
 
-          ${{ steps.prs.outputs.open_prs }}
+          $OPEN_PRS
 
           ### Quick Actions
 
@@ -98,7 +102,7 @@ jobs:
           else
             echo "Creating new reminder issue"
             gh issue create \
-              --title "Weekend Review: ${{ steps.check.outputs.pending_count }} vulnerabilities pending ($DATE)" \
+              --title "Weekend Review: $PENDING_COUNT vulnerabilities pending ($DATE)" \
               --body "$ISSUE_BODY" \
               --label "weekly-review"
           fi
