@@ -327,7 +327,7 @@ def generate_index_page(comparisons, certs):
     idx_keywords = 'certification comparison, Security+ vs CySA+, CISSP vs CISM, IT certification guide, cybersecurity certifications'
     idx_canonical = f'{SITE_URL}/comparisons/'
     idx_schema = [breadcrumb_schema([("Home", f"{SITE_URL}/"), ("Certification Comparisons", None)])]
-    idx_head = html_head('Certification Comparisons &mdash; Which Cert Should You Get?', idx_desc, idx_canonical,
+    idx_head = html_head('Certification Comparisons: Which Cert Should You Get?', idx_desc, idx_canonical,
                          keywords=idx_keywords, schema_blocks=idx_schema, depth=1)
 
     return f'''<!DOCTYPE html>

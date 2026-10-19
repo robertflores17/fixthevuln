@@ -282,7 +282,7 @@ def generate_roadmap_page(product, config):
         rm_title = f'{name} Study Roadmap (Retired Exam)'
     else:
         rm_desc = f'Free {name} study roadmap. {num_weeks}-week plan with domain weights, free resources, and progress tracking. Start your {name} journey today.'
-        rm_title = f'{name} Study Roadmap — Free Week-by-Week Plan'
+        rm_title = f'{name} Study Roadmap: Free Week-by-Week Plan'
     rm_canonical = f'{SITE_URL}/roadmaps/{pid}.html'
     rm_schemas = [
         breadcrumb_schema([("Home", f"{SITE_URL}/"), ("Roadmaps", f"{SITE_URL}/roadmaps/"), (f"{name} Roadmap", None)]),
@@ -459,7 +459,7 @@ def generate_hub_page(generated_products):
 
     hub_desc = 'Free week-by-week study roadmaps for 65+ IT certifications. CompTIA, AWS, Azure, Cisco, CISSP, and more. Progress tracking included.'
     hub_schemas = [breadcrumb_schema([("Home", f"{SITE_URL}/"), ("Study Roadmaps", None)])]
-    hub_head = html_head('Free Certification Study Roadmaps — 65+ IT Certs', hub_desc, f'{SITE_URL}/roadmaps/',
+    hub_head = html_head('Free Certification Study Roadmaps: 65+ IT Certs', hub_desc, f'{SITE_URL}/roadmaps/',
                          schema_blocks=hub_schemas, depth=1)
 
     return f'''<!DOCTYPE html>

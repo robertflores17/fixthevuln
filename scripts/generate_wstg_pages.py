@@ -187,7 +187,7 @@ def generate_category_page(cat, all_categories):
     difficulty = cat.get('difficulty', '')
     faq_items = cat.get('faq_items', [])
 
-    page_title = f'{code}: {name} — OWASP Testing Guide | FixTheVuln'
+    page_title = f'{code}: {name} - OWASP Testing Guide | FixTheVuln'
     meta_desc = f'OWASP WSTG {name}: {len(tests)} security test cases. {summary}'
     if len(meta_desc) > 160:
         meta_desc = meta_desc[:157] + '...'
@@ -238,7 +238,7 @@ def generate_category_page(cat, all_categories):
     cat_canonical = f'{SITE_URL}/wstg/{slug}.html'
     cat_keywords = f'{escape_html(code)}, OWASP WSTG, {escape_html(name)}, web security testing, penetration testing, {", ".join(certs)}'
     cat_schemas = [
-        article_schema(f'{code}: {name} — OWASP Web Security Testing Guide', meta_desc,
+        article_schema(f'{code}: {name} - OWASP Web Security Testing Guide', meta_desc,
                        existing_date_published(WSTG_DIR / f'{slug}.html', TODAY), TODAY),
         breadcrumb_schema([("Home", f"{SITE_URL}/"), ("Guides", f"{SITE_URL}/guides.html"), ("OWASP WSTG", f"{SITE_URL}/wstg/"), (name, None)]),
     ]
@@ -365,7 +365,7 @@ def generate_index_page(categories, meta):
     idx_desc = f'OWASP Web Security Testing Guide (WSTG) v{version} -- {total_tests} security test cases across {total_cats} categories. Free educational guides for Security+, CEH, OSCP, and GPEN certification prep.'
     idx_keywords = 'OWASP WSTG, web security testing guide, penetration testing methodology, OWASP testing, web application security, Security+, CEH, OSCP'
     idx_schemas = [breadcrumb_schema([("Home", f"{SITE_URL}/"), ("Guides", f"{SITE_URL}/guides.html"), ("OWASP WSTG", None)])]
-    idx_head = html_head(f'OWASP Web Security Testing Guide (WSTG) &mdash; {total_tests} Test Cases', idx_desc,
+    idx_head = html_head(f'OWASP Web Security Testing Guide (WSTG): {total_tests} Test Cases', idx_desc,
                          f'{SITE_URL}/wstg/', keywords=idx_keywords, schema_blocks=idx_schemas, depth=1)
 
     return f'''<!DOCTYPE html>

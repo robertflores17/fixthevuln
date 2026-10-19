@@ -176,7 +176,7 @@ def generate_cve_page(vuln):
     archived = vuln.get('archived', False)
     nvd_url = f'https://nvd.nist.gov/vuln/detail/{cve_id}'
     page_title = f'{cve_id}: {title} - FixTheVuln'
-    meta_desc = truncate_sentence(f'{cve_id} — CVSS {cvss_display} ({sev}). {vuln.get("description", "")}', 160)
+    meta_desc = truncate_sentence(f'{cve_id}: CVSS {cvss_display} ({sev}). {vuln.get("description", "")}', 160)
     zero_day_badge = '<span style="display:inline-block;background:#dc3545;color:white;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.8rem;font-weight:600;margin-left:0.5rem;">ZERO-DAY</span>' if is_zero_day else ''
     archived_badge = '<span style="display:inline-block;background:#6c757d;color:white;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.8rem;font-weight:600;margin-left:0.5rem;">ARCHIVED</span>' if archived else '<span style="display:inline-block;background:#28a745;color:white;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.8rem;font-weight:600;margin-left:0.5rem;">ACTIVE</span>'
     owasp_badges = generate_owasp_badges(vuln)
@@ -337,7 +337,7 @@ def generate_index_page(vulns):
 
     idx_desc = f'Browse {len(vulns)} tracked CVEs from the CISA Known Exploited Vulnerabilities catalog. CVSS scores, fix instructions, and NVD links.'
     idx_schema = [breadcrumb_schema([("Home", f"{SITE_URL}/"), ("CVE Database", None)])]
-    idx_head = html_head('CVE Database &mdash; CISA KEV Tracker', idx_desc, f'{SITE_URL}/cve/',
+    idx_head = html_head('CVE Database: CISA KEV Tracker', idx_desc, f'{SITE_URL}/cve/',
                          keywords='CVE database, CISA KEV, vulnerability database, CVE lookup, cybersecurity vulnerabilities',
                          schema_blocks=idx_schema, depth=1)
 

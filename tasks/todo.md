@@ -1108,3 +1108,26 @@ same treatment.
 - [ ] **CISM quiz weights on Nov 3, 2026. Source unverified, do not implement yet.** ISACA confirms the outline is updated effective 3 Nov 2026, but the new domain percentages (18/20/33/29 from a press-release summary) are not verified against a primary ISACA source. Before Nov 3: capture the ISACA URL and published weights, then update `cism-quiz.html` (lines 626-629 and the `domains` map near line 808) and drop the dated note.
 - [ ] **Newsletter form (10 pages).** The beehiiv form sends the email as a `?email=` query parameter. Needs the embed snippet from the beehiiv dashboard.
 - [ ] **CISSP quiz (done 2026-10-03)** — weights now 16/10/13/13/13/12/13/10 to match the ISC2 outline effective 2024-04-15.
+
+## Em-dash voice pass — 2026-10-19
+
+Baseline: 7,463 em-dashes in 766 HTML pages; ~5,600 come from generators/data. Robert chose phased.
+
+Phase 1 (rule-based, generators + HTML together so regeneration doesn't undo it):
+- [x] `<strong>Label</strong> — text` → `Label: text` (~859)
+- [x] `<title>`, og/twitter title, JSON-LD headline: dash → ": " (" - " if left side already has a colon)
+- [x] meta/og/twitter description: dash → ": " after a short label, ", " after a full sentence (~871)
+- [x] Same literals in generators (build_practice_tests_hub, generate_guides, generate_quiz_pages,
+      inject_seo_questions, lib/ai_vuln_pages, generate_cve_pages, generate_roadmaps,
+      generate_comparisons, generate_wstg_pages)
+- [x] Verify: re-run an offline generator, diff shows no dash regressions; self-QA; spot screenshots
+- [ ] Pre-push review (security-review, AppSec, Content Editor), push
+
+Phase 2 (later, by section, hand-rewritten): the ~5,230 mid-sentence prose dashes + data/*.json + blog markdown.
+
+Phase 1 review (2026-10-19): 2,272 dashes removed (7,463 plus 147 double-escaped -> 5,338 left in HTML). 20 mid-sentence bold
+phrases deliberately skipped (Phase 2). Generators + data/ai-vuln-content.json fixed at source; verified
+by regenerating 8 offline generators in a scratch copy: transform then finds 0 remaining Phase 1 cases.
+inject_seo_schema.py quiz-name split now handles ": " as well as the old dash.
+Found and fixed a live bug: 49 pages showed a literal "&mdash;" in <title>/og/twitter titles
+(html_head double-escaped "&mdash;" to "&amp;mdash;").

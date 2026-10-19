@@ -73,7 +73,7 @@ def build_seo_html(seo_qs, name, exam):
         items.append(
             f'        <details>\n'
             f'            <summary>Q: {escape(q["question"])}</summary>\n'
-            f'            <p><strong>A: {escape(answer)}</strong> &mdash; {escape(explanation)}</p>\n'
+            f'            <p><strong>A: {escape(answer)}</strong>. {escape(explanation)}</p>\n'
             f'        </details>'
         )
     return (

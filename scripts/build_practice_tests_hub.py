@@ -136,9 +136,9 @@ page = f"""<!DOCTYPE html>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Free cybersecurity practice tests for 68 certifications. {total_q:,}+ questions across CompTIA, AWS, Microsoft, Cisco, ISC2, and more. Domain-weighted, timed, with progress tracking.">
     <meta name="keywords" content="cybersecurity practice test, free certification quiz, Security+ practice test, CISSP mock exam, AWS practice questions, Azure certification quiz, CCNA practice test, CompTIA quiz, ISC2 practice exam, OSCP practice questions">
-    <title>Free Cybersecurity Practice Tests &mdash; {total_q:,}+ Questions, 68 Certifications - {SITE_NAME}</title>
+    <title>Free Cybersecurity Practice Tests: {total_q:,}+ Questions, 68 Certifications - {SITE_NAME}</title>
     <link rel="canonical" href="{SITE_URL}/practice-tests.html">
-    <meta property="og:title" content="Free Cybersecurity Practice Tests &mdash; {total_q:,}+ Questions - {SITE_NAME}">
+    <meta property="og:title" content="Free Cybersecurity Practice Tests: {total_q:,}+ Questions - {SITE_NAME}">
     <meta property="og:description" content="Free practice tests for 68 cybersecurity certifications. {total_q:,}+ domain-weighted questions with explanations. No login required.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{SITE_URL}/practice-tests.html">
@@ -146,7 +146,7 @@ page = f"""<!DOCTYPE html>
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Free Cybersecurity Practice Tests &mdash; {total_q:,}+ Questions - {SITE_NAME}">
+    <meta name="twitter:title" content="Free Cybersecurity Practice Tests: {total_q:,}+ Questions - {SITE_NAME}">
     <meta name="twitter:description" content="Free practice tests for 68 cybersecurity certifications. Domain-weighted questions with explanations.">
     <meta name="twitter:image" content="{OG_IMAGE}">
     <link rel="icon" type="image/svg+xml" href="{FAVICON_SVG}">

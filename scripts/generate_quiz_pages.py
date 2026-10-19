@@ -268,7 +268,7 @@ def build_seo_html(seo_qs, name, exam):
         items.append(
             f'            <details>\n'
             f'                <summary>Q: {escape(q["question"])}</summary>\n'
-            f'                <p><strong>A: {escape(answer)}</strong> &mdash; {escape(explanation)}</p>\n'
+            f'                <p><strong>A: {escape(answer)}</strong>. {escape(explanation)}</p>\n'
             f'            </details>'
         )
     return (
@@ -367,7 +367,7 @@ def generate_quiz_html(cfg, domains_js, total_questions, questions):
         quiz_schema_json,
         faq_schema_json,
     ]
-    q_head = html_head(f'Free {name} Practice Quiz &mdash; {exam} Questions', q_desc, q_canonical,
+    q_head = html_head(f'Free {name} Practice Quiz: {exam} Questions', q_desc, q_canonical,
                        extra_css=[f'quiz.css?v={QUIZ_CSS_VERSION}'],
                        schema_blocks=q_schema, depth=0)
 

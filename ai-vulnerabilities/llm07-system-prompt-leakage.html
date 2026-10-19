@@ -5,11 +5,11 @@
     <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
     <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="LLM07: System Prompt Leakage — risk level High. Part of the OWASP LLM Top 10 technique library on FixTheVuln.">
+    <meta name="description" content="LLM07: System Prompt Leakage, risk level High. Part of the OWASP LLM Top 10 technique library on FixTheVuln.">
     <title>LLM07: System Prompt Leakage - FixTheVuln</title>
     <link rel="canonical" href="https://fixthevuln.com/ai-vulnerabilities/llm07-system-prompt-leakage.html">
     <meta property="og:title" content="LLM07: System Prompt Leakage - FixTheVuln">
-    <meta property="og:description" content="LLM07: System Prompt Leakage — risk level High. Part of the OWASP LLM Top 10 technique library on FixTheVuln.">
+    <meta property="og:description" content="LLM07: System Prompt Leakage, risk level High. Part of the OWASP LLM Top 10 technique library on FixTheVuln.">
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://fixthevuln.com/ai-vulnerabilities/llm07-system-prompt-leakage.html">
     <meta property="og:image" content="https://fixthevuln.com/og-image.png">
@@ -17,7 +17,7 @@
     <meta property="og:image:height" content="630">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="LLM07: System Prompt Leakage - FixTheVuln">
-    <meta name="twitter:description" content="LLM07: System Prompt Leakage — risk level High. Part of the OWASP LLM Top 10 technique library on FixTheVuln.">
+    <meta name="twitter:description" content="LLM07: System Prompt Leakage, risk level High. Part of the OWASP LLM Top 10 technique library on FixTheVuln.">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -117,11 +117,11 @@
             <p>Confidential instructions embedded in the system prompt that the application never intends the user to see. When leaked through conversational manipulation, encoding tricks, or model behavior, these instructions expose business logic, refusal rules, internal API details, and other controls that attackers use to bypass safeguards or map the application's attack surface. Treat the system prompt as discoverable, and never make a security control depend on the user not seeing it.</p>
             <h3>What counts as hidden context</h3>
 <ul>
-                <li><strong>System and developer instructions</strong> — role definitions, refusal rules, formatting contracts</li>
-                <li><strong>Retrieved documents</strong> — RAG chunks pulled from internal wikis, ticketing systems, or customer records</li>
-                <li><strong>Policy and config text</strong> — pricing rules, entitlement logic, or moderation thresholds injected at request time</li>
-                <li><strong>Memory and profile data</strong> — prior-session summaries and user attributes fetched from a profile service</li>
-                <li><strong>Tool schemas and responses</strong> — function names, parameter shapes, internal endpoints, and raw API output returned to the model</li>
+                <li><strong>System and developer instructions</strong>: role definitions, refusal rules, formatting contracts</li>
+                <li><strong>Retrieved documents</strong>: RAG chunks pulled from internal wikis, ticketing systems, or customer records</li>
+                <li><strong>Policy and config text</strong>: pricing rules, entitlement logic, or moderation thresholds injected at request time</li>
+                <li><strong>Memory and profile data</strong>: prior-session summaries and user attributes fetched from a profile service</li>
+                <li><strong>Tool schemas and responses</strong>: function names, parameter shapes, internal endpoints, and raw API output returned to the model</li>
             </ul>
             <h3>Why the expansion matters</h3>
 <p>A leaked system prompt tells an attacker what the guardrails say. A leaked tool schema tells them what the application can actually do, which parameters reach a backend, and which internal service sits behind each call. A leaked RAG chunk can be somebody else's data. The principle: treat the whole assembled context as potential attack surface, because exfiltrating any part of it expands what an attacker can do next.</p>

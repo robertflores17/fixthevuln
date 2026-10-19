@@ -5,11 +5,11 @@
     <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
     <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="AST05: Untrusted External Instructions — risk level High. Part of the OWASP Agentic Skills Top 10 technique library on FixTheVuln.">
+    <meta name="description" content="AST05: Untrusted External Instructions, risk level High. Part of the OWASP Agentic Skills Top 10 technique library on FixTheVuln.">
     <title>AST05: Untrusted External Instructions - FixTheVuln</title>
     <link rel="canonical" href="https://fixthevuln.com/ai-vulnerabilities/ast05-untrusted-external-instructions.html">
     <meta property="og:title" content="AST05: Untrusted External Instructions - FixTheVuln">
-    <meta property="og:description" content="AST05: Untrusted External Instructions — risk level High. Part of the OWASP Agentic Skills Top 10 technique library on FixTheVuln.">
+    <meta property="og:description" content="AST05: Untrusted External Instructions, risk level High. Part of the OWASP Agentic Skills Top 10 technique library on FixTheVuln.">
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://fixthevuln.com/ai-vulnerabilities/ast05-untrusted-external-instructions.html">
     <meta property="og:image" content="https://fixthevuln.com/og-image.png">
@@ -17,7 +17,7 @@
     <meta property="og:image:height" content="630">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="AST05: Untrusted External Instructions - FixTheVuln">
-    <meta name="twitter:description" content="AST05: Untrusted External Instructions — risk level High. Part of the OWASP Agentic Skills Top 10 technique library on FixTheVuln.">
+    <meta name="twitter:description" content="AST05: Untrusted External Instructions, risk level High. Part of the OWASP Agentic Skills Top 10 technique library on FixTheVuln.">
     <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -117,9 +117,9 @@
             <p>Skills routinely point the agent at external documentation: an API reference, a schema, a runbook, a URL to read at runtime. That content becomes part of the skill's instructions. The agent loads it, trusts it exactly as it trusts the skill, and acts on it with the host agent's full permissions.</p><p>The skill package itself may be signed and version-pinned. What it points at is not. That content is mutable, unverified, and sits outside the trust boundary, so an audited skill can become a malicious one without the package changing at all.</p>
             <h3>Three ways it gets exploited</h3>
 <ul>
-                <li><strong>Author rug-pull</strong> — ship a benign skill pointing at documentation you control, pass review, then change the referenced content. Every running agent picks it up.</li>
-                <li><strong>Reviewer bait-and-switch</strong> — serve clean documentation to reviewers and scanners by IP or user-agent, and malicious instructions to live agents.</li>
-                <li><strong>Transitive reference chaining</strong> — the referenced document points at further resources. Control a link deep in the chain and review that only checks direct references never sees it.</li>
+                <li><strong>Author rug-pull</strong>: ship a benign skill pointing at documentation you control, pass review, then change the referenced content. Every running agent picks it up.</li>
+                <li><strong>Reviewer bait-and-switch</strong>: serve clean documentation to reviewers and scanners by IP or user-agent, and malicious instructions to live agents.</li>
+                <li><strong>Transitive reference chaining</strong>: the referenced document points at further resources. Control a link deep in the chain and review that only checks direct references never sees it.</li>
             </ul>
             <h3>How common is it</h3>
 <p>Air Security's <em>The Circus of Skills</em> (June 24, 2026) scanned 142,836 live skills and found <strong>17,822 of them (about 12.4%, totaling 6.7 million installs)</strong> referencing at least one unvetted external instruction source: zero-reputation GitHub repos, free-tier hosts, and unknown domains with nothing preventing a later takeover. Their earlier proof of concept, <em>The Story of Skills</em> (June 22, 2026), demonstrated full agent compromise through exactly this path.</p><p>Anthropic's own Agent Skills guidance makes the same point: skills that fetch data from external URLs pose particular risk, because fetched content may carry malicious instructions, and even a trustworthy skill can be compromised if its external dependencies change.</p>

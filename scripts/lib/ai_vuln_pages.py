@@ -51,7 +51,7 @@ def render_technique_page(entry, hub_url, hub_name, last_updated):
     # html_head's own escaping.
     heading = f'{esc(entry["code"])}: {esc(entry["name"])}'
     canonical = f'{SITE_URL}/ai-vulnerabilities/{entry["id"]}.html'
-    description = f'{title} — risk level {entry["risk_level"]}. Part of the {hub_name} technique library on {SITE_NAME}.'
+    description = f'{title}, risk level {entry["risk_level"]}. Part of the {hub_name} technique library on {SITE_NAME}.'
 
     content = f'''    <header>
         <div class="container">

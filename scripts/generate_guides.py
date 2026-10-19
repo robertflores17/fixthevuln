@@ -1117,25 +1117,25 @@ def verify_model_integrity(model_dir: str, manifest_path: str) -> bool:
             <h3>Foundation (Years 0-2)</h3>
             <div class="remediation">
                 <ul>
-                    <li><input type="checkbox"> <strong>CompTIA Security+</strong> — Security fundamentals, threats, risk management</li>
-                    <li><input type="checkbox"> <strong>Cloud Provider Associate</strong> — AWS SAA, Azure AZ-104, or GCP ACE for infrastructure knowledge</li>
-                    <li><input type="checkbox"> <strong>Online ML courses</strong> — Andrew Ng Machine Learning, fast.ai Practical Deep Learning</li>
+                    <li><input type="checkbox"> <strong>CompTIA Security+</strong>: Security fundamentals, threats, risk management</li>
+                    <li><input type="checkbox"> <strong>Cloud Provider Associate</strong>: AWS SAA, Azure AZ-104, or GCP ACE for infrastructure knowledge</li>
+                    <li><input type="checkbox"> <strong>Online ML courses</strong>: Andrew Ng Machine Learning, fast.ai Practical Deep Learning</li>
                 </ul>
             </div>
             <h3>Intermediate (Years 2-4)</h3>
             <div class="remediation">
                 <ul>
-                    <li><input type="checkbox"> <strong>CISSP or CISM</strong> — Demonstrates broad security leadership</li>
-                    <li><input type="checkbox"> <strong>Cloud ML Certification</strong> — AWS ML Specialty, Azure AI Engineer, or GCP ML Engineer</li>
-                    <li><input type="checkbox"> <strong>GIAC certifications</strong> — GPEN for red team track, GCIH for blue team track</li>
+                    <li><input type="checkbox"> <strong>CISSP or CISM</strong>: Demonstrates broad security leadership</li>
+                    <li><input type="checkbox"> <strong>Cloud ML Certification</strong>: AWS ML Specialty, Azure AI Engineer, or GCP ML Engineer</li>
+                    <li><input type="checkbox"> <strong>GIAC certifications</strong>: GPEN for red team track, GCIH for blue team track</li>
                 </ul>
             </div>
             <h3>Advanced (Years 4+)</h3>
             <div class="remediation">
                 <ul>
-                    <li><input type="checkbox"> <strong>OSCP/OSWE</strong> — Offensive security depth for AI red team roles</li>
-                    <li><input type="checkbox"> <strong>Research publications</strong> — Contribute to adversarial ML research, present at security conferences</li>
-                    <li><input type="checkbox"> <strong>Open-source contributions</strong> — Contribute to ML security tools (Adversarial Robustness Toolbox, Garak, etc.)</li>
+                    <li><input type="checkbox"> <strong>OSCP/OSWE</strong>: Offensive security depth for AI red team roles</li>
+                    <li><input type="checkbox"> <strong>Research publications</strong>: Contribute to adversarial ML research, present at security conferences</li>
+                    <li><input type="checkbox"> <strong>Open-source contributions</strong>: Contribute to ML security tools (Adversarial Robustness Toolbox, Garak, etc.)</li>
                 </ul>
             </div>
         </section>
@@ -1869,24 +1869,24 @@ def verify_model_integrity(model_dir: str, manifest_path: str) -> bool:
             <h3>Foundation (Years 0-2)</h3>
             <div class="remediation">
                 <ul>
-                    <li><input type="checkbox"> <strong>CompTIA Security+</strong> — Core security concepts, threats, and risk management fundamentals</li>
-                    <li><input type="checkbox"> <strong>ISC2 CC</strong> — Entry-level security certification; stepping stone to CISSP</li>
+                    <li><input type="checkbox"> <strong>CompTIA Security+</strong>: Core security concepts, threats, and risk management fundamentals</li>
+                    <li><input type="checkbox"> <strong>ISC2 CC</strong>: Entry-level security certification; stepping stone to CISSP</li>
                 </ul>
             </div>
             <h3>Core GRC (Years 2-5)</h3>
             <div class="remediation">
                 <ul>
-                    <li><input type="checkbox"> <strong>ISACA CISM</strong> — Information security governance and management (ideal for GRC focus)</li>
-                    <li><input type="checkbox"> <strong>ISACA CRISC</strong> — Enterprise IT risk identification, assessment, and management</li>
-                    <li><input type="checkbox"> <strong>ISACA CISA</strong> — IS audit, control, and assurance (if audit-focused)</li>
+                    <li><input type="checkbox"> <strong>ISACA CISM</strong>: Information security governance and management (ideal for GRC focus)</li>
+                    <li><input type="checkbox"> <strong>ISACA CRISC</strong>: Enterprise IT risk identification, assessment, and management</li>
+                    <li><input type="checkbox"> <strong>ISACA CISA</strong>: IS audit, control, and assurance (if audit-focused)</li>
                 </ul>
             </div>
             <h3>Senior / Leadership (Years 5+)</h3>
             <div class="remediation">
                 <ul>
-                    <li><input type="checkbox"> <strong>ISC2 CISSP</strong> — Broad security leadership; recognized gold standard for senior roles</li>
-                    <li><input type="checkbox"> <strong>ISACA CGEIT</strong> — Enterprise IT governance (for executive-track roles)</li>
-                    <li><input type="checkbox"> <strong>ISO 27001 Lead Auditor/Implementer</strong> — For organizations pursuing or maintaining certification</li>
+                    <li><input type="checkbox"> <strong>ISC2 CISSP</strong>: Broad security leadership; recognized gold standard for senior roles</li>
+                    <li><input type="checkbox"> <strong>ISACA CGEIT</strong>: Enterprise IT governance (for executive-track roles)</li>
+                    <li><input type="checkbox"> <strong>ISO 27001 Lead Auditor/Implementer</strong>: For organizations pursuing or maintaining certification</li>
                 </ul>
             </div>
         </section>

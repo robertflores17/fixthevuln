@@ -70,7 +70,7 @@ def find_tech_article_breadcrumb_end(html):
 
 def extract_quiz_info(html, filepath):
     """Extract quiz metadata from HTML for Quiz schema."""
-    # Title: "Free CompTIA Security+ Practice Quiz — SY0-701 Questions - FixTheVuln"
+    # Title: "Free CompTIA Security+ Practice Quiz: SY0-701 Questions - FixTheVuln"
     title_m = re.search(r'<title>(.+?)</title>', html)
     if not title_m:
         return None
@@ -79,8 +79,8 @@ def extract_quiz_info(html, filepath):
     title = re.sub(r'\s*-\s*FixTheVuln$', '', title)
     # Remove "Free " prefix for schema name
     quiz_name = re.sub(r'^Free\s+', '', title)
-    # Strip trailing "— ..." (exam code or question count)
-    quiz_name = re.sub(r'\s*—.*$', '', quiz_name)
+    # Strip trailing ": ..." (exam code or question count); older titles used "— ..."
+    quiz_name = re.sub(r'\s*(?:—|:\s).*$', '', quiz_name)
 
     # Total questions — prefer tagline which always has the real count
     # Tagline: "... Practice Quiz — 30 Questions" or "... Quiz — 250 Questions Across 8 Domains"
