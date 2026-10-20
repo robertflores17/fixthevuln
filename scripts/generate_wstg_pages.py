@@ -387,7 +387,7 @@ def generate_index_page(categories, meta):
         <section class="intro">
             <h2>What is the OWASP WSTG?</h2>
             <p>The OWASP Web Security Testing Guide (WSTG) is the premier open-source resource for web application security testing methodology. It provides a complete framework of {total_tests} test cases organized into {total_cats} categories, covering everything from information gathering and authentication testing to business logic flaws and API security.</p>
-            <p>Whether you're studying for Security+, CEH, OSCP, or GPEN — or conducting professional penetration tests — the WSTG provides the systematic approach you need.</p>
+            <p>Whether you're studying for Security+, CEH, OSCP, or GPEN, or conducting professional penetration tests, the WSTG provides the systematic approach you need.</p>
         </section>
 
         <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:1rem;margin:2rem 0;">

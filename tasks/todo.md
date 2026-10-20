@@ -1143,5 +1143,22 @@ Found and fixed a live bug: 49 pages showed a literal "&mdash;" in <title>/og/tw
 
 Phase 2 rule for later batches: do NOT rewrite quoted third-party text (AI roundup excerpts, attributed
 quotes, CVE descriptions from CISA/NVD). Only FixTheVuln's own copy.
+Content Editor extension: also leave alone CISA KEV fields (vulnerabilityName, shortDescription,
+requiredAction), NVD/vendor advisory text, third-party article/paper titles used as link text, vendor
+exam-objective wording, and anything in <code>/<pre>. Our own intro/summary sentences are fair game.
 Next batches by section: certs/cve/comparisons/store/wstg/practice-tests (small), then root guides,
 roadmaps, blog (largest).
+
+- [x] **Bundle "~30% off" copy (done 2026-10-20: "Multi-cert bundles save 25% or more").** All-format career bundles save 45-48%, so "up to 29%" would understate them. Actual savings vs $5.99/cert from worker
+      CP_PRICING: 2 certs 25%, 3 certs 28%, 4 certs 29%. Accurate options: "Save up to 29%" or "25% to 29% off".
+      On 7 store pages (aws, cisco, comptia, google-cloud, microsoft, offensive-devops, security-governance).
+      Route through the gate with Revenue Guardian.
+- [ ] **Productivity Bundle "Save 25%" badge looks wrong (Robert's call, checkout pricing).** store.js shows
+      "3 planners · Save 25%", but the worker prices 'lifestyle-bundle' via PRICING[variant] like a single
+      planner: $5.99 (standard) or $15.99 (bundle variant) for 3 planners. Neither matches 25%. Decide the
+      intended price, then fix worker + badge together through the gate.
+
+### Phase 2 batch 2 — 2026-10-20
+- [x] ai-vulnerabilities, comparisons, practice-tests, store, wstg, cve/comparisons index headers: 0 own-copy
+      dashes left (fixed in data/ai-vuln-content.json, data/cert-comparisons, and 4 generators too).
+- Left: blog 2,172, root guides 529, roadmaps 487.

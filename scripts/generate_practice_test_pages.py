@@ -106,7 +106,7 @@ QUIZ_REGISTRY = [
     {'quiz': 'gcia-quiz.html', 'json': 'gcia-questions.json', 'name': 'GIAC GCIA',  'short': 'GCIA', 'exam': 'GCIA', 'vendor': 'giac', 'tagline': 'Intrusion analysis and network forensics'},
 
     # ── EC-Council (3) ──
-    {'quiz': 'ceh-quiz.html',  'json': 'ceh-questions.json',  'name': 'EC-Council CEH v13', 'short': 'CEH',  'exam': 'CEH',  'vendor': 'ec-council', 'tagline': 'Certified Ethical Hacker — offensive security fundamentals'},
+    {'quiz': 'ceh-quiz.html',  'json': 'ceh-questions.json',  'name': 'EC-Council CEH v13', 'short': 'CEH',  'exam': 'CEH',  'vendor': 'ec-council', 'tagline': 'Certified Ethical Hacker: offensive security fundamentals'},
     {'quiz': 'chfi-quiz.html', 'json': 'chfi-questions.json', 'name': 'EC-Council CHFI v11','short': 'CHFI', 'exam': 'CHFI', 'vendor': 'ec-council', 'tagline': 'Computer hacking forensic investigation'},
     {'quiz': 'cnd-quiz.html',  'json': 'cnd-questions.json',  'name': 'EC-Council CND v3',  'short': 'CND',  'exam': 'CND',  'vendor': 'ec-council', 'tagline': 'Certified network defender'},
 
@@ -157,7 +157,7 @@ VENDOR_META = {
     'comptia': {
         'name': 'CompTIA',
         'icon': '🏆',
-        'desc': 'From A+ to CASP+ — the most widely recognized IT certifications worldwide',
+        'desc': 'From A+ to CASP+: the most widely recognized IT certifications worldwide',
         'store_url': '/store/comptia.html',
         'seo_title': 'Free CompTIA Practice Tests',
         'seo_desc': 'Free practice tests for all 14 CompTIA certifications including Security+, Network+, CySA+, PenTest+, CASP+, and more. Domain-weighted questions with explanations.',
@@ -184,7 +184,7 @@ VENDOR_META = {
     'aws': {
         'name': 'Amazon Web Services',
         'icon': '☁️',
-        'desc': 'Cloud Practitioner through Specialty — the most in-demand cloud certifications',
+        'desc': 'Cloud Practitioner through Specialty: the most in-demand cloud certifications',
         'store_url': '/store/aws.html',
         'seo_title': 'Free AWS Certification Practice Tests',
         'seo_desc': 'Free practice tests for 8 AWS certifications including Cloud Practitioner, Solutions Architect, Security Specialty, and more. Domain-weighted questions.',
@@ -209,7 +209,7 @@ VENDOR_META = {
     'cisco': {
         'name': 'Cisco',
         'icon': '🔌',
-        'desc': 'CCNA through CCNP — networking and security certifications',
+        'desc': 'CCNA through CCNP: networking and security certifications',
         'store_url': '/store/cisco.html',
         'seo_title': 'Free Cisco Certification Practice Tests',
         'seo_desc': 'Free practice tests for 5 Cisco certifications including CCNA, CCNP Enterprise ENCOR, CCNP Security SCOR, CyberOps, and DevNet.',
@@ -221,7 +221,7 @@ VENDOR_META = {
     'isc2': {
         'name': 'ISC2',
         'icon': '🛡️',
-        'desc': 'CISSP, SSCP, CCSP, and CC — the gold standard in cybersecurity',
+        'desc': 'CISSP, SSCP, CCSP, and CC: the gold standard in cybersecurity',
         'store_url': '/store/security-governance.html',
         'seo_title': 'Free ISC2 Certification Practice Tests',
         'seo_desc': 'Free practice tests for 4 ISC2 certifications including CISSP, SSCP, CCSP, and Certified in Cybersecurity (CC). Domain-weighted questions with explanations.',
@@ -245,7 +245,7 @@ VENDOR_META = {
     'ec-council': {
         'name': 'EC-Council',
         'icon': '🕵️',
-        'desc': 'CEH, CHFI, and CND — ethical hacking and forensics certifications',
+        'desc': 'CEH, CHFI, and CND: ethical hacking and forensics certifications',
         'store_url': '/store/offensive-devops.html',
         'seo_title': 'Free EC-Council Practice Tests',
         'seo_desc': 'Free practice tests for 3 EC-Council certifications including CEH v13, CHFI v11, and CND v3. Module-based questions with detailed explanations.',
@@ -257,37 +257,37 @@ VENDOR_META = {
     'isaca': {
         'name': 'ISACA',
         'icon': '📋',
-        'desc': 'CISM, CISA, and CRISC — governance, audit, and risk management',
+        'desc': 'CISM, CISA, and CRISC: governance, audit, and risk management',
         'store_url': '/store/security-governance.html',
         'seo_title': 'Free ISACA Certification Practice Tests',
         'seo_desc': 'Free practice tests for 3 ISACA certifications including CISM, CISA, and CRISC. Domain-weighted questions for governance and risk professionals.',
         'faq': [
-            ('CISM vs CISSP — which should I get?', 'CISM focuses on security management and governance (management-track), while CISSP covers broader technical security domains. Many senior professionals hold both.'),
+            ('CISM vs CISSP: which should I get?', 'CISM focuses on security management and governance (management-track), while CISSP covers broader technical security domains. Many senior professionals hold both.'),
             ('Do ISACA exams require work experience?', 'Yes. CISM requires 5 years of security management experience, CISA requires 5 years of audit experience, and CRISC requires 3 years of risk management experience (waivers available).'),
         ],
     },
     'offsec': {
         'name': 'OffSec',
         'icon': '💀',
-        'desc': 'OSCP, OSWA, and OSWE — hands-on offensive security certifications',
+        'desc': 'OSCP, OSWA, and OSWE: hands-on offensive security certifications',
         'store_url': '/store/offensive-devops.html',
         'seo_title': 'Free OffSec Practice Tests',
         'seo_desc': 'Free practice tests for 3 OffSec certifications including OSCP (PEN-200), OSWA (WEB-200), and OSWE (WEB-300). Concept-check questions for hands-on exam prep.',
         'faq': [
             ('Can practice questions help with the OSCP exam?', 'OSCP is a hands-on practical exam, so lab practice is essential. Our questions test the conceptual knowledge (networking, enumeration, exploitation methodology) needed to succeed in the lab environment.'),
-            ('What is the difference between OSWA and OSWE?', 'OSWA (WEB-200) covers web application security assessment fundamentals. OSWE (WEB-300) is advanced — covering source code analysis, custom exploit development, and advanced web attacks.'),
+            ('What is the difference between OSWA and OSWE?', 'OSWA (WEB-200) covers web application security assessment fundamentals. OSWE (WEB-300) is advanced, covering source code analysis, custom exploit development, and advanced web attacks.'),
         ],
     },
     'kubernetes': {
         'name': 'Kubernetes',
         'icon': '⚙️',
-        'desc': 'CKA, CKAD, and CKS — CNCF Kubernetes certifications',
+        'desc': 'CKA, CKAD, and CKS: CNCF Kubernetes certifications',
         'store_url': '/store/offensive-devops.html',
         'seo_title': 'Free Kubernetes Certification Practice Tests',
         'seo_desc': 'Free practice tests for 3 Kubernetes certifications: CKA, CKAD, and CKS. Concept-check questions to complement hands-on lab practice.',
         'faq': [
             ('Are Kubernetes exams performance-based?', 'Yes. CKA, CKAD, and CKS are hands-on exams where you solve problems in a live Kubernetes environment. Our practice questions test the conceptual knowledge that underpins practical skills.'),
-            ('Which Kubernetes cert should I get first?', 'CKA (Certified Kubernetes Administrator) is the recommended starting point. CKAD focuses on application development, and CKS covers security — both build on CKA knowledge.'),
+            ('Which Kubernetes cert should I get first?', 'CKA (Certified Kubernetes Administrator) is the recommended starting point. CKAD focuses on application development, and CKS covers security. Both build on CKA knowledge.'),
         ],
     },
     'hashicorp': {

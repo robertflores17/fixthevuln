@@ -372,7 +372,7 @@ def generate_index_page(vulns):
         <div class="container">
             <h1>CVE Database</h1>
             <p>CISA Known Exploited Vulnerabilities Tracker</p>
-            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">{len(vulns)} CVEs tracked &mdash; Updated {TODAY}</p>
+            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">{len(vulns)} CVEs tracked. Updated {TODAY}</p>
         </div>
     </header>
 

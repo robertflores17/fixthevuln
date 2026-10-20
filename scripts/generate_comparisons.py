@@ -341,7 +341,7 @@ def generate_index_page(comparisons, certs):
         <div class="container">
             <h1>Certification Comparisons</h1>
             <p>Side-by-side guides to help you choose the right certification</p>
-            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">{len(comparisons)} comparisons &mdash; Updated {TODAY_DISPLAY}</p>
+            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">{len(comparisons)} comparisons. Updated {TODAY_DISPLAY}</p>
         </div>
     </header>
 

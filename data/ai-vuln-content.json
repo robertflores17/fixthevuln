@@ -16,7 +16,7 @@
         }
       ],
       "mitigations": [
-        "Enforce privilege separation — LLM operates with least privilege, never has direct DB/API write access",
+        "Enforce privilege separation: LLM operates with least privilege, never has direct DB/API write access",
         "Implement input filtering and prompt hardening techniques",
         "Use a secondary LLM or classifier to detect injection attempts",
         "Require human-in-the-loop approval for sensitive actions",
@@ -36,7 +36,7 @@
       "name": "Sensitive Information Disclosure",
       "risk_level": "Critical",
       "risk_color": "#ef4444",
-      "summary_html": "<p>LLMs may reveal sensitive information through their responses — including training data (memorization), system prompts, API keys embedded in context, PII from conversation history, or proprietary business logic. This risk is amplified when LLMs are connected to internal knowledge bases or RAG pipelines that access confidential data.</p>",
+      "summary_html": "<p>LLMs may reveal sensitive information through their responses, including training data (memorization), system prompts, API keys embedded in context, PII from conversation history, or proprietary business logic. This risk is amplified when LLMs are connected to internal knowledge bases or RAG pipelines that access confidential data.</p>",
       "sections": [
         {
           "heading": "Attack Example",
@@ -59,16 +59,16 @@
       "name": "Excessive Agency",
       "risk_level": "Critical",
       "risk_color": "#ef4444",
-      "summary_html": "<p>LLM systems are granted too much autonomy — excessive permissions, too many functions, or the ability to take high-impact actions without human oversight. When combined with prompt injection or hallucination, the model may execute harmful actions like deleting data, sending emails, or modifying production configurations.</p>",
+      "summary_html": "<p>LLM systems are granted too much autonomy: excessive permissions, too many functions, or the ability to take high-impact actions without human oversight. When combined with prompt injection or hallucination, the model may execute harmful actions like deleting data, sending emails, or modifying production configurations.</p>",
       "sections": [
         {
           "heading": "Real-World Examples (2026)",
-          "html": "<p><strong>AI IDE Code Execution:</strong> AI coding assistants (Copilot, Cursor, Claude Code) have terminal access, file system access, and can execute arbitrary code. A prompt injection via a malicious MCP tool description caused AI IDEs to spawn reverse shells — the AI's \"excessive agency\" (unrestricted terminal access) turned a text injection into full RCE. <a href=\"/blog/ai-ide-security-vulnerabilities-2026.html\">Full breakdown &rarr;</a></p>\n            <p><strong>AI Notetaker Spread:</strong> Otter.ai spread to 80,000 corporate endpoints without IT approval. The AI agent had excessive permissions — it could auto-join meetings via calendar integration, record audio, transcribe content, and share notes. No human gate existed between \"user installs app\" and \"app joins every meeting in the organization.\" <a href=\"/blog/ai-notetaker-security-risk.html\">Full breakdown &rarr;</a></p>"
+          "html": "<p><strong>AI IDE Code Execution:</strong> AI coding assistants (Copilot, Cursor, Claude Code) have terminal access, file system access, and can execute arbitrary code. A prompt injection via a malicious MCP tool description caused AI IDEs to spawn reverse shells. The AI's \"excessive agency\" (unrestricted terminal access) turned a text injection into full RCE. <a href=\"/blog/ai-ide-security-vulnerabilities-2026.html\">Full breakdown &rarr;</a></p>\n            <p><strong>AI Notetaker Spread:</strong> Otter.ai spread to 80,000 corporate endpoints without IT approval. The AI agent had excessive permissions: it could auto-join meetings via calendar integration, record audio, transcribe content, and share notes. No human gate existed between \"user installs app\" and \"app joins every meeting in the organization.\" <a href=\"/blog/ai-notetaker-security-risk.html\">Full breakdown &rarr;</a></p>"
         }
       ],
       "mitigations": [
         "Limit LLM agents to the minimum set of functions required for their task",
-        "Restrict write/delete operations — prefer read-only access where possible",
+        "Restrict write/delete operations: prefer read-only access where possible",
         "Implement human-in-the-loop gates for destructive or irreversible actions",
         "Use allowlists for permitted actions rather than blocklists",
         "Monitor agent behavior for deviations from expected action patterns"
@@ -95,7 +95,7 @@
       "sections": [
         {
           "heading": "Real-World Example (March 2026)",
-          "html": "<p>Researchers disclosed <strong>37 vulnerabilities across 15+ AI IDE vendors</strong>, including a zero-click MCP (Model Context Protocol) autoload attack. Malicious MCP tools — the AI IDE equivalent of browser extensions — auto-loaded without trust prompts and spawned reverse shells with developer permissions. This is supply chain compromise through AI tooling: the \"plugin\" is the attack vector. <a href=\"/blog/ai-ide-security-vulnerabilities-2026.html\">Full breakdown &rarr;</a></p>"
+          "html": "<p>Researchers disclosed <strong>37 vulnerabilities across 15+ AI IDE vendors</strong>, including a zero-click MCP (Model Context Protocol) autoload attack. Malicious MCP tools (the AI IDE equivalent of browser extensions) auto-loaded without trust prompts and spawned reverse shells with developer permissions. This is supply chain compromise through AI tooling: the \"plugin\" is the attack vector. <a href=\"/blog/ai-ide-security-vulnerabilities-2026.html\">Full breakdown &rarr;</a></p>"
         }
       ],
       "mitigations": [
@@ -118,11 +118,11 @@
       "sections": [
         {
           "heading": "Attack Example",
-          "html": "<p>An attacker contributes thousands of code samples to a public dataset that contain subtle security flaws. When a code-generation LLM is fine-tuned on this data, it learns to suggest insecure coding patterns — such as using <code>eval()</code> for input processing or weak cryptographic functions. Alternatively, an attacker poisons a RAG knowledge base to inject false information into LLM responses.</p>"
+          "html": "<p>An attacker contributes thousands of code samples to a public dataset that contain subtle security flaws. When a code-generation LLM is fine-tuned on this data, it learns to suggest insecure coding patterns, such as using <code>eval()</code> for input processing or weak cryptographic functions. Alternatively, an attacker poisons a RAG knowledge base to inject false information into LLM responses.</p>"
         }
       ],
       "mitigations": [
-        "Vet and audit training data sources — verify provenance and integrity",
+        "Vet and audit training data sources: verify provenance and integrity",
         "Use data sanitization pipelines to filter malicious or low-quality training samples",
         "Implement anomaly detection during fine-tuning to flag unusual model behavior changes",
         "Maintain a data lineage record (AI-BOM) for all training, fine-tuning, and RAG datasets",
@@ -200,10 +200,10 @@
       ],
       "mitigations": [
         "Never embed secrets, API keys, or internal URLs in system prompts or tool descriptions",
-        "Assume the system prompt is public — enforce every security control server-side, outside the model",
+        "Assume the system prompt is public: enforce every security control server-side, outside the model",
         "Apply per-user authorization to RAG retrieval so the context window can only hold data that user may read",
         "Keep tool schemas minimal: no internal hostnames, no fields the model does not need to set",
-        "Filter tool responses before they enter context — return the fields the model needs, not raw API payloads",
+        "Filter tool responses before they enter context: return the fields the model needs, not raw API payloads",
         "Scope and expire conversation memory so one session cannot surface another's contents",
         "Monitor outputs for verbatim context content and alert on extraction patterns"
       ],
@@ -224,7 +224,7 @@
       "summary_html": "<p>Vulnerabilities in vector databases and embedding pipelines used by RAG (Retrieval-Augmented Generation) systems. Attackers can manipulate embeddings to poison knowledge retrieval, bypass access controls in vector stores, or inject malicious content that gets prioritized in similarity searches. Insufficient access controls on vector databases can expose sensitive documents to unauthorized users.</p>",
       "sections": [],
       "mitigations": [
-        "Implement access controls on vector database collections — enforce user-level permissions",
+        "Implement access controls on vector database collections: enforce user-level permissions",
         "Validate and sanitize documents before embedding and indexing",
         "Monitor for adversarial embedding manipulation and anomalous retrieval patterns",
         "Use metadata filtering to enforce document-level authorization during retrieval",
@@ -247,7 +247,7 @@
         }
       ],
       "mitigations": [
-        "Treat LLM output as untrusted — apply output encoding appropriate to the rendering context",
+        "Treat LLM output as untrusted: apply output encoding appropriate to the rendering context",
         "Use allowlists for permitted output formats and content types",
         "Implement Content Security Policy (CSP) headers to mitigate XSS from LLM output",
         "Never pass raw LLM output to eval(), shell commands, or SQL queries"
@@ -398,7 +398,7 @@
         "Pin a cryptographic hash for every external document at review time and re-verify on each load, refusing drifted or unpinned content",
         "Snapshot external documentation into the signed skill package at publish time so it is reviewable and immutable",
         "Allowlist the domains and URL patterns a skill may fetch from, and prefer stable ones unlikely to lapse",
-        "Audit reference chains transitively — a document's own outbound references are part of the skill's attack surface",
+        "Audit reference chains transitively, since a document's own outbound references are part of the skill's attack surface",
         "Keep a fleet-wide inventory of which deployed skills fetch from which sources, so a compromised source can be traced and revoked fast",
         "Rescan external sources continuously; a scan is a snapshot of mutable state, not a durable clearance"
       ],
