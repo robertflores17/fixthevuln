@@ -18,6 +18,13 @@ from lib.templates import (html_head, nav, share_bar, footer, cf_analytics, esc 
                             outdated_content_notice, OUTDATED_CONTENT,
                             apply_domain_overrides)
 from lib.constants import SITE_URL, STYLE_CSS_VERSION, FAVICON_SVG
+from generate_practice_test_pages import QUIZ_REGISTRY, load_quiz_data
+
+# Same totals as the practice tests hub, so the cert-page count can't drift from it
+_QUIZZES = [d for d in (load_quiz_data(q['json']) for q in QUIZ_REGISTRY) if d]
+QUIZ_TOTAL_Q = sum(d['total_questions'] for d in _QUIZZES)
+QUIZ_CERT_COUNT = len(_QUIZZES)
+
 CERTS_DIR = REPO / 'certs'
 ETSY_CERTS = Path.home() / 'Library' / 'CloudStorage' / 'OneDrive-Personal' / 'Documents' / 'Invest' / 'Business' / 'Dropshipping' / 'Etsy-Claude' / 'certifications'  # OneDrive path (Dropshipping is docs-only, stays on OneDrive per Business/CLAUDE.md)
 
@@ -541,7 +548,7 @@ def generate_page(product):
             <h2>Free Training Resources</h2>
             <p>Use these free tools to support your {name} certification training:</p>
             <ul class="study-tips">
-                <li><a href="/practice-tests.html">Cybersecurity Practice Tests</a>: 10,500+ free questions across 68 certifications</li>
+                <li><a href="/practice-tests.html">Cybersecurity Practice Tests</a>: {QUIZ_TOTAL_Q:,}+ free questions across {QUIZ_CERT_COUNT} certifications</li>
                 <li><a href="/roadmaps/{pid}.html">Study Roadmap</a>: Structured learning path for {name}</li>
                 <li><a href="/study-tracker.html">Study Progress Tracker</a>: Track hours and domain coverage</li>
                 <li><a href="/cvss-calculator.html">CVSS Calculator</a>: Practice scoring vulnerabilities</li>

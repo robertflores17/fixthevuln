@@ -190,7 +190,7 @@ def main():
 
     # What this means section
     if highest_cvss >= 9.0:
-        action_msg = """If you run any of the affected products, **patch immediately**. Critical-severity vulnerabilities are actively exploited in the wild. CISA adds them to the KEV catalog specifically because they represent real, current threats.
+        action_msg = """If you run any of the affected products, **patch immediately**. Every vulnerability in this roundup is in CISA's KEV catalog, which lists only flaws with confirmed exploitation in the wild.
 
 Use the [CVSS Calculator](/cvss-calculator.html) to assess how these scores apply to your specific environment."""
     elif highest_cvss >= 7.0:
