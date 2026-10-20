@@ -1162,3 +1162,14 @@ roadmaps, blog (largest).
 - [x] ai-vulnerabilities, comparisons, practice-tests, store, wstg, cve/comparisons index headers: 0 own-copy
       dashes left (fixed in data/ai-vuln-content.json, data/cert-comparisons, and 4 generators too).
 - Left: blog 2,172, root guides 529, roadmaps 487.
+
+### Phase 2 batches 3-4 — 2026-10-20
+- [x] Batch 3 roadmaps (487): generate_roadmaps._dash_to_parens at render time; nested-paren topics (32) use ". " instead.
+- [x] Batch 4 root pages (529 -> 13): quiz taglines/cards "Quiz: N Questions" (rule), then 387 hand decisions
+      (spec in session scratchpad), mirrored into generate_guides.py, generate_quiz_pages.py, quiz data JSON.
+      13 left on purpose: ai-ide-mcp-disclosures advisory text (third-party), "[un]prompted 2026 — ..." talk
+      title, OWASP table empty-cell placeholders (3), one HTML comment.
+- [ ] Pre-existing drift (not fixed, flag only): generate_guides.py's owasp-llm-top10.html template is a different
+      (2026-edition) version than the live page, and its mlsecops/threat-hunting output differs from the live
+      pages. Running generate_guides.py would overwrite live content. Decide which is canonical before running it.
+- Left: blog 2,172.

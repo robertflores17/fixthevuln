@@ -503,20 +503,20 @@
         <div class="vuln-item">
                 <h2>A01:2025 – Broken Access Control</h2>
                 <p><strong>Risk Level:</strong> Critical &middot; Found in 100% of tested apps &middot; 40 CWEs &middot; 32,654 CVEs</p>
-                <p><strong>Description:</strong> Users can act outside their intended permissions — accessing unauthorized data, modifying records, or escalating privileges. Now includes SSRF (formerly A10:2021).</p>
+                <p><strong>Description:</strong> Users can act outside their intended permissions: accessing unauthorized data, modifying records, or escalating privileges. Now includes SSRF (formerly A10:2021).</p>
 
                 <h3>Common Vulnerabilities:</h3>
                 <p>• Bypassing access control checks by modifying URLs, API requests, or internal state<br>
-                • Insecure Direct Object References (IDOR) — viewing another user's data by changing an ID<br>
+                • Insecure Direct Object References (IDOR): viewing another user's data by changing an ID<br>
                 • Missing access controls for POST, PUT, DELETE API endpoints<br>
-                • Elevation of privilege — acting as admin when logged in as a regular user<br>
+                • Elevation of privilege: acting as admin when logged in as a regular user<br>
                 • CORS misconfiguration allowing unauthorized API access<br>
-                • SSRF — fetching internal resources via user-controlled URLs</p>
+                • SSRF: fetching internal resources via user-controlled URLs</p>
 
                 <h3>Quick Fixes:</h3>
-                <p>• Deny by default — except for public resources<br>
+                <p>• Deny by default, except for public resources<br>
                 • Implement access control once and reuse throughout the application<br>
-                • Enforce record ownership — don't let users CRUD any record<br>
+                • Enforce record ownership: don't let users CRUD any record<br>
                 • Invalidate JWT tokens on the server after logout; use short-lived tokens<br>
                 • Rate limit API calls and validate/allowlist URLs for SSRF prevention<br>
                 • Log access control failures and alert on repeated violations</p>
@@ -553,7 +553,7 @@ def get_account(request, acct_id):
 
                 <h3>Quick Fixes:</h3>
                 <p>• Implement a repeatable hardening process for all environments<br>
-                • Use a minimal platform — remove unused features and frameworks<br>
+                • Use a minimal platform: remove unused features and frameworks<br>
                 • Send security directives to clients (Content-Security-Policy, HSTS)<br>
                 • Automate configuration verification across all environments<br>
                 • Review and update configs as part of the patch management cycle</p>
@@ -576,10 +576,10 @@ def get_account(request, acct_id):
             <div class="vuln-item" style="border-left: 4px solid #22c55e;">
                 <h2>A03:2025 – Software Supply Chain Failures <span style="background: #22c55e; color: white; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.7rem; vertical-align: middle;">NEW</span></h2>
                 <p><strong>Risk Level:</strong> Critical &middot; #1 in community surveys &middot; Highest incidence rate (5.19%)</p>
-                <p><strong>Description:</strong> Expands far beyond the former "Vulnerable and Outdated Components" (A06:2021) to cover the entire software supply chain — compromised build pipelines, malicious dependencies, unverified packages, and developer workstation attacks.</p>
+                <p><strong>Description:</strong> Expands far beyond the former "Vulnerable and Outdated Components" (A06:2021) to cover the entire software supply chain: compromised build pipelines, malicious dependencies, unverified packages, and developer workstation attacks.</p>
 
                 <h3>Common Vulnerabilities:</h3>
-                <p>• No SBOM — no visibility into transitive dependencies<br>
+                <p>• No SBOM: no visibility into transitive dependencies<br>
                 • Using outdated, unsupported, or vulnerable software<br>
                 • Components from untrusted or unverified sources<br>
                 • Compromised CI/CD pipelines or build systems<br>
@@ -592,7 +592,7 @@ def get_account(request, acct_id):
                 • Obtain components only from trusted sources with verified signatures<br>
                 • Harden CI/CD pipelines, code repos, and dev workstations with MFA<br>
                 • Use staged/canary deployments rather than simultaneous rollouts<br>
-                • Implement risk-based patching — not fixed monthly schedules</p>
+                • Implement risk-based patching, not fixed monthly schedules</p>
 
                 <div class="code-block">
                     <code># Generate SBOM for your project
@@ -606,7 +606,7 @@ snyk test</code>
                 </div>
 
                 <div class="info-box" style="margin-top: 0.75rem;">
-                    <strong>Real-world:</strong> SolarWinds (2020) — compromised build process affected 18,000+ orgs. Log4Shell (2021) — one library dependency enabled widespread ransomware campaigns.
+                    <strong>Real-world:</strong> SolarWinds (2020) - compromised build process affected 18,000+ orgs. Log4Shell (2021) - one library dependency enabled widespread ransomware campaigns.
                 </div>
 
                 <a href="https://owasp.org/Top10/2025/A03_2025-Software_Supply_Chain_Failures/" class="detailed-link" target="_blank" rel="noopener">OWASP reference &rarr;</a>
@@ -687,7 +687,7 @@ stmt.setString(1, request.getParameter("id"));</code>
             <div class="vuln-item">
                 <h2>A06:2025 – Insecure Design</h2>
                 <p><strong>Risk Level:</strong> High &middot; Dropped from #4 (2021) to #6</p>
-                <p><strong>Description:</strong> Missing or ineffective security controls at the architecture level. An insecure design cannot be fixed by a perfect implementation — the needed security controls were never created.</p>
+                <p><strong>Description:</strong> Missing or ineffective security controls at the architecture level. An insecure design cannot be fixed by a perfect implementation: the needed security controls were never created.</p>
 
                 <h3>Quick Fixes:</h3>
                 <p>• Establish a Secure Development Lifecycle (SDLC) with AppSec professionals<br>
@@ -761,7 +761,7 @@ response.set_cookie('session_id', session_id,
             <div class="vuln-item">
                 <h2>A08:2025 – Software or Data Integrity Failures</h2>
                 <p><strong>Risk Level:</strong> High &middot; Focuses on trust boundaries and verification at the code/data level</p>
-                <p><strong>Description:</strong> Code and infrastructure that does not protect against integrity violations — insecure deserialization, unsigned updates, and unverified CI/CD pipelines.</p>
+                <p><strong>Description:</strong> Code and infrastructure that does not protect against integrity violations: insecure deserialization, unsigned updates, and unverified CI/CD pipelines.</p>
 
                 <h3>Quick Fixes:</h3>
                 <p>• Use digital signatures to verify software and data integrity<br>
@@ -830,9 +830,9 @@ def login(username, password):
                 <p><strong>Description:</strong> Improper error handling, fail-open logic, verbose error messages exposing internals, and state corruption from unhandled edge cases. Three failure modes: prevention, detection, and response.</p>
 
                 <h3>Common Vulnerabilities:</h3>
-                <p>• Fail-open conditions — security checks default to "allow" on error<br>
+                <p>• Fail-open conditions: security checks default to "allow" on error<br>
                 • Verbose error messages exposing database traces, file paths, stack traces<br>
-                • Silent exception handling — suppressing errors while continuing in unsafe state<br>
+                • Silent exception handling: suppressing errors while continuing in unsafe state<br>
                 • Resource exhaustion from errors that don't clean up (DoS)<br>
                 • State corruption in multi-step transactions when intermediate steps fail<br>
                 • NULL pointer dereferences causing crashes</p>
@@ -901,8 +901,8 @@ def check_auth(user, resource):
                 <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Latest from the Blog</h3>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
                     <a href="blog/owasp-genai-data-security-guide-2026.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">5 GenAI Data Risks Your Security Team Is Probably Ignoring (OWASP 2...</a>
-                    <a href="blog/ai-security-roundup-2026-04-17.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">AI Security Trend Roundup — Apr 17, 2026</a>
-                    <a href="blog/ai-security-roundup-2026-04-24.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">AI Security Trend Roundup — Apr 24, 2026</a>
+                    <a href="blog/ai-security-roundup-2026-04-17.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">AI Security Trend Roundup: Apr 17, 2026</a>
+                    <a href="blog/ai-security-roundup-2026-04-24.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">AI Security Trend Roundup: Apr 24, 2026</a>
                 </div>
             </section>
             <!-- End Blog Cross-Links -->

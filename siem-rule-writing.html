@@ -143,7 +143,7 @@
                 <li>Good detection rules are specific, tuned, documented, and mapped to MITRE ATT&CK techniques</li>
                 <li>Sigma rules provide vendor-agnostic detection logic that works across Splunk, Sentinel, Elastic, and more</li>
                 <li>Three detection logic types: signature-based (known bad), anomaly-based (deviation from baseline), and behavioral (TTP patterns)</li>
-                <li>Every rule needs a tuning plan — expect to iterate based on your environment's baseline</li>
+                <li>Every rule needs a tuning plan: expect to iterate based on your environment's baseline</li>
                 <li>Map all rules to MITRE ATT&CK for coverage analysis and gap identification</li>
             </ul>
         </div>
@@ -197,7 +197,7 @@
         <!-- Splunk SPL Example -->
         <section class="vulnerability-card">
             <h2>Splunk SPL Example: Brute Force Detection</h2>
-            <p><strong>MITRE ATT&CK:</strong> T1110.001 — Brute Force: Password Guessing</p>
+            <p><strong>MITRE ATT&CK:</strong> T1110.001 - Brute Force: Password Guessing</p>
             <div class="code-block">
 <pre><code>index=windows sourcetype=WinEventLog:Security EventCode=4625
 | bin _time span=5m
@@ -214,14 +214,14 @@
 | sort -failed_attempts</code></pre>
             </div>
             <p style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-muted);">
-                <strong>Logic:</strong> Windows Event ID 4625 (failed logon) events grouped into 5-minute windows. Alerts when a single source IP generates more than 10 failures against 3 or more distinct accounts — a strong indicator of password spraying or brute force.
+                <strong>Logic:</strong> Windows Event ID 4625 (failed logon) events grouped into 5-minute windows. Alerts when a single source IP generates more than 10 failures against 3 or more distinct accounts, a strong indicator of password spraying or brute force.
             </p>
         </section>
 
         <!-- KQL Example -->
         <section class="vulnerability-card">
             <h2>KQL Example (Microsoft Sentinel): Suspicious PowerShell</h2>
-            <p><strong>MITRE ATT&CK:</strong> T1059.001 — Command and Scripting Interpreter: PowerShell</p>
+            <p><strong>MITRE ATT&CK:</strong> T1059.001 - Command and Scripting Interpreter: PowerShell</p>
             <div class="code-block">
 <pre><code>DeviceProcessEvents
 | where Timestamp > ago(24h)
@@ -248,7 +248,7 @@
         <!-- Sigma Rule -->
         <section class="vulnerability-card">
             <h2>Sigma Rule: Credential Dumping via LSASS Access</h2>
-            <p><strong>MITRE ATT&CK:</strong> T1003.001 — OS Credential Dumping: LSASS Memory</p>
+            <p><strong>MITRE ATT&CK:</strong> T1003.001 - OS Credential Dumping: LSASS Memory</p>
             <div class="code-block">
 <pre><code>title: Suspicious LSASS Process Access
 id: 8f5b02a0-6d12-4b5a-9e3c-1a2b3c4d5e6f

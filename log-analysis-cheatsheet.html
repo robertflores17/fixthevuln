@@ -141,7 +141,7 @@
             <h2>Key Takeaways</h2>
             <ul>
                 <li>Windows Event IDs 4624/4625 (logon success/failure) and 4688 (process creation) are the foundation of Windows security monitoring</li>
-                <li>Linux authentication logs live in /var/log/auth.log (Debian) or /var/log/secure (RHEL) — know your distro</li>
+                <li>Linux authentication logs live in /var/log/auth.log (Debian) or /var/log/secure (RHEL): know your distro</li>
                 <li>Master grep, awk, sort, uniq, and jq for fast command-line log analysis</li>
                 <li>Correlation is key: link events across authentication, process, network, and file access logs by timestamp and user</li>
                 <li>Always establish a baseline of normal before looking for anomalies</li>
@@ -175,15 +175,15 @@
                         <tr><td><strong>4672</strong></td><td>Special privileges assigned</td><td>Privilege Use</td><td>Admin logon detection, privilege escalation monitoring</td></tr>
                         <tr><td><strong>4688</strong></td><td>New process created</td><td>Process Tracking</td><td>Command execution tracking (enable command-line logging for full value)</td></tr>
                         <tr><td><strong>4689</strong></td><td>Process exited</td><td>Process Tracking</td><td>Process lifetime analysis, correlate with 4688</td></tr>
-                        <tr><td><strong>4698</strong></td><td>Scheduled task created</td><td>Object Access</td><td>Persistence mechanism detection — attackers frequently use scheduled tasks</td></tr>
+                        <tr><td><strong>4698</strong></td><td>Scheduled task created</td><td>Object Access</td><td>Persistence mechanism detection: attackers frequently use scheduled tasks</td></tr>
                         <tr><td><strong>4720</strong></td><td>User account created</td><td>Account Mgmt</td><td>Unauthorized account creation, backdoor account detection</td></tr>
                         <tr><td><strong>4722</strong></td><td>User account enabled</td><td>Account Mgmt</td><td>Re-enabled dormant or disabled accounts</td></tr>
                         <tr><td><strong>4724</strong></td><td>Password reset attempt</td><td>Account Mgmt</td><td>Unauthorized password changes, account takeover</td></tr>
-                        <tr><td><strong>4732</strong></td><td>Member added to security group</td><td>Account Mgmt</td><td>Privilege escalation — user added to Administrators, Domain Admins, etc.</td></tr>
+                        <tr><td><strong>4732</strong></td><td>Member added to security group</td><td>Account Mgmt</td><td>Privilege escalation: user added to Administrators, Domain Admins, etc.</td></tr>
                         <tr><td><strong>4738</strong></td><td>User account changed</td><td>Account Mgmt</td><td>Account modification tracking, attribute changes</td></tr>
                         <tr><td><strong>4776</strong></td><td>NTLM authentication attempt</td><td>Account Logon</td><td>NTLM relay attacks, legacy authentication monitoring</td></tr>
                         <tr><td><strong>7045</strong></td><td>New service installed</td><td>System</td><td>Persistence and privilege escalation via service creation (System log, not Security)</td></tr>
-                        <tr><td><strong>1102</strong></td><td>Audit log cleared</td><td>System</td><td>Anti-forensics — attacker clearing their tracks (always investigate immediately)</td></tr>
+                        <tr><td><strong>1102</strong></td><td>Audit log cleared</td><td>System</td><td>Anti-forensics: attacker clearing their tracks (always investigate immediately)</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -297,7 +297,7 @@ cat audit.json | jq '.events[] | select(.action == "DeleteBucket")'</code></pre>
                         <tr>
                             <td><strong>Brute Force &rarr; Success</strong></td>
                             <td>Multiple 4625 (failed) from same IP followed by 4624 (success) for same account</td>
-                            <td>Successful password attack — immediate investigation needed</td>
+                            <td>Successful password attack: immediate investigation needed</td>
                         </tr>
                         <tr>
                             <td><strong>Lateral Movement</strong></td>
@@ -307,7 +307,7 @@ cat audit.json | jq '.events[] | select(.action == "DeleteBucket")'</code></pre>
                         <tr>
                             <td><strong>Privilege Escalation</strong></td>
                             <td>4732 (added to admin group) or 4672 (special privileges) shortly after 4624</td>
-                            <td>Account gaining elevated access — verify authorization</td>
+                            <td>Account gaining elevated access: verify authorization</td>
                         </tr>
                         <tr>
                             <td><strong>Persistence Installation</strong></td>
@@ -322,7 +322,7 @@ cat audit.json | jq '.events[] | select(.action == "DeleteBucket")'</code></pre>
                         <tr>
                             <td><strong>Anti-Forensics</strong></td>
                             <td>1102 (log cleared) + 4688 showing wevtutil or Clear-EventLog commands</td>
-                            <td>Attacker destroying evidence — treat as confirmed compromise</td>
+                            <td>Attacker destroying evidence: treat as confirmed compromise</td>
                         </tr>
                     </tbody>
                 </table>
@@ -359,7 +359,7 @@ cat audit.json | jq '.events[] | select(.action == "DeleteBucket")'</code></pre>
                         </tr>
                         <tr>
                             <td><strong>4. Filter</strong></td>
-                            <td>Remove noise — known-good events, scheduled tasks, monitoring systems</td>
+                            <td>Remove noise: known-good events, scheduled tasks, monitoring systems</td>
                             <td>grep -v, allowlists, SIEM filters</td>
                         </tr>
                         <tr>

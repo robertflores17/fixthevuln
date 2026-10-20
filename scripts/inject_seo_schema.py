@@ -83,7 +83,7 @@ def extract_quiz_info(html, filepath):
     quiz_name = re.sub(r'\s*(?:—|:\s).*$', '', quiz_name)
 
     # Total questions — prefer tagline which always has the real count
-    # Tagline: "... Practice Quiz — 30 Questions" or "... Quiz — 250 Questions Across 8 Domains"
+    # Tagline: "... Practice Quiz: 30 Questions" or "... Quiz: 250 Questions Across 8 Domains"
     total_q = None
     tag_m = re.search(r'class="tagline"[^>]*>[^<]*?(\d+)\s+Questions', html)
     if tag_m:

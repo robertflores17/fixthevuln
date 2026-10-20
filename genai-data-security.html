@@ -140,9 +140,9 @@
         <div class="key-takeaways">
             <h2>Key Takeaways</h2>
             <ul>
-                <li>21 data-layer risks (DSGAI01-DSGAI21) organized in 6 groups target GenAI systems at every lifecycle stage &mdash; from training to inference to agent orchestration</li>
-                <li>Context windows merge data from multiple trust domains into a single flat namespace with no internal access control &mdash; a fundamental architectural weakness</li>
-                <li>Derived artifacts (embeddings, fine-tuned weights, cached retrievals) are first-class security concerns &mdash; deleting source data is insufficient</li>
+                <li>21 data-layer risks (DSGAI01-DSGAI21) organized in 6 groups target GenAI systems at every lifecycle stage, from training to inference to agent orchestration</li>
+                <li>Context windows merge data from multiple trust domains into a single flat namespace with no internal access control, a fundamental architectural weakness</li>
+                <li>Derived artifacts (embeddings, fine-tuned weights, cached retrievals) are first-class security concerns: deleting source data is insufficient</li>
                 <li>Real CVEs referenced throughout: EmailGPT (CVE-2024-5184), Qdrant path traversal (CVE-2024-3584), LangChain injection (CVE-2024-8309)</li>
                 <li>EU AI Act Article 10 data governance applies to high-risk AI systems from December 2, 2027 (Annex III use cases) or August 2, 2028 (systems embedded in regulated products), after the 2026 AI Omnibus delay</li>
                 <li>AI-DSPM framework provides a 13-category posture assessment model with tiered mitigations (Foundational, Hardening, Advanced)</li>
@@ -199,7 +199,7 @@
         <!-- Group 1: Direct Exposure -->
         <section class="vulnerability-card">
             <h2>Group 1: Direct Exposure Risks</h2>
-            <p>The most immediate data security threats &mdash; sensitive information leaking directly from GenAI systems through model outputs, credential mismanagement, or unauthorized use of AI services.</p>
+            <p>The most immediate data security threats: sensitive information leaking directly from GenAI systems through model outputs, credential mismanagement, or unauthorized use of AI services.</p>
 
             <h3 id="dsgai01">DSGAI01: Sensitive Data Leakage</h3>
             <p><strong>Risk Level:</strong> <span style="color: #ef4444; font-weight: 700;">Critical</span></p>
@@ -210,7 +210,7 @@
             <div class="remediation">
                 <ul>
                     <li><input type="checkbox"> Implement output filtering with PII/secret detection before responses reach users</li>
-                    <li><input type="checkbox"> Apply data minimization &mdash; only include data in RAG context that the user is authorized to see</li>
+                    <li><input type="checkbox"> Apply data minimization: only include data in RAG context that the user is authorized to see</li>
                     <li><input type="checkbox"> Use per-document access controls in RAG retrieval pipelines</li>
                     <li><input type="checkbox"> Audit fine-tuning datasets for sensitive data before training</li>
                     <li><input type="checkbox"> Deploy DLP on both prompts and model outputs</li>
@@ -219,7 +219,7 @@
 
             <h3 id="dsgai02">DSGAI02: Agent Identity &amp; Credential Exposure</h3>
             <p><strong>Risk Level:</strong> <span style="color: #ef4444; font-weight: 700;">Critical</span></p>
-            <p>Non-human identities (NHIs) &mdash; service accounts, API keys, OAuth tokens &mdash; accumulate across agent orchestration layers with over-broad scope and no expiration. Every AI agent that calls an API needs credentials, and these multiply rapidly without lifecycle management.</p>
+            <p>Non-human identities (NHIs), such as service accounts, API keys, OAuth tokens, accumulate across agent orchestration layers with over-broad scope and no expiration. Every AI agent that calls an API needs credentials, and these multiply rapidly without lifecycle management.</p>
             <h4>Real-World Context</h4>
             <p>The Hugging Face Spaces secrets exposure demonstrated how AI platform credentials stored alongside model code can be compromised at scale. Agent frameworks that spawn sub-agents often inherit parent credentials with full privilege, creating lateral movement opportunities.</p>
             <h4>Mitigations</h4>
@@ -229,7 +229,7 @@
                     <li><input type="checkbox"> Enforce short-lived tokens over long-lived API keys</li>
                     <li><input type="checkbox"> Implement per-agent, per-task scoped OAuth with JIT access</li>
                     <li><input type="checkbox"> Add AI agent credentials to your PAM lifecycle management</li>
-                    <li><input type="checkbox"> Deploy PKI-backed per-agent identities &mdash; no shared credentials across agent boundaries</li>
+                    <li><input type="checkbox"> Deploy PKI-backed per-agent identities: no shared credentials across agent boundaries</li>
                 </ul>
             </div>
 
@@ -253,7 +253,7 @@
         <!-- Group 2: Pipeline Integrity -->
         <section class="vulnerability-card">
             <h2>Group 2: Pipeline Integrity Risks</h2>
-            <p>Attacks targeting the integrity of data as it flows through GenAI pipelines &mdash; from training data poisoning to supply chain compromise to tool interaction exploits.</p>
+            <p>Attacks targeting the integrity of data as it flows through GenAI pipelines, from training data poisoning to supply chain compromise to tool interaction exploits.</p>
 
             <h3 id="dsgai04">DSGAI04: Data, Model &amp; Artifact Poisoning</h3>
             <p><strong>Risk Level:</strong> <span style="color: #ef4444; font-weight: 700;">Critical</span></p>
@@ -295,7 +295,7 @@
             <div class="remediation">
                 <ul>
                     <li><input type="checkbox"> Validate and sanitize all tool/plugin metadata and descriptions</li>
-                    <li><input type="checkbox"> Implement per-tool data access policies &mdash; tools should only receive the data they need</li>
+                    <li><input type="checkbox"> Implement per-tool data access policies: tools should only receive the data they need</li>
                     <li><input type="checkbox"> Log all agent-to-agent and agent-to-tool data exchanges</li>
                     <li><input type="checkbox"> Use signed tool manifests to prevent tampering</li>
                     <li><input type="checkbox"> Enforce network egress controls on agent execution environments</li>
@@ -310,7 +310,7 @@
 
             <h3 id="dsgai07">DSGAI07: Data Governance, Lifecycle &amp; Classification</h3>
             <p><strong>Risk Level:</strong> <span style="color: #fd7e14; font-weight: 700;">High</span></p>
-            <p>Classification failures propagate into derived artifacts &mdash; when source data isn't properly labeled, the embeddings, fine-tuned weights, and cached retrievals generated from it inherit no classification. Erasure gaps emerge where deleting source records leaves derived data intact. Lineage gaps make compliance auditing impossible.</p>
+            <p>Classification failures propagate into derived artifacts: when source data isn't properly labeled, the embeddings, fine-tuned weights, and cached retrievals generated from it inherit no classification. Erasure gaps emerge where deleting source records leaves derived data intact. Lineage gaps make compliance auditing impossible.</p>
             <h4>Mitigations</h4>
             <div class="remediation">
                 <ul>
@@ -326,7 +326,7 @@
             <p><strong>Risk Level:</strong> <span style="color: #ef4444; font-weight: 700;">Critical</span></p>
             <p>Unlawful basis and consent failures, erasure gaps (GDPR Right to Be Forgotten cannot be honored in model weights), and lineage absence create regulatory exposure. The guide maps risks to GDPR, HIPAA, CCPA/CPRA, EU AI Act (Article 10), and the Colorado AI Act.</p>
             <h4>Key Deadline</h4>
-            <p style="padding: 1rem; background: rgba(239, 68, 68, 0.1); border-left: 4px solid #ef4444; border-radius: 4px;"><strong>EU AI Act Article 10 &mdash; December 2, 2027 (Annex III) / August 2, 2028 (Annex I):</strong> Providers of high-risk AI systems must demonstrate data governance for training datasets, including quality criteria, bias examination, and gap identification. The AI Omnibus (in force July 27, 2026) moved these dates back from August 2, 2026, per the <a href="https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai" target="_blank" rel="noopener">European Commission</a>. This guide's DSGAI07 controls map to Article 10 requirements.</p>
+            <p style="padding: 1rem; background: rgba(239, 68, 68, 0.1); border-left: 4px solid #ef4444; border-radius: 4px;"><strong>EU AI Act Article 10, December 2, 2027 (Annex III) / August 2, 2028 (Annex I):</strong> Providers of high-risk AI systems must demonstrate data governance for training datasets, including quality criteria, bias examination, and gap identification. The AI Omnibus (in force July 27, 2026) moved these dates back from August 2, 2026, per the <a href="https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai" target="_blank" rel="noopener">European Commission</a>. This guide's DSGAI07 controls map to Article 10 requirements.</p>
             <h4>Mitigations</h4>
             <div class="remediation">
                 <ul>
@@ -358,13 +358,13 @@
 
             <h3 id="dsgai10">DSGAI10: Synthetic Data, Anonymization &amp; Transformation Pitfalls</h3>
             <p><strong>Risk Level:</strong> <span style="color: #ffc107; font-weight: 700;">Medium</span></p>
-            <p>De-identification can be reversed via quasi-identifiers. Synthetic data provides false anonymity &mdash; membership inference attacks achieve over 0.9 accuracy on some synthetic datasets, effectively revealing whether a specific individual's data was used. Transformation and preprocessing errors can leak the original data.</p>
+            <p>De-identification can be reversed via quasi-identifiers. Synthetic data provides false anonymity: membership inference attacks achieve over 0.9 accuracy on some synthetic datasets, effectively revealing whether a specific individual's data was used. Transformation and preprocessing errors can leak the original data.</p>
             <h4>Mitigations</h4>
             <div class="remediation">
                 <ul>
                     <li><input type="checkbox"> Test synthetic datasets with membership inference attacks before publishing</li>
                     <li><input type="checkbox"> Apply differential privacy guarantees to synthetic data generation</li>
-                    <li><input type="checkbox"> Never assume anonymization is irreversible &mdash; treat anonymized GenAI data as sensitive</li>
+                    <li><input type="checkbox"> Never assume anonymization is irreversible: treat anonymized GenAI data as sensitive</li>
                 </ul>
             </div>
 
@@ -407,7 +407,7 @@
 
             <h3 id="dsgai13">DSGAI13: Vector Store Platform Data Security</h3>
             <p><strong>Risk Level:</strong> <span style="color: #fd7e14; font-weight: 700;">High</span></p>
-            <p>Vector databases are treated as "just storage" but they're unauthenticated data gateways in many deployments. Unencrypted embeddings, permissive APIs, and platform-level vulnerabilities create serious exposure. Critically, embedding inversion research shows that original text can be reconstructed from embeddings &mdash; they are not one-way transforms.</p>
+            <p>Vector databases are treated as "just storage" but they're unauthenticated data gateways in many deployments. Unencrypted embeddings, permissive APIs, and platform-level vulnerabilities create serious exposure. Critically, embedding inversion research shows that original text can be reconstructed from embeddings: they are not one-way transforms.</p>
             <h4>Real-World Context</h4>
             <p>Qdrant path traversal (<strong>CVE-2024-3584</strong>) allowed snapshot import to write files outside the intended directory. Many production vector store deployments lack authentication entirely, with collections accessible from internal networks without encryption.</p>
             <h4>Mitigations</h4>
@@ -416,7 +416,7 @@
                     <li><input type="checkbox"> Enable authentication and TLS on all vector store connections</li>
                     <li><input type="checkbox"> Implement collection-level access controls mapped to user/role permissions</li>
                     <li><input type="checkbox"> Encrypt embeddings at rest (not just the underlying storage)</li>
-                    <li><input type="checkbox"> Patch vector store platforms promptly &mdash; treat them as first-class data stores</li>
+                    <li><input type="checkbox"> Patch vector store platforms promptly: treat them as first-class data stores</li>
                     <li><input type="checkbox"> Monitor vector store APIs for enumeration and bulk extraction patterns</li>
                 </ul>
             </div>
@@ -438,11 +438,11 @@
 
             <h3 id="dsgai15">DSGAI15: Over-Broad Context Windows &amp; Prompt Over-Sharing</h3>
             <p><strong>Risk Level:</strong> <span style="color: #fd7e14; font-weight: 700;">High</span></p>
-            <p>Teams stuff full user profiles, transaction histories, and entire documents into prompts for "better context." Every request becomes a high-density intelligence artifact &mdash; if a single prompt is logged, intercepted, or extracted, it contains a cross-section of data from multiple systems and trust domains with no internal access boundaries.</p>
+            <p>Teams stuff full user profiles, transaction histories, and entire documents into prompts for "better context." Every request becomes a high-density intelligence artifact: if a single prompt is logged, intercepted, or extracted, it contains a cross-section of data from multiple systems and trust domains with no internal access boundaries.</p>
             <h4>Mitigations</h4>
             <div class="remediation">
                 <ul>
-                    <li><input type="checkbox"> Apply data minimization &mdash; only include context the model needs for the specific task</li>
+                    <li><input type="checkbox"> Apply data minimization: only include context the model needs for the specific task</li>
                     <li><input type="checkbox"> Never put credentials, API keys, or connection strings in system prompts</li>
                     <li><input type="checkbox"> Implement metadata-based filtering in RAG to limit context by user permissions</li>
                     <li><input type="checkbox"> Audit prompt templates for unnecessary data inclusion</li>
@@ -452,7 +452,7 @@
 
             <h3 id="dsgai16">DSGAI16: Endpoint &amp; Browser Assistant Overreach</h3>
             <p><strong>Risk Level:</strong> <span style="color: #fd7e14; font-weight: 700;">High</span></p>
-            <p>AI-native browsers, local copilots, and AI extensions read browser tabs, DOM content, clipboard data, IDE buffers, and system files. The "HashJack" technique exploits URL fragments (the part after #) which aren't sent to servers but are visible to client-side AI assistants &mdash; creating a covert data channel.</p>
+            <p>AI-native browsers, local copilots, and AI extensions read browser tabs, DOM content, clipboard data, IDE buffers, and system files. The "HashJack" technique exploits URL fragments (the part after #) which aren't sent to servers but are visible to client-side AI assistants, creating a covert data channel.</p>
             <h4>Mitigations</h4>
             <div class="remediation">
                 <ul>
@@ -470,7 +470,7 @@
 
             <h3 id="dsgai17">DSGAI17: Data Availability &amp; Resilience Failures in AI Pipelines</h3>
             <p><strong>Risk Level:</strong> <span style="color: #ffc107; font-weight: 700;">Medium</span></p>
-            <p>Vector database saturation, stale embedding services during failover (silently serving outdated or revoked data), and model registry corruption. When a GenAI system fails over, it may serve answers based on stale data without any indication to the user &mdash; a revoked document could still surface in RAG results because the embedding index wasn't updated.</p>
+            <p>Vector database saturation, stale embedding services during failover (silently serving outdated or revoked data), and model registry corruption. When a GenAI system fails over, it may serve answers based on stale data without any indication to the user: a revoked document could still surface in RAG results because the embedding index wasn't updated.</p>
             <h4>Mitigations</h4>
             <div class="remediation">
                 <ul>
@@ -546,7 +546,7 @@
         <!-- AI-DSPM Framework -->
         <section class="vulnerability-card">
             <h2>AI-DSPM Framework: 13-Category Assessment</h2>
-            <p>The guide introduces an <strong>AI Data Security Posture Management (AI-DSPM)</strong> framework &mdash; 13 categories for assessing and managing data security across GenAI systems. Organizations can use this as a maturity assessment checklist.</p>
+            <p>The guide introduces an <strong>AI Data Security Posture Management (AI-DSPM)</strong> framework: 13 categories for assessing and managing data security across GenAI systems. Organizations can use this as a maturity assessment checklist.</p>
             <div style="overflow-x: auto;">
                 <table class="styled-table">
                     <thead>

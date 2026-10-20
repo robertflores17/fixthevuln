@@ -140,11 +140,11 @@
         <div class="key-takeaways">
             <h2>Key Takeaways</h2>
             <ul>
-                <li>Threat hunting is proactive and human-driven — it finds threats that automated detection misses</li>
+                <li>Threat hunting is proactive and human-driven: it finds threats that automated detection misses</li>
                 <li>The hypothesis-driven methodology gives structure: form hypothesis, identify data, analyze, document, automate</li>
                 <li>The Hunting Maturity Model (HMM) has 5 levels from HM0 (no hunting) to HM4 (automated hunting)</li>
                 <li>Essential data sources: endpoint telemetry, authentication logs, network flows, DNS, and cloud audit trails</li>
-                <li>Every hunt should produce output — either confirmed threats for IR or new detection rules for the SIEM</li>
+                <li>Every hunt should produce output: either confirmed threats for IR or new detection rules for the SIEM</li>
             </ul>
         </div>
 
@@ -166,7 +166,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td><strong>Approach</strong></td><td>Reactive — waits for alerts</td><td>Proactive — actively searches for threats</td></tr>
+                        <tr><td><strong>Approach</strong></td><td>Reactive: waits for alerts</td><td>Proactive: actively searches for threats</td></tr>
                         <tr><td><strong>Driver</strong></td><td>Automated rules and signatures</td><td>Human hypotheses and intuition</td></tr>
                         <tr><td><strong>Scope</strong></td><td>Known attack patterns</td><td>Unknown and novel techniques</td></tr>
                         <tr><td><strong>Speed</strong></td><td>Real-time or near-real-time</td><td>Periodic (daily, weekly, or campaign-based)</td></tr>
@@ -209,7 +209,7 @@
                         <tr>
                             <td><strong>4. Analyze Results</strong></td>
                             <td>Review query results, investigate anomalies, correlate with other data</td>
-                            <td>Found 3 scheduled tasks running PowerShell from AppData — investigate further</td>
+                            <td>Found 3 scheduled tasks running PowerShell from AppData: investigate further</td>
                         </tr>
                         <tr>
                             <td><strong>5. Document Findings</strong></td>
@@ -305,7 +305,7 @@
         <section class="vulnerability-card">
             <h2>TTP Hunt Examples</h2>
             <h3>Hunt 1: C2 Beaconing Detection</h3>
-            <p><strong>MITRE ATT&CK:</strong> T1071.001 — Application Layer Protocol: Web</p>
+            <p><strong>MITRE ATT&CK:</strong> T1071.001 - Application Layer Protocol: Web</p>
             <p><strong>Hypothesis:</strong> "Compromised endpoints are communicating with C2 servers via HTTP/S at regular intervals."</p>
             <div class="code-block">
 <pre><code># Splunk SPL — Detect beaconing patterns
@@ -321,11 +321,11 @@ index=proxy sourcetype=web_proxy
 | sort -total_beacons</code></pre>
             </div>
             <p style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-muted);">
-                <strong>Logic:</strong> Look for hosts making HTTP requests to the same destination at regular ~60-second intervals — a classic C2 beaconing pattern. Legitimate traffic is irregular; malware callbacks are metronomic.
+                <strong>Logic:</strong> Look for hosts making HTTP requests to the same destination at regular ~60-second intervals, a classic C2 beaconing pattern. Legitimate traffic is irregular; malware callbacks are metronomic.
             </p>
 
             <h3 style="margin-top: 2rem;">Hunt 2: Living-off-the-Land Binaries (LOLBins)</h3>
-            <p><strong>MITRE ATT&CK:</strong> T1218 — System Binary Proxy Execution</p>
+            <p><strong>MITRE ATT&CK:</strong> T1218 - System Binary Proxy Execution</p>
             <p><strong>Hypothesis:</strong> "Attackers are using legitimate Windows binaries to download and execute malicious payloads."</p>
             <div class="code-block">
 <pre><code># KQL — Detect suspicious LOLBin usage

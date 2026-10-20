@@ -140,8 +140,8 @@
         <div class="key-takeaways">
             <h2>Key Takeaways</h2>
             <ul>
-                <li>AI coding agents (Claude Code, Cursor, Copilot, Windsurf) have file system, terminal, and environment access — a compromised agent equals full workstation compromise</li>
-                <li>Rules file poisoning (CLAUDE.md, .cursorrules, copilot-instructions.md) is the #1 attack vector — malicious instructions auto-execute when a developer opens a cloned repo</li>
+                <li>AI coding agents (Claude Code, Cursor, Copilot, Windsurf) have file system, terminal, and environment access: a compromised agent equals full workstation compromise</li>
+                <li>Rules file poisoning (CLAUDE.md, .cursorrules, copilot-instructions.md) is the #1 attack vector: malicious instructions auto-execute when a developer opens a cloned repo</li>
                 <li>MCP (Model Context Protocol) tools can be weaponized for zero-click reverse shells via auto-loaded tool configurations</li>
                 <li>Unlike traditional malware, these attacks abuse trusted developer tools and leave minimal forensic artifacts</li>
                 <li>Defense requires monitoring hooks (NOVA Protector), strict permission boundaries, rules file review, and sandboxed execution environments</li>
@@ -151,15 +151,15 @@
         <!-- What Are AI Coding Agents? -->
         <section class="intro">
             <h2>What Are AI Coding Agents?</h2>
-            <p>AI coding agents are a new class of development tool that goes far beyond autocomplete. Unlike chatbots that only generate text, these agents operate autonomously within your development environment — reading files, writing code, executing terminal commands, making API calls, and managing git operations. They are trusted with the same permissions as the developer who runs them.</p>
+            <p>AI coding agents are a new class of development tool that goes far beyond autocomplete. Unlike chatbots that only generate text, these agents operate autonomously within your development environment: reading files, writing code, executing terminal commands, making API calls, and managing git operations. They are trusted with the same permissions as the developer who runs them.</p>
             <p>The major AI coding agents in 2026 include:</p>
             <ul>
-                <li><strong>Claude Code</strong> (Anthropic) — CLI-based agent with file read/write, terminal execution, and MCP tool integration</li>
+                <li><strong>Claude Code</strong> (Anthropic): CLI-based agent with file read/write, terminal execution, and MCP tool integration</li>
                 <li><strong>Cursor</strong>: VS Code fork with AI-native editing, terminal access, and .cursorrules configuration</li>
                 <li><strong>GitHub Copilot</strong>: IDE extension with code generation, chat, and copilot-instructions.md configuration</li>
                 <li><strong>Windsurf (Codeium)</strong>: IDE with "Cascade" agentic flows, file editing, and terminal execution</li>
             </ul>
-            <p>This is the critical distinction: <strong>a chatbot can say something harmful, but a coding agent can do something harmful</strong>. When an agent is compromised, the attacker inherits the developer's full access — source code, credentials, SSH keys, cloud tokens, and the ability to commit and push code.</p>
+            <p>This is the critical distinction: <strong>a chatbot can say something harmful, but a coding agent can do something harmful</strong>. When an agent is compromised, the attacker inherits the developer's full access: source code, credentials, SSH keys, cloud tokens, and the ability to commit and push code.</p>
         </section>
 
         <!-- Attack Surface Taxonomy -->
@@ -214,7 +214,7 @@
         <!-- Rules File Poisoning Deep Dive -->
         <section class="vulnerability-card">
             <h2>Rules File Poisoning: The #1 Threat</h2>
-            <p>Every major AI coding agent reads project-level configuration files that shape its behavior. These files are the modern equivalent of <code>.bashrc</code> injection — they execute implicitly, they're checked into version control, and developers rarely audit them.</p>
+            <p>Every major AI coding agent reads project-level configuration files that shape its behavior. These files are the modern equivalent of <code>.bashrc</code> injection: they execute implicitly, they're checked into version control, and developers rarely audit them.</p>
 
             <h3>Affected Configuration Files</h3>
             <div style="overflow-x: auto;">
@@ -282,10 +282,10 @@
 
             <h3>Why It's So Effective</h3>
             <ul>
-                <li><strong>Implicit trust:</strong> Rules files are loaded automatically — no user confirmation required</li>
+                <li><strong>Implicit trust:</strong> Rules files are loaded automatically, no user confirmation required</li>
                 <li><strong>Supply chain scale:</strong> One poisoned repo infects every developer who clones it</li>
                 <li><strong>Review blind spot:</strong> Developers scrutinize code changes but rarely audit config file diffs</li>
-                <li><strong>Persistence:</strong> The payload survives across sessions — every time the agent starts, it re-reads the rules</li>
+                <li><strong>Persistence:</strong> The payload survives across sessions: every time the agent starts, it re-reads the rules</li>
                 <li><strong>Stealth:</strong> Unicode obfuscation makes the malicious content invisible in GitHub diffs and most editors</li>
             </ul>
         </section>
@@ -293,7 +293,7 @@
         <!-- MCP Attack Vectors -->
         <section class="vulnerability-card">
             <h2>MCP Attack Vectors</h2>
-            <p>The <strong>Model Context Protocol (MCP)</strong> is a standard for connecting AI agents to external tools — databases, APIs, file systems, and custom integrations. While MCP enables powerful workflows, it introduces a new attack surface.</p>
+            <p>The <strong>Model Context Protocol (MCP)</strong> is a standard for connecting AI agents to external tools: databases, APIs, file systems, and custom integrations. While MCP enables powerful workflows, it introduces a new attack surface.</p>
 
             <h3>Tool Description Poisoning</h3>
             <p>MCP tools expose a description field that the AI agent reads to understand what the tool does. An attacker publishes a malicious MCP server with a helpful name (e.g., "Database Query Helper") but includes prompt injection in the tool's description:</p>
@@ -321,7 +321,7 @@
             </ul>
 
             <h3>Auto-Load Risk</h3>
-            <p>Some AI agents auto-load MCP tools from project configuration without explicit user approval per session. This means cloning a repo that contains MCP server configurations can immediately grant third-party tools access to your development environment — the same zero-click risk as rules file poisoning.</p>
+            <p>Some AI agents auto-load MCP tools from project configuration without explicit user approval per session. This means cloning a repo that contains MCP server configurations can immediately grant third-party tools access to your development environment, the same zero-click risk as rules file poisoning.</p>
         </section>
 
         <!-- Defense Strategies -->
@@ -340,32 +340,32 @@
                         <tr>
                             <td><strong>Execution Monitoring</strong></td>
                             <td>Hook-based monitoring tools (e.g., <a href="https://code.claude.com/docs/en/hooks" target="_blank" rel="noopener">Claude Code hooks</a>, <a href="https://github.com/fr0gger/nova-claude-code-protector" target="_blank" rel="noopener">NOVA Protector</a> by <a href="https://x.com/fr0gger_" target="_blank" rel="noopener">Thomas Roccia</a>) that intercept and audit every tool call before execution</td>
-                            <td>Very High — catches malicious commands at the execution boundary</td>
+                            <td>Very High: catches malicious commands at the execution boundary</td>
                         </tr>
                         <tr>
                             <td><strong>Permission Boundaries</strong></td>
-                            <td>Configure strict permission modes — deny automatic file writes and terminal execution for untrusted projects. Claude Code's built-in permission system requires user approval for destructive operations.</td>
-                            <td>High — limits blast radius even if injection succeeds</td>
+                            <td>Configure strict permission modes: deny automatic file writes and terminal execution for untrusted projects. Claude Code's built-in permission system requires user approval for destructive operations.</td>
+                            <td>High: limits blast radius even if injection succeeds</td>
                         </tr>
                         <tr>
                             <td><strong>Rules File Review</strong></td>
                             <td>Audit all rules files (CLAUDE.md, .cursorrules, copilot-instructions.md) before opening a project. Check git diffs for hidden Unicode characters (U+200B, U+2066, U+2069) and obfuscated instructions.</td>
-                            <td>High — prevents the #1 attack vector when consistently applied</td>
+                            <td>High: prevents the #1 attack vector when consistently applied</td>
                         </tr>
                         <tr>
                             <td><strong>MCP Server Auditing</strong></td>
                             <td>Review every MCP tool's description and permissions before enabling. Disable auto-load for MCP tools. Only use MCP servers from trusted, audited sources.</td>
-                            <td>High — eliminates zero-click MCP tool poisoning</td>
+                            <td>High: eliminates zero-click MCP tool poisoning</td>
                         </tr>
                         <tr>
                             <td><strong>Sandboxed Execution</strong></td>
                             <td>Run AI coding agents in containers, VMs, or isolated environments rather than on your primary development machine. Use disposable environments for reviewing untrusted repositories.</td>
-                            <td>Very High — contains any compromise to a disposable environment</td>
+                            <td>Very High: contains any compromise to a disposable environment</td>
                         </tr>
                         <tr>
                             <td><strong>Session Logging</strong></td>
                             <td>Enable full session logging for all agent actions. Periodically review logs for unexpected file reads (credentials, SSH keys), outbound network requests, or suspicious terminal commands.</td>
-                            <td>Moderate — detection after the fact, but essential for incident response</td>
+                            <td>Moderate: detection after the fact, but essential for incident response</td>
                         </tr>
                     </tbody>
                 </table>

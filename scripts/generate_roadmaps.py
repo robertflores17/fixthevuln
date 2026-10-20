@@ -195,7 +195,10 @@ def _dash_to_parens(topic):
     # Config topics read "Domain 3: Risk Response — Response options"; the site avoids em-dashes,
     # and the config is shared with the Etsy planners, so convert at render time.
     head, sep, tail = topic.partition(' — ')
-    return f'{head} ({tail})' if sep else topic
+    if not sep:
+        return topic
+    # Detail that already has parentheses reads better as its own sentence than nested parens
+    return f'{head}. {tail}' if '(' in tail else f'{head} ({tail})'
 
 
 def generate_timeline(weekly_plan, num_weeks, pid):

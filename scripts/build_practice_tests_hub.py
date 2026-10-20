@@ -102,7 +102,7 @@ faq_items = [
     ('Are these practice tests really free?', 'Yes. All 68 practice tests are completely free with no login required, no paywall, and no ads. Take as many quizzes as you want, as many times as you want.'),
     ('How are the questions weighted?', 'Questions are weighted to match official exam domain percentages. If an exam domain is worth 25% of the real test, roughly 25% of our practice questions come from that domain.'),
     ('Do you cover all exam domains?', 'Yes. Every practice test covers all domains from the current exam objectives. Domain filters let you focus on specific areas where you need more practice.'),
-    ('Can I use these to pass my certification exam?', 'Our practice tests are a supplemental study tool — not a replacement for official study materials, courses, or hands-on experience. They help you identify knowledge gaps and build test-taking confidence.'),
+    ('Can I use these to pass my certification exam?', 'Our practice tests are a supplemental study tool, not a replacement for official study materials, courses, or hands-on experience. They help you identify knowledge gaps and build test-taking confidence.'),
     ('How often are questions updated?', 'Questions are reviewed and updated when certification exam objectives change. We align to the latest exam versions including Security+ SY0-701, AWS SAA-C03, AZ-900, CCNA 200-301, and more.'),
     ('Do you track my scores?', 'Score history is saved locally in your browser using localStorage. No data is sent to any server. You can view your progress on the Knowledge Gap Dashboard.'),
 ]

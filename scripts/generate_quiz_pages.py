@@ -381,7 +381,7 @@ def generate_quiz_html(cfg, domains_js, total_questions, questions):
     <header>
         <div class="container">
             <a href="index.html" style="text-decoration: none; color: inherit;"><h1>FixTheVuln</h1></a>
-            <p class="tagline">{name} {exam} Practice Quiz &mdash; {total_questions} Questions</p>
+            <p class="tagline">{name} {exam} Practice Quiz: {total_questions} Questions</p>
         </div>
     </header>
 
