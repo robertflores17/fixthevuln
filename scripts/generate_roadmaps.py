@@ -191,11 +191,18 @@ def generate_heatmap(domains):
             </div>'''
 
 
+def _dash_to_parens(topic):
+    # Config topics read "Domain 3: Risk Response — Response options"; the site avoids em-dashes,
+    # and the config is shared with the Etsy planners, so convert at render time.
+    head, sep, tail = topic.partition(' — ')
+    return f'{head} ({tail})' if sep else topic
+
+
 def generate_timeline(weekly_plan, num_weeks, pid):
     """Generate week-by-week timeline cards."""
     cards = ''
     for i in range(num_weeks):
-        topic = escape(weekly_plan[i]) if i < len(weekly_plan) else f'Review and practice — Week {i+1}'
+        topic = _dash_to_parens(escape(weekly_plan[i])) if i < len(weekly_plan) else 'Review and practice'
         week_num = i + 1
         cards += f'''
             <div class="timeline-card" data-week="{week_num}">
