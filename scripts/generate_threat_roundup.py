@@ -162,7 +162,7 @@ def main():
     elif high:
         severity_msg = f"This week includes **{len(high)} high-severity** vulnerabilities (CVSS 7.0+). Review your exposure and prioritize patching."
     else:
-        severity_msg = "No critical-severity vulnerabilities this week, but stay vigilant — patch what you can."
+        severity_msg = "No critical-severity vulnerabilities this week, but stay vigilant and patch what you can."
 
     # Build the vulnerability list
     vuln_entries = []
@@ -178,7 +178,7 @@ def main():
             severity_label = "LOW"
 
         zero_day_tag = " (Zero-Day)" if v.get('isZeroDay', False) else ""
-        entry = f"""### {v['id']} — {v.get('title', 'Unknown')}{zero_day_tag}
+        entry = f"""### {v['id']}: {v.get('title', 'Unknown')}{zero_day_tag}
 
 - **CVSS Score**: {v.get('cvss', 'N/A')} ({severity_label})
 - **Date Added**: {v.get('dateAdded', 'Unknown')}
@@ -198,7 +198,7 @@ Use the [CVSS Calculator](/cvss-calculator.html) to assess how these scores appl
 
 Use the [CVSS Calculator](/cvss-calculator.html) to contextualize these scores for your environment."""
     else:
-        action_msg = """While none of this week's additions are critical severity, they're in the KEV catalog because they've been exploited. Don't deprioritize them — schedule patches in your next maintenance window."""
+        action_msg = """While none of this week's additions are critical severity, they're in the KEV catalog because they've been exploited. Don't deprioritize them. Schedule patches in your next maintenance window."""
 
     # Classify CVEs by cert domain relevance
     cert_cve_map = {}  # cert_id → [(cve_id, [domains])]
@@ -226,7 +226,7 @@ Use the [CVSS Calculator](/cvss-calculator.html) to contextualize these scores f
         study_angle = "These CVEs map directly to certification exam objectives. Use them as real-world case studies:\n\n" + '\n\n'.join(study_angles)
         study_angle += f"\n\nSee all CVEs mapped to your cert: [Exploit Tracker](/exploit-tracker.html)"
     else:
-        study_angle = f"""Even with {count} new entries, each one maps to real certification exam objectives. Practice identifying the vulnerability type (injection, authentication bypass, deserialization) — that maps to Security+ **Domain 2** material.
+        study_angle = f"""Even with {count} new entries, each one maps to real certification exam objectives. Practice identifying the vulnerability type (injection, authentication bypass, deserialization), which maps to Security+ **Domain 2** material.
 
 See all CVEs mapped to your cert: [Exploit Tracker](/exploit-tracker.html)"""
 

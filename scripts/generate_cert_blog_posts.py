@@ -230,6 +230,14 @@ def study_timeline(level):
     return '6-10 weeks'
 
 
+
+def _dash_to_parens(topic):
+    # Config topics read "Domain 1: CloudWatch — Metrics, alarms"; same rendering as generate_roadmaps.py
+    head, sep, tail = topic.partition(' — ')
+    if not sep:
+        return topic
+    return f'{head}. {tail}' if '(' in tail else f'{head} ({tail})'
+
 def generate_draft(cert_id, name, vendor, exam_code, config):
     """Generate a markdown blog post draft from cert config."""
     cert_info = config.get('certification', {})
@@ -293,7 +301,7 @@ def generate_draft(cert_id, name, vendor, exam_code, config):
     # Build study plan
     study_plan_lines = []
     for i, week in enumerate(weekly_plan[:num_weeks], 1):
-        study_plan_lines.append(f'- **Week {i}:** {week}')
+        study_plan_lines.append(f'- **Week {i}:** {_dash_to_parens(week)}')
 
     study_plan = '\n'.join(study_plan_lines) if study_plan_lines else f'Spread your study over {timeline} with consistent daily sessions of 1-2 hours.'
 

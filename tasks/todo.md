@@ -1173,3 +1173,16 @@ roadmaps, blog (largest).
       (2026-edition) version than the live page, and its mlsecops/threat-hunting output differs from the live
       pages. Running generate_guides.py would overwrite live content. Decide which is canonical before running it.
 - Left: blog 2,172.
+
+### Phase 2 batch 5 (final) — 2026-10-20
+- [x] Blog: AI roundups (byline "Source: X, date", GHSA "(owner/repo)", titles, feed-excerpt dashes -> ", " exactly as
+      aggregate_ai_security_news._clean_html already does for new roundups); threat roundups ("CVE-…: Name" headings,
+      3 template sentences in generate_threat_roundup.py); study guides (379 week items via _dash_to_parens in
+      generate_cert_blog_posts.py); 91 hand decisions + 8 "isn't X, it's Y" rewrites; blog index/feed/blog_metadata
+      titles and the stale "released during RSA" excerpt.
+- [x] Quiz data (fetched at runtime by quiz-engine.js): 177 options "Term: description" (answers are int indexes),
+      168 explanation/question decisions + 2 hand rewrites. Edited as raw string replacements, formatting untouched.
+- [x] Content Editor follow-ups from batch 4: 5 "not X, it's Y" sentences, 4 double colons, template CTA wording
+      ("Free blank templates or $4.99/mo for pre-filled intelligence...").
+- Result: 19 em-dashes left site-wide, all deliberate (third-party titles/advisory text, table placeholders, one comment).
+- [ ] Unsourced figure to verify (Content Editor): cybersecurity-job-trends.html "CISSP holders earn an average of $150,000+".

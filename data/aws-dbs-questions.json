@@ -158,7 +158,7 @@
         "Amazon RDS with read-only replicas"
       ],
       "correct": 0,
-      "explanation": "Amazon QLDB provides an immutable, transparent, and cryptographically verifiable transaction log. It uses a journal that is append-only — no record can be updated or deleted. QLDB provides built-in SHA-256 cryptographic hashing to verify data integrity. DynamoDB deletion protection prevents table deletion but not record modification. Aurora audit logging records changes but does not prevent them.",
+      "explanation": "Amazon QLDB provides an immutable, transparent, and cryptographically verifiable transaction log. It uses a journal that is append-only: no record can be updated or deleted. QLDB provides built-in SHA-256 cryptographic hashing to verify data integrity. DynamoDB deletion protection prevents table deletion but not record modification. Aurora audit logging records changes but does not prevent them.",
       "link": "cloud-security.html"
     },
     {
@@ -622,7 +622,7 @@
         "Aurora requires provisioned IOPS similar to RDS for high-performance workloads"
       ],
       "correct": 0,
-      "explanation": "Aurora has a different pricing model than RDS. Aurora charges for I/O operations (per million I/Os) instead of provisioned IOPS, which can be more cost-effective for variable I/O workloads. Aurora's shared storage architecture means read replicas do not need separate storage, reducing costs. However, for I/O-heavy workloads, Aurora I/O Optimized configuration eliminates per-I/O charges for a higher instance price. Aurora is not always cheaper — it depends on the workload profile.",
+      "explanation": "Aurora has a different pricing model than RDS. Aurora charges for I/O operations (per million I/Os) instead of provisioned IOPS, which can be more cost-effective for variable I/O workloads. Aurora's shared storage architecture means read replicas do not need separate storage, reducing costs. However, for I/O-heavy workloads, Aurora I/O Optimized configuration eliminates per-I/O charges for a higher instance price. Aurora is not always cheaper: it depends on the workload profile.",
       "link": "cloud-security.html"
     },
     {
@@ -910,7 +910,7 @@
         "The DMS replication instance needs a larger size to handle code objects"
       ],
       "correct": 0,
-      "explanation": "DMS is a data migration service — it migrates table data, not database code objects (stored procedures, triggers, functions, views). For heterogeneous migrations (SQL Server to PostgreSQL), AWS SCT must be used first to convert the database schema and code objects. SCT handles the translation of SQL Server T-SQL to PostgreSQL PL/pgSQL. DMS and SCT are complementary tools used together for heterogeneous migrations.",
+      "explanation": "DMS is a data migration service: it migrates table data, not database code objects (stored procedures, triggers, functions, views). For heterogeneous migrations (SQL Server to PostgreSQL), AWS SCT must be used first to convert the database schema and code objects. SCT handles the translation of SQL Server T-SQL to PostgreSQL PL/pgSQL. DMS and SCT are complementary tools used together for heterogeneous migrations.",
       "link": "cloud-security.html"
     },
     {
@@ -1208,7 +1208,7 @@
       "difficulty": "hard",
       "question": "A DynamoDB table is experiencing increased read latency. The table uses provisioned capacity and auto-scaling is configured. CloudWatch shows that consumed RCUs are well below provisioned capacity. What should be investigated?",
       "options": [
-        "Hot partition access pattern — a small number of items receiving disproportionate traffic, causing partition-level throttling despite table-level capacity being available",
+        "Hot partition access pattern: a small number of items receiving disproportionate traffic, causing partition-level throttling despite table-level capacity being available",
         "The auto-scaling policy is scaling down too aggressively",
         "The table needs more GSIs to distribute reads",
         "DynamoDB service degradation in the region"
@@ -1310,7 +1310,7 @@
         "Enable Redshift Spectrum to automatically offload data to S3"
       ],
       "correct": 0,
-      "explanation": "Redshift does not automatically reclaim space from deleted or updated rows (similar to PostgreSQL's MVCC). VACUUM reclaims this space and re-sorts rows. Additionally, implementing data retention by archiving old data to S3 (queryable via Spectrum) reduces local storage. DEEP COPY (recreating tables) is faster than VACUUM DELETE for heavily modified tables. Redshift storage cannot be independently increased — it is tied to node count and type.",
+      "explanation": "Redshift does not automatically reclaim space from deleted or updated rows (similar to PostgreSQL's MVCC). VACUUM reclaims this space and re-sorts rows. Additionally, implementing data retention by archiving old data to S3 (queryable via Spectrum) reduces local storage. DEEP COPY (recreating tables) is faster than VACUUM DELETE for heavily modified tables. Redshift storage cannot be independently increased: it is tied to node count and type.",
       "link": "cloud-security.html"
     },
     {
@@ -1390,7 +1390,7 @@
         "Add individual nodes one at a time using the modify-cluster command"
       ],
       "correct": 0,
-      "explanation": "Elastic resize changes the number of nodes (and optionally node type) with minimal downtime — typically a few minutes. It redistributes data across the new nodes automatically. The cluster is read-only briefly during the operation. Classic resize is slower (hours) and should be used when changing node types that do not support elastic resize. Nodes cannot be added individually.",
+      "explanation": "Elastic resize changes the number of nodes (and optionally node type) with minimal downtime, typically a few minutes. It redistributes data across the new nodes automatically. The cluster is read-only briefly during the operation. Classic resize is slower (hours) and should be used when changing node types that do not support elastic resize. Nodes cannot be added individually.",
       "link": "cloud-security.html"
     },
     {
@@ -1398,7 +1398,7 @@
       "domain": 3,
       "objective": "3.3",
       "difficulty": "medium",
-      "question": "An Aurora MySQL cluster's reader endpoint is distributing connections unevenly — one replica handles most reads while others are idle. How can this be resolved?",
+      "question": "An Aurora MySQL cluster's reader endpoint is distributing connections unevenly: one replica handles most reads while others are idle. How can this be resolved?",
       "options": [
         "Use the reader endpoint which provides built-in load balancing, and ensure the application uses DNS-based connection pooling that respects TTL",
         "Manually distribute reads across replica endpoints in the application code",
@@ -1752,7 +1752,7 @@
       "difficulty": "easy",
       "question": "A DynamoDB table is experiencing high SuccessfulRequestLatency. The table uses provisioned capacity and is not being throttled. What should the administrator check?",
       "options": [
-        "Item sizes — large items increase read/write latency; check if items are close to the 400KB limit",
+        "Item sizes: large items increase read/write latency; check if items are close to the 400KB limit",
         "The number of GSIs on the table",
         "The AWS region's service health dashboard",
         "The table's encryption settings"
@@ -1790,7 +1790,7 @@
         "Add more GSIs to offload the traffic"
       ],
       "correct": 0,
-      "explanation": "DynamoDB Contributor Insights identifies the specific partition keys causing throttling. When 5% of keys cause 85% of throttling, this is a classic hot partition problem. Solutions include: redesigning keys for better distribution, using DAX to cache frequently read hot items, implementing write sharding (appending random suffixes), or using a combination approach. Simply increasing capacity does not fix distribution issues — DynamoDB divides capacity evenly across partitions.",
+      "explanation": "DynamoDB Contributor Insights identifies the specific partition keys causing throttling. When 5% of keys cause 85% of throttling, this is a classic hot partition problem. Solutions include: redesigning keys for better distribution, using DAX to cache frequently read hot items, implementing write sharding (appending random suffixes), or using a combination approach. Simply increasing capacity does not fix distribution issues: DynamoDB divides capacity evenly across partitions.",
       "link": "cloud-security.html"
     },
     {
@@ -1806,7 +1806,7 @@
         "Enable Enhanced Monitoring for better visibility"
       ],
       "correct": 0,
-      "explanation": "High disk queue depth with gp2 indicates the storage is I/O bottlenecked — the workload exceeds the gp2 baseline IOPS (3 IOPS per GB). Provisioned IOPS SSD (io1/io2) provides dedicated, consistent IOPS up to 256,000 IOPS. Alternatively, increasing gp2 volume size increases baseline IOPS (up to 16,000 at 5.3TB+). Upgrading to gp3 is also an option as it allows configuring IOPS independently of size. CPU is not the bottleneck here.",
+      "explanation": "High disk queue depth with gp2 indicates the storage is I/O bottlenecked: the workload exceeds the gp2 baseline IOPS (3 IOPS per GB). Provisioned IOPS SSD (io1/io2) provides dedicated, consistent IOPS up to 256,000 IOPS. Alternatively, increasing gp2 volume size increases baseline IOPS (up to 16,000 at 5.3TB+). Upgrading to gp3 is also an option as it allows configuring IOPS independently of size. CPU is not the bottleneck here.",
       "link": "cloud-security.html"
     },
     {
@@ -1848,7 +1848,7 @@
       "difficulty": "medium",
       "question": "A company uses an ElastiCache Redis cluster. They notice that the EngineCPUUtilization metric is consistently high (above 80%) on one shard while others are low. What should be investigated?",
       "options": [
-        "Hot key access pattern — one shard handles a disproportionate number of requests due to uneven key distribution",
+        "Hot key access pattern: one shard handles a disproportionate number of requests due to uneven key distribution",
         "The shard has a hardware issue",
         "Redis does not support horizontal scaling",
         "The Redis version is too old and needs upgrading"
@@ -2350,7 +2350,7 @@
         "Install SSL certificates on each Redis node manually"
       ],
       "correct": 0,
-      "explanation": "ElastiCache Redis supports both encryption at rest (using KMS) and encryption in transit (TLS). Both must be enabled at creation time — they cannot be added to an existing cluster. Encryption in transit requires clients to use TLS connections. Encryption at rest encrypts the data stored on disk, backups, and snapshots. These settings cannot be changed after cluster creation; a new cluster must be created with encryption enabled.",
+      "explanation": "ElastiCache Redis supports both encryption at rest (using KMS) and encryption in transit (TLS). Both must be enabled at creation time: they cannot be added to an existing cluster. Encryption in transit requires clients to use TLS connections. Encryption at rest encrypts the data stored on disk, backups, and snapshots. These settings cannot be changed after cluster creation; a new cluster must be created with encryption enabled.",
       "link": "cloud-security.html"
     },
     {

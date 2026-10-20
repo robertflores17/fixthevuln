@@ -63,7 +63,7 @@
                         "name": "Why is 37 Vulnerabilities in AI Coding Tools: Zero-Click RCE in Your IDE important for cybersecurity?",
                         "acceptedAnswer": {
                                 "@type": "Answer",
-                                "text": "Understanding 37 vulnerabilities in ai coding tools — zero-click rce in your ide is critical for cybersecurity professionals to stay ahead of emerging threats and protect their organizations. This article provides actionable insights and analysis."
+                                "text": "Understanding 37 vulnerabilities in ai coding tools: zero-click rce in your ide is critical for cybersecurity professionals to stay ahead of emerging threats and protect their organizations. This article provides actionable insights and analysis."
                         }
                 },
                 {
@@ -113,7 +113,7 @@
 
     <header class="content-header">
         <div class="container">
-            <h1>37 Vulnerabilities in AI Coding Tools — Zero-Click RCE in Your IDE</h1>
+            <h1>37 Vulnerabilities in AI Coding Tools: Zero-Click RCE in Your IDE</h1>
             <p>Security research into AI-powered development environments reveals critical attack surface</p>
             <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">Published: March 16, 2026 &middot; <span id="tracker-last-updated">Last updated: October 19, 2026 (disclosure table)</span></p>
         </div>
@@ -232,7 +232,7 @@
 
 <p>To understand why these vulnerabilities are so dangerous, you need to understand what the Model Context Protocol is and how AI IDEs use it.</p>
 
-<p>MCP is an open protocol that allows AI coding assistants to connect to external tools and data sources. Think of it as a plugin system for AI agents. An MCP server exposes capabilities — reading databases, querying APIs, running shell commands, accessing file systems — and the AI agent calls those capabilities as needed to complete tasks.</p>
+<p>MCP is an open protocol that allows AI coding assistants to connect to external tools and data sources. Think of it as a plugin system for AI agents. An MCP server exposes capabilities (reading databases, querying APIs, running shell commands, accessing file systems) and the AI agent calls those capabilities as needed to complete tasks.</p>
 
 <p>The protocol itself is straightforward: JSON-RPC over stdio or HTTP. The problem is not the protocol. The problem is how AI IDEs discover and load MCP servers.</p>
 
@@ -249,13 +249,13 @@
     <li><strong>Exfiltrate data</strong> by having the AI agent read files, environment variables, or credentials and send them to an attacker-controlled endpoint</li>
 </ul>
 
-<p>The zero-click RCE variant works like this: a malicious <code>.mcp.json</code> or equivalent configuration file is committed to a repository. A developer clones the repo and opens it in their AI IDE. The IDE autoloads the MCP configuration, connects to the attacker's server (or a local server spawned from the config), and the AI agent now has access to tools that execute shell commands. If the tool descriptions contain crafted instructions — a form of <a href="../prompt-injection.html">prompt injection</a> — the agent may execute those commands without any user-visible confirmation.</p>
+<p>The zero-click RCE variant works like this: a malicious <code>.mcp.json</code> or equivalent configuration file is committed to a repository. A developer clones the repo and opens it in their AI IDE. The IDE autoloads the MCP configuration, connects to the attacker's server (or a local server spawned from the config), and the AI agent now has access to tools that execute shell commands. If the tool descriptions contain crafted instructions (a form of <a href="../prompt-injection.html">prompt injection</a>), the agent may execute those commands without any user-visible confirmation.</p>
 
 <p>The result: a reverse shell on the developer's machine, triggered by nothing more than opening a project.</p>
 
 <h3 id="tool-description-injection">Tool Description Injection</h3>
 
-<p>A subtler variant exploits how AI agents interpret tool descriptions. MCP tool definitions include a human-readable description field that tells the AI agent what the tool does and when to use it. Attackers can embed hidden instructions in these descriptions — telling the agent to always call the tool first, to pass specific arguments, or to ignore user instructions.</p>
+<p>A subtler variant exploits how AI agents interpret tool descriptions. MCP tool definitions include a human-readable description field that tells the AI agent what the tool does and when to use it. Attackers can embed hidden instructions in these descriptions: telling the agent to always call the tool first, to pass specific arguments, or to ignore user instructions.</p>
 
 <p>This is prompt injection applied to the tool layer. The AI agent trusts the tool descriptions it receives over MCP because they are treated as system-level context, not user input. That trust boundary violation is the root cause of multiple vulnerabilities in the research.</p>
 
@@ -279,7 +279,7 @@
 
 <p>This is not hypothetical escalation. Developers routinely have the keys to the kingdom. Compromising a single developer machine through their AI coding assistant can provide initial access to an organization's entire software supply chain.</p>
 
-<p>Compare this to a typical web application vulnerability. An XSS bug might steal a session cookie. An SSRF might read cloud metadata. Those are serious. But a zero-click RCE in a developer's IDE can compromise every system that developer has access to — which in many organizations includes production infrastructure, customer data, and proprietary source code.</p>
+<p>Compare this to a typical web application vulnerability. An XSS bug might steal a session cookie. An SSRF might read cloud metadata. Those are serious. But a zero-click RCE in a developer's IDE can compromise every system that developer has access to, which in many organizations includes production infrastructure, customer data, and proprietary source code.</p>
 
 <h2 id="the-supply-chain-angle">The Supply Chain Angle</h2>
 
@@ -287,11 +287,11 @@
 
 <h3 id="malicious-mcp-servers">Malicious MCP Servers</h3>
 
-<p>MCP servers can be distributed as npm packages, Python packages, or standalone binaries. The same supply chain risks that apply to any dependency apply here — typosquatting, account takeover of popular packages, and compromised maintainers. The difference is that an MCP server has explicit permission to execute commands and access the file system. A malicious npm package has to find a way to run code during installation. A malicious MCP server is <em>invited</em> to run code by the AI agent.</p>
+<p>MCP servers can be distributed as npm packages, Python packages, or standalone binaries. The same supply chain risks that apply to any dependency apply here: typosquatting, account takeover of popular packages, and compromised maintainers. The difference is that an MCP server has explicit permission to execute commands and access the file system. A malicious npm package has to find a way to run code during installation. A malicious MCP server is <em>invited</em> to run code by the AI agent.</p>
 
 <h3 id="poisoned-project-configurations">Poisoned Project Configurations</h3>
 
-<p>MCP configuration files in project repositories create a new vector for repository poisoning. A compromised contributor, a malicious pull request, or even a poorly reviewed merge can introduce an MCP configuration that targets every developer who clones the repository. Unlike a malicious build script that might be caught by CI/CD security scanning, MCP configuration files are JSON — they look benign to most static analysis tools.</p>
+<p>MCP configuration files in project repositories create a new vector for repository poisoning. A compromised contributor, a malicious pull request, or even a poorly reviewed merge can introduce an MCP configuration that targets every developer who clones the repository. Unlike a malicious build script that might be caught by CI/CD security scanning, MCP configuration files are JSON: they look benign to most static analysis tools.</p>
 
 <h3 id="compromised-extensions-and-plugins">Compromised Extensions and Plugins</h3>
 
@@ -309,7 +309,7 @@
 
 <h3 id="disable-autoload">2. Disable MCP Autoload</h3>
 
-<p>If your AI IDE supports it, disable automatic loading of project-level MCP configurations. Require explicit approval before any MCP server is connected. Some tools now default to requiring user confirmation — make sure you are on a version that does.</p>
+<p>If your AI IDE supports it, disable automatic loading of project-level MCP configurations. Require explicit approval before any MCP server is connected. Some tools now default to requiring user confirmation: make sure you are on a version that does.</p>
 
 <h3 id="review-tool-permissions">3. Review Tool Permissions</h3>
 
@@ -325,7 +325,7 @@
 
 <h3 id="treat-mcp-configs-like-code">6. Treat MCP Configs Like Executable Code</h3>
 
-<p>Add MCP configuration files to your code review checklist. Any PR that adds or modifies an MCP configuration should receive the same scrutiny as a change to a CI/CD pipeline or a Dockerfile. These files control what code runs on developer machines — they deserve that level of attention.</p>
+<p>Add MCP configuration files to your code review checklist. Any PR that adds or modifies an MCP configuration should receive the same scrutiny as a change to a CI/CD pipeline or a Dockerfile. These files control what code runs on developer machines; they deserve that level of attention.</p>
 
 <h3 id="developer-checklist">Developer Security Checklist</h3>
 
@@ -341,11 +341,11 @@
 
 <h2 id="what-security-teams-should-do">What Security Teams Should Do</h2>
 
-<p>If your organization allows developers to use AI coding tools — and most do, whether officially or not — this research demands a policy response. Here is a practical framework.</p>
+<p>If your organization allows developers to use AI coding tools (and most do, whether officially or not), this research demands a policy response. Here is a practical framework.</p>
 
 <h3 id="asset-inventory">1. Build an AI Tool Inventory</h3>
 
-<p>You cannot secure what you cannot see. Survey your development teams to understand which AI coding tools are in use. Include IDE extensions, CLI tools, and any MCP server configurations. Many organizations will be surprised by the breadth of AI tool adoption — developers adopt these tools faster than security teams can evaluate them.</p>
+<p>You cannot secure what you cannot see. Survey your development teams to understand which AI coding tools are in use. Include IDE extensions, CLI tools, and any MCP server configurations. Many organizations will be surprised by the breadth of AI tool adoption: developers adopt these tools faster than security teams can evaluate them.</p>
 
 <h3 id="approved-tool-list">2. Establish an Approved Tool List</h3>
 
@@ -416,7 +416,7 @@
 
 <h2 id="the-bigger-picture">The Bigger Picture</h2>
 
-<p>The 37 vulnerabilities disclosed in this research are early findings in what will be an ongoing area of security research. AI coding tools are evolving rapidly. New capabilities are being added monthly — deeper file system access, cloud service integrations, autonomous code review, automated deployment. Each new capability expands the attack surface.</p>
+<p>The 37 vulnerabilities disclosed in this research are early findings in what will be an ongoing area of security research. AI coding tools are evolving rapidly. New capabilities are being added monthly: deeper file system access, cloud service integrations, autonomous code review, automated deployment. Each new capability expands the attack surface.</p>
 
 <p>The security community is catching up. Vendors are adding permission models, sandboxing, and explicit consent requirements. But the fundamental tension remains: AI coding tools are powerful precisely because they have broad access to developer environments. Restricting that access reduces their utility. Finding the right balance between capability and security will define this tool category for years to come.</p>
 
@@ -446,8 +446,8 @@
                 <p>Researchers found 37 vulnerabilities across 15+ AI IDE vendors including remote code execution via MCP autoload attacks. Here's what developers and security teams need to know.</p>
             </details>
             <details class="faq-item">
-                <summary>Why is 37 Vulnerabilities in AI Coding Tools — Zero-Click RCE in Your IDE important for cybersecurity?</summary>
-                <p>Understanding 37 vulnerabilities in ai coding tools — zero-click rce in your ide is critical for cybersecurity professionals to stay ahead of emerging threats and protect their organizations. This article provides actionable insights and analysis.</p>
+                <summary>Why is 37 Vulnerabilities in AI Coding Tools: Zero-Click RCE in Your IDE important for cybersecurity?</summary>
+                <p>Understanding 37 vulnerabilities in ai coding tools: zero-click rce in your ide is critical for cybersecurity professionals to stay ahead of emerging threats and protect their organizations. This article provides actionable insights and analysis.</p>
             </details>
             <details class="faq-item">
                 <summary>How can I stay updated on cybersecurity threats?</summary>

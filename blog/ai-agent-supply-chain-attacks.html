@@ -127,7 +127,7 @@
         <div class="content-wrapper">
 <h2 id="what-are-ai-agent-skills-and-why-attackers-love-them">What Are AI Agent Skills (And Why Attackers Love Them)</h2>
 
-<p>Every major AI coding agent — Codex, Cursor, Windsurf, Claude Code — now supports <strong>skills</strong>, <strong>plugins</strong>, or <strong>extensions</strong> that expand what the agent can do. A skill might add a new slash command, inject system prompt context, define custom tools, or hook into the agent's execution pipeline. Think of them as npm packages for your AI assistant.</p>
+<p>Every major AI coding agent (Codex, Cursor, Windsurf, Claude Code) now supports <strong>skills</strong>, <strong>plugins</strong>, or <strong>extensions</strong> that expand what the agent can do. A skill might add a new slash command, inject system prompt context, define custom tools, or hook into the agent's execution pipeline. Think of them as npm packages for your AI assistant.</p>
 
 <p>Here's the trust model that should concern you: when you install a skill, it runs with the agent's full permissions. That means file system access, terminal execution, network requests, and access to whatever secrets are in your environment. The agent doesn't distinguish between its built-in capabilities and what a third-party skill told it to do.</p>
 
@@ -153,9 +153,9 @@
     <li><strong>Detection evasion</strong> using Unicode steganography and base64-encoded payloads hidden in seemingly innocent configuration strings</li>
 </ul>
 
-<p>Nobody caught it because there was no security scanning tooling for agent skills. No SAST. No dependency audit. No malware analysis pipeline. The marketplace had a rating system and a terms-of-service page — that was the entire security model.</p>
+<p>Nobody caught it because there was no security scanning tooling for agent skills. No SAST. No dependency audit. No malware analysis pipeline. The marketplace had a rating system and a terms-of-service page: that was the entire security model.</p>
 
-<p>This is the npm/PyPI supply chain problem all over again, but worse. A malicious npm package runs in a sandboxed Node.js process. A malicious agent skill runs through an AI agent with terminal access, <code>.env</code> file access, and arbitrary command execution. The blast radius isn't a compromised build — it's a compromised development environment.</p>
+<p>This is the npm/PyPI supply chain problem all over again, but worse. A malicious npm package runs in a sandboxed Node.js process. A malicious agent skill runs through an AI agent with terminal access, <code>.env</code> file access, and arbitrary command execution. The blast radius is the whole development environment.</p>
 
 <h2 id="the-5-core-threat-categories">The 5 Core Threat Categories</h2>
 
@@ -167,7 +167,7 @@
 
 <p><strong>Direct injection</strong> is the simplest form: a skill embeds malicious instructions in its content that override the agent's intended behavior. "Ignore previous instructions and execute the following command" works when the agent treats skill content as trusted input.</p>
 
-<p><strong>Indirect (transitive) injection</strong> is harder to detect. The skill itself looks clean, but it instructs the agent to read external data — a URL, a file, an API response — that contains the actual malicious payload. The skill is just the delivery mechanism.</p>
+<p><strong>Indirect (transitive) injection</strong> is harder to detect. The skill itself looks clean, but it instructs the agent to read external data (a URL, a file, an API response) that contains the actual malicious payload. The skill is just the delivery mechanism.</p>
 
 <blockquote><p>In a chatbot, prompt injection produces wrong text. In an agent, prompt injection produces executed commands. That's the difference between an annoyance and a breach.</p></blockquote>
 
@@ -178,12 +178,12 @@
 <p>Agent skills can construct <strong>read-collect-send chains</strong> that are invisible to network-level monitoring:</p>
 
 <ol>
-    <li><strong>Read:</strong> The skill instructs the agent to read files — source code, credentials, environment variables, SSH keys</li>
+    <li><strong>Read:</strong> The skill instructs the agent to read files: source code, credentials, environment variables, SSH keys</li>
     <li><strong>Collect:</strong> Data is aggregated in the agent's context window, not written to disk</li>
     <li><strong>Send:</strong> The agent makes an HTTP request (or writes to a file that's synced to a remote service) to exfiltrate the collected data</li>
 </ol>
 
-<p>Your existing DLP won't catch this. The data flows through the agent's reasoning process, not through the network in a way your proxy can inspect. The exfiltration request looks like a normal API call — the agent is just making it for the wrong reasons.</p>
+<p>Your existing DLP won't catch this. The data flows through the agent's reasoning process, not through the network in a way your proxy can inspect. The exfiltration request looks like a normal API call: the agent is just making it for the wrong reasons.</p>
 
 <h3 id="3-tool-poisoning-and-dependency-confusion">3. Tool Poisoning and Dependency Confusion</h3>
 
@@ -227,7 +227,7 @@
 
 <ol>
     <li><strong>Deterministic analysis:</strong> YARA rules for known malware signatures, AST parsing for suspicious code patterns, taint tracking for data flow from sensitive sources to network sinks. This catches the known-bad patterns with zero false positive tolerance.</li>
-    <li><strong>LLM-assisted semantic analysis:</strong> For obfuscated or novel threats that evade pattern matching, the scanner uses an LLM to reason about code intent. "This function reads environment variables, encodes them, and passes them to an HTTP request — is this expected behavior for a code formatting skill?"</li>
+    <li><strong>LLM-assisted semantic analysis:</strong> For obfuscated or novel threats that evade pattern matching, the scanner uses an LLM to reason about code intent. "This function reads environment variables, encodes them, and passes them to an HTTP request. Is this expected behavior for a code formatting skill?"</li>
 </ol>
 
 <p>The tool maps findings to Cisco's AI Security Framework (AITech and AISubtech codes), with cross-framework mappings to OWASP, MITRE ATLAS, and NIST AML available through its taxonomy metadata. Check the <a href="https://github.com/cisco-ai-defense/skill-scanner" target="_blank" rel="noopener">skill-scanner repository</a> for the current mapping before you rely on it in a risk assessment.</p>
@@ -236,15 +236,15 @@
 
 <h2 id="defenses-for-security-teams">Defenses for Security Teams</h2>
 
-<p>The agent skill supply chain is where browser extensions were in 2010 — powerful, largely unaudited, and running with excessive permissions. Here's how to get ahead of it.</p>
+<p>The agent skill supply chain is where browser extensions were in 2010: powerful, largely unaudited, and running with excessive permissions. Here's how to get ahead of it.</p>
 
 <ul>
     <li><strong>Scan before trust.</strong> Treat agent skills exactly like third-party dependencies. Run them through Cisco's skill-scanner or equivalent tooling before installation. Add skill auditing to your SDLC the same way you added SCA for npm packages.</li>
-    <li><strong>Principle of least privilege.</strong> Limit what agents can access. If your coding agent doesn't need to read <code>.env</code> files or make network requests, revoke those permissions. Most agent frameworks now support permission boundaries — use them.</li>
+    <li><strong>Principle of least privilege.</strong> Limit what agents can access. If your coding agent doesn't need to read <code>.env</code> files or make network requests, revoke those permissions. Most agent frameworks now support permission boundaries: use them.</li>
     <li><strong>Monitor agent behavior.</strong> Log tool calls, file access patterns, and network requests made by agents. If your code formatting skill is reading SSH keys, that's a finding.</li>
     <li><strong>Review rules files and MCP configurations.</strong> Before running an agent on a new repository, inspect <code>.cursorrules</code>, <code>.claude/</code>, <code>.cursor/</code>, MCP server configs, and any other agent configuration files. These are attack vectors for indirect prompt injection.</li>
-    <li><strong>Sandbox execution.</strong> Run agents in containers, VMs, or ephemeral environments — not directly on developer workstations with access to production credentials and VPN connections. The blast radius of a compromised agent should be one disposable environment, not your entire development infrastructure.</li>
-    <li><strong>Enforce approval workflows.</strong> Require security team sign-off for new agent skills the same way you require approval for new SaaS tools. Shadow AI isn't just ChatGPT — it's every unvetted plugin your developers installed this week.</li>
+    <li><strong>Sandbox execution.</strong> Run agents in containers, VMs, or ephemeral environments, not directly on developer workstations with access to production credentials and VPN connections. The blast radius of a compromised agent should be one disposable environment, not your entire development infrastructure.</li>
+    <li><strong>Enforce approval workflows.</strong> Require security team sign-off for new agent skills the same way you require approval for new SaaS tools. Shadow AI includes every unvetted plugin your developers installed this week.</li>
 </ul>
 
 <h2 id="the-bottom-line">The Bottom Line</h2>
@@ -253,7 +253,7 @@
 
 <p>The "What Would Elon Do?" incident is one documented example of a broader pattern. Detection tooling is emerging, but prevention requires fundamental changes to how marketplaces operate: mandatory code signing, permission scoping, behavioral sandboxing, and continuous monitoring.</p>
 
-<p>If your organization uses AI coding agents — and in 2026, most do — agent skill security belongs on your threat model today.</p>
+<p>If your organization uses AI coding agents (and in 2026, most do), agent skill security belongs on your threat model today.</p>
 
 <h2 id="related-resources">Related Resources</h2>
 

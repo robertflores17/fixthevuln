@@ -625,7 +625,7 @@
       "domain": 1,
       "objective": "1.2",
       "difficulty": "hard",
-      "question": "A data engineer needs to convert a data lake from JSON to Parquet format while the lake continues to receive new data. The conversion must be atomic — queries should never see partial results. Which approach is BEST?",
+      "question": "A data engineer needs to convert a data lake from JSON to Parquet format while the lake continues to receive new data. The conversion must be atomic: queries should never see partial results. Which approach is BEST?",
       "options": [
         "Use Athena CTAS to create new Parquet tables in a separate location, then update Glue Data Catalog pointers atomically",
         "Overwrite JSON files with Parquet files in place",
@@ -1865,7 +1865,7 @@
         "Store late data in a separate table and join at query time"
       ],
       "correct": 0,
-      "explanation": "Apache Iceberg's MERGE INTO operation performs atomic upserts — inserting new records and updating existing ones based on a primary key match. This handles late-arriving data without overwriting entire partitions or requiring separate tables.",
+      "explanation": "Apache Iceberg's MERGE INTO operation performs atomic upserts, inserting new records and updating existing ones based on a primary key match. This handles late-arriving data without overwriting entire partitions or requiring separate tables.",
       "link": "cloud-security.html"
     },
     {
@@ -1923,7 +1923,7 @@
       "difficulty": "medium",
       "question": "Which metric should a data engineer track to measure the freshness of data in a data warehouse?",
       "options": [
-        "Data latency — the time between when data is generated at the source and when it becomes available for queries",
+        "Data latency: the time between when data is generated at the source and when it becomes available for queries",
         "Query execution time",
         "Storage utilization",
         "Number of tables in the data catalog"
@@ -1957,7 +1957,7 @@
       "options": [
         "Up to 60 seconds of data since the last successful checkpoint",
         "All data from the beginning of the stream",
-        "No data — Glue Streaming jobs never reprocess",
+        "No data: Glue Streaming jobs never reprocess",
         "Up to 24 hours of data"
       ],
       "correct": 0,
@@ -2169,7 +2169,7 @@
         "Granting read access to all data stores by default"
       ],
       "correct": 0,
-      "explanation": "Least privilege means granting only the specific permissions required. For data engineering, this means a Glue job should only access the specific S3 paths, Data Catalog tables, and Redshift schemas it needs — not broad s3:* or glue:* permissions.",
+      "explanation": "Least privilege means granting only the specific permissions required. For data engineering, this means a Glue job should only access the specific S3 paths, Data Catalog tables, and Redshift schemas it needs, not broad s3:* or glue:* permissions.",
       "link": "cloud-security.html"
     },
     {
@@ -2323,8 +2323,8 @@
       "difficulty": "hard",
       "question": "A data pipeline needs to encrypt data at rest in Glue, transit between services, and at rest in Redshift, all using the SAME KMS key for unified key management. Is this possible?",
       "options": [
-        "Yes — a single KMS CMK can be specified in Glue security configuration and Redshift cluster encryption, and in-transit encryption uses TLS which is separate",
-        "No — each service requires a different KMS key",
+        "Yes: a single KMS CMK can be specified in Glue security configuration and Redshift cluster encryption, and in-transit encryption uses TLS which is separate",
+        "No: each service requires a different KMS key",
         "Only if using SSE-S3 encryption",
         "Only if using CloudHSM"
       ],
@@ -2355,7 +2355,7 @@
       "difficulty": "hard",
       "question": "A data engineer needs to implement tag-based access control (TBAC) where different teams can only access data tagged with their department. The solution must work across Athena, EMR, and Redshift Spectrum. Which implementation is correct?",
       "options": [
-        "Define LF-Tags in Lake Formation, tag resources by department, and create permissions grants using tag expressions — Lake Formation enforces access across all three query engines",
+        "Define LF-Tags in Lake Formation, tag resources by department, and create permissions grants using tag expressions: Lake Formation enforces access across all three query engines",
         "Use S3 object tagging and IAM condition keys",
         "Create separate Glue databases per department",
         "Use Redshift row-level security policies"
@@ -2393,7 +2393,7 @@
         "Encryption in transit only"
       ],
       "correct": 0,
-      "explanation": "HIPAA compliance requires: encryption at rest (SSE-KMS), encryption in transit (TLS), access controls (Lake Formation), audit logging (CloudTrail), sensitive data detection (Macie), network isolation (VPC endpoints), and a signed BAA with AWS. All components are necessary — encryption alone is insufficient.",
+      "explanation": "HIPAA compliance requires: encryption at rest (SSE-KMS), encryption in transit (TLS), access controls (Lake Formation), audit logging (CloudTrail), sensitive data detection (Macie), network isolation (VPC endpoints), and a signed BAA with AWS. All components are necessary; encryption alone is insufficient.",
       "link": "cloud-security.html"
     },
     {
