@@ -36,9 +36,11 @@ jobs:
       - name: Run page audit
         id: audit
         continue-on-error: true
+        env:
+          SKIP_LINKS: ${{ github.event.inputs.skip_links }}
         run: |
           SKIP_FLAG=""
-          if [ "${{ github.event.inputs.skip_links }}" == "true" ]; then
+          if [ "$SKIP_LINKS" == "true" ]; then
             SKIP_FLAG="--skip-links"
           fi
 

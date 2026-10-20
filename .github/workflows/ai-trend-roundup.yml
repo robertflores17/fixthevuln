@@ -30,9 +30,11 @@ jobs:
           python-version: '3.11'
 
       - name: Aggregate AI security news
+        env:
+          DAYS: ${{ github.event.inputs.days || '7' }}
         run: |
           python3 scripts/aggregate_ai_security_news.py \
-            --days "${{ github.event.inputs.days || '7' }}"
+            --days "$DAYS"
 
       - name: Aggregate AI vulnerability intel
         run: |
