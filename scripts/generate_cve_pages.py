@@ -28,6 +28,7 @@ KEV_PATH = REPO_ROOT / 'data' / 'kev-data.json'
 CVE_DIR = REPO_ROOT / 'cve'
 SITEMAP_PATH = REPO_ROOT / 'sitemap.xml'
 TODAY = date.today().isoformat()
+TODAY_DISPLAY = date.today().strftime('%B %-d, %Y')
 
 
 def severity_label(cvss, version=''):
@@ -372,7 +373,7 @@ def generate_index_page(vulns):
         <div class="container">
             <h1>CVE Database</h1>
             <p>CISA Known Exploited Vulnerabilities Tracker</p>
-            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">{len(vulns)} CVEs tracked. Updated {TODAY}</p>
+            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">{len(vulns)} CVEs tracked. Updated {TODAY_DISPLAY}</p>
         </div>
     </header>
 
