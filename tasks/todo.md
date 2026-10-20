@@ -1186,3 +1186,8 @@ roadmaps, blog (largest).
       ("Free blank templates or $4.99/mo for pre-filled intelligence...").
 - Result: 19 em-dashes left site-wide, all deliberate (third-party titles/advisory text, table placeholders, one comment).
 - [ ] Unsourced figure to verify (Content Editor): cybersecurity-job-trends.html "CISSP holders earn an average of $150,000+".
+- [ ] Figure to verify (Content Editor): blog/ai-notetaker-security-risk.html "California, Illinois, and 9 other U.S. states
+      require all-party consent". Published counts vary 11-13 depending on how MI, CT and OR are treated.
+
+- [x] Batch 5 polish (2026-10-20): roundup bylines end with a period (old posts + aggregator), SecAI 40% sentence,
+      2 quiz sentences, 3 more "not X, it's Y" sentences in editorial posts.

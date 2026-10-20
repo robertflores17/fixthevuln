@@ -335,7 +335,7 @@ def build_digest(grouped: dict, cutoff_dt: datetime, today: datetime) -> str:
             lines.append(f"- **[{title}]({href})**  ")
             credit = f"  Source: [{src['name']}]({src['site']})"
             if pub:
-                credit += f', {html.escape(pub, quote=False)}'
+                credit += f', {html.escape(pub, quote=False)}.'
             lines.append(credit)
             if it.get('summary'):
                 lines.append(f"  {_md_text(it['summary'][:280])}")
