@@ -66,20 +66,23 @@ const PRODUCT_FORMATS = {
   'lifestyle-bundle':     ['standard', 'adhd', 'dark'],
 };
 
-// Own-property checks so a saved productId like 'constructor' can't hit an inherited member
+// Own-property checks so a saved productId like 'constructor' can't hit an inherited member.
+// hasOwnProperty.call, not Object.hasOwn: the store must still load on Safari < 15.4.
+const hasOwn = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
+
 function formatAvailable(productId, variant) {
-  return !Object.hasOwn(PRODUCT_FORMATS, productId) || PRODUCT_FORMATS[productId].includes(variant);
+  return !hasOwn(PRODUCT_FORMATS, productId) || PRODUCT_FORMATS[productId].includes(variant);
 }
 
 function productPrice(productId, variant) {
-  const pb = Object.hasOwn(PRODUCT_BUNDLE_PRICING, productId) ? PRODUCT_BUNDLE_PRICING[productId] : null;
+  const pb = hasOwn(PRODUCT_BUNDLE_PRICING, productId) ? PRODUCT_BUNDLE_PRICING[productId] : null;
   if (pb) return pb.single;
   return PRICING[variant] || PRICING.standard;
 }
 
 // Strike-through price shown next to a discounted product, or null when there isn't one
 function productOriginalPrice(productId, variant) {
-  const pb = Object.hasOwn(PRODUCT_BUNDLE_PRICING, productId) ? PRODUCT_BUNDLE_PRICING[productId] : null;
+  const pb = hasOwn(PRODUCT_BUNDLE_PRICING, productId) ? PRODUCT_BUNDLE_PRICING[productId] : null;
   if (pb) return pb.items.length * (PRICING[variant] || PRICING.standard);
   if (variant === 'bundle') return PRICING.standard + PRICING.adhd + PRICING.dark + PRICING.adhd_dark;
   return null;
@@ -337,7 +340,7 @@ try {
   cart = cart.filter(item => item && typeof item.productId === 'string'
     && (item.productId.startsWith('cp:')
         || (PRODUCTS.some(p => p.id === item.productId)
-            && Object.hasOwn(PRICING, item.variant) && formatAvailable(item.productId, item.variant))));
+            && hasOwn(PRICING, item.variant) && formatAvailable(item.productId, item.variant))));
   for (const item of cart) {
     if (!item.productId.startsWith('cp:')) item.price = productPrice(item.productId, item.variant);
   }
