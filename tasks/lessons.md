@@ -143,3 +143,19 @@ Robert asked. Fixed in #150.
    `best-cybersecurity-certifications.html`. Grep both the literal dash and `&ndash;`.
 3. Flint (credibility-editor) checks LinkedIn captions only. A caption that links a
    site page does not make that page verified.
+
+## 2026-10-21: A real OWASP edition was "corrected" away as fabricated
+
+**What happened:** On 2026-10-03/04, two commits (648c32c5, c3d2e499) reverted owasp-llm-top10.html and the
+ai-vulnerabilities pages from the OWASP LLM Top 10 2026 edition to 2025, calling 2026 "fabricated". The 2026
+edition is real (published Aug 3-4, 2026; canonical source github.com/GenAI-Security-Project/GenAI-LLM-Top10
+/2026/final). The check that misled it: genai.owasp.org/llm-top-10/ still showed the 2025 list weeks after release.
+Result: the hub page said "next revision not expected until 2027", the 2026 URLs redirected to 2025 pages, and
+the rest of the site (AI hub, Agentic Skills, quiz, data) still said 2026. Contradictory for 2.5 weeks.
+
+**Rules:**
+1. Before declaring a standard's edition fabricated or wrong, check its canonical source repo or release page,
+   not only the landing page. Landing pages lag.
+2. A change to a standard's edition must update every page that cites its numbering in the same commit:
+   grep for the category names and LLMxx numbers site-wide first.
+3. "Corrections" to facts get the same content-editor gate as new claims.

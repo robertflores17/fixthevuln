@@ -158,7 +158,7 @@ PAGE_CONFIGS = [
         ],
         'faq_items': [
             ('What is the OWASP Top 10 for LLM Applications?',
-             'The OWASP Top 10 for LLM Applications is a security awareness document identifying the most critical vulnerabilities in applications that use Large Language Models. The 2026 edition, published August 2026 and announced September 1, 2026, covers prompt injection, sensitive information disclosure, excessive agency, supply chain risk, data and model poisoning, unbounded consumption, misinformation, hidden context exposure, vector and embedding weaknesses, and improper output handling.'),
+             'The OWASP Top 10 for LLM Applications is a security awareness document identifying the most critical vulnerabilities in applications that use Large Language Models. The 2026 edition, published in August 2026, covers prompt injection, sensitive information disclosure, excessive agency, supply chain risk, data and model poisoning, unbounded consumption, misinformation, hidden context exposure, vector and embedding weaknesses, and improper output handling.'),
             ('What is prompt injection in LLM applications?',
              'Prompt injection is an attack where a malicious user crafts input that overrides or manipulates the LLM system prompt, causing the model to perform unintended actions such as leaking system instructions, bypassing safety filters, or executing unauthorized operations.'),
             ('How can organizations secure LLM-powered applications?',
@@ -174,10 +174,10 @@ PAGE_CONFIGS = [
         'content_html': r"""        <div class="key-takeaways">
             <h2>Key Takeaways</h2>
             <ul>
-                <li>The 2026 edition reranks the list against real incident data for the first time: eight of the ten categories moved position</li>
+                <li>The 2026 edition ranks the list using practitioner votes weighed against real incident records: eight of the ten categories moved position</li>
                 <li>Prompt injection (LLM01) holds the top spot for the third edition running, so treat all user input to LLMs as untrusted</li>
                 <li>Excessive agency jumped from sixth to third (LLM03) as agentic deployments started causing production incidents</li>
-                <li>System Prompt Leakage was broadened and renamed Hidden Context Exposure (LLM08): it now covers RAG content, memory, application state, and tool schemas, not just the system prompt</li>
+                <li>System Prompt Leakage was broadened and renamed Hidden Context Exposure (LLM08): it now covers any hidden, non-user-facing instructions or operational context placed in a model's context, not only the system prompt</li>
                 <li>Improper Output Handling fell from fifth to tenth (LLM10), but the severity of what it causes (XSS, SSRF, RCE) has not changed</li>
                 <li>Maintain an AI Bill of Materials (AI-BOM) to track models, datasets, and plugins in your supply chain</li>
             </ul>
@@ -185,7 +185,7 @@ PAGE_CONFIGS = [
 
         <section class="intro">
             <h2>Securing LLM-Powered Applications</h2>
-            <p>Large Language Models are being integrated into applications at an unprecedented rate, from chatbots and code assistants to autonomous agents. The OWASP Top 10 for LLM Applications (2026 edition, published August 2026 and announced September 1, 2026) identifies the most critical security risks unique to these systems. Unlike traditional web vulnerabilities, LLM risks stem from the probabilistic nature of model outputs, the opacity of training data, and the novel ways users interact with AI systems.</p>
+            <p>Large Language Models are being integrated into applications at an unprecedented rate, from chatbots and code assistants to autonomous agents. The OWASP Top 10 for LLM Applications (2026 edition, published in August 2026) identifies the most critical security risks unique to these systems. Unlike traditional web vulnerabilities, LLM risks stem from the probabilistic nature of model outputs, the opacity of training data, and the novel ways users interact with AI systems.</p>
             <p>The 2026 ranking shifts emphasis from protecting the conversation to containing the consequences: categories describing what an application can <em>do</em> with its access and authority moved up, while categories describing what it <em>says</em> moved down.</p>
             <p>Each of the ten categories below has its own detailed page with risk ratings, real-world attack examples, and practical mitigations. Click through from the summary grid.</p>
         </section>
