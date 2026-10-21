@@ -1185,8 +1185,8 @@ roadmaps, blog (largest).
 - [x] Content Editor follow-ups from batch 4: 5 "not X, it's Y" sentences, 4 double colons, template CTA wording
       ("Free blank templates or $4.99/mo for pre-filled intelligence...").
 - Result: 19 em-dashes left site-wide, all deliberate (third-party titles/advisory text, table placeholders, one comment).
-- [ ] Unsourced figure to verify (Content Editor): cybersecurity-job-trends.html "CISSP holders earn an average of $150,000+".
-- [ ] Figure to verify (Content Editor): blog/ai-notetaker-security-risk.html "California, Illinois, and 9 other U.S. states
+- [x] (2026-10-21, ISC2 cissp-salary page: NA median $150,000, global $127,000) Unsourced figure to verify (Content Editor): cybersecurity-job-trends.html "CISSP holders earn an average of $150,000+".
+- [x] (2026-10-21, now "At least 11 U.S. states") Figure to verify (Content Editor): blog/ai-notetaker-security-risk.html "California, Illinois, and 9 other U.S. states
       require all-party consent". Published counts vary 11-13 depending on how MI, CT and OR are treated.
 
 - [x] Batch 5 polish (2026-10-20): roundup bylines end with a period (old posts + aggregator), SecAI 40% sentence,
