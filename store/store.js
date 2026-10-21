@@ -54,19 +54,32 @@ const PRICING = {
 // Multi-planner bundles sold as one product: 25% off the planners bought separately.
 // Must match PRODUCT_BUNDLE_PRICING in cloudflare-worker.js (checked by tests/test_store_pricing_parity.py).
 const PRODUCT_BUNDLE_PRICING = {
-  'lifestyle-bundle': { planners: 3, single: 13.47, bundle: 35.97 },
+  'lifestyle-bundle': { items: ['budget-binder', '2026-digital-planner', 'wellness-journal'], single: 13.47 },
 };
+
+// Formats that exist for products without all five. Must match PRODUCT_FORMATS in cloudflare-worker.js.
+const PRODUCT_FORMATS = {
+  'budget-binder':        ['standard', 'adhd', 'dark'],
+  'wellness-journal':     ['standard', 'adhd', 'dark'],
+  '2026-digital-planner': ['standard', 'adhd', 'dark'],
+  'business-templates':   ['standard', 'adhd', 'dark', 'adhd_dark'],
+  'lifestyle-bundle':     ['standard', 'adhd', 'dark'],
+};
+
+function formatAvailable(productId, variant) {
+  return !PRODUCT_FORMATS[productId] || PRODUCT_FORMATS[productId].includes(variant);
+}
 
 function productPrice(productId, variant) {
   const pb = PRODUCT_BUNDLE_PRICING[productId];
-  if (pb) return variant === 'bundle' ? pb.bundle : pb.single;
+  if (pb) return pb.single;
   return PRICING[variant] || PRICING.standard;
 }
 
 // Strike-through price shown next to a discounted product, or null when there isn't one
 function productOriginalPrice(productId, variant) {
   const pb = PRODUCT_BUNDLE_PRICING[productId];
-  if (pb) return pb.planners * (PRICING[variant] || PRICING.standard);
+  if (pb) return pb.items.length * (PRICING[variant] || PRICING.standard);
   if (variant === 'bundle') return PRICING.standard + PRICING.adhd + PRICING.dark + PRICING.adhd_dark;
   return null;
 }
@@ -498,6 +511,7 @@ function renderProducts() {
     const inCart = cart.some(item => item.key === cartKey);
     const price = productPrice(product.id, selectedVariant);
     const original = productOriginalPrice(product.id, selectedVariant);
+    const available = formatAvailable(product.id, selectedVariant);
 
     return `
       <div class="product-card ${product.popular ? 'popular' : ''}" data-vendor="${esc(product.vendor)}">
@@ -519,8 +533,8 @@ function renderProducts() {
                   data-product-name="${esc(product.name)}"
                   data-variant="${esc(selectedVariant)}"
                   data-price="${price}"
-                  ${inCart ? 'disabled' : ''}>
-            ${inCart ? '✓ Added' : 'Add to Cart'}
+                  ${inCart || !available ? 'disabled' : ''}>
+            ${inCart ? '✓ Added' : available ? 'Add to Cart' : 'Not in this format'}
           </button>
         </div>
       </div>
@@ -814,6 +828,7 @@ function renderFeaturedProducts() {
     const inCart = cart.some(item => item.key === cartKey);
     const price = productPrice(product.id, selectedVariant);
     const original = productOriginalPrice(product.id, selectedVariant);
+    const available = formatAvailable(product.id, selectedVariant);
 
     return `
       <div class="product-card ${product.popular ? 'popular' : ''}" data-vendor="${esc(product.vendor)}">
@@ -835,8 +850,8 @@ function renderFeaturedProducts() {
                   data-product-name="${esc(product.name)}"
                   data-variant="${esc(selectedVariant)}"
                   data-price="${price}"
-                  ${inCart ? 'disabled' : ''}>
-            ${inCart ? '✓ Added' : 'Add to Cart'}
+                  ${inCart || !available ? 'disabled' : ''}>
+            ${inCart ? '✓ Added' : available ? 'Add to Cart' : 'Not in this format'}
           </button>
         </div>
       </div>

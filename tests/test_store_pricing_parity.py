@@ -1,43 +1,57 @@
-"""Guards the multi-planner bundle prices: the worker (source of truth) and store.js must agree,
-and each bundle must really save at least the 25% its badge claims."""
+"""Guards the multi-planner bundle and per-product format tables: the worker (source of truth)
+and store.js must agree, and each bundle must really save at least the 25% its badge claims."""
 import re
 import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+WORKER = 'store/cloudflare-worker.js'
+STORE = 'store/store.js'
 
 
-def _table(path, scale):
+def _block(path, name):
     src = (ROOT / path).read_text()
-    block = re.search(r'const PRODUCT_BUNDLE_PRICING = \{(.*?)\n\};', src, re.S).group(1)
-    return {pid: {'planners': int(n), 'single': round(float(s) * scale), 'bundle': round(float(b) * scale)}
-            for pid, n, s, b in re.findall(
-                r"'([\w-]+)': \{ planners: (\d+), single: ([\d.]+), bundle: ([\d.]+) \}", block)}
+    return re.search(r'const ' + name + r' = \{(.*?)\n\};', src, re.S).group(1)
 
 
-def _per_planner(path, scale):
-    src = (ROOT / path).read_text()
-    block = re.search(r'const PRICING = \{(.*?)\};', src, re.S).group(1)
-    return {k: round(float(v) * scale) for k, v in re.findall(r'(\w+):\s+([\d.]+)', block)}
+def _bundles(path, scale):
+    out = {}
+    for pid, items, single in re.findall(
+            r"'([\w-]+)': \{ items: \[([^\]]*)\], single: ([\d.]+) \}", _block(path, 'PRODUCT_BUNDLE_PRICING')):
+        out[pid] = {'items': re.findall(r"'([\w-]+)'", items), 'single': round(float(single) * scale)}
+    return out
+
+
+def _formats(path):
+    return {pid: re.findall(r"'(\w+)'", fmts)
+            for pid, fmts in re.findall(r"'([\w-]+)':\s+\[([^\]]*)\]", _block(path, 'PRODUCT_FORMATS'))}
 
 
 class StorePricingParity(unittest.TestCase):
-    def test_worker_and_store_js_agree(self):
-        worker = _table('store/cloudflare-worker.js', 1)
-        frontend = _table('store/store.js', 100)
+    def test_bundle_tables_agree(self):
+        worker = _bundles(WORKER, 1)
         self.assertTrue(worker)
-        self.assertEqual(worker, frontend)
+        self.assertEqual(worker, _bundles(STORE, 100))
+
+    def test_format_tables_agree(self):
+        worker = _formats(WORKER)
+        self.assertTrue(worker)
+        self.assertEqual(worker, _formats(STORE))
 
     def test_bundles_save_at_least_25_percent(self):
-        per = _per_planner('store/cloudflare-worker.js', 1)
-        for pid, b in _table('store/cloudflare-worker.js', 1).items():
-            self.assertLessEqual(b['single'], b['planners'] * per['standard'] * 0.75, pid)
-            self.assertLessEqual(b['bundle'], b['planners'] * per['bundle'] * 0.75, pid)
+        standard = int(re.search(r'standard:\s+(\d+)', _block(WORKER, 'PRICING')).group(1))
+        for pid, b in _bundles(WORKER, 1).items():
+            self.assertLessEqual(b['single'], len(b['items']) * standard * 0.75, pid)
+
+    def test_bundle_formats_exist_for_every_component(self):
+        formats = _formats(WORKER)
+        for pid, b in _bundles(WORKER, 1).items():
+            for item in b['items']:
+                self.assertTrue(set(formats[pid]) <= set(formats.get(item, formats[pid])), (pid, item))
 
     def test_badge_matches_claim(self):
-        js = (ROOT / 'store/store.js').read_text()
-        self.assertIn("id: 'lifestyle-bundle'", js)
-        self.assertRegex(js, r"id: 'lifestyle-bundle'.*meta: '3 planners · Save 25%'")
+        self.assertRegex((ROOT / STORE).read_text(),
+                         r"id: 'lifestyle-bundle'.*meta: '3 planners · Save 25%'")
 
 
 if __name__ == '__main__':

@@ -1191,3 +1191,11 @@ roadmaps, blog (largest).
 
 - [x] Batch 5 polish (2026-10-20): roundup bylines end with a period (old posts + aggregator), SecAI 40% sentence,
       2 quiz sentences, 3 more "not X, it's Y" sentences in editorial posts.
+
+### Store delivery fix — 2026-10-21
+- [x] R2 had no lifestyle-bundle files in any format (buyers paid, got nothing), and no lifestyle product had an
+      adhd_dark (except business-templates) or 4-format zip. Worker now delivers lifestyle-bundle as its 3
+      planners (expandPurchasedItems) and refuses formats missing from R2 (PRODUCT_FORMATS); store.js shows
+      "Not in this format". Productivity Bundle: $13.47, Standard/ADHD/Dark only.
+- [ ] Check Stripe for past lifestyle-bundle purchases (they received no files) and make those buyers whole.
+- [ ] Spot-check that cert planners really have all five formats in R2 (only lifestyle products were checked).

@@ -161,7 +161,14 @@ function expandPurchasedItems(rawItems) {
         }
       }
     } else {
-      expanded.add(item);
+      // Multi-planner product bundles deliver their component planners in the purchased format
+      const [productId, variant] = item.split('__');
+      const pb = PRODUCT_BUNDLE_PRICING[productId];
+      if (pb) {
+        for (const id of pb.items) expanded.add(`${id}__${variant}`);
+      } else {
+        expanded.add(item);
+      }
     }
   }
   return [...expanded];
@@ -183,9 +190,20 @@ const CP_PRICING = {
   4: { single: 1699, bundle: 3499 },
 };
 
-// Multi-planner bundles sold as one product (cents): 25% off the planners bought separately
+// Multi-planner bundles sold as one product (cents): 25% off the planners bought separately.
+// Delivered as the component planners (expandPurchasedItems), so no bundle file of its own exists in R2.
 const PRODUCT_BUNDLE_PRICING = {
-  'lifestyle-bundle': { planners: 3, single: 1347, bundle: 3597 },
+  'lifestyle-bundle': { items: ['budget-binder', '2026-digital-planner', 'wellness-journal'], single: 1347 },
+};
+
+// Formats that actually exist in R2 for products that don't have all five (checked 2026-10-21).
+// Products not listed have every format.
+const PRODUCT_FORMATS = {
+  'budget-binder':        ['standard', 'adhd', 'dark'],
+  'wellness-journal':     ['standard', 'adhd', 'dark'],
+  '2026-digital-planner': ['standard', 'adhd', 'dark'],
+  'business-templates':   ['standard', 'adhd', 'dark', 'adhd_dark'],
+  'lifestyle-bundle':     ['standard', 'adhd', 'dark'],
 };
 
 // Valid product IDs = all keys in CERT_NAMES
@@ -203,8 +221,12 @@ function getServerPrice(productId, variant) {
   // Reject unknown product IDs
   if (!VALID_CERT_IDS.has(productId)) return null;
   const pb = PRODUCT_BUNDLE_PRICING[productId];
-  if (pb && PRICING[variant]) return variant === 'bundle' ? pb.bundle : pb.single;
-  return PRICING[variant] || null;
+  // Own-property checks: a client variant like 'constructor' must not match an inherited member
+  if (!Object.hasOwn(PRICING, variant)) return null;
+  // Refuse to sell a format we can't deliver
+  if (Object.hasOwn(PRODUCT_FORMATS, productId) && !PRODUCT_FORMATS[productId].includes(variant)) return null;
+  if (pb) return pb.single;
+  return PRICING[variant];
 }
 
 function getServerProductName(productId) {
@@ -369,7 +391,7 @@ async function handleCheckout(request, env, cors) {
       }
       // Server-side name + variant lookup (don't trust any client-provided display values)
       const productName = getServerProductName(item.productId);
-      const variantLabel = VARIANT_LABELS[item.variant];
+      const variantLabel = Object.hasOwn(VARIANT_LABELS, item.variant) ? VARIANT_LABELS[item.variant] : null;
       if (!variantLabel) {
         return new Response(JSON.stringify({ error: 'Invalid variant' }), {
           status: 400,
