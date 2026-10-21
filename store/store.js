@@ -329,6 +329,17 @@ try {
   localStorage.removeItem('ftv_cart');
   cart = [];
 }
+// Saved carts can predate a format or price change: drop formats we can no longer deliver
+// (checkout would reject the whole cart) and show today's price for single products.
+{
+  const before = JSON.stringify(cart);
+  cart = cart.filter(item => item && typeof item.productId === 'string'
+    && (item.productId.startsWith('cp:') || formatAvailable(item.productId, item.variant)));
+  for (const item of cart) {
+    if (!item.productId.startsWith('cp:')) item.price = productPrice(item.productId, item.variant);
+  }
+  if (JSON.stringify(cart) !== before) localStorage.setItem('ftv_cart', JSON.stringify(cart));
+}
 // Remember UTM tags from the landing URL so checkout can attribute the sale (last touch wins).
 const utmParams = new URLSearchParams(location.search);
 if (utmParams.has('utm_source')) {
