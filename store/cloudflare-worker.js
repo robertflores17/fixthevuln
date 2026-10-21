@@ -183,6 +183,11 @@ const CP_PRICING = {
   4: { single: 1699, bundle: 3499 },
 };
 
+// Multi-planner bundles sold as one product (cents): 25% off the planners bought separately
+const PRODUCT_BUNDLE_PRICING = {
+  'lifestyle-bundle': { planners: 3, single: 1347, bundle: 3597 },
+};
+
 // Valid product IDs = all keys in CERT_NAMES
 const VALID_CERT_IDS = new Set(Object.keys(CERT_NAMES));
 
@@ -197,6 +202,8 @@ function getServerPrice(productId, variant) {
   }
   // Reject unknown product IDs
   if (!VALID_CERT_IDS.has(productId)) return null;
+  const pb = PRODUCT_BUNDLE_PRICING[productId];
+  if (pb && PRICING[variant]) return variant === 'bundle' ? pb.bundle : pb.single;
   return PRICING[variant] || null;
 }
 

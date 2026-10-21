@@ -1153,7 +1153,7 @@ roadmaps, blog (largest).
       CP_PRICING: 2 certs 25%, 3 certs 28%, 4 certs 29%. Accurate options: "Save up to 29%" or "25% to 29% off".
       On 7 store pages (aws, cisco, comptia, google-cloud, microsoft, offensive-devops, security-governance).
       Route through the gate with Revenue Guardian.
-- [ ] **Productivity Bundle "Save 25%" badge looks wrong (Robert's call, checkout pricing).** store.js shows
+- [x] **(2026-10-21: worker + store.js PRODUCT_BUNDLE_PRICING, $13.47 single-format / $35.97 all-format, tests/test_store_pricing_parity.py) Productivity Bundle "Save 25%" badge looks wrong (Robert's call, checkout pricing).** store.js shows
       "3 planners · Save 25%", but the worker prices 'lifestyle-bundle' via PRICING[variant] like a single
       planner: $5.99 (standard) or $15.99 (bundle variant) for 3 planners. Neither matches 25%. Decide the
       intended price, then fix worker + badge together through the gate.

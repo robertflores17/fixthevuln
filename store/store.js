@@ -51,6 +51,26 @@ const PRICING = {
   bundle:    15.99,  // All 4 formats for one cert — save ~$8
 };
 
+// Multi-planner bundles sold as one product: 25% off the planners bought separately.
+// Must match PRODUCT_BUNDLE_PRICING in cloudflare-worker.js (checked by tests/test_store_pricing_parity.py).
+const PRODUCT_BUNDLE_PRICING = {
+  'lifestyle-bundle': { planners: 3, single: 13.47, bundle: 35.97 },
+};
+
+function productPrice(productId, variant) {
+  const pb = PRODUCT_BUNDLE_PRICING[productId];
+  if (pb) return variant === 'bundle' ? pb.bundle : pb.single;
+  return PRICING[variant] || PRICING.standard;
+}
+
+// Strike-through price shown next to a discounted product, or null when there isn't one
+function productOriginalPrice(productId, variant) {
+  const pb = PRODUCT_BUNDLE_PRICING[productId];
+  if (pb) return pb.planners * (PRICING[variant] || PRICING.standard);
+  if (variant === 'bundle') return PRICING.standard + PRICING.adhd + PRICING.dark + PRICING.adhd_dark;
+  return null;
+}
+
 const VARIANT_LABELS = {
   standard:  'Standard',
   adhd:      'ADHD-Friendly',
@@ -471,12 +491,13 @@ function renderProducts() {
     ? pool
     : pool.filter(p => p.vendor === selectedVendor);
 
-  const price = PRICING[selectedVariant] || PRICING.standard;
   const variantLabel = VARIANT_LABELS[selectedVariant] || VARIANT_LABELS.standard;
 
   productGrid.innerHTML = filtered.map(product => {
     const cartKey = `${product.id}__${selectedVariant}`;
     const inCart = cart.some(item => item.key === cartKey);
+    const price = productPrice(product.id, selectedVariant);
+    const original = productOriginalPrice(product.id, selectedVariant);
 
     return `
       <div class="product-card ${product.popular ? 'popular' : ''}" data-vendor="${esc(product.vendor)}">
@@ -491,7 +512,7 @@ function renderProducts() {
         <div class="product-bottom">
           <div class="product-price">
             $${price.toFixed(2)}
-            ${selectedVariant === 'bundle' ? `<span class="original">$${(PRICING.standard + PRICING.adhd + PRICING.dark + PRICING.adhd_dark).toFixed(2)}</span>` : ''}
+            ${original ? `<span class="original">$${original.toFixed(2)}</span>` : ''}
           </div>
           <button class="btn-add ${inCart ? 'added' : ''}"
                   data-product-id="${esc(product.id)}"
@@ -786,12 +807,13 @@ function renderHubCards() {
 function renderFeaturedProducts() {
   if (!featuredGrid) return;
 
-  const price = PRICING[selectedVariant];
   const featured = PRODUCTS.filter(p => p.popular).slice(0, 6);
 
   featuredGrid.innerHTML = featured.map(product => {
     const cartKey = `${product.id}__${selectedVariant}`;
     const inCart = cart.some(item => item.key === cartKey);
+    const price = productPrice(product.id, selectedVariant);
+    const original = productOriginalPrice(product.id, selectedVariant);
 
     return `
       <div class="product-card ${product.popular ? 'popular' : ''}" data-vendor="${esc(product.vendor)}">
@@ -806,7 +828,7 @@ function renderFeaturedProducts() {
         <div class="product-bottom">
           <div class="product-price">
             $${price.toFixed(2)}
-            ${selectedVariant === 'bundle' ? `<span class="original">$${(PRICING.standard + PRICING.adhd + PRICING.dark + PRICING.adhd_dark).toFixed(2)}</span>` : ''}
+            ${original ? `<span class="original">$${original.toFixed(2)}</span>` : ''}
           </div>
           <button class="btn-add ${inCart ? 'added' : ''}"
                   data-product-id="${esc(product.id)}"
