@@ -204,6 +204,9 @@ const PRODUCT_FORMATS = {
   '2026-digital-planner': ['standard', 'adhd', 'dark'],
   'business-templates':   ['standard', 'adhd', 'dark', 'adhd_dark'],
   'lifestyle-bundle':     ['standard', 'adhd', 'dark'],
+  'teacher-planner':      ['standard', 'adhd', 'dark', 'adhd_dark'],
+  'student-planner':      ['standard', 'adhd', 'dark', 'adhd_dark'],
+  'adhd-student-planner': ['standard', 'dark'],
 };
 
 // Valid product IDs = all keys in CERT_NAMES

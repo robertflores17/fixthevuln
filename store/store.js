@@ -64,6 +64,9 @@ const PRODUCT_FORMATS = {
   '2026-digital-planner': ['standard', 'adhd', 'dark'],
   'business-templates':   ['standard', 'adhd', 'dark', 'adhd_dark'],
   'lifestyle-bundle':     ['standard', 'adhd', 'dark'],
+  'teacher-planner':      ['standard', 'adhd', 'dark', 'adhd_dark'],
+  'student-planner':      ['standard', 'adhd', 'dark', 'adhd_dark'],
+  'adhd-student-planner': ['standard', 'dark'],
 };
 
 // Own-property checks so a saved productId like 'constructor' can't hit an inherited member.
@@ -477,6 +480,10 @@ function initTheme() {
 function initFormatSelector() {
   const cards = document.querySelectorAll('.format-card');
   if (!cards.length) return;
+
+  // A format remembered from another page may not be offered here (e.g. 4-Format Bundle on the
+  // lifestyle page): fall back to Standard for this page without overwriting the saved choice.
+  if (![...cards].some(c => c.dataset.variant === selectedVariant)) selectedVariant = 'standard';
 
   // Set initial active state
   cards.forEach(c => {

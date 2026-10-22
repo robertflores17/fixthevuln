@@ -1199,3 +1199,14 @@ roadmaps, blog (largest).
       "Not in this format". Productivity Bundle: $13.47, Standard/ADHD/Dark only.
 - [ ] Check Stripe for past lifestyle-bundle purchases (they received no files) and make those buyers whole.
 - [ ] Spot-check that cert planners really have all five formats in R2 (only lifestyle products were checked).
+
+### Store + figures follow-ups — 2026-10-21
+- [x] Education planners checked in R2: teacher/student have all 4 single formats, no 4-format zip; adhd-student-planner
+      has only Standard and Dark. Added to PRODUCT_FORMATS (worker + store.js).
+- [x] Lifestyle/education format pickers: 4-Format Bundle removed, "/planner" labels, ADHD-Dark availability notes;
+      a format remembered from another page falls back to Standard on pages that don't offer it.
+- [x] FAQ copy: lifestyle/education "what do I get" no longer quotes cert page counts; store.html 4-Format FAQ scoped.
+- [x] CISSP "$135K-$165K average" (6 places) -> ISC2 North America median $150,000 / global $127,000, linked.
+- [ ] Still unsourced, same pages: CISM "$140,000+", OSCP "$130,000+", AWS Security Specialty figures
+      (best-cybersecurity-certifications.html), and the "55-75 pages" / "100+ pages" counts on cert store FAQs.
+- [ ] R2 spot-check of cert planners (all five formats) not yet done.
