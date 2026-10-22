@@ -1197,7 +1197,9 @@ roadmaps, blog (largest).
       adhd_dark (except business-templates) or 4-format zip. Worker now delivers lifestyle-bundle as its 3
       planners (expandPurchasedItems) and refuses formats missing from R2 (PRODUCT_FORMATS); store.js shows
       "Not in this format". Productivity Bundle: $13.47, Standard/ADHD/Dark only.
-- [ ] Check Stripe for past lifestyle-bundle purchases (they received no files) and make those buyers whole.
+- [x] (2026-10-22) Checked with Robert: zero lifestyle-bundle purchases ever went through. The flag was
+      precautionary (the product was listed/purchasable for ~8 months with no R2 files behind it), not
+      based on a confirmed sale. No buyers to make whole.
 - [ ] Spot-check that cert planners really have all five formats in R2 (only lifestyle products were checked).
 
 ### Store + figures follow-ups — 2026-10-21
