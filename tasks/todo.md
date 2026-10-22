@@ -1107,7 +1107,7 @@ same treatment.
 - [ ] **Store favicon.** `store/store.html` uses `/favicon.ico`, while the other pages use the blue "F" SVG. Robert likes the store tab icon as-is, so keep it unless that changes.
 - [ ] **CISM quiz weights on Nov 3, 2026. Source unverified, do not implement yet.** ISACA confirms the outline is updated effective 3 Nov 2026, but the new domain percentages (18/20/33/29 from a press-release summary) are not verified against a primary ISACA source. Before Nov 3: capture the ISACA URL and published weights, then update `cism-quiz.html` (lines 626-629 and the `domains` map near line 808) and drop the dated note.
 - [ ] **Newsletter form (10 pages).** The beehiiv form sends the email as a `?email=` query parameter. Needs the embed snippet from the beehiiv dashboard.
-- [ ] **CISSP quiz (done 2026-10-03)** — weights now 16/10/13/13/13/12/13/10 to match the ISC2 outline effective 2024-04-15.
+- [x] **CISSP quiz (done 2026-10-03)** — weights now 16/10/13/13/13/12/13/10 to match the ISC2 outline effective 2024-04-15.
 
 ## Em-dash voice pass — 2026-10-19
 
@@ -1169,9 +1169,22 @@ roadmaps, blog (largest).
       (spec in session scratchpad), mirrored into generate_guides.py, generate_quiz_pages.py, quiz data JSON.
       13 left on purpose: ai-ide-mcp-disclosures advisory text (third-party), "[un]prompted 2026 — ..." talk
       title, OWASP table empty-cell placeholders (3), one HTML comment.
-- [ ] Pre-existing drift (not fixed, flag only): generate_guides.py's owasp-llm-top10.html template is a different
-      (2026-edition) version than the live page, and its mlsecops/threat-hunting output differs from the live
-      pages. Running generate_guides.py would overwrite live content. Decide which is canonical before running it.
+- [x] (2026-10-22) mlsecops.html/threat-hunting.html drift: both pages were hand-edited many times since
+      their original generation (dark mode, FAQ schema, canonical URL fixes, new content) with generate_guides.py
+      never kept in sync. Deleted their PAGE_CONFIGS entries (dead code; `'related'` cross-links from other
+      pages to these two files are untouched and still correct). Verified by regenerating in a scratch copy:
+      both pages are now fully untouched by the script. owasp-llm-top10.html stayed in sync separately, in the
+      2026-edition-restore commit.
+- [ ] **New, bigger finding, not fixed:** the same kind of drift exists on at least 9 more PAGE_CONFIGS pages
+      (confirmed with the pre-edit generator, so not caused by the deletion above): ai-security-careers.html
+      (767 differing lines), prompt-injection.html (248), model-poisoning.html (210), owasp-llm-top10.html (225,
+      likely including the AI-VULN-GRID markers a separate script injects after generate_guides.py runs, so some
+      of this may be expected rather than real drift), siem-rule-writing.html (197), log-analysis-cheatsheet.html
+      (196), grc-career-path.html / risk-register-guide.html / third-party-risk.html (189 each). Every
+      hand-maintained guide page the generator can still produce may carry the same risk: running
+      generate_guides.py would silently regress it to an old version. Needs a decision on scope before doing
+      anything: audit each page (which content is actually stale vs. a cosmetic/formatting-only diff), then
+      either retire the whole generator for pages that are now hand-maintained, or resync it.
 - Left: blog 2,172.
 
 ### Phase 2 batch 5 (final) — 2026-10-20
@@ -1200,7 +1213,8 @@ roadmaps, blog (largest).
 - [x] (2026-10-22) Checked with Robert: zero lifestyle-bundle purchases ever went through. The flag was
       precautionary (the product was listed/purchasable for ~8 months with no R2 files behind it), not
       based on a confirmed sale. No buyers to make whole.
-- [ ] Spot-check that cert planners really have all five formats in R2 (only lifestyle products were checked).
+- [x] Spot-check that cert planners really have all five formats in R2 (only lifestyle products were checked).
+      Done 2026-10-22: full inventory, not a spot-check — all 65 certs x 5 files = 325 checks, 0 missing.
 
 ### Store + figures follow-ups — 2026-10-21
 - [x] Education planners checked in R2: teacher/student have all 4 single formats, no 4-format zip; adhd-student-planner
