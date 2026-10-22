@@ -1207,6 +1207,16 @@ roadmaps, blog (largest).
       a format remembered from another page falls back to Standard on pages that don't offer it.
 - [x] FAQ copy: lifestyle/education "what do I get" no longer quotes cert page counts; store.html 4-Format FAQ scoped.
 - [x] CISSP "$135K-$165K average" (6 places) -> ISC2 North America median $150,000 / global $127,000, linked.
-- [ ] Still unsourced, same pages: CISM "$140,000+", OSCP "$130,000+", AWS Security Specialty figures
-      (best-cybersecurity-certifications.html), and the "55-75 pages" / "100+ pages" counts on cert store FAQs.
-- [ ] R2 spot-check of cert planners (all five formats) not yet done.
+- [x] (2026-10-22) CISM/OSCP/AWS figures on best-cybersecurity-certifications.html sourced:
+      ISACA states $149,000+ for CISM (isaca.org/credentialing/cism, no year given); ZipRecruiter via
+      direct fetch puts OSCP at $119,895 average / $96K-$141K range as of July 2026
+      (ziprecruiter.com/Salaries/OSCP-Salary); AWS Security Specialty has no verifiable salary figure from
+      AWS, ZipRecruiter, CertMag, PayScale or Infosec Institute (3 fetch attempts, all 403/404) so the
+      specific dollar claim was cut. Two adjacent unsourced claims in the AWS section (role-salary range,
+      "outperforming Azure/GCP") also softened since they sat right next to the fix.
+- [x] (2026-10-22) Cert store FAQ "55-75 pages" / "100+ pages" claim verified by downloading and measuring
+      7 real planner PDFs from R2 (pdfinfo): Standard 62-79 pages, ADHD-Friendly 116-118 pages. Updated to
+      "60-80 pages" / "115+ pages" to match. Applied to all 7 cert vendor store pages.
+- [x] (2026-10-22) R2 spot-check of ALL 65 cert planners (not just a sample): checked all 5 files per cert
+      (standard/adhd/dark/adhd_dark/bundle.zip) = 325 checks. 0 missing. Unlike lifestyle/education, every
+      cert planner has every format.
