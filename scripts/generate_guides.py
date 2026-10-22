@@ -789,7 +789,7 @@ def verify_model_integrity(model_dir: str, manifest_path: str) -> bool:
         ],
         'faq_items': [
             ('What is MLSecOps?',
-             'MLSecOps (Machine Learning Security Operations) is the practice of integrating security into every phase of the machine learning lifecycle — from data collection and model training through deployment and monitoring. It extends DevSecOps principles to address the unique risks of ML systems, including data poisoning, model theft, adversarial attacks, and supply chain compromise.'),
+             'MLSecOps (Machine Learning Security Operations) is the practice of integrating security into every phase of the machine learning lifecycle, from data collection and model training through deployment and monitoring. It extends DevSecOps principles to address the unique risks of ML systems, including data poisoning, model theft, adversarial attacks, and supply chain compromise.'),
             ('How does MLSecOps differ from traditional DevSecOps?',
              'MLSecOps addresses ML-specific risks that traditional DevSecOps does not cover: training data integrity, model artifact security, adversarial robustness testing, ML supply chain risks (pre-trained models, datasets), inference pipeline security, and model drift monitoring. It adds data-centric security controls alongside traditional code-centric ones.'),
             ('What are the key phases of an MLSecOps pipeline?',
@@ -2229,7 +2229,7 @@ level: high</code></pre>
         ],
         'faq_items': [
             ('What is the difference between threat hunting and threat detection?',
-             'Threat detection is reactive and automated — SIEM rules and alerts fire when known patterns are matched. Threat hunting is proactive and human-driven — analysts form hypotheses about attacker behavior and actively search through data to find threats that automated tools missed. Hunting discovers novel attack patterns that become new detection rules.'),
+             'Threat detection is reactive and automated: SIEM rules and alerts fire when known patterns are matched. Threat hunting is proactive and human-driven: analysts form hypotheses about attacker behavior and actively search through data to find threats that automated tools missed. Hunting discovers novel attack patterns that become new detection rules.'),
             ('What is hypothesis-driven threat hunting?',
              'Hypothesis-driven hunting starts with a specific, testable theory about attacker behavior in your environment. For example: "An attacker who compromised a user via phishing would use encoded PowerShell to download additional tools." The hunter then queries relevant data sources to validate or refute the hypothesis, documenting findings regardless of outcome.'),
             ('What data sources are needed for threat hunting?',

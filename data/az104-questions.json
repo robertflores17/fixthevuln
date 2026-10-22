@@ -2664,7 +2664,7 @@
       "difficulty": "hard",
       "question": "You need to create a log-based alert that triggers when more than 5 failed sign-in attempts occur for any single user within a 10-minute window. Which Log Analytics query and alert configuration is correct?",
       "options": [
-        "SigninLogs | where ResultType != '0' | summarize FailedAttempts = count() by UserPrincipalName, bin(TimeGenerated, 10m) | where FailedAttempts > 5: configured as a log alert with 10-minute evaluation frequency",
+        "SigninLogs | where ResultType != '0' | summarize FailedAttempts = count() by UserPrincipalName, bin(TimeGenerated, 10m) | where FailedAttempts > 5 (configured as a log alert with 10-minute evaluation frequency)",
         "AzureActivity | where OperationName == 'Sign In' | count | where count > 5",
         "Perf | where CounterName == 'Failed Logins' | summarize sum(CounterValue) by Computer",
         "Heartbeat | where TimeGenerated > ago(10m) | count"
