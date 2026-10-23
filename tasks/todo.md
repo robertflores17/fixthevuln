@@ -1265,8 +1265,8 @@ roadmaps, blog (largest).
       Content Editor flagged it; fixed in a39f9677 by keeping both keys (the combo check runs first in the
       loop, so "ec-council" intercepts the 2-token case and "ec" alone still covers the 3-token titles).
       Verified all 10 ec*.html pages render correctly.
-- Practice-tests vendor-page timestamp (the 5th item, P1, 20 weeks open) deliberately NOT touched: its
-  suggested fix (remove the pt-timestamp block) conflicts with this repo's own documented policy
-  (`CLAUDE.md`'s Practice Tests section explicitly says these vendor pages are auto-generated and should
-  KEEP a timestamp, unlike evergreen quiz/tool/guide pages). Flagged back to Robert rather than picking
-  silently between "the policy is wrong" and "the tech-debt note is wrong."
+- [x] Practice-tests vendor-page timestamp (the 5th item, P1, was 20 weeks open): flagged the conflict
+      between tech-debt.md's suggested fix (remove the timestamp) and CLAUDE.md's documented policy (keep
+      it, auto-generated pages do). Robert confirmed: regenerate the date, don't remove it. Verified via
+      scratch-copy regen first (every page's diff was exactly the one timestamp line, 0 content drift),
+      then ran `generate_practice_test_pages.py` for real across all 13 vendor pages.
