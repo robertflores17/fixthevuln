@@ -1175,16 +1175,20 @@ roadmaps, blog (largest).
       pages to these two files are untouched and still correct). Verified by regenerating in a scratch copy:
       both pages are now fully untouched by the script. owasp-llm-top10.html stayed in sync separately, in the
       2026-edition-restore commit.
-- [ ] **New, bigger finding, not fixed:** the same kind of drift exists on at least 9 more PAGE_CONFIGS pages
-      (confirmed with the pre-edit generator, so not caused by the deletion above): ai-security-careers.html
-      (767 differing lines), prompt-injection.html (248), model-poisoning.html (210), owasp-llm-top10.html (225,
-      likely including the AI-VULN-GRID markers a separate script injects after generate_guides.py runs, so some
-      of this may be expected rather than real drift), siem-rule-writing.html (197), log-analysis-cheatsheet.html
-      (196), grc-career-path.html / risk-register-guide.html / third-party-risk.html (189 each). Every
-      hand-maintained guide page the generator can still produce may carry the same risk: running
-      generate_guides.py would silently regress it to an old version. Needs a decision on scope before doing
-      anything: audit each page (which content is actually stale vs. a cosmetic/formatting-only diff), then
-      either retire the whole generator for pages that are now hand-maintained, or resync it.
+- [x] (2026-10-23) Fixed the remaining 9 drifted PAGE_CONFIGS pages. Audited each (not just line counts):
+      ai-security-careers.html's entry held an entirely superseded title/description/FAQ (pre-dates the
+      "Roles That Didn't Exist Last Year" rewrite); prompt-injection.html's entry was missing the whole
+      hand-added "2026 Update: AI IDE & MCP Attack Surface" section; owasp-llm-top10.html's entry (despite
+      being deliberately corrected during the 2026-edition restore) had drifted again since, via the later
+      ranking-wording commit (2683fe48) and injected cross-link tiles neither were ever mirrored back. The
+      other 6 showed the same pattern (injector-script output + hand edits the generator never learned about).
+      Confirmed no other script imports generate_guides.py or calls PAGE_CONFIGS (same as the mlsecops/
+      threat-hunting fix), so deleted all 9 remaining dead entries, which empties PAGE_CONFIGS entirely.
+      `main()` now generates 0 pages but still calls `generate_ai_vuln_pages.main()` for the AI-VULN-GRID
+      markers (that part reads/writes the live HTML directly, independent of PAGE_CONFIGS, and is unaffected).
+      Verified via scratch-copy regeneration: all 9 pages are now fully untouched by the script. Helper
+      functions (`build_related`, `build_quiz_links`, `generate_page`) are now dead code too; left in place,
+      not in scope here.
 - Left: blog 2,172.
 
 ### Phase 2 batch 5 (final) — 2026-10-20
