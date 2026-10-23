@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
-"""Generate 11 new guide pages for AI Security, GRC, and Blue Team content gaps.
+"""Generated 11 guide pages for AI Security, GRC, and Blue Team content gaps.
 
-WARNING — DO NOT RUN THIS CASUALLY. It rewrites all 11 pages in PAGE_CONFIGS
-with no filter argument, and the live pages have drifted far ahead of it. They
-are post-processed after generation by inject_navbar_rss.py, inject_blog_links.py,
-inject_store_ctas.py and inject_error_reporter.py, plus hand edits, none of which
-this script knows about. A run on 2026-09-17 produced a net -634 lines across the
-11 pages (ai-security-careers.html alone lost 450) by reverting all of it.
+PAGE_CONFIGS is now empty. All 11 entries (the original 9 plus mlsecops.html
+and threat-hunting.html) drifted from their live pages, which were hand-edited
+and post-processed by inject_navbar_rss.py, inject_blog_links.py,
+inject_store_ctas.py and inject_error_reporter.py, none of which this script
+knew about. A run on 2026-09-17 produced a net -634 lines by reverting all of
+it (see tasks/lessons.md). Entries were retired rather than resynced since no
+other script imports this module or PAGE_CONFIGS.
 
-If you run it: `git diff --stat` immediately and `git checkout --` every page you
-did not intend to touch. See tasks/lessons.md, 2026-09-17.
-
-main() chains generate_ai_vuln_pages.main() so the AI-VULN-GRID blocks this
-script emits empty are repopulated from data/ai-vuln-content.json before exit.
+main() still chains generate_ai_vuln_pages.main() so the AI-VULN-GRID blocks
+on owasp-llm-top10.html and agentic-skills-top-10.html stay repopulated from
+data/ai-vuln-content.json — that path reads/writes those pages directly and
+doesn't depend on PAGE_CONFIGS.
 """
 
 import json
