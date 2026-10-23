@@ -1243,3 +1243,30 @@ roadmaps, blog (largest).
 - [x] (2026-10-22) R2 spot-check of ALL 65 cert planners (not just a sample): checked all 5 files per cert
       (standard/adhd/dark/adhd_dark/bundle.zip) = 325 checks. 0 missing. Unlike lifestyle/education, every
       cert planner has every format.
+
+### Tech-debt cleanup — 2026-10-23
+- [x] generate_sitemap.py CONTENT_DIRS was missing "wstg" and "practice-tests" (26 live pages never made
+      it into sitemap.xml despite reconcile-sitemap.yml running this script daily). Added both; sitemap.xml
+      791 URLs (was 765). GUIDE_PAGES was missing ai-agent-security.html, genai-data-security.html, and
+      agentic-skills-top-10.html (misclassified "Other Pages" 0.7 instead of "Security Guides" 0.8 priority;
+      the third one wasn't in the tech-debt.md note, found while auditing the same set). llms.txt/
+      llms-full.txt regenerated too (independently stale, same pages missing there as well).
+- [x] requirements.txt added (Pillow, reportlab, requests) so security-audit.yml's pip-audit step checks
+      something instead of silently no-oping with no file present.
+- [x] 7 of 9 bare `except Exception:` blocks now print a warning to stderr before their existing fallback
+      (update_sitemap.py, generate_sitemap.py, audit_pages.py x2, inject_error_reporter.py, health_check.py,
+      fetch_kev.py). Left generate_linkedin_posts.py/create_hero.py's font-path-probing ones alone:
+      those try multiple paths by design, most "failing" routinely, so logging every miss would be noise.
+- [x] Found + fixed while regenerating llms-full.txt: generate_llms_txt.py's ABBREVIATIONS mapped standalone
+      "ec" straight to "EC-Council", so ec-council.html rendered as "EC-Council Council" (loop re-processed
+      "council" separately). First fix (3774c40c) replaced "ec" with the combo key "ec-council", which broke
+      9 other EC-Council pages (ec-ceh/chfi/cnd.html x3 each) that depend on the single-word "ec" plus a
+      separate cert-code lookup — they started rendering "Ec CEH" instead of "EC-Council CEH". Caught before
+      Content Editor flagged it; fixed in a39f9677 by keeping both keys (the combo check runs first in the
+      loop, so "ec-council" intercepts the 2-token case and "ec" alone still covers the 3-token titles).
+      Verified all 10 ec*.html pages render correctly.
+- Practice-tests vendor-page timestamp (the 5th item, P1, 20 weeks open) deliberately NOT touched: its
+  suggested fix (remove the pt-timestamp block) conflicts with this repo's own documented policy
+  (`CLAUDE.md`'s Practice Tests section explicitly says these vendor pages are auto-generated and should
+  KEEP a timestamp, unlike evergreen quiz/tool/guide pages). Flagged back to Robert rather than picking
+  silently between "the policy is wrong" and "the tech-debt note is wrong."
