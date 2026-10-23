@@ -1179,8 +1179,11 @@ roadmaps, blog (largest).
       ai-security-careers.html's entry held an entirely superseded title/description/FAQ (pre-dates the
       "Roles That Didn't Exist Last Year" rewrite); prompt-injection.html's entry was missing the whole
       hand-added "2026 Update: AI IDE & MCP Attack Surface" section; owasp-llm-top10.html's entry (despite
-      being deliberately corrected during the 2026-edition restore) had drifted again since, via the later
-      ranking-wording commit (2683fe48) and injected cross-link tiles neither were ever mirrored back. The
+      being deliberately corrected during the 2026-edition restore) had drifted from the live page in ways
+      that predate the later ranking-wording fix (2683fe48, which correctly kept both files in sync for the
+      lines it touched) — the generator's copy still said "holds the top spot for the third edition running"
+      and "supply chain risks" where the live page had already dropped both, plus injected cross-link tiles
+      never mirrored back. Drift's origin wasn't tracked down (not in `git log -S` for that phrase). The
       other 6 showed the same pattern (injector-script output + hand edits the generator never learned about).
       Confirmed no other script imports generate_guides.py or calls PAGE_CONFIGS (same as the mlsecops/
       threat-hunting fix), so deleted all 9 remaining dead entries, which empties PAGE_CONFIGS entirely.
