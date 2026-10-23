@@ -247,7 +247,8 @@ def should_skip_link(url):
         parsed = urlparse(url)
         if parsed.hostname and parsed.hostname in SKIP_LINK_DOMAINS:
             return True
-    except Exception:
+    except Exception as e:
+        print(f"Warning: could not parse URL {url!r}: {e}", file=sys.stderr)
         return True
     return False
 
@@ -379,8 +380,8 @@ def audit_page(filepath):
     parser = PageParser()
     try:
         parser.feed(content)
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"Warning: HTML parse error in {rel_path} (using partial result): {e}", file=sys.stderr)
 
     # Collect external links (filtered)
     ext_links = [url for url in parser.links if not should_skip_link(url)]

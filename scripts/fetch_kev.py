@@ -60,7 +60,8 @@ def _validate_nvd_key():
         req = urllib.request.Request(url, headers=headers)
         with urllib.request.urlopen(req, timeout=10) as resp:
             _nvd_key_valid = (resp.status == 200)
-    except Exception:
+    except Exception as e:
+        print(f"  Warning: NVD key validation request failed: {e}", file=sys.stderr)
         _nvd_key_valid = False
 
     if not _nvd_key_valid:

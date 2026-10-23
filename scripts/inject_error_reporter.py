@@ -43,7 +43,8 @@ def main():
             try:
                 with open(filepath, 'r', encoding='utf-8') as f:
                     content = f.read()
-            except Exception:
+            except Exception as e:
+                print(f"Warning: could not read {filepath}: {e}", file=sys.stderr)
                 skipped += 1
                 continue
 

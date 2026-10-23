@@ -20,6 +20,7 @@ import glob
 import json
 import os
 import re
+import sys
 import urllib.request
 from datetime import datetime, timezone, timedelta
 
@@ -124,7 +125,8 @@ def _gh_api(path):
     try:
         with urllib.request.urlopen(req, timeout=20) as r:
             return json.loads(r.read().decode())
-    except Exception:
+    except Exception as e:
+        print(f"Warning: GitHub API request failed for {path}: {e}", file=sys.stderr)
         return None
 
 

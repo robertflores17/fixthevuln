@@ -22,7 +22,7 @@ SITEMAP_PATH = REPO_ROOT / "sitemap.xml"
 BASE_URL = "https://fixthevuln.com"
 
 # Directories to scan for .html files (relative to repo root)
-CONTENT_DIRS = ["blog", "certs", "comparisons", "roadmaps", "cve", "store", "ai-vulnerabilities"]
+CONTENT_DIRS = ["blog", "certs", "comparisons", "roadmaps", "cve", "store", "ai-vulnerabilities", "wstg", "practice-tests"]
 
 # Files to exclude from sitemap
 EXCLUDE_FILES = {
@@ -87,6 +87,7 @@ GUIDE_PAGES = {
     "owasp-llm-top10.html", "prompt-injection.html", "model-poisoning.html",
     "mlsecops.html", "ai-agent-security-threats.html", "ai-security-careers.html", "grc-career-path.html",
     "siem-rule-writing.html", "threat-hunting.html", "log-analysis-cheatsheet.html",
+    "ai-agent-security.html", "genai-data-security.html", "agentic-skills-top-10.html",
 }
 
 
@@ -99,8 +100,8 @@ def get_last_commit_date(filepath):
         )
         if result.stdout.strip():
             return result.stdout.strip()[:10]
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"Warning: git log lookup failed for {filepath}: {e}", file=sys.stderr)
     return datetime.now().strftime("%Y-%m-%d")
 
 
@@ -132,6 +133,8 @@ def classify_subdir_page(subdir):
         "cve":         (0.6, "weekly",  "CVE Pages"),
         "store":       (0.8, "monthly", "Store Pages"),
         "ai-vulnerabilities": (0.6, "monthly", "AI Vulnerability Techniques"),
+        "wstg":          (0.6, "monthly", "WSTG Pages"),
+        "practice-tests": (0.6, "monthly", "Practice Quizzes"),
     }
     return mapping.get(subdir, (0.5, "monthly", "Other"))
 

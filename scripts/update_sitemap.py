@@ -8,6 +8,7 @@ Usage: python3 scripts/update_sitemap.py
 
 import subprocess
 import re
+import sys
 from pathlib import Path
 from datetime import datetime
 
@@ -26,8 +27,8 @@ def get_last_commit_date(filepath: str) -> str:
             # Parse ISO date and return YYYY-MM-DD
             date_str = result.stdout.strip()
             return date_str[:10]
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"Warning: git log lookup failed for {filepath}: {e}", file=sys.stderr)
     # Fallback to today's date
     return datetime.now().strftime("%Y-%m-%d")
 
