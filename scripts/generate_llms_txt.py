@@ -36,6 +36,7 @@ ABBREVIATIONS = {
     "isaca": "ISACA",
     "giac": "GIAC",
     "ec-council": "EC-Council",
+    "ec": "EC-Council",
     "k8s": "Kubernetes",
     "offsec": "OffSec",
     "cissp": "CISSP",
