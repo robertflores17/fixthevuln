@@ -27,7 +27,8 @@ jobs:
           node-version: '20'
 
       - name: Install audit tools
-        run: pip install pip-audit
+        run: |
+          pip install --require-hashes --only-binary=:all: -r requirements-audit.txt
 
       - name: Run security audit
         id: audit
