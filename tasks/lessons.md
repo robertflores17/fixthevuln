@@ -159,3 +159,19 @@ the rest of the site (AI hub, Agentic Skills, quiz, data) still said 2026. Contr
 2. A change to a standard's edition must update every page that cites its numbering in the same commit:
    grep for the category names and LLMxx numbers site-wide first.
 3. "Corrections" to facts get the same content-editor gate as new claims.
+
+## 2026-10-24: Hash-locked pip-audit install passed every local check and failed on its first CI run
+
+The lock (`requirements-audit.txt`) was compiled with pip-compile on Python 3.14, but the workflow runs 3.12.
+`cyclonedx-python-lib` needs `typing_extensions` only on 3.12, so the 3.14 lock left it out and
+`pip install --require-hashes` aborted ("all requirements must have their versions pinned"). Two reviewers had
+flagged the version mismatch as a P3. My "CI simulation" (`pip download --no-deps --python-version 3.12`) passed
+because `--no-deps` never resolves transitive dependencies, and `--python-version` changes wheel selection but not
+which dependency markers pip evaluates. Caught by a manual `workflow_dispatch` run.
+
+**Rules:**
+1. Compile a lock with the same Python minor version the job runs (pip-compile has no flag for this).
+2. Verify a hash-locked file with a real `pip install --require-hashes --only-binary=:all: -r <lock>` in a venv
+   of the CI Python version. Check the test is valid by running it against the old/broken lock first: it must fail.
+3. A "version mismatch" P3 on a lock file is a probable failure, not a nit. Fix it before pushing.
+4. A new CI install path is not verified until it has run in CI once.
