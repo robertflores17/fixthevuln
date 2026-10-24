@@ -137,5 +137,15 @@ out="$(python3 scripts/audit_pages.py --skip-links 2>&1)"
 errs="$(echo "$out" | grep -oE '[0-9]+ errors' | head -1 | grep -oE '[0-9]+')"
 if [ "${errs:-x}" = "0" ]; then ok "page audit: 0 errors"; else bad "page audit errors: ${errs:-could not parse audit output}"; fi
 
+# A workflow with invalid YAML (e.g. an unquoted ": " in a run value) is rejected whole by GitHub.
+if command -v ruby >/dev/null; then
+    badyaml="$(for f in .github/workflows/*.yml .github/dependabot.yml; do
+        ruby -ryaml -e 'YAML.load_file(ARGV[0])' "$f" >/dev/null 2>&1 || echo "$f"
+    done)"
+    if [ -z "$badyaml" ]; then ok "workflow YAML parses"; else bad "workflow YAML does not parse: $badyaml"; fi
+else
+    echo "  SKIP workflow YAML parse (ruby not installed)"
+fi
+
 [ $fail = 0 ] && echo "self-QA: all checks passed" || echo "self-QA: FAILED"
 exit $fail
