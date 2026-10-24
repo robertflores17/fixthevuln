@@ -1,4 +1,4 @@
-# Daily KEV Review — 2026-10-23
+# Daily KEV Review — 2026-10-24
 
 **New CVEs:** 1 | **Critical:** 1 | **High:** 0 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
@@ -6,14 +6,14 @@
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-114625 | Arista | VeloCloud Orchestrator | 9.9 | Unknown | 2026-10-26 |
+| CVE-2026-110447 | Collabora | Collabora Online – Built-in CODE Server | 9.2 | Unknown | 2026-10-26 |
 
 ## Deadline Alert
 - **Nearest due date:** 2026-10-26 (1 CVE)
 - **Overdue:** None
 
 ## Vendor Summary
-- Arista: 1 CVE
+- Collabora: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
