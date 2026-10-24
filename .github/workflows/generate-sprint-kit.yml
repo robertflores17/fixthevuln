@@ -44,8 +44,13 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Set up Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'  # wrangler 4.x requires Node >=22
+
       - name: Install dependencies
-        run: pip install reportlab
+        run: pip install reportlab==5.1.0
 
       - name: Fetch latest KEV data
         run: python scripts/fetch_kev.py
@@ -69,7 +74,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           # Install wrangler
-          npm install -g wrangler
+          npm install -g wrangler@4.152.0
 
           # Find the generated PDF
           PDF_FILE=$(ls data/sprint-kits/patch-sprint-kit-*.pdf 2>/dev/null | head -1)
