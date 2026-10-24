@@ -150,8 +150,8 @@ fi
 # actionlint catches what a YAML parse can't (unknown keys, bad ${{ }} expressions). Shellcheck
 # is off: run-script style nits are out of scope here.
 if command -v actionlint >/dev/null; then
-    lint="$(actionlint -shellcheck= 2>&1)"
-    if [ -z "$lint" ]; then ok "actionlint"; else echo "$lint" | sed 's/^/    /'; bad "actionlint"; fi
+    lint="$(actionlint -shellcheck= 2>&1)"; rc=$?
+    if [ $rc = 0 ] && [ -z "$lint" ]; then ok "actionlint"; else echo "$lint" | sed 's/^/    /'; bad "actionlint (exit $rc)"; fi
 else
     echo "  SKIP actionlint (brew install actionlint)"
 fi
