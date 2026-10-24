@@ -5,6 +5,7 @@
 # post-deploy checks in /deploy. See .claude/skills/self-qa.md for the rest.
 set -uo pipefail
 cd "$(git rev-parse --show-toplevel)"
+[ -d .venv/bin ] && PATH="$PWD/.venv/bin:$PATH"  # deps (reportlab) for the full test run
 fail=0
 ok()  { echo "  PASS $1"; }
 bad() { echo "  FAIL $1"; fail=1; }
