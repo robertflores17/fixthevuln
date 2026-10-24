@@ -5,12 +5,19 @@
 # post-deploy checks in /deploy. See .claude/skills/self-qa.md for the rest.
 set -uo pipefail
 cd "$(git rev-parse --show-toplevel)"
-[ -d .venv/bin ] && PATH="$PWD/.venv/bin:$PATH"  # deps (reportlab) for the full test run
 fail=0
 ok()  { echo "  PASS $1"; }
 bad() { echo "  FAIL $1"; fail=1; }
 
 echo "== FixTheVuln self-QA"
+
+# Local venv (gitignored, built from requirements.txt) supplies reportlab for the full test run.
+# Trusted-local-only: it goes first on PATH, so never point it at a venv you did not build yourself.
+if [ -d .venv/bin ]; then
+    PATH="$PWD/.venv/bin:$PATH"
+else
+    echo "  note: no .venv, reportlab tests will be skipped (python3 -m venv .venv && .venv/bin/pip install -r requirements.txt)"
+fi
 
 broken=0
 for s in scripts/*.py scripts/lib/*.py; do
