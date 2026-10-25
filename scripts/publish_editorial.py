@@ -457,7 +457,7 @@ class BlogPublisher:
 
     def _generate_blog_index(self):
         """Generate blog/index.html listing all published posts."""
-        posts = sorted(self.metadata['posts'], key=lambda p: p['date'], reverse=True)
+        posts = sorted(self.metadata['posts'], key=lambda p: (p['date'], p['slug']), reverse=True)
 
         cards = []
         for p in posts:
@@ -534,7 +534,7 @@ class BlogPublisher:
 
     def _generate_rss_feed(self):
         """Generate blog/feed.xml RSS 2.0 feed."""
-        posts = sorted(self.metadata['posts'], key=lambda p: p['date'], reverse=True)
+        posts = sorted(self.metadata['posts'], key=lambda p: (p['date'], p['slug']), reverse=True)
 
         items = []
         for p in posts:
