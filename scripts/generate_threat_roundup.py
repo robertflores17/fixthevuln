@@ -9,6 +9,7 @@ Usage:
 """
 
 import json
+import re
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -89,6 +90,31 @@ CERT_CTA_SECTIONS = {
 }
 
 
+# KEV entries reach data/kev-data.json 1-3 days after CISA's dateAdded (daily fetch, then the
+# reviewer trigger), so a Sun/Mon addition is not there yet when the Tuesday run happens. A
+# 7-day window on dateAdded therefore lost CVEs (8 between Aug and Oct 2026). Look back 14 days
+# and drop CVEs an earlier roundup already listed: nothing is lost, nothing repeats.
+LOOKBACK_DAYS = 14
+_HEADING_CVE_RE = re.compile(r'^###\s*(CVE-\d{4}-\d+)', re.M)  # item headings only, not CVEs cited in prose
+_ISO_DATE_RE = re.compile(r'\d{4}-\d\d-\d\d')
+
+
+def covered_ids(drafts_dir):
+    """CVE ids already listed in any earlier weekly roundup draft (published or not)."""
+    ids = set()
+    for f in Path(drafts_dir).glob('weekly-threat-roundup-*.md*'):
+        ids.update(_HEADING_CVE_RE.findall(f.read_text(encoding='utf-8')))
+    return ids
+
+
+def recent_vulns(vulns, today, covered=frozenset()):
+    """Active vulns added within LOOKBACK_DAYS (boundary day inclusive) and not yet covered."""
+    start = (today - timedelta(days=LOOKBACK_DAYS)).strftime('%Y-%m-%d')
+    return [v for v in vulns
+            if not v.get('archived', False) and _ISO_DATE_RE.fullmatch(str(v.get('dateAdded') or ''))
+            and v['dateAdded'] >= start and v.get('id') not in covered]
+
+
 def main():
     repo_root = Path(__file__).resolve().parent.parent
     dry_run = '--dry-run' in sys.argv
@@ -110,27 +136,14 @@ def main():
 
     # Get date range for this week's roundup
     today = datetime.now()
-    week_ago = today - timedelta(days=14)  # 14-day lookback to catch Saturday fetch
     today_str = today.strftime('%Y-%m-%d')
-    week_start = week_ago.strftime('%Y-%m-%d')
 
-    # Filter recent active vulns
-    recent = []
-    for v in vulns:
-        if v.get('archived', False):
-            continue
-        date_added = v.get('dateAdded', '')
-        if date_added >= week_start:
-            recent.append(v)
+    recent = recent_vulns(vulns, today, covered_ids(drafts_dir))
 
-    # If no recent vulns, use all active (non-archived) ones
+    # A quiet week gets no post; padding it with old CVEs would repeat earlier roundups.
     if not recent:
-        recent = [v for v in vulns if not v.get('archived', False)]
-        if not recent:
-            print('  No active vulnerabilities for roundup.')
-            return
-        # Take the most recent 6
-        recent = sorted(recent, key=lambda v: v.get('dateAdded', ''), reverse=True)[:6]
+        print('  No new KEV entries since the last roundup, skipping.')
+        return
 
     # Sort by CVSS descending
     recent.sort(key=cvss_score, reverse=True)
@@ -152,7 +165,9 @@ def main():
     high = [v for v in recent if 7.0 <= cvss_score(v) < 9.0]
 
     # Date formatting
-    week_start_display = week_ago.strftime('%b %d')
+    # Title span starts at the oldest CVE actually included, so it never overstates the period.
+    oldest = min(v.get('dateAdded') or today_str for v in recent)
+    week_start_display = datetime.strptime(oldest, '%Y-%m-%d').strftime('%b %d')
     week_end_display = today.strftime('%b %d, %Y')
     month_year = today.strftime('%B %Y')
 
@@ -240,7 +255,7 @@ See all CVEs mapped to your cert: [Exploit Tracker](/exploit-tracker.html)"""
     # Assemble the full draft
     markdown = f"""---
 title: "This Week in Threats: {week_start_display}–{week_end_display}"
-description: "{count} new CISA KEV vulnerabilities this week. Highest CVSS: {highest_cvss}. Review the latest threats added to the Known Exploited Vulnerabilities catalog."
+description: "{count} CISA KEV vulnerabilities added since the last roundup. Highest CVSS: {highest_cvss}. Review the latest threats added to the Known Exploited Vulnerabilities catalog."
 keywords: "CISA KEV, weekly threat roundup, vulnerability management, cybersecurity threats, {month_year}"
 date: "{today_str}"
 slug: "{slug}"
@@ -251,7 +266,7 @@ cta_section: "{cta_section}"
 
 ## Weekly Threat Summary
 
-**{count} vulnerabilities** were added to the CISA Known Exploited Vulnerabilities (KEV) catalog this period. The highest CVSS score is **{highest_cvss}**.{' ' + str(len(zero_days)) + ' zero-day(s) identified.' if zero_days else ''}
+**{count} vulnerabilities** were added to the CISA Known Exploited Vulnerabilities (KEV) catalog since the last roundup. The highest CVSS score is **{highest_cvss}**.{' ' + str(len(zero_days)) + ' zero-day(s) identified.' if zero_days else ''}
 
 {severity_msg}
 
