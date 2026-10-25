@@ -1,0 +1,68 @@
+name: Hot Topic Detector
+
+# Watches primary security sources (php.net, Node.js vulnerability reports, GitHub critical
+# advisories, CISA KEV, Simon Willison) and opens ONE issue when something priority >= 2 is new.
+# Detection only: nothing is drafted or published here. Reply "post X" in a Claude session to
+# run the fast lane (primary facts, Content Editor, /pre-push-review). Why: 2026-10-25 baseline
+# lag was ~4 days from vendor release to our post; target is <= 24h (tasks/defect-ledger.md).
+
+on:
+  schedule:
+    - cron: '23 1,7,13,19 * * *'  # every 6 hours, off the :00 mark
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: hot-topic-detect
+  cancel-in-progress: false
+
+jobs:
+  detect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.11'
+
+      - name: Detect hot topics
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/detect_hot_topics.py --out hot-topics.md
+
+      - name: Open issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -s hot-topics.md ]; then
+            gh label create hot-topic --color B60205 --description "Breaking security topic candidates" 2>/dev/null || true
+            gh issue create --title "Hot topics: $(date -u +'%Y-%m-%d %H:%M UTC')" \
+              --label hot-topic --body-file hot-topics.md
+          else
+            echo "No new priority>=2 candidates." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Commit seen state
+        run: |
+          git config user.name "FixTheVuln Bot"
+          git config user.email "bot@fixthevuln.com"
+          git add data/hot_topics_seen.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Hot topic detector state $(date -u +%Y-%m-%d) [skip ci]"
+            # Other bots push to main; retry so a lost race does not leave state uncommitted
+            # (that would file a duplicate issue on the next run).
+            for _ in 1 2 3; do
+              git pull --rebase origin main && git push && break
+              sleep 5
+            done
+            git fetch -q origin main
+            git merge-base --is-ancestor HEAD origin/main || { echo "state push failed"; exit 1; }
+          fi
