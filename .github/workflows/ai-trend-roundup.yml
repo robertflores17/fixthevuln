@@ -42,10 +42,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Publish the fresh draft now instead of waiting for Tuesday's blog job.
+      # The draft sat 4 days, so the newest roundup on the site was always 10+
+      # days behind (Oct 2026). Tuesday's publish_editorial.py run stays as the
+      # catch-all for hand-written drafts.
+      - name: Publish roundup
+        run: |
+          python3 scripts/publish_editorial.py
+          python3 scripts/generate_llms_txt.py
+
       - name: Check for changes
         id: changes
         run: |
-          if [[ -n $(git status --porcelain drafts/ data/ai-security-trends.json data/ai_news_seen.json data/ai-vuln-intel.json) ]]; then
+          if [[ -n $(git status --porcelain drafts/ blog/ sitemap.xml llms.txt llms-full.txt data/blog_metadata.json data/ai-security-trends.json data/ai_news_seen.json data/ai-vuln-intel.json) ]]; then
             echo "changes=true" >> $GITHUB_OUTPUT
           else
             echo "changes=false" >> $GITHUB_OUTPUT
@@ -56,7 +65,7 @@ jobs:
         run: |
           git config user.name "FixTheVuln Bot"
           git config user.email "bot@fixthevuln.com"
-          git add drafts/ai-security-roundup-*.md data/ai-security-trends.json data/ai_news_seen.json data/ai-vuln-intel.json
+          git add drafts/ blog/ sitemap.xml llms.txt llms-full.txt data/blog_metadata.json data/ai-security-trends.json data/ai_news_seen.json data/ai-vuln-intel.json
           git commit -m "AI security trend roundup $(date -u +%Y-%m-%d) [skip ci]"
           git push
 
