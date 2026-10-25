@@ -175,3 +175,9 @@ which dependency markers pip evaluates. Caught by a manual `workflow_dispatch` r
    of the CI Python version. Check the test is valid by running it against the old/broken lock first: it must fail.
 3. A "version mismatch" P3 on a lock file is a probable failure, not a nit. Fix it before pushing.
 4. A new CI install path is not verified until it has run in CI once.
+
+### 2026-10-25: Blamed the wrong script for log warnings
+- **What went wrong:** `self-qa.sh` printed "arXiv response did not parse / carried a doctype / over 1000000 bytes". I logged "arXiv cs.CR is a flaky roundup source" in the defect ledger and built a scheduled check that counted those lines in the roundup workflow log. The lines come from `aggregate_ai_ide_vulns.py` (AI IDE tracker tests), a different script; the roundup's arXiv feed was healthy (14 items on 10-23, empty on weekends by design). The check would have reported a false PASS.
+- **What's correct:** Grep the message text (`grep -rn "arXiv response" scripts tests`) before attributing a log line to a source or script. The real, reproduced roundup defect was different: `read(MAX_FEED_BYTES)` silently truncated Project Zero and CISA feeds to 0 items.
+- **Prevention rule:** Before logging a defect from a log line, find the code that prints it and confirm it belongs to the component you are blaming. Before scheduling a check on a metric, run the metric once yourself against the real log. Same family as 2026-10-25 PHP post: facts from a summary, not the primary source.
+
