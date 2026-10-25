@@ -52,6 +52,20 @@ SOURCES = [
         'site': 'https://simonwillison.net/',
         'feed': 'https://simonwillison.net/atom/everything/',
         'category': 'prompt-injection',
+        # His feed is everything he posts (games, music, release notes); keep security posts only.
+        # Whole-word match (no stemming), so inflected forms are listed explicitly.
+        'filter_keywords': ['prompt injection', 'prompt injections', 'injection', 'injections',
+                            'jailbreak', 'jailbreaks', 'vulnerability', 'vulnerabilities',
+                            'exploit', 'exploits', 'exfiltrate', 'exfiltrates', 'exfiltrated',
+                            'exfiltration', 'security', 'cve', 'malware', 'attack', 'attacks',
+                            'attacked', 'attacker', 'sandbox', 'sandbox escape', 'supply chain',
+                            'compromise', 'compromised', 'compromising', 'backdoor', 'poisoning',
+                            'zero-day', 'hack', 'hacked', 'hackers', 'hacking',
+                            'leaking', 'lethal trifecta', 'mcp', 'guardrail', 'guardrails',
+                            'red team', 'red teaming', 'worm', 'worming', 'lockdown mode',
+                            'tricked', 'secrets', 'intrusion', 'cyberattack', 'cyberattacks',
+                            'cyber attack', 'cyber attacks', 'steal', 'stealing', 'stole',
+                            'runaway', 'unsanctioned'],
     },
     {
         'name': 'arXiv cs.CR',
@@ -60,7 +74,7 @@ SOURCES = [
         'category': 'research',
         'filter_keywords': ['llm', 'agent', 'prompt', 'gpt', 'diffusion', 'jailbreak',
                             'adversarial', 'generative', 'rag', 'machine learning',
-                            'neural', 'alignment', 'fine-tun'],
+                            'neural', 'alignment', 'fine-tune', 'fine-tuned', 'fine-tuning'],
     },
     {
         'name': 'Protect AI',
@@ -197,6 +211,7 @@ def parse_feed(raw: bytes, source: dict) -> list[dict]:
 
 _HTML_TAG_RE = re.compile(r'<[^<>]*>')  # no backtracking on unclosed '<'
 _WS_RE = re.compile(r'\s+')
+_ARXIV_PREFIX_RE = re.compile(r'^arXiv:\S+ Announce Type: \S+ Abstract: ?')
 
 
 def _md_text(s: str) -> str:
@@ -208,22 +223,24 @@ def _md_text(s: str) -> str:
     return s
 
 
+def _strip_em_dash(s: str) -> str:
+    return re.sub(r' ?— ?', ', ', s)
+
+
 def _clean_html(s: str) -> str:
     if not s:
         return ''
     s = _HTML_TAG_RE.sub('', s)
-    # Em-dashes are banned in consumer-facing copy (anti-AI-tell rule); feeds send them as entities.
-    # Collapse whitespace first so the dash pattern never backtracks over long whitespace runs.
-    s = re.sub(r' ?(?:&mdash;|—) ?', ', ', _WS_RE.sub(' ', s))
+    # Decode every entity once (named, &#39;, &#x27;) so _md_text escapes exactly once later.
+    s = html.unescape(_WS_RE.sub(' ', s))
+    # Em-dashes are banned in consumer-facing copy (anti-AI-tell rule); feeds send them as entities
+    # or literals, so strip after decoding. Whitespace is already collapsed, so no backtracking.
+    s = _strip_em_dash(s)
     # Feeds sometimes drop the space after a sentence ("Hacker News.I'm").
     s = re.sub(r'([a-z]{2})\.([A-Z])', r'\1. \2', s)
-    s = (s.replace('&nbsp;', ' ')
-          .replace('&amp;', '&')
-          .replace('&lt;', '<')
-          .replace('&gt;', '>')
-          .replace('&quot;', '"')
-          .replace('&#39;', "'"))
-    return _WS_RE.sub(' ', s).strip()
+    s = _WS_RE.sub(' ', s).strip()
+    # arXiv RSS prefixes every abstract with "arXiv:<id> Announce Type: <kind> Abstract:".
+    return _ARXIV_PREFIX_RE.sub('', s)
 
 
 def _parse_date(s: str) -> datetime | None:
@@ -294,15 +311,11 @@ def build_digest(grouped: dict, cutoff_dt: datetime, today: datetime) -> str:
     # Frontmatter — required by scripts/publish_editorial.py to convert to blog post.
     lines.append('---')
     lines.append(f'title: "AI Security Trend Roundup: {week_end}"')
-    lines.append(f'description: "{total} AI security updates from {source_names}, covering {week_start}–{today.strftime("%b %d")}. Every item credited to its original author."')
+    lines.append(f'description: "{total} AI security update{"" if total == 1 else "s"} from {source_names}, covering {week_start}–{today.strftime("%b %d")}. Every item credited to its original author."')
     lines.append('keywords: "AI security, LLM security, prompt injection, agentic AI, GenAI threats, AI vulnerabilities, AI red team"')
-    # No `date:` field here deliberately: this digest is written on aggregation
-    # day (Friday), but publish_editorial.py doesn't turn it into a live page
-    # until the next Tuesday publish-blog.yml run, up to 4 days later. Leaving
-    # `date` unset lets _parse_frontmatter's setdefault() stamp the page with
-    # the day it actually goes live, instead of a datePublished/"Last updated"
-    # that undercounts the post's real age by up to 4 days. The week the
-    # digest covers is still stated in the title and body copy above/below.
+    # No `date:` field here deliberately: publish_editorial.py's setdefault() stamps the page
+    # with the day it goes live. ai-trend-roundup.yml publishes right after this runs, so that
+    # is the aggregation day; the week covered is stated in the title and body copy.
     lines.append(f'slug: "{slug}"')
     lines.append('author: "FixTheVuln Team"')
     lines.append(f'sources: "{source_names}"')
@@ -313,7 +326,8 @@ def build_digest(grouped: dict, cutoff_dt: datetime, today: datetime) -> str:
     lines.append('')
     lines.append(f'# AI Security Trend Roundup: {week_end}')
     lines.append('')
-    lines.append(f'*Covering {week_start} → {week_end}. {total} new items from {len(contributing)} sources.*')
+    n_src = len(contributing)
+    lines.append(f"*Covering {week_start} → {week_end}. {total} new item{'' if total == 1 else 's'} from {n_src} source{'' if n_src == 1 else 's'}.*")
     lines.append('')
     lines.append('> This digest credits every source by name and links directly to each original post. '
                  'Items are selected automatically by keyword and feed filters. All rights and attribution belong to the original authors.')
@@ -330,12 +344,12 @@ def build_digest(grouped: dict, cutoff_dt: datetime, today: datetime) -> str:
             it = entry['item']
             pub = it['published_dt'].strftime('%b %d') if it.get('published_dt') else it.get('published', '')[:16]
             # Feed text is untrusted and the publisher emits this markdown as raw HTML, so escape it here.
-            title = _md_text(it['title'])
+            title = _md_text(_strip_em_dash(it['title']))
             href = quote(it['link'], safe=":/?#[]@!$&'*+,;=%~-._")
             lines.append(f"- **[{title}]({href})**  ")
             credit = f"  Source: [{src['name']}]({src['site']})"
             if pub:
-                credit += f', {html.escape(pub, quote=False)}.'
+                credit += f', {_md_text(pub)}.'
             lines.append(credit)
             if it.get('summary'):
                 lines.append(f"  {_md_text(it['summary'][:280])}")

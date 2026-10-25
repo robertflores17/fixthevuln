@@ -23,8 +23,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / 'scripts'))
 
 import re
 import time
+from html.parser import HTMLParser
 
-from aggregate_ai_security_news import CATEGORY_ORDER, SOURCES, _clean_html, build_digest, carry_framework_advisories, parse_feed
+from aggregate_ai_security_news import CATEGORY_ORDER, SOURCES, _clean_html, _item_matches_filter, build_digest, carry_framework_advisories, parse_feed
 from publish_editorial import MarkdownConverter
 from publish_editorial import BlogPublisher
 
@@ -96,6 +97,86 @@ class TestFeedTextEscaping(unittest.TestCase):
         start = time.monotonic()
         _clean_html(' ' * 50000 + 'x')
         self.assertLess(time.monotonic() - start, 2.0)
+
+    def test_hostile_item_renders_no_executable_markup(self):
+        """Friday publishes with no human step: escaping is the only control, so pin it end to end."""
+        hostile = ('"><script>alert(1)</script><img src=x onerror=alert(1)> '
+                   '&lt;script&gt;alert(2)&lt;/script&gt; [x](javascript:alert(3)) &#x3c;svg onload=alert(4)&#x3e;')
+        digest = self._digest_with(hostile, 'https://example.com/a?q="><x', hostile)
+        out = MarkdownConverter().convert(digest.split('\n---\n', 1)[1])
+        tags = []
+
+        class Collect(HTMLParser):
+            def handle_starttag(self, tag, attrs):
+                tags.append((tag, [k for k, _ in attrs]))
+
+        Collect().feed(out)
+        for tag, attr_names in tags:
+            self.assertNotIn(tag, ('script', 'img', 'svg', 'iframe'), out)
+            self.assertFalse([a for a in attr_names if a.startswith('on')], (tag, attr_names))
+        hrefs = re.findall(r'href="([^"]*)"', out)
+        self.assertTrue(all(h.startswith('http') for h in hrefs), hrefs)
+
+
+class TestUnparseablePublishedDate(unittest.TestCase):
+    def test_raw_date_text_cannot_inject_markdown_formatting(self):
+        item = {'title': 'T', 'link': 'https://example.com/a', 'summary': '',
+                'published': '*x*_y_`z`<b>', 'published_dt': None}
+        grouped = {CATEGORY_ORDER[0][0]: [{'source': SOURCES[0], 'item': item}]}
+        digest = build_digest(grouped, datetime(2026, 10, 2), datetime(2026, 10, 2))
+        out = MarkdownConverter().convert(digest.split('\n---\n', 1)[1])
+        credit = re.search(r'<p>Source:.*?</p>', out, re.S).group(0)
+        self.assertNotRegex(credit, r'<(em|code|b)>')
+
+
+class TestFeedTextCleanup(unittest.TestCase):
+    def test_arxiv_announce_prefix_is_stripped(self):
+        self.assertEqual(_clean_html('arXiv:2610.30184v1 Announce Type: new Abstract: Static analysis misses bugs.'),
+                         'Static analysis misses bugs.')
+
+    def test_numeric_hex_apostrophe_decodes_once(self):
+        self.assertEqual(_clean_html('Today&#x27;s release'), "Today's release")
+        digest = TestFeedTextEscaping()._digest_with('T', 'https://example.com/a', 'Today&#x27;s release')
+        self.assertNotIn('&amp;#x27;', digest)
+
+    def test_numeric_em_dash_becomes_comma(self):
+        self.assertEqual(_clean_html('a &#8212; b'), 'a, b')
+
+    def test_em_dash_in_item_title_becomes_comma(self):
+        digest = TestFeedTextEscaping()._digest_with('Alpha \u2014 Beta', 'https://example.com/a', 'x')
+        self.assertNotIn('\u2014', digest)
+        self.assertIn('Alpha, Beta', digest)
+
+    def test_single_source_is_singular(self):
+        digest = TestFeedTextEscaping()._digest_with('T', 'https://example.com/a', 'x')
+        self.assertIn('1 new item from 1 source.', digest)
+        self.assertNotIn('1 sources', digest)
+
+
+class TestWillisonRelevanceFilter(unittest.TestCase):
+    KW = next(s for s in SOURCES if s['name'] == 'Simon Willison')['filter_keywords']
+
+    def test_off_topic_posts_are_dropped(self):
+        for title in ('Battle Drones - a vibe coded RTS', 'My obituary for programming', 'llm-echo 0.5',
+                      'Inline rendering with document.currentScript', 'web-edit 0.1a2'):
+            self.assertFalse(_item_matches_filter({'title': title, 'summary': ''}, self.KW), title)
+        # 'Hacker News' links in a summary must not rescue an off-topic post.
+        for title in ('DE STAAT - FREEDOM (Official Music Video)',):
+            self.assertFalse(_item_matches_filter({'title': title, 'summary': 'via Hacker News'}, self.KW), title)
+
+    def test_ai_security_posts_are_kept(self):
+        """Real Willison security titles that an earlier, tighter list dropped (inflected forms)."""
+        for title in ('Self-generated prompt injections in compaction summaries',
+                      'Microsoft Copilot Cowork Exfiltrates Files',
+                      'Clinejection - Compromising Cline\'s Production Releases',
+                      'OpenAI agents attacked RubyGems',
+                      'How I tricked Claude into leaking your deepest, darkest secrets',
+                      'AI Worming through Word',
+                      'OpenAI Help: Lockdown Mode', "OpenAI's accidental cyberattack against Hugging Face",
+                      'Stealing Reasoning Traces from Proprietary LLM APIs',
+                      'MCP Colors: Systematically deal with prompt injection risk',
+                      'eMudhra Intermediate CA Compromise', "Today's PHP Security Release"):
+            self.assertTrue(_item_matches_filter({'title': title, 'summary': ''}, self.KW), title)
 
 
 if __name__ == '__main__':
