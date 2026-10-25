@@ -21,11 +21,15 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / 'scripts'))
 
+import io
 import re
 import time
+from contextlib import redirect_stderr, redirect_stdout
+from unittest import mock
 from html.parser import HTMLParser
 
-from aggregate_ai_security_news import CATEGORY_ORDER, SOURCES, _clean_html, _item_matches_filter, build_digest, carry_framework_advisories, parse_feed
+import aggregate_ai_security_news as agg
+from aggregate_ai_security_news import CATEGORY_ORDER, SOURCES, _clean_html, _item_matches_filter, build_digest, carry_framework_advisories, parse_feed, report_source_health
 from publish_editorial import MarkdownConverter
 from publish_editorial import BlogPublisher
 
@@ -177,6 +181,64 @@ class TestWillisonRelevanceFilter(unittest.TestCase):
                       'MCP Colors: Systematically deal with prompt injection risk',
                       'eMudhra Intermediate CA Compromise', "Today's PHP Security Release"):
             self.assertTrue(_item_matches_filter({'title': title, 'summary': ''}, self.KW), title)
+
+
+class FakeResp:
+    def __init__(self, body):
+        self.body = body
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *a):
+        return False
+
+    def read(self, n=-1):
+        return self.body if n < 0 else self.body[:n]
+
+
+class TestFeedSizeCap(unittest.TestCase):
+    """2026-10: read(MAX_FEED_BYTES) cut Project Zero (11 MB) and CISA (5.7 MB) off mid-XML, so they
+    parsed to 0 items with no alert. Over-cap must be a loud fetch error, never a silent truncation."""
+
+    def test_feed_over_cap_is_rejected_not_truncated(self):
+        big = b'<rss><channel>' + b'x' * (agg.MAX_FEED_BYTES + 10)
+        with mock.patch.object(agg.urllib.request, 'urlopen', return_value=FakeResp(big)), redirect_stderr(io.StringIO()) as err:
+            self.assertIsNone(agg.fetch_feed('https://example.com/f.xml'))
+        self.assertIn('over', err.getvalue())
+
+    def test_feed_at_cap_boundary_is_kept(self):
+        ok = b'<rss/>' + b' ' * (agg.MAX_FEED_BYTES - 6)
+        with mock.patch.object(agg.urllib.request, 'urlopen', return_value=FakeResp(ok)):
+            self.assertEqual(len(agg.fetch_feed('https://example.com/f.xml')), agg.MAX_FEED_BYTES)
+
+    def test_parse_error_is_reported_to_the_caller(self):
+        errors = []
+        self.assertEqual(parse_feed(b'<rss><channel><item>', SOURCES[0], errors), [])
+        self.assertEqual(len(errors), 1)
+
+    def test_no_known_oversize_or_dead_feed_urls(self):
+        feeds = [s['feed'] for s in SOURCES]
+        self.assertNotIn('https://www.cisa.gov/cybersecurity-advisories/all.xml', feeds)  # 5.7 MB
+        self.assertNotIn('https://googleprojectzero.blogspot.com/feeds/posts/default', feeds)  # 11 MB
+        self.assertFalse([f for f in feeds if 'protectai.com' in f])  # 404
+
+
+class TestSourceHealthReport(unittest.TestCase):
+    def test_reports_live_broken_and_empty_sources(self):
+        stats = [{'source': 'A', 'status': 'ok', 'parsed': 5, 'count': 1},
+                 {'source': 'B', 'status': 'parse-failed', 'parsed': 0, 'count': 0},
+                 {'source': 'C', 'status': 'fetch-failed', 'parsed': 0, 'count': 0},
+                 {'source': 'D', 'status': 'ok', 'parsed': 0, 'count': 0}]
+        out = io.StringIO()
+        with redirect_stdout(out):
+            live = report_source_health(stats)
+        text = out.getvalue()
+        self.assertEqual(live, 1)
+        self.assertIn('sources_with_items=1/4', text)
+        self.assertIn('B (parse-failed)', text)
+        self.assertIn('C (fetch-failed)', text)
+        self.assertIn('empty', text)
 
 
 if __name__ == '__main__':

@@ -26,6 +26,7 @@ import argparse
 import hashlib
 import html
 import json
+import os
 import re
 import sys
 import urllib.error
@@ -76,27 +77,24 @@ SOURCES = [
                             'adversarial', 'generative', 'rag', 'machine learning',
                             'neural', 'alignment', 'fine-tune', 'fine-tuned', 'fine-tuning'],
     },
-    {
-        'name': 'Protect AI',
-        'site': 'https://protectai.com/',
-        'feed': 'https://protectai.com/blog/rss.xml',
-        'category': 'vendor-research',
-    },
-    # NOTE: HiddenLayer, Lakera, Anthropic, and MITRE ATLAS do not publish
+    # NOTE: Protect AI's feed returned 404 at every plausible URL on 2026-10-25, so it was removed.
+    # HiddenLayer, Lakera, Anthropic, and MITRE ATLAS do not publish
     # stable public RSS feeds at well-known URLs (all returned 404 on last
     # probe). Leaving them out rather than shipping dead links. If/when they
     # publish feeds, add entries here with the correct URL.
     {
         'name': 'Google Project Zero',
         'site': 'https://googleprojectzero.blogspot.com/',
-        'feed': 'https://googleprojectzero.blogspot.com/feeds/posts/default',
+        # /summary, not /default: the default feed is every post ever (11 MB); summary is about 16 KB.
+        'feed': 'https://googleprojectzero.blogspot.com/feeds/posts/summary?max-results=25',
         'category': 'research',
         'filter_keywords': ['ai', 'ml', 'llm', 'model', 'agent', 'prompt'],
     },
     {
         'name': 'CISA Cybersecurity Advisories',
         'site': 'https://www.cisa.gov/news-events/cybersecurity-advisories',
-        'feed': 'https://www.cisa.gov/cybersecurity-advisories/all.xml',
+        # all.xml is 5.7 MB (mostly ICS advisories); this joint-advisory feed is about 1.4 MB.
+        'feed': 'https://www.cisa.gov/cybersecurity-advisories/cybersecurity-advisories.xml',
         'category': 'government',
         'filter_keywords': ['ai', 'artificial intelligence', 'ml', 'llm', 'model',
                             'langflow', 'ollama', 'pytorch', 'tensorflow'],
@@ -130,7 +128,12 @@ def fetch_feed(url: str) -> bytes | None:
     req = urllib.request.Request(url, headers={'User-Agent': USER_AGENT, 'Accept': 'application/rss+xml, application/atom+xml, application/xml, text/xml, */*'})
     try:
         with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as resp:
-            return resp.read(MAX_FEED_BYTES)
+            raw = resp.read(MAX_FEED_BYTES + 1)
+        if len(raw) > MAX_FEED_BYTES:
+            # Truncating here used to cut the XML mid-document and the source silently yielded 0 items.
+            print(f'    [fetch-error] {url}: feed over {MAX_FEED_BYTES} bytes, skipped (use a smaller feed URL)', file=sys.stderr)
+            return None
+        return raw
     except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError) as e:
         print(f'    [fetch-error] {url}: {e}', file=sys.stderr)
         return None
@@ -153,12 +156,14 @@ def _text(el) -> str:
     return (el.text or '').strip()
 
 
-def parse_feed(raw: bytes, source: dict) -> list[dict]:
+def parse_feed(raw: bytes, source: dict, errors: list | None = None) -> list[dict]:
     """Parse RSS 2.0 or Atom. Returns normalized list of {title, link, summary, published}."""
     try:
         root = ET.fromstring(raw)
     except ET.ParseError as e:
         print(f"    [parse-error] {source['feed']}: {e}", file=sys.stderr)
+        if errors is not None:
+            errors.append(str(e))
         return []
 
     items: list[dict] = []
@@ -382,6 +387,25 @@ def carry_framework_advisories(existing, digest):
     return digest.replace("## Source List", m.group(0).rstrip("\n") + "\n\n## Source List", 1)
 
 
+def report_source_health(source_stats):
+    """Say which sources produced nothing and why, so a dead or truncated feed is not silent."""
+    live = [s for s in source_stats if s['status'] == 'ok' and s['parsed'] > 0]
+    broken = [f"{s['source']} ({s['status']})" for s in source_stats if s['status'] != 'ok']
+    empty = [s['source'] for s in source_stats if s['status'] == 'ok' and s['parsed'] == 0]
+    lines = [f'sources_with_items={len(live)}/{len(source_stats)}']
+    if broken:
+        lines.append('BROKEN: ' + ', '.join(broken))
+    if empty:
+        lines.append('empty (can be legitimate, e.g. arXiv on weekends): ' + ', '.join(empty))
+    for line in lines:
+        print('  ' + line)
+    summary = os.environ.get('GITHUB_STEP_SUMMARY')
+    if summary:
+        with open(summary, 'a', encoding='utf-8') as f:
+            f.write('### AI roundup source health\n' + '\n'.join(f'- {l}' for l in lines) + '\n')
+    return len(live)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--dry-run', action='store_true', help='Preview; write nothing')
@@ -420,7 +444,8 @@ def main():
             source_stats.append({'source': name, 'status': 'fetch-failed', 'count': 0})
             continue
 
-        items = parse_feed(raw, source)
+        parse_errors: list = []
+        items = parse_feed(raw, source, parse_errors)
         kept = 0
         for it in items:
             if not _item_matches_filter(it, source.get('filter_keywords')):
@@ -446,12 +471,14 @@ def main():
             })
             kept += 1
 
-        source_stats.append({'source': name, 'status': 'ok', 'count': kept, 'parsed': len(items)})
+        status = 'parse-failed' if parse_errors else 'ok'
+        source_stats.append({'source': name, 'status': status, 'count': kept, 'parsed': len(items)})
         print(f'    parsed={len(items)}  new={kept}')
 
     for cat in grouped:
         grouped[cat].sort(key=lambda e: e['item'].get('published_dt') or datetime.min.replace(tzinfo=timezone.utc), reverse=True)
 
+    report_source_health(source_stats)
     total_new = sum(len(v) for v in grouped.values())
     print(f'\nTotal new items: {total_new}')
 
