@@ -1,3 +1,47 @@
+## 2026-10-26 — Weekly Tech-Debt Audit
+
+**Headline:** Near-P0 watch — CVE review stall timer hits 44.7h as of 14:23 UTC (P0 fires at ~17:42 UTC today if auto-publish doesn't run); 1 CVSS 9.2 OS-RCE CVE pending with due date TODAY; generate_guides.py massively refactored (2,751→169 LOC) and requirements.txt added — strong hygiene week offset by stall risk.
+
+**Pipeline pulse:**
+- KEV fetch last checked (`data/pending_review.json` last_checked): 2026-10-25T17:57:18 UTC (yesterday ✓ — NO P0)
+- CVEs pending review (`total_pending`), waiting since (`last_updated`): 1, 2026-10-24T17:42 UTC — **44.7h elapsed; P0 threshold at ~17:42 UTC TODAY (3.3h from audit time)**
+- Daily CVE trigger last publish (`data/appsec-review.md`): 2026-10-24 (informational — not a stall signal per Oct 12 rule update)
+- Friday AI trend roundup last file (`blog/ai-security-roundup-2026-10-25.html`): 2026-10-25 ✓ (Oct 25 roundup published directly to blog; last draft `.md.published` file is 2026-10-20, but roundup pipeline is running)
+
+**New this week:**
+- P1 pipeline — `data/pending_review.json` — CVE review stall approaching P0: `last_updated` 2026-10-24T17:42 UTC is 44.7h old at audit time 14:23 UTC; P0 rule triggers at 48h (~17:42 UTC today). Pending CVE: CVE-2026-110447 (Collabora OS Command Injection, CVSS 9.2, NextCloud RCE, due **today** 2026-10-26, `include_on_site: false`). Auto-publish workflow has not processed it since Oct 24. — Fix: trigger `auto-publish-cve.yml` via workflow_dispatch immediately, or manually set `include_on_site: true` and run `python scripts/generate_html.py` — Effort: XS
+- P2 generator — `scripts/aggregate_ai_security_news.py` (536 LOC) and `scripts/generate_cert_blog_posts.py` (503 LOC) newly crossed 500 LOC threshold this week; overall >500 LOC count: 16→17 (generate_guides.py resolved -1, two new scripts +2). — Effort: M (track at next sprint)
+- P2 infra — `style.min.css`, `quiz.css`, `comparison.css`, `practice-tests.css`, `store/store.css` appeared as **new files** (not modifications) in reconcile commit `c3d6ebc` (Oct 23, "Reconcile sitemap & llms.txt"). These were previously untracked or accidentally dropped from git. HTML `?v=` version strings are unchanged (`style.min.css?v=13`, `quiz.css?v=3`, `comparison.css?v=3`). Content appears identical (pure recovery), but should be verified. — Fix: `git show c3d6ebc -- style.min.css | diff - style.min.css` to confirm no content drift; if content differs, bump `?v=` in all referencing HTML — Effort: XS
+
+**Still open from prior audits:** 7
+1. P1 content — `practice-tests/*.html:1` (13 pages) — `<p class="pt-timestamp">Last updated: September 29, 2026</p>` still present (**20 weeks open**) — Fix: remove `pt-timestamp` block from `scripts/generate_practice_test_pages.py` template; re-run — Effort: XS
+2. P2 generator — **17 scripts >500 LOC** (+1 net vs prior 16; generate_guides.py resolved ✓, two new scripts joined): `generate_sprint_kit.py` 1,998 · `fetch_kev.py` 897 · `etsy_to_pinterest.py` 829 · `aggregate_ai_ide_vulns.py` 771 · `entity_extractor.py` 765 · `generate_linkedin_posts.py` 716 · `publish_editorial.py` 711 · `generate_ai_ide_tracker.py` 697 · `audit_pages.py` 662 · `generate_quiz_pages.py` 627 · `generate_cert_pages.py` 614 · `generate_practice_test_pages.py` 593 · `inject_store_ctas.py` 588 · `generate_roadmaps.py` 544 · `aggregate_ai_security_news.py` 536 **[NEW]** · `generate_cve_pages.py` 513 · `generate_cert_blog_posts.py` 503 **[NEW]** — Effort: L
+3. P2 SEO — `scripts/generate_sitemap.py:25` — `CONTENT_DIRS` still omits `wstg` (13 HTML files) and `practice-tests` subpages — Fix: add both to `CONTENT_DIRS` — Effort: XS
+4. P2 worker growth — `store/cloudflare-worker.js` — 1,532→1,564 LOC (+32); webhook HMAC-SHA256 signature verification in place ✓; PRICING cents↔dollars match ✓ (`599`/`1599` worker ↔ `5.99`/`15.99` frontend) — Effort: M
+5. P3 hygiene — `scripts/` (2 remaining instances) — Bare `except Exception:` without logging: `create_hero.py:51`, `generate_linkedin_posts.py:72` — Add `logging.exception()` before each — Effort: XS
+6. P3 hygiene — repo root — No `CLAUDE.md`; editorial rules (evergreen-page timestamp ban, cache-bust policy, pipeline health thresholds) uncodified in-repo — Effort: XS
+7. P3 generator drift — `scripts/generate_sitemap.py:25` — `GUIDE_PAGES` still missing `ai-agent-security.html` and `genai-data-security.html` (open **16 weeks** since July 13 audit) — Effort: XS
+
+**Resolved since last audit:**
+- P2 hygiene (open since Aug) — `requirements.txt` created: `Pillow==13.0.0`, `reportlab==5.1.0`, `requests==2.34.2` — all external deps now declared ✓ (prior item #2 closed)
+- P2 generator (partial) — `generate_guides.py` refactored 2,751→169 LOC (↓93.8%) — no longer in >500 LOC list ✓
+- P3 hygiene (partial) — bare `except Exception:` reduced 9→2 instances; 7 fixed this week (`fetch_kev.py:63`, `generate_sitemap.py:102`, `update_sitemap.py:29`, `audit_pages.py:250,382`, `inject_error_reporter.py:46`, `health_check.py:127`)
+
+**Metrics tracked:**
+- Total generated pages (cve-*, cert-*, comparisons/*, roadmaps/*): 446 (270 CVE · 66 cert · 43 comparisons · 67 roadmaps)
+- AI vuln pages (`ai-vulnerabilities/`): 28 (unchanged)
+- Blog pages: 141 (+5 from 136)
+- Sitemap entries: 795 (+39 from 756 — reconcile Oct 23 caught up backlog)
+- Evergreen pages with timestamps (should be 0): 13 practice-tests (P1 open ×20wk) + 1 `ai-ide-mcp-disclosures.html` (intentional tracker freshness date, `d-updated` ID, not flagged) = 14 total shown by grep; 13 flagged
+- Pages missing from llms.txt: 0 ✓ (reconcile ran Oct 23)
+- Cache-bust drift count: 5 CSS files under investigation (recovered as new files in reconcile commit; content likely unchanged)
+- Scripts >500 LOC: 17 (+1 net)
+- Store worker LOC: 1,564 (+32)
+- D1 migrations: 2 (unchanged — 0001_error_log, 0002_quiz_feedback)
+- Python scripts with bare `except Exception:` without logging: 2 instances (down from 9)
+
+---
+
 ## 2026-10-19 — Weekly Tech-Debt Audit
 
 **Headline:** All-clear week — pipeline fully healthy (last_checked Oct 18, 0 pending CVEs); 9 CVEs published (263 total); AI security roundup draft Oct 16 on schedule (publishes Tuesday Oct 21); no new findings; P1 practice-tests timestamps remain open at **19 weeks**.
