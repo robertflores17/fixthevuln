@@ -1,19 +1,20 @@
-# Daily KEV Review — 2026-10-24
+# Daily KEV Review — 2026-10-27
 
-**New CVEs:** 1 | **Critical:** 1 | **High:** 0 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 2 | **Critical:** 1 | **High:** 1 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-110447 | Collabora | Collabora Online – Built-in CODE Server | 9.2 | Unknown | 2026-10-26 |
+| CVE-2026-109618 | PHP Group | PHP | 9.8 | Unknown | 2026-10-29 |
+| CVE-2026-109619 | PHP Group | PHP | 8.1 | Unknown | 2026-10-29 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-10-26 (1 CVE)
+- **Nearest due date:** 2026-10-29 (2 CVEs)
 - **Overdue:** None
 
 ## Vendor Summary
-- Collabora: 1 CVE
+- PHP Group: 2 CVEs
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
