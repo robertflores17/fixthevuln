@@ -1,20 +1,25 @@
-# Daily KEV Review — 2026-10-27
+# Daily KEV Review — 2026-10-28
 
-**New CVEs:** 2 | **Critical:** 1 | **High:** 1 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 4 | **Critical:** 2 | **High:** 1 | **Medium:** 0 | **Low:** 1 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-109618 | PHP Group | PHP | 9.8 | Unknown | 2026-10-29 |
-| CVE-2026-109619 | PHP Group | PHP | 8.1 | Unknown | 2026-10-29 |
+| CVE-2026-111497 | Google | Brotli | 9.8 | Unknown | 2026-11-10 |
+| CVE-2026-48356 | Adobe | Commerce and Magento | 9.3 | Unknown | 2026-11-10 |
+| CVE-2026-46300 | Linux | Kernel | 7.8 | Unknown | 2026-10-31 |
+| CVE-2026-41709 | Broadcom | VMware ESX | 2.7 | Unknown | 2026-11-11 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-10-29 (2 CVEs)
+- **Nearest due date:** 2026-10-31 (1 CVE)
 - **Overdue:** None
 
 ## Vendor Summary
-- PHP Group: 2 CVEs
+- Broadcom: 1 CVE
+- Linux: 1 CVE
+- Adobe: 1 CVE
+- Google: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
