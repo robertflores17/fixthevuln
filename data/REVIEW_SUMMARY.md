@@ -1,25 +1,21 @@
-# Daily KEV Review — 2026-10-28
+# Daily KEV Review — 2026-10-29
 
-**New CVEs:** 4 | **Critical:** 2 | **High:** 1 | **Medium:** 0 | **Low:** 1 | **Ransomware-linked:** 0
+**New CVEs:** 2 | **Critical:** 1 | **High:** 1 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-111497 | Google | Brotli | 9.8 | Unknown | 2026-11-10 |
-| CVE-2026-48356 | Adobe | Commerce and Magento | 9.3 | Unknown | 2026-11-10 |
-| CVE-2026-46300 | Linux | Kernel | 7.8 | Unknown | 2026-10-31 |
-| CVE-2026-41709 | Broadcom | VMware ESX | 2.7 | Unknown | 2026-11-11 |
+| CVE-2026-97229 | GitLab | Community Edition and Enterprise Edition | 10.0 | Unknown | 2026-11-01 |
+| CVE-2026-76418 | Cisco | Secure Firewall ASA Software and Cisco Secure FTD Software | 8.6 | Unknown | 2026-11-01 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-10-31 (1 CVE)
+- **Nearest due date:** 2026-11-01 (2 CVEs)
 - **Overdue:** None
 
 ## Vendor Summary
-- Broadcom: 1 CVE
-- Linux: 1 CVE
-- Adobe: 1 CVE
-- Google: 1 CVE
+- GitLab: 1 CVE
+- Cisco: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
