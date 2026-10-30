@@ -1,21 +1,20 @@
-# Daily KEV Review — 2026-10-29
+# Daily KEV Review — 2026-10-30
 
-**New CVEs:** 2 | **Critical:** 1 | **High:** 1 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
+**New CVEs:** 2 | **Critical:** 0 | **High:** 1 | **Medium:** 0 | **Low:** 1 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-97229 | GitLab | Community Edition and Enterprise Edition | 10.0 | Unknown | 2026-11-01 |
-| CVE-2026-76418 | Cisco | Secure Firewall ASA Software and Cisco Secure FTD Software | 8.6 | Unknown | 2026-11-01 |
+| CVE-2026-111357 | Ivanti | Connect Secure | 7.0 | Unknown | 2026-11-02 |
+| CVE-2026-118527 | Ivanti | Connect Secure | N/A | Unknown | 2026-11-13 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-11-01 (2 CVEs)
+- **Nearest due date:** 2026-11-02 (1 CVE)
 - **Overdue:** None
 
 ## Vendor Summary
-- GitLab: 1 CVE
-- Cisco: 1 CVE
+- Ivanti: 2 CVEs
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
