@@ -4,6 +4,24 @@
 
 _Capture lessons here after any user correction._
 
+## Index (read this; open an entry only when its topic comes up)
+
+| Date | Rule in one line |
+|---|---|
+| 2026-04-08 | Every pipeline step must be able to read the previous step's output (same branch/path); KEV health check in `audit_pages.py`. |
+| 2026-06-21 | `dict.get(k, d)` only guards missing keys, not null: use `(v.get(k) or d)`. Isolate independent generator failures (`continue-on-error` + aggregate gate). |
+| 2026-06-21 | Under `set -e`, never end a function with bare `[[ ]] && cmd`; use `if`. Run new workflow steps once via `workflow_dispatch`. |
+| 2026-09-05 | Scanner findings are leads, not verdicts: verify against live config and full git history before touching DNS. |
+| 2026-09-17 | Run `git diff --stat` right after any site generator; `generate_guides.py` regresses live pages. Edit injector-owned pages surgically. |
+| 2026-09-17 | Standards (OWASP/NIST/CIS/MITRE): fetch the standards body's own repo first; verify CVE IDs and CVSS against NVD even when upstream supplies them. |
+| 2026-09-19 | Before writing any import file or vendor click-path, open that vendor's current format/UI reference. |
+| 2026-09-19 | Network code passing locally proves nothing about CI. Read step logs after a new pipeline's first run; prefer endpoints proven from CI. |
+| 2026-10-04 | A repeat visual bug is a missing shared default: fix in `style.css`. Dark mode is part of "done". Minify with `zindex: false`. |
+| 2026-10-10 | Any cert/CVE/quiz fact change needs a real `content-editor` dispatch before push; check every cert from the same vendor and every page type. |
+| 2026-10-21 | Before calling a standard's edition fabricated, check its canonical repo/release page; update every citing page in one commit. |
+| 2026-10-24 | Compile hash-locked pip files on the CI Python minor version; verify with a real `pip install --require-hashes` in a matching venv. |
+| 2026-10-25 | Find the code that prints a log line before blaming a script; run a metric once against the real log before scheduling a check on it. |
+
 ### 2026-04-08: KEV pipeline silently broke for 13 days
 - **What went wrong:** `fetch-vulnerabilities.yml` pushed `pending_review.json` to PR branches, but the AppSec CVE Reviewer trigger reads from main. PRs were never auto-merged, so pending CVEs accumulated on branches for 13 days without being published. Homepage showed "Updated Mar 26 · Checked Apr 8".
 - **What's correct:** Fetch workflow now pushes `pending_review.json` directly to main. No intermediate PR branches — the trigger IS the reviewer, so human-review PRs were redundant.
