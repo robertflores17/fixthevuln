@@ -233,7 +233,7 @@ def main():
 
         # Build paid resources list
         paid_resources = [
-            {'name': f'{name} Study Planner', 'cost': 5.99}
+            {'name': f'{name} Study Planner', 'cost': 9.99}
         ]
 
         # Quiz and cert page URLs

@@ -44,17 +44,20 @@ const CHECKOUT_API_URL = 'https://fixthevuln-checkout.robertflores17.workers.dev
 
 // ─── PRICING ────────────────────────────────
 const PRICING = {
-  standard:  5.99,
-  adhd:      5.99,
-  dark:      5.99,
-  adhd_dark: 5.99,
-  bundle:    15.99,  // All 4 formats for one cert — save ~$8
+  standard:  9.99,
+  adhd:      9.99,
+  dark:      9.99,
+  adhd_dark: 9.99,
+  bundle:    24.99,  // All 4 formats for one cert — save ~$15
 };
 
 // Multi-planner bundles sold as one product: 25% off the planners bought separately.
 // Must match PRODUCT_BUNDLE_PRICING in cloudflare-worker.js (checked by tests/test_store_pricing_parity.py).
 const PRODUCT_BUNDLE_PRICING = {
-  'lifestyle-bundle': { items: ['budget-binder', '2026-digital-planner', 'wellness-journal'], single: 13.47 },
+  'lifestyle-bundle': { items: ['budget-binder', '2026-digital-planner', 'wellness-journal'], single: 22.47 },
+  'comptia-complete': { items: ['comptia-a-plus-1201', 'comptia-a-plus-1202', 'comptia-security-plus', 'comptia-network-plus', 'comptia-linux-plus', 'comptia-cloud-plus', 'comptia-cysa-plus', 'comptia-pentest-plus', 'comptia-casp-plus', 'comptia-server-plus', 'comptia-data-plus', 'comptia-project-plus', 'comptia-itf-plus', 'comptia-secai-plus'], single: 79.00 },
+  'microsoft-complete': { items: ['ms-az-900', 'ms-az-104', 'ms-az-305', 'ms-sc-900', 'ms-ai-900', 'ms-az-500', 'ms-az-204', 'ms-az-400', 'ms-dp-900', 'ms-ms-900', 'ms-sc-300', 'ms-ai-102'], single: 69.00 },
+  'aws-complete': { items: ['aws-cloud-practitioner', 'aws-solutions-architect', 'aws-developer', 'aws-cloudops', 'aws-security-specialty', 'aws-database-specialty', 'aws-machine-learning', 'aws-data-engineer'], single: 59.00 },
 };
 
 // Formats that exist for products without all five. Must match PRODUCT_FORMATS in cloudflare-worker.js.
@@ -64,6 +67,9 @@ const PRODUCT_FORMATS = {
   '2026-digital-planner': ['standard', 'adhd', 'dark'],
   'business-templates':   ['standard', 'adhd', 'dark', 'adhd_dark'],
   'lifestyle-bundle':     ['standard', 'adhd', 'dark'],
+  'comptia-complete':     ['bundle'],
+  'microsoft-complete':   ['bundle'],
+  'aws-complete':         ['bundle'],
   'teacher-planner':      ['standard', 'adhd', 'dark', 'adhd_dark'],
   'student-planner':      ['standard', 'adhd', 'dark', 'adhd_dark'],
   'adhd-student-planner': ['standard', 'dark'],
@@ -75,6 +81,12 @@ const hasOwn = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
 
 function formatAvailable(productId, variant) {
   return !hasOwn(PRODUCT_FORMATS, productId) || PRODUCT_FORMATS[productId].includes(variant);
+}
+
+// Products sold in exactly one format (the vendor packs) ignore the format picker.
+function effectiveVariant(productId, selected) {
+  return hasOwn(PRODUCT_FORMATS, productId) && PRODUCT_FORMATS[productId].length === 1
+    ? PRODUCT_FORMATS[productId][0] : selected;
 }
 
 function productPrice(productId, variant) {
@@ -206,13 +218,18 @@ const CAREER_PATHS = [
 // Career path pricing by cert count and variant type
 const CAREER_PATH_PRICING = {
   // { certCount: { single format price, bundle (4-format) price, individual total single, individual total bundle } }
-  2: { single: 8.99,  bundle: 16.99, indivSingle: 11.98, indivBundle: 31.98 },
-  3: { single: 12.99, bundle: 24.99, indivSingle: 17.97, indivBundle: 47.97 },
-  4: { single: 16.99, bundle: 34.99, indivSingle: 23.96, indivBundle: 63.96 },
+  2: { single: 14.99, bundle: 26.99, indivSingle: 19.98, indivBundle: 49.98 },
+  3: { single: 21.99, bundle: 36.99, indivSingle: 29.97, indivBundle: 74.97 },
+  4: { single: 28.99, bundle: 46.99, indivSingle: 39.96, indivBundle: 99.96 },
 };
 
 // ─── PRODUCT CATALOG ────────────────────────
 const PRODUCTS = [
+  // Vendor packs (anchor tier). vendor 'packs' keeps them out of hub group counts; forVendor shows them on that vendor's page.
+  { id: 'comptia-complete',   vendor: 'packs', forVendor: 'comptia',   name: 'CompTIA Complete',   meta: 'All 14 planners · All 4 formats', popular: true, tags: ['A+', 'Network+', 'Security+', 'CySA+', 'CASP+'] },
+  { id: 'microsoft-complete', vendor: 'packs', forVendor: 'microsoft', name: 'Microsoft Complete', meta: 'All 12 planners · All 4 formats', popular: true, tags: ['Azure', 'Security', 'M365', 'AI'] },
+  { id: 'aws-complete',       vendor: 'packs', forVendor: 'aws',       name: 'AWS Complete',       meta: 'All 8 planners · All 4 formats',  popular: true, tags: ['Cloud Practitioner', 'Solutions Architect', 'Security', 'ML'] },
+
   // CompTIA
   { id: 'comptia-a-plus-1201',     vendor: 'comptia',   name: 'CompTIA A+ Core 1',           meta: '220-1201 · 5 domains', popular: true,  tags: ['Hardware', 'Networking', 'Troubleshooting'] },
   { id: 'comptia-a-plus-1202',     vendor: 'comptia',   name: 'CompTIA A+ Core 2',           meta: '220-1202 · 4 domains', popular: false, tags: ['OS', 'Security', 'Software'] },
@@ -424,7 +441,7 @@ function showConfirm(message) {
 // ─── PAGE-SCOPED PRODUCT FILTER ─────────────
 function getPageProducts() {
   if (!PAGE_CONFIG.vendors) return PRODUCTS;
-  return PRODUCTS.filter(p => PAGE_CONFIG.vendors.includes(p.vendor));
+  return PRODUCTS.filter(p => PAGE_CONFIG.vendors.includes(p.vendor) || PAGE_CONFIG.vendors.includes(p.forVendor));
 }
 
 function getPageCareerPaths() {
@@ -533,11 +550,12 @@ function renderProducts() {
   const variantLabel = VARIANT_LABELS[selectedVariant] || VARIANT_LABELS.standard;
 
   productGrid.innerHTML = filtered.map(product => {
-    const cartKey = `${product.id}__${selectedVariant}`;
+    const variant = effectiveVariant(product.id, selectedVariant);
+    const cartKey = `${product.id}__${variant}`;
     const inCart = cart.some(item => item.key === cartKey);
-    const price = productPrice(product.id, selectedVariant);
-    const original = productOriginalPrice(product.id, selectedVariant);
-    const available = formatAvailable(product.id, selectedVariant);
+    const price = productPrice(product.id, variant);
+    const original = productOriginalPrice(product.id, variant);
+    const available = formatAvailable(product.id, variant);
 
     return `
       <div class="product-card ${product.popular ? 'popular' : ''}" data-vendor="${esc(product.vendor)}">
@@ -548,7 +566,7 @@ function renderProducts() {
         <div class="product-features">
           ${product.tags.map(t => `<span class="product-tag">${esc(t)}</span>`).join('')}
         </div>
-        ${selectedVariant === 'bundle' ? '<div class="product-bundle-note">📦 Standard + ADHD + Dark + ADHD Dark</div>' : ''}
+        ${variant === 'bundle' ? '<div class="product-bundle-note">📦 Standard + ADHD + Dark + ADHD Dark</div>' : ''}
         <div class="product-bottom">
           <div class="product-price">
             $${price.toFixed(2)}
@@ -557,7 +575,7 @@ function renderProducts() {
           <button class="btn-add ${inCart ? 'added' : ''}"
                   data-product-id="${esc(product.id)}"
                   data-product-name="${esc(product.name)}"
-                  data-variant="${esc(selectedVariant)}"
+                  data-variant="${esc(variant)}"
                   data-price="${price}"
                   ${inCart || !available ? 'disabled' : ''}>
             ${inCart ? '✓ Added' : available ? 'Add to Cart' : 'Not in this format'}
@@ -604,6 +622,7 @@ function vendorDisplayName(vendor) {
     lifestyle: 'Lifestyle',
     education: 'Education',
     bundles: 'Bundles',
+    packs: 'Vendor Pack',
   };
   return map[vendor] || vendor;
 }
@@ -850,11 +869,12 @@ function renderFeaturedProducts() {
   const featured = PRODUCTS.filter(p => p.popular).slice(0, 6);
 
   featuredGrid.innerHTML = featured.map(product => {
-    const cartKey = `${product.id}__${selectedVariant}`;
+    const variant = effectiveVariant(product.id, selectedVariant);
+    const cartKey = `${product.id}__${variant}`;
     const inCart = cart.some(item => item.key === cartKey);
-    const price = productPrice(product.id, selectedVariant);
-    const original = productOriginalPrice(product.id, selectedVariant);
-    const available = formatAvailable(product.id, selectedVariant);
+    const price = productPrice(product.id, variant);
+    const original = productOriginalPrice(product.id, variant);
+    const available = formatAvailable(product.id, variant);
 
     return `
       <div class="product-card ${product.popular ? 'popular' : ''}" data-vendor="${esc(product.vendor)}">
@@ -865,7 +885,7 @@ function renderFeaturedProducts() {
         <div class="product-features">
           ${product.tags.map(t => `<span class="product-tag">${esc(t)}</span>`).join('')}
         </div>
-        ${selectedVariant === 'bundle' ? '<div class="product-bundle-note">📦 Standard + ADHD + Dark + ADHD Dark</div>' : ''}
+        ${variant === 'bundle' ? '<div class="product-bundle-note">📦 Standard + ADHD + Dark + ADHD Dark</div>' : ''}
         <div class="product-bottom">
           <div class="product-price">
             $${price.toFixed(2)}
@@ -874,7 +894,7 @@ function renderFeaturedProducts() {
           <button class="btn-add ${inCart ? 'added' : ''}"
                   data-product-id="${esc(product.id)}"
                   data-product-name="${esc(product.name)}"
-                  data-variant="${esc(selectedVariant)}"
+                  data-variant="${esc(variant)}"
                   data-price="${price}"
                   ${inCart || !available ? 'disabled' : ''}>
             ${inCart ? '✓ Added' : available ? 'Add to Cart' : 'Not in this format'}

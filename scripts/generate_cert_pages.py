@@ -532,8 +532,8 @@ def generate_page(product):
             <div class="planner-cta-card">
                 <h3>Get the {name} Study Planner</h3>
                 <p>Fillable PDF with {study_weeks}-week schedule, domain trackers, flashcard templates, progress tracking, and quick reference sheets. Available in Standard, ADHD-Friendly, Dark Mode, and 4-Format Bundle.</p>
-                <a href="{store_page}" class="btn-cta">Get the Study Planner ($5.99)</a>
-                <p style="font-size: 0.85rem; opacity: 0.7; margin-top: 0.75rem;">Also available as a 4-Format Bundle for $15.99</p>
+                <a href="{store_page}" class="btn-cta">Get the Study Planner ($9.99)</a>
+                <p style="font-size: 0.85rem; opacity: 0.7; margin-top: 0.75rem;">Also available as a 4-Format Bundle for $24.99</p>
             </div>
         </section>
 

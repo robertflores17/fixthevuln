@@ -106,6 +106,9 @@ const CERT_NAMES = {
   'adhd-student-planner': 'ADHD Student Planner Spring 2026',
   // Bundles
   'lifestyle-bundle': 'Productivity Bundle (Budget Binder + 2026 Planner + Wellness Journal)',
+  'comptia-complete': 'CompTIA Complete (all 14 planners)',
+  'microsoft-complete': 'Microsoft Complete (all 12 planners)',
+  'aws-complete': 'AWS Complete (all 8 planners)',
 };
 
 const VARIANT_LABELS = {
@@ -176,24 +179,29 @@ function expandPurchasedItems(rawItems) {
 
 // ─── SERVER-SIDE PRICING (source of truth) ──────
 const PRICING = {
-  standard:  599,  // cents
-  adhd:      599,
-  dark:      599,
-  adhd_dark: 599,
-  bundle:    1599,
+  standard:  999,  // cents
+  adhd:      999,
+  dark:      999,
+  adhd_dark: 999,
+  bundle:    2499,
 };
 
 // Career path pricing by cert count (cents)
 const CP_PRICING = {
-  2: { single: 899,  bundle: 1699 },
-  3: { single: 1299, bundle: 2499 },
-  4: { single: 1699, bundle: 3499 },
+  2: { single: 1499, bundle: 2699 },
+  3: { single: 2199, bundle: 3699 },
+  4: { single: 2899, bundle: 4699 },
 };
 
 // Multi-planner bundles sold as one product (cents): 25% off the planners bought separately.
 // Delivered as the component planners (expandPurchasedItems), so no bundle file of its own exists in R2.
+// The *-complete vendor packs are sold only in the 4-format bundle variant (see PRODUCT_FORMATS) and are
+// priced as the anchor tier above the $24.99 per-cert bundle.
 const PRODUCT_BUNDLE_PRICING = {
-  'lifestyle-bundle': { items: ['budget-binder', '2026-digital-planner', 'wellness-journal'], single: 1347 },
+  'lifestyle-bundle': { items: ['budget-binder', '2026-digital-planner', 'wellness-journal'], single: 2247 },
+  'comptia-complete': { items: ['comptia-a-plus-1201', 'comptia-a-plus-1202', 'comptia-security-plus', 'comptia-network-plus', 'comptia-linux-plus', 'comptia-cloud-plus', 'comptia-cysa-plus', 'comptia-pentest-plus', 'comptia-casp-plus', 'comptia-server-plus', 'comptia-data-plus', 'comptia-project-plus', 'comptia-itf-plus', 'comptia-secai-plus'], single: 7900 },
+  'microsoft-complete': { items: ['ms-az-900', 'ms-az-104', 'ms-az-305', 'ms-sc-900', 'ms-ai-900', 'ms-az-500', 'ms-az-204', 'ms-az-400', 'ms-dp-900', 'ms-ms-900', 'ms-sc-300', 'ms-ai-102'], single: 6900 },
+  'aws-complete': { items: ['aws-cloud-practitioner', 'aws-solutions-architect', 'aws-developer', 'aws-cloudops', 'aws-security-specialty', 'aws-database-specialty', 'aws-machine-learning', 'aws-data-engineer'], single: 5900 },
 };
 
 // Formats that actually exist in R2 for products that don't have all five (checked 2026-10-21).
@@ -204,6 +212,9 @@ const PRODUCT_FORMATS = {
   '2026-digital-planner': ['standard', 'adhd', 'dark'],
   'business-templates':   ['standard', 'adhd', 'dark', 'adhd_dark'],
   'lifestyle-bundle':     ['standard', 'adhd', 'dark'],
+  'comptia-complete':     ['bundle'],
+  'microsoft-complete':   ['bundle'],
+  'aws-complete':         ['bundle'],
   'teacher-planner':      ['standard', 'adhd', 'dark', 'adhd_dark'],
   'student-planner':      ['standard', 'adhd', 'dark', 'adhd_dark'],
   'adhd-student-planner': ['standard', 'dark'],

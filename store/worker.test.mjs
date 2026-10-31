@@ -131,3 +131,36 @@ test('planner token cannot download a kit', async () => {
   const res = await worker.fetch(new Request(`https://w/download?token=${encodeURIComponent(`${payload}.${sig}`)}&file=patch-sprint-kit-2026-10.pdf`), env());
   assert.equal(res.status, 403);
 });
+
+// Checkout pricing: server-side prices, vendor packs sold only as the all-formats bundle.
+let ipSeq = 0; // the checkout rate limiter is per IP, so each call gets its own
+async function checkout(items) {
+  let body;
+  globalThis.fetch = async (url, opts) => {
+    body = new URLSearchParams(opts.body);
+    return { ok: true, status: 200, json: async () => ({ id: 'cs_t', url: 'https://stripe.test' }) };
+  };
+  const res = await worker.fetch(new Request('https://w/checkout', {
+    method: 'POST', headers: { 'Content-Type': 'application/json', Origin: 'https://fixthevuln.com', 'CF-Connecting-IP': `10.0.0.${++ipSeq}` }, body: JSON.stringify({ items }),
+  }), env());
+  return { res, body };
+}
+
+test('single planner is $9.99 and 4-format bundle is $24.99', async () => {
+  const a = await checkout([{ productId: 'comptia-security-plus', variant: 'standard' }]);
+  assert.equal(a.res.status, 200);
+  assert.equal(a.body.get('line_items[0][price_data][unit_amount]'), '999');
+  const b = await checkout([{ productId: 'comptia-security-plus', variant: 'bundle' }]);
+  assert.equal(b.body.get('line_items[0][price_data][unit_amount]'), '2499');
+});
+
+test('vendor packs charge $79/$69/$59 and expand to every cert as a bundle zip', async () => {
+  for (const [id, cents, certs] of [['comptia-complete', '7900', 14], ['microsoft-complete', '6900', 12], ['aws-complete', '5900', 8]]) {
+    const { res, body } = await checkout([{ productId: id, variant: 'bundle' }]);
+    assert.equal(res.status, 200, id);
+    assert.equal(body.get('line_items[0][price_data][unit_amount]'), cents, id);
+    assert.equal(body.get('metadata[purchased_items]'), `${id}__bundle`);
+  }
+  const { res } = await checkout([{ productId: 'comptia-complete', variant: 'standard' }]);
+  assert.equal(res.status, 400, 'pack is not sold in a single format');
+});

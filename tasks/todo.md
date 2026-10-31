@@ -909,3 +909,31 @@ roadmaps, blog (largest).
       it, auto-generated pages do). Robert confirmed: regenerate the date, don't remove it. Verified via
       scratch-copy regen first (every page's diff was exactly the one timestamp line, 0 content drift),
       then ran `generate_practice_test_pages.py` for real across all 13 vendor pages.
+
+## 2026-10-31 Store price reposition (Hormozi anchor + "too cheap" perception) — PLAN, awaiting go-ahead
+
+Decision (Robert, 2026-10-31): raise singles + add a high-priced anchor. Exact numbers still to confirm.
+Reference: Hormozi LinkedIn post (tier spacing + "always have a very expensive item"). No sales yet, so no A/B possible; judgment call.
+
+Proposed: single $5.99 -> ~$9.99; 4-format bundle $15.99 -> ~$19.99 (still ~50% off $39.96); career-path tiers rescaled so
+the ladder stays monotonic; one new anchor ($49-79 full-library/vendor pack) on store.html.
+
+- [ ] Confirm final numbers + anchor contents (what does the $49-79 item actually deliver? needs R2 files)
+- [ ] worker PRICING / CP_PRICING / PRODUCT_BUNDLE_PRICING + store.js mirrors + store.html cards; tests/test_store_pricing_parity.py
+- [ ] "$5.99/$15.99" copy on ~209 pages (certs/, roadmaps/ ~66 each, 1 promo per tool/guide page, js/, scripts/ generators): fix at the generator, regenerate, don't hand-edit
+- [ ] "Save X%" badges, JSON-LD/offers, llms-full.txt, Stripe checkout copy, cache-bust ?v=
+- [ ] Existing buyers/open Stripe sessions unaffected (price_data is server-side per session) — verify
+- [ ] Gate: Revenue Guardian + /pre-push-review; self-qa.sh; one deploy
+- 2026-10-31 decisions: single $9.99, 4-format bundle $19.99, anchor = "CompTIA Complete" $59 (14 certs x all 4 formats, delivered as 14 `__bundle` zips via expandPurchasedItems, no new R2 files).
+  Needs a forced-variant field on PRODUCT_BUNDLE_PRICING (today it accepts any client variant at the flat price). Vendor packs feasible: comptia 14, microsoft 12, aws 8 (rest <=5, skip).
+
+### 2026-10-31 build result (uncommitted, not pushed)
+Final: single $9.99, 4-format bundle $19.99, career paths 2/3/4 certs $14.99/$21.99/$28.99 single and $21.99/$31.99/$41.99 all-format,
+Productivity Bundle $22.47, packs CompTIA Complete $79 (14), Microsoft Complete $69 (12), AWS Complete $59 (8), bundle-only via PRODUCT_FORMATS.
+- [x] worker + store.js tables, pack cards (hub featured + vendor pages via forVendor), 209 pages' copy, generators, cert-costs data/calculator
+- [x] tests: parity (price tables + packs), worker checkout tests (12 pass), self-qa.sh pass, headless render checked store/comptia/aws
+- [x] cache-bust: store.js v14->v15 (10 store pages), quiz-engine.js v1->v2 (68 quizzes + generate_quiz_pages.py)
+- [ ] /pre-push-review (Revenue Guardian), then deploy worker (wrangler) BEFORE/with static push so site and checkout prices never disagree
+- [ ] Known gap: a pack plus an individual cert it contains can both sit in the cart (career paths have an overlap guard, packs do not)
+- [ ] Review 2026-11-30: did packs cannibalize $19.99 bundles? ($79 pack beats buying 4 CompTIA certs at $19.99)
+- 2026-10-31 revision (Robert): 4-format bundle $19.99 -> $24.99; career-path all-format bundles +$5 (2/3/4 certs = $26.99/$36.99/$46.99). Singles, single-format paths, Productivity Bundle and packs unchanged. Tests + self-qa pass.

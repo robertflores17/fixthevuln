@@ -519,7 +519,7 @@ def generate_quiz_html(cfg, domains_js, total_questions, questions):
 
 {footer(affiliate_disclosure=True, quiz_disclaimer=vendor)}
 
-    <script src="js/quiz-engine.js?v=1"></script>
+    <script src="js/quiz-engine.js?v=2"></script>
     <script>
         function startQuiz() {{ QuizEngine.startQuiz(); }}
         function skipQuestion() {{ QuizEngine.skipQuestion(); }}

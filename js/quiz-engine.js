@@ -306,7 +306,7 @@ const QuizEngine = (() => {
         cta.innerHTML = '<h3 style="margin-bottom:8px;">Get the ' + certName + ' Study Planner</h3>'
             + '<p style="color:var(--text-secondary);margin-bottom:16px;">' + motivation
             + ' Our fillable PDF covers every exam domain with weekly schedules, progress trackers, and flashcard templates.</p>'
-            + '<a href="/store/store.html" style="display:inline-block;padding:12px 24px;background:var(--accent-color);color:white;border-radius:8px;text-decoration:none;font-weight:600;">Get the Study Planner — $5.99</a>'
+            + '<a href="/store/store.html" style="display:inline-block;padding:12px 24px;background:var(--accent-color);color:white;border-radius:8px;text-decoration:none;font-weight:600;">Get the Study Planner — $9.99</a>'
             + '<p style="color:var(--text-secondary);margin-top:8px;font-size:13px;">Also available in ADHD-Friendly, Dark Mode, and 4-Format Bundle</p>';
         resultsScreen.appendChild(cta);
     }

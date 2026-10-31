@@ -144,7 +144,7 @@ def store_cta_html(certs, prefix=''):
             <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
             <h3 style="color: white; margin-bottom: 0.5rem;">{heading}</h3>
             <p style="opacity: 0.9; margin-bottom: 1rem;">Fillable PDF study planners with domain trackers, weekly schedules, and progress tracking. Available in Standard, ADHD-Friendly, Dark Mode, and 4-Format Bundle.</p>
-{cert_buttons}            <p style="font-size: 0.8rem; opacity: 0.85; margin-top: 0.75rem;">60+ certifications available, from $5.99</p>
+{cert_buttons}            <p style="font-size: 0.8rem; opacity: 0.85; margin-top: 0.75rem;">60+ certifications available, from $9.99</p>
         </section>
 '''
 
