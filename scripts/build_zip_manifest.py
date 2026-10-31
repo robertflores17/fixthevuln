@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build _zip-manifest.json: {filename: {size, crc}} for every planner file in the R2 bucket.
+"""Build _zip-manifest.json: {filename: {size, crc, md5}} for every planner file in the R2 bucket.
 
 The checkout worker's GET /download-all streams a store-only zip and needs each file's CRC32 and size
 up front (hashing in the worker would exceed the free plan's CPU budget). Re-run this whenever a planner
@@ -13,6 +13,7 @@ Usage:
 Downloads every file once (about 840 MB) through `wrangler r2 object get --remote`.
 """
 import argparse
+import hashlib
 import json
 import re
 import subprocess
@@ -57,7 +58,8 @@ def fingerprint(name, tmp):
         return name, None
     data = path.read_bytes()
     path.unlink()
-    return name, {'size': len(data), 'crc': zlib.crc32(data) & 0xFFFFFFFF}
+    # md5 is R2's ETag for single-part uploads; the worker compares it to catch a same-size replacement
+    return name, {'size': len(data), 'crc': zlib.crc32(data) & 0xFFFFFFFF, 'md5': hashlib.md5(data).hexdigest()}
 
 
 def main():

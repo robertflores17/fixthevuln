@@ -199,3 +199,11 @@ which dependency markers pip evaluates. Caught by a manual `workflow_dispatch` r
 - **What's correct:** Grep the message text (`grep -rn "arXiv response" scripts tests`) before attributing a log line to a source or script. The real, reproduced roundup defect was different: `read(MAX_FEED_BYTES)` silently truncated Project Zero and CISA feeds to 0 items.
 - **Prevention rule:** Before logging a defect from a log line, find the code that prints it and confirm it belongs to the component you are blaming. Before scheduling a check on a metric, run the metric once yourself against the real log. Same family as 2026-10-25 PHP post: facts from a summary, not the primary source.
 
+
+## Store: zip checksum list (2026-10-31)
+- **Rule:** after adding or replacing any planner PDF or bundle zip in the R2 bucket, run
+  `python3 scripts/build_zip_manifest.py --out /tmp/zip-manifest.json --upload`. The worker's `GET /download-all`
+  needs each file's size, CRC32 and MD5 from `_zip-manifest.json`; a stale list fails safe (zip link hidden, 409 on the
+  route, individual links unaffected) but the one-click zip silently disappears for those orders.
+- **Why:** hashing in the worker would exceed the free plan's ~10 ms CPU limit, so the numbers are precomputed.
+- **Check:** `scripts/build_zip_manifest.py` prints `NOT IN BUCKET` for any expected file that is missing.

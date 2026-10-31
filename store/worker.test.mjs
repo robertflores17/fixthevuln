@@ -2,7 +2,7 @@
 // Stripe, Resend and R2 are mocked; no network.
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { createHmac } from 'node:crypto';
+import { createHash, createHmac } from 'node:crypto';
 import worker from './cloudflare-worker.js';
 
 const KIT_PRICE = 'price_1UWlNqLBnrzacKtTfxZZDmkg';
@@ -251,14 +251,16 @@ function crc32(buf) {
   return (crc ^ 0xffffffff) >>> 0;
 }
 
+const md5 = buf => createHash('md5').update(buf).digest('hex'); // R2's ETag for single-part uploads
+
 function zipEnv(files, manifest) {
   const e = env();
   const all = new Map(files);
   all.set('_zip-manifest.json', Buffer.from(JSON.stringify(manifest)));
   e.PLANNERS = {
-    head: async k => (all.has(k) ? { size: all.get(k).length } : null),
+    head: async k => (all.has(k) ? { size: all.get(k).length, etag: md5(all.get(k)) } : null),
     get: async k => (all.has(k)
-      ? { size: all.get(k).length, body: new Blob([all.get(k)]).stream(), json: async () => JSON.parse(all.get(k).toString()) }
+      ? { size: all.get(k).length, etag: md5(all.get(k)), body: new Blob([all.get(k)]).stream(), json: async () => JSON.parse(all.get(k).toString()) }
       : null),
   };
   return e;
@@ -268,7 +270,7 @@ const zipFiles = () => new Map([
   ['comptia-security-plus_bundle.zip', Buffer.from('PK-fake-security-plus-'.repeat(5000))],
   ['aws-developer_bundle.zip', Buffer.from('aws-developer-planner-bytes-'.repeat(3000))],
 ]);
-const zipManifest = files => Object.fromEntries([...files].map(([n, b]) => [n, { size: b.length, crc: crc32(b) }]));
+const zipManifest = files => Object.fromEntries([...files].map(([n, b]) => [n, { size: b.length, crc: crc32(b), md5: md5(b) }]));
 
 const zipOrder = { purchased_items: 'comptia-security-plus__bundle,aws-developer__bundle' };
 
@@ -360,4 +362,43 @@ test('a file replaced after the check aborts the zip instead of producing a bad 
   const res = await worker.fetch(new Request(href), e);
   assert.equal(res.status, 200);
   await assert.rejects(async () => { await res.arrayBuffer(); }, 'download errors out instead of finishing');
+});
+
+test('a replacement file of the same size is caught by its ETag', async () => {
+  const href = await zipLinkFromEmail();
+  const files = zipFiles();
+  const manifest = zipManifest(files);
+  const old = files.get('aws-developer_bundle.zip');
+  files.set('aws-developer_bundle.zip', Buffer.from(old.toString().replace(/a/g, 'b'))); // same length, different bytes
+  assert.equal(files.get('aws-developer_bundle.zip').length, old.length);
+  assert.equal((await worker.fetch(new Request(href), zipEnv(files, manifest))).status, 409);
+  sent.length = 0; // emailFor returns the first buyer email captured, so drop the one zipLinkFromEmail made
+  const mail = await emailFor(zipOrder, zipEnv(files, manifest));
+  assert.doesNotMatch(mail.html, /download-all/, 'no zip link for a stale file');
+});
+
+test('a file swapped for different bytes of the same size mid-download aborts the zip', async () => {
+  const href = await zipLinkFromEmail();
+  const files = zipFiles();
+  const e = zipEnv(files, zipManifest(files));
+  const realGet = e.PLANNERS.get;
+  let gets = 0;
+  e.PLANNERS.get = async k => {
+    const object = await realGet(k);
+    return ++gets === 3 ? { ...object, etag: 'f'.repeat(32) } : object;
+  };
+  const res = await worker.fetch(new Request(href), e);
+  await assert.rejects(async () => { await res.arrayBuffer(); }, 'download errors out instead of finishing');
+});
+
+test('a hung storage check cannot hold up the order email: no zip link, email still sent', async () => {
+  const files = zipFiles();
+  const e = zipEnv(files, zipManifest(files));
+  e.PLANNERS.head = () => new Promise(() => {}); // never resolves
+  const started = Date.now();
+  const mail = await emailFor(zipOrder, e);
+  assert.ok(mail, 'customer email was sent');
+  assert.doesNotMatch(mail.html, /download-all/);
+  assert.match(mail.html, /download\?token=/, 'per-file links still there');
+  assert.ok(Date.now() - started < 8000, 'bounded by the 3 s zip-check timeout');
 });

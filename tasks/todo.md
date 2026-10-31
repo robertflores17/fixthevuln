@@ -944,3 +944,7 @@ Productivity Bundle $22.47, packs CompTIA Complete $79 (14), Microsoft Complete 
 - 2026-10-31 kit price $4.99 -> $14.99/mo (Robert): new Stripe price price_1UWlNqLBnrzacKtTfxZZDmkg and payment link plink_1UWlUWLBnrzacKtTAX7gP3n8 (buy.stripe.com/eVqaEY2L8563evE6G81oI01), settings verified identical to the old link; old price/link archived by Robert (old link page: "no longer active"). Worker KIT_PRICE_ID, 19 pages' Subscribe links, ~89 price strings, JSON-LD offer, inject_store_ctas.py generator updated.
   - [ ] Robert: edit the Stripe product description (still says "Price: $4.99", visible on the checkout page)
   - [ ] Decide: regenerate the October kit with the workbook so new subscribers get sections 8-11 now (workflow_dispatch on generate-sprint-kit.yml replaces the Oct PDF in R2), or wait for the November run
+
+- 2026-10-31 follow-ups done (Robert asked): kit vendor-name escaping (hostile-text test across all 9 builders), worker zip-check 3 s timeout + MD5/ETag integrity (same-size replacement now caught), Dependabot #7 (undici DoS, dev-only) fixed by pinning wrangler 4.156.0 (miniflare pins undici 7.30.1), upkeep rule in lessons.md.
+  - [ ] 2026-11-30: run `python3 scripts/pack_sales_review.py` (read-only) to see packs vs $24.99 bundles
+  - [ ] after deploy: upload the MD5 manifest (scripts/build_zip_manifest.py --upload) BEFORE relying on the new worker check; re-run the kit workflow for 2026-10 so the Oct PDF has sections 8-11

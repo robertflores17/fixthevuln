@@ -750,8 +750,10 @@ async function planZip(env, items) {
   const manifestObject = await env.PLANNERS.get(ZIP_MANIFEST_KEY);
   const manifest = manifestObject ? await manifestObject.json() : {};
   const heads = await Promise.all(names.map(name => env.PLANNERS.head(name)));
-  const entries = names.map((name, i) => ({ name, ...manifest[name], missing: !heads[i], actual: heads[i]?.size }));
-  const bad = entries.filter(e => e.missing || e.size !== e.actual || typeof e.crc !== 'number');
+  const entries = names.map((name, i) => ({ name, ...manifest[name], missing: !heads[i], actual: heads[i]?.size, etag: heads[i]?.etag }));
+  // R2's ETag is the MD5 for single-part uploads; compare it when both sides have one, so a same-size replacement is caught too
+  const stale = e => e.md5 && /^[0-9a-f]{32}$/.test(e.etag || '') && e.etag !== e.md5;
+  const bad = entries.filter(e => e.missing || e.size !== e.actual || typeof e.crc !== 'number' || stale(e));
   const total = entries.reduce((n, e) => n + 30 + e.name.length + e.size, 0);
   if (bad.length || total > 0xFFFFFFFF) { // ponytail: no zip64, so a 4 GiB archive is refused rather than wrapped
     console.error('zip unavailable: manifest stale, file missing, or too large', bad.map(e => e.name));
@@ -782,8 +784,10 @@ async function handleDownloadAll(request, env) {
           await writer.write(locals[i]);
           writer.releaseLock();
           const object = await env.PLANNERS.get(entries[i].name);
-          // The headers already promised this size: a file replaced since planZip must abort the download, not corrupt it
-          if (!object?.body || object.size !== entries[i].size) throw new Error(`${entries[i].name} changed during download`);
+          // The headers already promised this size and content: a file replaced since planZip must abort the download, not corrupt it
+          if (!object?.body || object.size !== entries[i].size || (entries[i].etag && object.etag !== entries[i].etag)) {
+            throw new Error(`${entries[i].name} changed during download`);
+          }
           await object.body.pipeTo(writable, { preventClose: true });
         }
         const writer = writable.getWriter();
@@ -818,13 +822,23 @@ function zipUrlFor(downloads) {
 
 // The zip link only when the zip will really work, so the page and email never offer a dead button.
 // Any failure here means no link; it must never break /verify or the delivery email.
+const ZIP_CHECK_TIMEOUT_MS = 3000;
+
 async function zipLinkIfReady(env, downloads, items) {
   const url = zipUrlFor(downloads);
+  if (!url) return null;
+  let timer;
+  const timeout = new Promise(resolve => { timer = setTimeout(() => resolve('timeout'), ZIP_CHECK_TIMEOUT_MS); });
   try {
-    return url && (await planZip(env, items)) ? url : null;
+    // A slow bucket must not hold up the order email or /verify: no answer in time means no zip link
+    const plan = await Promise.race([planZip(env, items), timeout]);
+    if (plan === 'timeout') console.error('zip check timed out');
+    return Array.isArray(plan) ? url : null;
   } catch (err) {
     console.error('zip check failed', err?.message);
     return null;
+  } finally {
+    clearTimeout(timer);
   }
 }
 
