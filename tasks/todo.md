@@ -948,3 +948,6 @@ Productivity Bundle $22.47, packs CompTIA Complete $79 (14), Microsoft Complete 
 - 2026-10-31 follow-ups done (Robert asked): kit vendor-name escaping (hostile-text test across all 9 builders), worker zip-check 3 s timeout + MD5/ETag integrity (same-size replacement now caught), Dependabot #7 (undici DoS, dev-only) fixed by pinning wrangler 4.156.0 (miniflare pins undici 7.30.1), upkeep rule in lessons.md.
   - [ ] 2026-11-30: run `python3 scripts/pack_sales_review.py` (read-only) to see packs vs $24.99 bundles
   - [ ] after deploy: upload the MD5 manifest (scripts/build_zip_manifest.py --upload) BEFORE relying on the new worker check; re-run the kit workflow for 2026-10 so the Oct PDF has sections 8-11
+- 2026-10-31 shipped (pushed + worker ca1ed1e5): kit escaping, zip-check timeout + MD5/ETag, wrangler 4.156.0. MD5 manifest uploaded to R2 first. October kit regenerated via workflow_dispatch (28 pages, sections 8-11 present, 499 unique fields, no email sent). Real-bucket preview check: CompTIA Complete zip valid (14 entries, testzip None).
+  - [ ] Robert: first real order (about $20 two-item cart) to see the zip link in the email + success page; first kit subscription to see the welcome email
+  - [ ] hostile-text kit test only runs where reportlab is installed (kit workflow yes, self-qa.sh no)
