@@ -108,6 +108,7 @@
     }
     .btn-download-all {
       display: inline-block;
+      text-decoration: none;
       background: linear-gradient(135deg, #2563eb, #7c3aed);
       color: white;
       border: none;
@@ -347,7 +348,7 @@
       <p class="success-sub">Thank you for your purchase. Your downloads are ready.</p>
 
       <div id="downloadAllWrap" style="display:none">
-        <button class="btn-download-all" id="btnDownloadAll" onclick="downloadAll()">Download All Files</button>
+        <a class="btn-download-all" id="zipLink" href="#">Download everything (.zip)</a>
       </div>
 
       <div class="download-list" id="downloadList">
@@ -664,11 +665,9 @@
 
         downloadList.innerHTML = html;
 
-        // Show "Download All" button if 2+ files (only allow URLs from our worker)
-        allDownloadUrls = data.downloads
-          .map(dl => dl.url)
-          .filter(url => url && url.startsWith('https://fixthevuln-checkout.'));
-        if (allDownloadUrls.length >= 2) {
+        // One-click zip for orders with 2+ files (only allow URLs from our worker)
+        if (data.zipUrl && data.zipUrl.startsWith('https://fixthevuln-checkout.')) {
+          document.getElementById('zipLink').href = data.zipUrl;
           document.getElementById('downloadAllWrap').style.display = 'block';
         }
 
@@ -680,29 +679,6 @@
         showError();
       }
     }
-
-    let allDownloadUrls = [];
-
-    function downloadAll() {
-      const btn = document.getElementById('btnDownloadAll');
-      btn.disabled = true;
-      btn.textContent = 'Starting downloads...';
-      allDownloadUrls.forEach((url, i) => {
-        setTimeout(() => {
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = '';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          if (i === allDownloadUrls.length - 1) {
-            btn.textContent = 'All downloads started!';
-          }
-        }, i * 600);
-      });
-    }
-    // Expose to onclick
-    window.downloadAll = downloadAll;
 
     function renderDownloadCard(dl) {
       const certName = CERT_NAMES[dl.certId] || dl.certId;

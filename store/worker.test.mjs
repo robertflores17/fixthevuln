@@ -199,14 +199,14 @@ test('webhook reads a purchase record split across metadata keys', async () => {
 });
 
 // Delivery email: big orders link to the success page instead of embedding every signed download link.
-async function emailFor(metadata) {
+async function emailFor(metadata, workerEnv = env()) {
   globalThis.fetch = async (url, opts = {}) => {
     if (url === 'https://api.resend.com/emails') { sent.push(JSON.parse(opts.body)); return { ok: true, status: 200, json: async () => ({ id: 'x' }) }; }
     throw new Error(`unexpected fetch ${url}`);
   };
   await worker.fetch(webhook({
     id: 'cs_mail', mode: 'payment', customer_details: { email: 'buyer@example.com' }, amount_total: 7900, metadata,
-  }), env());
+  }), workerEnv);
   return sent.find(m => m.to[0] === 'buyer@example.com');
 }
 
@@ -237,4 +237,127 @@ test('email threshold: 12 files keep inline links, 13 switch to the success page
   const thirteen = await emailFor({ purchased_items: 'microsoft-complete__bundle,comptia-security-plus__bundle' });
   assert.match(thirteen.html, /View and download your files/);
   assert.doesNotMatch(thirteen.html, /download\?token=/);
+});
+
+// One-click zip: store-only archive streamed from R2 using a precomputed CRC manifest.
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+function crc32(buf) {
+  let c, crc = 0xffffffff;
+  for (const byte of buf) { c = (crc ^ byte) & 0xff; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; crc = (crc >>> 8) ^ c; }
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+function zipEnv(files, manifest) {
+  const e = env();
+  const all = new Map(files);
+  all.set('_zip-manifest.json', Buffer.from(JSON.stringify(manifest)));
+  e.PLANNERS = {
+    head: async k => (all.has(k) ? { size: all.get(k).length } : null),
+    get: async k => (all.has(k)
+      ? { size: all.get(k).length, body: new Blob([all.get(k)]).stream(), json: async () => JSON.parse(all.get(k).toString()) }
+      : null),
+  };
+  return e;
+}
+
+const zipFiles = () => new Map([
+  ['comptia-security-plus_bundle.zip', Buffer.from('PK-fake-security-plus-'.repeat(5000))],
+  ['aws-developer_bundle.zip', Buffer.from('aws-developer-planner-bytes-'.repeat(3000))],
+]);
+const zipManifest = files => Object.fromEntries([...files].map(([n, b]) => [n, { size: b.length, crc: crc32(b) }]));
+
+const zipOrder = { purchased_items: 'comptia-security-plus__bundle,aws-developer__bundle' };
+
+async function zipLinkFromEmail() {
+  const files = zipFiles();
+  const mail = await emailFor(zipOrder, zipEnv(files, zipManifest(files)));
+  return mail.html.match(/href="([^"]*download-all[^"]*)"/)[1].replaceAll('&amp;', '&');
+}
+
+test('zip link in the email downloads a valid archive with every purchased file', async () => {
+  const href = await zipLinkFromEmail();
+  const files = zipFiles();
+  const res = await worker.fetch(new Request(href), zipEnv(files, zipManifest(files)));
+  assert.equal(res.status, 200);
+  assert.equal(res.headers.get('content-type'), 'application/zip');
+  const path = join(mkdtempSync(join(tmpdir(), 'ftvzip-')), 'out.zip');
+  writeFileSync(path, Buffer.from(await res.arrayBuffer()));
+  // Python's zipfile checks the central directory, offsets and every CRC
+  const out = execFileSync('python3', ['-I', '-c', `
+import sys, zipfile, hashlib
+z = zipfile.ZipFile(sys.argv[1])
+print(z.testzip())
+print(sorted(z.namelist()))
+print(sorted(hashlib.sha256(z.read(n)).hexdigest()[:8] for n in z.namelist()))
+`, path]).toString().trim().split('\n');
+  assert.equal(out[0], 'None', 'testzip reports no bad file');
+  assert.equal(out[1], "['aws-developer_bundle.zip', 'comptia-security-plus_bundle.zip']");
+  const sha = b => execFileSync('python3', ['-I', '-c', 'import sys,hashlib;print(hashlib.sha256(sys.stdin.buffer.read()).hexdigest()[:8])'], { input: b }).toString().trim();
+  assert.equal(out[2], JSON.stringify([...files.values()].map(sha).sort()).replaceAll('"', "'").replaceAll(',', ', '));
+});
+
+test('zip is refused when the manifest is stale or a file is missing, and with a bad token', async () => {
+  const href = await zipLinkFromEmail();
+  const files = zipFiles();
+  const stale = zipManifest(files);
+  stale['aws-developer_bundle.zip'].size += 1;
+  assert.equal((await worker.fetch(new Request(href), zipEnv(files, stale))).status, 409);
+  const missing = new Map(files); missing.delete('aws-developer_bundle.zip');
+  assert.equal((await worker.fetch(new Request(href), zipEnv(missing, zipManifest(files)))).status, 409);
+  const tampered = href.replace(/token=[^&]*/, m => m.slice(0, -2) + 'xx');
+  assert.equal((await worker.fetch(new Request(tampered), zipEnv(files, zipManifest(files)))).status, 403);
+  assert.equal((await worker.fetch(new Request(href.replace(/\?.*/, '')), zipEnv(files, zipManifest(files)))).status, 400);
+});
+
+test('a single-file order has no zip button', async () => {
+  const mail = await emailFor({ purchased_items: 'comptia-security-plus__standard' });
+  assert.doesNotMatch(mail.html, /download-all/);
+});
+
+test('/verify returns a zip link for 2+ files and none for a single file', async () => {
+  let n = 0;
+  const files = zipFiles();
+  const verify = async (purchased_items, workerEnv = zipEnv(files, zipManifest(files))) => {
+    globalThis.fetch = async () => ({ ok: true, status: 200, json: async () => ({ payment_status: 'paid', mode: 'payment', created: Math.floor(Date.now() / 1000), metadata: { purchased_items } }) });
+    const res = await worker.fetch(new Request('https://w/verify', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'CF-Connecting-IP': `10.1.0.${++n}` }, body: JSON.stringify({ sessionId: 'cs_v' }),
+    }), workerEnv);
+    return res.json();
+  };
+  const two = await verify('comptia-security-plus__bundle,aws-developer__bundle');
+  assert.equal(two.downloads.length, 2);
+  assert.match(two.zipUrl, /^https:\/\/fixthevuln-checkout\..*\/download-all\?token=/);
+  assert.doesNotMatch(two.zipUrl, /file=/);
+  assert.equal((await verify('comptia-security-plus__standard')).zipUrl, null);
+  const stale = zipManifest(files);
+  stale['aws-developer_bundle.zip'].size += 1;
+  assert.equal((await verify('comptia-security-plus__bundle,aws-developer__bundle', zipEnv(files, stale))).zipUrl, null, 'no dead zip button');
+});
+
+test('no zip link is offered when the manifest is stale or a file is missing', async () => {
+  const files = zipFiles();
+  const stale = zipManifest(files);
+  stale['aws-developer_bundle.zip'].crc = undefined;
+  const mail = await emailFor(zipOrder, zipEnv(files, stale));
+  assert.doesNotMatch(mail.html, /download-all/);
+  assert.match(mail.html, /download\?token=/, 'per-file links are still there');
+});
+
+test('a file replaced after the check aborts the zip instead of producing a bad archive', async () => {
+  const href = await zipLinkFromEmail();
+  const files = zipFiles();
+  const e = zipEnv(files, zipManifest(files));
+  const realGet = e.PLANNERS.get;
+  let gets = 0; // 1 = manifest, 2 = first file; the second file comes back a different size
+  e.PLANNERS.get = async k => {
+    const object = await realGet(k);
+    return ++gets === 3 ? { ...object, size: object.size + 5 } : object;
+  };
+  const res = await worker.fetch(new Request(href), e);
+  assert.equal(res.status, 200);
+  await assert.rejects(async () => { await res.arrayBuffer(); }, 'download errors out instead of finishing');
 });

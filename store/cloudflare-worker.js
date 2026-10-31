@@ -325,6 +325,12 @@ export default {
       return handleDownload(request, env, cors);
     }
 
+    // ─── ROUTE: GET /download-all ───────────────
+    // Streams every file in the purchase as one zip
+    if (request.method === 'GET' && url.pathname === '/download-all') {
+      return handleDownloadAll(request, env);
+    }
+
     // ─── ROUTE: POST /errors ──────────────────
     // Client error reporting
     if (request.method === 'POST' && url.pathname === '/errors') {
@@ -590,6 +596,7 @@ async function handleVerify(request, env, cors) {
       verified: true,
       mode: session.mode,
       downloads,
+      zipUrl: await zipLinkIfReady(env, downloads, items),
     }), {
       status: 200,
       headers: { ...cors, 'Content-Type': 'application/json' },
@@ -604,6 +611,33 @@ async function handleVerify(request, env, cors) {
 }
 
 // ─── DOWNLOAD HANDLER ───────────────────────────
+// Verifies the HMAC signature and expiry of a download token. Returns { data } or { error: Response }.
+async function readDownloadToken(token, env) {
+  const dotIndex = token.lastIndexOf('.');
+  if (dotIndex === -1) {
+    return { error: new Response('Invalid token', { status: 403 }) };
+  }
+  const payload = token.substring(0, dotIndex);
+  const sig = token.substring(dotIndex + 1);
+
+  const validSig = await verifyTokenHmac(payload, sig, env.STRIPE_WEBHOOK_SECRET);
+  if (!validSig) {
+    return { error: new Response('Invalid token', { status: 403 }) };
+  }
+
+  let data;
+  try {
+    data = JSON.parse(atob(payload));
+  } catch {
+    return { error: new Response('Invalid token', { status: 403 }) };
+  }
+
+  if (Date.now() > data.expiry) {
+    return { error: new Response('Download link expired. Please contact hello@fixthevuln.com for a new link.', { status: 403 }) };
+  }
+  return { data };
+}
+
 // Serves a PDF from R2 after verifying the download token
 async function handleDownload(request, env, cors) {
   try {
@@ -615,30 +649,9 @@ async function handleDownload(request, env, cors) {
       return new Response('Missing token or file', { status: 400 });
     }
 
-    // Verify HMAC signature and decode token
-    const dotIndex = token.lastIndexOf('.');
-    if (dotIndex === -1) {
-      return new Response('Invalid token', { status: 403 });
-    }
-    const payload = token.substring(0, dotIndex);
-    const sig = token.substring(dotIndex + 1);
-
-    const validSig = await verifyTokenHmac(payload, sig, env.STRIPE_WEBHOOK_SECRET);
-    if (!validSig) {
-      return new Response('Invalid token', { status: 403 });
-    }
-
-    let tokenData;
-    try {
-      tokenData = JSON.parse(atob(payload));
-    } catch {
-      return new Response('Invalid token', { status: 403 });
-    }
-
-    // Check expiry
-    if (Date.now() > tokenData.expiry) {
-      return new Response('Download link expired. Please contact hello@fixthevuln.com for a new link.', { status: 403 });
-    }
+    const checked = await readDownloadToken(token, env);
+    if (checked.error) return checked.error;
+    const tokenData = checked.data;
 
     // Verify the file was part of the purchase
     const requestedFile = decodeURIComponent(file);
@@ -669,6 +682,151 @@ async function handleDownload(request, env, cors) {
 
   } catch (err) {
     return new Response('Download failed', { status: 500 });
+  }
+}
+
+// ─── ZIP DOWNLOAD ───────────────────────────────
+// One zip of every file in the purchase. Entries are stored, not compressed (the files are already PDFs
+// and zips), so the worker only writes small headers and pipes each R2 object straight through. CRC32 and
+// size come from _zip-manifest.json (scripts/build_zip_manifest.py) because hashing 30-75 MB per request
+// would blow the free plan's ~10 ms CPU budget. A file whose size no longer matches the manifest means the
+// manifest is stale: refuse the zip (the individual links still work) instead of shipping a corrupt archive.
+const ZIP_MANIFEST_KEY = '_zip-manifest.json';
+
+function zipHeaders(entries) {
+  const enc = new TextEncoder();
+  const DOS_DATE = 0x0021; // 1980-01-01, the format's epoch; the files carry no meaningful mtime
+  const locals = [];
+  const centrals = [];
+  let offset = 0;
+  for (const e of entries) {
+    const name = enc.encode(e.name);
+    const local = new DataView(new ArrayBuffer(30));
+    local.setUint32(0, 0x04034b50, true);
+    local.setUint16(4, 20, true);
+    local.setUint16(6, 0x0800, true); // UTF-8 names
+    local.setUint16(12, DOS_DATE, true);
+    local.setUint32(14, e.crc, true);
+    local.setUint32(18, e.size, true);
+    local.setUint32(22, e.size, true);
+    local.setUint16(26, name.length, true);
+    const central = new DataView(new ArrayBuffer(46));
+    central.setUint32(0, 0x02014b50, true);
+    central.setUint16(4, 20, true);
+    central.setUint16(6, 20, true);
+    central.setUint16(8, 0x0800, true);
+    central.setUint16(14, DOS_DATE, true);
+    central.setUint32(16, e.crc, true);
+    central.setUint32(20, e.size, true);
+    central.setUint32(24, e.size, true);
+    central.setUint16(28, name.length, true);
+    central.setUint32(42, offset, true);
+    locals.push(concatBytes(new Uint8Array(local.buffer), name));
+    centrals.push(concatBytes(new Uint8Array(central.buffer), name));
+    offset += 30 + name.length + e.size;
+  }
+  const cd = concatBytes(...centrals);
+  const end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true);
+  end.setUint16(8, entries.length, true);
+  end.setUint16(10, entries.length, true);
+  end.setUint32(12, cd.length, true);
+  end.setUint32(16, offset, true);
+  return { locals, tail: concatBytes(cd, new Uint8Array(end.buffer)) };
+}
+
+function concatBytes(...parts) {
+  const out = new Uint8Array(parts.reduce((n, p) => n + p.length, 0));
+  let at = 0;
+  for (const p of parts) { out.set(p, at); at += p.length; }
+  return out;
+}
+
+// Maps an order's items to zip entries and checks them against the manifest and the bucket.
+// Returns the entries, or null when a zip would be corrupt or impossible (stale manifest, missing file, over 4 GiB).
+async function planZip(env, items) {
+  const names = [...new Set(items.map(item => {
+    const [certId, variant] = item.split('__');
+    return getFilename(certId, variant);
+  }))];
+  const manifestObject = await env.PLANNERS.get(ZIP_MANIFEST_KEY);
+  const manifest = manifestObject ? await manifestObject.json() : {};
+  const heads = await Promise.all(names.map(name => env.PLANNERS.head(name)));
+  const entries = names.map((name, i) => ({ name, ...manifest[name], missing: !heads[i], actual: heads[i]?.size }));
+  const bad = entries.filter(e => e.missing || e.size !== e.actual || typeof e.crc !== 'number');
+  const total = entries.reduce((n, e) => n + 30 + e.name.length + e.size, 0);
+  if (bad.length || total > 0xFFFFFFFF) { // ponytail: no zip64, so a 4 GiB archive is refused rather than wrapped
+    console.error('zip unavailable: manifest stale, file missing, or too large', bad.map(e => e.name));
+    return null;
+  }
+  return entries;
+}
+
+async function handleDownloadAll(request, env) {
+  try {
+    const token = new URL(request.url).searchParams.get('token');
+    if (!token) return new Response('Missing token', { status: 400 });
+    const checked = await readDownloadToken(token, env);
+    if (checked.error) return checked.error;
+
+    const entries = await planZip(env, checked.data.items);
+    if (!entries) {
+      return new Response('Combined zip is unavailable right now. Please use the individual download links, or contact hello@fixthevuln.com.', { status: 409 });
+    }
+
+    const { locals, tail } = zipHeaders(entries);
+    const { readable, writable } = new TransformStream();
+    // Runs while the response body is consumed: header, then the object piped natively (no per-chunk JS)
+    (async () => {
+      try {
+        for (let i = 0; i < entries.length; i++) {
+          const writer = writable.getWriter();
+          await writer.write(locals[i]);
+          writer.releaseLock();
+          const object = await env.PLANNERS.get(entries[i].name);
+          // The headers already promised this size: a file replaced since planZip must abort the download, not corrupt it
+          if (!object?.body || object.size !== entries[i].size) throw new Error(`${entries[i].name} changed during download`);
+          await object.body.pipeTo(writable, { preventClose: true });
+        }
+        const writer = writable.getWriter();
+        await writer.write(tail);
+        await writer.close();
+      } catch (err) {
+        console.error('zip stream failed', err?.message);
+        await writable.abort(err).catch(() => {});
+      }
+    })();
+
+    return new Response(readable, {
+      headers: {
+        'Content-Type': 'application/zip',
+        'Content-Disposition': 'attachment; filename="fixthevuln-planners.zip"',
+        'Cache-Control': 'no-store',
+      },
+    });
+  } catch (err) {
+    return new Response('Download failed', { status: 500 });
+  }
+}
+
+// One-click zip link for an order: same signed token as the per-file links, no file parameter
+function zipUrlFor(downloads) {
+  if (downloads.length < 2) return null;
+  const u = new URL(downloads[0].url);
+  u.pathname = '/download-all';
+  u.searchParams.delete('file');
+  return u.toString();
+}
+
+// The zip link only when the zip will really work, so the page and email never offer a dead button.
+// Any failure here means no link; it must never break /verify or the delivery email.
+async function zipLinkIfReady(env, downloads, items) {
+  const url = zipUrlFor(downloads);
+  try {
+    return url && (await planZip(env, items)) ? url : null;
+  } catch (err) {
+    console.error('zip check failed', err?.message);
+    return null;
   }
 }
 
@@ -830,7 +988,7 @@ async function handleWebhook(request, env) {
         const promises = [];
 
         if (customerEmail) {
-          promises.push(sendCustomerEmail(env, customerEmail, downloads, items, session.id));
+          promises.push(sendCustomerEmail(env, customerEmail, downloads, items, session.id, await zipLinkIfReady(env, downloads, items)));
         }
         promises.push(sendSellerNotification(env, customerEmail, downloads, items, amountCents, session.metadata?.utm_source));
 
@@ -864,7 +1022,7 @@ async function handleWebhook(request, env) {
 // the email past Gmail's ~102 KB clipping limit and hide the later Download buttons.
 const EMAIL_INLINE_LINK_LIMIT = 12;
 
-async function sendCustomerEmail(env, toEmail, downloads, items, sessionId) {
+async function sendCustomerEmail(env, toEmail, downloads, items, sessionId, zipUrl) {
   const compact = downloads.length > EMAIL_INLINE_LINK_LIMIT && Boolean(sessionId); // no session id, no page to link to
   const filesUrl = `https://fixthevuln.com/store/success.html?session_id=${encodeURIComponent(sessionId || '')}`;
   // Group downloads by career path for nicer email layout
@@ -943,6 +1101,7 @@ async function sendCustomerEmail(env, toEmail, downloads, items, sessionId) {
         <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 24px;">
           Thank you for your purchase! Your certification study planners are ready to download. ${compact ? 'Use the button below to open your download page with a link for every file.' : 'Click the buttons below to save your files.'}
         </p>
+        ${zipUrl ? `<p style="margin:0 0 16px;text-align:center;"><a href="${escapeHtml(zipUrl)}" style="display:inline-block;background:#059669;color:#ffffff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:600;font-size:16px;">Download everything as one zip</a></p>` : ''}
         ${compact ? `<p style="margin:0 0 24px;text-align:center;"><a href="${escapeHtml(filesUrl)}" style="display:inline-block;background:#2563eb;color:#ffffff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:600;font-size:16px;">View and download your files</a></p>` : ''}
         <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
           ${itemRows}
