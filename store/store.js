@@ -324,9 +324,6 @@ const PRODUCTS = [
   { id: 'k8s-ckad',                vendor: 'k8s',       name: 'Kubernetes CKAD',              meta: 'CKAD · Performance-based', popular: false, tags: ['App Design', 'Deployment', 'Services'] },
   { id: 'k8s-cks',                 vendor: 'k8s',       name: 'Kubernetes CKS',               meta: 'CKS · Performance-based', popular: false, tags: ['Cluster Security', 'Hardening', 'Runtime'] },
 
-  // Security Ops
-  { id: 'vuln-remediation-planner', vendor: 'secops',   name: 'Vulnerability Remediation Planner', meta: 'Remediation tracker · SLA deadlines', popular: true, tags: ['Remediation', 'SLA Tracking', 'Scan Import', 'Assignment'] },
-
   // Lifestyle & Productivity
   { id: 'budget-binder',            vendor: 'lifestyle', name: 'Budget Binder',                    meta: 'Monthly budgets · Expense tracking', popular: true, tags: ['Budget', 'Expense Tracking', 'Savings Goals', 'Debt Payoff'] },
   { id: 'wellness-journal',         vendor: 'lifestyle', name: 'Wellness Journal',                 meta: 'Daily check-ins · Habit tracking', popular: false, tags: ['Mood Tracker', 'Gratitude', 'Sleep Log', 'Self-Care'] },
@@ -618,7 +615,6 @@ function vendorDisplayName(vendor) {
     offsec: 'OffSec',
     hashicorp: 'HashiCorp',
     k8s: 'Kubernetes',
-    secops: 'Security Ops',
     lifestyle: 'Lifestyle',
     education: 'Education',
     bundles: 'Bundles',

@@ -4,14 +4,17 @@ Generate monthly Patch Tuesday Sprint Kit PDF.
 
 Pulls CISA KEV CVEs for the current Patch Tuesday cycle, enriches with
 EPSS scores, and generates a professional multi-page intelligence PDF containing:
-  1. Cover page with severity breakdown, EPSS high-risk callout
-  2. Triage Matrix (pre-filled with CVE data)
-  3. Month-over-Month Trend (comparison with previous cycle)
-  4. CVE Remediation Details (descriptions, CWE, EPSS, advisory links)
-  5. 14-Day Sprint Calendar (data-driven tasks, due date callouts)
-  6. Testing & Rollback Checklist (pre-filled vendors/products)
-  7. SLA Compliance Tracker (pre-filled severity counts & deadlines)
-  8. Executive Summary (CWE analysis, risk highlights, EPSS distribution)
+  Cover page with severity breakdown and EPSS high-risk callout, then:
+  1. Triage Matrix (pre-filled with CVE data)
+  2. Month-over-Month Trend (comparison with previous cycle)
+  3. CVE Remediation Details (descriptions, CWE, EPSS, advisory links)
+  4. 14-Day Sprint Calendar (data-driven tasks, due date callouts)
+  5. Testing & Rollback Checklist (pre-filled vendors/products)
+  6. SLA Compliance Tracker (pre-filled severity counts & deadlines)
+  7. Executive Summary (CWE analysis, risk highlights, EPSS distribution)
+  Remediation workbook (blank fillable forms for the ongoing backlog):
+  8. Remediation Ownership  9. Exception & Risk Acceptance
+  10. Remediation Metrics   11. Scan Export Mapping
 
 Usage:
   python scripts/generate_sprint_kit.py                    # current month
@@ -813,6 +816,10 @@ def build_cover_page(entries, month_label, cycle_start, cycle_end, styles):
         "5. Testing & Rollback Checklist \u2014 Pre-filled vendors/products",
         "6. SLA Compliance Tracker \u2014 Pre-filled severity counts & deadlines",
         "7. Executive Summary \u2014 CWE analysis, risk highlights, EPSS distribution",
+        "8. Remediation Ownership \u2014 Owner, backup and escalation per asset group",
+        "9. Exception & Risk Acceptance \u2014 Written record for anything that misses its SLA",
+        "10. Remediation Metrics \u2014 Cycle-over-cycle numbers worth reporting",
+        "11. Scan Export Mapping \u2014 Repeatable scanner-to-tracker column map",
     ]
     for item in contents:
         elements.append(Paragraph(item, ParagraphStyle(
@@ -1828,6 +1835,179 @@ def build_executive_summary(entries, month_label, cycle_start, cycle_end, styles
     return elements
 
 
+# ══════════════════════════════════════════════════════
+# Remediation workbook (sections 8-11): the ongoing-backlog pages that sit
+# alongside the monthly sprint. Blank fillable forms; only the vendor list and
+# the in-scope count come from this cycle's data.
+# ══════════════════════════════════════════════════════
+
+def _workbook_table(rows, col_widths, pad=6):
+    table = Table(rows, colWidths=col_widths)
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), HEADER_BG),
+        ('TEXTCOLOR', (0, 0), (-1, 0), white),
+        ('GRID', (0, 0), (-1, -1), 0.5, BORDER_GRAY),
+        ('BOX', (0, 0), (-1, -1), 1, TEXT_MED),
+        ('TOPPADDING', (0, 0), (-1, -1), pad),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), pad),
+        ('LEFTPADDING', (0, 0), (-1, -1), 6),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+    ]))
+    return table
+
+
+def _head(labels, styles):
+    return [Paragraph(f'<b>{t}</b>', styles['CellText']) for t in labels]
+
+
+def build_ownership_sheet(entries, styles):
+    """Section 8: who owns the fix for each asset group."""
+    from xml.sax.saxutils import escape
+    elements = [
+        Paragraph("8. Remediation Ownership", styles['SectionHeader']),
+        Paragraph(
+            "Name an owner and a backup for every asset group before the sprint starts. The first rows are "
+            "pre-filled with the vendors affected this cycle; use the blank rows for your own asset groups.",
+            styles['KitBody']),
+        Spacer(1, 10),
+    ]
+    widths = [1.7 * inch, 1.4 * inch, 1.4 * inch, 1.6 * inch, 1.2 * inch]
+    rows = [_head(['Asset group / vendor', 'Owner', 'Backup', 'Escalation contact', 'Patch window'], styles)]
+    vendors = [v for v, _ in vendor_summary(entries)][:8]
+    for i in range(14):
+        first = (Paragraph(f'<font size="9">{escape(vendors[i])}</font>', styles['CellText'])
+                 if i < len(vendors) else AcroTextField(name=f'own_group_{i}', width=widths[0] - 12, height=14))
+        rows.append([first] + [
+            AcroTextField(name=f'own_{key}_{i}', width=w - 12, height=14)
+            for key, w in zip(('owner', 'backup', 'escalation', 'window'), widths[1:])])
+    elements.append(_workbook_table(rows, widths, pad=7))
+    return elements
+
+
+def _exception_block(n, styles):
+    """One risk-acceptance form as a two-column table."""
+    def checks(prefix, options):
+        cells = []
+        for key, label in options:
+            cells += [AcroCheckbox(name=f'exc{n}_{prefix}_{key}', size=11),
+                      Paragraph(f'<font size="8">{label}</font>', styles['CellText'])]
+        return Table([cells], colWidths=[0.2 * inch, 1.1 * inch] * len(options))
+
+    label = lambda t: Paragraph(f'<font size="8"><b>{t}</b></font>', styles['CellText'])
+    field = lambda name, h=14, **kw: AcroTextField(name=f'exc{n}_{name}', width=330, height=h, **kw)
+    rows = [
+        [label(f'Exception {n}: CVE ID(s)'), field('cve')],
+        [label('Affected asset(s)'), field('assets')],
+        [label('Why the patch cannot be applied'), checks('reason', [
+            ('nopatch', 'Vendor patch unavailable'), ('breaks', 'Breaks a critical system'),
+            ('window', 'No maintenance window'), ('other', 'Other')])],
+        [label('Compensating controls'), field('controls', h=40, multiline=True)],
+        [label('Residual risk'), checks('risk', [('low', 'Low'), ('med', 'Medium'), ('high', 'High')])],
+        [label('Business owner / approver'), field('approver')],
+        [label('Approval date / re-review date'), field('dates')],
+    ]
+    table = Table(rows, colWidths=[1.9 * inch, 5.3 * inch])
+    table.setStyle(TableStyle([
+        ('GRID', (0, 0), (-1, -1), 0.5, BORDER_GRAY),
+        ('BOX', (0, 0), (-1, -1), 1, TEXT_MED),
+        ('BACKGROUND', (0, 0), (0, -1), HexColor('#f1f5f9')),
+        ('TOPPADDING', (0, 0), (-1, -1), 5),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+    ]))
+    return table
+
+
+def build_exception_forms(styles):
+    """Section 9: written record for anything that will miss its SLA."""
+    return [
+        Paragraph("9. Exception &amp; Risk Acceptance", styles['SectionHeader']),
+        Paragraph(
+            "If a fix will miss its SLA, record why, what reduces the risk in the meantime, and who accepted it. "
+            "Set a re-review date so an exception cannot quietly become permanent.",
+            styles['KitBody']),
+        Spacer(1, 8),
+        _exception_block(1, styles),
+        Spacer(1, 14),
+        _exception_block(2, styles),
+    ]
+
+
+def build_metrics_page(entries, styles):
+    """Section 10: the numbers worth reporting each cycle."""
+    elements = [
+        Paragraph("10. Remediation Metrics", styles['SectionHeader']),
+        Paragraph(
+            "Fill in one row per metric at the end of each cycle and compare with the last one. "
+            "Definitions are written so two analysts count the same way.",
+            styles['KitBody']),
+        Spacer(1, 10),
+    ]
+    widths = [1.7 * inch, 2.6 * inch, 1.0 * inch, 1.0 * inch, 0.9 * inch]
+    rows = [_head(['Metric', 'How to count it', 'This cycle', 'Last cycle', 'Target'], styles)]
+    metrics = [
+        ('cves', 'CVEs in scope', 'KEV entries in this cycle\'s Triage Matrix', str(len(entries))),
+        ('fixed', 'CVEs remediated', 'Fix deployed and verified', None),
+        ('insla', 'Remediated within SLA', 'Verified on or before the due date', None),
+        ('overdue', 'Open and past SLA', 'Still unpatched after the due date', None),
+        ('compliance', 'SLA compliance %', 'Within SLA \u00f7 (remediated + open past SLA)', None),
+        ('mttr', 'Mean time to remediate (days)', 'Average days from patch release to verified fix', None),
+        ('exceptions', 'Open exceptions', 'Approved exceptions not yet expired (Section 9)', None),
+        ('rollbacks', 'Rollbacks', 'Patches reverted after deployment', None),
+    ]
+    for key, name, how, prefill in metrics:
+        rows.append([
+            Paragraph(f'<font size="9"><b>{name}</b></font>', styles['CellText']),
+            Paragraph(f'<font size="8">{how}</font>', styles['CellText']),
+            (Paragraph(f'<font size="9">{prefill}</font>', styles['CellText']) if prefill
+             else AcroTextField(name=f'met_{key}_now', width=widths[2] - 12, height=14)),
+            AcroTextField(name=f'met_{key}_prev', width=widths[3] - 12, height=14),
+            AcroTextField(name=f'met_{key}_target', width=widths[4] - 12, height=14),
+        ])
+    elements.append(_workbook_table(rows, widths, pad=8))
+    elements.append(Spacer(1, 14))
+    elements.append(Paragraph("Actions for next cycle", styles['SubHeader']))
+    elements.append(AcroTextField(name='met_actions', width=520, height=90, multiline=True))
+    return elements
+
+
+def build_scan_mapping(styles):
+    """Section 11: repeatable scanner-export-to-tracker column map. Header names vary by scanner and
+    report template, so the cells are left for the analyst to fill from a real export."""
+    elements = [
+        Paragraph("11. Scan Export Mapping", styles['SectionHeader']),
+        Paragraph(
+            "Scanners name their export columns differently, and the names change with the report template. "
+            "Export one sample report from each scanner, copy its exact column headers into the matching cells, "
+            "and keep this page with your tracker so the next analyst can repeat the import the same way.",
+            styles['KitBody']),
+        Spacer(1, 10),
+    ]
+    widths = [1.6 * inch, 1.4 * inch, 1.4 * inch, 1.4 * inch, 1.4 * inch]
+    rows = [_head(['Tracker field', 'Scanner 1', 'Scanner 2', 'Scanner 3', 'Other'], styles)]
+    rows.append([Paragraph('<font size="8"><i>Scanner name</i></font>', styles['CellText'])] + [
+        AcroTextField(name=f'map_scanner_{i}', width=widths[i + 1] - 12, height=14) for i in range(4)])
+    for key, label in [('cve', 'CVE ID'), ('host', 'Asset / hostname'), ('ip', 'IP address'),
+                       ('finding', 'Finding name'), ('severity', 'Severity'), ('cvss', 'CVSS score'),
+                       ('port', 'Port / service'), ('first', 'First detected'), ('fix', 'Fix / solution'),
+                       ('owner', 'Owner (from Section 8)')]:
+        rows.append([Paragraph(f'<font size="9"><b>{label}</b></font>', styles['CellText'])] + [
+            AcroTextField(name=f'map_{key}_{i}', width=widths[i + 1] - 12, height=14) for i in range(4)])
+    elements.append(_workbook_table(rows, widths, pad=7))
+    elements.append(Spacer(1, 12))
+    elements.append(Paragraph("Import notes (filters, duplicate rules, rows to skip)", styles['SubHeader']))
+    elements.append(AcroTextField(name='map_notes', width=520, height=70, multiline=True))
+    return elements
+
+
+def build_workbook(entries, styles):
+    """Sections 8-11, each on its own page."""
+    return (build_ownership_sheet(entries, styles) + [PageBreak()]
+            + build_exception_forms(styles) + [PageBreak()]
+            + build_metrics_page(entries, styles) + [PageBreak()]
+            + build_scan_mapping(styles))
+
+
 def generate_pdf(entries, year, month, cycle_start, cycle_end):
     """Generate the complete Sprint Kit PDF."""
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -1861,6 +2041,8 @@ def generate_pdf(entries, year, month, cycle_start, cycle_end):
     elements.extend(build_testing_checklist(entries, styles))
     elements.extend(build_sla_tracker(entries, styles))
     elements.extend(build_executive_summary(entries, month_label, cycle_start, cycle_end, styles))
+    elements.append(PageBreak())
+    elements.extend(build_workbook(entries, styles))
 
     doc.build(elements, onFirstPage=add_footer, onLaterPages=add_footer)
 

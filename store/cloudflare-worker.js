@@ -93,8 +93,6 @@ const CERT_NAMES = {
   'k8s-cka': 'Kubernetes CKA',
   'k8s-ckad': 'Kubernetes CKAD',
   'k8s-cks': 'Kubernetes CKS',
-  // Security Ops
-  'vuln-remediation-planner': 'Vulnerability Remediation Planner',
   // Lifestyle & Productivity
   'budget-binder': 'Budget Binder',
   'wellness-journal': 'Wellness Journal',
