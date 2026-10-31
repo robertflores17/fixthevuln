@@ -146,6 +146,27 @@ const CAREER_PATH_NAMES = {
   'cisco-path':             'Cisco Path',
 };
 
+// Stripe caps a metadata value at 500 chars, so a long purchase list spans purchased_items,
+// purchased_items_2, ... (whole items only, never split mid-id). Stripe allows 50 keys; the cart cap is 20 lines.
+function purchasedItemsMetadata(rawItems) {
+  const chunks = [''];
+  for (const item of rawItems) {
+    const next = chunks[chunks.length - 1] ? `${chunks[chunks.length - 1]},${item}` : item;
+    if (next.length <= 480) chunks[chunks.length - 1] = next;
+    else chunks.push(item);
+  }
+  return Object.fromEntries(chunks.map((c, i) => [i ? `purchased_items_${i + 1}` : 'purchased_items', c]));
+}
+
+function readPurchasedItems(metadata) {
+  const index = key => (key === 'purchased_items' ? 1 : Number(key.slice('purchased_items_'.length)));
+  return Object.keys(metadata || {})
+    .filter(key => /^purchased_items(_\d+)?$/.test(key))
+    .sort((a, b) => index(a) - index(b))
+    .flatMap(key => String(metadata[key]).split(','))
+    .filter(Boolean);
+}
+
 // Expand career path items (cp:pathId:variant) into individual cert items (certId__variant)
 function expandPurchasedItems(rawItems) {
   const expanded = new Set();
@@ -436,13 +457,15 @@ async function handleCheckout(request, env, cors) {
         return `${item.productId}:${item.variant}`;
       }
       return `${item.productId}__${item.variant}`;
-    }).join(',');
+    });
 
     const params = new URLSearchParams();
     params.append('mode', 'payment');
     params.append('success_url', 'https://fixthevuln.com/store/success.html?session_id={CHECKOUT_SESSION_ID}');
     params.append('cancel_url', 'https://fixthevuln.com/store/store.html');
-    params.append('metadata[purchased_items]', purchasedItems);
+    for (const [key, value] of Object.entries(purchasedItemsMetadata(purchasedItems))) {
+      params.append(`metadata[${key}]`, value);
+    }
     // Referral attribution (optional). Only short slug-like values reach Stripe metadata.
     for (const key of ['source', 'medium', 'campaign']) {
       const value = utm?.[key];
@@ -477,7 +500,9 @@ async function handleCheckout(request, env, cors) {
     const session = await stripeResponse.json();
 
     if (session.error) {
-      return new Response(JSON.stringify({ error: session.error.message }), {
+      // Type and code only: the message and params can echo cart or customer data
+      console.error('Stripe checkout error:', session.error.type, session.error.code);
+      return new Response(JSON.stringify({ error: 'Could not start checkout. Please try again, or email hello@fixthevuln.com.' }), {
         status: 400,
         headers: { ...cors, 'Content-Type': 'application/json' },
       });
@@ -554,8 +579,7 @@ async function handleVerify(request, env, cors) {
     }
 
     // Get purchased items from session metadata and expand career paths
-    const purchasedItems = session.metadata.purchased_items || '';
-    const rawItems = purchasedItems.split(',').filter(Boolean);
+    const rawItems = readPurchasedItems(session.metadata);
     const items = expandPurchasedItems(rawItems);
 
     // Anchor expiry to session creation time (not current time) to prevent unlimited replays
@@ -795,8 +819,7 @@ async function handleWebhook(request, env) {
       const session = event.data.object;
       const customerEmail = session.customer_details?.email;
       const amountCents = session.amount_total;
-      const purchasedItems = session.metadata?.purchased_items || '';
-      const rawItems = purchasedItems.split(',').filter(Boolean);
+      const rawItems = readPurchasedItems(session.metadata);
       const items = expandPurchasedItems(rawItems);
 
       if (items.length > 0) {

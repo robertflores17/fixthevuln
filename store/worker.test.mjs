@@ -164,3 +164,36 @@ test('vendor packs charge $79/$69/$59 and expand to every cert as a bundle zip',
   const { res } = await checkout([{ productId: 'comptia-complete', variant: 'standard' }]);
   assert.equal(res.status, 400, 'pack is not sold in a single format');
 });
+
+// Stripe caps a metadata value at 500 chars; a full 20-line bundle cart must span several keys and read back whole.
+const twentyBundles = [
+  'comptia-a-plus-1201', 'comptia-a-plus-1202', 'comptia-security-plus', 'comptia-network-plus', 'comptia-linux-plus',
+  'comptia-cloud-plus', 'comptia-cysa-plus', 'comptia-pentest-plus', 'comptia-casp-plus', 'comptia-server-plus',
+  'aws-cloud-practitioner', 'aws-solutions-architect', 'aws-developer', 'aws-cloudops', 'aws-security-specialty',
+  'aws-database-specialty', 'aws-machine-learning', 'aws-data-engineer', 'ms-az-900', 'ms-az-104',
+].map(productId => ({ productId, variant: 'bundle' }));
+
+test('a 20-line bundle cart splits its purchase record across metadata keys under 500 chars', async () => {
+  const { res, body } = await checkout(twentyBundles);
+  assert.equal(res.status, 200);
+  const keys = [...body.keys()].filter(k => /^metadata\[purchased_items(_\d+)?\]$/.test(k));
+  assert.ok(keys.length >= 2, 'spans more than one key');
+  for (const k of keys) assert.ok(body.get(k).length <= 500, `${k} within Stripe's 500 char limit`);
+  const joined = keys.flatMap(k => body.get(k).split(','));
+  assert.deepEqual(joined.sort(), twentyBundles.map(i => `${i.productId}__bundle`).sort());
+});
+
+test('webhook reads a purchase record split across metadata keys', async () => {
+  globalThis.fetch = async (url, opts = {}) => {
+    if (url === 'https://api.resend.com/emails') { sent.push(JSON.parse(opts.body)); return { ok: true, status: 200, json: async () => ({ id: 'x' }) }; }
+    throw new Error(`unexpected fetch ${url}`);
+  };
+  await worker.fetch(webhook({
+    id: 'cs_split', mode: 'payment', customer_details: { email: 'buyer@example.com' }, amount_total: 5000,
+    metadata: { purchased_items: 'comptia-security-plus__bundle', purchased_items_2: 'aws-developer__bundle' },
+  }), env());
+  const mail = sent.find(m => m.to[0] === 'buyer@example.com');
+  assert.ok(mail, 'customer email sent');
+  assert.match(mail.html, /comptia-security-plus_bundle\.zip/);
+  assert.match(mail.html, /aws-developer_bundle\.zip/);
+});
