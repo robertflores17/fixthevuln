@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { createHmac } from 'node:crypto';
 import worker from './cloudflare-worker.js';
 
-const KIT_PRICE = 'price_1T45YOLBnrzacKtTCA08o8PY';
+const KIT_PRICE = 'price_1UWlNqLBnrzacKtTfxZZDmkg';
 const WEBHOOK_SECRET = 'whsec_test';
 let r2, sent, stripe;
 

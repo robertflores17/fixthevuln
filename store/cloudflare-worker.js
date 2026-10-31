@@ -1209,7 +1209,8 @@ async function sendSellerNotification(env, customerEmail, downloads, items, amou
 }
 
 // ─── PATCH TUESDAY SPRINT KIT SUBSCRIPTION ─────
-const KIT_PRICE_ID = 'price_1T45YOLBnrzacKtTCA08o8PY';
+// $14.99/month. Replaced price_1T45YOLBnrzacKtTCA08o8PY ($4.99, archived 2026-10-31 with no active subscribers).
+const KIT_PRICE_ID = 'price_1UWlNqLBnrzacKtTfxZZDmkg';
 const KIT_LINK_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 async function stripeGet(env, path) {
