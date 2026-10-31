@@ -830,7 +830,7 @@ async function handleWebhook(request, env) {
         const promises = [];
 
         if (customerEmail) {
-          promises.push(sendCustomerEmail(env, customerEmail, downloads, items));
+          promises.push(sendCustomerEmail(env, customerEmail, downloads, items, session.id));
         }
         promises.push(sendSellerNotification(env, customerEmail, downloads, items, amountCents, session.metadata?.utm_source));
 
@@ -859,7 +859,14 @@ async function handleWebhook(request, env) {
 }
 
 // ─── CUSTOMER EMAIL ─────────────────────────────
-async function sendCustomerEmail(env, toEmail, downloads, items) {
+// Above this many files the email lists names only and links to the success page, which regenerates
+// every download link. Per-file links carry a signed token, so a multi-pack order would otherwise push
+// the email past Gmail's ~102 KB clipping limit and hide the later Download buttons.
+const EMAIL_INLINE_LINK_LIMIT = 12;
+
+async function sendCustomerEmail(env, toEmail, downloads, items, sessionId) {
+  const compact = downloads.length > EMAIL_INLINE_LINK_LIMIT && Boolean(sessionId); // no session id, no page to link to
+  const filesUrl = `https://fixthevuln.com/store/success.html?session_id=${encodeURIComponent(sessionId || '')}`;
   // Group downloads by career path for nicer email layout
   const grouped = {};
   const individual = [];
@@ -875,6 +882,15 @@ async function sendCustomerEmail(env, toEmail, downloads, items) {
   function renderRow(dl) {
     const certName = CERT_NAMES[dl.certId] || dl.certId;
     const variantLabel = VARIANT_LABELS[dl.variant] || dl.variant;
+    if (compact) {
+      return `
+      <tr>
+        <td colspan="2" style="padding:8px 16px;border-bottom:1px solid #e5e7eb;">
+          <strong style="color:#1e293b;">${escapeHtml(certName)}</strong>
+          <span style="display:inline-block;background:#eff6ff;color:#2563eb;padding:2px 8px;border-radius:50px;font-size:11px;font-weight:600;margin-left:6px;">${escapeHtml(variantLabel)}</span>
+        </td>
+      </tr>`;
+    }
     return `
       <tr>
         <td style="padding:12px 16px;border-bottom:1px solid #e5e7eb;">
@@ -925,8 +941,9 @@ async function sendCustomerEmail(env, toEmail, downloads, items) {
       <!-- Body -->
       <div style="padding:32px 24px;">
         <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 24px;">
-          Thank you for your purchase! Your certification study planners are ready to download. Click the buttons below to save your files.
+          Thank you for your purchase! Your certification study planners are ready to download. ${compact ? 'Use the button below to open your download page with a link for every file.' : 'Click the buttons below to save your files.'}
         </p>
+        ${compact ? `<p style="margin:0 0 24px;text-align:center;"><a href="${escapeHtml(filesUrl)}" style="display:inline-block;background:#2563eb;color:#ffffff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:600;font-size:16px;">View and download your files</a></p>` : ''}
         <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
           ${itemRows}
         </table>

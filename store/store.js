@@ -628,7 +628,13 @@ function vendorDisplayName(vendor) {
 }
 
 // ─── CART MANAGEMENT ────────────────────────
-function addToCart(productId, productName, variant, price) {
+// Cert ids a vendor pack delivers in every format, or null for anything that isn't a vendor pack.
+function vendorPackItems(productId) {
+  return hasOwn(PRODUCT_BUNDLE_PRICING, productId) && effectiveVariant(productId, '') === 'bundle'
+    ? PRODUCT_BUNDLE_PRICING[productId].items : null;
+}
+
+async function addToCart(productId, productName, variant, price) {
   const key = `${productId}__${variant}`;
   if (cart.some(item => item.key === key)) return;
 
@@ -643,6 +649,30 @@ function addToCart(productId, productName, variant, price) {
   if (overlappingPath) {
     showToast(`"${productName}" is already included in the "${overlappingPath.name}" in your cart.`, 'warning');
     return;
+  }
+
+  // A vendor pack in the cart already includes every format of its planners
+  const coveringPack = cart.find(item => (vendorPackItems(item.productId) || []).includes(productId));
+  if (coveringPack) {
+    showToast(`"${productName}" is already included in "${coveringPack.name}" in your cart.`, 'warning');
+    return;
+  }
+
+  // Adding a vendor pack: offer to drop the planners and career paths it already covers
+  const packItems = vendorPackItems(productId);
+  if (packItems) {
+    const covered = cart.filter(item => {
+      if (!item.productId.startsWith('cp:')) return packItems.includes(item.productId);
+      const path = CAREER_PATHS.find(p => p.id === item.productId.replace('cp:', ''));
+      return path && path.certIds.every(id => packItems.includes(id));
+    });
+    if (covered.length > 0) {
+      const names = covered.map(o => o.name).join(', ');
+      const proceed = await showConfirm(`${productName} already includes ${names} in every format. Remove ${covered.length === 1 ? 'it' : 'them'} from your cart to avoid paying twice?`);
+      if (proceed) cart = cart.filter(item => !covered.includes(item));
+      // A second add of the same pack can be waiting on the same dialog
+      if (cart.some(item => item.key === key)) return;
+    }
   }
 
   cart.push({
@@ -802,6 +832,14 @@ async function addCareerPathToCart(pathId, pathName, certCount) {
 
   // Check for individual certs in cart that overlap with this career path
   const path = CAREER_PATHS.find(p => p.id === pathId);
+  const coveringPack = path && cart.find(item => {
+    const packItems = vendorPackItems(item.productId);
+    return packItems && path.certIds.every(id => packItems.includes(id));
+  });
+  if (coveringPack) {
+    showToast(`The "${pathName}" career path is already included in "${coveringPack.name}" in your cart.`, 'warning');
+    return;
+  }
   if (path) {
     const overlaps = cart.filter(item => {
       if (item.productId.startsWith('cp:')) return false;

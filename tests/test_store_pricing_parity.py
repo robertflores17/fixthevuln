@@ -85,6 +85,14 @@ class StorePricingParity(unittest.TestCase):
             self.assertLess(b['single'], len(b['items']) * bundle, pid)
             self.assertGreater(b['single'], bundle, pid)  # still the expensive anchor tier
 
+    def test_success_page_names_every_product(self):
+        worker = dict(re.findall(r"^\s*'([^']+)':\s*'([^']*)'", _block(WORKER, 'CERT_NAMES'), re.M))
+        page = (ROOT / 'store/success.html').read_text()
+        block = re.search(r'const CERT_NAMES = \{(.*?)\n\s*\};', page, re.S).group(1)
+        success = dict(re.findall(r"'([^']+)':\s*'([^']*)'", block))
+        self.assertEqual([k for k in worker if k not in success], [])
+        self.assertEqual({k: v for k, v in worker.items() if success.get(k) != v}, {})
+
     def test_badge_matches_claim(self):
         self.assertRegex((ROOT / STORE).read_text(),
                          r"id: 'lifestyle-bundle'.*meta: '3 planners · Save 25%'")

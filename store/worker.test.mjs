@@ -197,3 +197,44 @@ test('webhook reads a purchase record split across metadata keys', async () => {
   assert.match(mail.html, /comptia-security-plus_bundle\.zip/);
   assert.match(mail.html, /aws-developer_bundle\.zip/);
 });
+
+// Delivery email: big orders link to the success page instead of embedding every signed download link.
+async function emailFor(metadata) {
+  globalThis.fetch = async (url, opts = {}) => {
+    if (url === 'https://api.resend.com/emails') { sent.push(JSON.parse(opts.body)); return { ok: true, status: 200, json: async () => ({ id: 'x' }) }; }
+    throw new Error(`unexpected fetch ${url}`);
+  };
+  await worker.fetch(webhook({
+    id: 'cs_mail', mode: 'payment', customer_details: { email: 'buyer@example.com' }, amount_total: 7900, metadata,
+  }), env());
+  return sent.find(m => m.to[0] === 'buyer@example.com');
+}
+
+test('a 14-file pack order emails one link to the success page, not 14 signed links', async () => {
+  const mail = await emailFor({ purchased_items: 'comptia-complete__bundle' });
+  assert.match(mail.html, /success\.html\?session_id=cs_mail/);
+  assert.doesNotMatch(mail.html, /download\?token=/);
+  assert.match(mail.html, /CompTIA Security\+/);
+  assert.ok(mail.html.length < 30000, `compact email is ${mail.html.length} chars`);
+});
+
+test('a small order keeps per-file download links in the email', async () => {
+  const mail = await emailFor({ purchased_items: 'comptia-security-plus__standard' });
+  assert.match(mail.html, /download\?token=/);
+  assert.doesNotMatch(mail.html, /View and download your files/);
+});
+
+test('three packs at once stay well under the Gmail clipping limit', async () => {
+  const mail = await emailFor({ purchased_items: 'comptia-complete__bundle,microsoft-complete__bundle,aws-complete__bundle' });
+  assert.ok(mail.html.length < 60000, `email is ${mail.html.length} chars`);
+});
+
+test('email threshold: 12 files keep inline links, 13 switch to the success page link', async () => {
+  const twelve = await emailFor({ purchased_items: 'microsoft-complete__bundle' });
+  assert.match(twelve.html, /download\?token=/);
+  assert.doesNotMatch(twelve.html, /View and download your files/);
+  sent.length = 0;
+  const thirteen = await emailFor({ purchased_items: 'microsoft-complete__bundle,comptia-security-plus__bundle' });
+  assert.match(thirteen.html, /View and download your files/);
+  assert.doesNotMatch(thirteen.html, /download\?token=/);
+});
