@@ -35,6 +35,8 @@ from calendar import monthrange
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from fetch_kev import cvss_from_metrics
 
+from xml.sax.saxutils import escape as esc  # KEV text is external data; Paragraph parses XML-like markup
+
 # ── ReportLab imports ────────────────────────────────
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
@@ -300,15 +302,15 @@ def generate_executive_narrative(entries, sev, vendors, cwes):
         parts.append(
             f"{len(top5_entries)} CVE{'s' if len(top5_entries) != 1 else ''} "
             f"rank in the EPSS Top 5% for exploitation likelihood, indicating active or "
-            f"imminent exploitation. The highest-risk vulnerability is {top_entry['cveID']} "
-            f"({top_entry['vendor']} {top_entry['product']}, CVSS {top_entry.get('cvss', 0):.1f}, "
+            f"imminent exploitation. The highest-risk vulnerability is {esc(top_entry['cveID'])} "
+            f"({esc(top_entry['vendor'])} {esc(top_entry['product'])}, CVSS {top_entry.get('cvss', 0):.1f}, "
             f"PPS {top_entry.get('pps', 0)}), which should be prioritized for immediate remediation."
         )
 
     # Ransomware paragraph
     rw_entries = [e for e in entries if e.get('ransomware') == 'Known']
     if rw_entries:
-        rw_cves = ", ".join(e['cveID'] for e in rw_entries[:5])
+        rw_cves = ", ".join(esc(e['cveID']) for e in rw_entries[:5])
         if len(rw_entries) > 5:
             rw_cves += f", +{len(rw_entries) - 5} more"
         parts.append(
@@ -321,7 +323,7 @@ def generate_executive_narrative(entries, sev, vendors, cwes):
     if cwes:
         top_cwe_id, top_cwe_name, top_cwe_count = cwes[0]
         parts.append(
-            f"The most prevalent weakness type is {top_cwe_id} \u2014 {top_cwe_name} "
+            f"The most prevalent weakness type is {esc(top_cwe_id)} \u2014 {esc(top_cwe_name)} "
             f"({top_cwe_count} instance{'s' if top_cwe_count != 1 else ''}), suggesting a pattern "
             f"that may warrant focused vendor communication or compensating controls."
         )
@@ -799,7 +801,7 @@ def build_cover_page(entries, month_label, cycle_start, cycle_end, styles):
     vendors = vendor_summary(entries)
     if vendors:
         elements.append(Paragraph("Vendor Summary", styles['SubHeader']))
-        vendor_text = "  |  ".join(f"{v}: {c}" for v, c in vendors[:10])
+        vendor_text = "  |  ".join(f"{esc(v)}: {c}" for v, c in vendors[:10])
         elements.append(Paragraph(vendor_text, ParagraphStyle(
             'vend', parent=styles['KitBody'], alignment=TA_CENTER, fontSize=9, textColor=TEXT_MED
         )))
@@ -867,11 +869,11 @@ def build_triage_matrix(entries, styles):
         pps_lbl, pps_color = pps_label(pps)
 
         rows.append([
-            Paragraph(f'<font size="7">{e["cveID"]}</font>', styles['CellText']),
-            Paragraph(f'<font size="7">{e["vendor"]}<br/>{e["product"]}</font>', styles['CellTextSmall']),
+            Paragraph(f'<font size="7">{esc(e["cveID"])}</font>', styles['CellText']),
+            Paragraph(f'<font size="7">{esc(e["vendor"])}<br/>{esc(e["product"])}</font>', styles['CellTextSmall']),
             Paragraph(f'<font size="8" color="{sev_color.hexval()}">{cvss:.1f}</font>', styles['CellText']),
             Paragraph(f'<font size="7">{epss:.3f}</font>', styles['CellText']),
-            Paragraph(f'<font size="7">{e.get("dueDate", "")}</font>', styles['CellText']),
+            Paragraph(f'<font size="7">{esc(e.get("dueDate", ""))}</font>', styles['CellText']),
             Paragraph(f'<font size="7" color="#dc2626">{rw}</font>', styles['CellText']),
             Paragraph(f'<font size="8" color="{pps_color}"><b>{pps}</b></font>', styles['CellText']),
             AcroTextField(name=f'triage_priority_{i}', width=56, height=14),
@@ -938,7 +940,7 @@ def build_cve_detail_pages(entries, styles):
         # ── Severity + CVE ID + CVSS header row ──
         header_text = (
             f'<font color="{sev_color.hexval()}">[{sev_label_str}]</font> '
-            f'<b>{e["cveID"]}</b>'
+            f'<b>{esc(e["cveID"])}</b>'
             f'<font size="9" color="#475569">  &mdash;  CVSS {cvss:.1f}</font>'
         )
         elements.append(Paragraph(header_text, styles['DetailTitle']))
@@ -947,7 +949,7 @@ def build_cve_detail_pages(entries, styles):
         name = e.get('name', '')
         if name:
             elements.append(Paragraph(
-                f'<i>{name}</i>', styles['DetailSmall']
+                f'<i>{esc(name)}</i>', styles['DetailSmall']
             ))
 
         # ── Description ──
@@ -956,7 +958,7 @@ def build_cve_detail_pages(entries, styles):
             # Truncate very long descriptions
             if len(desc) > 300:
                 desc = desc[:297] + '...'
-            elements.append(Paragraph(desc, styles['DetailBody']))
+            elements.append(Paragraph(esc(desc), styles['DetailBody']))
 
         # ── Metadata line: CWE + EPSS + Due Date ──
         meta_parts = []
@@ -966,7 +968,7 @@ def build_cve_detail_pages(entries, styles):
             cwe_strs = []
             for cwe_id in cwes:
                 cwe_name = CWE_NAMES.get(cwe_id, '')
-                cwe_strs.append(f'{cwe_id} ({cwe_name})' if cwe_name else cwe_id)
+                cwe_strs.append(esc(f'{cwe_id} ({cwe_name})' if cwe_name else cwe_id))
             meta_parts.append(f'<b>Weakness:</b> {", ".join(cwe_strs)}')
 
         epss_score = e.get('epss', 0) or 0
@@ -979,7 +981,7 @@ def build_cve_detail_pages(entries, styles):
         due = e.get('dueDate', '')
         rw = e.get('ransomware', 'Unknown')
         if due:
-            meta_parts.append(f'<b>Due Date:</b> {due}  |  <b>Ransomware:</b> {rw}')
+            meta_parts.append(f'<b>Due Date:</b> {esc(due)}  |  <b>Ransomware:</b> {esc(rw)}')
 
         for part in meta_parts:
             elements.append(Paragraph(part, styles['DetailSmall']))
@@ -988,7 +990,7 @@ def build_cve_detail_pages(entries, styles):
         action = e.get('requiredAction', '')
         if action:
             elements.append(Paragraph(
-                f'<b>Required Action:</b> {action}', styles['DetailSmall']
+                f'<b>Required Action:</b> {esc(action)}', styles['DetailSmall']
             ))
 
         # ── Vendor advisories from notes ──
@@ -1001,7 +1003,7 @@ def build_cve_detail_pages(entries, styles):
                 if len(display_url) > 70:
                     display_url = display_url[:67] + '...'
                 elements.append(Paragraph(
-                    f'&bull; {link["label"]}: {display_url}',
+                    f'&bull; {esc(link["label"])}: {esc(display_url)}',
                     styles['LinkText']
                 ))
 
@@ -1159,12 +1161,12 @@ def build_trend_page(entries, year, month, styles):
 
         if new_vendors:
             elements.append(Paragraph(
-                f'<b>New vendors this cycle:</b> {", ".join(sorted(new_vendors))}',
+                f'<b>New vendors this cycle:</b> {", ".join(esc(v) for v in sorted(new_vendors))}',
                 styles['KitBody']
             ))
         if recurring:
             elements.append(Paragraph(
-                f'<b>Recurring vendors:</b> {", ".join(sorted(recurring))}',
+                f'<b>Recurring vendors:</b> {", ".join(esc(v) for v in sorted(recurring))}',
                 styles['KitBody']
             ))
 
@@ -1181,13 +1183,13 @@ def build_sprint_calendar(patch_tuesday, entries, styles):
     total = len(entries)
 
     # Build vendor deployment string
-    vendor_str = ", ".join(f"{v} ({c} CVEs)" for v, c in vendors[:4])
+    vendor_str = ", ".join(f"{esc(v)} ({c} CVEs)" for v, c in vendors[:4])
     if len(vendors) > 4:
         vendor_str += f", +{len(vendors) - 4} more"
 
     # Critical CVE IDs for Wave 1
     critical_cves = [e['cveID'] for e in entries if (e.get('cvss', 0) or 0) >= 9.0]
-    critical_str = ", ".join(critical_cves[:4])
+    critical_str = ", ".join(esc(c) for c in critical_cves[:4])
     if len(critical_cves) > 4:
         critical_str += f", +{len(critical_cves) - 4} more"
 
@@ -1329,8 +1331,8 @@ def build_testing_checklist(entries, styles):
 
         cbs = [AcroCheckbox(name=f'test_{phase}_{row_idx}', size=11) for phase in check_phases]
         rows.append([
-            Paragraph(f'<font size="8">{e["vendor"]}<br/>{e["product"]}</font>', styles['CellText']),
-            Paragraph(f'<font size="7">{e["cveID"]}</font>', styles['CellTextSmall']),
+            Paragraph(f'<font size="8">{esc(e["vendor"])}<br/>{esc(e["product"])}</font>', styles['CellText']),
+            Paragraph(f'<font size="7">{esc(e["cveID"])}</font>', styles['CellTextSmall']),
             *cbs,
         ])
         row_idx += 1
@@ -1622,7 +1624,7 @@ def build_executive_summary(entries, month_label, cycle_start, cycle_end, styles
         ['Low Severity', str(sev['low'])],
         ['Ransomware-Linked', str(ransomware_count)],
         ['Vendors Affected', str(len(vendors))],
-        ['Top Vendor', f'{vendors[0][0]} ({vendors[0][1]} CVEs)' if vendors else 'N/A'],
+        ['Top Vendor', f'{esc(vendors[0][0])} ({vendors[0][1]} CVEs)' if vendors else 'N/A'],
     ]
 
     metrics_rows = []
@@ -1681,8 +1683,8 @@ def build_executive_summary(entries, month_label, cycle_start, cycle_end, styles
         cwe_rows = [cwe_header]
         for cwe_id, cwe_name, count in cwes[:5]:
             cwe_rows.append([
-                Paragraph(f'<font size="8">{cwe_id}</font>', styles['CellText']),
-                Paragraph(f'<font size="8">{cwe_name}</font>', styles['CellText']),
+                Paragraph(f'<font size="8">{esc(cwe_id)}</font>', styles['CellText']),
+                Paragraph(f'<font size="8">{esc(cwe_name)}</font>', styles['CellText']),
                 Paragraph(f'<font size="8">{count}</font>', styles['CellText']),
             ])
 
@@ -1713,7 +1715,7 @@ def build_executive_summary(entries, month_label, cycle_start, cycle_end, styles
     if ransomware_count > 0:
         risk_bullets.append(f'{ransomware_count} CVE{"s" if ransomware_count != 1 else ""} linked to known ransomware campaigns')
     if vendors:
-        risk_bullets.append(f'Most affected vendor: {vendors[0][0]} with {vendors[0][1]} CVEs')
+        risk_bullets.append(f'Most affected vendor: {esc(vendors[0][0])} with {vendors[0][1]} CVEs')
     if sev['critical'] > 0:
         risk_bullets.append(f'{sev["critical"]} critical-severity vulnerabilities requiring immediate attention')
 
@@ -1862,7 +1864,6 @@ def _head(labels, styles):
 
 def build_ownership_sheet(entries, styles):
     """Section 8: who owns the fix for each asset group."""
-    from xml.sax.saxutils import escape
     elements = [
         Paragraph("8. Remediation Ownership", styles['SectionHeader']),
         Paragraph(
@@ -1875,7 +1876,7 @@ def build_ownership_sheet(entries, styles):
     rows = [_head(['Asset group / vendor', 'Owner', 'Backup', 'Escalation contact', 'Patch window'], styles)]
     vendors = [v for v, _ in vendor_summary(entries)][:8]
     for i in range(14):
-        first = (Paragraph(f'<font size="9">{escape(vendors[i])}</font>', styles['CellText'])
+        first = (Paragraph(f'<font size="9">{esc(vendors[i])}</font>', styles['CellText'])
                  if i < len(vendors) else AcroTextField(name=f'own_group_{i}', width=widths[0] - 12, height=14))
         rows.append([first] + [
             AcroTextField(name=f'own_{key}_{i}', width=w - 12, height=14)
