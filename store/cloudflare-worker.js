@@ -985,8 +985,19 @@ async function handleWebhook(request, env) {
   try {
     const event = JSON.parse(payload);
 
-    if (event.type === 'checkout.session.completed') {
+    // async_payment_succeeded: delayed methods (ACH, SEPA, Bacs) complete as 'unpaid' first
+    if (event.type === 'checkout.session.completed' ||
+        event.type === 'checkout.session.async_payment_succeeded') {
       const session = event.data.object;
+
+      // Never email download links before funds are confirmed. 'no_payment_required' ($0 / trial) still passes.
+      if (session.payment_status === 'unpaid') {
+        return new Response(JSON.stringify({ received: true }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
       const customerEmail = session.customer_details?.email;
       const amountCents = session.amount_total;
       const rawItems = readPurchasedItems(session.metadata);

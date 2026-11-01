@@ -40,8 +40,8 @@ beforeEach(() => {
   };
 });
 
-function webhook(session) {
-  const payload = JSON.stringify({ type: 'checkout.session.completed', data: { object: session } });
+function webhook(session, type = 'checkout.session.completed') {
+  const payload = JSON.stringify({ type, data: { object: session } });
   const t = Math.floor(Date.now() / 1000);
   const v1 = createHmac('sha256', WEBHOOK_SECRET).update(`${t}.${payload}`).digest('hex');
   return new Request('https://w/webhook', { method: 'POST', body: payload, headers: { 'stripe-signature': `t=${t},v1=${v1}` } });
@@ -401,4 +401,35 @@ test('a hung storage check cannot hold up the order email: no zip link, email st
   assert.doesNotMatch(mail.html, /download-all/);
   assert.match(mail.html, /download\?token=/, 'per-file links still there');
   assert.ok(Date.now() - started < 8000, 'bounded by the 3 s zip-check timeout');
+});
+
+// Delayed payment methods (ACH etc.): no files until the bank confirms.
+const delayedOrder = status => ({
+  id: 'cs_ach', mode: 'payment', payment_status: status, customer_details: { email: 'buyer@example.com' },
+  amount_total: 2900, metadata: { purchased_items: 'comptia-security-plus__standard' },
+});
+const noMailFetch = () => {
+  globalThis.fetch = async (url, opts = {}) => {
+    if (url === 'https://api.resend.com/emails') { sent.push(JSON.parse(opts.body)); return { ok: true, status: 200, json: async () => ({ id: 'x' }) }; }
+    throw new Error(`unexpected fetch ${url}`);
+  };
+};
+
+test('unpaid checkout.session.completed (ACH) sends no download email', async () => {
+  noMailFetch();
+  const res = await worker.fetch(webhook(delayedOrder('unpaid')), env());
+  assert.equal(res.status, 200);
+  assert.equal(sent.length, 0);
+});
+
+test('async_payment_succeeded delivers the files', async () => {
+  noMailFetch();
+  await worker.fetch(webhook(delayedOrder('paid'), 'checkout.session.async_payment_succeeded'), env());
+  assert.ok(sent.find(m => m.to[0] === 'buyer@example.com'), 'customer email sent');
+});
+
+test('paid checkout.session.completed still delivers immediately', async () => {
+  noMailFetch();
+  await worker.fetch(webhook(delayedOrder('paid')), env());
+  assert.ok(sent.find(m => m.to[0] === 'buyer@example.com'), 'customer email sent');
 });
