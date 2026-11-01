@@ -1,9 +1,8 @@
-# AppSec Review — 2026-10-30
+# AppSec Review — 2026-11-01
 
-**Reviewer:** Robert Flores, CISSP  
-**Pipeline Run:** 2026-10-30 (automated)  
-**CVEs Reviewed:** 2  
-**Total in Database After Publish:** 278
+**Reviewer:** Robert Flores, CISSP (FixTheVuln AppSec Reviewer)  
+**CVE Count:** 2  
+**Review Date:** 2026-11-01
 
 ---
 
@@ -11,10 +10,10 @@
 
 | Priority | Count | CVEs |
 |----------|-------|------|
-| Critical | 1 | CVE-2026-97229 |
-| High | 1 | CVE-2026-76418 |
-| Medium | 0 | — |
-| Low | 0 | — |
+| Critical | 0 | — |
+| High     | 2 | CVE-2026-118527, CVE-2026-111357 |
+| Medium   | 0 | — |
+| Low      | 0 | — |
 
 ---
 
@@ -22,31 +21,27 @@
 
 | CVE ID | Vendor | Priority | Vulnerability Class |
 |--------|--------|----------|---------------------|
-| CVE-2026-97229 | GitLab | Critical | Integer Overflow → Unauthenticated RCE (CWE-190) |
-| CVE-2026-76418 | Cisco | High | NULL Pointer Dereference → Remote DoS (CWE-690) |
+| CVE-2026-118527 | Ivanti | High | Predictable Identifier / Arbitrary File Write |
+| CVE-2026-111357 | Ivanti | High | Missing Authentication / Privilege Escalation |
 
 ---
 
 ## Trend Analysis
 
-This batch reflects a continuing CISA focus on widely-deployed developer and network security infrastructure. The GitLab integer overflow (CVSS 10.0) represents a particularly severe supply chain risk vector: unauthenticated code execution triggered through CI/CD configuration files means any contributor with push access to a public or shared GitLab repository could potentially exploit the flaw against the server without credentials. The Ruby/Onigmo regex compiler root cause extends risk beyond GitLab itself to any Ruby application using the affected library, a pattern consistent with the "shared dependency" KEV entries CISA has increasingly added in 2025–2026. The Cisco ASA/FTD DoS reinforces an ongoing trend of perimeter device vulnerabilities reaching KEV status quickly after public disclosure—particularly concerning given that disabling a firewall creates an unmonitered gap that adversaries can exploit for lateral movement or data exfiltration without triggering firewall-based alerting.
+This batch continues a well-documented pattern of chained Ivanti Connect Secure vulnerabilities — both CVEs are explicitly linked to a third (CVE-2026-104935) forming a three-link exploit chain that moves an attacker from unauthenticated access through file write and into privilege escalation. Ivanti's VPN appliances have been a persistent target since 2024, and CISA's BOD 26-04 specifically calls out this product line for expedited patching timelines (note the seven-day remediation window on CVE-2026-111357, due 2026-11-02). The pattern of predictable identifiers enabling file writes to known paths is a common design flaw in appliance firmware stacks, suggesting the underlying codebase has not been fully audited post-disclosure. Organizations running Ivanti Connect Secure should treat all three CVEs as a single remediation unit and complete forensic triage per CISA's published requirements before re-exposing the appliance to the internet.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"GitLab CVSS 10.0: How a Regex Overflow Becomes an Unauthenticated RCE Supply Chain Threat"** — Deep dive into CWE-190 in the Onigmo regex compiler, the CI/CD attack path, and why Ruby apps beyond GitLab may be silently vulnerable.
-
-2. **"When Your Firewall Is the Vulnerability: Cisco ASA/FTD DoS and the Gap It Creates"** — Explores how NULL pointer dereferences on perimeter devices create brief but dangerous blind spots and why CISA is accelerating KEV due dates for network security products.
-
-3. **"BOD 26-04 in Practice: The 3-Day Patch Window and What It Means for Enterprise Security Teams"** — Both CVEs carry a 3-day CISA remediation deadline under BOD 26-04, an opportunity to explain the directive's urgency framework and help practitioners build faster patch workflows.
+1. **"Ivanti's Three-Link Chain: How CVE-2026-104935, -118527, and -111357 Combine for Full Compromise"** — A technical breakdown of how each vulnerability feeds the next, with a timeline of CISA advisories and patch availability.
+2. **"BOD 26-04 in Practice: What the New CISA Patching Directive Means for Network Appliances"** — Explains the directive's seven-day and 14-day windows, forensic triage requirements, and how to build a compliant remediation workflow.
+3. **"Why Ivanti Keep Making the KEV List: Appliance Security Anti-Patterns"** — A recurring-vendor analysis examining the architectural and development practices that produce predictable-identifier and missing-auth flaws in VPN/gateway appliances.
 
 ---
 
 ## Newsletter Snippet
 
-**This Week in KEV: Critical GitLab RCE and Cisco Firewall DoS**
+**This week CISA added two new Ivanti Connect Secure vulnerabilities to the Known Exploited Vulnerabilities catalog, both part of a three-CVE exploit chain.** CVE-2026-118527 allows a remote authenticated attacker to write files to a predictable on-disk path, while CVE-2026-111357 (CVSS 7.0) enables a local attacker to escalate privileges through a missing authentication check on a critical function. Together with the previously catalogued CVE-2026-104935, these three flaws can be chained to achieve full appliance compromise from an unauthenticated starting position.
 
-CISA added two high-impact vulnerabilities to the Known Exploited Vulnerabilities catalog this week, both carrying BOD 26-04 remediation deadlines of November 1, 2026. The most urgent is CVE-2026-97229, a CVSS 10.0 integer overflow in GitLab's CI/CD regex compiler that allows an unauthenticated attacker to execute arbitrary code on the GitLab server — no credentials required, just a crafted `.gitlab-ci.yml` file. Organizations running GitLab CE or EE should treat this as an emergency patch: apply GitLab 19.4.2 or later immediately and review CISA's forensics triage guidance under BOD 26-04.
-
-The second entry, CVE-2026-76418, affects Cisco Secure Firewall ASA and FTD software. A NULL pointer dereference in the VPN tunnel stack enables an unauthenticated remote attacker to reload the device, causing a denial-of-service condition. While classified as DoS rather than RCE, taking down a perimeter firewall — even briefly — eliminates visibility and control over network traffic. Cisco has published advisory `cisco-sa-asaftd-tunnel-dos-s6mgkb75` with patched software versions. Prioritize patching internet-facing ASA/FTD devices first and verify redundancy controls are in place before applying updates in production.
+If your organization runs Ivanti Connect Secure, the clock is ticking: CVE-2026-111357 carries a remediation due date of **2026-11-02** under BOD 26-04, and CISA has published forensic triage requirements that must be completed before the appliance is returned to service. Patch guidance is available in Ivanti's security advisory linked from the KEV entry. As always, if patching cannot be completed before the deadline, CISA's guidance is to discontinue use of the product rather than leave it exposed.
