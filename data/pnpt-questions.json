@@ -1,0 +1,2442 @@
+{
+  "metadata": {
+    "title": "TCM Security PNPT Practice Questions",
+    "version": "1.0",
+    "total_questions": 150,
+    "exam": "PNPT",
+    "domains": {
+      "1": {
+        "name": "OSINT & Reconnaissance",
+        "weight": 15,
+        "count": 23
+      },
+      "2": {
+        "name": "Scanning & Enumeration",
+        "weight": 15,
+        "count": 22
+      },
+      "3": {
+        "name": "Exploitation & Privilege Escalation",
+        "weight": 15,
+        "count": 23
+      },
+      "4": {
+        "name": "Active Directory Attacks",
+        "weight": 30,
+        "count": 45
+      },
+      "5": {
+        "name": "Web Application Attacks",
+        "weight": 15,
+        "count": 22
+      },
+      "6": {
+        "name": "Reporting & Debrief",
+        "weight": 10,
+        "count": 15
+      }
+    }
+  },
+  "questions": [
+    {
+      "id": 1,
+      "domain": 1,
+      "objective": "1.1",
+      "difficulty": "easy",
+      "question": "Which activity is passive reconnaissance?",
+      "options": [
+        "Running an Nmap SYN scan against the target range",
+        "Attempting a DNS zone transfer against the target's name server",
+        "Searching certificate transparency logs for a target's subdomains",
+        "Grabbing banners from open ports with netcat"
+      ],
+      "correct": 2,
+      "explanation": "Certificate transparency logs (for example crt.sh) are public records, so the target never sees your queries. Scanning, zone transfer attempts, and banner grabbing all send traffic to target systems.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 2,
+      "domain": 1,
+      "objective": "1.2",
+      "difficulty": "easy",
+      "question": "What is theHarvester mainly used for?",
+      "options": [
+        "Exploiting SMB vulnerabilities on Windows hosts",
+        "Collecting emails, subdomains, and hostnames from public sources",
+        "Intercepting HTTP traffic between a browser and a server",
+        "Cracking password hashes offline"
+      ],
+      "correct": 1,
+      "explanation": "theHarvester queries search engines, certificate logs, and other public sources to build lists of emails, hosts, and subdomains during the OSINT phase.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 3,
+      "domain": 1,
+      "objective": "1.3",
+      "difficulty": "easy",
+      "question": "Why would a tester look up a company's domain on Hunter.io?",
+      "options": [
+        "To crack the domain registrar's password",
+        "To check whether TLS certificates have expired",
+        "To learn the company's email address format and find employee addresses",
+        "To scan the domain for open ports"
+      ],
+      "correct": 2,
+      "explanation": "Knowing the pattern (such as first.last@company.com) lets a tester build valid username lists for later password spraying or phishing, if those are in scope.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 4,
+      "domain": 1,
+      "objective": "1.4",
+      "difficulty": "easy",
+      "question": "A tester finds the addresses jsmith@corp.example and mdoe@corp.example. Which username format does the company use?",
+      "options": [
+        "First initial followed by last name",
+        "First name followed by last initial",
+        "Full first name and last name separated by a dot",
+        "Last name only"
+      ],
+      "correct": 0,
+      "explanation": "jsmith is J. Smith and mdoe is M. Doe, so the format is first initial plus last name. Identifying the format turns a LinkedIn employee list into a usable username list.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 5,
+      "domain": 1,
+      "objective": "1.5",
+      "difficulty": "easy",
+      "question": "What does the Google dork site:example.com filetype:pdf do?",
+      "options": [
+        "Downloads every PDF on example.com automatically",
+        "Returns PDFs from every site except example.com",
+        "Scans example.com for PDF vulnerabilities",
+        "Returns only PDF files indexed under example.com"
+      ],
+      "correct": 3,
+      "explanation": "The site: operator limits results to one domain and filetype: limits them to one extension. Public documents often leak usernames, software versions, and internal paths.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 6,
+      "domain": 1,
+      "objective": "1.6",
+      "difficulty": "easy",
+      "question": "Which browser extension or service is commonly used to identify the technologies a website runs?",
+      "options": [
+        "Wappalyzer",
+        "Hashcat",
+        "Mimikatz",
+        "Responder"
+      ],
+      "correct": 0,
+      "explanation": "Wappalyzer (and BuiltWith) fingerprint web frameworks, CMS platforms, servers, and libraries. The other tools are for credential attacks, not technology fingerprinting.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 7,
+      "domain": 1,
+      "objective": "1.7",
+      "difficulty": "medium",
+      "question": "How are LinkedIn profiles most useful during external reconnaissance?",
+      "options": [
+        "Reading internal network diagrams",
+        "Retrieving the company's firewall configuration",
+        "Downloading the company's source code",
+        "Building a list of employee names that can be converted into likely usernames and email addresses"
+      ],
+      "correct": 3,
+      "explanation": "Employee names plus a known email format give a candidate username list. This feeds password spraying against in-scope portals and, where authorized, social engineering.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 8,
+      "domain": 1,
+      "objective": "1.8",
+      "difficulty": "easy",
+      "question": "Which whois data is most useful during recon?",
+      "options": [
+        "Password hashes of the domain admin",
+        "The internal IP addressing scheme",
+        "Open ports and running services",
+        "Registrant organization, name servers, and registration dates"
+      ],
+      "correct": 3,
+      "explanation": "whois returns registration details such as name servers, registrar, and dates. It does not touch the target's hosts, and it helps confirm ownership of domains listed in scope.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 9,
+      "domain": 1,
+      "objective": "1.9",
+      "difficulty": "medium",
+      "question": "What does a successful DNS zone transfer (AXFR) return?",
+      "options": [
+        "Only the A record for the requested host",
+        "All DNS records in the zone",
+        "A list of users logged in to the DNS server",
+        "The private key for the domain"
+      ],
+      "correct": 1,
+      "explanation": "A zone transfer copies the entire zone, exposing every hostname the server knows. Properly configured name servers restrict AXFR to secondary servers.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 10,
+      "domain": 1,
+      "objective": "1.10",
+      "difficulty": "medium",
+      "question": "Which tool is built specifically for subdomain enumeration using many data sources, with a passive mode?",
+      "options": [
+        "Amass",
+        "Netcat",
+        "Nikto",
+        "Hydra"
+      ],
+      "correct": 0,
+      "explanation": "OWASP Amass enumerates subdomains from certificate logs, DNS data, and APIs, and its passive mode avoids touching the target. Nikto scans web servers, Hydra guesses passwords, and netcat moves raw data.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 11,
+      "domain": 1,
+      "objective": "1.11",
+      "difficulty": "medium",
+      "question": "What does Shodan index?",
+      "options": [
+        "Leaked password databases only",
+        "Source code in public Git repositories",
+        "Banners and metadata from internet-connected hosts and devices",
+        "Employee social media posts"
+      ],
+      "correct": 2,
+      "explanation": "Shodan scans the internet and stores service banners, so a tester can see a target's exposed services and versions without sending any packets to the target.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 12,
+      "domain": 1,
+      "objective": "1.12",
+      "difficulty": "medium",
+      "question": "What is the Wayback Machine most useful for during recon?",
+      "options": [
+        "Decrypting old TLS traffic",
+        "Viewing archived versions of a site that may reveal removed pages, endpoints, or files",
+        "Brute-forcing login pages",
+        "Scanning for open ports on archived hosts"
+      ],
+      "correct": 1,
+      "explanation": "Old snapshots can expose forgotten admin paths, API routes, and documents the owner removed but that may still exist on the server.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 13,
+      "domain": 1,
+      "objective": "1.13",
+      "difficulty": "medium",
+      "question": "During recon you discover a domain belonging to a company the client recently acquired. It is not listed in the scope document. What should you do?",
+      "options": [
+        "Test it with passive tools only and skip the report",
+        "Do not test it. Ask the client to confirm in writing whether it is in scope",
+        "Test it, because it belongs to the same parent company",
+        "Scan it at night so nobody notices"
+      ],
+      "correct": 1,
+      "explanation": "Only assets named in the rules of engagement are authorized. Testing an unlisted asset can be illegal and can hit systems the client does not own or control.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 14,
+      "domain": 1,
+      "objective": "1.14",
+      "difficulty": "easy",
+      "question": "What is the main goal of reconnaissance on an external penetration test?",
+      "options": [
+        "Map the attack surface: hosts, services, technologies, and people",
+        "Gain domain admin as quickly as possible",
+        "Disable the client's security monitoring",
+        "Write the final report"
+      ],
+      "correct": 0,
+      "explanation": "Good recon decides where to spend the rest of the engagement. It produces the target list that scanning and exploitation build on.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 15,
+      "domain": 1,
+      "objective": "1.15",
+      "difficulty": "medium",
+      "question": "What can searching a company's public GitHub repositories with a tool like TruffleHog or Gitleaks uncover?",
+      "options": [
+        "The company's employee payroll",
+        "The company's internal Active Directory structure",
+        "Open ports on the company's servers",
+        "Hard-coded API keys, passwords, and tokens in code or commit history"
+      ],
+      "correct": 3,
+      "explanation": "Developers sometimes commit secrets, and deleting the file later does not remove it from commit history. Secret scanners search every commit.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 16,
+      "domain": 1,
+      "objective": "1.16",
+      "difficulty": "easy",
+      "question": "Which DNS record type identifies a domain's mail servers?",
+      "options": [
+        "MX",
+        "NS",
+        "TXT",
+        "PTR"
+      ],
+      "correct": 0,
+      "explanation": "MX (mail exchange) records list the servers that accept email for the domain. NS lists name servers, TXT holds free text such as SPF, and PTR maps IPs to names.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 17,
+      "domain": 1,
+      "objective": "1.17",
+      "difficulty": "medium",
+      "question": "A domain has no DMARC record and a permissive SPF record. What is the likely impact?",
+      "options": [
+        "The mail server will accept SMB connections",
+        "Attackers can read email stored on the mail server",
+        "Attackers can spoof email that appears to come from the domain",
+        "DNS zone transfers are enabled"
+      ],
+      "correct": 2,
+      "explanation": "SPF and DMARC tell receiving servers how to treat mail that fails sender checks. Missing or weak records make spoofed mail far more likely to be delivered.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 18,
+      "domain": 1,
+      "objective": "1.18",
+      "difficulty": "medium",
+      "question": "What can a tester learn by running ExifTool on a document downloaded from the target's website?",
+      "options": [
+        "Author usernames, software versions, and sometimes internal paths",
+        "The target's firewall rules",
+        "The document's encryption key",
+        "Open ports on the author's laptop"
+      ],
+      "correct": 0,
+      "explanation": "File metadata often includes the creator's account name and the application version. Both help with username lists and picking client-side attack paths.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 19,
+      "domain": 1,
+      "objective": "1.19",
+      "difficulty": "medium",
+      "question": "What is Maltego used for?",
+      "options": [
+        "Graphing relationships between people, domains, emails, and infrastructure",
+        "Capturing NetNTLMv2 hashes on the local network",
+        "Cracking Kerberos tickets",
+        "Generating Metasploit payloads"
+      ],
+      "correct": 0,
+      "explanation": "Maltego links entities pulled from many data sources into a graph, which helps spot relationships that a flat list hides.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 20,
+      "domain": 1,
+      "objective": "1.20",
+      "difficulty": "medium",
+      "question": "Which tool from ProjectDiscovery is used for passive subdomain discovery?",
+      "options": [
+        "mimikatz",
+        "subfinder",
+        "evil-winrm",
+        "sqlmap"
+      ],
+      "correct": 1,
+      "explanation": "subfinder queries passive sources for subdomains. It is commonly followed by httpx to find which of those names serve live web content.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 21,
+      "domain": 1,
+      "objective": "1.21",
+      "difficulty": "medium",
+      "question": "You have a list of 4,000 discovered subdomains. Which step best narrows it to targets worth testing?",
+      "options": [
+        "Probe the list with httpx or httprobe to find hosts serving web content",
+        "Reset the passwords for each subdomain",
+        "Run a UDP scan on every address",
+        "Email every subdomain owner"
+      ],
+      "correct": 0,
+      "explanation": "Most discovered names are dead or point to the same host. Probing for live HTTP/HTTPS services reduces the list to systems you can actually test.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 22,
+      "domain": 1,
+      "objective": "1.22",
+      "difficulty": "easy",
+      "question": "What should be confirmed before any active testing begins?",
+      "options": [
+        "That the client's antivirus is disabled",
+        "The target's Wi-Fi password",
+        "That the report template is finished",
+        "Signed scope and rules of engagement, including targets, dates, and testing limits"
+      ],
+      "correct": 3,
+      "explanation": "Written authorization is what separates a penetration test from an attack. It defines what you may test, when, and how.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 23,
+      "domain": 1,
+      "objective": "1.23",
+      "difficulty": "medium",
+      "question": "Which search operator finds pages whose title contains a given word?",
+      "options": [
+        "related:",
+        "intitle:",
+        "cache:",
+        "inurl:"
+      ],
+      "correct": 1,
+      "explanation": "intitle: matches the page title, inurl: matches the URL, and the others do different jobs. Combining operators finds exposed login pages and directory listings.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 24,
+      "domain": 2,
+      "objective": "2.1",
+      "difficulty": "easy",
+      "question": "Which Nmap flag runs a TCP SYN (half-open) scan?",
+      "options": [
+        "-sS",
+        "-sT",
+        "-sU",
+        "-sV"
+      ],
+      "correct": 0,
+      "explanation": "-sS sends SYN packets and does not complete the handshake. -sT does a full connect, -sU scans UDP, and -sV detects service versions.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 25,
+      "domain": 2,
+      "objective": "2.2",
+      "difficulty": "easy",
+      "question": "Which Nmap option scans all 65,535 TCP ports?",
+      "options": [
+        "-p 1-1000",
+        "-sP",
+        "-F",
+        "-p-"
+      ],
+      "correct": 3,
+      "explanation": "-p- is shorthand for ports 1 through 65535. Default scans cover only the 1,000 most common ports, so uncommon services are missed without it.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 26,
+      "domain": 2,
+      "objective": "2.3",
+      "difficulty": "easy",
+      "question": "What does the Nmap -sV option do?",
+      "options": [
+        "Saves output in three formats",
+        "Probes open ports to determine service and version",
+        "Skips host discovery",
+        "Runs a UDP scan"
+      ],
+      "correct": 1,
+      "explanation": "-sV sends probes to open ports and matches the replies against a fingerprint database, producing product names and version numbers.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 27,
+      "domain": 2,
+      "objective": "2.4",
+      "difficulty": "easy",
+      "question": "What does Nmap -sC do?",
+      "options": [
+        "Runs the default set of NSE scripts",
+        "Performs a connect scan only",
+        "Randomizes the target order",
+        "Scans all UDP ports"
+      ],
+      "correct": 0,
+      "explanation": "-sC is equivalent to --script=default. The default scripts are considered safe and useful for basic enumeration.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 28,
+      "domain": 2,
+      "objective": "2.5",
+      "difficulty": "medium",
+      "question": "A host does not answer ping, but you believe it is up. Which Nmap option skips host discovery and scans it anyway?",
+      "options": [
+        "-R",
+        "-n",
+        "-Pn",
+        "-sn"
+      ],
+      "correct": 2,
+      "explanation": "-Pn treats every target as online. It is the usual fix when a firewall blocks ICMP and Nmap would otherwise report the host as down.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 29,
+      "domain": 2,
+      "objective": "2.6",
+      "difficulty": "medium",
+      "question": "What does Nmap -oA scan1 do?",
+      "options": [
+        "Scans all ports with aggressive timing",
+        "Runs every NSE script",
+        "Writes results in normal, XML, and grepable formats with the base name scan1",
+        "Sends results to the target"
+      ],
+      "correct": 2,
+      "explanation": "-oA saves .nmap, .xml, and .gnmap files in one run, which keeps the evidence needed for the report.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 30,
+      "domain": 2,
+      "objective": "2.7",
+      "difficulty": "medium",
+      "question": "Which set of open ports most strongly suggests the host is a Windows domain controller?",
+      "options": [
+        "53, 88, 389, 445",
+        "22, 80, 443, 3306",
+        "21, 25, 110, 143",
+        "161, 162, 514, 6000"
+      ],
+      "correct": 0,
+      "explanation": "DNS (53), Kerberos (88), LDAP (389), and SMB (445) together are the signature of an AD domain controller.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 31,
+      "domain": 2,
+      "objective": "2.8",
+      "difficulty": "easy",
+      "question": "Which port does WinRM use for HTTP by default?",
+      "options": [
+        "5985",
+        "3389",
+        "5900",
+        "8443"
+      ],
+      "correct": 0,
+      "explanation": "WinRM listens on 5985 (HTTP) and 5986 (HTTPS). With valid credentials, Evil-WinRM can open a remote shell over it.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 32,
+      "domain": 2,
+      "objective": "2.9",
+      "difficulty": "medium",
+      "question": "Which command lists the shares on a host using an anonymous (null) session?",
+      "options": [
+        "nmap -sU TARGET",
+        "showmount -e TARGET",
+        "smbclient -U admin //TARGET/C$",
+        "smbclient -L //TARGET -N"
+      ],
+      "correct": 3,
+      "explanation": "-L lists shares and -N suppresses the password prompt, so the connection tries an anonymous login. Exposed null sessions are a reportable finding.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 33,
+      "domain": 2,
+      "objective": "2.10",
+      "difficulty": "medium",
+      "question": "What does enum4linux do?",
+      "options": [
+        "Brute-forces SSH passwords",
+        "Captures web traffic",
+        "Enumerates users, groups, shares, and policies over SMB and RPC",
+        "Scans for XSS in web forms"
+      ],
+      "correct": 2,
+      "explanation": "enum4linux (and enum4linux-ng) wraps several Samba tools to pull domain information from hosts that allow it.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 34,
+      "domain": 2,
+      "objective": "2.11",
+      "difficulty": "medium",
+      "question": "Which Gobuster mode is used to discover directories and files on a web server?",
+      "options": [
+        "dns",
+        "fuzz",
+        "dir",
+        "vhost"
+      ],
+      "correct": 2,
+      "explanation": "gobuster dir brute-forces paths from a wordlist. dns finds subdomains and vhost finds virtual hosts on one IP.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 35,
+      "domain": 2,
+      "objective": "2.12",
+      "difficulty": "easy",
+      "question": "What is the default read-only SNMP community string on many misconfigured devices?",
+      "options": [
+        "public",
+        "default123",
+        "snmp",
+        "admin"
+      ],
+      "correct": 0,
+      "explanation": "public is the classic default read community string. With it, snmpwalk can often list users, processes, and network settings.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 36,
+      "domain": 2,
+      "objective": "2.13",
+      "difficulty": "medium",
+      "question": "What is the main trade-off of masscan compared with Nmap?",
+      "options": [
+        "It requires credentials",
+        "Much faster port discovery, with less service detail and a higher risk of overwhelming networks",
+        "It only scans UDP",
+        "It cannot scan more than one host"
+      ],
+      "correct": 1,
+      "explanation": "masscan sends packets asynchronously at very high rates. It is useful for large ranges, but pair it with a controlled Nmap scan on the open ports it finds.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 37,
+      "domain": 2,
+      "objective": "2.14",
+      "difficulty": "easy",
+      "question": "Which command shows NFS exports offered by a server?",
+      "options": [
+        "smbclient -L TARGET",
+        "showmount -e TARGET",
+        "dig axfr TARGET",
+        "snmpwalk TARGET"
+      ],
+      "correct": 1,
+      "explanation": "showmount -e lists the shares exported by the NFS service. World-readable exports are a common source of sensitive files.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 38,
+      "domain": 2,
+      "objective": "2.15",
+      "difficulty": "easy",
+      "question": "What username is used for anonymous FTP access?",
+      "options": [
+        "root",
+        "ftpadmin",
+        "guest123",
+        "anonymous"
+      ],
+      "correct": 3,
+      "explanation": "Anonymous FTP accepts the username anonymous with any password (usually an email address). Always check it, since writable anonymous FTP can lead to code execution.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 39,
+      "domain": 2,
+      "objective": "2.16",
+      "difficulty": "medium",
+      "question": "What does Nmap report when a port state is filtered?",
+      "options": [
+        "A firewall or filter is blocking the probe, so Nmap cannot tell whether the port is open",
+        "The port is closed",
+        "The host is offline",
+        "The port is open and the service is encrypted"
+      ],
+      "correct": 0,
+      "explanation": "Filtered means no definite answer came back. Closed ports reply with a reset; filtered ports usually reply with nothing or an ICMP error.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 40,
+      "domain": 2,
+      "objective": "2.17",
+      "difficulty": "medium",
+      "question": "Why are UDP scans normally much slower than TCP scans?",
+      "options": [
+        "UDP ports cannot be scanned from Linux",
+        "UDP requires a three-way handshake",
+        "Open UDP ports often send no reply, and closed ports are rate-limited with ICMP errors",
+        "UDP packets are larger"
+      ],
+      "correct": 2,
+      "explanation": "Without a handshake, Nmap must wait and retransmit to distinguish open|filtered from closed, which makes -sU slow.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 41,
+      "domain": 2,
+      "objective": "2.18",
+      "difficulty": "medium",
+      "question": "What does an anonymous LDAP bind allow, if the server permits it?",
+      "options": [
+        "Changing the domain admin password",
+        "Querying directory information without credentials",
+        "Starting a remote shell",
+        "Decrypting NTLM hashes"
+      ],
+      "correct": 1,
+      "explanation": "Most modern domain controllers disable anonymous binds, but when allowed, tools such as ldapsearch can list users and groups.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 42,
+      "domain": 2,
+      "objective": "2.19",
+      "difficulty": "medium",
+      "question": "Why is a credentialed vulnerability scan usually more accurate than an unauthenticated one?",
+      "options": [
+        "It can inspect installed software and patch levels directly on the host",
+        "It is invisible to security tools",
+        "It scans more ports",
+        "It avoids all false positives"
+      ],
+      "correct": 0,
+      "explanation": "With valid credentials, scanners such as Nessus read registry values and package lists instead of guessing from network banners.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 43,
+      "domain": 2,
+      "objective": "2.20",
+      "difficulty": "easy",
+      "question": "Which Nmap script category runs scripts that check for known vulnerabilities?",
+      "options": [
+        "discovery",
+        "safe",
+        "brute",
+        "vuln"
+      ],
+      "correct": 3,
+      "explanation": "--script vuln runs checks that report known vulnerabilities. Results should be verified manually before they go in a report.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 44,
+      "domain": 2,
+      "objective": "2.21",
+      "difficulty": "easy",
+      "question": "What does netcat do when used as nc TARGET 80?",
+      "options": [
+        "Opens a raw TCP connection that can be used to grab a banner or send a manual request",
+        "Launches an exploit against port 80",
+        "Captures traffic on port 80",
+        "Scans every port on the host"
+      ],
+      "correct": 0,
+      "explanation": "Netcat connects and passes data both ways, so a typed HTTP request shows the server's raw response and headers.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 45,
+      "domain": 2,
+      "objective": "2.22",
+      "difficulty": "medium",
+      "question": "Which Nmap option sets the speed template, where higher numbers are faster and noisier?",
+      "options": [
+        "-g",
+        "-D",
+        "-S",
+        "-T"
+      ],
+      "correct": 3,
+      "explanation": "-T0 to -T5 select timing templates. -T4 is common on reliable networks, while very low or high values can be slow or disruptive.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 46,
+      "domain": 3,
+      "objective": "3.1",
+      "difficulty": "easy",
+      "question": "In Metasploit, which command sets the target host for a module?",
+      "options": [
+        "exploit -t",
+        "set LHOST",
+        "use TARGET",
+        "set RHOSTS"
+      ],
+      "correct": 3,
+      "explanation": "RHOSTS is the remote host (the target). LHOST is the local address the payload connects back to.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 47,
+      "domain": 3,
+      "objective": "3.2",
+      "difficulty": "easy",
+      "question": "What does msfvenom do?",
+      "options": [
+        "Generates standalone payloads and encodes them into chosen file formats",
+        "Proxies web traffic",
+        "Cracks Windows hashes",
+        "Scans a network for live hosts"
+      ],
+      "correct": 0,
+      "explanation": "msfvenom combines payload generation and encoding. The -p flag picks the payload and -f picks the output format.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 48,
+      "domain": 3,
+      "objective": "3.3",
+      "difficulty": "medium",
+      "question": "What is the difference between a staged and a stageless payload?",
+      "options": [
+        "Staged payloads need no listener",
+        "Staged payloads are encrypted and stageless are not",
+        "A staged payload sends a small stager that then downloads the rest, while a stageless payload is sent in one piece",
+        "Stageless payloads only work on Linux"
+      ],
+      "correct": 2,
+      "explanation": "Staged names use a slash (windows/meterpreter/reverse_tcp) and stageless use an underscore (windows/meterpreter_reverse_tcp). Staged payloads are smaller but need a second network step.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 49,
+      "domain": 3,
+      "objective": "3.4",
+      "difficulty": "easy",
+      "question": "Why are reverse shells usually preferred over bind shells?",
+      "options": [
+        "They are always encrypted",
+        "They give higher privileges",
+        "They need no listener",
+        "The target connects out to the attacker, which usually passes through firewalls that block inbound connections"
+      ],
+      "correct": 3,
+      "explanation": "Outbound connections are typically permitted, while inbound connections to random ports are blocked. A bind shell requires an inbound path to the target.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 50,
+      "domain": 3,
+      "objective": "3.5",
+      "difficulty": "easy",
+      "question": "Which netcat command starts a listener on port 4444?",
+      "options": [
+        "nc -sS 4444",
+        "nc -p 4444 --scan",
+        "nc target 4444 -e",
+        "nc -lvnp 4444"
+      ],
+      "correct": 3,
+      "explanation": "-l listens, -v is verbose, -n skips DNS lookups, and -p sets the port. The reverse shell connects back to it.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 51,
+      "domain": 3,
+      "objective": "3.6",
+      "difficulty": "medium",
+      "question": "After catching a basic reverse shell, why do testers upgrade it to a fully interactive TTY?",
+      "options": [
+        "To hide from the process list",
+        "To increase the shell's privileges",
+        "To encrypt the connection",
+        "To get working tab-completion, job control, and programs like su and sudo that need a terminal"
+      ],
+      "correct": 3,
+      "explanation": "Simple shells lack a terminal. Spawning a pty (for example with Python's pty module) and setting terminal options fixes arrow keys, Ctrl+C, and interactive prompts.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 52,
+      "domain": 3,
+      "objective": "3.7",
+      "difficulty": "easy",
+      "question": "MS17-010 (EternalBlue) is a vulnerability in which service?",
+      "options": [
+        "Kerberos",
+        "SMBv1",
+        "DNS",
+        "RDP"
+      ],
+      "correct": 1,
+      "explanation": "EternalBlue targets a flaw in how SMBv1 handles certain requests. Disabling SMBv1 and patching removes the exposure.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 53,
+      "domain": 3,
+      "objective": "3.8",
+      "difficulty": "medium",
+      "question": "What makes an unquoted service path exploitable?",
+      "options": [
+        "The service uses port 445",
+        "The service runs as a standard user",
+        "The service has no description",
+        "A path with spaces and no quotes lets Windows try executables at earlier break points, which a user may be able to write to"
+      ],
+      "correct": 3,
+      "explanation": "For a path like C:\\Program Files\\App Name\\svc.exe, Windows may try C:\\Program.exe first. A writable earlier directory lets an attacker place a binary that runs as the service account.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 54,
+      "domain": 3,
+      "objective": "3.9",
+      "difficulty": "medium",
+      "question": "What does the AlwaysInstallElevated policy allow when enabled in both HKLM and HKCU?",
+      "options": [
+        "Any user can install an MSI package with SYSTEM privileges",
+        "Passwords never expire",
+        "Services restart automatically",
+        "Any user can log on to the domain controller"
+      ],
+      "correct": 0,
+      "explanation": "When both registry keys are set to 1, Windows Installer runs MSI files elevated. It is a configuration-based local privilege escalation.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 55,
+      "domain": 3,
+      "objective": "3.10",
+      "difficulty": "medium",
+      "question": "Which Windows privilege is associated with Potato-style attacks such as PrintSpoofer for escalating to SYSTEM?",
+      "options": [
+        "SeImpersonatePrivilege",
+        "SeChangeNotifyPrivilege",
+        "SeShutdownPrivilege",
+        "SeUndockPrivilege"
+      ],
+      "correct": 0,
+      "explanation": "Service accounts often hold SeImpersonatePrivilege. Potato-family tools coerce a SYSTEM connection and impersonate its token.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 56,
+      "domain": 3,
+      "objective": "3.11",
+      "difficulty": "easy",
+      "question": "Which tools automate local privilege escalation enumeration?",
+      "options": [
+        "WinPEAS and LinPEAS",
+        "Burp Suite and sqlmap",
+        "Hashcat and John",
+        "Nmap and Nikto"
+      ],
+      "correct": 0,
+      "explanation": "WinPEAS (Windows) and LinPEAS (Linux) search for misconfigurations, weak permissions, and stored credentials. Always read the output manually rather than trusting colors alone.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 57,
+      "domain": 3,
+      "objective": "3.12",
+      "difficulty": "easy",
+      "question": "What does sudo -l show on Linux?",
+      "options": [
+        "All users on the system",
+        "The commands the current user may run with sudo",
+        "Open network connections",
+        "Recently modified files"
+      ],
+      "correct": 1,
+      "explanation": "A sudo rule that permits a shell-capable binary can often be turned into root. GTFOBins documents how.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 58,
+      "domain": 3,
+      "objective": "3.13",
+      "difficulty": "medium",
+      "question": "Which command finds files with the SUID bit set on Linux?",
+      "options": [
+        "find / -perm -4000 -type f 2>/dev/null",
+        "find / -perm -0777",
+        "ls -la /etc/shadow",
+        "grep -r suid /home"
+      ],
+      "correct": 0,
+      "explanation": "-perm -4000 matches files with the setuid bit. If one is a binary with a known abuse path, running it can execute with its owner's privileges.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 59,
+      "domain": 3,
+      "objective": "3.14",
+      "difficulty": "medium",
+      "question": "A cron job runs a script as root every minute, and the script file is writable by all users. What is the risk?",
+      "options": [
+        "An unprivileged user can modify the script and have it run as root",
+        "Logs will stop being written",
+        "The script will run twice",
+        "The cron daemon will crash"
+      ],
+      "correct": 0,
+      "explanation": "Anything a privileged scheduled task executes must be writable only by privileged users. Check crontab entries and /etc/cron.* directories.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 60,
+      "domain": 3,
+      "objective": "3.15",
+      "difficulty": "hard",
+      "question": "What does getcap -r / 2>/dev/null look for?",
+      "options": [
+        "Files owned by root",
+        "World-writable directories",
+        "Files with Linux capabilities assigned, some of which allow privilege escalation",
+        "Active network sockets"
+      ],
+      "correct": 2,
+      "explanation": "Capabilities split root powers into smaller units. A binary with cap_setuid, for example, can be abused to become root.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 61,
+      "domain": 3,
+      "objective": "3.16",
+      "difficulty": "medium",
+      "question": "Why are kernel exploits usually a last resort during a pentest?",
+      "options": [
+        "They only work on Windows",
+        "They require a signed scope amendment",
+        "They always trigger antivirus",
+        "They can crash the system and cause an outage"
+      ],
+      "correct": 3,
+      "explanation": "A failed kernel exploit may panic or freeze a production host. Configuration-based escalation paths are safer to demonstrate.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 62,
+      "domain": 3,
+      "objective": "3.17",
+      "difficulty": "medium",
+      "question": "Which Hashcat mode cracks NTLM hashes?",
+      "options": [
+        "13100",
+        "1000",
+        "5600",
+        "18200"
+      ],
+      "correct": 1,
+      "explanation": "Mode 1000 is NTLM. 13100 is Kerberos TGS-REP, 5600 is NetNTLMv2, and 18200 is AS-REP.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 63,
+      "domain": 3,
+      "objective": "3.18",
+      "difficulty": "medium",
+      "question": "Which command opens a local SOCKS proxy on port 1080 through an SSH connection?",
+      "options": [
+        "ssh -X user@pivot",
+        "ssh -L 1080 user@pivot",
+        "ssh -R 1080 user@pivot",
+        "ssh -D 1080 user@pivot"
+      ],
+      "correct": 3,
+      "explanation": "-D creates dynamic port forwarding. Combined with proxychains, tools can reach networks the pivot host can see.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 64,
+      "domain": 3,
+      "objective": "3.19",
+      "difficulty": "medium",
+      "question": "What does searchsploit -m 12345 do?",
+      "options": [
+        "Runs the exploit against the target",
+        "Scans the target for exploit ID 12345",
+        "Updates Metasploit",
+        "Copies the Exploit-DB entry with that ID into the current directory"
+      ],
+      "correct": 3,
+      "explanation": "-m mirrors the exploit file locally. Read and understand public exploit code before running it, since it can be broken or malicious.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 65,
+      "domain": 3,
+      "objective": "3.20",
+      "difficulty": "hard",
+      "question": "What does the $6$ prefix in a Linux /etc/shadow hash indicate?",
+      "options": [
+        "SHA-512 crypt",
+        "MD5 crypt",
+        "NTLM",
+        "bcrypt"
+      ],
+      "correct": 0,
+      "explanation": "$1$ is MD5, $2a$/$2y$ is bcrypt, $5$ is SHA-256, and $6$ is SHA-512. The prefix tells you which Hashcat or John mode to use.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 66,
+      "domain": 3,
+      "objective": "3.21",
+      "difficulty": "medium",
+      "question": "Why should persistence mechanisms be avoided on a pentest unless explicitly authorized?",
+      "options": [
+        "They are not detectable",
+        "They automatically expire",
+        "They leave artifacts the client must clean up and can create new risk",
+        "They do not work on modern systems"
+      ],
+      "correct": 2,
+      "explanation": "Anything left behind is a liability. If the rules of engagement allow persistence, document each change and remove it at the end.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 67,
+      "domain": 3,
+      "objective": "3.22",
+      "difficulty": "hard",
+      "question": "Meterpreter's hashdump command requires which level of access?",
+      "options": [
+        "Guest",
+        "Standard user",
+        "SYSTEM",
+        "Backup Operators only"
+      ],
+      "correct": 2,
+      "explanation": "hashdump reads the SAM database, which needs SYSTEM-level access. Use getsystem or an escalation technique first.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 68,
+      "domain": 3,
+      "objective": "3.23",
+      "difficulty": "medium",
+      "question": "Why must you review a public exploit before running it against a client system?",
+      "options": [
+        "It is illegal to run without a license",
+        "It must be recompiled for each client",
+        "Exploit-DB blocks unreviewed downloads",
+        "It may be unstable, destructive, or contain malicious code"
+      ],
+      "correct": 3,
+      "explanation": "Public code is not vetted for safety. Understanding what it does protects both the client's systems and your own.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 69,
+      "domain": 4,
+      "objective": "4.1",
+      "difficulty": "easy",
+      "question": "Which file on a domain controller stores the AD database, including password hashes?",
+      "options": [
+        "SAM",
+        "boot.ini",
+        "NTDS.dit",
+        "krb5.conf"
+      ],
+      "correct": 2,
+      "explanation": "NTDS.dit holds every domain account's data. The local SAM only stores local account hashes.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 70,
+      "domain": 4,
+      "objective": "4.2",
+      "difficulty": "easy",
+      "question": "Which port does Kerberos use by default?",
+      "options": [
+        "445",
+        "3389",
+        "88",
+        "389"
+      ],
+      "correct": 2,
+      "explanation": "Kerberos listens on port 88. 389 is LDAP, 445 is SMB, and 3389 is RDP.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 71,
+      "domain": 4,
+      "objective": "4.3",
+      "difficulty": "medium",
+      "question": "What does Kerberoasting target?",
+      "options": [
+        "The krbtgt account's session",
+        "Accounts with no password",
+        "Domain controllers' local admin accounts",
+        "Service accounts with SPNs, by requesting service tickets and cracking them offline"
+      ],
+      "correct": 3,
+      "explanation": "Any authenticated user can request a TGS for an SPN. The ticket is encrypted with the service account's key, so a weak password can be cracked offline.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 72,
+      "domain": 4,
+      "objective": "4.4",
+      "difficulty": "medium",
+      "question": "Which Impacket script requests service tickets for Kerberoasting?",
+      "options": [
+        "GetUserSPNs.py",
+        "GetNPUsers.py",
+        "psexec.py",
+        "secretsdump.py"
+      ],
+      "correct": 0,
+      "explanation": "GetUserSPNs.py lists accounts with SPNs and requests their tickets in a Hashcat-ready format.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 73,
+      "domain": 4,
+      "objective": "4.5",
+      "difficulty": "hard",
+      "question": "Which Hashcat mode cracks a Kerberoast hash (RC4 TGS-REP)?",
+      "options": [
+        "18200",
+        "13100",
+        "5600",
+        "1000"
+      ],
+      "correct": 1,
+      "explanation": "13100 is Kerberos 5 TGS-REP etype 23. 18200 is AS-REP and 5600 is NetNTLMv2.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 74,
+      "domain": 4,
+      "objective": "4.6",
+      "difficulty": "medium",
+      "question": "AS-REP roasting works against accounts that have which setting?",
+      "options": [
+        "Do not require Kerberos preauthentication",
+        "User must change password at next logon",
+        "Password never expires",
+        "Account is sensitive and cannot be delegated"
+      ],
+      "correct": 0,
+      "explanation": "Without preauthentication, anyone can request an AS-REP encrypted with the user's key and crack it offline. GetNPUsers.py performs the request.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 75,
+      "domain": 4,
+      "objective": "4.7",
+      "difficulty": "easy",
+      "question": "Which attack captures NetNTLMv2 hashes when a host fails a DNS lookup and falls back to name resolution broadcasts?",
+      "options": [
+        "Golden ticket",
+        "LLMNR/NBT-NS poisoning with Responder",
+        "DCSync",
+        "Kerberoasting"
+      ],
+      "correct": 1,
+      "explanation": "Responder answers broadcast name queries and collects the authentication attempts that follow. It is one of the most common first footholds on internal tests.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 76,
+      "domain": 4,
+      "objective": "4.8",
+      "difficulty": "medium",
+      "question": "Which Hashcat mode is used for NetNTLMv2 hashes captured by Responder?",
+      "options": [
+        "13100",
+        "1800",
+        "1000",
+        "5600"
+      ],
+      "correct": 3,
+      "explanation": "NetNTLMv2 challenge-response hashes use mode 5600. They can be cracked, but not used directly in pass-the-hash.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 77,
+      "domain": 4,
+      "objective": "4.9",
+      "difficulty": "medium",
+      "question": "What condition is required for NTLM relay to a target over SMB?",
+      "options": [
+        "The target has port 22 open",
+        "Kerberos is disabled in the domain",
+        "The target runs Linux",
+        "SMB signing is disabled or not required on the target"
+      ],
+      "correct": 3,
+      "explanation": "Signing lets the server verify the message came from the real client. Without it, ntlmrelayx can forward captured authentication to another host.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 78,
+      "domain": 4,
+      "objective": "4.10",
+      "difficulty": "medium",
+      "question": "Which mitigation best stops NTLM relay attacks over SMB?",
+      "options": [
+        "Rename the Administrator account",
+        "Hide the SSID",
+        "Block port 80",
+        "Require SMB signing on all hosts"
+      ],
+      "correct": 3,
+      "explanation": "Required signing breaks relay. Disabling LLMNR/NBT-NS and moving to Kerberos-only authentication also reduces exposure.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 79,
+      "domain": 4,
+      "objective": "4.11",
+      "difficulty": "medium",
+      "question": "How can you find hosts that do not require SMB signing?",
+      "options": [
+        "Use traceroute",
+        "Use an Nmap smb2-security-mode script or CrackMapExec to generate a relay target list",
+        "Run nslookup against each host",
+        "Check the TLS certificate of each host"
+      ],
+      "correct": 1,
+      "explanation": "Both methods report signing status per host, giving you the list of valid relay targets.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 80,
+      "domain": 4,
+      "objective": "4.12",
+      "difficulty": "medium",
+      "question": "Which Group Policy change reduces LLMNR and NBT-NS poisoning risk?",
+      "options": [
+        "Disable LLMNR and NetBIOS name resolution",
+        "Disable DNS",
+        "Increase DHCP lease time",
+        "Enable guest accounts"
+      ],
+      "correct": 0,
+      "explanation": "With both protocols off, hosts do not broadcast name queries that Responder could answer.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 81,
+      "domain": 4,
+      "objective": "4.13",
+      "difficulty": "hard",
+      "question": "What does the mitm6 attack abuse?",
+      "options": [
+        "Windows hosts asking for IPv6 configuration, letting an attacker become the DNS server over DHCPv6",
+        "Weak WPA2 passphrases",
+        "Unpatched web servers",
+        "Default SNMP strings"
+      ],
+      "correct": 0,
+      "explanation": "Windows prefers IPv6 and requests DHCPv6 even where IPv6 is unused. The attacker's DNS responses redirect authentication that is then relayed, often to LDAPS.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 82,
+      "domain": 4,
+      "objective": "4.14",
+      "difficulty": "medium",
+      "question": "What does pass-the-hash allow?",
+      "options": [
+        "Authenticating with an NTLM hash without knowing the plaintext password",
+        "Forging a TGT for any user",
+        "Decrypting Kerberos tickets",
+        "Reading the SAM without admin rights"
+      ],
+      "correct": 0,
+      "explanation": "NTLM authentication uses the hash as the secret, so possession of the hash is enough to authenticate over NTLM.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 83,
+      "domain": 4,
+      "objective": "4.15",
+      "difficulty": "medium",
+      "question": "What does pass-the-ticket use?",
+      "options": [
+        "A stolen or forged Kerberos ticket",
+        "A TLS session key",
+        "An NTLM hash",
+        "A cracked WPA handshake"
+      ],
+      "correct": 0,
+      "explanation": "The attacker imports a valid ticket into their session and authenticates as that user without the password.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 84,
+      "domain": 4,
+      "objective": "4.16",
+      "difficulty": "medium",
+      "question": "What does Mimikatz's sekurlsa::logonpasswords command do?",
+      "options": [
+        "Extracts credentials from LSASS memory",
+        "Forges a Kerberos ticket",
+        "Replicates the domain database",
+        "Disables Windows Defender"
+      ],
+      "correct": 0,
+      "explanation": "It reads credential material from the LSASS process, so it requires administrator rights with debug privilege (or SYSTEM).",
+      "link": "start-here.html"
+    },
+    {
+      "id": 85,
+      "domain": 4,
+      "objective": "4.17",
+      "difficulty": "medium",
+      "question": "What does DCSync do?",
+      "options": [
+        "Copies files from SYSVOL",
+        "Resets the krbtgt password",
+        "Cracks hashes with a GPU",
+        "Impersonates a domain controller to request password data through directory replication"
+      ],
+      "correct": 3,
+      "explanation": "Using the replication protocol, an account with the right permissions can pull any user's hashes without touching the DC's disk.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 86,
+      "domain": 4,
+      "objective": "4.18",
+      "difficulty": "hard",
+      "question": "Which permissions are required for a DCSync attack?",
+      "options": [
+        "Server Operators membership",
+        "Backup Operators membership only",
+        "GenericWrite on the domain object",
+        "Replicating Directory Changes and Replicating Directory Changes All"
+      ],
+      "correct": 3,
+      "explanation": "By default, Domain Admins, Enterprise Admins, and domain controllers hold these rights. Any other account granted them can DCSync.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 87,
+      "domain": 4,
+      "objective": "4.19",
+      "difficulty": "medium",
+      "question": "Which Impacket script performs a DCSync and also dumps hashes from SAM and LSA?",
+      "options": [
+        "GetNPUsers.py",
+        "smbserver.py",
+        "ticketer.py",
+        "secretsdump.py"
+      ],
+      "correct": 3,
+      "explanation": "secretsdump.py can run remotely against a DC with replication rights (-just-dc) or dump local secrets with admin access.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 88,
+      "domain": 4,
+      "objective": "4.20",
+      "difficulty": "hard",
+      "question": "A golden ticket is forged using which secret?",
+      "options": [
+        "The krbtgt account's hash",
+        "The machine account hash of any workstation",
+        "The Administrator's plaintext password",
+        "A service account's hash"
+      ],
+      "correct": 0,
+      "explanation": "A TGT is encrypted with the krbtgt key. Whoever has it can mint a TGT for any user, so it must be reset (twice) after a domain compromise.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 89,
+      "domain": 4,
+      "objective": "4.21",
+      "difficulty": "hard",
+      "question": "A silver ticket is forged using which secret?",
+      "options": [
+        "The Domain Admin's password",
+        "The krbtgt hash",
+        "The service account's (or computer account's) hash",
+        "The KDC's TLS key"
+      ],
+      "correct": 2,
+      "explanation": "Silver tickets are forged service tickets, so they work only for the service whose key was used and never involve the KDC.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 90,
+      "domain": 4,
+      "objective": "4.22",
+      "difficulty": "hard",
+      "question": "Why must the krbtgt password be reset twice after a golden ticket compromise?",
+      "options": [
+        "The KDC rejects single resets",
+        "Two resets are required to trigger replication",
+        "The first reset is ignored by Windows",
+        "AD keeps the current and previous password, so both must be replaced to invalidate forged tickets"
+      ],
+      "correct": 3,
+      "explanation": "Tickets signed with either of the last two krbtgt keys remain valid. A second reset, after replication, removes the compromised key.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 91,
+      "domain": 4,
+      "objective": "4.23",
+      "difficulty": "easy",
+      "question": "What is BloodHound used for?",
+      "options": [
+        "Cracking NTLM hashes",
+        "Scanning web applications",
+        "Mapping AD relationships to find attack paths such as routes to Domain Admin",
+        "Capturing network traffic"
+      ],
+      "correct": 2,
+      "explanation": "BloodHound graphs users, groups, sessions, and permissions so a tester can see the shortest path to high-value targets.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 92,
+      "domain": 4,
+      "objective": "4.24",
+      "difficulty": "medium",
+      "question": "Which tool collects the data that BloodHound ingests?",
+      "options": [
+        "Nikto",
+        "Gobuster",
+        "Hydra",
+        "SharpHound or BloodHound.py"
+      ],
+      "correct": 3,
+      "explanation": "SharpHound runs on a domain-joined Windows host, and bloodhound-python collects remotely with valid credentials.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 93,
+      "domain": 4,
+      "objective": "4.25",
+      "difficulty": "medium",
+      "question": "What is the goal of password spraying?",
+      "options": [
+        "Try many passwords against one account",
+        "Intercept hashes on the wire",
+        "Crack hashes offline",
+        "Try one or a few common passwords against many accounts to avoid lockouts"
+      ],
+      "correct": 3,
+      "explanation": "Spraying stays under a lockout threshold per account. Check the domain lockout policy first.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 94,
+      "domain": 4,
+      "objective": "4.26",
+      "difficulty": "medium",
+      "question": "Which command shows the domain password and lockout policy from a Windows host?",
+      "options": [
+        "whoami /priv",
+        "net share",
+        "ipconfig /all",
+        "net accounts /domain"
+      ],
+      "correct": 3,
+      "explanation": "It reports minimum length, lockout threshold, and observation window. CrackMapExec's --pass-pol does the same remotely.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 95,
+      "domain": 4,
+      "objective": "4.27",
+      "difficulty": "medium",
+      "question": "Which file contains the password hashes of local accounts on a Windows host?",
+      "options": [
+        "NTDS.dit",
+        "SYSVOL",
+        "The SAM database",
+        "Group.xml"
+      ],
+      "correct": 2,
+      "explanation": "Local hashes live in the SAM registry hive, protected by a boot key from the SYSTEM hive.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 96,
+      "domain": 4,
+      "objective": "4.28",
+      "difficulty": "hard",
+      "question": "What else is needed alongside NTDS.dit to extract hashes offline?",
+      "options": [
+        "The SECURITY event log",
+        "The krbtgt TGT",
+        "The DNS zone file",
+        "The SYSTEM registry hive"
+      ],
+      "correct": 3,
+      "explanation": "The SYSTEM hive holds the boot key that decrypts the password encryption key inside NTDS.dit.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 97,
+      "domain": 4,
+      "objective": "4.29",
+      "difficulty": "hard",
+      "question": "Why is unconstrained delegation dangerous?",
+      "options": [
+        "The server caches the TGT of every user that authenticates to it, which an attacker on the server can steal",
+        "It lets any user join computers to the domain",
+        "It exposes the krbtgt hash directly",
+        "It disables Kerberos"
+      ],
+      "correct": 0,
+      "explanation": "If a high-privileged account, or a coerced DC, authenticates to the host, its TGT can be extracted and reused.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 98,
+      "domain": 4,
+      "objective": "4.30",
+      "difficulty": "medium",
+      "question": "Which weakness exists in Group Policy Preferences files containing a cpassword value?",
+      "options": [
+        "It only affects Linux clients",
+        "The password is stored in plaintext",
+        "It requires physical access",
+        "The AES key used to encrypt it is publicly documented, so any domain user can decrypt it"
+      ],
+      "correct": 3,
+      "explanation": "Microsoft published the key, so anything in SYSVOL (readable by all authenticated users) can be decrypted. MS14-025 stopped new ones from being created.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 99,
+      "domain": 4,
+      "objective": "4.31",
+      "difficulty": "easy",
+      "question": "Which share on a domain controller is readable by all authenticated users and stores logon scripts and Group Policy?",
+      "options": [
+        "IPC$",
+        "C$ only",
+        "ADMIN$",
+        "SYSVOL"
+      ],
+      "correct": 3,
+      "explanation": "Scripts there sometimes contain hard-coded credentials, so reviewing SYSVOL is a standard enumeration step.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 100,
+      "domain": 4,
+      "objective": "4.32",
+      "difficulty": "medium",
+      "question": "psexec.py typically requires which of the following on the target?",
+      "options": [
+        "A Kerberos golden ticket",
+        "Domain Admin on a Linux host",
+        "Anonymous SMB access",
+        "Local administrator rights and access to a writable share such as ADMIN$"
+      ],
+      "correct": 3,
+      "explanation": "It uploads a service binary to a share and starts it, so it needs admin rights and creates visible artifacts.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 101,
+      "domain": 4,
+      "objective": "4.33",
+      "difficulty": "medium",
+      "question": "Why is wmiexec.py often considered quieter than psexec.py?",
+      "options": [
+        "It requires no credentials",
+        "It runs only on localhost",
+        "It uses WMI and does not install a service or drop a binary",
+        "It encrypts all traffic with TLS"
+      ],
+      "correct": 2,
+      "explanation": "WMI execution avoids service creation events, though it still generates logs and can be detected.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 102,
+      "domain": 4,
+      "objective": "4.34",
+      "difficulty": "easy",
+      "question": "Which tool is commonly used to get a shell over WinRM with valid credentials?",
+      "options": [
+        "Evil-WinRM",
+        "Gobuster",
+        "Nikto",
+        "Hydra"
+      ],
+      "correct": 0,
+      "explanation": "Evil-WinRM connects on 5985/5986 and supports uploading files, loading scripts, and pass-the-hash. The account needs WinRM access.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 103,
+      "domain": 4,
+      "objective": "4.35",
+      "difficulty": "medium",
+      "question": "A local administrator password works on dozens of workstations. What does this indicate?",
+      "options": [
+        "Expired certificates",
+        "A secure baseline",
+        "Password reuse from a shared image or build, which LAPS addresses",
+        "Kerberos misconfiguration"
+      ],
+      "correct": 2,
+      "explanation": "Reused local admin credentials allow lateral movement across the fleet. LAPS sets a unique random password per machine.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 104,
+      "domain": 4,
+      "objective": "4.36",
+      "difficulty": "medium",
+      "question": "What is the main difference between Domain Admins and Enterprise Admins?",
+      "options": [
+        "Enterprise Admins only exist on workstations",
+        "There is no difference",
+        "Enterprise Admins have rights across every domain in the forest",
+        "Domain Admins cannot log on to servers"
+      ],
+      "correct": 2,
+      "explanation": "Enterprise Admins live in the forest root domain and can administer all domains. Domain Admins are limited to their own domain.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 105,
+      "domain": 4,
+      "objective": "4.37",
+      "difficulty": "hard",
+      "question": "What does GenericAll over a user object allow?",
+      "options": [
+        "Read-only access to attributes",
+        "Full control, including resetting the user's password",
+        "Only viewing group membership",
+        "Only changing the description"
+      ],
+      "correct": 1,
+      "explanation": "BloodHound flags GenericAll edges. Control of a user object often means taking over the account.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 106,
+      "domain": 4,
+      "objective": "4.38",
+      "difficulty": "hard",
+      "question": "What is the default ms-DS-MachineAccountQuota value, and why does it matter?",
+      "options": [
+        "0, so nobody can join computers",
+        "10, and it lets any domain user add computer accounts that can be used in attacks such as RBCD",
+        "100, and it controls lockouts",
+        "1, and it applies only to admins"
+      ],
+      "correct": 1,
+      "explanation": "Controlled machine accounts are the foundation of resource-based constrained delegation and relay attacks. Setting the quota to 0 removes the foothold.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 107,
+      "domain": 4,
+      "objective": "4.39",
+      "difficulty": "medium",
+      "question": "Which tool searches file shares for credentials and interesting files across a domain?",
+      "options": [
+        "Burp Suite",
+        "Nikto",
+        "Snaffler",
+        "Wireshark"
+      ],
+      "correct": 2,
+      "explanation": "Snaffler crawls readable shares and flags config files, keys, and scripts likely to contain secrets.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 108,
+      "domain": 4,
+      "objective": "4.40",
+      "difficulty": "hard",
+      "question": "What mitigates Kerberoasting most effectively?",
+      "options": [
+        "Disabling ICMP",
+        "Long, random service account passwords or group managed service accounts",
+        "Renaming SPNs",
+        "Blocking port 80"
+      ],
+      "correct": 1,
+      "explanation": "Offline cracking depends on password strength. gMSA passwords are 120 characters, random, and rotated automatically.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 109,
+      "domain": 4,
+      "objective": "4.41",
+      "difficulty": "medium",
+      "question": "Kerberos authentication breaks if clock skew between client and DC exceeds what default value?",
+      "options": [
+        "1 hour",
+        "30 seconds",
+        "5 minutes",
+        "24 hours"
+      ],
+      "correct": 2,
+      "explanation": "Kerberos uses timestamps to prevent replay, so out-of-sync clocks cause KRB_AP_ERR_SKEW errors. This commonly bites testers using Impacket from a drifted VM.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 110,
+      "domain": 4,
+      "objective": "4.42",
+      "difficulty": "hard",
+      "question": "What is the Zerologon (CVE-2020-1472) risk when testing?",
+      "options": [
+        "It only affects workstations",
+        "It always crashes the target",
+        "It requires physical access",
+        "Exploiting it can reset the DC's machine account password and break the domain if not restored"
+      ],
+      "correct": 3,
+      "explanation": "The flaw in Netlogon lets an unauthenticated attacker set the DC's machine account password to empty. Careless use can break replication, so only test with explicit approval and a restore plan.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 111,
+      "domain": 4,
+      "objective": "4.43",
+      "difficulty": "medium",
+      "question": "Which Windows component is the target of PrintNightmare (CVE-2021-34527)?",
+      "options": [
+        "The Print Spooler service",
+        "DNS Server",
+        "Windows Update",
+        "Remote Desktop Services"
+      ],
+      "correct": 0,
+      "explanation": "Print Spooler flaws allowed remote code execution and privilege escalation. Disabling the Spooler on servers that do not need it removes the risk.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 112,
+      "domain": 4,
+      "objective": "4.44",
+      "difficulty": "medium",
+      "question": "Which type of Windows credential protection helps stop LSASS credential dumping?",
+      "options": [
+        "BitLocker",
+        "AppLocker",
+        "Credential Guard",
+        "Windows Firewall"
+      ],
+      "correct": 2,
+      "explanation": "Credential Guard isolates secrets with virtualization-based security, so tools like Mimikatz cannot read NTLM hashes or TGTs from LSASS memory.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 113,
+      "domain": 4,
+      "objective": "4.45",
+      "difficulty": "easy",
+      "question": "After obtaining Domain Admin on an internal test, which of these best demonstrates impact in the report?",
+      "options": [
+        "Changing the krbtgt password",
+        "Showing controlled proof such as a DCSync of a test account or a file listing from the DC, then stopping",
+        "Disabling all user accounts",
+        "Deleting the NTDS.dit file"
+      ],
+      "correct": 1,
+      "explanation": "Prove access with the least destructive evidence. The client needs to see the risk, not suffer the damage.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 114,
+      "domain": 5,
+      "objective": "5.1",
+      "difficulty": "easy",
+      "question": "What is Burp Suite's default proxy listener address?",
+      "options": [
+        "127.0.0.1:8080",
+        "127.0.0.1:3128",
+        "127.0.0.1:443",
+        "0.0.0.0:80"
+      ],
+      "correct": 0,
+      "explanation": "Browsers are pointed at 127.0.0.1:8080 so Burp can intercept and modify requests.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 115,
+      "domain": 5,
+      "objective": "5.2",
+      "difficulty": "easy",
+      "question": "What is Burp Repeater used for?",
+      "options": [
+        "Crawling a site automatically",
+        "Scanning ports",
+        "Cracking hashes",
+        "Manually modifying and re-sending individual requests"
+      ],
+      "correct": 3,
+      "explanation": "Repeater lets you tweak one request and see each response, which is ideal for testing a single parameter.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 116,
+      "domain": 5,
+      "objective": "5.3",
+      "difficulty": "medium",
+      "question": "What is Burp Intruder used for?",
+      "options": [
+        "Generating reports",
+        "Decrypting HTTPS traffic",
+        "Managing proxies",
+        "Automating requests with different values in marked positions"
+      ],
+      "correct": 3,
+      "explanation": "Intruder substitutes lists of values into positions for fuzzing, enumeration, and login testing.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 117,
+      "domain": 5,
+      "objective": "5.4",
+      "difficulty": "easy",
+      "question": "What distinguishes stored XSS from reflected XSS?",
+      "options": [
+        "The malicious script is saved on the server and served to other users later",
+        "It only works on mobile browsers",
+        "It requires a CSRF token",
+        "It needs physical access"
+      ],
+      "correct": 0,
+      "explanation": "Stored XSS persists in the application (comments, profiles), so any visitor can be affected without clicking a crafted link.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 118,
+      "domain": 5,
+      "objective": "5.5",
+      "difficulty": "medium",
+      "question": "Which defense most directly prevents XSS?",
+      "options": [
+        "Context-aware output encoding, backed by a Content Security Policy",
+        "Disabling cookies",
+        "Using longer passwords",
+        "Hiding the server banner"
+      ],
+      "correct": 0,
+      "explanation": "Encoding data for its output context stops browsers from treating input as code. CSP limits what injected script can do.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 119,
+      "domain": 5,
+      "objective": "5.6",
+      "difficulty": "easy",
+      "question": "Which defense most directly prevents SQL injection?",
+      "options": [
+        "Input length limits only",
+        "Blocking the word SELECT",
+        "Parameterized queries (prepared statements)",
+        "Hiding error messages only"
+      ],
+      "correct": 2,
+      "explanation": "Parameterization keeps data separate from the query structure. Filters and error suppression are not reliable on their own.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 120,
+      "domain": 5,
+      "objective": "5.7",
+      "difficulty": "medium",
+      "question": "Which sqlmap option enumerates the databases on a vulnerable target once -u is set?",
+      "options": [
+        "--crack",
+        "--dbs",
+        "--scan",
+        "--shell-only"
+      ],
+      "correct": 1,
+      "explanation": "--dbs lists database names, and -D with --tables continues from there. Only run sqlmap against in-scope targets with permission.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 121,
+      "domain": 5,
+      "objective": "5.8",
+      "difficulty": "medium",
+      "question": "Which observation best suggests a parameter may be vulnerable to SQL injection?",
+      "options": [
+        "The page loads slowly once",
+        "The response contains a cookie",
+        "The status code is 200",
+        "A database syntax error appears after sending an unbalanced quote character"
+      ],
+      "correct": 3,
+      "explanation": "Errors that expose SQL syntax show user input is reaching the query unsanitized. Confirm manually before reporting.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 122,
+      "domain": 5,
+      "objective": "5.9",
+      "difficulty": "easy",
+      "question": "What is IDOR?",
+      "options": [
+        "Forging a session cookie",
+        "Injecting scripts into a page",
+        "Accessing other users' objects by changing an identifier because the app does not check ownership",
+        "Uploading a web shell"
+      ],
+      "correct": 2,
+      "explanation": "Insecure direct object references are broken access control: changing /orders/1001 to /orders/1002 should be refused if the order belongs to someone else.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 123,
+      "domain": 5,
+      "objective": "5.10",
+      "difficulty": "medium",
+      "question": "What does an anti-CSRF token protect against?",
+      "options": [
+        "SQL injection",
+        "Brute-force logins",
+        "Directory traversal",
+        "Forged cross-site requests made using a victim's authenticated session"
+      ],
+      "correct": 3,
+      "explanation": "The token is an unpredictable value the attacker's page cannot read, so forged state-changing requests are rejected. SameSite cookies add another layer.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 124,
+      "domain": 5,
+      "objective": "5.11",
+      "difficulty": "medium",
+      "question": "What is SSRF?",
+      "options": [
+        "Resetting a user's password by email",
+        "Tricking a server into sending requests to locations the attacker chooses",
+        "Crashing a server with large requests",
+        "Stealing a server's SSL certificate"
+      ],
+      "correct": 1,
+      "explanation": "SSRF often reaches internal services or cloud metadata endpoints such as 169.254.169.254 that the attacker cannot reach directly.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 125,
+      "domain": 5,
+      "objective": "5.12",
+      "difficulty": "medium",
+      "question": "What is the root cause of OS command injection?",
+      "options": [
+        "Cookies lack the Secure flag",
+        "User input is passed to a system shell without safe handling",
+        "The server uses HTTP/2",
+        "Passwords are short"
+      ],
+      "correct": 1,
+      "explanation": "Avoid shell calls where possible, use APIs with argument arrays, and validate input against a strict allow list.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 126,
+      "domain": 5,
+      "objective": "5.13",
+      "difficulty": "medium",
+      "question": "Which control best reduces file upload risk?",
+      "options": [
+        "Validate file type and content, rename files, and store them outside the web root",
+        "Store files in the web root with the original name",
+        "Allow any extension",
+        "Trust the Content-Type header"
+      ],
+      "correct": 0,
+      "explanation": "Client-supplied names and headers can be forged. Serving uploaded files as executable code is how web shells land.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 127,
+      "domain": 5,
+      "objective": "5.14",
+      "difficulty": "medium",
+      "question": "What is local file inclusion (LFI)?",
+      "options": [
+        "Making the application load a local file chosen by the attacker through a vulnerable path parameter",
+        "Mounting an NFS share",
+        "Including remote JavaScript",
+        "Uploading files over FTP"
+      ],
+      "correct": 0,
+      "explanation": "LFI often starts with path traversal and can expose configuration files or lead to code execution.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 128,
+      "domain": 5,
+      "objective": "5.15",
+      "difficulty": "hard",
+      "question": "What is the best mitigation for XXE?",
+      "options": [
+        "Encode XML in base64",
+        "Require HTTP basic auth",
+        "Disable DTDs and external entity resolution in the XML parser",
+        "Use larger XML files"
+      ],
+      "correct": 2,
+      "explanation": "XXE exists when parsers resolve external entities in untrusted XML. Safe parser configuration prevents file disclosure and SSRF through XML.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 129,
+      "domain": 5,
+      "objective": "5.16",
+      "difficulty": "easy",
+      "question": "Which OWASP Top 10 (2021) category is ranked first?",
+      "options": [
+        "Broken Access Control",
+        "Injection",
+        "Security Misconfiguration",
+        "Cryptographic Failures"
+      ],
+      "correct": 0,
+      "explanation": "Broken Access Control moved to #1 in 2021. Injection fell to #3.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 130,
+      "domain": 5,
+      "objective": "5.17",
+      "difficulty": "medium",
+      "question": "What is an example of security misconfiguration?",
+      "options": [
+        "A strong password policy",
+        "A web application firewall",
+        "Default credentials left enabled or verbose error pages shown to users",
+        "Parameterized queries"
+      ],
+      "correct": 2,
+      "explanation": "Defaults, debug pages, and unnecessary services are common, easy to find, and often serious.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 131,
+      "domain": 5,
+      "objective": "5.18",
+      "difficulty": "hard",
+      "question": "What is the risk of a JWT signed with a weak or guessable secret?",
+      "options": [
+        "An attacker can crack the secret and forge valid tokens",
+        "Browsers will refuse to store them",
+        "Tokens become unreadable",
+        "The server will reject all tokens"
+      ],
+      "correct": 0,
+      "explanation": "HS256 tokens can be cracked offline. Servers must also reject the none algorithm and enforce expected algorithms.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 132,
+      "domain": 5,
+      "objective": "5.19",
+      "difficulty": "medium",
+      "question": "What does the HttpOnly cookie flag do?",
+      "options": [
+        "Prevents cross-site sends",
+        "Encrypts the cookie value",
+        "Forces HTTPS",
+        "Blocks JavaScript from reading the cookie"
+      ],
+      "correct": 3,
+      "explanation": "HttpOnly limits the damage from XSS by keeping session cookies out of reach of scripts. Secure and SameSite serve other purposes.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 133,
+      "domain": 5,
+      "objective": "5.20",
+      "difficulty": "medium",
+      "question": "Which header helps prevent clickjacking?",
+      "options": [
+        "X-Frame-Options or CSP frame-ancestors",
+        "Server",
+        "Strict-Transport-Security",
+        "Referrer-Policy"
+      ],
+      "correct": 0,
+      "explanation": "These headers stop the site from being embedded in a hostile frame. HSTS forces HTTPS and does not address framing.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 134,
+      "domain": 5,
+      "objective": "5.21",
+      "difficulty": "medium",
+      "question": "A login form accepts unlimited attempts with no lockout or delay. Which tool might a tester use to demonstrate the weakness?",
+      "options": [
+        "ExifTool",
+        "Wireshark",
+        "Shodan",
+        "Burp Intruder or Hydra"
+      ],
+      "correct": 3,
+      "explanation": "Missing rate limiting enables credential brute forcing. Keep the demo small and within the rules of engagement.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 135,
+      "domain": 5,
+      "objective": "5.22",
+      "difficulty": "hard",
+      "question": "What is a subdomain takeover?",
+      "options": [
+        "Spoofing the domain registrar",
+        "Claiming an unused external service that a dangling DNS record still points to",
+        "Guessing the DNS admin's password",
+        "Poisoning a resolver cache"
+      ],
+      "correct": 1,
+      "explanation": "When a CNAME points to a deprovisioned cloud service, an attacker can register that resource and serve content under the victim's subdomain.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 136,
+      "domain": 6,
+      "objective": "6.1",
+      "difficulty": "easy",
+      "question": "What does the PNPT exam require beyond finding vulnerabilities?",
+      "options": [
+        "A multiple-choice test",
+        "Only a screenshot of proof",
+        "A video of the entire engagement",
+        "A professional written report and a live debrief with an assessor"
+      ],
+      "correct": 3,
+      "explanation": "TCM Security describes the exam as a full engagement, ending with a report and a live report debrief, and notes that it is not a CTF.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 137,
+      "domain": 6,
+      "objective": "6.2",
+      "difficulty": "easy",
+      "question": "Who is the audience for the executive summary of a pentest report?",
+      "options": [
+        "Auditors from the tool vendors",
+        "Non-technical leaders who decide on risk and budget",
+        "Network administrators only",
+        "Other penetration testers"
+      ],
+      "correct": 1,
+      "explanation": "It should state business impact and overall risk in plain language without commands or long tool output.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 138,
+      "domain": 6,
+      "objective": "6.3",
+      "difficulty": "medium",
+      "question": "Which items belong in a technical finding?",
+      "options": [
+        "Only the CVE number",
+        "Only a screenshot",
+        "Description, affected assets, severity, evidence, reproduction steps, and remediation",
+        "The tester's personal notes"
+      ],
+      "correct": 2,
+      "explanation": "A reader should be able to understand the issue, reproduce it, and fix it from the finding alone.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 139,
+      "domain": 6,
+      "objective": "6.4",
+      "difficulty": "medium",
+      "question": "What is CVSS used for in a report?",
+      "options": [
+        "Measuring network speed",
+        "Choosing a scanning tool",
+        "Tracking client invoices",
+        "A standard way to score vulnerability severity"
+      ],
+      "correct": 3,
+      "explanation": "CVSS gives a consistent numeric score and vector. Many reports adjust the final rating using business context.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 140,
+      "domain": 6,
+      "objective": "6.5",
+      "difficulty": "easy",
+      "question": "Why should every finding include evidence such as screenshots and command output?",
+      "options": [
+        "It is only required for critical findings",
+        "It replaces remediation advice",
+        "It proves the issue is real and helps the client reproduce and verify the fix",
+        "It makes the report longer"
+      ],
+      "correct": 2,
+      "explanation": "Evidence turns a claim into a verifiable fact. Redact real credentials and personal data before including it.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 141,
+      "domain": 6,
+      "objective": "6.6",
+      "difficulty": "medium",
+      "question": "What is the best way to write a remediation recommendation?",
+      "options": [
+        "Tell the client to be more careful",
+        "Specific, actionable, and tied to the affected system",
+        "Suggest replacing the whole network",
+        "Link to a general security textbook"
+      ],
+      "correct": 1,
+      "explanation": "Good recommendations say what to change and where, so engineers can act on them without a follow-up call.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 142,
+      "domain": 6,
+      "objective": "6.7",
+      "difficulty": "medium",
+      "question": "How should captured credentials be handled in the report?",
+      "options": [
+        "Emailed in plaintext to all staff",
+        "Pasted in full in the body",
+        "Partially redacted or masked, with full values shared only through a secure channel if needed",
+        "Posted in the executive summary"
+      ],
+      "correct": 2,
+      "explanation": "Reports get forwarded. Redaction avoids creating a new leak from the report itself.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 143,
+      "domain": 6,
+      "objective": "6.8",
+      "difficulty": "easy",
+      "question": "What should you do if you accidentally cause a service outage during testing?",
+      "options": [
+        "Continue and mention it in the report",
+        "Delete the logs",
+        "Stop, notify the client contact immediately, and document what happened",
+        "Wait until the end of the test"
+      ],
+      "correct": 2,
+      "explanation": "Prompt disclosure lets the client restore service. Hiding or delaying it damages trust and may breach the contract.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 144,
+      "domain": 6,
+      "objective": "6.9",
+      "difficulty": "medium",
+      "question": "What is the purpose of the live debrief?",
+      "options": [
+        "To show off tools",
+        "Walk through findings, explain impact, and answer questions about the attack path and fixes",
+        "To negotiate the price",
+        "To retest every finding"
+      ],
+      "correct": 1,
+      "explanation": "TCM's PNPT debrief is a short, live conversation where you explain what you found and how you found it, in your own words.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 145,
+      "domain": 6,
+      "objective": "6.10",
+      "difficulty": "medium",
+      "question": "Why should you keep detailed notes with timestamps during an engagement?",
+      "options": [
+        "They are required by Nmap",
+        "They replace the report",
+        "They speed up scans",
+        "They support accurate reporting and let you match your activity to client logs"
+      ],
+      "correct": 3,
+      "explanation": "If the client's SOC asks what happened at 14:05, your notes answer. They also keep the report accurate days later.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 146,
+      "domain": 6,
+      "objective": "6.11",
+      "difficulty": "medium",
+      "question": "Which approach best prioritizes findings in the report?",
+      "options": [
+        "Order by risk, combining severity with exploitability and business impact",
+        "Put the easiest ones first",
+        "Order alphabetically",
+        "Order by the tool that found them"
+      ],
+      "correct": 0,
+      "explanation": "Clients have limited time. Putting the highest-risk items first shows them where to start.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 147,
+      "domain": 6,
+      "objective": "6.12",
+      "difficulty": "medium",
+      "question": "A scanner reports a critical vulnerability on a host. What should you do before adding it to the report?",
+      "options": [
+        "Delete it if you cannot exploit it immediately",
+        "Verify it manually to remove false positives",
+        "Copy the scanner text directly",
+        "Mark it informational automatically"
+      ],
+      "correct": 1,
+      "explanation": "Scanner output is a lead, not a finding. Unverified issues waste the client's time and weaken credibility.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 148,
+      "domain": 6,
+      "objective": "6.13",
+      "difficulty": "easy",
+      "question": "What should a report's methodology section describe?",
+      "options": [
+        "The price of the engagement",
+        "The client's HR policies",
+        "The scope, approach, and phases of testing performed",
+        "The tester's personal tool preferences only"
+      ],
+      "correct": 2,
+      "explanation": "It tells readers what was and was not tested, which sets expectations about coverage.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 149,
+      "domain": 6,
+      "objective": "6.14",
+      "difficulty": "medium",
+      "question": "What should you do with client data and tool artifacts when the engagement ends?",
+      "options": [
+        "Keep everything forever",
+        "Leave test accounts for later",
+        "Securely delete or return them as agreed, and remove any tools or accounts you created",
+        "Post screenshots publicly"
+      ],
+      "correct": 2,
+      "explanation": "Cleanup and data handling are part of professional practice and usually written into the contract.",
+      "link": "start-here.html"
+    },
+    {
+      "id": 150,
+      "domain": 6,
+      "objective": "6.15",
+      "difficulty": "hard",
+      "question": "Why should a pentest report include positive observations when controls worked?",
+      "options": [
+        "It lowers the severity of findings",
+        "It hides weaknesses",
+        "It is required by CVSS",
+        "It gives a balanced picture and tells the client which defenses to keep"
+      ],
+      "correct": 3,
+      "explanation": "Noting that EDR blocked a technique or that MFA stopped an attack shows what is effective and where spending is working.",
+      "link": "start-here.html"
+    }
+  ]
+}

@@ -129,9 +129,10 @@ QUIZ_REGISTRY = [
     {'quiz': 'terraform-quiz.html', 'json': 'terraform-questions.json', 'name': 'HashiCorp Terraform', 'short': 'Terraform', 'exam': 'TA-003', 'vendor': 'hashicorp', 'tagline': 'Infrastructure as code with Terraform'},
     {'quiz': 'vault-quiz.html',     'json': 'vault-questions.json',     'name': 'HashiCorp Vault',     'short': 'Vault',     'exam': 'VA-002', 'vendor': 'hashicorp', 'tagline': 'Secrets management and data protection'},
 
-    # ── Specialty (2) ──
+    # ── Specialty (3) ──
     {'quiz': 'ai-security-quiz.html', 'json': 'ai-security-questions.json', 'name': 'AI Security',       'short': 'AI-SEC', 'exam': 'AI-SEC', 'vendor': 'specialty', 'tagline': 'AI/ML security threats and defenses'},
     {'quiz': 'cpts-quiz.html',        'json': 'cpts-questions.json',        'name': 'Hack The Box CPTS', 'short': 'CPTS',   'exam': 'CPTS',   'vendor': 'specialty', 'tagline': 'Hands-on penetration testing across the full kill chain'},
+    {'quiz': 'pnpt-quiz.html',        'json': 'pnpt-questions.json',        'name': 'TCM Security', 'short': 'PNPT',   'exam': 'PNPT',   'vendor': 'specialty', 'tagline': 'Practical network pentest: external, internal AD, and reporting'},
 ]
 
 # Same 7 exams as RETIRED_EXAMS in lib/templates.py, keyed by quiz filename

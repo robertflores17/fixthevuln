@@ -37,6 +37,7 @@ HAND_CRAFTED = [
     ('az900-quiz.html',         'data/az900-questions.json',           'Microsoft AZ-900',             'AZ-900'),
     ('sc900-quiz.html',         'data/sc900-questions.json',           'Microsoft SC-900',             'SC-900'),
     ('cpts-quiz.html',          'data/cpts-questions.json',            'HTB CPTS',                     'CPTS'),
+    ('pnpt-quiz.html',          'data/pnpt-questions.json',            'TCM Security',                 'PNPT'),
 ]
 
 
