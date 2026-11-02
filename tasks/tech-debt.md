@@ -1,3 +1,42 @@
+## 2026-11-02 — Weekly Tech-Debt Audit
+
+**Headline:** All-clear pipeline — KEV fetch fresh (Nov 1), 0 CVEs pending, 2 published Nov 1; store worker surged +234 LOC in 8 commits this week (1,564→1,798) and is approaching the 2,000-LOC refactor threshold.
+
+**Pipeline pulse:**
+- KEV fetch last checked (`data/pending_review.json` last_checked): 2026-11-01T19:15:43 UTC (yesterday ✓ — NO P0)
+- CVEs pending review (`total_pending`), waiting since (`last_updated`): 0, 2026-11-01T17:02:23 UTC — pipeline healthy, NO P0
+- Daily CVE trigger last publish (`data/appsec-review.md`): 2026-11-01 (2 CVEs: Ivanti ×2 ✓)
+- Friday AI trend roundup last file (`drafts/ai-security-roundup-*.md`): 2026-10-30 ✓ (on schedule)
+
+**New this week:**
+- P2 worker growth (escalation) — `store/cloudflare-worker.js` — **8 commits this week**, 1,564→1,798 LOC (+234, ↑15% in one week); new code paths: zip-download handler, one-click order delivery, webhook email hold, cert/pack overlap guard, Stripe metadata key spanning, MD5/ETag integrity check. Webhook HMAC-SHA256 signature verification still in place ✓; PRICING updated ($5.99/$15.99 → $9.99/$24.99 — both sides consistent ✓). At this rate, file breaches 2,000 LOC within a week. Recommend splitting into `worker-download.js`, `worker-checkout.js`, `worker-webhook.js` modules. — Effort: M
+
+**Still open from prior audits:** 5
+1. P1 content — `practice-tests/*.html:352` (13 pages) — `<p class="pt-timestamp">Last updated: October 23, 2026</p>` still present (**21 weeks open**; dates regenerated but block not removed) — Fix: remove `pt-timestamp` block from `scripts/generate_practice_test_pages.py` template; re-run — Effort: XS
+2. P2 generator — **17 scripts >500 LOC** (same count; `generate_sprint_kit.py` grew 1,998→2,181 LOC this week, +183): `generate_sprint_kit.py` 2,181 · `fetch_kev.py` 897 · `etsy_to_pinterest.py` 829 · `aggregate_ai_ide_vulns.py` 771 · `entity_extractor.py` 765 · `generate_linkedin_posts.py` 716 · `publish_editorial.py` 711 · `generate_ai_ide_tracker.py` 697 · `audit_pages.py` 662 · `generate_quiz_pages.py` 627 · `generate_cert_pages.py` 614 · `generate_practice_test_pages.py` 594 · `inject_store_ctas.py` 588 · `generate_roadmaps.py` 544 · `aggregate_ai_security_news.py` 536 · `generate_cve_pages.py` 513 · `generate_cert_blog_posts.py` 503 — Effort: L
+3. P2 worker growth — `store/cloudflare-worker.js` — 1,798 LOC (↑from 1,564; +234 this week alone — see "New this week") — Effort: M
+4. P3 hygiene — `scripts/` (2 instances) — Bare `except Exception:` without logging: `create_hero.py:51`, `generate_linkedin_posts.py:72` — Add `logging.exception()` before each — Effort: XS
+5. P3 hygiene — repo root — No `CLAUDE.md`; editorial rules (evergreen-page timestamp ban, cache-bust policy, pipeline health thresholds) uncodified in-repo — Effort: XS
+
+**Resolved since last audit:**
+- P2 SEO (open since Oct 19) — `scripts/generate_sitemap.py:25` — `CONTENT_DIRS` now includes `wstg` and `practice-tests` subpages ✓
+- P3 generator drift (open 17 weeks since Jul 13) — `scripts/generate_llms_txt.py:90` — `ai-agent-security.html` and `genai-data-security.html` now in GUIDE_PAGES ✓
+
+**Metrics tracked:**
+- Total generated pages (cve-*, cert-*, comparisons/*, roadmaps/*): 457 (281 CVE · 66 cert · 43 comparisons · 67 roadmaps)
+- AI vuln pages (`ai-vulnerabilities/`): 28 (unchanged)
+- Blog pages: 143 (+2 from 141)
+- Sitemap entries: 809 (+14 from 795)
+- Evergreen pages with timestamps (should be 0): 13 practice-tests (P1 open ×21wk) + 1 `ai-ide-mcp-disclosures.html` (intentional tracker freshness date) = 14 total matched by grep; 13 flagged
+- Pages missing from llms.txt: 0 ✓
+- Cache-bust drift count: 0 (no key CSS/JS files modified this week)
+- Scripts >500 LOC: 17 (same as prior)
+- Store worker LOC: 1,798 (+234 from 1,564)
+- Python scripts with bare `except Exception:` without logging: 2 instances
+- D1 migrations: 2 (unchanged — 0001_error_log, 0002_quiz_feedback)
+
+---
+
 ## 2026-10-26 — Weekly Tech-Debt Audit
 
 **Headline:** Near-P0 watch — CVE review stall timer hits 44.7h as of 14:23 UTC (P0 fires at ~17:42 UTC today if auto-publish doesn't run); 1 CVSS 9.2 OS-RCE CVE pending with due date TODAY; generate_guides.py massively refactored (2,751→169 LOC) and requirements.txt added — strong hygiene week offset by stall risk.
