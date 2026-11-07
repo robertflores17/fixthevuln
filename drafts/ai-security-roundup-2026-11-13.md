@@ -1,0 +1,30 @@
+---
+title: "AI Security Trend Roundup: Nov 13, 2026"
+description: "AI security updates covering Nov 06–Nov 13."
+slug: "ai-security-roundup-2026-11-13"
+author: "FixTheVuln Team"
+auto_digest: "true"
+cta_section: "comptia"
+---
+
+# AI Security Trend Roundup: Nov 13, 2026
+
+*Covering Nov 06 → Nov 13, 2026.*
+
+## Framework Advisories
+
+Security advisories for AI serving and agent frameworks, each sourced from the project's own GitHub Security Advisory.
+
+- **langchain-ai/langgraph: [GHSA-6hmw-9432-67qq](https://github.com/langchain-ai/langgraph/security/advisories/GHSA-6hmw-9432-67qq) (CVE-2026-115883):** The Postgres and SQLite `Store` backends join namespace tuple labels with `.` before storing them, so a label containing a dot (e.g. `("tenant.bob",)`) resolves to the same key as a different namespace tuple (`("tenant", "bob")`); `put` rejected such labels but `get`, `search`, `delete`, `list_namespaces`, their async variants, and `batch`/`abatch` did not, letting a caller who controls a namespace label read, overwrite, or delete another tenant's Store data. `InMemoryStore` is unaffected. CVSS v4.0 6.0 (Moderate), CWE-20/CWE-863; affects `langgraph-checkpoint-postgres` < 3.1.3 and `langgraph-checkpoint-sqlite` < 3.1.2, fixed in 3.1.3/3.1.2 (both require `langgraph-checkpoint` >= 4.3.0).
+
+- **vllm-project/vllm: [GHSA-894j-wg8m-63h8](https://github.com/vllm-project/vllm/security/advisories/GHSA-894j-wg8m-63h8):** The OpenCVDynamicOpenPanguVideoBackend derives frame sampling from the request-supplied `num_frames` with no server-side ceiling, and setting `fps=-1` skips the existing clamp entirely; the reporter measured roughly 462 MB and 118 CPU-seconds at `num_frames=1e7`, extrapolating to about 46 GB at `1e9`, and any unauthenticated request can route video through this backend by naming it in `media_io_kwargs` even on deployments that don't otherwise use it. CVSS v3.1 5.3 (Moderate), CWE-400/CWE-770, no CVE assigned; affects vLLM >= 0.30.0, < 0.31.0, fixed in 0.31.0 (PR #58830 blocks untrusted per-request `mm_processor_kwargs`/`media_io_kwargs` by default; `--trust-request-mm-kwargs` restores the override).
+
+- **vllm-project/vllm: [GHSA-m9fg-w9qh-67pc](https://github.com/vllm-project/vllm/security/advisories/GHSA-m9fg-w9qh-67pc):** `sanitize_message()` strips heap addresses from error text with a regex that matches only lowercase hex, but PIL's `Image.__repr__` prints its address in uppercase, so a crafted image that trips an HF-processor failure returns a live heap address of the API server process to an unauthenticated client (the `/tokenize` route stays unauthenticated even with an API key configured). The reporter ties the leak to a previously reported chain whose recommended regex fix was never applied; disclosure is address-only, with no claimed code execution. CVSS v3.1 5.3 (Moderate), CWE-532, no CVE assigned; affects vLLM >= 0.14.0rc1, < 0.31.0, fixed in 0.31.0.
+
+- **vllm-project/vllm: [GHSA-w4cg-mhc7-mgw3](https://github.com/vllm-project/vllm/security/advisories/GHSA-w4cg-mhc7-mgw3):** The MiniMax M3 video processor doesn't validate the request-level `mm_processor_kwargs.min_pixels`, so a large value enlarges each frame past the default per-frame cap while the volumetric check meant to catch it is skipped by default, letting a single video request allocate disproportionate memory and CPU before engine validation runs. The author verified this by static source review only, without running vLLM. CVSS v3.1 5.3 (Moderate), CWE-770, no CVE assigned; affects vLLM >= 0.24.0, < 0.31.0, fixed in 0.31.0 (same PR #58830 mitigation as the other `mm_processor_kwargs` advisories here).
+
+- **vllm-project/vllm: [GHSA-9g3c-x747-c6wr](https://github.com/vllm-project/vllm/security/advisories/GHSA-9g3c-x747-c6wr):** Serving Cohere2 Vision models lets a client set `mm_processor_kwargs.max_patches` to a large value with no server-side upper bound; the Hugging Face processor's aspect-ratio enumeration uses nested loops bounded by that value, so CPU work grows quadratically, and varying the value across requests defeats the processor's small LRU cache, so a single valid-image request can tie up multimodal preprocessing workers. The default server requires no API key, so this is reachable without authentication unless the operator sets one. CVSS v3.1 5.3 (Moderate), CWE-400/CWE-407, no CVE assigned; affects vLLM >= 0.10.1, < 0.31.0, fixed in 0.31.0.
+
+- **vllm-project/vllm: [GHSA-5q78-j82c-2vr2](https://github.com/vllm-project/vllm/security/advisories/GHSA-5q78-j82c-2vr2):** A single `/v1/completions` request containing only `prompt_embeds` crashes the vLLM engine and API server for XD-RoPE models (e.g. `tencent/HunyuanOCR`) run with `--enable-prompt-embeds` on the V1 GPU model runner, via a reachable assertion in `_init_xdrope_positions`; the advisory frames this as the XD-RoPE counterpart of the M-RoPE fix shipped for CVE-2026-55514, which removed the same assertion only from the M-RoPE path. One request terminates the whole server process for every concurrent client, and a deployment with `--api-key` is exposed to any authorized caller. CVSS v3.1 5.9 (Moderate), CWE-617, no CVE assigned to this advisory; affects vLLM >= 0.28.0, < 0.30.0, fixed in 0.30.0.
+
+- **vllm-project/vllm: [GHSA-vxqj-p4gw-9h4c](https://github.com/vllm-project/vllm/security/advisories/GHSA-vxqj-p4gw-9h4c):** The frame-count protection added for CVE-2026-34755 is incomplete: sending `media_io_kwargs.video.num_frames=-1` in a chat completion request overrides the server's frame limit, and the video decoder treats the negative value as unlimited, decoding every frame so memory use scales with frames supplied. The advisory claims availability impact only (allocation failure or process termination in memory-constrained deployments), no confidentiality/integrity/code-execution impact, and recommends a server-enforced maximum that requests cannot override. CVSS v3.1 6.5 (Moderate), CWE-770, no CVE assigned to this advisory; affects vLLM >= 0.19.0, < 0.31.0, fixed in 0.31.0.
