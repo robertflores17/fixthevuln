@@ -1,9 +1,9 @@
-# AppSec Review — 2026-11-07
+# AppSec Review — 2026-11-10
 
 **Reviewer:** Robert Flores, CISSP  
-**Run Date:** 2026-11-07  
-**CVEs Reviewed:** 1  
-**Total in Database:** 283  
+**Date:** 2026-11-10  
+**CVEs Reviewed:** 4  
+**All Approved for Publication**
 
 ---
 
@@ -11,8 +11,8 @@
 
 | Priority | Count |
 |----------|-------|
-| Critical | 0     |
-| High     | 1     |
+| Critical | 4     |
+| High     | 0     |
 | Medium   | 0     |
 | Low      | 0     |
 
@@ -20,37 +20,33 @@
 
 ## CVE Summary
 
-| CVE ID | Vendor | Priority | Vulnerability Class |
-|--------|--------|----------|---------------------|
-| CVE-2026-19868 | SonicWall | High | Authentication Bypass / MFA Bypass (CWE-308) |
-
----
-
-## CVE Detail
-
-**CVE-2026-19868 — SonicWall SonicOS SSLVPN Use of Single-factor Authentication Vulnerability**  
-SonicWall's SSLVPN implementation contains a use of single-factor authentication flaw (CWE-308) that allows users with valid credentials for an alternate authentication method to bypass SAML authentication controls, including SAML-enforced MFA. This is a perimeter security failure — SonicWall SSLVPN is widely deployed in enterprise and government networks, and MFA bypass on a VPN gateway represents direct initial access potential for threat actors. CISA flagged this under BOD 26-04 with a 14-day remediation window, indicating active exploitation.
+| CVE ID            | Vendor      | Product         | Priority | Vuln Class                       | CVSS |
+|-------------------|-------------|-----------------|----------|----------------------------------|------|
+| CVE-2026-102895   | GPUStack     | GPUStack        | critical | Improper Authentication / Unauth RCE | 9.8  |
+| CVE-2026-123158   | OpenBSD      | OpenSSH         | critical | Authentication Bypass            | 8.1  |
+| CVE-2026-116779   | SignalWire   | FreeSwitch      | critical | Code Injection / RCE             | 9.8  |
+| CVE-2026-123218   | IBM          | Aspera Faspex   | critical | Incorrect Authorization / Priv Esc | 9.8  |
 
 ---
 
 ## Trend Analysis
 
-This week's addition continues a persistent pattern in CISA KEV: authentication and access control failures on network perimeter devices — VPNs, firewalls, and remote access gateways — remain a top exploitation vector. SonicWall has had a disproportionate share of KEV entries in 2025–2026, suggesting ongoing security debt in its authentication stack. The specific bypass here (alternate-method credentials bypassing SAML/MFA) reflects a systemic design weakness where federated auth pathways are not enforced uniformly. As enterprises accelerate MFA rollouts, attackers are increasingly targeting the gaps between authentication providers rather than attacking credentials directly. Organizations relying on SAML-based MFA for VPN access should treat this as a warning that federated identity assumptions can be undermined at the application layer.
+This batch is notable for targeting foundational infrastructure components across three distinct categories: AI/ML compute platforms, remote access protocols, and enterprise file transfer. The GPUStack and OpenSSH vulnerabilities reflect a continued attacker focus on seizing control of AI and cloud-adjacent infrastructure — GPUStack's unauthenticated admin access with code execution via POST endpoint is especially concerning as GPU-backed inference platforms become operational targets. The OpenSSH authentication bypass is arguably the most systemic risk in the batch: SSH is the backbone of server administration worldwide, and a Linux-platform authentication bypass with active exploitation confirmed by CISA KEV status warrants emergency patching response. FreeSwitch and IBM Aspera Faspex round out a batch that spans VoIP/telecom and enterprise data transfer — both high-value attack surfaces for lateral movement and data exfiltration. All four vulnerabilities have CVSS scores at or above 8.1, with three at the ceiling of 9.8, underscoring an unusually severe batch with no medium or low-priority entries.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"When MFA Isn't Enough: Analyzing Authentication Bypass Patterns in CISA KEV"** — Covers the growing trend of CVEs that sidestep MFA via alternate credential paths, using CVE-2026-19868 as the lead example. Practical guidance: defense-in-depth beyond SAML.
+1. **"SSH at Risk Again: What the OpenSSH Auth Bypass (CVE-2026-123158) Means for Every Linux Administrator"** — High-traffic angle given OpenSSH's universal deployment; covers detection, patching, and audit steps.
 
-2. **"SonicWall's Security Track Record: A CISA KEV Analysis"** — Deep dive into SonicWall's frequency in the KEV catalog, vulnerability class distribution, and what security teams should know about their deployed appliances.
+2. **"AI Infrastructure Under Attack: GPUStack's Unauthenticated RCE and the Security Debt in ML Platforms"** — Timely piece on the emerging threat surface of GPU inference servers as orgs rush to deploy LLM workloads without hardening.
 
-3. **"BOD 26-04 and the Race Against Active Exploitation"** — Explainer on CISA's BOD 26-04, the forensics triage requirements, and how security teams should operationalize 14-day patch cycles for internet-facing appliances.
+3. **"Code Injection in VoIP: FreeSwitch CVE-2026-116779 and What Telecom Engineers Need to Know"** — Niche but high-relevance for security teams managing telecom infrastructure; pairs well with existing KEV coverage.
 
 ---
 
 ## Newsletter Snippet
 
-**This week in CISA KEV:** One new vulnerability was added to the Known Exploited Vulnerabilities catalog — CVE-2026-19868 in SonicWall SonicOS SSLVPN. This authentication bypass allows attackers with alternate-method credentials to sidestep SAML controls and defeat SAML-enforced MFA. With a 14-day federal remediation deadline under BOD 26-04, this one demands immediate attention from any organization running SonicWall SSLVPN in a perimeter role.
+This week's CISA KEV additions are a critical-only batch — four vulnerabilities, all rated Critical, spanning AI compute, remote access, enterprise file transfer, and VoIP. The headline is CVE-2026-123158, an authentication bypass in OpenBSD OpenSSH on Linux: if your Linux fleet exposes SSH (and it almost certainly does), this is an emergency patch, not a "schedule it next sprint" situation. Alongside it, CVE-2026-102895 in GPUStack allows completely unauthenticated administrative access and remote code execution — a stark reminder that the rush to deploy AI infrastructure is outpacing security hardening.
 
-If you're running SonicWall: check the vendor advisory (SNWLID-2026-0014) now. This isn't a theoretical weakness — it's actively exploited, and bypassing MFA on your VPN gateway is as close to "keys to the kingdom" as vulnerabilities get. Apply mitigations, review your authentication stack for similar alternate-path weaknesses, and ensure your incident response team is familiar with CISA's forensics triage requirements if you can't patch immediately.
+For enterprise and telecom teams, CVE-2026-116779 (FreeSwitch code injection) and CVE-2026-123218 (IBM Aspera Faspex privilege escalation) round out a week where attackers are clearly probing for high-value lateral movement paths. All four are confirmed actively exploited per CISA KEV. Prioritize patching OpenSSH and GPUStack immediately; FreeSwitch and Aspera Faspex upgrades should follow within the BOD 26-04 three-day window. Full technical details and remediation links are live at fixthevuln.com.
