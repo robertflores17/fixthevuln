@@ -1,28 +1,21 @@
-# Daily KEV Review — 2026-11-10
+# Daily KEV Review — 2026-11-13
 
-**New CVEs:** 6 | **Critical:** 0 | **High:** 3 | **Medium:** 1 | **Low:** 2 | **Ransomware-linked:** 0
+**New CVEs:** 2 | **Critical:** 0 | **High:** 2 | **Medium:** 0 | **Low:** 0 | **Ransomware-linked:** 0
 
 ## Severity Breakdown
 
 | CVE | Vendor | Product | CVSS | Ransomware | Due Date |
 |-----|--------|---------|------|------------|----------|
-| CVE-2026-125350 | Google | Chromium | 8.8 | Unknown | 2026-11-24 |
-| CVE-2026-111560 | Barracuda Networks | Multiple Products | 8.6 | Unknown | 2026-11-13 |
-| CVE-2026-20320 | Cisco | BroadWorks | 7.5 | Unknown | 2026-11-24 |
-| CVE-2026-111793 | Openwave Messaging Limited | Webtop Media Transcoder | 4.3 | Unknown | 2026-11-24 |
-| CVE-2026-124194 | Microsoft | Office | N/A | Unknown | 2026-11-24 |
-| CVE-2026-116606 | Barracuda Networks | Barracuda Email Security Gateway (ESG) | N/A | Unknown | 2026-11-13 |
+| CVE-2026-114713 | UnrealIRCd | UnrealIRCd | 8.6 | Unknown | 2026-11-16 |
+| CVE-2026-123039 | Check Point | Multiple Products | 7.8 | Unknown | 2026-11-16 |
 
 ## Deadline Alert
-- **Nearest due date:** 2026-11-13 (2 CVEs)
+- **Nearest due date:** 2026-11-16 (2 CVEs)
 - **Overdue:** None
 
 ## Vendor Summary
-- Barracuda Networks: 2 CVEs
-- Microsoft: 1 CVE
-- Openwave Messaging Limited: 1 CVE
-- Cisco: 1 CVE
-- Google: 1 CVE
+- UnrealIRCd: 1 CVE
+- Check Point: 1 CVE
 
 ## Quick Review
 1. Open `data/REVIEW.md` for detailed per-CVE analysis with expert links
