@@ -1,9 +1,9 @@
-# AppSec Review — 2026-11-11
+# AppSec Review — 2026-11-14
 
 **Reviewer:** Robert Flores, CISSP  
-**Review Date:** 2026-11-11  
-**CVEs Reviewed:** 6  
-**Source:** CISA Known Exploited Vulnerabilities (KEV) — Batch Added 2026-11-10
+**Review Date:** 2026-11-14  
+**CVEs Reviewed:** 2  
+**CVEs Approved:** 2  
 
 ---
 
@@ -11,10 +11,10 @@
 
 | Priority | Count | CVEs |
 |----------|-------|------|
-| Critical | 1 | CVE-2026-116606 |
-| High     | 4 | CVE-2026-124194, CVE-2026-20320, CVE-2026-111560, CVE-2026-125350 |
-| Medium   | 1 | CVE-2026-111793 |
-| Low      | 0 | — |
+| Critical | 0     | —    |
+| High     | 2     | CVE-2026-114713, CVE-2026-123039 |
+| Medium   | 0     | —    |
+| Low      | 0     | —    |
 
 ---
 
@@ -22,33 +22,39 @@
 
 | CVE ID | Vendor | Priority | Vulnerability Class |
 |--------|--------|----------|---------------------|
-| CVE-2026-124194 | Microsoft | High | Spoofing (Missing User Interaction) |
-| CVE-2026-111793 | Openwave Messaging Limited | Medium | Incorrect Resource Transfer (CWE-669) |
-| CVE-2026-20320 | Cisco | High | XXE Injection (CWE-611) |
-| CVE-2026-111560 | Barracuda Networks | High | OS Command Injection (CWE-78) |
-| CVE-2026-116606 | Barracuda Networks | Critical | Authentication Bypass (Alternate Path) |
-| CVE-2026-125350 | Google | High | Use-After-Free / Memory Corruption (CWE-416) |
+| CVE-2026-114713 | UnrealIRCd | High | Command Injection / Delimiter Injection (CWE-140) |
+| CVE-2026-123039 | Check Point | High | Incorrect Permission Assignment / Local Privilege Escalation (CWE-732, CWE-862) |
+
+---
+
+## Individual Assessments
+
+**CVE-2026-114713 — UnrealIRCd Delimiter Injection (CVSS 8.6)**  
+Any authenticated user on a network with two or more linked UnrealIRCd servers can inject server-to-server commands executed with server authority via improper neutralization of delimiters (CWE-140). This is remotely exploitable by any IRC user and effectively allows unauthorized privilege escalation to server-level command execution.
+
+**CVE-2026-123039 — Check Point Local Privilege Escalation (CVSS 7.8)**  
+Check Point's DynamicCLI daemon runs as root and listens on a world-writable local socket without authenticating connecting processes (CWE-732, CWE-862). Any authenticated local user can send commands to the socket and execute them as root, impacting Firewall, Multi-Domain Security Management Server, Scalable Platforms, Security Gateway, and Security Management Server.
 
 ---
 
 ## Trend Analysis
 
-This batch highlights two converging threat patterns. First, security gateway vendors continue to be prime targets: the Barracuda ESG pair (CVE-2026-116606 + CVE-2026-111560) represents a classic pre-auth-to-RCE chain — an authentication bypass enables a crafted backup import, which then unlocks authenticated admin command injection with root privileges, all without valid credentials. The 3-day remediation deadline (due 2026-11-13) underscores CISA's view of these as imminent threats, consistent with Barracuda's 2023 and 2024 ESG exploitation patterns that resulted in persistent post-compromise implants. Second, browser engine memory corruption remains a persistent supply-chain-style risk: the Chromium use-after-free (CVE-2026-125350) affects not just Chrome but Microsoft Edge and Opera as well, compressing the attack surface well beyond a single vendor's user base. The Microsoft Outlook spoofing and Cisco BroadWorks XXE complete a picture where enterprise communication infrastructure — email gateways, collaboration platforms, and telecom backbones — is under sustained, active exploitation pressure heading into Q4 2026.
+This batch continues a pattern of privilege escalation vulnerabilities in security-adjacent infrastructure. Both CVEs affect components that are trusted deeply within their respective environments — an IRC server's inter-server trust model and a firewall management daemon running as root — making exploitation especially impactful when it occurs. The UnrealIRCd finding is consistent with ongoing CISA interest in network protocol injection flaws, while the Check Point LPE reflects a persistent class of UNIX daemon hardening failures (unauthenticated local sockets owned by root) that remain common in mature commercial security products. Organizations running either product should treat the November 16 due date as firm given CISA BOD 26-04 requirements.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"The Barracuda ESG Chain: How CVE-2026-116606 + CVE-2026-111560 Deliver Unauthenticated Root"** — Walk through the pre-auth bypass → crafted backup archive → command injection kill chain, referencing the Mandiant disclosures and Barracuda's 2023 historical exploitation pattern.
+1. **"Server-to-Server Trust Abuse: How IRC Delimiter Injection Grants Root Authority"** — Deep dive on the UnrealIRCd multi-server injection path, explaining how delimiter mishandling in legacy protocol parsers creates escalation opportunities even without RCE.
 
-2. **"Chromium's XML Component: Use-After-Free Vulnerabilities That Transcend Browsers"** — Explain how CVE-2026-125350 affects Chrome, Edge, and Opera simultaneously, what sandbox escape means in practice, and why patching is non-trivial across browser families.
+2. **"The Root Socket Problem: Why Unix Daemons Running as Root Are a Persistent LPE Vector"** — Using CVE-2026-123039 as a case study on CWE-732/CWE-862, covering world-writable sockets, missing process authentication, and how to audit for similar patterns in enterprise security tooling.
 
-3. **"XXE in the Telecom Stack: Cisco BroadWorks CVE-2026-20320 and Unauthenticated Configuration Exfiltration"** — Cover XML External Entity injection in enterprise voice infrastructure, with guidance for defenders on detecting XXE exfiltration over DNS and HTTP.
+3. **"CISA BOD 26-04: What 3-Day Patch Deadlines Mean for Security Operations Teams"** — Both CVEs carry a November 16 due date, making this a good hook to explain the accelerated patching cadence now required under BOD 26-04 and what orgs should have in place to meet it.
 
 ---
 
 ## Newsletter Snippet
 
-CISA added six new vulnerabilities to the Known Exploited Vulnerabilities catalog this week, with two Barracuda Networks entries demanding immediate attention. CVE-2026-116606, an unauthenticated authentication bypass in the Email Security Gateway, can be chained with CVE-2026-111560, an OS command injection vulnerability that runs with root privileges — together they represent a complete, pre-authentication remote compromise of a network security appliance. Both carry a remediation deadline of November 13, 2026, leaving organizations just days to patch or isolate affected ESG, WAF, ADC, and Message Archiver deployments.
+CISA added two vulnerabilities to the Known Exploited Vulnerabilities catalog this week, both carrying a 3-day remediation deadline under BOD 26-04. The first, CVE-2026-114713, affects UnrealIRCd and allows any user on a multi-server IRC network to inject server-to-server commands with full server authority — a command injection flaw (CVSS 8.6) that is remotely exploitable by any authenticated IRC user. The second, CVE-2026-123039, is a local privilege escalation in several Check Point products (Firewall, Security Gateway, Security Management Server, and others), where the DynamicCLI daemon runs as root with an unauthenticated world-writable socket, letting any local user gain root-level code execution (CVSS 7.8).
 
-Rounding out the batch: Google Chromium's XML use-after-free (CVE-2026-125350, CVSS 8.8) demands browser fleet patching across Chrome, Edge, and Opera, while Cisco BroadWorks' XXE flaw (CVE-2026-20320, CVSS 7.5) exposes sensitive telecom configuration to unauthenticated remote attackers. Microsoft Outlook's spoofing vulnerability and an Openwave Webtop Media Transcoder misconfiguration complete the week's additions. All six are now published on FixTheVuln with full remediation guidance aligned to CISA's BOD 26-04.
+Both vulnerabilities are classified **High** severity and reflect two persistent problem classes — protocol injection in legacy network daemons and insecure UNIX socket permissions in security tooling. If your environment includes UnrealIRCd or any Check Point security product, the patch deadline is **November 16, 2026**. Refer to the UnrealIRCd forums advisory and Check Point sk1000362 for vendor-specific remediation guidance.
