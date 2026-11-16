@@ -1,3 +1,41 @@
+## 2026-11-16 — Weekly Tech-Debt Audit
+
+**Headline:** All-clear pipeline — KEV fetch fresh (Nov 15), 0 CVEs pending, Nov 14 review published; +12 CVEs this week; `knowledge-gaps.html` and `vuln-classifier.html` on disk but intentionally excluded from sitemap — no new P0/P1.
+
+**Pipeline pulse:**
+- KEV fetch last checked (`data/pending_review.json` last_checked): 2026-11-15T20:00:45 UTC (~18h ago ✓ — NO P0)
+- CVEs pending review (`total_pending`), waiting since (`last_updated`): 0, 2026-11-14T17:01:59 UTC — pipeline healthy, NO P0
+- Daily CVE trigger last publish (`data/appsec-review.md`): 2026-11-14 (2 CVEs: UnrealIRCd, Check Point — informational; not a stall signal)
+- Friday AI trend roundup last file (`drafts/ai-security-roundup-*.md`): 2026-11-13 ✓ (last Friday, running on schedule)
+
+**New this week:**
+- P3 SEO/llms — `knowledge-gaps.html`, `vuln-classifier.html` — Both pages added 2026-11-04; both intentionally excluded from `sitemap.xml` via `EXCLUDE_FILES` in `scripts/generate_sitemap.py` (labeled "internal dashboard" / "internal tool") and therefore absent from `llms.txt`. Both have full OG/Twitter meta tags suggesting public use. Confirm whether exclusion is permanent or whether pages should be promoted to `HUB_PAGES`/`TOOL_PAGES` in both scripts. — Effort: XS
+
+**Still open from prior audits:** 6
+1. P1 content — `practice-tests/*.html` (13 pages) — `<p class="pt-timestamp">Last updated: October 23, 2026</p>` still present (**23 weeks open**) — Fix: remove `pt-timestamp` block from `scripts/generate_practice_test_pages.py` template; re-run — Effort: XS
+2. P2 generator — **17 scripts >500 LOC** (unchanged): `generate_sprint_kit.py` 2,181 · `fetch_kev.py` 897 · `etsy_to_pinterest.py` 829 · `aggregate_ai_ide_vulns.py` 771 · `entity_extractor.py` 765 · `generate_linkedin_posts.py` 716 · `publish_editorial.py` 711 · `generate_ai_ide_tracker.py` 697 · `audit_pages.py` 662 · `generate_quiz_pages.py` 627 · `generate_cert_pages.py` 614 · `generate_practice_test_pages.py` 594 · `inject_store_ctas.py` 588 · `generate_roadmaps.py` 544 · `aggregate_ai_security_news.py` 536 · `generate_cve_pages.py` 513 · `generate_cert_blog_posts.py` 503 — Effort: L
+3. P2 worker growth — `store/cloudflare-worker.js` — 1,798 LOC (unchanged — 0 commits this week; webhook HMAC-SHA256 signature verification in place ✓; PRICING cents↔dollars match: worker 999/$9.99 · 2499/$24.99 ✓) — Effort: M
+4. P3 hygiene — `scripts/` (2 instances) — Bare `except Exception:` without logging: `create_hero.py:51`, `generate_linkedin_posts.py:72` — Add `logging.exception()` before each — Effort: XS
+5. P3 hygiene — repo root — No `CLAUDE.md`; editorial rules (evergreen-page timestamp ban, cache-bust policy, pipeline health thresholds) uncodified in-repo — Effort: XS
+6. P3 SEO (open 1 week since Nov 9) — `404.html`, `analytics.html` — both missing `og:title` / Twitter Card meta tags — Add standard OG/Twitter tags to both utility pages — Effort: XS
+
+**Resolved since last audit:** None
+
+**Metrics tracked:**
+- Total generated pages (cve-*, cert-*, comparisons/*, roadmaps/*): 472 (296 CVE · 66 cert · 43 comparisons · 67 roadmaps) — +12 CVE vs last week
+- AI vuln pages (`ai-vulnerabilities/`): 28 (unchanged)
+- Blog pages: 147 (+2 from 145)
+- Sitemap entries: 828 (+14 from 814)
+- Evergreen pages with timestamps (should be 0): 13 practice-tests (P1 open ×23wk)
+- Pages missing from llms.txt: 0 ✓ (knowledge-gaps.html, vuln-classifier.html intentionally excluded)
+- Cache-bust drift count: 0 (no key CSS/JS files modified this week)
+- Scripts >500 LOC: 17 (unchanged)
+- Store worker LOC: 1,798 (unchanged — 0 commits this week)
+- Python scripts with bare `except Exception:` without logging: 2 instances (unchanged)
+- D1 migrations: 2 (unchanged — 0001_error_log, 0002_quiz_feedback)
+
+---
+
 ## 2026-11-09 — Weekly Tech-Debt Audit
 
 **Headline:** All-clear week — KEV fetch fresh (Nov 8), 0 CVEs pending, Nov 7 review published; worker and script counts stable; 5 prior items still open; 2 utility pages flagged P3 for missing OG tags.
