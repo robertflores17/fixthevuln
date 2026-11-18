@@ -1,20 +1,19 @@
-# AppSec Review — 2026-11-14
+# AppSec Review — 2026-11-18
 
 **Reviewer:** Robert Flores, CISSP  
-**Review Date:** 2026-11-14  
-**CVEs Reviewed:** 2  
-**CVEs Approved:** 2  
+**Run Date:** 2026-11-18  
+**CVEs Reviewed:** 1  
 
 ---
 
 ## Severity Breakdown
 
-| Priority | Count | CVEs |
-|----------|-------|------|
-| Critical | 0     | —    |
-| High     | 2     | CVE-2026-114713, CVE-2026-123039 |
-| Medium   | 0     | —    |
-| Low      | 0     | —    |
+| Priority | Count |
+|----------|-------|
+| Critical | 1     |
+| High     | 0     |
+| Medium   | 0     |
+| Low      | 0     |
 
 ---
 
@@ -22,39 +21,26 @@
 
 | CVE ID | Vendor | Priority | Vulnerability Class |
 |--------|--------|----------|---------------------|
-| CVE-2026-114713 | UnrealIRCd | High | Command Injection / Delimiter Injection (CWE-140) |
-| CVE-2026-123039 | Check Point | High | Incorrect Permission Assignment / Local Privilege Escalation (CWE-732, CWE-862) |
-
----
-
-## Individual Assessments
-
-**CVE-2026-114713 — UnrealIRCd Delimiter Injection (CVSS 8.6)**  
-Any authenticated user on a network with two or more linked UnrealIRCd servers can inject server-to-server commands executed with server authority via improper neutralization of delimiters (CWE-140). This is remotely exploitable by any IRC user and effectively allows unauthorized privilege escalation to server-level command execution.
-
-**CVE-2026-123039 — Check Point Local Privilege Escalation (CVSS 7.8)**  
-Check Point's DynamicCLI daemon runs as root and listens on a world-writable local socket without authenticating connecting processes (CWE-732, CWE-862). Any authenticated local user can send commands to the socket and execute them as root, impacting Firewall, Multi-Domain Security Management Server, Scalable Platforms, Security Gateway, and Security Management Server.
+| CVE-2026-115731 | Perforce | Critical | Deserialization / RCE |
 
 ---
 
 ## Trend Analysis
 
-This batch continues a pattern of privilege escalation vulnerabilities in security-adjacent infrastructure. Both CVEs affect components that are trusted deeply within their respective environments — an IRC server's inter-server trust model and a firewall management daemon running as root — making exploitation especially impactful when it occurs. The UnrealIRCd finding is consistent with ongoing CISA interest in network protocol injection flaws, while the Check Point LPE reflects a persistent class of UNIX daemon hardening failures (unauthenticated local sockets owned by root) that remain common in mature commercial security products. Organizations running either product should treat the November 16 due date as firm given CISA BOD 26-04 requirements.
+This batch adds a single high-impact critical vulnerability in Perforce Puppet Enterprise (CVSS 9.9), a widely-deployed infrastructure-as-code platform used in enterprise environments. The deserialization-to-RCE pattern (CWE-502 + CWE-94) in report-processing logic is particularly dangerous because Puppet Servers often run with elevated service account privileges and sit at the core of configuration management pipelines, meaning exploitation could grant an attacker persistent, high-privilege access to hundreds or thousands of managed nodes. The auto-signing CA scenario — common in many deployments — elevates this from an authenticated-agent issue to a fully unauthenticated network-reachable RCE, reinforcing the trend of infrastructure management software becoming a priority target for ransomware and nation-state actors seeking lateral movement at scale.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"Server-to-Server Trust Abuse: How IRC Delimiter Injection Grants Root Authority"** — Deep dive on the UnrealIRCd multi-server injection path, explaining how delimiter mishandling in legacy protocol parsers creates escalation opportunities even without RCE.
-
-2. **"The Root Socket Problem: Why Unix Daemons Running as Root Are a Persistent LPE Vector"** — Using CVE-2026-123039 as a case study on CWE-732/CWE-862, covering world-writable sockets, missing process authentication, and how to audit for similar patterns in enterprise security tooling.
-
-3. **"CISA BOD 26-04: What 3-Day Patch Deadlines Mean for Security Operations Teams"** — Both CVEs carry a November 16 due date, making this a good hook to explain the accelerated patching cadence now required under BOD 26-04 and what orgs should have in place to meet it.
+1. **"Why Puppet's Report Deserialization Flaw Is a Crown-Jewel Threat"** — Deep-dive on how deserialization vulnerabilities in orchestration planes create outsized blast radius, with Puppet Server's trusted-agent model as the case study.
+2. **"CA Auto-Signing: The Config Default That Turns Authenticated RCE Into Unauthenticated"** — Practical analysis of Puppet's auto-signing feature, which orgs should disable it, and what compensating controls look like.
+3. **"Infrastructure-as-Code Platforms as High-Value Targets: The 2026 KEV Trend"** — Trend piece examining how IaC and config-management tools (Puppet, Ansible, Chef, Salt) are increasingly appearing in CISA's KEV catalog as ransomware groups seek management-plane footholds.
 
 ---
 
 ## Newsletter Snippet
 
-CISA added two vulnerabilities to the Known Exploited Vulnerabilities catalog this week, both carrying a 3-day remediation deadline under BOD 26-04. The first, CVE-2026-114713, affects UnrealIRCd and allows any user on a multi-server IRC network to inject server-to-server commands with full server authority — a command injection flaw (CVSS 8.6) that is remotely exploitable by any authenticated IRC user. The second, CVE-2026-123039, is a local privilege escalation in several Check Point products (Firewall, Security Gateway, Security Management Server, and others), where the DynamicCLI daemon runs as root with an unauthenticated world-writable socket, letting any local user gain root-level code execution (CVSS 7.8).
+CISA added CVE-2026-115731 to its Known Exploited Vulnerabilities catalog this week — a critical deserialization flaw (CVSS 9.9) in Perforce Puppet Enterprise that allows an attacker holding any CA-signed agent certificate to execute arbitrary code on the Puppet Server. When certificate auto-signing is enabled, the bar drops to unauthenticated network exploitation, making this effectively a zero-click RCE for anyone who can reach the Puppet Server's API endpoint. Federal agencies must remediate by December 1, 2026 per BOD 26-04.
 
-Both vulnerabilities are classified **High** severity and reflect two persistent problem classes — protocol injection in legacy network daemons and insecure UNIX socket permissions in security tooling. If your environment includes UnrealIRCd or any Check Point security product, the patch deadline is **November 16, 2026**. Refer to the UnrealIRCd forums advisory and Check Point sk1000362 for vendor-specific remediation guidance.
+Security teams should treat Puppet Servers as tier-one assets regardless of this specific CVE: they hold signed credentials and configuration baselines for every managed node in the environment, so a compromised Puppet Server is frequently a precursor to full-domain takeover. Patch immediately using vendor guidance at the Perforce support portal, disable CA auto-signing if not operationally required, and review Puppet Server network segmentation to ensure the API endpoint is not reachable from untrusted networks.
