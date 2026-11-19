@@ -1,46 +1,52 @@
-# AppSec Review — 2026-11-18
+# AppSec Review — 2026-11-19
 
 **Reviewer:** Robert Flores, CISSP  
-**Run Date:** 2026-11-18  
-**CVEs Reviewed:** 1  
+**Date:** 2026-11-19  
+**CVEs Reviewed:** 4  
+**All Approved:** Yes (CISA KEV = confirmed actively exploited)
 
 ---
 
 ## Severity Breakdown
 
-| Priority | Count |
-|----------|-------|
-| Critical | 1     |
-| High     | 0     |
-| Medium   | 0     |
-| Low      | 0     |
+| Priority  | Count | CVEs |
+|-----------|-------|------|
+| Critical  | 3     | CVE-2024-10441, CVE-2026-90817, CVE-2026-90436 |
+| High      | 1     | CVE-2026-40217 |
+| Medium    | 0     | — |
+| Low       | 0     | — |
 
 ---
 
-## CVE Summary
+## CVE Inventory
 
 | CVE ID | Vendor | Priority | Vulnerability Class |
 |--------|--------|----------|---------------------|
-| CVE-2026-115731 | Perforce | Critical | Deserialization / RCE |
+| CVE-2024-10441 | Synology | critical | Improper Output Encoding / RCE |
+| CVE-2026-40217 | BerriAI (LiteLLM) | high | Unprotected Alternate Channel + Code Injection / RCE |
+| CVE-2026-90817 | Vanderbilt University (REDCap) | critical | Code Injection / Unauthenticated RCE |
+| CVE-2026-90436 | Apache | critical | Unsafe Reflection / RCE |
 
 ---
 
 ## Trend Analysis
 
-This batch adds a single high-impact critical vulnerability in Perforce Puppet Enterprise (CVSS 9.9), a widely-deployed infrastructure-as-code platform used in enterprise environments. The deserialization-to-RCE pattern (CWE-502 + CWE-94) in report-processing logic is particularly dangerous because Puppet Servers often run with elevated service account privileges and sit at the core of configuration management pipelines, meaning exploitation could grant an attacker persistent, high-privilege access to hundreds or thousands of managed nodes. The auto-signing CA scenario — common in many deployments — elevates this from an authenticated-agent issue to a fully unauthenticated network-reachable RCE, reinforcing the trend of infrastructure management software becoming a priority target for ransomware and nation-state actors seeking lateral movement at scale.
+This batch is dominated by unauthenticated remote code execution vulnerabilities (3 of 4 entries, all CVSS 9.8), reflecting a continued CISA focus on the most severe pre-auth attack surface. Notably, two entries target infrastructure that is difficult to rapidly patch: Apache Axis is explicitly flagged as end-of-life with no upstream patch available, while REDCap is a tightly version-controlled research platform deployed across healthcare and academic networks. The Synology DSM entry is a 2024 CVE only recently added to the KEV, strongly suggesting threat actor activity against NAS devices accelerated in late 2026 — consistent with the persistent ransomware interest in network-attached storage appliances. The LiteLLM entry is the most forward-looking: it represents the first AI/ML infrastructure platform to appear in this feed, underscoring that LLM API gateways and guardrail endpoints are becoming an active attack surface as organizations scale AI deployments without commensurate security review of the supporting middleware stack.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"Why Puppet's Report Deserialization Flaw Is a Crown-Jewel Threat"** — Deep-dive on how deserialization vulnerabilities in orchestration planes create outsized blast radius, with Puppet Server's trusted-agent model as the case study.
-2. **"CA Auto-Signing: The Config Default That Turns Authenticated RCE Into Unauthenticated"** — Practical analysis of Puppet's auto-signing feature, which orgs should disable it, and what compensating controls look like.
-3. **"Infrastructure-as-Code Platforms as High-Value Targets: The 2026 KEV Trend"** — Trend piece examining how IaC and config-management tools (Puppet, Ansible, Chef, Salt) are increasingly appearing in CISA's KEV catalog as ransomware groups seek management-plane footholds.
+1. **"The EoL Problem: Why Apache Axis in CISA KEV Signals a Legacy Debt Crisis"** — Deep dive on how end-of-life SOAP/XML frameworks remain embedded in enterprise Java middleware years after vendor support ends, and what organizations can do short of a full re-platform.
+
+2. **"AI Infrastructure Under Fire: LiteLLM's /guardrails Endpoint and the Hidden Attack Surface of LLM Gateways"** — Explores how AI gateway products like LiteLLM introduce novel RCE vectors through code execution endpoints designed for custom guardrail logic, and what secure-by-default patterns should look like.
+
+3. **"NAS Ransomware Targeting Escalates: Synology DSM Joins the KEV"** — Analysis of CISA's addition of a 2024 Synology vulnerability in late 2026, the threat actor patterns behind NAS targeting, and backup/segmentation guidance for SMB and enterprise environments.
 
 ---
 
 ## Newsletter Snippet
 
-CISA added CVE-2026-115731 to its Known Exploited Vulnerabilities catalog this week — a critical deserialization flaw (CVSS 9.9) in Perforce Puppet Enterprise that allows an attacker holding any CA-signed agent certificate to execute arbitrary code on the Puppet Server. When certificate auto-signing is enabled, the bar drops to unauthenticated network exploitation, making this effectively a zero-click RCE for anyone who can reach the Puppet Server's API endpoint. Federal agencies must remediate by December 1, 2026 per BOD 26-04.
+CISA added four new vulnerabilities to its Known Exploited Vulnerabilities catalog this week, all confirmed as actively exploited in the wild. Three carry CVSS scores of 9.8 and enable unauthenticated remote code execution: Synology DiskStation Manager (NAS appliances), Vanderbilt REDCap (healthcare research data platform), and Apache Axis (a widely-deployed but end-of-life SOAP framework). A fourth entry — BerriAI LiteLLM (CVSS 8.8) — marks the first AI/ML infrastructure product to appear in the KEV catalog, exploiting a code injection flaw in the guardrails API endpoint.
 
-Security teams should treat Puppet Servers as tier-one assets regardless of this specific CVE: they hold signed credentials and configuration baselines for every managed node in the environment, so a compromised Puppet Server is frequently a precursor to full-domain takeover. Patch immediately using vendor guidance at the Perforce support portal, disable CA auto-signing if not operationally required, and review Puppet Server network segmentation to ensure the API endpoint is not reachable from untrusted networks.
+Federal agencies under BOD 26-04 must remediate the Synology, REDCap, and Apache Axis entries by **2026-11-21**, and the LiteLLM entry by **2026-12-02**. Organizations not subject to BOD 26-04 should treat all four as urgent given confirmed exploitation. The Apache Axis entry is particularly difficult to address quickly — it is end-of-life with no vendor patch, requiring organizations to audit their Java middleware stack for embedded copies and prioritize migration or isolation of affected services.
