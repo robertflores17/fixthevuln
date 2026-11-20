@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="36 AI security updates from Simon Willison, arXiv cs.CR, Hacker News (AI Security), covering Nov 13–Nov 20. Every item credited to its original author.">
+    <meta name="keywords" content="AI security, LLM security, prompt injection, agentic AI, GenAI threats, AI vulnerabilities, AI red team">
+    <title>AI Security Trend Roundup: Nov 20, 2026 - FixTheVuln</title>
+    <link rel="canonical" href="https://fixthevuln.com/blog/ai-security-roundup-2026-11-20.html">
+    <meta property="og:title" content="AI Security Trend Roundup: Nov 20, 2026 - FixTheVuln">
+    <meta property="og:description" content="36 AI security updates from Simon Willison, arXiv cs.CR, Hacker News (AI Security), covering Nov 13–Nov 20. Every item credited to its original author.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://fixthevuln.com/blog/ai-security-roundup-2026-11-20.html">
+    <meta property="og:image" content="https://fixthevuln.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AI Security Trend Roundup: Nov 20, 2026 - FixTheVuln">
+    <meta name="twitter:description" content="36 AI security updates from Simon Willison, arXiv cs.CR, Hacker News (AI Security), covering Nov 13–Nov 20. Every item credited to its original author.">
+    <meta name="twitter:image" content="https://fixthevuln.com/og-image.png">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="stylesheet" href="../style.min.css?v=13">
+    <script type="application/ld+json">
+{
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "AI Security Trend Roundup: Nov 20, 2026",
+        "description": "36 AI security updates from Simon Willison, arXiv cs.CR, Hacker News (AI Security), covering Nov 13\u2013Nov 20. Every item credited to its original author.",
+        "datePublished": "2026-11-20",
+        "dateModified": "2026-11-20",
+        "author": {
+                "@type": "Organization",
+                "name": "FixTheVuln Team",
+                "url": "https://fixthevuln.com"
+        },
+        "publisher": {
+                "@type": "Organization",
+                "name": "FixTheVuln",
+                "url": "https://fixthevuln.com"
+        }
+}
+    </script>
+    <script type="application/ld+json">
+{
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+                {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": "https://fixthevuln.com/"
+                },
+                {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Blog",
+                        "item": "https://fixthevuln.com/blog/"
+                },
+                {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": "AI Security Trend Roundup: Nov 20, 2026"
+                }
+        ]
+}
+    </script>
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "What is this article about?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "36 AI security updates from Simon Willison, arXiv cs.CR, Hacker News (AI Security), covering Nov 13–Nov 20. Every item credited to its original author."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Why is AI Security Trend Roundup important for cybersecurity?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Understanding ai security trend roundup is critical for cybersecurity professionals to stay ahead of emerging threats and protect their organizations. This article provides actionable insights and analysis."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How can I stay updated on cybersecurity threats?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Follow FixTheVuln for weekly threat roundups, vulnerability breakdowns, and security certification guides. Subscribe to CISA alerts and monitor the Known Exploited Vulnerabilities (KEV) catalog for the latest actively exploited vulnerabilities."
+            }
+        }
+    ]
+}
+    </script>
+    <link rel="alternate" type="application/rss+xml" title="FixTheVuln Blog" href="../blog/feed.xml">
+</head>
+<body>
+<nav class="site-nav">
+    <div class="container">
+        <a href="../" class="site-nav-logo"><img src="/logo/ftv-logo.svg" alt="" width="24" height="24">FixTheVuln</a>
+        <button class="nav-toggle" aria-label="Menu" onclick="this.classList.toggle('active');this.parentElement.querySelector('.site-nav-links').classList.toggle('open')"><span></span><span></span><span></span></button>
+        <div class="site-nav-links">
+            <a href="../guides.html">Guides</a>
+            <a href="../tools.html">Tools</a>
+            <a href="../compliance.html">Compliance</a>
+            <a href="../resources.html">Resources</a>
+            <a href="../practice-tests.html">Quizzes</a>
+            <a href="../career-paths.html">Career Paths</a>
+            <a href="../blog/">Blog</a>
+            <a href="/store/store.html" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; padding: .35rem .75rem; border-radius: 6px; font-size: .85rem; font-weight: 600; text-decoration: none;">Store</a>
+        </div>
+    </div>
+</nav>
+<!-- Social Share Bar -->
+<div class="share-bar">
+    <a class="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=" onclick="this.href+=encodeURIComponent(window.location.href)" target="_blank" rel="noopener" title="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a class="share-twitter" href="https://twitter.com/intent/tweet?url=" onclick="this.href='https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on X/Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a class="share-reddit" href="https://reddit.com/submit?url=" onclick="this.href='https://reddit.com/submit?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)" target="_blank" rel="noopener" title="Share on Reddit">
+        <svg viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 0-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </a>
+    <a class="share-copy" href="javascript:void(0)" onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.title='Copied!';setTimeout(()=>this.title='Copy link',2000)})" title="Copy link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </a>
+</div>
+
+    <header class="content-header">
+        <div class="container">
+            <h1>AI Security Trend Roundup: Nov 20, 2026</h1>
+            <p>Expert cybersecurity insights for IT professionals</p>
+            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">Last updated: November 20, 2026</p>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <div class="content-wrapper">
+<h1 id="ai-security-trend-roundup-nov-20-2026">AI Security Trend Roundup: Nov 20, 2026</h1>
+
+<p><em>Covering Nov 13 → Nov 20, 2026. 36 new items from 3 sources.</em></p>
+
+<blockquote><p>This digest credits every source by name and links directly to each original post. Items are selected automatically by keyword and feed filters. All rights and attribution belong to the original authors.</p></blockquote>
+
+<h2 id="academic-research">Academic & Research</h2>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2611.24989">Signed, Valid, and Unauthorized: Authority Closure at the Trust Boundary Between Agent Commerce Protocols and Crypto Wallets</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Nov 20. Agent commerce protocols let software agents pay with stablecoins. A buyer approves a payee, asset, spending cap and time window, but the wallet signs an object whose effects depend on the contracts that consume it. Matching the displayed fields or simulating one payment can miss</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2611.25056">Attacks and Defenses in Decentralized Multi-Agent Systems with Hop-by-Hop Task Decomposition and Delegation</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Nov 20. Decentralized multi-agent LLM systems enable independently administered agents, each with its own operator, model, memory, and configuration, to collaborate on complex tasks without centralized coordination. Agents autonomously decompose tasks, execute subtasks and delegate remai</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2611.25226">Reject and Report: Forgery-Evident Undetectable Watermarks for Generative Image Models</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Nov 20. Provenance schemes such as those based on content watermarks let images from a generative model be traced back to it. A practical watermarking scheme must be accurate at a low false-positive rate &#40;FPR&#41;, robust under content-preserving processing, and undetectable. In addition, it</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2611.25324">Verified Netlist-to-RTL Recovery with LLM Agents</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Nov 20. Gate-level netlists circulate among IP integrators and foundries and can be extracted from chips. Reverse engineering them into readable register-transfer-level &#40;RTL&#41; code would help an adversary understand and modify a design, but remains difficult because word-level operations</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2611.25301">SplitReAlign: Partition-Aware Representation Realignment for Split Federated Unlearning</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Nov 20. Split federated learning &#40;SFL&#41; distributes neural networks across clients and a server, coupling class-specific knowledge across their representations. This coupling complicates split federated unlearning &#40;SFU&#41;, where class-wise forgetting must remove target knowledge while prese</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2409.18248">On the Vulnerability of Lane Detectors to Physical Shadow Attack</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Nov 20. Automated Lane Centering &#40;ALC&#41; systems are critical components of Level 2 autonomous vehicles, yet their reliance on Deep Neural Networks &#40;DNNs&#41; for lane detection introduces security vulnerabilities. This work introduces the Negative Shadow &#40;NS&#41; Attack, a novel physical-world ad</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2502.07807">CP-Guard+: A New Paradigm for Malicious Agent Detection and Defense in Collaborative Perception</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Nov 20. Collaborative perception &#40;CP&#41; is a promising method for safe connected and autonomous driving, which enables multiple vehicles to share sensing information to enhance perception performance. However, compared with single-vehicle perception, the openness of a CP system makes it mo</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2505.00240">LLM-Based Threat Detection and Prevention Framework for IoT Ecosystems</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Nov 20. The rapid expansion of the Internet of Things &#40;IoT&#41; has introduced complex and evolving cybersecurity challenges. This paper presents a Large Language Model &#40;LLM&#41;-based framework for intelligent threat detection and prevention in IoT networks. The proposed architecture integrates</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2605.11770">Behavioral Integrity Verification for AI Agent Skills</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Nov 20. Agent skills extend LLM agents with privileged third-party capabilities such as filesystem access, credentials, network calls, and shell execution. Existing safety work catches malicious prompts and risky runtime actions, but the skill artifact itself goes unverified. We formaliz</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2606.28666">Why Trust Your Agent? Empirical Security Gains from TRiSM-Guided Agentic Workflows in Healthcare</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Nov 20. Agent-based AI has enabled the automation of tasks by exposing application tools and resources to large language models &#40;LLMs&#41;. However, to improve scope and accuracy, agents are often given access rights that exceed those of ordinary users, introducing significant security risks</p>
+
+<ul>
+    <li><strong><a href="https://arxiv.org/abs/2608.27496">ROPE: Routed Origin Policy Enforcement against Indirect Prompt Injection</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, Nov 20. Tool-using LLM agents execute consequential operations on behalf of users. Because the LLM driving an agent processes trusted user instructions and untrusted content in the same context, agents are vulnerable to indirect prompt injection attacks that induce unintended actions by</p>
+
+<h2 id="prompt-injection-llm-security">Prompt Injection & LLM Security</h2>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Nov/19/postgresql-19/">PostgreSQL 19 Released</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Nov 19. PostgreSQL 19 Released Most years PostgreSQL ships a new release in September, but this year&#x27;s release came two months later thanks mainly to the flurry of issues that the PostgreSQL team needed to address as part of the ongoing AI-reported vulnerability apocalypse. This release</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Nov/18/daniel-stenberg/">Quoting Daniel Stenberg</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Nov 18. During the time these agents converted 185,000 lines of C code into 340,000 lines of Rust code &#40;I counted&#41;, we merged over 300 commits in the actual curl project. We actually improved curl during these a little more than three weeks. A little over 200 bugfixes actually. 200 bugfi</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Nov/17/external-sandboxes-for-coding-agents/">External sandboxes for coding agents</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Nov 17. External sandboxes for coding agents I&#x27;ve been exploring new ways to sandbox code that is executed by agents, with a focus on making it safer to try out local models without worrying that a mistake or prompt injection attack might cause them to take damaging actions on a machine.</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Nov/15/datasette/">datasette 1.0a43</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Nov 15. Release: datasette 1.0a43 I&#x27;ve been leaning hard into Claude Fable 5.2 to help knock things off the 1.0 milestone, which is now 53% complete. The biggest 1.0 item in this release is streaming support for output renderers - the built-in TSV and CSV export mechanisms now use this a</p>
+
+<ul>
+    <li><strong><a href="https://simonwillison.net/2026/Nov/15/datasette-2/">datasette 0.65.6</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://simonwillison.net/">Simon Willison</a>, Nov 15. Release: datasette 0.65.6 I backported a minor security fix from 1.0a43: Fixed a security issue where a database registered using add&#95;database&#40;db, name=..., route=...&#41; with a route that differs from its name could be downloaded from /&lt;route&gt;.db by actors who were denied access to</p>
+
+<h2 id="community-signal">Community Signal</h2>
+
+<ul>
+    <li><strong><a href="https://www.echr.coe.int/w/romanian-lawyer-barred-for-two-years-from-representing-applicants-before-the-court-over-unverified-ai-generated-citations">European rights court bars Romanian lawyer for 2 years over AI citations</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://news.ycombinator.com/">Hacker News (AI Security)</a>, Nov 20. Article URL: https://www.echr.coe.int/w/romanian-lawyer-barred-for-two-years-from-representing-applicants-before-the-court-over-unverified-ai-generated-citations Comments URL: https://news.ycombinator.com/item?id=50579237 Points: 21 # Comments: 3</p>
+
+<ul>
+    <li><strong><a href="https://www.motherjones.com/politics/2026/11/google-alphabet-union-school-ai-protest-gemini-workers-petition/">Google Workers Tell Their Employer Not to Punish Schools That Don&#x27;t Want AI</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://news.ycombinator.com/">Hacker News (AI Security)</a>, Nov 20. Article URL: https://www.motherjones.com/politics/2026/11/google-alphabet-union-school-ai-protest-gemini-workers-petition/ Comments URL: https://news.ycombinator.com/item?id=50577901 Points: 203 # Comments: 141</p>
+
+<ul>
+    <li><strong><a href="https://a90.com/experiments/same-advice/">AI is giving everyone the same advice</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://news.ycombinator.com/">Hacker News (AI Security)</a>, Nov 20. Article URL: https://a90.com/experiments/same-advice/ Comments URL: https://news.ycombinator.com/item?id=50577872 Points: 27 # Comments: 9</p>
+
+<ul>
+    <li><strong><a href="https://backpackforlaravel.com/articles/opinions/llms-txt-and-mcp-didn-t-move-the-needle-for-us-here-s-what-did">Llms.txt and MCP didn&#x27;t move the needle</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://news.ycombinator.com/">Hacker News (AI Security)</a>, Nov 20. Article URL: https://backpackforlaravel.com/articles/opinions/llms-txt-and-mcp-didn-t-move-the-needle-for-us-here-s-what-did Comments URL: https://news.ycombinator.com/item?id=50574772 Points: 28 # Comments: 19</p>
+
+<ul>
+    <li><strong><a href="https://www.theguardian.com/business/2026/nov/20/global-stock-markets-slump-anthropic-ipo-ai-sell-off">Global stock markets slump as Anthropic&#x27;s record IPO fails to stem AI sell-off</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://news.ycombinator.com/">Hacker News (AI Security)</a>, Nov 20. Article URL: https://www.theguardian.com/business/2026/nov/20/global-stock-markets-slump-anthropic-ipo-ai-sell-off Comments URL: https://news.ycombinator.com/item?id=50574383 Points: 186 # Comments: 220</p>
+
+<ul>
+    <li><strong><a href="https://spectrum.ieee.org/epic-games-unreal-engine-ai">Epic Games Turns to AI Coding for the Unreal Engine</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://news.ycombinator.com/">Hacker News (AI Security)</a>, Nov 20. Article URL: https://spectrum.ieee.org/epic-games-unreal-engine-ai Comments URL: https://news.ycombinator.com/item?id=50573681 Points: 54 # Comments: 58</p>
+
+<ul>
+    <li><strong><a href="https://architectlabs.com/blog/frostbite">Frostbite: A new CPU architecture discovered, designed and verified by AI</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://news.ycombinator.com/">Hacker News (AI Security)</a>, Nov 20. Article URL: https://architectlabs.com/blog/frostbite Comments URL: https://news.ycombinator.com/item?id=50572503 Points: 574 # Comments: 305</p>
+
+<ul>
+    <li><strong><a href="https://www.techdirt.com/2026/11/19/court-tells-cops-that-the-4th-amendment-doesnt-cover-ai-generated-probable-cause/">Court: 4th Amendment Disallows Use Of AI-Generated &#x27;Probable Cause&#x27;</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://news.ycombinator.com/">Hacker News (AI Security)</a>, Nov 19. Article URL: https://www.techdirt.com/2026/11/19/court-tells-cops-that-the-4th-amendment-doesnt-cover-ai-generated-probable-cause/ Comments URL: https://news.ycombinator.com/item?id=50567735 Points: 68 # Comments: 21</p>
+
+<ul>
+    <li><strong><a href="https://www.synology.com/en-uk/security/advisory/Synology_SA_26_21">Synology Security Advisory</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://news.ycombinator.com/">Hacker News (AI Security)</a>, Nov 19. Article URL: https://www.synology.com/en-uk/security/advisory/Synology&#95;SA&#95;26&#95;21 Comments URL: https://news.ycombinator.com/item?id=50567209 Points: 178 # Comments: 137</p>
+
+<ul>
+    <li><strong><a href="https://www.youtube.com/watch?v=lwfewYL7X0o">Should governments slow frontier AI? Jacob Coxon and Robin Hanson debate &#91;video&#93;</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://news.ycombinator.com/">Hacker News (AI Security)</a>, Nov 19. Article URL: https://www.youtube.com/watch?v=lwfewYL7X0o Comments URL: https://news.ycombinator.com/item?id=50564366 Points: 113 # Comments: 237</p>
+
+<ul>
+    <li><strong><a href="https://www.techpolicy.press/no-bailout-for-the-ai-bubble-anthropic-ipo-protesters-say/">No Bailout for the AI Bubble, Anthropic IPO Protesters Say</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://news.ycombinator.com/">Hacker News (AI Security)</a>, Nov 19. Article URL: https://www.techpolicy.press/no-bailout-for-the-ai-bubble-anthropic-ipo-protesters-say/ Comments URL: https://news.ycombinator.com/item?id=50564282 Points: 50 # Comments: 34</p>
+
+<ul>
+    <li><strong><a href="https://www.robertpeake.com/archives/104254-ai-came-for-the-coders-understanding-why-tells-us-whos-next.html">AI came for the coders. Understanding why tells us who&#x27;s next</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://news.ycombinator.com/">Hacker News (AI Security)</a>, Nov 19. Article URL: https://www.robertpeake.com/archives/104254-ai-came-for-the-coders-understanding-why-tells-us-whos-next.html Comments URL: https://news.ycombinator.com/item?id=50563328 Points: 64 # Comments: 78</p>
+
+<ul>
+    <li><strong><a href="https://www.newscientist.com/article/2528235-pancreatic-cancer-halted-by-virus-injection-in-three-patients/">Pancreatic cancer halted by virus injection in three patients</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://news.ycombinator.com/">Hacker News (AI Security)</a>, Nov 19. https://archive.ph/2Et0xhttps://clinicaltrials.gov/study/NCT06693986 Comments URL: https://news.ycombinator.com/item?id=50563066 Points: 868 # Comments: 153</p>
+
+<ul>
+    <li><strong><a href="https://perishablepress.com/chrome-ai-wasting-much-bandwidth/">Chrome AI features wasting much bandwidth</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://news.ycombinator.com/">Hacker News (AI Security)</a>, Nov 19. Article URL: https://perishablepress.com/chrome-ai-wasting-much-bandwidth/ Comments URL: https://news.ycombinator.com/item?id=50562636 Points: 131 # Comments: 51</p>
+
+<ul>
+    <li><strong><a href="https://getagentmall.com">Show HN: AgentMall – Let your AI agent buy groceries</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://news.ycombinator.com/">Hacker News (AI Security)</a>, Nov 19. Hey HN, we’re Nel and Kosi. We noticed personal agents like Instinct, Muse were terrible at buying stuff. Most of the time the checkout would fail. So we built reliable automations for agents to checkout at 9 leading grocery merchants. We grapple with anti bot, logins, OTP codes,</p>
+
+<ul>
+    <li><strong><a href="https://restofworld.org/2026/ai-jobs-skills-gig-work/">AI isn&#x27;t replacing your job. It&#x27;s turning it into low-paid gig work</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://news.ycombinator.com/">Hacker News (AI Security)</a>, Nov 19. Article URL: https://restofworld.org/2026/ai-jobs-skills-gig-work/ Comments URL: https://news.ycombinator.com/item?id=50562500 Points: 143 # Comments: 80</p>
+
+<ul>
+    <li><strong><a href="https://ounapuu.ee/posts/2026/11/19/unsafeguards/">Fuck Your AI Safeguards</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://news.ycombinator.com/">Hacker News (AI Security)</a>, Nov 19. Article URL: https://ounapuu.ee/posts/2026/11/19/unsafeguards/ Comments URL: https://news.ycombinator.com/item?id=50562262 Points: 594 # Comments: 244</p>
+
+<ul>
+    <li><strong><a href="https://thedataexchange.media/pete-warden-moonshine/">Pete Warden on local AI, open models, voice interfaces, the future of hardware</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://news.ycombinator.com/">Hacker News (AI Security)</a>, Nov 19. Article URL: https://thedataexchange.media/pete-warden-moonshine/ Comments URL: https://news.ycombinator.com/item?id=50561508 Points: 267 # Comments: 245</p>
+
+<ul>
+    <li><strong><a href="https://spectrum.ieee.org/ai-superintelligence-debate">The AI Superintelligence Debate Has Serious Flaws</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://news.ycombinator.com/">Hacker News (AI Security)</a>, Nov 19. Article URL: https://spectrum.ieee.org/ai-superintelligence-debate Comments URL: https://news.ycombinator.com/item?id=50559140 Points: 104 # Comments: 163</p>
+
+<ul>
+    <li><strong><a href="https://twitter.com/catalinmpit/status/2123061832781090948">AI Overworks People</a></strong>  </li>
+</ul>
+
+<p>Source: <a href="https://news.ycombinator.com/">Hacker News (AI Security)</a>, Nov 19. Article URL: https://twitter.com/catalinmpit/status/2123061832781090948 Comments URL: https://news.ycombinator.com/item?id=50558494 Points: 34 # Comments: 24</p>
+
+<hr>
+
+<h2 id="source-list">Source List</h2>
+
+<p>Sources in this roundup, credited to their original authors/organizations:</p>
+
+<ul>
+    <li><a href="https://simonwillison.net/">Simon Willison</a>, feed: <code>https://simonwillison.net/atom/everything/</code></li>
+    <li><a href="https://arxiv.org/list/cs.CR/recent">arXiv cs.CR</a>, feed: <code>http://export.arxiv.org/rss/cs.CR</code></li>
+    <li><a href="https://news.ycombinator.com/">Hacker News (AI Security)</a>, feed: <code>https://hnrss.org/newest?q=%22AI+security%22+OR+%22prompt+injection%22+OR+%22LLM+vulnerability%22&points=20</code></li>
+</ul>
+        </div>
+
+
+            <!-- Related Tools -->
+            <section style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px;">
+                <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Explore More</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+                    <a href="../tools.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Free Security Tools</a>
+                    <a href="../practice-tests.html" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Practice Quizzes</a>
+                    <a href="../comparisons/" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; text-decoration: none; color: var(--text-primary); border: 1px solid var(--border-color); transition: border-color 0.2s;">Cert Comparisons</a>
+                </div>
+            </section>
+
+
+            <!-- Store CTA -->
+            <section style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-top: 2rem; text-align: center;">
+                <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.6; margin-bottom: 0.3rem;">FixTheVuln Store</p>
+                <h3 style="color: white; margin-bottom: 0.5rem;">Studying for Security+? Get the Study Planner</h3>
+                <p style="opacity: 0.9; margin-bottom: 1rem;">Structured study planners for CompTIA certifications. Domain trackers, time blocking, and exam strategies.</p>
+                <a href="/store/store.html" style="display: inline-block; background: #667eea; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 600;">Shop Security+ Planner</a>
+                <p style="font-size: 0.8rem; opacity: 0.85; margin-top: 0.75rem;">Also available: CompTIA A+, Network+, CySA+, PenTest+</p>
+            </section>
+
+            <!-- CyberFolio CTA -->
+            <div style="border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; text-align: center; margin-top: 1.5rem;">
+                <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.3rem;">CyberFolio</p>
+                <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Building cybersecurity skills? Track them in one place.</p>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">Build a shareable cybersecurity portfolio that highlights your certifications, projects, and skills, free.</p>
+                <a href="https://cyberfolio.io" style="display:inline-block;background:#06b6d4;color:white;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;" target="_blank" rel="noopener">Build Your Portfolio &rarr;</a>
+            </div>
+
+            <a href="../index.html" class="back-link">&larr; Back to Home</a>
+            <a href="index.html" class="back-link" style="margin-left: 1rem;">&larr; All Blog Posts</a>
+    </main>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2026 FixTheVuln. Practical Vulnerability Remediation.</p>
+        <p>Study Planners: <a href="/store/store.html">FixTheVuln Store</a> | Career Tools: <a href="https://cyberfolio.io" target="_blank" rel="noopener">CyberFolio</a></p>
+        <p style="font-size: 0.85rem; color: #999; margin-top: 1rem;">
+            <strong>Affiliate Disclosure:</strong> Some links on this site are affiliate links. We may earn a commission when you purchase through these links at no additional cost to you. We only recommend tools and services we trust.
+        </p>
+    </div>
+</footer>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "8304415b01684a00adedcbf6975458d7"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
