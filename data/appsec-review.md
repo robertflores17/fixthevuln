@@ -1,52 +1,65 @@
-# AppSec Review — 2026-11-19
-
+# AppSec Review — CISA KEV Batch
+**Date:** 2026-11-21  
 **Reviewer:** Robert Flores, CISSP  
-**Date:** 2026-11-19  
 **CVEs Reviewed:** 4  
-**All Approved:** Yes (CISA KEV = confirmed actively exploited)
+**All Approved for Publication**
 
 ---
 
 ## Severity Breakdown
 
-| Priority  | Count | CVEs |
-|-----------|-------|------|
-| Critical  | 3     | CVE-2024-10441, CVE-2026-90817, CVE-2026-90436 |
-| High      | 1     | CVE-2026-40217 |
-| Medium    | 0     | — |
-| Low       | 0     | — |
+| Priority | Count | CVEs |
+|----------|-------|------|
+| Critical | 3 | CVE-2026-129448, CVE-2026-123890, CVE-2026-76466 |
+| High | 1 | CVE-2025-42884 |
+| Medium | 0 | — |
+| Low | 0 | — |
 
 ---
 
-## CVE Inventory
+## CVE Summary
 
-| CVE ID | Vendor | Priority | Vulnerability Class |
-|--------|--------|----------|---------------------|
-| CVE-2024-10441 | Synology | critical | Improper Output Encoding / RCE |
-| CVE-2026-40217 | BerriAI (LiteLLM) | high | Unprotected Alternate Channel + Code Injection / RCE |
-| CVE-2026-90817 | Vanderbilt University (REDCap) | critical | Code Injection / Unauthenticated RCE |
-| CVE-2026-90436 | Apache | critical | Unsafe Reflection / RCE |
+| CVE ID | Vendor / Product | Priority | Vuln Class |
+|--------|-----------------|----------|------------|
+| CVE-2026-129448 | Apache / Roller | critical | Deserialization RCE (CWE-502) |
+| CVE-2026-123890 | Broadcom / VMware vCenter | critical | Authentication Bypass (CWE-288) |
+| CVE-2025-42884 | SAP / NetWeaver Enterprise Portal | high | JNDI Injection / Query Logic (CWE-943) |
+| CVE-2026-76466 | Cisco / Expressway Series | critical | Hard-coded Credentials (CWE-798) |
+
+---
+
+## CVE Details
+
+**CVE-2026-129448 — Apache Roller** (CVSS 9.8, Critical)  
+Pre-authentication deserialization of untrusted data via the XML-RPC endpoint (CWE-502). Unauthenticated RCE with no user interaction required; Java deserialization gadget chains make exploitation straightforward. Patch immediately — this endpoint should be disabled if XML-RPC is not required.
+
+**CVE-2026-123890 — Broadcom VMware vCenter** (CVSS 9.8, Critical)  
+Authentication bypass through an alternate path in VMware Directory Service (CWE-288). An unauthenticated attacker with network access to vCenter gains full access, compromising hypervisor management of entire virtual infrastructure. vCenter is perimeter-adjacent in most enterprise environments; treat this as a datacenter-wide critical.
+
+**CVE-2025-42884 — SAP NetWeaver Enterprise Portal** (CVSS 6.5, High)  
+JNDI injection via improper query logic neutralization (CWE-943) enables unauthenticated server info disclosure and modification. 2025 CVE added to KEV in November 2026, indicating sustained active exploitation of under-patched SAP systems — a common pattern for SAP vulnerabilities which tend to have long remediation cycles.
+
+**CVE-2026-76466 — Cisco Expressway Series** (CVSS 9.8, Critical)  
+Hard-coded credentials in the database service of clustered Expressway devices (CWE-798) allow unauthenticated root command execution by an attacker with network access and persistent cookies. Hard-coded credentials in network-exposed clustering infrastructure represent a supply-chain-level trust failure; there is no compensating control short of patching.
 
 ---
 
 ## Trend Analysis
 
-This batch is dominated by unauthenticated remote code execution vulnerabilities (3 of 4 entries, all CVSS 9.8), reflecting a continued CISA focus on the most severe pre-auth attack surface. Notably, two entries target infrastructure that is difficult to rapidly patch: Apache Axis is explicitly flagged as end-of-life with no upstream patch available, while REDCap is a tightly version-controlled research platform deployed across healthcare and academic networks. The Synology DSM entry is a 2024 CVE only recently added to the KEV, strongly suggesting threat actor activity against NAS devices accelerated in late 2026 — consistent with the persistent ransomware interest in network-attached storage appliances. The LiteLLM entry is the most forward-looking: it represents the first AI/ML infrastructure platform to appear in this feed, underscoring that LLM API gateways and guardrail endpoints are becoming an active attack surface as organizations scale AI deployments without commensurate security review of the supporting middleware stack.
+This batch continues the November 2026 KEV acceleration pattern: three of four additions carry CVSS 9.8, targeting foundational enterprise infrastructure — hypervisors (vCenter), collaboration platforms (Cisco Expressway), and application servers (Apache Roller, SAP NetWeaver). The VMware vCenter auth bypass and Apache Roller deserialization are archetypal infrastructure pivot points; once exploited, they hand attackers full lateral movement capability across datacenter or DevOps environments. The SAP NetWeaver JNDI injection warrants attention beyond its moderate CVSS — JNDI-based attacks have demonstrated severe real-world impact (cf. Log4Shell) and SAP's installed base skews toward high-value financial and manufacturing targets. Defenders should prioritize vCenter and Cisco Expressway patches within the BOD 26-04 three-day window, treat the SAP finding as exploitable regardless of CVSS score, and audit Apache Roller deployments for exposed XML-RPC endpoints as an interim mitigation.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"The EoL Problem: Why Apache Axis in CISA KEV Signals a Legacy Debt Crisis"** — Deep dive on how end-of-life SOAP/XML frameworks remain embedded in enterprise Java middleware years after vendor support ends, and what organizations can do short of a full re-platform.
-
-2. **"AI Infrastructure Under Fire: LiteLLM's /guardrails Endpoint and the Hidden Attack Surface of LLM Gateways"** — Explores how AI gateway products like LiteLLM introduce novel RCE vectors through code execution endpoints designed for custom guardrail logic, and what secure-by-default patterns should look like.
-
-3. **"NAS Ransomware Targeting Escalates: Synology DSM Joins the KEV"** — Analysis of CISA's addition of a 2024 Synology vulnerability in late 2026, the threat actor patterns behind NAS targeting, and backup/segmentation guidance for SMB and enterprise environments.
+1. **"Why CVSS Scores Lie: SAP NetWeaver JNDI Injection Is More Dangerous Than a 6.5"** — walk through why CWE-943 on enterprise middleware warrants critical-level response despite a mid-range score.
+2. **"vCenter Auth Bypass: The Blast Radius of a Single Unauthenticated Request"** — model the attack chain from CVE-2026-123890 to full datacenter compromise, including ESXi host access and VM exfiltration.
+3. **"Hard-coded Credentials in 2026: Why CWE-798 Won't Die"** — use Cisco Expressway as a case study for why embedded credentials persist in enterprise network gear and what detection looks like.
 
 ---
 
 ## Newsletter Snippet
 
-CISA added four new vulnerabilities to its Known Exploited Vulnerabilities catalog this week, all confirmed as actively exploited in the wild. Three carry CVSS scores of 9.8 and enable unauthenticated remote code execution: Synology DiskStation Manager (NAS appliances), Vanderbilt REDCap (healthcare research data platform), and Apache Axis (a widely-deployed but end-of-life SOAP framework). A fourth entry — BerriAI LiteLLM (CVSS 8.8) — marks the first AI/ML infrastructure product to appear in the KEV catalog, exploiting a code injection flaw in the guardrails API endpoint.
+CISA added four new vulnerabilities to the Known Exploited Vulnerabilities catalog this week, three of which carry a maximum CVSS score of 9.8. The most urgent is **CVE-2026-123890** (Broadcom VMware vCenter), an authentication bypass that lets any network-adjacent attacker walk straight into your hypervisor management plane — no credentials required. Close behind is **CVE-2026-76466** (Cisco Expressway Series), where hard-coded database credentials enable unauthenticated root execution on clustered video conferencing infrastructure, and **CVE-2026-129448** (Apache Roller), a pre-auth deserialization flaw exposing the XML-RPC endpoint to trivial remote code execution.
 
-Federal agencies under BOD 26-04 must remediate the Synology, REDCap, and Apache Axis entries by **2026-11-21**, and the LiteLLM entry by **2026-12-02**. Organizations not subject to BOD 26-04 should treat all four as urgent given confirmed exploitation. The Apache Axis entry is particularly difficult to address quickly — it is end-of-life with no vendor patch, requiring organizations to audit their Java middleware stack for embedded copies and prioritize migration or isolation of affected services.
+Don't sleep on **CVE-2025-42884** (SAP NetWeaver) just because its CVSS is 6.5 — JNDI injection on SAP Enterprise Portal is a stealth pivot point into some of the most sensitive ERP data in your organization, and the 2025-to-2026 KEV lag tells you adversaries have been exploiting unpatched systems for months. All four have a BOD 26-04 remediation due date of **2026-11-23**, leaving federal agencies less than 72 hours. If you're running any of these products, patch now — or disable the vulnerable feature surface until you can.
