@@ -1,0 +1,5 @@
+## Framework Advisories
+
+Security advisories for AI serving and agent frameworks, each sourced from the project's own GitHub Security Advisory.
+
+- **vllm-project/vllm: [GHSA-xgh8-qwjh-q853](https://github.com/vllm-project/vllm/security/advisories/GHSA-xgh8-qwjh-q853):** The `POST /v1/systemone` endpoint reaches the shared `preprocess_chat` path directly instead of going through `render_chat`/`render_responses`, so it never calls `OnlineRenderer.validate_chat_template()` — the check that enforces the `--trust-request-chat-template` gate — letting a caller override the chat template an operator pinned with `--chat-template` even on a default configuration. The endpoint is registered by default and no special flag is required to reach it; the advisory does not claim CPU/memory exhaustion (an existing render timeout applies) or a Jinja sandbox escape (not tested). CVSS v3.1 6.5 (Moderate), CWE-693 (Protection Mechanism Failure), no CVE assigned; affects vLLM 0.32.0rc0 up to 0.34.0, fixed in 0.34.0 (PR #64503).
