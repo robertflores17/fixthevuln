@@ -344,6 +344,10 @@ def generate_index_page(categories, meta):
     total_tests = meta.get('total_tests', 112)
     total_cats = meta.get('total_categories', 12)
     version = meta.get('version', '4.2')
+    v42 = meta.get('v42_tests', total_tests)
+    extra = total_tests - v42
+    basis = f' ({v42} from OWASP v{escape_html(str(version))}, plus {extra} FixTheVuln additions)' if extra else ''
+    additions_note = escape_html(meta.get('additions_note', '')) if extra else ''
 
     cards = []
     for cat in categories:
@@ -362,7 +366,7 @@ def generate_index_page(categories, meta):
         )
     cards_html = '\n'.join(cards)
 
-    idx_desc = f'OWASP Web Security Testing Guide (WSTG) v{version} -- {total_tests} security test cases across {total_cats} categories. Free educational guides for Security+, CEH, OSCP, and GPEN certification prep.'
+    idx_desc = f'OWASP Web Security Testing Guide (WSTG) v{version} -- {total_tests} security test cases across {total_cats} categories{basis}. Free educational guides for Security+, CEH, OSCP, and GPEN certification prep.'
     idx_keywords = 'OWASP WSTG, web security testing guide, penetration testing methodology, OWASP testing, web application security, Security+, CEH, OSCP'
     idx_schemas = [breadcrumb_schema([("Home", f"{SITE_URL}/"), ("Guides", f"{SITE_URL}/guides.html"), ("OWASP WSTG", None)])]
     idx_head = html_head(f'OWASP Web Security Testing Guide (WSTG): {total_tests} Test Cases', idx_desc,
@@ -379,7 +383,7 @@ def generate_index_page(categories, meta):
         <div class="container">
             <h1>OWASP Web Security Testing Guide</h1>
             <p>{total_tests} security test cases across {total_cats} categories</p>
-            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">WSTG v{version}</p>
+            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem;">Based on OWASP WSTG v{version}{basis}</p>
         </div>
     </header>
 
@@ -387,6 +391,7 @@ def generate_index_page(categories, meta):
         <section class="intro">
             <h2>What is the OWASP WSTG?</h2>
             <p>The OWASP Web Security Testing Guide (WSTG) is the premier open-source resource for web application security testing methodology. It provides a complete framework of {total_tests} test cases organized into {total_cats} categories, covering everything from information gathering and authentication testing to business logic flaws and API security.</p>
+            {f'<p>FixTheVuln adds {extra} tests beyond the OWASP v{version} list: {additions_note}.</p>' if extra else ''}
             <p>Whether you're studying for Security+, CEH, OSCP, or GPEN, or conducting professional penetration tests, the WSTG provides the systematic approach you need.</p>
         </section>
 
