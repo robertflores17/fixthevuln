@@ -1,19 +1,20 @@
-# AppSec Review — 2026-11-24
+# AppSec Review — 2026-11-25
 
-**Reviewer:** Robert Flores, CISSP  
-**CVEs Reviewed:** 2  
-**Pipeline Run:** 2026-11-24
+**Reviewer:** Robert Flores, CISSP (FixTheVuln AppSec Reviewer)
+**Date:** 2026-11-25
+**CVEs Reviewed:** 3
+**Source:** CISA KEV (dateAdded: 2026-11-24)
 
 ---
 
 ## Severity Breakdown
 
-| Priority | Count | CVEs |
-|----------|-------|------|
-| Critical | 2     | CVE-2026-133968, CVE-2026-134624 |
-| High     | 0     | — |
-| Medium   | 0     | — |
-| Low      | 0     | — |
+| Priority  | Count | CVEs |
+|-----------|-------|------|
+| Critical  | 2     | CVE-2026-131914, CVE-2026-132165 |
+| High      | 1     | CVE-2026-132224 |
+| Medium    | 0     | — |
+| Low       | 0     | — |
 
 ---
 
@@ -21,29 +22,30 @@
 
 | CVE ID | Vendor | Priority | Vuln Class |
 |--------|--------|----------|------------|
-| CVE-2026-133968 | Project MONAI | critical | Path Traversal → Unauthenticated RCE |
-| CVE-2026-134624 | N-able | critical | Server-Side Request Forgery (SSRF) |
+| CVE-2026-132224 | Optimizely | High | External Control of Critical State Data / JS Supply-Chain Injection (CWE-642) |
+| CVE-2026-131914 | Idunno (Blowdart) | Critical | Deserialization of Untrusted Data / Unauthenticated RCE (CWE-502) |
+| CVE-2026-132165 | Drupal | Critical | Unauthenticated RCE via Install Script (Fail-Open) |
 
 ---
 
 ## Trend Analysis
 
-Both CVEs added in this batch target infrastructure used in specialized enterprise and healthcare environments, reflecting an ongoing CISA trend of cataloging exploited vulnerabilities in niche but critical software — not just mainstream platforms like Windows or Cisco. CVE-2026-133968 (MONAI Label) is particularly notable: an unauthenticated path traversal leading directly to arbitrary file write and RCE in a medical AI annotation platform used in clinical research settings represents a high-risk supply-chain adjacent threat, since these systems often operate on internal research networks with privileged access to sensitive patient-adjacent data. CVE-2026-134624 (N-able MailAssure) fits the persistent pattern of SSRF vulnerabilities being weaponized in MSP tooling — attackers continue to target the managed service provider ecosystem because compromising one MSP tool can cascade across dozens of downstream client environments, making a single authenticated API credential extremely high-value.
+This batch is notable for the breadth of attack surface it touches. Two of the three CVEs enable unauthenticated remote code execution — one through classic .NET deserialization (a vulnerability class still turning up in EoL libraries years after Mandiant and others first flagged it in legacy ASP.NET stacks), and one through an open installer endpoint, a Drupalgeddon-era pattern that continues to resurface in CMS deployments that skip hardening checklists. The Optimizely finding is the most operationally interesting: rather than direct code execution on a server, it enables attacker-controlled JavaScript to ride Optimizely's own CDN into the browsers of visitors on affected customer sites — a supply-chain injection vector with significant downstream reach that may be underweighted purely on CVSS score. CISA's tight 3-day remediation window (due 2026-11-27) for all three reflects the confirmed in-the-wild exploitation noted in the KEV addition, and the combination of a CMS RCE, an EoL library RCE, and a SaaS JS injection in a single batch suggests threat actors are actively broadening their initial-access toolkit.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"Path Traversal to RCE: Why Medical AI Platforms Are the New Attack Surface"** — Deep dive into CVE-2026-133968, how unauthenticated file-write primitives translate to full RCE, and why CISA is increasingly adding healthcare AI tooling to KEV.
+1. **"Install.php Still Kills: Drupal CVE-2026-132165 and Why CMS Hardening Checklists Matter"** — Covers the recurring pattern of accessible install scripts as an RCE vector across Drupal's history (Drupalgeddon through present), with practical hardening steps (remove/rename install.php, server-side block, monitoring).
 
-2. **"SSRF in MSP Tooling: One Credential, Hundreds of Victims"** — Analysis of CVE-2026-134624 and the systemic risk of SSRF vulnerabilities in N-able/MSP platforms, with guidance on internal segmentation and API access hardening.
+2. **"Supply-Chain JS Injection via SaaS Platforms: Lessons from CVE-2026-132224"** — Explores how third-party script providers (A/B testing, analytics, tag managers) represent a high-impact, often-overlooked attack surface; includes Subresource Integrity (SRI), CSP, and vendor security review guidance.
 
-3. **"BOD 26-04 and the 72-Hour Patch Clock: What Federal Agencies Must Do Now"** — Practical guide to meeting the new CISA BOD 26-04 remediation timelines using this week's KEV additions as a case study.
+3. **"Deserialization Is Still Alive in Legacy .NET: CVE-2026-131914 and EoL Risk Management"** — Examines why deserialization vulnerabilities persist in EoL/.NET libraries, how to detect exposure in dependency inventories, and when "just migrate" is the only viable remediation.
 
 ---
 
 ## Newsletter Snippet
 
-**This week CISA added 2 new vulnerabilities to the Known Exploited Vulnerabilities catalog**, both rated critical. The first, CVE-2026-133968, affects Project MONAI Label — a medical AI annotation platform — and allows unauthenticated attackers to write arbitrary files and achieve remote code execution. The second, CVE-2026-134624, is an SSRF flaw in N-able MailAssure (SpamExperts) that lets authenticated API users probe and reach arbitrary internal hosts, posing serious risk to MSP-managed enterprise environments. Both carry CVSS scores above 9.0 and have confirmed active exploitation per CISA.
+CISA added three actively exploited vulnerabilities to the Known Exploited Vulnerabilities catalog this week, all with a 3-day federal remediation deadline (due 2026-11-27). The most severe are a deserialization RCE in Idunno AntiCsrf (CVSS 9.8, unauthenticated, now EoL) and a Drupal Core installer bypass that lets unauthenticated attackers execute arbitrary code by triggering a site reinstall via install.php — both warrant emergency patching or service discontinuation. A third vulnerability in Optimizely Web Experimentation (CVSS 8.7) is lower on the CVSS scale but potentially high in real-world impact: exploitation allows attacker-controlled JavaScript to be injected into Optimizely's CDN-hosted assets and silently executed in the browsers of visitors to affected customer sites.
 
-Federal agencies under BOD 26-04 have until **2026-11-26** to apply mitigations or discontinue use of affected products. If your organization runs MONAI Label in clinical or research environments, treat CVE-2026-133968 as an emergency patch — unauthenticated RCE with no prerequisites is as dangerous as it gets. For N-able MailAssure customers, audit API user permissions immediately and ensure LDAP sync endpoints are not exposed to untrusted users while awaiting vendor patches.
+If your organization uses any of these products, treat this as an active incident response situation, not a standard patch cycle. Verify that install.php is inaccessible on all Drupal instances, check Optimizely's incident report and status page for indicators of compromise, and audit whether any applications still reference the Idunno AntiCsrf library — if so, plan an accelerated migration. All three are confirmed in-the-wild exploits; CISA's 3-day window reflects genuine urgency.
