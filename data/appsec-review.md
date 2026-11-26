@@ -1,51 +1,58 @@
-# AppSec Review — 2026-11-25
+# AppSec Review — 2026-11-26
 
-**Reviewer:** Robert Flores, CISSP (FixTheVuln AppSec Reviewer)
-**Date:** 2026-11-25
-**CVEs Reviewed:** 3
-**Source:** CISA KEV (dateAdded: 2026-11-24)
+**Reviewer:** Robert Flores, CISSP  
+**Review Date:** 2026-11-26  
+**CVEs Reviewed:** 10  
+**Source:** CISA KEV (dateAdded: 2026-11-25)
 
 ---
 
 ## Severity Breakdown
 
-| Priority  | Count | CVEs |
-|-----------|-------|------|
-| Critical  | 2     | CVE-2026-131914, CVE-2026-132165 |
-| High      | 1     | CVE-2026-132224 |
-| Medium    | 0     | — |
-| Low       | 0     | — |
+| Priority | Count | CVEs |
+|----------|-------|------|
+| Critical | 5 | CVE-2026-103406, CVE-2026-133469, CVE-2026-133303, CVE-2026-133323, CVE-2026-133303 |
+| High | 3 | CVE-2025-41450, CVE-2023-25914, CVE-2023-25915 |
+| Medium | 3 | CVE-2026-133324, CVE-2026-133275, CVE-2026-133311 |
+| Low | 0 | — |
 
 ---
 
 ## CVE Summary
 
-| CVE ID | Vendor | Priority | Vuln Class |
-|--------|--------|----------|------------|
-| CVE-2026-132224 | Optimizely | High | External Control of Critical State Data / JS Supply-Chain Injection (CWE-642) |
-| CVE-2026-131914 | Idunno (Blowdart) | Critical | Deserialization of Untrusted Data / Unauthenticated RCE (CWE-502) |
-| CVE-2026-132165 | Drupal | Critical | Unauthenticated RCE via Install Script (Fail-Open) |
+| CVE ID | Vendor | Priority | Vulnerability Class |
+|--------|--------|----------|---------------------|
+| CVE-2026-103406 | Hewlett Packard Enterprise (HPE) / Juniper | critical | OS Command Injection (RCE as root) |
+| CVE-2026-133469 | Vates | critical | Authentication Bypass (empty JSON token → admin) |
+| CVE-2026-133303 | Mitel | critical | XML Injection → Arbitrary Command Execution |
+| CVE-2026-133323 | Mitel | critical | OS Command Injection (Unauthenticated RCE) |
+| CVE-2025-41450 | Danfoss | high | Improper Authentication (OT/ICS info disclosure) |
+| CVE-2023-25914 | Danfoss | high | Path Traversal (legacy CVE, OT/ICS exploitation) |
+| CVE-2023-25915 | Danfoss | high | Improper Input Validation (remote command execution) |
+| CVE-2026-133324 | Mitel | medium | Authentication Bypass (conferencing AWV component) |
+| CVE-2026-133275 | Mitel | medium | Unrestricted File Upload (unauthenticated) |
+| CVE-2026-133311 | Mitel | medium | Weak Authentication (sensitive info disclosure) |
 
 ---
 
 ## Trend Analysis
 
-This batch is notable for the breadth of attack surface it touches. Two of the three CVEs enable unauthenticated remote code execution — one through classic .NET deserialization (a vulnerability class still turning up in EoL libraries years after Mandiant and others first flagged it in legacy ASP.NET stacks), and one through an open installer endpoint, a Drupalgeddon-era pattern that continues to resurface in CMS deployments that skip hardening checklists. The Optimizely finding is the most operationally interesting: rather than direct code execution on a server, it enables attacker-controlled JavaScript to ride Optimizely's own CDN into the browsers of visitors on affected customer sites — a supply-chain injection vector with significant downstream reach that may be underweighted purely on CVSS score. CISA's tight 3-day remediation window (due 2026-11-27) for all three reflects the confirmed in-the-wild exploitation noted in the KEV addition, and the combination of a CMS RCE, an EoL library RCE, and a SaaS JS injection in a single batch suggests threat actors are actively broadening their initial-access toolkit.
+This batch highlights two converging attack surfaces that defenders should treat as priority patches. First, enterprise unified communications and collaboration platforms remain a persistent target: five of the ten CVEs are in Mitel MiCollab's Audio, Web and Video Conferencing (AWV) component, spanning the full exploit chain from unauthenticated information disclosure through file upload to outright OS command injection. The two critical-severity Mitel entries (CVE-2026-133303 and CVE-2026-133323) together provide an unauthenticated pre-auth RCE pathway, making unpatched MiCollab deployments internet-facing attack surface requiring immediate action. Second, the three legacy Danfoss AK-SM 800A entries (two from 2023, one from 2025) underscore CISA's renewed focus on OT/ICS equipment: CISA adding 2023-era CVEs to the KEV in late 2026 signals active, ongoing exploitation in industrial and retail/HVAC control environments — organizations running this hardware in refrigeration, HVAC, or food retail settings should treat the 3-day due dates seriously even for the 2023 entries.
 
 ---
 
 ## Blog Post Candidates
 
-1. **"Install.php Still Kills: Drupal CVE-2026-132165 and Why CMS Hardening Checklists Matter"** — Covers the recurring pattern of accessible install scripts as an RCE vector across Drupal's history (Drupalgeddon through present), with practical hardening steps (remove/rename install.php, server-side block, monitoring).
+1. **"The MiCollab AWV Attack Chain: Five CVEs, One Pre-Auth RCE Path"** — Walk through how CVE-2026-133303 (XML injection) and CVE-2026-133323 (OS command injection) combine with the auth bypass and file upload flaws to create a complete unauthenticated compromise chain in Mitel's conferencing stack.
 
-2. **"Supply-Chain JS Injection via SaaS Platforms: Lessons from CVE-2026-132224"** — Explores how third-party script providers (A/B testing, analytics, tag managers) represent a high-impact, often-overlooked attack surface; includes Subresource Integrity (SRI), CSP, and vendor security review guidance.
+2. **"Why CISA Is Adding 2023 CVEs to KEV in 2026: The Danfoss ICS Story"** — Explain the lag between CVE assignment and KEV listing for OT/ICS devices, and what it means for critical infrastructure operators running AK-SM 800A controllers in food retail and HVAC environments.
 
-3. **"Deserialization Is Still Alive in Legacy .NET: CVE-2026-131914 and EoL Risk Management"** — Examines why deserialization vulnerabilities persist in EoL/.NET libraries, how to detect exposure in dependency inventories, and when "just migrate" is the only viable remediation.
+3. **"Hypervisor Management Platform Auth Bypass: CVE-2026-133469 in Vates Xen Orchestra"** — Deep dive on the empty JSON object authentication bypass, how it maps to CWE-287/1287, and what it means for organizations running Xen-based virtualization without network segmentation on the management plane.
 
 ---
 
 ## Newsletter Snippet
 
-CISA added three actively exploited vulnerabilities to the Known Exploited Vulnerabilities catalog this week, all with a 3-day federal remediation deadline (due 2026-11-27). The most severe are a deserialization RCE in Idunno AntiCsrf (CVSS 9.8, unauthenticated, now EoL) and a Drupal Core installer bypass that lets unauthenticated attackers execute arbitrary code by triggering a site reinstall via install.php — both warrant emergency patching or service discontinuation. A third vulnerability in Optimizely Web Experimentation (CVSS 8.7) is lower on the CVSS scale but potentially high in real-world impact: exploitation allows attacker-controlled JavaScript to be injected into Optimizely's CDN-hosted assets and silently executed in the browsers of visitors to affected customer sites.
+This week's CISA KEV batch is dominated by two vendors — Mitel and Danfoss — with a combined eight entries across collaboration and industrial control systems. The standout is Mitel MiCollab, where five vulnerabilities in a single product's conferencing component (AWV) form a layered attack chain: unauthenticated attackers can bypass authentication, upload arbitrary files, and ultimately execute OS commands without credentials. With CVSS scores ranging from 5.3 to 9.8, the full severity of this cluster is only apparent when the chain is viewed together — any MiCollab deployment exposed to the internet should be patched or taken offline until mitigations are applied.
 
-If your organization uses any of these products, treat this as an active incident response situation, not a standard patch cycle. Verify that install.php is inaccessible on all Drupal instances, check Optimizely's incident report and status page for indicators of compromise, and audit whether any applications still reference the Idunno AntiCsrf library — if so, plan an accelerated migration. All three are confirmed in-the-wild exploits; CISA's 3-day window reflects genuine urgency.
+Also notable this week: CISA added two 2023-era Danfoss AK-SM 800A vulnerabilities (path traversal and remote command execution) with the same 3-day remediation deadline as the newer entries. This signals active, ongoing exploitation in operational technology environments — likely refrigeration and HVAC controllers in food retail and industrial facilities — where patching cycles are notoriously slow. If your organization operates this equipment, treat the legacy CVE dates as irrelevant: the active exploitation is happening now.
